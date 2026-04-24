@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Generated extraction output
+output/*
+!output/json/
+output/json/*
+!output/json/.gitkeep
+
+# Legacy/generated practice output
+practice/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
