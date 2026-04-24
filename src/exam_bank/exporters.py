@@ -7,6 +7,7 @@ from typing import Any
 from .config import AppConfig
 from .models import QuestionRecord
 from .output_layout import component_code_from_values, paper_family_dir_name, paper_instance_id, question_id
+from .trust import CropConfidence
 
 
 QUESTION_BANK_SCHEMA_NAME = "exam_bank.question_bank"
@@ -43,79 +44,89 @@ def write_json(records: list[QuestionRecord], output_path: str | Path, *, output
 
 
 def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> dict[str, Any]:
+    extraction = record.extraction
+    classification = record.classification
+    images = record.images
+    mark_scheme = record.mark_scheme
+    validation = record.validation
+    metadata = record.paper_metadata
+    paper_total = record.paper_total
+
     paper = paper_instance_id(
-        record.component or record.source_paper_code,
-        record.session,
-        record.year,
+        metadata.component or metadata.source_paper_code,
+        metadata.session,
+        metadata.year,
     )
-    family = paper_family_dir_name(record.paper_family or record.question_level_paper_family)
-    subparts = list(record.question_subparts or record.markscheme_subparts)
-    question_image_paths = _path_list(record.screenshot_path, output_root)
-    mark_scheme_image_paths = _path_list(record.markscheme_image, output_root)
+    family = paper_family_dir_name(classification.paper_family or classification.question_level_paper_family)
+    subparts = list(extraction.question_subparts or mark_scheme.markscheme_subparts)
+    question_image_paths = _path_list(images.screenshot_path, output_root)
+    mark_scheme_image_paths = _path_list(mark_scheme.image_path, output_root)
     question_solution_marks = _question_solution_marks(record)
 
     return {
-        "question_id": question_id(paper, record.question_number),
+        "question_id": question_id(paper, extraction.question_number),
         "paper": paper,
         "paper_family": family,
-        "question_number": record.question_number,
-        "question_text": record.combined_question_text,
-        "mark_scheme_text": record.answer_text,
+        "question_number": extraction.question_number,
+        "question_text": extraction.combined_question_text,
+        "mark_scheme_text": mark_scheme.answer_text,
         "question_solution_marks": question_solution_marks,
         "subparts": subparts,
         "subparts_solution_marks": {label: None for label in subparts},
         "question_image_paths": question_image_paths,
         "mark_scheme_image_paths": mark_scheme_image_paths,
         "page_refs": {
-            "question": list(record.page_numbers),
-            "mark_scheme": list(record.markscheme_pages),
+            "question": extraction.page_numbers,
+            "mark_scheme": mark_scheme.pages,
         },
-        "topic": record.question_level_topic or record.topic,
+        "topic": classification.question_level_topic or classification.topic,
         "notes": {
-            "subtopic": record.question_level_subtopic or record.subtopic,
-            "source_pdf": record.source_pdf,
-            "mark_scheme_source_pdf": record.mark_scheme_source_pdf,
-            "source_paper_code": component_code_from_values(record.component, record.source_paper_code),
-            "full_question_label": record.full_question_label,
-            "topic_confidence": record.topic_confidence,
-            "topic_uncertain": record.topic_uncertain,
-            "topic_trust_status": record.topic_trust_status,
-            "mapping_status": record.markscheme_mapping_status,
-            "mapping_failure_reason": record.markscheme_failure_reason,
-            "scope_quality_status": record.scope_quality_status,
-            "question_crop_confidence": record.question_crop_confidence or ("low" if record.crop_uncertain else "high"),
-            "text_source_profile": record.text_source_profile,
-            "text_fidelity_status": record.text_fidelity_status,
-            "text_fidelity_flags": list(record.text_fidelity_flags),
-            "mark_scheme_crop_confidence": record.markscheme_crop_confidence,
-            "review_flags": list(record.review_flags),
-            "extraction_quality_score": round(record.extraction_quality_score, 3),
-            "extraction_quality_flags": list(record.extraction_quality_flags),
-            "validation_status": record.validation_status,
-            "validation_flags": list(record.validation_flags),
-            "recovery_attempted": record.recovery_attempted,
-            "recovery_result": record.recovery_result,
-            "question_structure_detected": dict(record.question_structure_detected),
-            "mark_scheme_structure_detected": dict(record.mark_scheme_structure_detected),
-            "question_total_detected": record.question_total_detected,
-            "mark_scheme_total_detected": record.mark_scheme_total_detected,
-            "question_format_profile": record.question_format_profile,
-            "paper_total_expected": record.paper_total_expected,
-            "paper_total_detected": record.paper_total_detected,
-            "paper_total_status": record.paper_total_status,
-            "rescan_triggered": record.rescan_triggered,
-            "rescan_result": record.rescan_result,
-            "paper_total_before_rescan": record.paper_total_before_rescan,
-            "paper_total_after_rescan": record.paper_total_after_rescan,
-            "paper_total_focus_questions": list(record.paper_total_focus_questions),
-            "paper_total_focus_pages": list(record.paper_total_focus_pages),
-            "paper_total_focus_reason": record.paper_total_focus_reason,
+            "subtopic": classification.question_level_subtopic or classification.subtopic,
+            "source_pdf": extraction.source_pdf,
+            "mark_scheme_source_pdf": mark_scheme.source_pdf,
+            "source_paper_code": component_code_from_values(metadata.component, metadata.source_paper_code),
+            "full_question_label": extraction.full_question_label,
+            "topic_confidence": classification.topic_confidence,
+            "topic_uncertain": classification.topic_uncertain,
+            "topic_trust_status": validation.topic_trust_status,
+            "mapping_status": mark_scheme.mapping_status,
+            "mapping_failure_reason": mark_scheme.failure_reason,
+            "scope_quality_status": validation.scope_quality_status,
+            "question_crop_confidence": images.question_crop_confidence or (CropConfidence.LOW if images.crop_uncertain else CropConfidence.HIGH),
+            "text_source_profile": validation.text_source_profile,
+            "text_fidelity_status": validation.text_fidelity_status,
+            "text_fidelity_flags": validation.text_fidelity_flags,
+            "mark_scheme_crop_confidence": mark_scheme.crop_confidence,
+            "review_flags": validation.review_flags,
+            "extraction_quality_score": round(extraction.extraction_quality_score, 3),
+            "extraction_quality_flags": extraction.extraction_quality_flags,
+            "validation_status": validation.validation_status,
+            "validation_flags": validation.validation_flags,
+            "recovery_attempted": extraction.recovery_attempted,
+            "recovery_result": extraction.recovery_result,
+            "question_structure_detected": extraction.question_structure_detected,
+            "mark_scheme_structure_detected": mark_scheme.structure_detected,
+            "question_total_detected": extraction.question_total_detected,
+            "mark_scheme_total_detected": mark_scheme.total_detected,
+            "question_format_profile": extraction.question_format_profile,
+            "paper_total_expected": paper_total.expected,
+            "paper_total_detected": paper_total.detected,
+            "paper_total_status": paper_total.status,
+            "rescan_triggered": paper_total.rescan_triggered,
+            "rescan_result": paper_total.rescan_result,
+            "paper_total_before_rescan": paper_total.before_rescan,
+            "paper_total_after_rescan": paper_total.after_rescan,
+            "paper_total_focus_questions": paper_total.focus_questions,
+            "paper_total_focus_pages": paper_total.focus_pages,
+            "paper_total_focus_reason": paper_total.focus_reason,
         },
     }
 
 
 def _question_solution_marks(record: QuestionRecord) -> int | None:
-    for value in [record.markscheme_marks_total, record.question_marks_total, record.marks_if_available, record.marks]:
+    extraction = record.extraction
+    mark_scheme = record.mark_scheme
+    for value in [mark_scheme.markscheme_marks_total, extraction.question_marks_total, record.marks_if_available, record.marks]:
         if value is not None:
             return int(value)
     return None

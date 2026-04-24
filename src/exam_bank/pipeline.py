@@ -19,6 +19,19 @@ from .mark_schemes import MarkSchemeImageResult, extract_mark_scheme_answers, fi
 from .models import ClassificationResult, PageLayout, QuestionRecord, QuestionSpan
 from .pdf_extract import extract_pdf_layout
 from .question_detection import detect_question_anchor_candidates, detect_question_spans, extract_marks_from_text, extract_question_total_from_text
+from .trust import (
+    CropConfidence,
+    MappingStatus,
+    PaperTotalStatus,
+    RescanResult,
+    ValidationStatus,
+    assess_text_fidelity as _assess_text_fidelity,
+    derive_scope_quality_status as _derive_scope_quality_status,
+    derive_topic_trust_status as _derive_topic_trust_status,
+    polluted_pass_signal_groups as _polluted_pass_signal_groups,
+    refine_validation_status as _refine_validation_status,
+    text_source_profile as _text_source_profile,
+)
 
 
 @dataclass(frozen=True)
@@ -125,7 +138,7 @@ def build_records_for_pdf(
     final_total_check = initial_total_check
     final_layouts = layouts
     rescan_triggered = False
-    rescan_result = "not_triggered"
+    rescan_result = RescanResult.NOT_TRIGGERED
 
     if _should_trigger_paper_total_rescan(initial_total_check):
         rescan_triggered = True
@@ -339,7 +352,7 @@ def _build_question_record(
         validation_status, validation_flags = _refine_validation_status(
             base_status=span.validation_status,
             base_validation_flags=span.validation_flags,
-            mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else "fail",
+            mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else MappingStatus.FAIL,
             mapping_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "",
             crop_uncertain=render_result.crop_uncertain,
             extraction_quality_flags=structured_text.extraction_quality_flags,
@@ -422,7 +435,7 @@ def _build_question_record(
                 review_flags=sorted(set(flags)),
                 confidence=confidence,
                 crop_uncertain=render_result.crop_uncertain,
-                question_crop_confidence="low" if render_result.crop_uncertain else "high",
+                question_crop_confidence=CropConfidence.LOW if render_result.crop_uncertain else CropConfidence.HIGH,
                 crop_debug_paths=render_result.debug_paths,
                 question_crop_diagnostics=render_result.crop_diagnostics,
                 topic_alternatives=classification.alternative_topics,
@@ -441,7 +454,7 @@ def _build_question_record(
                 markscheme_subparts=mark_scheme_image.markscheme_subparts if mark_scheme_image else [],
                 question_marks_total=mark_scheme_image.question_marks_total if mark_scheme_image else marks,
                 markscheme_marks_total=mark_scheme_image.markscheme_marks_total if mark_scheme_image else None,
-                markscheme_mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else "fail",
+                markscheme_mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else MappingStatus.FAIL,
                 markscheme_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "partial_question_block",
                 validation_status=validation_status,
                 validation_flags=validation_flags,
@@ -518,139 +531,6 @@ def _record_solution_marks(record: QuestionRecord) -> int | None:
     return None
 
 
-def _derive_scope_quality_status(
-    *,
-    validation_flags: list[str],
-    review_flags: list[str],
-    question_structure_detected: dict[str, Any],
-) -> str:
-    if (
-        question_structure_detected.get("contamination_detected")
-        or any(
-            flag in validation_flags or flag in review_flags
-            for flag in {
-                "question_scope_contaminated",
-                "question_start_mismatch",
-                "possible_next_question_contamination",
-                "likely_truncated_question_crop",
-            }
-        )
-    ):
-        return "fail"
-    if any(
-        flag in validation_flags or flag in review_flags
-        for flag in {
-            "weak_question_anchor",
-            "question_start_uncertain",
-            "question_sequence_gap",
-            "paper_total_focus_candidate",
-        }
-    ):
-        return "review"
-    return "clean"
-
-
-def _text_source_profile(review_flags: list[str]) -> str:
-    if any(flag.startswith("ocr_merged") for flag in review_flags):
-        return "hybrid"
-    if "ocr_question_text" in review_flags:
-        return "ocr"
-    return "native_pdf"
-
-
-def _assess_text_fidelity(
-    *,
-    question_text: str,
-    extraction_quality_flags: list[str],
-    review_flags: list[str],
-    validation_flags: list[str],
-    question_structure_detected: dict[str, Any],
-    mapping_failure_reason: str,
-    text_source_profile: str,
-) -> tuple[str, list[str]]:
-    flags: set[str] = set()
-    strong_corruption_flags = {
-        "likely_needs_visual_review",
-        "math_corruption_suspected",
-        "broken_fraction_structure",
-        "broken_superscript_or_power",
-        "suspicious_symbol_run",
-        "flattened_display_math",
-        "diagram_text_mixed_with_body",
-    }
-    if any(flag in extraction_quality_flags for flag in strong_corruption_flags):
-        flags.add("math_text_corruption_detected")
-    if _text_has_suspicious_ocr_noise(question_text):
-        flags.add("ocr_noise_fragment_present")
-    if _text_has_corrupted_math_notation(question_text):
-        flags.add("ocr_math_notation_degraded")
-    if (
-        mapping_failure_reason == "question_subparts_incomplete"
-        or "question_subparts_incomplete" in validation_flags
-        or bool(question_structure_detected.get("missing_internal_subparts"))
-        or bool(question_structure_detected.get("impossible_subpart_sequence_detected"))
-    ):
-        flags.add("missing_visible_structure_in_text")
-    if (
-        text_source_profile != "native_pdf"
-        and "heavy_math_density" in extraction_quality_flags
-        and ("ocr_noise_fragment_present" in flags or "ocr_math_notation_degraded" in flags)
-    ):
-        flags.add("hybrid_math_text_requires_review")
-    if "weak_question_text" in review_flags and flags:
-        flags.add("weak_extracted_text")
-
-    status = "clean"
-    if "missing_visible_structure_in_text" in flags:
-        status = "unusable"
-    elif flags:
-        status = "degraded"
-    return status, sorted(flags)
-
-
-def _text_has_suspicious_ocr_noise(text: str) -> bool:
-    normalized_lines = [line.strip() for line in str(text).splitlines() if line.strip()]
-    for line in normalized_lines:
-        lowered = line.lower()
-        if lowered in {"anne", "fy"} or any(token in lowered for token in {"| anne", "| fy", "¢"}):
-            return True
-        if re.fullmatch(r"[|¦Il1]\s*[A-Za-z]{2,6}", line):
-            return True
-        if re.fullmatch(r"[A-Za-z]{2,6}[!?]", line):
-            return True
-        if re.search(r"\b[A-Za-z]{3,}[!?]\b", line):
-            return True
-    return False
-
-
-def _text_has_corrupted_math_notation(text: str) -> bool:
-    normalized = str(text)
-    patterns = [
-        r"(?:sin|cos|tan|sec|cot){2,}",
-        r"\b[a-z]*(?:sin|cos|tan|sec|cot){2,}[a-z]*\b",
-        r"\^\{[^}]{1,4}\}_\{[^}]{1,4}\}r",
-        r"[A-Za-z]{1,3},,",
-    ]
-    return any(re.search(pattern, normalized, re.IGNORECASE) for pattern in patterns)
-
-
-def _derive_topic_trust_status(
-    *,
-    topic_confidence: str,
-    topic_uncertain: bool,
-    text_fidelity_status: str,
-    validation_status: str,
-    scope_quality_status: str,
-) -> str:
-    if validation_status == "fail" or scope_quality_status == "fail":
-        return "review_required"
-    if text_fidelity_status != "clean":
-        return "degraded_text"
-    if topic_uncertain or topic_confidence == "low":
-        return "review_required"
-    return "normal"
-
-
 def _expected_paper_total(component: str, paper_family: str = "") -> int | None:
     family = (paper_family or "").strip().upper()
     if family in {"P1", "P3", "P4", "P5"}:
@@ -670,9 +550,9 @@ def _paper_total_check(
 ) -> dict[str, int | str | bool | None]:
     expected_total = _expected_paper_total(component, paper_family)
     detected_total = sum(mark for record in records if (mark := _record_solution_marks(record)) is not None)
-    status = "unknown_expected_total"
+    status = PaperTotalStatus.UNKNOWN_EXPECTED_TOTAL
     if expected_total is not None:
-        status = "matched" if detected_total == expected_total else "mismatch"
+        status = PaperTotalStatus.MATCHED if detected_total == expected_total else PaperTotalStatus.MISMATCH
     return {
         "expected_total": expected_total,
         "detected_total": detected_total,
@@ -682,7 +562,7 @@ def _paper_total_check(
 
 
 def _should_trigger_paper_total_rescan(total_check: dict[str, int | str | bool | None]) -> bool:
-    return total_check.get("expected_total") is not None and total_check.get("status") == "mismatch"
+    return total_check.get("expected_total") is not None and total_check.get("status") == PaperTotalStatus.MISMATCH
 
 
 def _structural_failure_count(records: list[QuestionRecord]) -> int:
@@ -731,16 +611,16 @@ def _select_preferred_detection_pass(
     dict[str, int | str | bool | None],
     str,
 ]:
-    if rescanned_total_check.get("status") == "matched" and initial_total_check.get("status") != "matched":
-        return rescanned_spans, rescanned_records, rescanned_total_check, "recovered_exact_total"
+    if rescanned_total_check.get("status") == PaperTotalStatus.MATCHED and initial_total_check.get("status") != PaperTotalStatus.MATCHED:
+        return rescanned_spans, rescanned_records, rescanned_total_check, RescanResult.RECOVERED_EXACT_TOTAL
 
     if _paper_total_preference_key(rescanned_total_check, rescanned_records) > _paper_total_preference_key(initial_total_check, initial_records):
-        result = "improved_but_still_mismatch"
-        if rescanned_total_check.get("status") == "matched":
-            result = "recovered_exact_total"
+        result = RescanResult.IMPROVED_BUT_STILL_MISMATCH
+        if rescanned_total_check.get("status") == PaperTotalStatus.MATCHED:
+            result = RescanResult.RECOVERED_EXACT_TOTAL
         return rescanned_spans, rescanned_records, rescanned_total_check, result
 
-    return initial_spans, initial_records, initial_total_check, "no_improvement"
+    return initial_spans, initial_records, initial_total_check, RescanResult.NO_IMPROVEMENT
 
 
 def _apply_paper_total_metadata(
@@ -759,10 +639,10 @@ def _apply_paper_total_metadata(
     focus_questions = [str(question) for question in focus.get("question_numbers", [])]
     focus_pages = [int(page) for page in focus.get("pages", [])]
     reasons_by_question = dict(focus.get("reasons_by_question", {}))
-    if status == "matched" and rescan_triggered:
-        status = "recovered_after_rescan" if rescan_result == "recovered_exact_total" else "matched"
-    elif status == "mismatch" and rescan_triggered:
-        status = "mismatch_after_rescan"
+    if status == PaperTotalStatus.MATCHED and rescan_triggered:
+        status = PaperTotalStatus.RECOVERED_AFTER_RESCAN if rescan_result == RescanResult.RECOVERED_EXACT_TOTAL else PaperTotalStatus.MATCHED
+    elif status == PaperTotalStatus.MISMATCH and rescan_triggered:
+        status = PaperTotalStatus.MISMATCH_AFTER_RESCAN
 
     for record in records:
         record.paper_total_expected = int(expected_total) if expected_total is not None else None
@@ -779,18 +659,18 @@ def _apply_paper_total_metadata(
         review_flags = set(record.review_flags)
         if rescan_triggered:
             review_flags.add("paper_total_rescan_triggered")
-        if rescan_result == "recovered_exact_total":
+        if rescan_result == RescanResult.RECOVERED_EXACT_TOTAL:
             review_flags.add("paper_total_rescan_recovered")
         if record.question_number in focus_questions:
             review_flags.add("paper_total_focus_candidate")
-        if status == "mismatch_after_rescan":
+        if status == PaperTotalStatus.MISMATCH_AFTER_RESCAN:
             review_flags.add("paper_total_mismatch")
         record.review_flags = sorted(review_flags)
 
         validation_flags = set(record.validation_flags)
-        if status == "mismatch_after_rescan":
+        if status == PaperTotalStatus.MISMATCH_AFTER_RESCAN:
             validation_flags.add("paper_total_mismatch")
-            record.validation_status = "fail"
+            record.validation_status = ValidationStatus.FAIL
         record.validation_flags = sorted(validation_flags)
 
 
@@ -852,82 +732,6 @@ def _paper_total_focus(records: list[QuestionRecord]) -> dict[str, object]:
 def _record_confidence(classification_confidence: float, flags: list[str]) -> float:
     penalty = min(0.45, len(set(flags)) * 0.04)
     return max(0.05, min(0.98, classification_confidence - penalty))
-
-
-def _refine_validation_status(
-    *,
-    base_status: str,
-    base_validation_flags: list[str],
-    mapping_status: str,
-    mapping_failure_reason: str,
-    crop_uncertain: bool,
-    extraction_quality_flags: list[str],
-    review_flags: list[str],
-    question_structure_detected: dict[str, Any],
-) -> tuple[str, list[str]]:
-    validation_flags = list(base_validation_flags)
-    status = base_status
-
-    structural_mapping_failures = {
-        "question_subparts_incomplete",
-        "question_scope_contaminated",
-        "missing_terminal_mark_total",
-        "question_mark_total_mismatch",
-        "question_mark_total_missing",
-        "likely_truncated_question_crop",
-    }
-    if mapping_failure_reason in structural_mapping_failures:
-        status = "fail"
-        if mapping_failure_reason not in validation_flags:
-            validation_flags.append(mapping_failure_reason)
-
-    support_groups = _polluted_pass_signal_groups(
-        crop_uncertain=crop_uncertain,
-        base_validation_flags=base_validation_flags,
-        extraction_quality_flags=extraction_quality_flags,
-        review_flags=review_flags,
-        question_structure_detected=question_structure_detected,
-    )
-    if mapping_status == "pass" and len(support_groups) >= 2:
-        status = "fail"
-        if "polluted_pass_requires_review" not in validation_flags:
-            validation_flags.append("polluted_pass_requires_review")
-
-    return status, sorted(set(validation_flags))
-
-
-def _polluted_pass_signal_groups(
-    *,
-    crop_uncertain: bool,
-    base_validation_flags: list[str],
-    extraction_quality_flags: list[str],
-    review_flags: list[str],
-    question_structure_detected: dict[str, Any],
-) -> set[str]:
-    if not crop_uncertain:
-        return set()
-
-    groups: set[str] = set()
-    if any(
-        flag in extraction_quality_flags
-        for flag in {"likely_needs_visual_review", "math_corruption_suspected", "broken_fraction_structure", "suspicious_symbol_run"}
-    ):
-        groups.add("low_quality_text")
-    if any(
-        flag in review_flags
-        for flag in {"low_confidence_question_crop", "crop_reaches_page_margin", "weak_question_text"}
-    ):
-        groups.add("crop_risk")
-    if any(
-        flag in base_validation_flags
-        for flag in {"weak_question_anchor", "likely_truncated_question_crop", "missing_terminal_mark_total"}
-    ):
-        groups.add("question_validation_risk")
-    contamination_indicators = question_structure_detected.get("contamination_indicators") or {}
-    contamination_signal_score = int(contamination_indicators.get("signal_score", 0))
-    if question_structure_detected.get("contamination_detected") or contamination_signal_score >= 2:
-        groups.add("pollution_signals")
-    return groups
 
 
 def _question_topic_from_parts(

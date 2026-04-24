@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-import json
 import os
 import re
-from pathlib import Path
 from typing import Any
 
 from .config import AppConfig
-from .document_metadata import parse_filename_metadata
+from .classification_family import infer_source_paper_code, infer_source_paper_family
+from .classification_models import DifficultyDecision, FamilyDecision, ObjectCueDecision, QuestionPartSegment, TopicCandidate
+from .classification_parts import (
+    index_structured_part_texts as _index_structured_part_texts,
+    normalize_part_key as _normalize_part_key,
+    split_question_parts,
+)
+from .classification_provider import classify_with_openai as _classify_with_openai
 from .models import ClassificationResult
+from .trust import Confidence
 
 
 TASK_VERB_PATTERNS = {
@@ -28,91 +33,7 @@ TASK_VERB_PATTERNS = {
     "calculate": r"\bcalculate\b|\bfind\b|\bdetermine\b",
 }
 
-_ALPHA_PART_ANCHOR_RE = re.compile(
-    r"(?m)^(?P<prefix>\s*(?:(?P<question>\d{1,2})\s*)?\((?P<label>[a-h])\)(?:\s*\([ivx]+\))?\s*)",
-    re.IGNORECASE,
-)
-_ROMAN_PART_ANCHOR_RE = re.compile(
-    r"(?m)^(?P<prefix>\s*(?:(?P<question>\d{1,2})\s*)?\((?P<label>i{1,3}|iv|v|vi{0,3}|ix|x)\)\s*)",
-    re.IGNORECASE,
-)
 _MARK_RE = re.compile(r"\[(\d{1,2})\]")
-_PAPER_CODE_RE = re.compile(r"(?:qp|ms|paper|p)[_\-\s]*(?P<code>[1-6][0-9])\b", re.IGNORECASE)
-_PAPER_FAMILY_RE = re.compile(r"\bP(?P<family>[1-6])\b", re.IGNORECASE)
-
-
-@dataclass
-class TopicCandidate:
-    paper_family: str
-    topic: str
-    subtopic: str
-    score: float = 0.0
-    methods: list[str] = field(default_factory=list)
-    objects: list[str] = field(default_factory=list)
-    keywords: list[str] = field(default_factory=list)
-    boosts: list[str] = field(default_factory=list)
-    source_scores: dict[str, float] = field(default_factory=dict)
-    method_scores: dict[str, float] = field(default_factory=dict)
-    object_cue_prior_score: float = 0.0
-    object_anchor_bonus: float = 0.0
-    object_protection_penalty: float = 0.0
-
-    @property
-    def label(self) -> str:
-        return f"{self.paper_family}:{self.topic}:{self.subtopic}"
-
-    @property
-    def topic_label(self) -> str:
-        return f"{self.topic}:{self.subtopic}"
-
-    @property
-    def has_method_and_object(self) -> bool:
-        return bool(self.methods and self.objects)
-
-    @property
-    def source_method_total(self) -> float:
-        return sum(self.source_scores.values()) + sum(self.method_scores.values())
-
-
-@dataclass(frozen=True)
-class QuestionPartSegment:
-    part_label: str
-    text: str
-    classification_text: str
-
-
-@dataclass(frozen=True)
-class FamilyDecision:
-    source_paper_family: str
-    source_paper_code: str
-    inferred_paper_family: str
-    paper_family: str
-    paper_family_confidence: str
-    allowed_families: list[str]
-    review_flags: list[str]
-
-
-@dataclass(frozen=True)
-class DifficultyDecision:
-    difficulty: str
-    confidence: str
-    evidence: str
-    uncertain: bool
-    numeric_confidence: float
-    review_flags: list[str]
-
-
-@dataclass(frozen=True)
-class ObjectCueDecision:
-    detected_object_cues: list[str]
-    topic_scores: dict[str, float]
-    evidence: dict[str, list[str]]
-    primary_topic: str
-    flags: list[str]
-    conflict_with_method_scoring: bool = False
-    source_topic_scores: dict[str, dict[str, float]] = field(default_factory=dict)
-
-
 def classify_question(
     text: str,
     marks: int | None,
@@ -233,17 +154,6 @@ def classify_question_parts(
     return part_topics
 
 
-def split_question_parts(text: str, question_number: str) -> list[QuestionPartSegment]:
-    cleaned = text.strip()
-    if not cleaned:
-        return []
-
-    alpha_segments = _segments_from_anchors(cleaned, question_number, _ALPHA_PART_ANCHOR_RE)
-    if alpha_segments:
-        return alpha_segments
-    return _segments_from_anchors(cleaned, question_number, _ROMAN_PART_ANCHOR_RE)
-
-
 def _apply_part_topic_continuity(
     part_topics: list[dict[str, Any]],
     segments: list[QuestionPartSegment],
@@ -263,7 +173,7 @@ def _apply_part_topic_continuity(
             continue
         if str(previous.get("paper_family", "")) != str(current.get("paper_family", "")):
             continue
-        if not (bool(current.get("topic_uncertain")) or str(current.get("topic_confidence", "")) == "low"):
+        if not (bool(current.get("topic_uncertain")) or str(current.get("topic_confidence", "")) == Confidence.LOW):
             continue
         if _explicit_primary_topic_from_text(current_text, str(current.get("paper_family", ""))) not in {"", previous_topic}:
             continue
@@ -291,38 +201,6 @@ def _apply_part_topic_continuity(
         }
         flags.add("part_topic_continuity_applied")
         current["review_flags"] = sorted(flags)
-
-
-def infer_source_paper_family(source_name: str | None) -> tuple[str, str]:
-    metadata = parse_filename_metadata(source_name or "")
-    if metadata.paper_family != "unknown":
-        return metadata.paper_family, "high"
-    code, confidence = infer_source_paper_code(source_name)
-    if code:
-        return f"P{code[0]}", confidence
-    if not source_name:
-        return "unknown", "low"
-    name = Path(source_name).name
-    direct = _PAPER_FAMILY_RE.search(name)
-    if direct:
-        return f"P{direct.group('family')}", "high"
-    return "unknown", "low"
-
-
-def infer_source_paper_code(source_name: str | None) -> tuple[str, str]:
-    if not source_name:
-        return "", "low"
-    metadata = parse_filename_metadata(source_name)
-    if metadata.component:
-        return metadata.component, "high"
-    name = Path(source_name).name
-    match = _PAPER_CODE_RE.search(name)
-    if match:
-        return match.group("code"), "high"
-    qp_match = re.search(r"(?:^|[_\-\s])(?:qp|ms)[_\-\s]*(?P<code>[1-6][0-9])(?:\D|$)", name, re.IGNORECASE)
-    if qp_match:
-        return qp_match.group("code"), "high"
-    return "", "low"
 
 
 def _local_classify(
@@ -611,23 +489,6 @@ def _extend_unique(target: list[str], values: list[str]) -> None:
 
 def _is_continuity_dependent_part(text: str) -> bool:
     return bool(re.search(r"\b(hence|deduce|using your answer|from part \(?[a-zivx]+\)?)\b", text, re.IGNORECASE))
-
-
-def _index_structured_part_texts(part_texts: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    indexed: dict[str, dict[str, Any]] = {}
-    for index, part in enumerate(part_texts):
-        label = _normalize_part_key(str(part.get("part_label", "")))
-        if label:
-            indexed[label] = part
-        indexed[str(index)] = part
-    return indexed
-
-
-def _normalize_part_key(label: str) -> str:
-    match = re.search(r"\((?P<label>[a-zivx]+)\)", label.lower())
-    if match:
-        return match.group("label")
-    return label.strip().lower()
 
 
 def _object_cue_map() -> dict[str, dict[str, list[tuple[str, str, float]]]]:
@@ -1268,10 +1129,10 @@ def _topic_confidence(
     weak_support = "weak_markscheme_signal" in existing_flags
 
     if top.score >= 10 and gap >= 3.0 and not low_quality and not weak_support:
-        return "high", False, 0.88
+        return Confidence.HIGH, False, 0.88
     if top.score >= 5.0 and gap >= 1.4 and not low_quality:
-        return "medium", False, 0.66
-    return "low", True, 0.42
+        return Confidence.MEDIUM, False, 0.66
+    return Confidence.LOW, True, 0.42
 
 
 def _plausible_alternatives(top: TopicCandidate, candidates: list[TopicCandidate]) -> list[TopicCandidate]:
@@ -1521,13 +1382,13 @@ def _infer_difficulty(
 
     confidence = "high"
     numeric_confidence = 0.82
-    if marks is None or topic_confidence == "low":
+    if marks is None or topic_confidence == Confidence.LOW:
         confidence = "medium"
         numeric_confidence = 0.62
     if _text_quality_is_low(text):
         confidence = "low"
         numeric_confidence = 0.42
-    uncertain = confidence == "low"
+    uncertain = confidence == Confidence.LOW
     if uncertain:
         flags.append("difficulty_uncertain")
 
@@ -1613,88 +1474,3 @@ def _text_quality_is_low(text: str) -> bool:
     replacement_markers = text.count("?") + text.count("\ufffd")
     return replacement_markers >= 4
 
-
-def _segments_from_anchors(text: str, question_number: str, pattern: re.Pattern[str]) -> list[QuestionPartSegment]:
-    matches = list(pattern.finditer(text))
-    if not matches:
-        return []
-
-    preamble = text[: matches[0].start()].strip()
-    segments: list[QuestionPartSegment] = []
-    for index, match in enumerate(matches):
-        next_start = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        part_text = text[match.start() : next_start].strip()
-        if len(part_text) < 12:
-            continue
-
-        label = match.group("label").lower()
-        part_label = f"{question_number}({label})" if question_number else f"({label})"
-        classification_text = f"{preamble}\n{part_text}".strip() if preamble else part_text
-        segments.append(QuestionPartSegment(part_label=part_label, text=part_text, classification_text=classification_text))
-    return segments
-
-
-def _classify_with_openai(text: str, marks: int | None, config: AppConfig, local: ClassificationResult) -> ClassificationResult:
-    from openai import OpenAI
-
-    family_taxonomy = config.paper_family_taxonomy.get(local.paper_family, {}) if local.paper_family != "unknown" else config.paper_family_taxonomy
-    schema = {
-        "type": "object",
-        "properties": {
-            "topic": {"type": "string"},
-            "subtopic": {"type": "string"},
-            "topic_confidence": {"type": "string", "enum": ["high", "medium", "low"]},
-            "topic_evidence": {"type": "string"},
-            "difficulty": {"type": "string", "enum": config.difficulty_labels},
-            "difficulty_confidence": {"type": "string", "enum": ["high", "medium", "low"]},
-            "difficulty_evidence": {"type": "string"},
-        },
-        "required": ["topic", "subtopic", "topic_confidence", "topic_evidence", "difficulty", "difficulty_confidence", "difficulty_evidence"],
-        "additionalProperties": False,
-    }
-    client = OpenAI(timeout=config.classification.openai_timeout_seconds)
-    prompt = (
-        "Classify this CAIE 9709 maths question. Use only the supplied paper-family topic bank. "
-        f"Paper family: {local.paper_family}. Topic bank:\n{json.dumps(family_taxonomy, indent=2)}\n\n"
-        f"Marks: {marks if marks is not None else 'unknown'}\nQuestion:\n{text[:6000]}"
-    )
-    response = client.responses.create(
-        model=config.classification.openai_model,
-        input=prompt,
-        text={"format": {"type": "json_schema", "name": "exam_question_classification", "schema": schema, "strict": True}},
-    )
-    data = json.loads(_response_text(response))
-    if not _is_valid_topic_path(local.paper_family, str(data["topic"]), str(data["subtopic"]), config):
-        return local
-    local.topic = str(data["topic"])
-    local.subtopic = str(data["subtopic"])
-    local.topic_confidence = str(data["topic_confidence"])
-    local.topic_evidence = str(data["topic_evidence"])
-    local.difficulty = str(data["difficulty"])
-    local.difficulty_confidence = str(data["difficulty_confidence"])
-    local.difficulty_evidence = str(data["difficulty_evidence"])
-    local.difficulty_uncertain = local.difficulty_confidence == "low"
-    return local
-
-
-def _is_valid_topic_path(paper_family: str, topic: str, subtopic: str, config: AppConfig) -> bool:
-    if paper_family == "unknown":
-        return any(subtopic in topics.get(topic, []) for family, topics in config.paper_family_taxonomy.items() if family != "unknown")
-    return subtopic in config.paper_family_taxonomy.get(paper_family, {}).get(topic, [])
-
-
-def _response_text(response: Any) -> str:
-    output_text = getattr(response, "output_text", None)
-    if output_text:
-        return output_text
-    output = getattr(response, "output", None)
-    if output:
-        chunks: list[str] = []
-        for item in output:
-            for content in getattr(item, "content", []) or []:
-                text = getattr(content, "text", None)
-                if text:
-                    chunks.append(text)
-        if chunks:
-            return "\n".join(chunks)
-    raise ValueError("OpenAI response did not contain output text.")

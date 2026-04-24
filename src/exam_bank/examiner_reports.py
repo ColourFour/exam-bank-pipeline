@@ -12,6 +12,7 @@ from .config import AppConfig
 from .document_metadata import companion_candidates, parse_filename_metadata
 from .identifiers import normalize_question_id, parent_question_id
 from .mupdf_tools import quiet_mupdf
+from .trust import Confidence
 
 
 MATH_CUE_PATTERNS = {
@@ -66,7 +67,7 @@ class ExaminerReportEvidence:
     question_number: str
     subpart: str = ""
     canonical_topic: str = ""
-    topic_confidence: str = "low"
+    topic_confidence: str = Confidence.LOW
     methods_skills: list[str] = field(default_factory=list)
     common_errors: list[str] = field(default_factory=list)
     linked_question_hints: list[str] = field(default_factory=list)
@@ -290,18 +291,18 @@ def _map_examiner_evidence_to_topic(evidence: ExaminerReportEvidence, config: Ap
     family = f"P{evidence.paper_code[0]}" if evidence.paper_code else "unknown"
     allowed_topics = config.paper_family_taxonomy.get(family, {})
     if not allowed_topics:
-        return "", "low"
+        return "", Confidence.LOW
     classification_text = evidence.classification_text
     candidates = _score_topic_candidates_from_sources({"examiner_report": classification_text}, config, [family])
     candidates = [candidate for candidate in candidates if candidate.topic in allowed_topics]
     candidates.sort(key=lambda candidate: candidate.score, reverse=True)
     if not candidates:
-        return next(iter(allowed_topics)), "low"
+        return next(iter(allowed_topics)), Confidence.LOW
     top = candidates[0]
     if top.score <= 0:
-        return top.topic, "low"
+        return top.topic, Confidence.LOW
     second = candidates[1].score if len(candidates) > 1 else 0.0
-    confidence = "high" if top.score >= 8 and top.score - second >= 3 else "medium"
+    confidence = Confidence.HIGH if top.score >= 8 and top.score - second >= 3 else Confidence.MEDIUM
     return top.topic, confidence
 
 

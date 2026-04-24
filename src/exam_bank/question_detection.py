@@ -5,56 +5,34 @@ from pathlib import Path
 
 from .config import AppConfig
 from .models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, TextBlock
+from .question_detection_furniture import (
+    boilerplate_reason as _boilerplate_reason,
+    is_answer_space_text as _is_answer_space_text,
+    is_boilerplate_text as _is_boilerplate_text,
+    is_centered_page_number_block as _is_centered_page_number_block,
+    is_control_artifact_text as _is_control_artifact_text,
+    is_footer_or_header_block as _is_footer_or_header_block,
+    is_margin_furniture_text as _is_margin_furniture_text,
+)
+from .question_detection_patterns import (
+    MARK_RE,
+    QUESTION_START_RE,
+    SUBPART_RE,
+    TERMINAL_MARK_RE,
+    detected_question_total as _detected_question_total,
+    extract_marks_from_text,
+    extract_question_total_from_text,
+    parse_question_start,
+)
+from .trust import ValidationStatus
 
 
-QUESTION_START_RE = re.compile(
-    r"^\s*(?P<number>[1-9]\d{0,2})(?P<label>(?:\s*\([a-zivxlcdm]+\))*)"
-    r"(?=\s|[).,:;\-–—]|$)",
-    re.IGNORECASE,
-)
-SUBPART_RE = re.compile(
-    r"^\s*(?:\d+\s*)?(?P<label>\((?:viii|vii|vi|iv|ix|iii|ii|i|v|x|[a-z])\)(?:\([ivxlcdm]+\))*)",
-    re.IGNORECASE,
-)
-MARK_RE = re.compile(r"\[(?P<marks>\d{1,2})\]")
-TERMINAL_MARK_RE = re.compile(r"\[(?P<marks>\d{1,2})\]\s*$")
 RECOVERABLE_QUESTION_VALIDATION_FLAGS = {
     "question_subparts_incomplete",
     "missing_terminal_mark_total",
     "likely_truncated_question_crop",
     "weak_question_anchor",
 }
-BOILERPLATE_PATTERNS = [
-    (r"^Additional Page\b", "additional_page"),
-    (r"If you use the following lined page", "lined_page_instruction"),
-    (r"write the question number", "lined_page_instruction"),
-    (r"^©\s*UCLES\b", "copyright_footer"),
-    (r"^UCLES\b", "copyright_footer"),
-    (r"^9709[/_ -]", "paper_code_footer"),
-    (r"^\d{4}/\d{2}/[A-Z]/[A-Z]/\d{2}$", "paper_code_footer"),
-    (r"^Cambridge International", "publisher_footer"),
-    (r"DO NOT WRITE IN THIS MARGIN", "margin_furniture"),
-    (r"^This document consists of", "page_furniture"),
-    (r"^BLANK PAGE$", "blank_page"),
-    (r"^Question Paper$", "page_furniture"),
-    (r"^Mark Scheme$", "page_furniture"),
-    (r"^Turn over$", "footer"),
-]
-
-
-def parse_question_start(text: str, config: AppConfig) -> tuple[str, str] | None:
-    """Return top-level question number and visible label if text starts a question."""
-
-    match = QUESTION_START_RE.match(text.strip())
-    if not match:
-        return None
-    number = int(match.group("number"))
-    if number > config.detection.max_question_number:
-        return None
-    label = f"{number}{match.group('label').replace(' ', '')}"
-    return str(number), label
-
-
 def detect_question_spans(layouts: list[PageLayout], source_pdf: str | Path, config: AppConfig) -> list[QuestionSpan]:
     max_question_number = _max_question_number_for_source(source_pdf, config)
     starts = detect_question_starts(layouts, config, source_pdf=source_pdf)
@@ -231,31 +209,6 @@ def detect_question_anchor_candidates(layouts: list[PageLayout], config: AppConf
     return candidates
 
 
-def extract_marks_from_text(text: str) -> int | None:
-    """Extract the sum of bracketed Cambridge-style marks, e.g. [3] [4]."""
-
-    marks = [int(match.group("marks")) for match in MARK_RE.finditer(text)]
-    if not marks:
-        return None
-    return sum(marks)
-
-
-def extract_question_total_from_text(text: str) -> int | None:
-    """Prefer the terminal total when present, otherwise fall back to summed marks."""
-
-    normalized = _strip_control_chars(text).replace("\u00a0", " ")
-    lines = [line.strip() for line in normalized.splitlines() if line.strip()]
-    terminal_mark_total = None
-    for line in reversed(lines[-3:]):
-        match = TERMINAL_MARK_RE.search(line)
-        if match:
-            terminal_mark_total = int(match.group("marks"))
-            break
-    mark_values = [int(match.group("marks")) for match in MARK_RE.finditer(normalized)]
-    subparts = _question_subparts_from_text_for_validation(normalized)
-    return _detected_question_total(mark_values, terminal_mark_total, subparts)
-
-
 def _fallback_unknown_question(
     layouts: list[PageLayout],
     source_pdf: Path,
@@ -278,7 +231,7 @@ def _fallback_unknown_question(
         blocks=blocks,
         full_question_label="unknown",
         review_flags=["no_question_boundaries_detected"],
-        validation_status="fail",
+        validation_status=ValidationStatus.FAIL,
         validation_flags=["weak_question_anchor"],
         recovery_attempted=False,
         recovery_result="not_attempted",
@@ -601,62 +554,6 @@ def _is_question_content_block(
         return False
 
     return True
-
-
-def _is_centered_page_number_block(block: TextBlock, page: PageLayout, config: AppConfig) -> bool:
-    text = _clean_text_line(block.text)
-    if not text.isdigit():
-        return False
-    if block.bbox.y0 > config.detection.min_question_start_y:
-        return False
-    center_x = (block.bbox.x0 + block.bbox.x1) / 2
-    return page.width * 0.35 <= center_x <= page.width * 0.65
-
-
-def _is_footer_or_header_block(block: TextBlock, page: PageLayout, config: AppConfig) -> bool:
-    return block.bbox.y1 < config.detection.crop_top_margin or block.bbox.y0 > page.height - config.detection.bottom_margin
-
-
-def _is_boilerplate_text(text: str) -> bool:
-    return _boilerplate_reason(text) is not None
-
-
-def _boilerplate_reason(text: str) -> str | None:
-    text = _clean_text_line(text)
-    for pattern, reason in BOILERPLATE_PATTERNS:
-        if re.search(pattern, text, re.IGNORECASE):
-            return reason
-    return None
-
-
-def _is_answer_space_text(text: str) -> bool:
-    if re.fullmatch(r"[._\-–—\s]{6,}", text):
-        return True
-    if re.fullmatch(r"(?:\.\s*){6,}", text):
-        return True
-    return bool(re.search(r"\bAnswer\b\s*[._\-–—]{6,}", text, re.IGNORECASE))
-
-
-def _is_margin_furniture_text(block: TextBlock, page: PageLayout, config: AppConfig) -> bool:
-    text = _clean_text_line(block.text)
-    if re.search(r"DO NOT WRITE IN THIS MARGIN", text, re.IGNORECASE):
-        return True
-    narrow_edge = (block.bbox.x1 - block.bbox.x0) <= 70 and (
-        block.bbox.x0 <= config.detection.crop_left_margin or block.bbox.x1 >= page.width - config.detection.crop_right_margin
-    )
-    tall = (block.bbox.y1 - block.bbox.y0) >= 80
-    return narrow_edge and tall
-
-
-def _is_control_artifact_text(text: str) -> bool:
-    control_count = sum(1 for char in text if ord(char) < 32 and char not in "\n\t\r")
-    if control_count == 0:
-        return False
-    cleaned = _strip_control_chars(text).strip()
-    visible_count = sum(1 for char in cleaned if not char.isspace())
-    if visible_count <= 3:
-        return True
-    return control_count >= max(4, visible_count)
 
 
 def _answer_artifact_count(
@@ -1238,10 +1135,10 @@ def _recover_incomplete_span_blocks(
 
 def _question_validation_status(validation_flags: list[str], review_flags: list[str]) -> str:
     if validation_flags:
-        return "fail"
+        return ValidationStatus.FAIL
     if "question_start_uncertain" in review_flags:
-        return "review"
-    return "pass"
+        return ValidationStatus.REVIEW
+    return ValidationStatus.PASS
 
 
 def _has_strong_follow_on_question_body(blocks: list[TextBlock], question_number: str, config: AppConfig) -> bool:
@@ -1441,32 +1338,6 @@ def _prefix_candidate_has_context_overlap(candidate_text: str, existing_blocks: 
         return False
     context_tokens = _content_overlap_tokens(extract_text_from_blocks(existing_blocks))
     return bool(candidate_tokens & context_tokens)
-
-
-def _detected_question_total(mark_values: list[int], terminal_mark_total: int | None, subparts: list[str]) -> int | None:
-    if not mark_values:
-        return terminal_mark_total
-    if not subparts or len(mark_values) == 1:
-        return terminal_mark_total if terminal_mark_total is not None else sum(mark_values)
-    if terminal_mark_total is None:
-        return sum(mark_values)
-    if len(mark_values) > len(subparts):
-        return terminal_mark_total
-    if len(mark_values) == len(subparts) and terminal_mark_total == mark_values[-1] and sum(mark_values) > terminal_mark_total:
-        return sum(mark_values)
-    return terminal_mark_total
-
-
-def _question_subparts_from_text_for_validation(text: str) -> list[str]:
-    labels: list[str] = []
-    for line in text.splitlines():
-        line = _clean_text_line(line)
-        if not line:
-            continue
-        label = _subpart_label_from_text(line)
-        if label and label not in labels:
-            labels.append(label)
-    return labels
 
 
 def _question_scope_contamination(

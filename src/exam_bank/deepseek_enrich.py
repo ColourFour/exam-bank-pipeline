@@ -9,6 +9,7 @@ from typing import Any, Sequence
 
 from openai import OpenAI
 from .runtime_profile import DIFFICULTY_LABELS, PAPER_FAMILY_TAXONOMY
+from .trust import Confidence, DeepSeekErrorType, ReconciliationStatus, final_review_reasons as _final_review_reasons
 
 DEFAULT_INPUT_PATH = Path("output/json/question_bank.json")
 DEFAULT_OUTPUT_PATH = Path("output/json/question_bank.deepseek.json")
@@ -192,10 +193,10 @@ def _numeric_confidence_bucket(value: float, *, had_percent: bool = False) -> st
             return None
         scaled = value / 100.0
     if scaled >= 0.75:
-        return "high"
+        return Confidence.HIGH
     if scaled >= 0.45:
-        return "medium"
-    return "low"
+        return Confidence.MEDIUM
+    return Confidence.LOW
 
 
 def require_api_key(env: dict[str, str] | None = None) -> str:
@@ -294,50 +295,14 @@ def _raw_or_none(value: Any) -> Any:
 
 def _reconciliation_status(*, raw_value: Any, normalized_value: str | None, local_value: str | None) -> str:
     if _raw_or_none(raw_value) in (None, ""):
-        return "no_deepseek_label"
+        return ReconciliationStatus.NO_DEEPSEEK_LABEL
     if normalized_value is None:
-        return "unmapped_label"
+        return ReconciliationStatus.UNMAPPED_LABEL
     if local_value is None:
-        return "no_local_label"
+        return ReconciliationStatus.NO_LOCAL_LABEL
     if normalized_value == local_value:
-        return "match"
-    return "mismatch"
-
-
-def _append_reason(reasons: list[str], reason: str) -> None:
-    if reason not in reasons:
-        reasons.append(reason)
-
-
-def _final_review_reasons(
-    *,
-    model_review_required: bool,
-    validation_status: str | None,
-    scope_quality_status: str | None,
-    text_fidelity_status: str | None,
-    topic_trust_status: str | None,
-    topic_reconciliation_status: str,
-    difficulty_reconciliation_status: str,
-    local_difficulty_present: bool,
-) -> list[str]:
-    reasons: list[str] = []
-    if model_review_required:
-        _append_reason(reasons, "llm_review_required")
-    if validation_status and validation_status != "pass":
-        _append_reason(reasons, f"validation_status:{validation_status}")
-    if scope_quality_status and scope_quality_status != "clean":
-        _append_reason(reasons, f"scope_quality_status:{scope_quality_status}")
-    if text_fidelity_status == "degraded":
-        _append_reason(reasons, "text_fidelity_status:degraded")
-    elif text_fidelity_status == "unusable":
-        _append_reason(reasons, "text_fidelity_status:unusable")
-    if topic_trust_status and topic_trust_status != "normal":
-        _append_reason(reasons, f"topic_trust_status:{topic_trust_status}")
-    if topic_reconciliation_status in {"mismatch", "unmapped_label", "no_deepseek_label"}:
-        _append_reason(reasons, f"topic_reconciliation_status:{topic_reconciliation_status}")
-    if local_difficulty_present and difficulty_reconciliation_status in {"mismatch", "unmapped_label", "no_deepseek_label"}:
-        _append_reason(reasons, f"difficulty_reconciliation_status:{difficulty_reconciliation_status}")
-    return reasons
+        return ReconciliationStatus.MATCH
+    return ReconciliationStatus.MISMATCH
 
 
 def build_messages(payload: dict[str, Any]) -> list[dict[str, str]]:
@@ -636,7 +601,7 @@ def enrich_records(
             continue
         except Exception as exc:
             error_record = build_sidecar_error(
-                error_type="provider_error",
+                error_type=DeepSeekErrorType.PROVIDER_ERROR,
                 message=f"{exc.__class__.__name__}: {exc}",
                 model=model,
                 run_timestamp=run_timestamp,
@@ -645,7 +610,7 @@ def enrich_records(
             _append_failure_log(
                 failure_log_path,
                 question_id=question_id,
-                error_type="provider_error",
+                error_type=DeepSeekErrorType.PROVIDER_ERROR,
                 error_message=f"{exc.__class__.__name__}: {exc}",
                 model=model,
                 run_timestamp=run_timestamp,
@@ -689,7 +654,7 @@ def enrichment_failure_counts(sidecar: dict[str, dict[str, Any]]) -> dict[str, i
             counts["succeeded"] += 1
             continue
         counts["failed"] += 1
-        if error.get("type") == "provider_error":
+        if error.get("type") == DeepSeekErrorType.PROVIDER_ERROR:
             counts["provider_failed"] += 1
     return counts
 

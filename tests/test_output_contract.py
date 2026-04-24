@@ -115,6 +115,20 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert not (tmp_path / "output" / "review").exists()
 
 
+def test_question_record_exposes_grouped_internal_state_without_changing_flat_fields() -> None:
+    record = _record()
+
+    assert record.extraction.question_number == record.question_number
+    assert record.extraction.combined_question_text == record.combined_question_text
+    assert record.classification.topic == record.topic
+    assert record.classification.question_level_topic == record.question_level_topic
+    assert record.images.screenshot_path == record.screenshot_path
+    assert record.mark_scheme.image_path == record.markscheme_image
+    assert record.mark_scheme.mapping_status == record.markscheme_mapping_status
+    assert record.validation.topic_trust_status == record.topic_trust_status
+    assert record.paper_metadata.component == record.component
+
+
 def test_question_bank_export_contract_includes_required_metadata_and_question_fields(tmp_path: Path) -> None:
     config = AppConfig()
     config.output.apply_root(tmp_path / "output")
