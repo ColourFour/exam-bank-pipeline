@@ -28,6 +28,14 @@ OCR fallback requires Tesseract:
 
 ```bash
 brew install tesseract
+pip install pytesseract
+```
+
+OCR is disabled by default. To verify local OCR setup:
+
+```bash
+.venv/bin/python -c "import pytesseract; print(pytesseract.get_tesseract_version())"
+tesseract --version
 ```
 
 ## Run
@@ -36,6 +44,12 @@ The supported extraction front door is:
 
 ```bash
 python -m exam_bank.cli process --input input --output output
+```
+
+Enable optional Tesseract OCR on rendered question crop PNGs with:
+
+```bash
+.venv/bin/python -m exam_bank.cli process --input input --output output --enable-ocr
 ```
 
 `--input` is scanned recursively, so either of these work:
@@ -131,7 +145,16 @@ Core fields:
 - `paper`
 - `paper_family`
 - `question_number`
+- `canonical_question_artifact`
+- `question_image_path`
+- `mark_scheme_image_path`
 - `question_text`
+- `question_text_role`
+- `question_text_trust`
+- `visual_required`
+- `visual_reason_flags`
+- `visual_curation_status`
+- `text_only_status`
 - `mark_scheme_text`
 - `question_solution_marks`
 - `subparts`
@@ -149,6 +172,15 @@ Core fields:
 - mapping status and failure reason
 - review flags
 - extraction quality score and flags
+- visual-first text role/trust fields and curation status
+
+For CAIE 9709 maths content, `canonical_question_artifact` normally points at the rendered question PNG crop. `question_text` is preserved as a lossy search and classification hint unless `question_text_role` is `readable_text`.
+
+Audit a JSON export with:
+
+```bash
+python -m exam_bank.cli audit --input output/json/question_bank.json
+```
 
 Archived topic-PDF code is kept for reference under `archive/topic_pdfs_legacy/`. It is not part of the supported package runtime.
 

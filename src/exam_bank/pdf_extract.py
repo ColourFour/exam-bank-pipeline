@@ -552,6 +552,8 @@ def _ocr_page(
     except ImportError as exc:
         raise RuntimeError("pytesseract and Pillow are required for OCR fallback.") from exc
     quiet_mupdf(fitz)
+    if config.ocr.tesseract_cmd:
+        pytesseract.pytesseract.tesseract_cmd = config.ocr.tesseract_cmd
 
     image, _used_zoom = render_pdf_area(
         page,
@@ -566,6 +568,7 @@ def _ocr_page(
         image,
         lang=config.ocr.language,
         output_type=pytesseract.Output.DICT,
+        timeout=config.ocr.timeout_seconds,
     )
 
     grouped: dict[tuple[int, int, int], list[tuple[str, int, int, int, int, float]]] = defaultdict(list)
@@ -622,7 +625,9 @@ def _ocr_page(
     if blocks:
         return sorted(blocks, key=lambda block: (block.bbox.y0, block.bbox.x0))
 
-    text = _normalize_ocr_block_text(pytesseract.image_to_string(image, lang=config.ocr.language).strip())
+    text = _normalize_ocr_block_text(
+        pytesseract.image_to_string(image, lang=config.ocr.language, timeout=config.ocr.timeout_seconds).strip()
+    )
     if not text:
         return []
     return [

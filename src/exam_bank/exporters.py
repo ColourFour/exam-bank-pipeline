@@ -11,7 +11,7 @@ from .trust import CropConfidence
 
 
 QUESTION_BANK_SCHEMA_NAME = "exam_bank.question_bank"
-QUESTION_BANK_SCHEMA_VERSION = 1
+QUESTION_BANK_SCHEMA_VERSION = 2
 
 
 def export_records(records: list[QuestionRecord], config: AppConfig, basename: str | None = None) -> Path:
@@ -61,6 +61,8 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
     subparts = list(extraction.question_subparts or mark_scheme.markscheme_subparts)
     question_image_paths = _path_list(images.screenshot_path, output_root)
     mark_scheme_image_paths = _path_list(mark_scheme.image_path, output_root)
+    question_image_path = question_image_paths[0] if question_image_paths else ""
+    mark_scheme_image_path = mark_scheme_image_paths[0] if mark_scheme_image_paths else ""
     question_solution_marks = _question_solution_marks(record)
 
     return {
@@ -68,7 +70,21 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
         "paper": paper,
         "paper_family": family,
         "question_number": extraction.question_number,
+        "canonical_question_artifact": question_image_path,
+        "question_image_path": question_image_path,
+        "mark_scheme_image_path": mark_scheme_image_path,
         "question_text": extraction.combined_question_text,
+        "question_text_role": validation.question_text_role,
+        "question_text_trust": validation.question_text_trust,
+        "ocr_ran": extraction.ocr_ran,
+        "ocr_engine": extraction.ocr_engine,
+        "ocr_text": extraction.ocr_text,
+        "ocr_text_trust": extraction.ocr_text_trust,
+        "ocr_failure_reason": extraction.ocr_failure_reason,
+        "visual_required": validation.visual_required,
+        "visual_reason_flags": validation.visual_reason_flags,
+        "visual_curation_status": validation.visual_curation_status,
+        "text_only_status": validation.text_only_status,
         "mark_scheme_text": mark_scheme.answer_text,
         "question_solution_marks": question_solution_marks,
         "subparts": subparts,
@@ -96,6 +112,12 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
             "text_source_profile": validation.text_source_profile,
             "text_fidelity_status": validation.text_fidelity_status,
             "text_fidelity_flags": validation.text_fidelity_flags,
+            "question_text_role": validation.question_text_role,
+            "question_text_trust": validation.question_text_trust,
+            "visual_required": validation.visual_required,
+            "visual_reason_flags": validation.visual_reason_flags,
+            "visual_curation_status": validation.visual_curation_status,
+            "text_only_status": validation.text_only_status,
             "mark_scheme_crop_confidence": mark_scheme.crop_confidence,
             "review_flags": validation.review_flags,
             "extraction_quality_score": round(extraction.extraction_quality_score, 3),
@@ -104,6 +126,11 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
             "validation_flags": validation.validation_flags,
             "recovery_attempted": extraction.recovery_attempted,
             "recovery_result": extraction.recovery_result,
+            "ocr_ran": extraction.ocr_ran,
+            "ocr_engine": extraction.ocr_engine,
+            "ocr_text_trust": extraction.ocr_text_trust,
+            "ocr_failure_reason": extraction.ocr_failure_reason,
+            "ocr_text_role": extraction.ocr_text_role,
             "question_structure_detected": extraction.question_structure_detected,
             "mark_scheme_structure_detected": mark_scheme.structure_detected,
             "question_total_detected": extraction.question_total_detected,

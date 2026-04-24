@@ -34,6 +34,12 @@ def _record(
         "paper_family": paper_family,
         "question_number": "1",
         "question_text": "Find x.",
+        "question_text_role": "readable_text",
+        "question_text_trust": "high",
+        "visual_required": False,
+        "visual_reason_flags": [],
+        "question_image_path": "p1/12spring24/questions/q01.png",
+        "mark_scheme_image_path": "p1/12spring24/mark_scheme/q01.png",
         "mark_scheme_text": "x = 2",
         "question_solution_marks": 3,
         "topic": local_topic,
@@ -119,6 +125,10 @@ def test_valid_json_response_parses_into_sidecar_schema() -> None:
     assert sidecar["difficulty_reconciliation_status"] == "match"
     assert sidecar["final_review_required"] is False
     assert sidecar["final_review_reasons"] == []
+    assert sidecar["enrichment_mode"] == "vision_ready_enrichment"
+    assert sidecar["image_available"] is True
+    assert sidecar["vision_model_required"] is False
+    assert sidecar["text_only_enrichment_risk"] == "low"
     assert sidecar["llm_provider"] == "deepseek"
     assert sidecar["llm_model"] == "deepseek-chat"
     assert sidecar["llm_prompt_version"] == "v2"
@@ -190,6 +200,24 @@ def test_degraded_text_forces_final_review_even_when_deepseek_matches() -> None:
     assert sidecar["topic_reconciliation_status"] == "match"
     assert sidecar["final_review_required"] is True
     assert "text_fidelity_status:degraded" in sidecar["final_review_reasons"]
+
+
+def test_enrichment_payload_marks_high_risk_when_vision_required_and_text_untrusted() -> None:
+    record = _record(text_fidelity_status="degraded")
+    record["question_text"] = "Sketch the graph of y x 3 6 = -."
+    record["question_text_role"] = "untrusted_math_text"
+    record["question_text_trust"] = "low"
+    record["visual_required"] = True
+    record["visual_reason_flags"] = ["contains_graph_or_diagram_prompt", "contains_math_text_corruption"]
+
+    payload = deepseek_enrich.build_enrichment_payload(record)
+
+    assert payload["image_available"] is True
+    assert payload["vision_model_required"] is True
+    assert payload["text_only_enrichment_risk"] == "high"
+    assert payload["question_image_path"] == "p1/12spring24/questions/q01.png"
+    assert payload["mark_scheme_image_path"] == "p1/12spring24/mark_scheme/q01.png"
+    assert payload["question_text_trust"] == "low"
 
 
 def test_scope_fail_forces_final_review_semantics() -> None:
@@ -529,6 +557,14 @@ def test_deepseek_sidecar_export_contract_includes_success_and_error_fields(tmp_
         "difficulty_reconciliation_status",
         "final_review_required",
         "final_review_reasons",
+        "enrichment_mode",
+        "image_available",
+        "question_image_path",
+        "mark_scheme_image_path",
+        "vision_model_required",
+        "question_text_role",
+        "question_text_trust",
+        "text_only_enrichment_risk",
         "llm_provider",
         "llm_model",
         "llm_prompt_version",

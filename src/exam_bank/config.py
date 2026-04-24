@@ -165,8 +165,10 @@ class DetectionConfig:
 
 @dataclass
 class OCRConfig:
-    enabled: bool = True
+    enabled: bool = False
     language: str = "eng"
+    tesseract_cmd: str = ""
+    timeout_seconds: int = 30
     dpi: int = 220
     min_confidence: int = 45
 
@@ -262,6 +264,8 @@ def validate_config(config: AppConfig) -> None:
         config.detection.output_mode = "prompt_only"
     if not 0 < config.detection.max_crop_height_ratio <= 1:
         raise ValueError("detection.max_crop_height_ratio must be between 0 and 1.")
+    if config.ocr.timeout_seconds <= 0:
+        raise ValueError("ocr.timeout_seconds must be positive.")
 
 def _deprecated_runtime_key_error(key: str) -> ValueError:
     return ValueError(
@@ -309,6 +313,13 @@ def _apply_mapping(config: AppConfig, raw: dict[str, Any]) -> None:
 def _set_dataclass_fields(target: object, values: dict[str, Any], path_fields: bool = False) -> None:
     valid = set(target.__dataclass_fields__)  # type: ignore[attr-defined]
     for key, value in values.items():
+        if isinstance(target, OCRConfig):
+            if key == "enable_ocr":
+                key = "enabled"
+            elif key == "ocr_language":
+                key = "language"
+            elif key == "ocr_timeout_seconds":
+                key = "timeout_seconds"
         if key not in valid:
             if isinstance(target, OutputConfig) and key in {"images_dir", "csv_dir", "review_dir"}:
                 raise _removed_output_key_error(key)

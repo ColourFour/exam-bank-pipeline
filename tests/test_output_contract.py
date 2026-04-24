@@ -57,6 +57,12 @@ def _record() -> QuestionRecord:
         text_source_profile="native_pdf",
         text_fidelity_status="clean",
         text_fidelity_flags=[],
+        question_text_role="readable_text",
+        question_text_trust="high",
+        visual_required=False,
+        visual_reason_flags=[],
+        visual_curation_status="ready",
+        text_only_status="ready",
         mark_scheme_source_pdf="input/mark_schemes/9709 Mathematics March 2021 Mark Scheme  12.pdf",
     )
 
@@ -99,6 +105,15 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     question = payload["questions"][0]
     assert question["question_image_paths"] == ["p1/12spring21/questions/q01.png"]
     assert question["mark_scheme_image_paths"] == ["p1/12spring21/mark_scheme/q01.png"]
+    assert question["canonical_question_artifact"] == "p1/12spring21/questions/q01.png"
+    assert question["question_image_path"] == "p1/12spring21/questions/q01.png"
+    assert question["mark_scheme_image_path"] == "p1/12spring21/mark_scheme/q01.png"
+    assert question["question_text_role"] == "readable_text"
+    assert question["question_text_trust"] == "high"
+    assert question["visual_required"] is False
+    assert question["visual_reason_flags"] == []
+    assert question["visual_curation_status"] == "ready"
+    assert question["text_only_status"] == "ready"
     assert question["notes"]["topic_confidence"] == "high"
     assert question["notes"]["topic_trust_status"] == "normal"
     assert question["notes"]["scope_quality_status"] == "clean"
@@ -150,7 +165,21 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "paper",
         "paper_family",
         "question_number",
+        "canonical_question_artifact",
+        "question_image_path",
+        "mark_scheme_image_path",
         "question_text",
+        "question_text_role",
+        "question_text_trust",
+        "ocr_ran",
+        "ocr_engine",
+        "ocr_text",
+        "ocr_text_trust",
+        "ocr_failure_reason",
+        "visual_required",
+        "visual_reason_flags",
+        "visual_curation_status",
+        "text_only_status",
         "mark_scheme_text",
         "question_solution_marks",
         "subparts",
@@ -183,6 +212,17 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "text_source_profile",
         "text_fidelity_status",
         "text_fidelity_flags",
+        "question_text_role",
+        "question_text_trust",
+        "ocr_ran",
+        "ocr_engine",
+        "ocr_text_trust",
+        "ocr_failure_reason",
+        "ocr_text_role",
+        "visual_required",
+        "visual_reason_flags",
+        "visual_curation_status",
+        "text_only_status",
         "mark_scheme_crop_confidence",
         "review_flags",
         "extraction_quality_score",

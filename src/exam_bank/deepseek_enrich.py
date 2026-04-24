@@ -266,15 +266,32 @@ def select_records(
 def build_enrichment_payload(record: dict[str, Any]) -> dict[str, Any]:
     notes = record.get("notes")
     note_map = notes if isinstance(notes, dict) else {}
+    question_image_path = record.get("question_image_path") or _first_path(record.get("question_image_paths"))
+    mark_scheme_image_path = record.get("mark_scheme_image_path") or _first_path(record.get("mark_scheme_image_paths"))
+    visual_required = bool(record.get("visual_required") or note_map.get("visual_required"))
+    question_text_trust = _raw_or_none(record.get("question_text_trust")) or _raw_or_none(note_map.get("question_text_trust"))
+    question_text_role = _raw_or_none(record.get("question_text_role")) or _raw_or_none(note_map.get("question_text_role"))
     payload: dict[str, Any] = {
         "question_id": str(record["question_id"]),
         "paper_family": record.get("paper_family"),
         "question_number": record.get("question_number"),
         "question_text": record.get("question_text"),
+        "question_text_role": question_text_role,
+        "question_text_trust": question_text_trust,
+        "image_available": bool(question_image_path),
+        "vision_model_required": visual_required,
+        "text_only_enrichment_risk": text_only_enrichment_risk(
+            visual_required=visual_required,
+            question_text_trust=question_text_trust,
+            question_text_role=question_text_role,
+        ),
     }
     optional_fields = {
         "mark_scheme_text": record.get("mark_scheme_text"),
         "question_solution_marks": record.get("question_solution_marks"),
+        "question_image_path": question_image_path,
+        "mark_scheme_image_path": mark_scheme_image_path,
+        "visual_reason_flags": record.get("visual_reason_flags") or note_map.get("visual_reason_flags"),
         "scope_quality_status": note_map.get("scope_quality_status"),
         "text_fidelity_status": note_map.get("text_fidelity_status"),
         "topic_trust_status": note_map.get("topic_trust_status"),
@@ -284,6 +301,29 @@ def build_enrichment_payload(record: dict[str, Any]) -> dict[str, Any]:
         if value not in (None, "", []):
             payload[key] = value
     return payload
+
+
+def _first_path(value: Any) -> str:
+    if isinstance(value, list) and value:
+        return str(value[0])
+    if isinstance(value, str):
+        return value
+    return ""
+
+
+def text_only_enrichment_risk(
+    *,
+    visual_required: bool,
+    question_text_trust: Any,
+    question_text_role: Any,
+) -> str:
+    trust = str(question_text_trust or "").strip().lower()
+    role = str(question_text_role or "").strip().lower()
+    if visual_required and (trust in {"low", "unusable", ""} or role in {"untrusted_math_text", "missing", ""}):
+        return "high"
+    if visual_required or trust == "medium" or role == "search_hint":
+        return "medium"
+    return "low"
 
 
 def _raw_or_none(value: Any) -> Any:
@@ -493,6 +533,11 @@ def build_sidecar_success(
         difficulty_reconciliation_status=difficulty_reconciliation_status,
         local_difficulty_present=local_difficulty_normalized is not None,
     )
+    question_image_path = record.get("question_image_path") or _first_path(record.get("question_image_paths"))
+    mark_scheme_image_path = record.get("mark_scheme_image_path") or _first_path(record.get("mark_scheme_image_paths"))
+    visual_required = bool(record.get("visual_required") or note_map.get("visual_required"))
+    question_text_trust = _raw_or_none(record.get("question_text_trust")) or _raw_or_none(note_map.get("question_text_trust"))
+    question_text_role = _raw_or_none(record.get("question_text_role")) or _raw_or_none(note_map.get("question_text_role"))
 
     return {
         "deepseek_topic": raw_topic,
@@ -516,6 +561,18 @@ def build_sidecar_success(
         "difficulty_reconciliation_status": difficulty_reconciliation_status,
         "final_review_required": bool(final_review_reasons),
         "final_review_reasons": final_review_reasons,
+        "enrichment_mode": "vision_ready_enrichment" if question_image_path else "text_only_enrichment",
+        "image_available": bool(question_image_path),
+        "question_image_path": question_image_path or None,
+        "mark_scheme_image_path": mark_scheme_image_path or None,
+        "vision_model_required": visual_required,
+        "question_text_role": question_text_role,
+        "question_text_trust": question_text_trust,
+        "text_only_enrichment_risk": text_only_enrichment_risk(
+            visual_required=visual_required,
+            question_text_trust=question_text_trust,
+            question_text_role=question_text_role,
+        ),
         "llm_provider": LLM_PROVIDER,
         "llm_model": model,
         "llm_prompt_version": PROMPT_VERSION,

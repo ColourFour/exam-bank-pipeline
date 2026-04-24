@@ -323,6 +323,7 @@ def test_repo_n24_p32_degraded_math_text_exports_degraded_text_fidelity_and_topi
 
     config = AppConfig()
     _configure_test_output(config, tmp_path)
+    config.ocr.enabled = True
 
     result = process_sample(REPO_N24_P32_QP, config, mark_scheme_pdf=REPO_N24_P32_MS)
     payload = json.loads(result.json_path.read_text(encoding="utf-8"))["questions"]
@@ -381,12 +382,14 @@ def test_repo_m24_p32_clean_single_question_page_remains_single_with_ocr_enabled
 def test_repo_newer_format_scope_cleanup_tightens_p51_scopes_upstream(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
+    pytest.importorskip("pytesseract")
 
     if not all(path.exists() for path in [REPO_N25_P51_QP, REPO_N25_P51_MS, REPO_N25_P5_QP, REPO_N25_P5_MS]):
         pytest.skip("Repo November 2025 sample PDFs are not available.")
 
     config = AppConfig()
     _configure_test_output(config, tmp_path)
+    config.ocr.enabled = True
 
     p51 = process_sample(REPO_N25_P51_QP, config, mark_scheme_pdf=REPO_N25_P51_MS)
     p53 = process_sample(REPO_N25_P5_QP, config, mark_scheme_pdf=REPO_N25_P5_MS)

@@ -61,11 +61,16 @@ def test_cli_import_does_not_load_legacy_surfaces_until_requested() -> None:
     assert loaded.isdisjoint(LEGACY_SURFACES)
 
 
-def test_cli_exposes_single_process_front_door() -> None:
+def test_cli_exposes_active_runtime_front_doors() -> None:
     parser = build_parser()
     action = parser._subparsers._group_actions[0]  # type: ignore[attr-defined]
 
-    assert set(action.choices) == {"process"}
+    assert set(action.choices) == {"process", "audit"}
+    process_parser = action.choices["process"]
+    process_options = {option for parser_action in process_parser._actions for option in parser_action.option_strings}
+    assert "--enable-ocr" in process_options
+    assert "--ocr-language" in process_options
+    assert "--tesseract-cmd" in process_options
 
     process_calls = _function_call_names(CLI_PATH, "cmd_process")
     assert process_calls >= {"load_config", "process_inputs", "_print_result"}

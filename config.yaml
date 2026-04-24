@@ -38,8 +38,10 @@ detection:
   max_crop_height_ratio: 0.82
 
 ocr:
-  enabled: true
+  enabled: false
   language: eng
+  tesseract_cmd:
+  timeout_seconds: 30
   dpi: 220
   min_confidence: 45
 

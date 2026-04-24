@@ -49,6 +49,35 @@ class TextFidelityStatus:
     VALUES = frozenset({CLEAN, DEGRADED, UNUSABLE})
 
 
+class QuestionTextRole:
+    """How consumers should use extracted question text."""
+
+    SEARCH_HINT = "search_hint"
+    READABLE_TEXT = "readable_text"
+    UNTRUSTED_MATH_TEXT = "untrusted_math_text"
+    MISSING = "missing"
+    VALUES = frozenset({SEARCH_HINT, READABLE_TEXT, UNTRUSTED_MATH_TEXT, MISSING})
+
+
+class QuestionTextTrust:
+    """Trust level for extracted question text as a representation of the visual question."""
+
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    UNUSABLE = "unusable"
+    VALUES = frozenset({HIGH, MEDIUM, LOW, UNUSABLE})
+
+
+class CurationStatus:
+    """Readiness for visual/manual curation or stricter text-only automation."""
+
+    READY = "ready"
+    REVIEW = "review"
+    FAIL = "fail"
+    VALUES = frozenset({READY, REVIEW, FAIL})
+
+
 class TopicTrustStatus:
     """Downstream interpretation of topic labels after extraction trust checks."""
 
@@ -192,6 +221,19 @@ def assess_text_fidelity(
         flags.add("ocr_noise_fragment_present")
     if _text_has_corrupted_math_notation(question_text):
         flags.add("ocr_math_notation_degraded")
+    visual_flags = visual_reason_flags(
+        question_text=question_text,
+        extraction_quality_flags=extraction_quality_flags,
+        review_flags=review_flags,
+        question_structure_detected=question_structure_detected,
+        text_source_profile=text_source_profile,
+    )
+    if "contains_math_text_corruption" in visual_flags:
+        flags.add("math_text_corruption_detected")
+    if "contains_pdf_control_garbage" in visual_flags:
+        flags.add("pdf_control_garbage_detected")
+    if "native_text_missing_or_sparse" in visual_flags or "ocr_text_sparse_or_merged" in visual_flags:
+        flags.add("sparse_or_merged_question_text")
     if (
         mapping_failure_reason == "question_subparts_incomplete"
         or "question_subparts_incomplete" in validation_flags
@@ -214,6 +256,156 @@ def assess_text_fidelity(
     elif flags:
         status = TextFidelityStatus.DEGRADED
     return status, sorted(flags)
+
+
+def visual_reason_flags(
+    *,
+    question_text: str,
+    extraction_quality_flags: list[str],
+    review_flags: list[str],
+    question_structure_detected: dict[str, Any],
+    text_source_profile: str,
+) -> list[str]:
+    text = str(question_text or "")
+    normalized = _normalize_for_visual_flags(text)
+    lowered = normalized.lower()
+    flags: set[str] = set()
+
+    if not normalized or len(re.findall(r"[A-Za-z0-9]", normalized)) < 12:
+        flags.add("native_text_missing_or_sparse")
+    if text_source_profile != TextSourceProfile.NATIVE_PDF and (
+        "weak_question_text" in review_flags or any(flag.startswith("ocr_merged") for flag in review_flags)
+    ):
+        flags.add("ocr_text_sparse_or_merged")
+
+    if _text_has_pdf_control_garbage(text):
+        flags.add("contains_pdf_control_garbage")
+    if _text_has_page_furniture(text):
+        flags.add("contains_page_furniture")
+    if _text_has_math_corruption(text):
+        flags.add("contains_math_text_corruption")
+        flags.add("text_order_unreliable")
+
+    if _contains_equation_layout(normalized):
+        flags.add("contains_equation_layout")
+    if _contains_fraction_or_integral_layout(normalized):
+        flags.add("contains_fraction_or_integral_layout")
+    if _contains_vector_notation(normalized):
+        flags.add("contains_vector_notation")
+    if _contains_complex_number_notation(normalized):
+        flags.add("contains_complex_number_notation")
+    if _contains_inequality_or_region_prompt(normalized):
+        flags.add("contains_inequality_or_region_prompt")
+    if _contains_graph_or_diagram_prompt(normalized):
+        flags.add("contains_graph_or_diagram_prompt")
+    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\b", lowered):
+        flags.add("contains_trig_expression")
+    if re.search(r"\b(?:ln|log|exp)\b|\be\s*(?:\^|[0-9]*x\b|[-+])", lowered):
+        flags.add("contains_log_exponential_expression")
+
+    structure_flags = set(extraction_quality_flags) | set(review_flags)
+    if structure_flags & {
+        "likely_needs_visual_review",
+        "math_corruption_suspected",
+        "broken_fraction_structure",
+        "broken_superscript_or_power",
+        "suspicious_symbol_run",
+        "flattened_display_math",
+        "diagram_text_mixed_with_body",
+    }:
+        flags.add("contains_math_text_corruption")
+        flags.add("text_order_unreliable")
+    if question_structure_detected.get("missing_internal_subparts") or question_structure_detected.get("impossible_subpart_sequence_detected"):
+        flags.add("text_order_unreliable")
+
+    return sorted(flags)
+
+
+def derive_question_text_semantics(
+    *,
+    question_text: str,
+    text_fidelity_status: str,
+    visual_reason_flags: list[str],
+) -> tuple[str, str, bool]:
+    if not str(question_text or "").strip():
+        return QuestionTextRole.MISSING, QuestionTextTrust.UNUSABLE, True
+
+    flag_set = set(visual_reason_flags)
+    visual_required = bool(
+        flag_set
+        & {
+            "contains_equation_layout",
+            "contains_fraction_or_integral_layout",
+            "contains_vector_notation",
+            "contains_complex_number_notation",
+            "contains_inequality_or_region_prompt",
+            "contains_graph_or_diagram_prompt",
+            "contains_trig_expression",
+            "contains_log_exponential_expression",
+            "contains_math_text_corruption",
+            "contains_pdf_control_garbage",
+            "text_order_unreliable",
+            "native_text_missing_or_sparse",
+            "ocr_text_sparse_or_merged",
+        }
+    )
+
+    corruption_flags = {
+        "contains_math_text_corruption",
+        "contains_pdf_control_garbage",
+        "text_order_unreliable",
+        "native_text_missing_or_sparse",
+        "ocr_text_sparse_or_merged",
+    }
+    if text_fidelity_status == TextFidelityStatus.UNUSABLE or flag_set & corruption_flags:
+        return QuestionTextRole.UNTRUSTED_MATH_TEXT, QuestionTextTrust.UNUSABLE if text_fidelity_status == TextFidelityStatus.UNUSABLE else QuestionTextTrust.LOW, True
+    if text_fidelity_status == TextFidelityStatus.DEGRADED:
+        return QuestionTextRole.SEARCH_HINT, QuestionTextTrust.LOW, True
+    if visual_required:
+        return QuestionTextRole.SEARCH_HINT, QuestionTextTrust.MEDIUM, True
+    return QuestionTextRole.READABLE_TEXT, QuestionTextTrust.HIGH, False
+
+
+def derive_visual_curation_status(
+    *,
+    validation_status: str,
+    scope_quality_status: str,
+    question_image_path: str,
+    question_crop_confidence: str,
+    mark_scheme_image_path: str,
+    mark_scheme_crop_confidence: str,
+) -> str:
+    if not question_image_path:
+        return CurationStatus.FAIL
+    if validation_status == ValidationStatus.FAIL or scope_quality_status == ScopeQualityStatus.FAIL:
+        return CurationStatus.FAIL
+    if question_crop_confidence == CropConfidence.LOW or not mark_scheme_image_path:
+        return CurationStatus.REVIEW
+    if mark_scheme_crop_confidence and mark_scheme_crop_confidence != CropConfidence.HIGH:
+        return CurationStatus.REVIEW
+    if validation_status == ValidationStatus.REVIEW or scope_quality_status == ScopeQualityStatus.REVIEW:
+        return CurationStatus.REVIEW
+    return CurationStatus.READY
+
+
+def derive_text_only_status(
+    *,
+    validation_status: str,
+    scope_quality_status: str,
+    question_text_role: str,
+    question_text_trust: str,
+) -> str:
+    if validation_status == ValidationStatus.FAIL or scope_quality_status == ScopeQualityStatus.FAIL:
+        return CurationStatus.FAIL
+    if question_text_role in {QuestionTextRole.MISSING, QuestionTextRole.UNTRUSTED_MATH_TEXT}:
+        return CurationStatus.FAIL
+    if question_text_trust in {QuestionTextTrust.UNUSABLE, QuestionTextTrust.LOW}:
+        return CurationStatus.FAIL
+    if question_text_role == QuestionTextRole.SEARCH_HINT or question_text_trust == QuestionTextTrust.MEDIUM:
+        return CurationStatus.REVIEW
+    if validation_status == ValidationStatus.REVIEW or scope_quality_status == ScopeQualityStatus.REVIEW:
+        return CurationStatus.REVIEW
+    return CurationStatus.READY
 
 
 def derive_topic_trust_status(
@@ -369,3 +561,107 @@ def _text_has_corrupted_math_notation(text: str) -> bool:
         r"[A-Za-z]{1,3},,",
     ]
     return any(re.search(pattern, normalized, re.IGNORECASE) for pattern in patterns)
+
+
+def _normalize_for_visual_flags(text: str) -> str:
+    return " ".join(str(text or "").replace("\u00a0", " ").split())
+
+
+def _text_has_pdf_control_garbage(text: str) -> bool:
+    raw = str(text or "")
+    if any(char == "\ufffd" or ord(char) in {*range(0, 9), *range(14, 32)} for char in raw):
+        return True
+    if re.search(r"(?:\b\d{5,}\b\s*){2,}", raw):
+        return True
+    if re.search(r"[^\w\s.,;:()\[\]{}+\-*/=<>|^'\"%°]+", raw) and len(re.findall(r"[A-Za-z]", raw)) < 20:
+        return True
+    return False
+
+
+def _text_has_page_furniture(text: str) -> bool:
+    lowered = str(text or "").lower()
+    furniture = [
+        "do not write in this margin",
+        "permission to reproduce items",
+        "uc les",
+        "cambridge university press",
+        "this document has",
+        "blank page",
+        "additional page",
+        "turn over",
+        "© ucles",
+    ]
+    return any(item in lowered for item in furniture)
+
+
+def _text_has_math_corruption(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    lowered = normalized.lower()
+    tokens = re.findall(r"[A-Za-z]+|\d+(?:\.\d+)?|[=+\-*/^<>≤≥|(){}\[\],]", normalized)
+    if not tokens:
+        return False
+
+    if _text_has_corrupted_math_notation(normalized):
+        return True
+    if re.search(r"\b[xyzijkn]\s+[xyzijkn]\s+\d+\s+\d+\s*=", lowered):
+        return True
+    if re.search(r"(?:\b[xyzijk]\b\s*){3,}", lowered):
+        return True
+    if re.search(r"(?:[+\-*/=<>]\s*){3,}", normalized):
+        return True
+    if re.search(r"\b\d+\s+\d+\s+[A-Za-z]\s+[A-Za-z]\s*[-+<>=]", normalized):
+        return True
+
+    mathish = {token for token in tokens if re.fullmatch(r"[xyzijkedr]|sin|cos|tan|ln|log|exp|\d+(?:\.\d+)?|[=+\-*/^<>≤≥|]", token, re.I)}
+    standalone_letter_count = sum(1 for token in tokens if re.fullmatch(r"[xyzijkedr]", token, re.I))
+    operator_count = sum(1 for token in tokens if re.fullmatch(r"[=+\-*/^<>≤≥|]", token))
+    if len(tokens) >= 8 and len(mathish) / len(tokens) >= 0.7 and standalone_letter_count >= 3 and operator_count >= 2:
+        return True
+
+    lines = [line.strip() for line in str(text).splitlines() if line.strip()]
+    short_math_lines = 0
+    for line in lines:
+        line_tokens = re.findall(r"[A-Za-z]+|\d+(?:\.\d+)?|[=+\-*/^<>≤≥|]", line)
+        if 4 <= len(line_tokens) <= 12:
+            line_mathish = [token for token in line_tokens if re.fullmatch(r"[xyzijkedr]|sin|cos|tan|ln|log|exp|\d+(?:\.\d+)?|[=+\-*/^<>≤≥|]", token, re.I)]
+            if len(line_mathish) / len(line_tokens) >= 0.75 and sum(1 for token in line_tokens if len(token) == 1) >= 4:
+                short_math_lines += 1
+    return short_math_lines >= 2
+
+
+def _contains_equation_layout(text: str) -> bool:
+    return bool(re.search(r"[A-Za-z0-9)]\s*=\s*[-+A-Za-z0-9(|]", text) or re.search(r"\by\s*=", text, re.I))
+
+
+def _contains_fraction_or_integral_layout(text: str) -> bool:
+    lowered = text.lower()
+    return bool(
+        re.search(r"\b(?:integral|differentiat|substitution)\b|∫", lowered)
+        or re.search(r"\bd[xy]\b|d[xy]\s*/\s*d[xy]", lowered)
+        or re.search(r"\b\d+\s*/\s*\d+\b|\\frac|over\s+\d", lowered)
+        or "broken_fraction_structure" in lowered
+    )
+
+
+def _contains_vector_notation(text: str) -> bool:
+    lowered = text.lower()
+    return bool(
+        re.search(r"\bvector\b|\bposition vector\b|\bline\s+l\b", lowered)
+        or re.search(r"\b[rijk]\b\s*[=+]\s*\d", lowered)
+        or re.search(r"\([^)]+,\s*[^)]+,\s*[^)]+\)", text)
+    )
+
+
+def _contains_complex_number_notation(text: str) -> bool:
+    lowered = text.lower()
+    return bool(re.search(r"\bargand\b|\bcomplex number\b|\barg\s*\(|\bmodulus\b", lowered) or re.search(r"\b[zw]\s*=\s*[^.\n]*\bi\b", lowered))
+
+
+def _contains_inequality_or_region_prompt(text: str) -> bool:
+    lowered = text.lower()
+    return bool(re.search(r"[<>≤≥]", text) or re.search(r"\binequalit(?:y|ies)\b|\bregion\b|\bshade\b", lowered))
+
+
+def _contains_graph_or_diagram_prompt(text: str) -> bool:
+    lowered = text.lower()
+    return bool(re.search(r"\b(?:sketch|draw|graph|diagram|curve|asymptote|argand diagram)\b", lowered))

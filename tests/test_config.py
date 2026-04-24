@@ -88,6 +88,28 @@ def test_document_registry_can_filter_archived_document_types(tmp_path: Path) ->
 def test_checked_in_config_yaml_loads_with_current_schema() -> None:
     config = load_config(Path("config.yaml"))
 
+    assert config.ocr.enabled is False
+    assert config.ocr.language == "eng"
+    assert config.ocr.timeout_seconds == 30
     assert config.classification.enable_openai is False
     assert config.classification.openai_model == "gpt-5-mini"
     assert config.classification.openai_timeout_seconds == 30
+
+
+def test_ocr_config_accepts_legacy_aliases(tmp_path: Path) -> None:
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        "ocr:\n"
+        "  enable_ocr: true\n"
+        "  ocr_language: eng\n"
+        "  tesseract_cmd: /opt/homebrew/bin/tesseract\n"
+        "  ocr_timeout_seconds: 12\n",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.ocr.enabled is True
+    assert config.ocr.language == "eng"
+    assert config.ocr.tesseract_cmd == "/opt/homebrew/bin/tesseract"
+    assert config.ocr.timeout_seconds == 12

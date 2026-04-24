@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
+from .audit import write_audit
 from .config import AppConfig, load_config
 from .pipeline import PipelineResult, process_inputs
 
@@ -32,7 +34,22 @@ def build_parser() -> argparse.ArgumentParser:
         default="config.yaml",
         help="Optional config.yaml path for operational overrides.",
     )
+    process.add_argument(
+        "--enable-ocr",
+        action="store_true",
+        help="Run optional Tesseract OCR on rendered question crop PNGs and sparse PDF regions.",
+    )
+    process.add_argument("--ocr-language", default="", help="Optional Tesseract language override, e.g. eng.")
+    process.add_argument("--tesseract-cmd", default="", help="Optional path to the tesseract binary.")
     process.set_defaults(func=cmd_process)
+
+    audit = subparsers.add_parser(
+        "audit",
+        help="Audit visual-first question text trust and curation readiness in an exported question bank JSON.",
+    )
+    audit.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    audit.add_argument("--output", default="", help="Optional path to write the audit JSON report.")
+    audit.set_defaults(func=cmd_audit)
     return parser
 
 
@@ -44,9 +61,22 @@ def main(argv: list[str] | None = None) -> int:
 
 def cmd_process(args: argparse.Namespace) -> int:
     config = load_config(args.config)
+    if args.enable_ocr:
+        config.ocr.enabled = True
+    if args.ocr_language:
+        config.ocr.language = args.ocr_language
+    if args.tesseract_cmd:
+        config.ocr.tesseract_cmd = args.tesseract_cmd
     _configure_runtime_paths(config, Path(args.input), Path(args.output))
     result = process_inputs(args.input, config)
     _print_result(result)
+    return 0
+
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    report = write_audit(args.input, output)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
 
 

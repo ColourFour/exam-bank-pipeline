@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .trust import Confidence, ValidationStatus
+from .trust import Confidence, CurationStatus, QuestionTextRole, QuestionTextTrust, ValidationStatus
 
 
 @dataclass(frozen=True)
@@ -132,6 +132,12 @@ class RenderResult:
     debug_paths: list[str] = field(default_factory=list)
     extracted_text: str = ""
     crop_diagnostics: dict[str, Any] = field(default_factory=dict)
+    ocr_ran: bool = False
+    ocr_engine: str = ""
+    ocr_text: str = ""
+    ocr_text_trust: str = QuestionTextTrust.UNUSABLE
+    ocr_failure_reason: str = "disabled"
+    ocr_text_role: str = QuestionTextRole.MISSING
 
 
 @dataclass(frozen=True)
@@ -156,6 +162,12 @@ class QuestionExtractionState:
     question_format_profile: str
     recovery_attempted: bool
     recovery_result: str
+    ocr_ran: bool
+    ocr_engine: str
+    ocr_text: str
+    ocr_text_trust: str
+    ocr_failure_reason: str
+    ocr_text_role: str
 
 
 @dataclass(frozen=True)
@@ -227,6 +239,12 @@ class ValidationTrustState:
     text_source_profile: str
     text_fidelity_status: str
     text_fidelity_flags: list[str]
+    question_text_role: str
+    question_text_trust: str
+    visual_required: bool
+    visual_reason_flags: list[str]
+    visual_curation_status: str
+    text_only_status: str
     topic_trust_status: str
 
 
@@ -334,9 +352,21 @@ class QuestionRecord:
     text_source_profile: str = ""
     text_fidelity_status: str = ""
     text_fidelity_flags: list[str] = field(default_factory=list)
+    question_text_role: str = QuestionTextRole.READABLE_TEXT
+    question_text_trust: str = QuestionTextTrust.HIGH
+    visual_required: bool = False
+    visual_reason_flags: list[str] = field(default_factory=list)
+    visual_curation_status: str = CurationStatus.READY
+    text_only_status: str = CurationStatus.READY
     topic_trust_status: str = ""
     recovery_attempted: bool = False
     recovery_result: str = ""
+    ocr_ran: bool = False
+    ocr_engine: str = ""
+    ocr_text: str = ""
+    ocr_text_trust: str = QuestionTextTrust.UNUSABLE
+    ocr_failure_reason: str = "disabled"
+    ocr_text_role: str = QuestionTextRole.MISSING
     question_structure_detected: dict[str, Any] = field(default_factory=dict)
     mark_scheme_structure_detected: dict[str, Any] = field(default_factory=dict)
     question_total_detected: int | None = None
@@ -388,6 +418,12 @@ class QuestionRecord:
             question_format_profile=self.question_format_profile,
             recovery_attempted=self.recovery_attempted,
             recovery_result=self.recovery_result,
+            ocr_ran=self.ocr_ran,
+            ocr_engine=self.ocr_engine,
+            ocr_text=self.ocr_text,
+            ocr_text_trust=self.ocr_text_trust,
+            ocr_failure_reason=self.ocr_failure_reason,
+            ocr_text_role=self.ocr_text_role,
         )
 
     @property
@@ -463,6 +499,12 @@ class QuestionRecord:
             text_source_profile=self.text_source_profile,
             text_fidelity_status=self.text_fidelity_status,
             text_fidelity_flags=list(self.text_fidelity_flags),
+            question_text_role=self.question_text_role,
+            question_text_trust=self.question_text_trust,
+            visual_required=self.visual_required,
+            visual_reason_flags=list(self.visual_reason_flags),
+            visual_curation_status=self.visual_curation_status,
+            text_only_status=self.text_only_status,
             topic_trust_status=self.topic_trust_status,
         )
 

@@ -26,11 +26,15 @@ from .trust import (
     RescanResult,
     ValidationStatus,
     assess_text_fidelity as _assess_text_fidelity,
+    derive_question_text_semantics as _derive_question_text_semantics,
     derive_scope_quality_status as _derive_scope_quality_status,
     derive_topic_trust_status as _derive_topic_trust_status,
+    derive_text_only_status as _derive_text_only_status,
+    derive_visual_curation_status as _derive_visual_curation_status,
     polluted_pass_signal_groups as _polluted_pass_signal_groups,
     refine_validation_status as _refine_validation_status,
     text_source_profile as _text_source_profile,
+    visual_reason_flags as _visual_reason_flags,
 )
 
 
@@ -328,7 +332,7 @@ def _build_question_record(
             source_name=question_pdf.name,
             examiner_report_text=examiner_text,
             mark_scheme_text=answer_text,
-            question_ocr_text=question_text if "ocr_question_text" in flags else "",
+            question_ocr_text=render_result.ocr_text,
             body_text_normalized=structured_text.body_text_normalized,
             part_texts=structured_text.part_texts,
             body_text_raw=structured_text.body_text_raw,
@@ -342,7 +346,7 @@ def _build_question_record(
             source_name=question_pdf.name,
             examiner_report_text=examiner_text,
             mark_scheme_text=answer_text,
-            question_ocr_text=question_text if "ocr_question_text" in flags else "",
+            question_ocr_text=render_result.ocr_text,
             structured_part_texts=structured_text.part_texts,
         )
         question_topic = _question_topic_from_parts(classification, part_level_topics)
@@ -373,6 +377,35 @@ def _build_question_record(
             question_structure_detected=span.structure_detected,
             mapping_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "",
             text_source_profile=text_source_profile,
+        )
+        visual_reason_flags = _visual_reason_flags(
+            question_text=question_text,
+            extraction_quality_flags=structured_text.extraction_quality_flags,
+            review_flags=flags,
+            question_structure_detected=span.structure_detected,
+            text_source_profile=text_source_profile,
+        )
+        question_text_role, question_text_trust, visual_required = _derive_question_text_semantics(
+            question_text=question_text,
+            text_fidelity_status=text_fidelity_status,
+            visual_reason_flags=visual_reason_flags,
+        )
+        question_crop_confidence = CropConfidence.LOW if render_result.crop_uncertain else CropConfidence.HIGH
+        mark_scheme_image_path = _display_path(mark_scheme_image.image_path) if mark_scheme_image and mark_scheme_image.image_path else ""
+        mark_scheme_crop_confidence = mark_scheme_image.crop_confidence if mark_scheme_image else ""
+        visual_curation_status = _derive_visual_curation_status(
+            validation_status=validation_status,
+            scope_quality_status=scope_quality_status,
+            question_image_path=_display_path(render_result.screenshot_path) if render_result.screenshot_path else "",
+            question_crop_confidence=question_crop_confidence,
+            mark_scheme_image_path=mark_scheme_image_path,
+            mark_scheme_crop_confidence=mark_scheme_crop_confidence,
+        )
+        text_only_status = _derive_text_only_status(
+            validation_status=validation_status,
+            scope_quality_status=scope_quality_status,
+            question_text_role=question_text_role,
+            question_text_trust=question_text_trust,
         )
         topic_trust_status = _derive_topic_trust_status(
             topic_confidence=str(question_topic["topic_confidence"]),
@@ -435,14 +468,14 @@ def _build_question_record(
                 review_flags=sorted(set(flags)),
                 confidence=confidence,
                 crop_uncertain=render_result.crop_uncertain,
-                question_crop_confidence=CropConfidence.LOW if render_result.crop_uncertain else CropConfidence.HIGH,
+                question_crop_confidence=question_crop_confidence,
                 crop_debug_paths=render_result.debug_paths,
                 question_crop_diagnostics=render_result.crop_diagnostics,
                 topic_alternatives=classification.alternative_topics,
-                markscheme_image=_display_path(mark_scheme_image.image_path) if mark_scheme_image and mark_scheme_image.image_path else "",
+                markscheme_image=mark_scheme_image_path,
                 markscheme_pages=mark_scheme_image.page_numbers if mark_scheme_image else [],
                 markscheme_question_number=mark_scheme_image.markscheme_question_number if mark_scheme_image else "",
-                markscheme_crop_confidence=mark_scheme_image.crop_confidence if mark_scheme_image else "",
+                markscheme_crop_confidence=mark_scheme_crop_confidence,
                 markscheme_mapping_method=mark_scheme_image.mapping_method if mark_scheme_image else "",
                 markscheme_table_detected=mark_scheme_image.table_detected if mark_scheme_image else False,
                 markscheme_table_header_detected=mark_scheme_image.table_header_detected if mark_scheme_image else [],
@@ -462,9 +495,21 @@ def _build_question_record(
                 text_source_profile=text_source_profile,
                 text_fidelity_status=text_fidelity_status,
                 text_fidelity_flags=text_fidelity_flags,
+                question_text_role=question_text_role,
+                question_text_trust=question_text_trust,
+                visual_required=visual_required,
+                visual_reason_flags=visual_reason_flags,
+                visual_curation_status=visual_curation_status,
+                text_only_status=text_only_status,
                 topic_trust_status=topic_trust_status,
                 recovery_attempted=span.recovery_attempted,
                 recovery_result=span.recovery_result,
+                ocr_ran=render_result.ocr_ran,
+                ocr_engine=render_result.ocr_engine,
+                ocr_text=render_result.ocr_text,
+                ocr_text_trust=render_result.ocr_text_trust,
+                ocr_failure_reason=render_result.ocr_failure_reason,
+                ocr_text_role=render_result.ocr_text_role,
                 question_structure_detected=span.structure_detected,
                 mark_scheme_structure_detected={
                     "subparts": mark_scheme_image.markscheme_subparts if mark_scheme_image else [],

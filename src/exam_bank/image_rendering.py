@@ -9,6 +9,7 @@ from .config import AppConfig
 from .image_limits import cap_image_pixels, render_pdf_area
 from .models import BoundingBox, PageLayout, QuestionSpan, RenderResult, TextBlock
 from .mupdf_tools import quiet_mupdf
+from .ocr import run_question_crop_ocr
 from .output_layout import question_image_output_path
 from .question_detection import detect_question_anchor_candidates, extract_text_from_blocks, parse_question_start
 
@@ -129,6 +130,9 @@ def _render_prompt_crop_image(
         context=f"question_output:{span.question_number}",
     )
     stitched.save(output_path)
+    ocr_result = run_question_crop_ocr(output_path, config)
+    if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
+        flags.append("ocr_question_crop_failed")
 
     if config.debug.enabled:
         debug_paths.append(_write_crop_metadata(span, regions, flags, config))
@@ -144,6 +148,12 @@ def _render_prompt_crop_image(
         debug_paths=debug_paths,
         extracted_text=extracted_text,
         crop_diagnostics=crop_diagnostics,
+        ocr_ran=ocr_result.ocr_ran,
+        ocr_engine=ocr_result.ocr_engine,
+        ocr_text=ocr_result.ocr_text,
+        ocr_text_trust=ocr_result.ocr_text_trust,
+        ocr_failure_reason=ocr_result.ocr_failure_reason,
+        ocr_text_role=ocr_result.ocr_text_role,
     )
 
 
@@ -905,9 +915,24 @@ def _render_full_region_image(
         context=f"question_full_region_output:{span.question_number}",
     )
     stitched.save(output_path)
+    ocr_result = run_question_crop_ocr(output_path, config)
+    flags = ["full_region_mode"]
+    if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
+        flags.append("ocr_question_crop_failed")
     if config.debug.enabled:
-        debug_paths.append(_write_crop_metadata(span, regions, ["full_region_mode"], config))
-    return RenderResult(output_path, debug_paths=debug_paths, extracted_text=span.combined_text)
+        debug_paths.append(_write_crop_metadata(span, regions, flags, config))
+    return RenderResult(
+        output_path,
+        review_flags=flags,
+        debug_paths=debug_paths,
+        extracted_text=span.combined_text,
+        ocr_ran=ocr_result.ocr_ran,
+        ocr_engine=ocr_result.ocr_engine,
+        ocr_text=ocr_result.ocr_text,
+        ocr_text_trust=ocr_result.ocr_text_trust,
+        ocr_failure_reason=ocr_result.ocr_failure_reason,
+        ocr_text_role=ocr_result.ocr_text_role,
+    )
 
 
 def _full_region_crop_for_page(layout: PageLayout, span: QuestionSpan, config: AppConfig) -> BoundingBox | None:
