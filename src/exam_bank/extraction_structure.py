@@ -182,8 +182,8 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
 
 def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = text
-    value = re.sub(r"\b([0-9])\s*G\s*([A-Za-zθ])", r"\1 ≤ \2", value)
-    value = re.sub(r"\b([A-Za-zθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
+    value = re.sub(r"\b([0-9])\s*G\s*([xXiIθ])", r"\1 ≤ \2", value)
+    value = re.sub(r"\b([xXiIθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
     value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
     value = re.sub(r"\b(0|90|180|360)°?\s*<\s*1\s*<", r"\1° < θ <", value)
     value = re.sub(r"\b(0|90|180|360)°?\s*≤\s*1\s*≤", r"\1° ≤ θ ≤", value)

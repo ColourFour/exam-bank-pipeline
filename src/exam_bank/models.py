@@ -168,6 +168,14 @@ class QuestionExtractionState:
     ocr_text_trust: str
     ocr_failure_reason: str
     ocr_text_role: str
+    text_candidate_source: str
+    native_text_score: int | None
+    ocr_text_score: int | None
+    selected_text_score: int | None
+    text_candidate_decision: str
+    text_candidate_decision_reasons: list[str]
+    ocr_selected: bool
+    ocr_rejected_reasons: list[str]
 
 
 @dataclass(frozen=True)
@@ -367,6 +375,14 @@ class QuestionRecord:
     ocr_text_trust: str = QuestionTextTrust.UNUSABLE
     ocr_failure_reason: str = "disabled"
     ocr_text_role: str = QuestionTextRole.MISSING
+    text_candidate_source: str = "native"
+    native_text_score: int | None = None
+    ocr_text_score: int | None = None
+    selected_text_score: int | None = None
+    text_candidate_decision: str = "native_retained"
+    text_candidate_decision_reasons: list[str] = field(default_factory=list)
+    ocr_selected: bool = False
+    ocr_rejected_reasons: list[str] = field(default_factory=list)
     question_structure_detected: dict[str, Any] = field(default_factory=dict)
     mark_scheme_structure_detected: dict[str, Any] = field(default_factory=dict)
     question_total_detected: int | None = None
@@ -424,6 +440,14 @@ class QuestionRecord:
             ocr_text_trust=self.ocr_text_trust,
             ocr_failure_reason=self.ocr_failure_reason,
             ocr_text_role=self.ocr_text_role,
+            text_candidate_source=self.text_candidate_source,
+            native_text_score=self.native_text_score,
+            ocr_text_score=self.ocr_text_score,
+            selected_text_score=self.selected_text_score,
+            text_candidate_decision=self.text_candidate_decision,
+            text_candidate_decision_reasons=list(self.text_candidate_decision_reasons),
+            ocr_selected=self.ocr_selected,
+            ocr_rejected_reasons=list(self.ocr_rejected_reasons),
         )
 
     @property

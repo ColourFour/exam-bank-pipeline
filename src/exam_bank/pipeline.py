@@ -17,6 +17,7 @@ from .extraction_structure import build_structured_question_text
 from .image_rendering import render_question_image
 from .mark_schemes import MarkSchemeImageResult, extract_mark_scheme_answers, find_mark_scheme, render_mark_scheme_images
 from .models import ClassificationResult, PageLayout, QuestionRecord, QuestionSpan
+from .ocr import select_text_candidate
 from .pdf_extract import extract_pdf_layout
 from .question_detection import detect_question_anchor_candidates, detect_question_spans, extract_marks_from_text, extract_question_total_from_text
 from .trust import (
@@ -324,6 +325,34 @@ def _build_question_record(
             flags.append("missing_question_image")
         if render_result.crop_uncertain:
             flags.append("low_confidence_question_crop")
+        flags.extend(render_result.review_flags)
+        preliminary_validation_status, preliminary_validation_flags = _refine_validation_status(
+            base_status=span.validation_status,
+            base_validation_flags=span.validation_flags,
+            mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else MappingStatus.FAIL,
+            mapping_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "",
+            crop_uncertain=render_result.crop_uncertain,
+            extraction_quality_flags=structured_text.extraction_quality_flags,
+            review_flags=flags,
+            question_structure_detected=span.structure_detected,
+        )
+        preliminary_scope_quality_status = _derive_scope_quality_status(
+            validation_flags=preliminary_validation_flags,
+            review_flags=flags,
+            question_structure_detected=span.structure_detected,
+        )
+        text_candidate_decision = select_text_candidate(
+            native_text=question_text,
+            ocr_text=render_result.ocr_text,
+            expected_question_number=span.question_number,
+            expected_subparts=question_subparts,
+            scope_quality_status=preliminary_scope_quality_status,
+        )
+        question_text = text_candidate_decision.selected_text
+        if text_candidate_decision.ocr_selected:
+            flags.extend(["ocr_question_text", "ocr_selected_for_question_text"])
+            if marks is None:
+                marks = extract_question_total_from_text(question_text)
         classification = classify_question(
             question_text,
             marks,
@@ -351,7 +380,7 @@ def _build_question_record(
         )
         question_topic = _question_topic_from_parts(classification, part_level_topics)
         flags.extend(question_topic["review_flags"])
-        flags.extend(render_result.review_flags)
+        flags = sorted(set(flags))
         confidence = _record_confidence(float(question_topic["confidence"]), flags)
         validation_status, validation_flags = _refine_validation_status(
             base_status=span.validation_status,
@@ -465,7 +494,7 @@ def _build_question_record(
                 marks=marks,
                 marks_if_available=marks,
                 page_numbers=span.page_numbers,
-                review_flags=sorted(set(flags)),
+                review_flags=flags,
                 confidence=confidence,
                 crop_uncertain=render_result.crop_uncertain,
                 question_crop_confidence=question_crop_confidence,
@@ -510,6 +539,14 @@ def _build_question_record(
                 ocr_text_trust=render_result.ocr_text_trust,
                 ocr_failure_reason=render_result.ocr_failure_reason,
                 ocr_text_role=render_result.ocr_text_role,
+                text_candidate_source=text_candidate_decision.text_candidate_source,
+                native_text_score=text_candidate_decision.native_text_score,
+                ocr_text_score=text_candidate_decision.ocr_text_score,
+                selected_text_score=text_candidate_decision.selected_text_score,
+                text_candidate_decision=text_candidate_decision.text_candidate_decision,
+                text_candidate_decision_reasons=text_candidate_decision.text_candidate_decision_reasons,
+                ocr_selected=text_candidate_decision.ocr_selected,
+                ocr_rejected_reasons=text_candidate_decision.ocr_rejected_reasons,
                 question_structure_detected=span.structure_detected,
                 mark_scheme_structure_detected={
                     "subparts": mark_scheme_image.markscheme_subparts if mark_scheme_image else [],

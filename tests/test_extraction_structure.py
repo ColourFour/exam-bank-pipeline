@@ -266,3 +266,28 @@ def test_normal_function_spacing_does_not_create_broken_power_flag() -> None:
 
     assert "ln y" in structured.combined_question_text
     assert "broken_superscript_or_power" not in structured.extraction_quality_flags
+
+
+def test_question_number_followed_by_george_is_not_ocr_inequality() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="2",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("2 George has a fair 5-sided spinner.", 80),
+            _block("Find the probability for 0GxG2r. [2]", 110),
+        ],
+        full_question_label="2",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "2 George" in structured.combined_question_text
+    assert "≤ eorge" not in structured.combined_question_text
+    assert "0 ≤ x ≤ 2π" in structured.combined_question_text
