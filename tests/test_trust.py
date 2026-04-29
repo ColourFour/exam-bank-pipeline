@@ -204,3 +204,36 @@ def test_good_image_bad_text_can_be_visual_ready_but_text_only_fail() -> None:
 
     assert visual_status == "ready"
     assert text_status == "fail"
+
+
+def test_repeated_trig_corruption_stays_text_only_fail_after_cleanup() -> None:
+    text = "Show that sin cos θ θ + - 2 cos2 sin θ θ ≡ 5 cos^{2}4θ -4."
+    flags = _visual_flags(
+        text,
+        extraction_flags=["flattened_display_math", "math_corruption_suspected", "likely_needs_visual_review"],
+    )
+    status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=["flattened_display_math", "math_corruption_suspected", "likely_needs_visual_review"],
+        review_flags=["weak_question_text"],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="native_pdf",
+    )
+    role, trust, visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=status,
+        visual_reason_flags=flags,
+    )
+    text_status = derive_text_only_status(
+        validation_status="pass",
+        scope_quality_status="clean",
+        question_text_role=role,
+        question_text_trust=trust,
+    )
+
+    assert "math_text_corruption_detected" in fidelity_flags
+    assert role == "untrusted_math_text"
+    assert visual_required is True
+    assert text_status == "fail"

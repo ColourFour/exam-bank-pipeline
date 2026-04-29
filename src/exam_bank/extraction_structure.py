@@ -128,16 +128,115 @@ def _normalize_preserving_structure(text: str) -> str:
 
 
 def _normalize_light(text: str) -> str:
-    value = text.replace("\u00a0", " ")
+    value = _normalize_pdf_math_glyphs(text)
+    value = value.replace("\u00a0", " ")
     value = value.replace("−", "-").replace("–", "-").replace("—", "-")
     value = re.sub(r"[ \t]+", " ", value.strip())
     return value
 
 
 def _clean_raw_line(text: str) -> str:
-    value = text.replace("\u00a0", " ")
+    value = _normalize_pdf_math_glyphs(text)
+    value = value.replace("\u00a0", " ")
     value = value.replace("\r", " ")
     return value.rstrip()
+
+
+def _normalize_pdf_math_glyphs(text: str) -> str:
+    """Repair recurring CAIE/PDF math glyph extraction artifacts without claiming semantic certainty."""
+
+    value = str(text or "")
+    replacements = {
+        "\ufb01": "fi",
+        "\ufb02": "fl",
+        "−": "-",
+        "–": "-",
+        "—": "-",
+        "\x00": "(",
+        "\x01": ")",
+        "\x02": "",
+        "\x0e": "|",
+        "\x10": "(",
+        "\x11": ")",
+        "\x8f": "≡",
+        "": "≡",
+        "Ó": "∫",
+        "Ô": "∫",
+        "Å": "°",
+        "": "(",
+        "": ")",
+    }
+    for old, new in replacements.items():
+        value = value.replace(old, new)
+
+    # This control character is often a radical marker in the question papers,
+    # but not reliably enough to replace globally. Keep the high-signal case
+    # from substitution prompts and otherwise remove the noise character.
+    value = re.sub(r"(\bu\s*=\s*)\x0f(?=\s*x\b)", r"\1√", value)
+    value = value.replace("\x0f", "")
+
+    value = _normalize_common_math_ocr_substitutions(value)
+    value = _repair_common_joined_words(value)
+    return value
+
+
+def _normalize_common_math_ocr_substitutions(text: str) -> str:
+    value = text
+    value = re.sub(r"\b([0-9])\s*G\s*([A-Za-zθ])", r"\1 ≤ \2", value)
+    value = re.sub(r"\b([A-Za-zθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
+    value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
+    value = re.sub(r"\b(0|90|180|360)°?\s*<\s*1\s*<", r"\1° < θ <", value)
+    value = re.sub(r"\b(0|90|180|360)°?\s*≤\s*1\s*≤", r"\1° ≤ θ ≤", value)
+    value = re.sub(r"\b0\s*<\s*1\s*<", "0 < θ <", value)
+    value = re.sub(r"\b0\s*≤\s*1\s*≤", "0 ≤ θ ≤", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)\(\s*1(?=\s*[-+])", r"\1(θ", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(\s*(?:\^\{(?!-\})[^}]+\})?)\s*1\b", r"\1\2 θ", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"\b(ln|log)(?=[A-Za-z0-9(])", r"\1 ", value)
+    value = re.sub(r"\b(ln|log)\s+\(", r"\1(", value)
+    value = re.sub(r"(?<=[A-Za-z0-9}])(?=(?:cosec|sin|cos|tan|sec|cot)(?:[0-9θxyz]|\b))", " ", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot|ln|log)\s+([0-9]+)([A-Za-zθ])\b", r"\1 \2\3", value)
+    value = re.sub(r"\b(tan|sin|cos|sec|cosec|cot)\^\{-\}\s*θ", r"\1^{-}1", value)
+    return value
+
+
+def _repair_common_joined_words(text: str) -> str:
+    value = text
+    replacements = [
+        (r"\bFindthe(?=\b|[a-z])", "Find the"),
+        (r"\bfindthe(?=\b|[a-z])", "find the"),
+        (r"\bGivethe(?=\b|[a-z])", "Give the"),
+        (r"\bgivethe(?=\b|[a-z])", "give the"),
+        (r"\bGiveyour(?=\b|[a-z])", "Give your"),
+        (r"\bgiveyour(?=\b|[a-z])", "give your"),
+        (r"\bByfirst\b", "By first"),
+        (r"\bbyfirst\b", "by first"),
+        (r"\bfirstexpressing\b", "first expressing"),
+        (r"\bfirstexpanding\b", "first expanding"),
+        (r"\btheequation\b", "the equation"),
+        (r"\bsolvethe\b", "solve the"),
+        (r"\bintheform\b", "in the form"),
+        (r"\banswerintheform(?=\b|[a-z])", "answer in the form"),
+        (r"\bthevalue(?=\b|[a-z])", "the value"),
+        (r"\byouranswer(?=\b|[a-z])", "your answer"),
+        (r"\bwhereaandbare\b", "where a and b are"),
+        (r"\bwhereaandb\b", "where a and b"),
+        (r"\bandbare\b", "and b are"),
+        (r"\bshowthat\b", "show that"),
+        (r"\bmaybe\b", "may be"),
+        (r"\bStatethe\b", "State the"),
+        (r"\bstatethe\b", "state the"),
+    ]
+    for pattern, replacement in replacements:
+        value = re.sub(pattern, replacement, value)
+    value = re.sub(r"(?<=[0-9])(?=Byfirst)", " ", value)
+    value = re.sub(r"\bByfirst(?=[a-z])", "By first", value)
+    value = re.sub(r"(?<=[a-z])(?=Express\b)", " ", value)
+    value = re.sub(r"(?<=[a-z])(?=Expand\b)", " ", value)
+    value = re.sub(r"(?<=[a-z])(?=Solve\b)", " ", value)
+    value = re.sub(r"\bquadratic equationin\b", "quadratic equation in ", value)
+    return value
 
 
 def _extract_math_lines(text: str) -> list[str]:
@@ -174,7 +273,9 @@ def _extraction_quality_flags(
         flags.append("diagram_text_mixed_with_body")
     if _unmatched_parentheses(body_text_raw):
         flags.append("broken_fraction_structure")
-    if re.search(r"(?:sin|cos|tan|ln|log)\s+[A-Za-z0-9]\b", body_text_raw):
+    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\s+[A-Za-zθ]\s+\d\b", body_text_raw) or re.search(
+        r"\b(?:ln|log)\s+(?:ln|log)\b", body_text_raw
+    ):
         flags.append("broken_superscript_or_power")
     if _SUSPICIOUS_SYMBOL_RUN_RE.search(body_text_raw):
         flags.append("suspicious_symbol_run")

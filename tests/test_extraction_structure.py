@@ -125,9 +125,9 @@ def test_flags_malformed_power_or_symbol_runs() -> None:
 
     structured = build_structured_question_text(span, [layout], AppConfig())
 
-    assert "broken_superscript_or_power" in structured.extraction_quality_flags
-    assert "math_corruption_suspected" in structured.extraction_quality_flags
-    assert structured.extraction_quality_score < 1.0
+    assert "θ" in structured.combined_question_text
+    assert "°" in structured.combined_question_text
+    assert "broken_superscript_or_power" not in structured.extraction_quality_flags
 
 
 def test_combined_question_text_prefers_clean_body_without_diagram_pollution() -> None:
@@ -162,3 +162,107 @@ def test_combined_question_text_prefers_clean_body_without_diagram_pollution() -
     assert "x" in structured.diagram_text
     assert "y" in structured.diagram_text
     assert structured.combined_question_text.endswith("[2]")
+
+
+def test_normalizes_pdf_control_glyphs_without_dropping_math_structure() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="1",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("1 Solve the equation ln\x00e^{2}x + 3\x01 = 2x + ln 3. [4]", 80),
+            _block("2\x0e3x -1\x0e < \x0ex + 1\x0e. [4]", 110),
+            _block("Find the exact value of Ó_{0}^{2}tan^{-}1\x101_{2}x\x11 dx. [5]", 140),
+            _block("Solve cos\x001 -60Å\x01 = 3 sin 1. [5]", 170),
+        ],
+        full_question_label="1",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "ln(e^{2}x + 3)" in structured.combined_question_text
+    assert "|3x -1|" in structured.combined_question_text
+    assert "∫_{0}^{2} tan^{-}1(1_{2}x) dx" in structured.combined_question_text
+    assert "cos(θ -60°) = 3 sin θ" in structured.combined_question_text
+    assert "\x00" not in structured.combined_question_text
+    assert "\x0e" not in structured.combined_question_text
+    assert "Ó" not in structured.combined_question_text
+
+
+def test_normalizes_common_ocr_math_substitutions_but_keeps_visual_review_flags() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="2",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("2 Find the stationary point of y = e^{2}xsin2x for 0GxG ^{1}_{2}r. [5]", 80),
+        ],
+        full_question_label="2",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "e^{2}x sin 2x" in structured.combined_question_text
+    assert "0 ≤ x ≤ ^{1}_{2}π" in structured.combined_question_text
+    assert "flattened_display_math" in structured.extraction_quality_flags
+    assert "likely_needs_visual_review" in structured.extraction_quality_flags
+
+
+def test_repairs_selected_joined_prompt_words() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="3",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("3 Findthevalueofxforwhich3\x002^{1}-x\x01 = 7^{x}. Giveyouranswerintheform lnln b a, whereaandbare integers. [4]", 80),
+        ],
+        full_question_label="3",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "Find the valueofxforwhich3(2^{1}-x)" in structured.combined_question_text
+    assert "Give your answer in the form" in structured.combined_question_text
+    assert "where a and b are integers" in structured.combined_question_text
+
+
+def test_normal_function_spacing_does_not_create_broken_power_flag() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="4",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("4 The graph of lny against x is a straight line.", 80),
+            _block("Find the values of k and c. [4]", 110),
+        ],
+        full_question_label="4",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "ln y" in structured.combined_question_text
+    assert "broken_superscript_or_power" not in structured.extraction_quality_flags

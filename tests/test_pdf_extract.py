@@ -122,3 +122,34 @@ def test_question_number_is_not_treated_as_subscript_or_split_line() -> None:
 
     assert len(lines) == 1
     assert _line_text_from_spans(lines[0]) == "8 Express x^{2}"
+
+
+def test_line_text_repairs_spacing_before_math_functions() -> None:
+    raw_order = [
+        span("y", 50, 10, 56, 20),
+        span("=", 60, 10, 66, 20),
+        span("e", 72, 10, 78, 20),
+        span("2", 79, 5, 84, 12, size=7),
+        span("x", 85, 10, 91, 20),
+        span("sin", 91, 10, 108, 20),
+        span("2x", 108, 10, 122, 20),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=6)
+
+    assert len(lines) == 1
+    assert _line_text_from_spans(lines[0]) == "y = e^{2}x sin 2x"
+
+
+def test_line_text_repairs_joined_pdf_words_with_capital_boundary() -> None:
+    raw_order = [
+        span("value", 50, 10, 75, 20),
+        span("of", 75, 10, 85, 20),
+        span("Express", 85, 10, 125, 20),
+        span("R", 132, 10, 140, 20),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=6)
+
+    assert len(lines) == 1
+    assert _line_text_from_spans(lines[0]) == "valueof Express R"

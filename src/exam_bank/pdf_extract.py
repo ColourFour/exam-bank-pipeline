@@ -259,12 +259,23 @@ def _line_text_from_spans(spans: list[dict[str, Any]]) -> str:
         previous_x1 = x1
         previous_text = text
 
-    return "".join(pieces)
+    return _repair_line_spacing("".join(pieces))
 
 
 def _needs_operator_spacing(previous_text: str, text: str) -> bool:
     operators = {"+", "-", "=", "<", ">", "≤", "≥", "±"}
     return previous_text.strip() in operators or text.strip() in operators
+
+
+def _repair_line_spacing(text: str) -> str:
+    value = text
+    value = re.sub(r"\b(ln|log)(?=[A-Za-z0-9(])", r"\1 ", value)
+    value = re.sub(r"\b(ln|log)\s+\(", r"\1(", value)
+    value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"(?<=[A-Za-z0-9}])(?=(?:cosec|sin|cos|tan|sec|cot)(?:[0-9θxyz]|\b))", " ", value)
+    value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"\b([A-Za-z]{2,})([A-Z][a-z]{2,})\b", r"\1 \2", value)
+    return value
 
 
 def _line_bbox_from_spans(spans: list[dict[str, Any]]) -> tuple[float, float, float, float]:
