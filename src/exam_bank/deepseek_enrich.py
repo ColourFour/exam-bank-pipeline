@@ -14,8 +14,8 @@ from .trust import Confidence, DeepSeekErrorType, ReconciliationStatus, final_re
 DEFAULT_INPUT_PATH = Path("output/json/question_bank.json")
 DEFAULT_OUTPUT_PATH = Path("output/json/question_bank.deepseek.json")
 DEFAULT_BASE_URL = "https://api.deepseek.com"
-DEFAULT_MODEL = "deepseek-chat"
-PROMPT_VERSION = "v2"
+DEFAULT_MODEL = "deepseek-v4-flash"
+PROMPT_VERSION = "v3"
 LLM_PROVIDER = "deepseek"
 DEEPSEEK_SIDECAR_SCHEMA_NAME = "exam_bank.deepseek_sidecar"
 DEEPSEEK_SIDECAR_SCHEMA_VERSION = 1
@@ -69,6 +69,57 @@ _CONFIDENCE_ALIASES = {
     "low": "low",
 }
 
+_EXTRA_TOPIC_ALIASES = {
+    "sequence": "series_and_sequences",
+    "sequences": "series_and_sequences",
+    "series": "series_and_sequences",
+    "sequences and series": "series_and_sequences",
+    "series and sequences": "series_and_sequences",
+    "binomial": "binomial_expansion",
+    "binomial theorem": "binomial_expansion",
+    "binomial expansion": "binomial_expansion",
+    "coordinate geometry": "coordinate_geometry",
+    "circle geometry": "coordinate_geometry",
+    "circles": "coordinate_geometry",
+    "circle": "coordinate_geometry",
+    "derivative": "differentiation",
+    "derivatives": "differentiation",
+    "differentiation": "differentiation",
+    "integration": "integration",
+    "integrals": "integration",
+    "vectors": "vectors",
+    "vector": "vectors",
+    "vector geometry": "vectors",
+    "complex number": "complex_numbers",
+    "complex numbers": "complex_numbers",
+    "argand": "complex_numbers",
+    "argand diagram": "complex_numbers",
+    "argand diagrams": "complex_numbers",
+    "differential equation": "differential_equations",
+    "differential equations": "differential_equations",
+    "trig": "trigonometry",
+    "trigonometry": "trigonometry",
+    "trig equations": "trigonometry",
+    "trigonometric equations": "trigonometry",
+    "functions": "functions",
+    "function": "functions",
+    "transformations": "functions",
+    "graph transformations": "functions",
+    "kinematics": "kinematics",
+    "motion": "kinematics",
+    "velocity time graphs": "kinematics_graphs",
+    "velocity time graph": "kinematics_graphs",
+    "work energy and power": "power_and_resistance",
+    "power": "power_and_resistance",
+    "power and resistance": "power_and_resistance",
+    "forces and equilibrium": "equilibrium_particle",
+    "force equilibrium": "equilibrium_particle",
+    "equilibrium": "equilibrium_particle",
+    "equilibrium of a particle": "equilibrium_particle",
+    "momentum impulse": "momentum_impulse",
+    "momentum and impulse": "momentum_impulse",
+    "conservation of momentum": "momentum_impulse",
+}
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -142,18 +193,41 @@ def _canonical_paper_family(value: Any) -> str:
 def normalize_topic_label(raw_topic: Any, *, paper_family: Any, raw_subtopic: Any = None) -> str | None:
     family = _canonical_paper_family(paper_family)
     family_aliases = _TOPIC_ALIASES_BY_FAMILY.get(family, {})
+    valid_family_topics = set(PAPER_FAMILY_TAXONOMY.get(family, ()))
+
     for candidate in (raw_topic, raw_subtopic):
         normalized_candidate = _normalize_free_text(candidate)
         if not normalized_candidate:
             continue
+
         if normalized_candidate in family_aliases:
             return family_aliases[normalized_candidate]
+
+        extra_alias = _EXTRA_TOPIC_ALIASES.get(normalized_candidate)
+        if extra_alias and extra_alias in valid_family_topics:
+            return extra_alias
+
         if normalized_candidate in _UNIQUE_TOPIC_ALIASES:
-            return _UNIQUE_TOPIC_ALIASES[normalized_candidate]
+            unique_topic = _UNIQUE_TOPIC_ALIASES[normalized_candidate]
+            if not valid_family_topics or unique_topic in valid_family_topics:
+                return unique_topic
+
     return None
 
 
 def normalize_difficulty_label(raw_difficulty: Any) -> str | None:
+    if isinstance(raw_difficulty, bool) or raw_difficulty is None:
+        return None
+
+    if isinstance(raw_difficulty, (int, float)):
+        if raw_difficulty <= 1:
+            return "easy"
+        if raw_difficulty <= 2:
+            return "average"
+        if raw_difficulty <= 3:
+            return "difficult"
+        return None
+
     normalized = _normalize_free_text(raw_difficulty)
     if not normalized:
         return None
@@ -161,6 +235,14 @@ def normalize_difficulty_label(raw_difficulty: Any) -> str | None:
         return _DIFFICULTY_ALIASES[normalized]
     if normalized in DIFFICULTY_LABELS:
         return normalized
+    if normalized in {"1", "one"}:
+        return "easy"
+    if normalized in {"2", "two"}:
+        return "average"
+    if normalized in {"3", "three"}:
+        return "difficult"
+    if normalized in {"medium hard", "mediumhard", "average hard"}:
+        return "difficult"
     return None
 
 
@@ -269,23 +351,48 @@ def build_enrichment_payload(record: dict[str, Any]) -> dict[str, Any]:
     question_image_path = record.get("question_image_path") or _first_path(record.get("question_image_paths"))
     mark_scheme_image_path = record.get("mark_scheme_image_path") or _first_path(record.get("mark_scheme_image_paths"))
     visual_required = bool(record.get("visual_required") or note_map.get("visual_required"))
+
+    question_text = record.get("question_text")
     question_text_trust = _raw_or_none(record.get("question_text_trust")) or _raw_or_none(note_map.get("question_text_trust"))
     question_text_role = _raw_or_none(record.get("question_text_role")) or _raw_or_none(note_map.get("question_text_role"))
+
+    ocr_text = record.get("ocr_text")
+    ocr_text_trust = _raw_or_none(record.get("ocr_text_trust")) or _raw_or_none(note_map.get("ocr_text_trust"))
+    ocr_text_role = _raw_or_none(record.get("ocr_text_role")) or _raw_or_none(note_map.get("ocr_text_role"))
+    text_only_status = _raw_or_none(record.get("text_only_status")) or _raw_or_none(note_map.get("text_only_status"))
+    visual_curation_status = _raw_or_none(record.get("visual_curation_status")) or _raw_or_none(note_map.get("visual_curation_status"))
     payload: dict[str, Any] = {
         "question_id": str(record["question_id"]),
         "paper_family": record.get("paper_family"),
         "question_number": record.get("question_number"),
-        "question_text": record.get("question_text"),
+
+        "question_text": question_text,
         "question_text_role": question_text_role,
         "question_text_trust": question_text_trust,
+
+        "ocr_text": ocr_text,
+        "ocr_text_role": ocr_text_role,
+        "ocr_text_trust": ocr_text_trust,
+
+        "combined_text_hint": combined_text_hint(
+            question_text=question_text,
+            question_text_trust=question_text_trust,
+            ocr_text=ocr_text,
+            ocr_text_trust=ocr_text_trust,
+        ),
+
         "image_available": bool(question_image_path),
+        "image_was_sent_to_model": False,
         "vision_model_required": visual_required,
+        "text_only_status": text_only_status,
+        "visual_curation_status": visual_curation_status,
         "text_only_enrichment_risk": text_only_enrichment_risk(
             visual_required=visual_required,
             question_text_trust=question_text_trust,
             question_text_role=question_text_role,
         ),
     }
+
     optional_fields = {
         "mark_scheme_text": record.get("mark_scheme_text"),
         "question_solution_marks": record.get("question_solution_marks"),
@@ -309,6 +416,28 @@ def _first_path(value: Any) -> str:
     if isinstance(value, str):
         return value
     return ""
+
+def combined_text_hint(
+    *,
+    question_text: Any,
+    question_text_trust: Any,
+    ocr_text: Any,
+    ocr_text_trust: Any,
+) -> str:
+    native = str(question_text or "").strip()
+    ocr = str(ocr_text or "").strip()
+    native_trust = str(question_text_trust or "").strip().lower() or "unknown"
+    ocr_trust = str(ocr_text_trust or "").strip().lower() or "unknown"
+
+    parts: list[str] = []
+
+    if native:
+        parts.append(f"NATIVE_PDF_TEXT_TRUST={native_trust}\n{native}")
+
+    if ocr:
+        parts.append(f"OCR_TEXT_TRUST={ocr_trust}\n{ocr}")
+
+    return "\n\n---\n\n".join(parts)
 
 
 def text_only_enrichment_risk(
@@ -347,10 +476,19 @@ def _reconciliation_status(*, raw_value: Any, normalized_value: str | None, loca
 
 def build_messages(payload: dict[str, Any]) -> list[dict[str, str]]:
     instructions = (
-        "You are reviewing a CAIE 9709 maths question record for suggestion-only enrichment. "
+        "You are reviewing a CAIE 9709 maths question record for suggestion-only metadata enrichment. "
+        "The rendered PNG crop is the canonical question artifact, but this request does not send the image itself. "
+        "Native PDF text and OCR text are lossy hints only and may corrupt equations, powers, fractions, vectors, "
+        "inequalities, integrals, trigonometric notation, and graph or diagram content. "
+        "Use the text hints primarily for topic and difficulty clues, not for exact reconstruction of the mathematical expression. "
+        "If visual_required is true, text_only_enrichment_risk is high, text_only_status is fail, or the text appears corrupted, "
+        "set review_required to true unless the topic and difficulty are still obvious from stable wording. "
+        "Do not overstate confidence from corrupted math text. "
         "Return one strict JSON object only, with no markdown, no prose, no code fences, and no extra keys. "
         "The object must contain exactly these keys: "
         "topic, subtopic, difficulty, confidence, rationale, review_required. "
+        "difficulty must be one of these strings only: easy, average, difficult. Do not use numbers for difficulty. "
+        "confidence must be high, medium, low, or a number from 0 to 1. "
         "Use an empty string for subtopic when unavailable. "
         "Keep rationale short and concrete. "
         "review_required must be a literal JSON boolean: true or false. "
@@ -410,7 +548,7 @@ def parse_model_json(raw_text: str) -> dict[str, Any]:
         )
 
     topic = _require_non_empty_string(payload["topic"], "topic")
-    difficulty = _require_non_empty_string(payload["difficulty"], "difficulty")
+    difficulty = _require_label_value(payload["difficulty"], "difficulty")    
     confidence = _require_confidence_value(payload["confidence"])
     rationale = _require_non_empty_string(payload["rationale"], "rationale")
 
@@ -440,6 +578,15 @@ def _require_non_empty_string(value: Any, field_name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{field_name} must be a non-empty string.")
     return value.strip()
+
+def _require_label_value(value: Any, field_name: str) -> str | int | float:
+    if isinstance(value, bool):
+        raise ValueError(f"{field_name} must be a non-empty string or numeric value.")
+    if isinstance(value, (int, float)):
+        return value
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    raise ValueError(f"{field_name} must be a non-empty string or numeric value.")
 
 
 def _require_confidence_value(value: Any) -> str | int | float:
@@ -535,9 +682,34 @@ def build_sidecar_success(
     )
     question_image_path = record.get("question_image_path") or _first_path(record.get("question_image_paths"))
     mark_scheme_image_path = record.get("mark_scheme_image_path") or _first_path(record.get("mark_scheme_image_paths"))
+
     visual_required = bool(record.get("visual_required") or note_map.get("visual_required"))
     question_text_trust = _raw_or_none(record.get("question_text_trust")) or _raw_or_none(note_map.get("question_text_trust"))
     question_text_role = _raw_or_none(record.get("question_text_role")) or _raw_or_none(note_map.get("question_text_role"))
+
+    ocr_text_trust = _raw_or_none(record.get("ocr_text_trust")) or _raw_or_none(note_map.get("ocr_text_trust"))
+    ocr_text_role = _raw_or_none(record.get("ocr_text_role")) or _raw_or_none(note_map.get("ocr_text_role"))
+    text_only_status = _raw_or_none(record.get("text_only_status")) or _raw_or_none(note_map.get("text_only_status"))
+    visual_curation_status = _raw_or_none(record.get("visual_curation_status")) or _raw_or_none(note_map.get("visual_curation_status"))
+
+    enrichment_risk = text_only_enrichment_risk(
+        visual_required=visual_required,
+        question_text_trust=question_text_trust,
+        question_text_role=question_text_role,
+    )
+
+    extra_review_reasons = list(final_review_reasons)
+
+    if enrichment_risk == "high":
+        extra_review_reasons.append("text_only_enrichment_risk:high")
+    if text_only_status and text_only_status != "ready":
+        extra_review_reasons.append(f"text_only_status:{text_only_status}")
+    if visual_curation_status == "fail":
+        extra_review_reasons.append("visual_curation_status:fail")
+    if ocr_text_trust in {"low", "unusable"}:
+        extra_review_reasons.append(f"ocr_text_trust:{ocr_text_trust}")
+
+    final_review_reasons = sorted(set(extra_review_reasons))
 
     return {
         "deepseek_topic": raw_topic,
@@ -561,18 +733,19 @@ def build_sidecar_success(
         "difficulty_reconciliation_status": difficulty_reconciliation_status,
         "final_review_required": bool(final_review_reasons),
         "final_review_reasons": final_review_reasons,
-        "enrichment_mode": "vision_ready_enrichment" if question_image_path else "text_only_enrichment",
+        "enrichment_mode": "text_with_image_reference",
         "image_available": bool(question_image_path),
+        "image_was_sent_to_model": False,
         "question_image_path": question_image_path or None,
         "mark_scheme_image_path": mark_scheme_image_path or None,
         "vision_model_required": visual_required,
         "question_text_role": question_text_role,
         "question_text_trust": question_text_trust,
-        "text_only_enrichment_risk": text_only_enrichment_risk(
-            visual_required=visual_required,
-            question_text_trust=question_text_trust,
-            question_text_role=question_text_role,
-        ),
+        "ocr_text_role": ocr_text_role,
+        "ocr_text_trust": ocr_text_trust,
+        "text_only_status": text_only_status,
+        "visual_curation_status": visual_curation_status,
+        "text_only_enrichment_risk": enrichment_risk,
         "llm_provider": LLM_PROVIDER,
         "llm_model": model,
         "llm_prompt_version": PROMPT_VERSION,

@@ -125,13 +125,14 @@ def test_valid_json_response_parses_into_sidecar_schema() -> None:
     assert sidecar["difficulty_reconciliation_status"] == "match"
     assert sidecar["final_review_required"] is False
     assert sidecar["final_review_reasons"] == []
-    assert sidecar["enrichment_mode"] == "vision_ready_enrichment"
+    assert sidecar["enrichment_mode"] == "text_with_image_reference"
+    assert sidecar["image_was_sent_to_model"] is False    
     assert sidecar["image_available"] is True
     assert sidecar["vision_model_required"] is False
     assert sidecar["text_only_enrichment_risk"] == "low"
     assert sidecar["llm_provider"] == "deepseek"
     assert sidecar["llm_model"] == "deepseek-chat"
-    assert sidecar["llm_prompt_version"] == "v2"
+    assert sidecar["llm_prompt_version"] == "v3"
     assert sidecar["llm_run_timestamp"] == "2026-04-23T00:00:00+00:00"
 
 
@@ -471,7 +472,7 @@ def test_sidecar_file_is_keyed_by_question_id_and_original_input_is_untouched(tm
     enrichment = written_sidecar["enrichments"]["12spring24_q01"]
     assert enrichment["llm_provider"] == "deepseek"
     assert enrichment["llm_model"] == "deepseek-chat"
-    assert enrichment["llm_prompt_version"] == "v2"
+    assert enrichment["llm_prompt_version"] == "v3"
     assert "llm_run_timestamp" in enrichment
     assert enrichment["deepseek_topic_raw"] == "binomial_expansion"
     assert enrichment["deepseek_topic_normalized"] == "binomial_expansion"
@@ -715,6 +716,39 @@ def test_cli_total_provider_failure_preserves_sidecar_and_exits_nonzero(
     assert all(record["error"]["type"] == "provider_error" for record in payload["enrichments"].values())
     assert "All attempted DeepSeek enrichments failed with provider/API errors" in captured.out
 
+def test_numeric_difficulty_output_is_accepted_and_bucketed() -> None:
+    raw = json.dumps(
+        {
+            "topic": "momentum_impulse",
+            "subtopic": "conservation of momentum",
+            "difficulty": 1,
+            "confidence": 0.95,
+            "rationale": "Direct conservation of momentum.",
+            "review_required": False,
+        }
+    )
+
+    parsed = deepseek_enrich.parse_model_json(raw)
+    sidecar = deepseek_enrich.build_sidecar_success(
+        _record(local_topic="momentum_impulse", paper_family="p4"),
+        parsed,
+        model="deepseek-v4-flash",
+        run_timestamp="2026-04-24T00:00:00+00:00",
+    )
+
+    assert parsed["difficulty"] == 1
+    assert sidecar["deepseek_difficulty_raw"] == 1
+    assert sidecar["deepseek_difficulty_normalized"] == "easy"
+
+def test_mechanics_topic_aliases_normalize_when_valid_for_family() -> None:
+    assert (
+        deepseek_enrich.normalize_topic_label("Work, Energy and Power", paper_family="p4")
+        == "power_and_resistance"
+    )
+    assert (
+        deepseek_enrich.normalize_topic_label("forces and equilibrium", paper_family="p4")
+        == "equilibrium_particle"
+    )
 
 def test_cli_allow_provider_failure_keeps_total_failure_soft(
     monkeypatch: pytest.MonkeyPatch,
