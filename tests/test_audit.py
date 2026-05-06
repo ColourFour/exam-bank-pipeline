@@ -3,7 +3,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from exam_bank.audit import audit_ocr_candidates, audit_question_bank, write_audit, write_ocr_candidate_audit
+from exam_bank.audit import (
+    audit_difficulty,
+    audit_ocr_candidates,
+    audit_question_bank,
+    write_audit,
+    write_difficulty_audit,
+    write_ocr_candidate_audit,
+)
 
 
 def test_visual_first_audit_reports_text_and_curation_distributions(tmp_path: Path) -> None:
@@ -316,3 +323,58 @@ def test_write_ocr_candidate_audit_writes_deterministic_json(tmp_path: Path) -> 
         "representative_records",
         "baseline_comparison",
     ]
+
+
+def test_difficulty_audit_reports_distribution_and_missing_metadata(tmp_path: Path) -> None:
+    records = [
+        {
+            "question_id": "12spring24_q01",
+            "paper_family": "p1",
+            "topic": "differentiation",
+            "difficulty": "easy",
+            "difficulty_score": 18,
+            "difficulty_band": "easy",
+            "question_solution_marks": 2,
+            "notes": {
+                "difficulty_confidence": "high",
+                "difficulty_evidence": "direct routine method",
+                "difficulty_features": {"marks": {"marks": 2}},
+                "difficulty_review_flags": [],
+                "difficulty_model_version": "local-difficulty-v1",
+            },
+        },
+        {
+            "question_id": "32spring24_q09",
+            "paper_family": "p3",
+            "topic": "complex_numbers",
+            "difficulty": "difficult",
+            "difficulty_score": 73,
+            "difficulty_band": "difficult",
+            "question_solution_marks": 12,
+            "notes": {
+                "difficulty_confidence": "medium",
+                "difficulty_evidence": "proof wording",
+                "difficulty_features": {"topic_prior": {"difficult_topic_prior": True}},
+                "difficulty_review_flags": ["marks_missing_for_difficulty"],
+                "difficulty_model_version": "local-difficulty-v1",
+            },
+        },
+        {"question_id": "52spring24_q03", "paper_family": "p5", "topic": "probability"},
+    ]
+
+    report = audit_difficulty(records)
+
+    assert report["difficulty_label_counts"] == {"difficult": 1, "easy": 1, "missing": 1}
+    assert report["difficulty_score_summary"]["count"] == 2
+    assert report["difficulty_score_bucket_counts"] == {"0-34": 1, "70-100": 1, "missing": 1}
+    assert report["difficulty_counts_by_paper_family"]["p3"] == {"difficult": 1}
+    assert report["difficulty_counts_by_marks_bucket"]["10+"] == {"difficult": 1}
+    assert report["difficulty_review_flag_counts"] == {"marks_missing_for_difficulty": 1}
+    assert report["missing_difficulty_metadata"]["difficulty_score"] == 1
+
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "difficulty_audit.json"
+    input_path.write_text(json.dumps({"questions": records}), encoding="utf-8")
+    written_report = write_difficulty_audit(input_path, output_path=output_path)
+
+    assert json.loads(output_path.read_text(encoding="utf-8")) == written_report

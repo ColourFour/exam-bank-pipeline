@@ -38,6 +38,12 @@ def _record() -> QuestionRecord:
         difficulty_confidence="high",
         difficulty_evidence="fixture",
         difficulty_uncertain=False,
+        difficulty_score=18,
+        difficulty_band="easy",
+        difficulty_score_scale="0-100",
+        difficulty_features={"marks": {"marks": 3, "contribution": -0.8}},
+        difficulty_review_flags=[],
+        difficulty_model_version="local-difficulty-v1",
         marks=3,
         marks_if_available=3,
         page_numbers=[3, 4],
@@ -110,12 +116,21 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert question["mark_scheme_image_path"] == "p1/12spring21/mark_scheme/q01.png"
     assert question["question_text_role"] == "readable_text"
     assert question["question_text_trust"] == "high"
+    assert question["difficulty"] == "easy"
+    assert question["difficulty_score"] == 18
+    assert question["difficulty_band"] == "easy"
     assert question["visual_required"] is False
     assert question["visual_reason_flags"] == []
     assert question["visual_curation_status"] == "ready"
     assert question["text_only_status"] == "ready"
     assert question["notes"]["topic_confidence"] == "high"
     assert question["notes"]["topic_trust_status"] == "normal"
+    assert question["notes"]["difficulty_confidence"] == "high"
+    assert question["notes"]["difficulty_score"] == 18
+    assert question["notes"]["difficulty_score_scale"] == "0-100"
+    assert question["notes"]["difficulty_features"]["marks"]["marks"] == 3
+    assert question["notes"]["difficulty_review_flags"] == []
+    assert question["notes"]["difficulty_model_version"] == "local-difficulty-v1"
     assert question["notes"]["scope_quality_status"] == "clean"
     assert question["notes"]["text_source_profile"] == "native_pdf"
     assert question["notes"]["text_fidelity_status"] == "clean"
@@ -137,6 +152,8 @@ def test_question_record_exposes_grouped_internal_state_without_changing_flat_fi
     assert record.extraction.combined_question_text == record.combined_question_text
     assert record.classification.topic == record.topic
     assert record.classification.question_level_topic == record.question_level_topic
+    assert record.classification.difficulty_score == record.difficulty_score
+    assert record.classification.difficulty_features == record.difficulty_features
     assert record.images.screenshot_path == record.screenshot_path
     assert record.mark_scheme.image_path == record.markscheme_image
     assert record.mark_scheme.mapping_status == record.markscheme_mapping_status
@@ -182,6 +199,9 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "text_only_status",
         "mark_scheme_text",
         "question_solution_marks",
+        "difficulty",
+        "difficulty_score",
+        "difficulty_band",
         "subparts",
         "subparts_solution_marks",
         "question_image_paths",
@@ -205,6 +225,15 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "topic_confidence",
         "topic_uncertain",
         "topic_trust_status",
+        "difficulty",
+        "difficulty_confidence",
+        "difficulty_evidence",
+        "difficulty_uncertain",
+        "difficulty_score",
+        "difficulty_score_scale",
+        "difficulty_features",
+        "difficulty_review_flags",
+        "difficulty_model_version",
         "mapping_status",
         "mapping_failure_reason",
         "scope_quality_status",

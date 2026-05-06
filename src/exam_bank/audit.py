@@ -110,6 +110,25 @@ def audit_ocr_candidates(
     return report
 
 
+def audit_difficulty(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    rows = list(records)
+    score_values = [_note_or_top(record, "difficulty_score") for record in rows]
+    return {
+        "record_count": len(rows),
+        "difficulty_label_counts": _counts(rows, "difficulty"),
+        "difficulty_band_counts": _counts(rows, "difficulty_band"),
+        "difficulty_confidence_counts": _counts(rows, "difficulty_confidence"),
+        "difficulty_score_summary": _score_summary(score_values),
+        "difficulty_score_bucket_counts": _difficulty_score_bucket_counts(rows),
+        "difficulty_counts_by_paper_family": _difficulty_counts_by(rows, "paper_family", "difficulty"),
+        "difficulty_score_summary_by_paper_family": _difficulty_score_summary_by(rows, "paper_family"),
+        "difficulty_counts_by_topic": _difficulty_counts_by(rows, "topic", "difficulty"),
+        "difficulty_counts_by_marks_bucket": _difficulty_counts_by(rows, "question_solution_marks", "difficulty", bucket_values=True),
+        "difficulty_review_flag_counts": _reason_counts(rows, "difficulty_review_flags"),
+        "missing_difficulty_metadata": _missing_difficulty_metadata(rows),
+    }
+
+
 def write_audit(input_path: str | Path, output_path: str | Path | None = None) -> dict[str, Any]:
     report = audit_question_bank(load_question_records(input_path))
     if output_path is not None:
@@ -132,6 +151,14 @@ def write_ocr_candidate_audit(
     return report
 
 
+def write_difficulty_audit(input_path: str | Path, *, output_path: str | Path | None = None) -> dict[str, Any]:
+    report = audit_difficulty(load_question_records(input_path))
+    if output_path is not None:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(output_path).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    return report
+
+
 def _counts(records: list[dict[str, Any]], key: str) -> dict[str, int]:
     counts: Counter[str] = Counter()
     for record in records:
@@ -142,6 +169,71 @@ def _counts(records: list[dict[str, Any]], key: str) -> dict[str, int]:
             label = str(value or "missing")
         counts[label] += 1
     return dict(sorted(counts.items()))
+
+
+def _difficulty_score_bucket_counts(records: list[dict[str, Any]]) -> dict[str, int]:
+    buckets: Counter[str] = Counter()
+    for record in records:
+        score = _numeric(_note_or_top(record, "difficulty_score"))
+        if score is None:
+            buckets["missing"] += 1
+        elif score <= 34:
+            buckets["0-34"] += 1
+        elif score <= 69:
+            buckets["35-69"] += 1
+        else:
+            buckets["70-100"] += 1
+    return dict(sorted(buckets.items()))
+
+
+def _difficulty_counts_by(
+    records: list[dict[str, Any]],
+    group_key: str,
+    value_key: str,
+    *,
+    bucket_values: bool = False,
+) -> dict[str, dict[str, int]]:
+    grouped: dict[str, Counter[str]] = {}
+    for record in records:
+        group_value = _note_or_top(record, group_key)
+        group = _marks_bucket(group_value) if bucket_values else str(group_value or "missing")
+        value = str(_note_or_top(record, value_key) or "missing")
+        grouped.setdefault(group, Counter())[value] += 1
+    return {group: dict(sorted(counts.items())) for group, counts in sorted(grouped.items())}
+
+
+def _difficulty_score_summary_by(records: list[dict[str, Any]], group_key: str) -> dict[str, dict[str, Any]]:
+    grouped: dict[str, list[Any]] = {}
+    for record in records:
+        group = str(_note_or_top(record, group_key) or "missing")
+        grouped.setdefault(group, []).append(_note_or_top(record, "difficulty_score"))
+    return {group: _score_summary(values) for group, values in sorted(grouped.items())}
+
+
+def _missing_difficulty_metadata(records: list[dict[str, Any]]) -> dict[str, int]:
+    fields = [
+        "difficulty",
+        "difficulty_score",
+        "difficulty_band",
+        "difficulty_confidence",
+        "difficulty_evidence",
+        "difficulty_features",
+        "difficulty_model_version",
+    ]
+    return {field: sum(1 for record in records if not _present(_note_or_top(record, field))) for field in fields}
+
+
+def _marks_bucket(value: Any) -> str:
+    mark = _numeric(value)
+    if mark is None:
+        return "missing"
+    if mark <= 3:
+        return "1-3"
+    if mark <= 6:
+        return "4-6"
+    if mark <= 9:
+        return "7-9"
+    return "10+"
 
 
 def _candidate_metadata_presence(records: list[dict[str, Any]]) -> dict[str, dict[str, int]]:

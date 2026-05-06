@@ -178,6 +178,108 @@ def test_routine_trig_question_is_not_marked_mixed_or_too_hard() -> None:
     assert result.topic == "trigonometry"
     assert "mixed_topic_possible" not in result.review_flags
     assert result.difficulty == "easy"
+    assert result.difficulty_band == "easy"
+    assert 0 <= result.difficulty_score <= 34
+    assert result.difficulty_score_scale == "0-100"
+    assert result.difficulty_features["marks"]["marks"] == 3
+
+
+def test_numeric_difficulty_is_bounded_deterministic_and_drives_label() -> None:
+    cases = [
+        (
+            "Differentiate y = 3x^2 - 4x + 1. [2]",
+            2,
+            "9709_s21_qp_12.pdf",
+        ),
+        (
+            "Express the rational function in partial fractions. Hence integrate the result with respect to x. [8]",
+            8,
+            "9709_s21_qp_32.pdf",
+        ),
+        (
+            (
+                "(a) Prove that the complex number z satisfies |z - 2i| = |z + 4|. [3]\n"
+                "(b) Hence sketch the locus and deduce the exact intersection points. [4]\n"
+                "(c) Using your answer, show that arg(z - 1) = pi/4. [5]"
+            ),
+            12,
+            "9709_s21_qp_32.pdf",
+        ),
+    ]
+
+    for text, marks, source_name in cases:
+        first = classify_question(text, marks=marks, config=AppConfig(), source_name=source_name)
+        second = classify_question(text, marks=marks, config=AppConfig(), source_name=source_name)
+
+        assert first.difficulty_score == second.difficulty_score
+        assert first.difficulty_features == second.difficulty_features
+        assert first.difficulty_review_flags == second.difficulty_review_flags
+        assert first.difficulty_score is not None
+        assert 0 <= first.difficulty_score <= 100
+
+        expected_label = "easy"
+        if first.difficulty_score >= 70:
+            expected_label = "difficult"
+        elif first.difficulty_score >= 35:
+            expected_label = "average"
+        assert first.difficulty == first.difficulty_band == expected_label
+
+
+def test_linked_mixed_question_gets_higher_numeric_difficulty_score() -> None:
+    routine = classify_question(
+        "Differentiate y = x^2 and find dy/dx. [2]",
+        marks=2,
+        config=AppConfig(),
+        source_name="9709_s21_qp_12.pdf",
+    )
+    linked = classify_question(
+        (
+            "Express the rational function in partial fractions. "
+            "Hence integrate the result with respect to x. [8]"
+        ),
+        marks=8,
+        config=AppConfig(),
+        source_name="9709_s21_qp_32.pdf",
+    )
+
+    assert linked.difficulty == linked.difficulty_band == "average"
+    assert linked.difficulty_score > routine.difficulty_score
+    assert routine.difficulty_features["cognitive_demand"]["direct_routine"] is True
+    assert linked.difficulty_features["mixed_topic_complexity"]["secondary_topic_count"] >= 1
+    assert linked.difficulty_features["structure"]["linked_keyword_present"] is True
+
+
+def test_high_mark_proof_style_question_can_score_difficult() -> None:
+    result = classify_question(
+        (
+            "(a) Prove that the complex number z satisfies |z - 2i| = |z + 4|. [3]\n"
+            "(b) Hence sketch the locus on an Argand diagram and deduce the exact intersection points. [4]\n"
+            "(c) Using your answer, show that arg(z - 1) = pi/4 and find the greatest value of |z|. [5]\n"
+            "(d) Comment on the geometrical meaning of your result. [2]"
+        ),
+        marks=12,
+        config=AppConfig(),
+        source_name="9709_s21_qp_32.pdf",
+    )
+
+    assert result.difficulty == result.difficulty_band == "difficult"
+    assert 70 <= result.difficulty_score <= 100
+    assert result.difficulty_features["topic_prior"]["difficult_topic_prior"] is True
+    assert result.difficulty_model_version == "local-difficulty-v1"
+
+
+def test_missing_marks_and_degraded_text_lower_difficulty_confidence() -> None:
+    result = classify_question(
+        "???",
+        marks=None,
+        config=AppConfig(),
+        source_name="9709_s21_qp_12.pdf",
+    )
+
+    assert result.difficulty_confidence == "low"
+    assert result.difficulty_uncertain is True
+    assert "marks_missing_for_difficulty" in result.difficulty_review_flags
+    assert "difficulty_uncertain" in result.review_flags
 
 
 def test_forces_low_confidence_topic_within_known_paper_bank() -> None:

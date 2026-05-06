@@ -115,6 +115,12 @@ class ClassificationResult:
     difficulty_evidence: str
     difficulty_uncertain: bool
     confidence: float
+    difficulty_score: int | None = None
+    difficulty_band: str = ""
+    difficulty_score_scale: str = "0-100"
+    difficulty_features: dict[str, Any] = field(default_factory=dict)
+    difficulty_review_flags: list[str] = field(default_factory=list)
+    difficulty_model_version: str = ""
     review_flags: list[str] = field(default_factory=list)
     topic_confidence: str = Confidence.LOW
     topic_evidence: str = ""
@@ -202,6 +208,12 @@ class QuestionClassificationState:
     difficulty_evidence: str
     difficulty_uncertain: bool
     confidence: float
+    difficulty_score: int | None
+    difficulty_band: str
+    difficulty_score_scale: str
+    difficulty_features: dict[str, Any]
+    difficulty_review_flags: list[str]
+    difficulty_model_version: str
 
 
 @dataclass(frozen=True)
@@ -317,6 +329,12 @@ class QuestionRecord:
     page_numbers: list[int]
     review_flags: list[str]
     confidence: float
+    difficulty_score: int | None = None
+    difficulty_band: str = ""
+    difficulty_score_scale: str = "0-100"
+    difficulty_features: dict[str, Any] = field(default_factory=dict)
+    difficulty_review_flags: list[str] = field(default_factory=list)
+    difficulty_model_version: str = ""
     source_paper_code: str = ""
     syllabus_code: str = ""
     session: str = ""
@@ -474,6 +492,12 @@ class QuestionRecord:
             difficulty_confidence=self.difficulty_confidence,
             difficulty_evidence=self.difficulty_evidence,
             difficulty_uncertain=self.difficulty_uncertain,
+            difficulty_score=self.difficulty_score,
+            difficulty_band=self.difficulty_band,
+            difficulty_score_scale=self.difficulty_score_scale,
+            difficulty_features=dict(self.difficulty_features),
+            difficulty_review_flags=list(self.difficulty_review_flags),
+            difficulty_model_version=self.difficulty_model_version,
             confidence=self.confidence,
         )
 

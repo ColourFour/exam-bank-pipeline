@@ -34,6 +34,13 @@ TASK_VERB_PATTERNS = {
 }
 
 _MARK_RE = re.compile(r"\[(\d{1,2})\]")
+
+DIFFICULTY_SCORE_SCALE = "0-100"
+DIFFICULTY_MODEL_VERSION = "local-difficulty-v1"
+DIFFICULTY_EASY_MAX = 34
+DIFFICULTY_AVERAGE_MAX = 69
+
+
 def classify_question(
     text: str,
     marks: int | None,
@@ -336,6 +343,12 @@ def _local_classify(
         difficulty_confidence=difficulty.confidence,
         difficulty_evidence=difficulty.evidence,
         difficulty_uncertain=difficulty.uncertain,
+        difficulty_score=difficulty.score,
+        difficulty_band=difficulty.band,
+        difficulty_score_scale=difficulty.score_scale,
+        difficulty_features=difficulty.features,
+        difficulty_review_flags=difficulty.review_flags,
+        difficulty_model_version=difficulty.model_version,
         confidence=confidence_value,
         review_flags=sorted(set(flags)),
         topic_confidence=topic_confidence,
@@ -1321,64 +1334,118 @@ def _infer_difficulty(
     score = 0.7
     evidence: list[str] = []
     flags: list[str] = []
+    features: dict[str, object] = {}
     heuristics = config.difficulty_heuristics.get(paper_family, config.difficulty_heuristics.get("unknown", {}))
 
+    marks_contribution = 0.0
     if marks is None:
         flags.append("marks_missing_for_difficulty")
         evidence.append("marks unavailable")
     elif marks <= 3:
-        score -= 0.8
+        marks_contribution = -0.8
         evidence.append("low mark allocation")
     elif marks >= 10:
-        score += 1.0
+        marks_contribution = 1.0
         evidence.append("very high mark allocation")
     elif marks >= 7:
-        score += 0.6
+        marks_contribution = 0.6
         evidence.append("higher mark allocation")
+    score += marks_contribution
+    features["marks"] = {
+        "marks": marks,
+        "contribution": _round_feature_score(marks_contribution),
+        "missing": marks is None,
+    }
 
     part_count = len(re.findall(r"^\s*(?:\d+\s*)?\([a-z]\)", text, flags=re.MULTILINE))
+    structure_contribution = 0.0
     if part_count >= 3:
-        score += 0.5
+        structure_contribution += 0.5
         evidence.append("multiple linked parts")
     if part_count >= 4:
-        score += 0.5
-
-    if any(keyword in text for keyword in heuristics.get("linked_keywords", [])):
-        score += 0.4
+        structure_contribution += 0.5
+    linked_keyword_present = any(keyword in text for keyword in heuristics.get("linked_keywords", []))
+    if linked_keyword_present:
+        structure_contribution += 0.4
         evidence.append("chains results across parts")
-    if any(keyword in text for keyword in heuristics.get("disguised_keywords", [])):
-        score += 0.5
+    score += structure_contribution
+    features["structure"] = {
+        "part_count": part_count,
+        "linked_keyword_present": linked_keyword_present,
+        "contribution": _round_feature_score(structure_contribution),
+    }
+
+    cognitive_contribution = 0.0
+    disguised_wording_present = any(keyword in text for keyword in heuristics.get("disguised_keywords", []))
+    proof_or_show_wording = bool(re.search(r"\b(?:show that|prove|deduce|justify|explain|comment on|interpret)\b", text))
+    modelling_wording = bool(re.search(r"\b(?:model|context|real[- ]world|assumption|practical)\b", text))
+    if disguised_wording_present:
+        cognitive_contribution += 0.5
         evidence.append("less direct exam-style wording")
+    if proof_or_show_wording:
+        cognitive_contribution += 0.3
+        evidence.append("proof or interpretation wording")
+    if modelling_wording:
+        cognitive_contribution += 0.2
+        evidence.append("modelling or contextual wording")
+    direct_routine = _looks_like_direct_routine_application(text, paper_family, topic)
+    if direct_routine:
+        cognitive_contribution -= 1.0
+        evidence.append("direct routine method")
+    score += cognitive_contribution
+    features["cognitive_demand"] = {
+        "direct_routine": direct_routine,
+        "disguised_wording_present": disguised_wording_present,
+        "proof_or_show_wording": proof_or_show_wording,
+        "modelling_wording": modelling_wording,
+        "contribution": _round_feature_score(cognitive_contribution),
+    }
 
     algebraic_density = len(re.findall(r"[=+\-*/^√∫]|\\frac|\\sqrt|\b(?:sin|cos|tan|ln|e\^|arg)\b", text))
+    density_contribution = 0.0
     if algebraic_density >= 22:
-        score += 0.7
+        density_contribution += 0.7
         evidence.append("high algebraic or symbolic density")
     if algebraic_density >= 32:
-        score += 0.4
-    if len(secondary_topics) >= 1 and topic_confidence != "low" and not _looks_like_direct_routine_application(text, paper_family, topic):
-        score += 0.4
-        evidence.append("mixes multiple syllabus ideas")
+        density_contribution += 0.4
+    score += density_contribution
+    features["mathematical_density"] = {
+        "symbol_count": algebraic_density,
+        "contribution": _round_feature_score(density_contribution),
+    }
 
+    mixed_topic_contribution = 0.0
+    if len(secondary_topics) >= 1 and topic_confidence != "low" and not direct_routine:
+        mixed_topic_contribution += 0.4
+        evidence.append("mixes multiple syllabus ideas")
+    score += mixed_topic_contribution
+    features["mixed_topic_complexity"] = {
+        "secondary_topic_count": len(secondary_topics),
+        "secondary_topics": list(secondary_topics),
+        "contribution": _round_feature_score(mixed_topic_contribution),
+    }
+
+    topic_contribution = 0.0
     if topic in heuristics.get("difficult_topics", []):
-        score += 0.7
+        topic_contribution += 0.7
         evidence.append(f"{paper_family} topic is often later-paper difficulty")
     if topic in heuristics.get("routine_easy_topics", []):
-        score -= 0.5
+        topic_contribution -= 0.5
         evidence.append("routine topic for this paper")
+    score += topic_contribution
+    features["topic_prior"] = {
+        "paper_family": paper_family,
+        "topic": topic,
+        "subtopic": subtopic,
+        "difficult_topic_prior": topic in heuristics.get("difficult_topics", []),
+        "routine_easy_topic_prior": topic in heuristics.get("routine_easy_topics", []),
+        "contribution": _round_feature_score(topic_contribution),
+    }
 
-    if _looks_like_direct_routine_application(text, paper_family, topic):
-        score -= 1.0
-        evidence.append("direct routine method")
-
-    if marks is not None and marks <= 4 and _looks_like_direct_routine_application(text, paper_family, topic):
-        label = "easy"
-    elif score <= 1.2:
-        label = "easy"
-    elif score >= 3.4:
-        label = "difficult"
-    else:
-        label = "average"
+    difficulty_score = _normalize_difficulty_score(score)
+    if marks is not None and marks <= 4 and direct_routine:
+        difficulty_score = min(difficulty_score, DIFFICULTY_EASY_MAX)
+    label = _difficulty_band_for_score(difficulty_score)
 
     confidence = "high"
     numeric_confidence = 0.82
@@ -1391,10 +1458,45 @@ def _infer_difficulty(
     uncertain = confidence == Confidence.LOW
     if uncertain:
         flags.append("difficulty_uncertain")
+    features["trust"] = {
+        "topic_confidence": topic_confidence,
+        "text_quality_low": _text_quality_is_low(text),
+        "confidence": confidence,
+    }
 
     if not evidence:
         evidence.append("routine-looking question with limited complexity signals")
-    return DifficultyDecision(label, confidence, "; ".join(evidence[:5]), uncertain, numeric_confidence, flags)
+    return DifficultyDecision(
+        difficulty=label,
+        confidence=confidence,
+        evidence="; ".join(evidence[:5]),
+        uncertain=uncertain,
+        numeric_confidence=numeric_confidence,
+        review_flags=flags,
+        score=difficulty_score,
+        band=label,
+        score_scale=DIFFICULTY_SCORE_SCALE,
+        features=features,
+        model_version=DIFFICULTY_MODEL_VERSION,
+    )
+
+
+def _normalize_difficulty_score(raw_score: float) -> int:
+    normalized = round(14.36 + raw_score * 16.36)
+    return max(0, min(100, int(normalized)))
+
+
+def _difficulty_band_for_score(score: int) -> str:
+    if score <= DIFFICULTY_EASY_MAX:
+        return "easy"
+    if score <= DIFFICULTY_AVERAGE_MAX:
+        return "average"
+    return "difficult"
+
+
+def _round_feature_score(value: float) -> int | float:
+    rounded = round(value, 3)
+    return int(rounded) if rounded.is_integer() else rounded
 
 
 def _looks_like_direct_routine_application(text: str, paper_family: str, topic: str) -> bool:
@@ -1473,4 +1575,3 @@ def _text_quality_is_low(text: str) -> bool:
         return True
     replacement_markers = text.count("?") + text.count("\ufffd")
     return replacement_markers >= 4
-

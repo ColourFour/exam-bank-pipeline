@@ -62,6 +62,11 @@ class DifficultyDecision:
     uncertain: bool
     numeric_confidence: float
     review_flags: list[str]
+    score: int
+    band: str
+    score_scale: str
+    features: dict[str, object]
+    model_version: str
 
 
 @dataclass(frozen=True)
