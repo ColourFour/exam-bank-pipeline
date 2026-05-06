@@ -1,244 +1,181 @@
-Agent 1 iteration_001 — Planner / Scope Controller
-
-Read and follow this prompt only for iteration_001 planning.
-
-You are Agent 1: Planner / Scope Controller.
-
-You do not write production code.
-You do not edit tests.
-You do not implement fixes.
-You only write the iteration_001 plan.
+# Agent 1 Plan — Exam Bank Pipeline iteration_001
 
-Project: CAIE 9709 Exam Bank Extraction Pipeline
-Target iteration: iteration_001 only
+## 1. Current repo state
 
-Project context
+The project is an image-first CAIE 9709 extraction pipeline: question PNG crops and mark-scheme PNG crops remain the student-facing source of truth, while extracted/native/OCR text supports search, metadata, trust gating, topic labeling, and review workflows.
 
-This project processes CAIE 9709 question papers and mark schemes. It discovers question-paper/mark-scheme PDF pairs, detects question spans, renders question crops and mark-scheme crops, maps questions to mark schemes, exports a versioned question_bank.json, and supports additive DeepSeek sidecar enrichment for topic/difficulty suggestions.
+Recent code has conservative OCR/native candidate selection in `src/exam_bank/ocr.py`, integration in `src/exam_bank/pipeline.py`, export metadata in `src/exam_bank/exporters.py`, and regression tests in `tests/test_ocr.py`. The selector only chooses OCR when it clears a score margin and avoids hard rejection reasons such as failed scope quality, missing question numbers, missing subparts, lost mark brackets, page furniture, and next-question contamination.
 
-The project is image-first. The rendered question PNG and mark-scheme PNG are the source of truth for student-facing use. Text extraction supports search, metadata, validation, topic labeling, review tooling, and future adaptive trainer features. Text extraction is not yet reliable enough to replace image display.
+`output/json/question_bank.json` is present with `record_count: 1301`, but the current export appears stale for this feature: all records have blank/null candidate-selection metadata in notes (`text_candidate_source`, `text_candidate_decision`, `ocr_selected`, and score fields), even though `ocr_ran` is true. That means the next step is full-bank measurement/reporting and stale-export detection, not another scoring implementation pass.
+
+## 2. Iteration target
+
+Measure OCR candidate-selection behavior across the full exported bank, compare it with a baseline export when available, sample OCR-selected records for human judgment, and decide whether the current conservative selection is safe, useful, too conservative, or too aggressive.
+
+## 3. Non-goals
+
+- No broad refactors.
+- No new OCR engine or OCR preprocessing variants.
+- No DeepSeek behavior changes.
+- No topic-classification changes except auditing topic changes caused by selected text.
+- No crop/scope detection fixes.
+- No mark-scheme mapping fixes.
+- No adaptive trainer work.
+- No schema-breaking changes.
+- No change that makes OCR or extracted text the student-facing source of truth.
+- No weakening trust gates, validation semantics, review/fail gates, or readiness gating.
+- No committing generated PNGs, PDFs, `.env`, or large output folders.
+
+## 4. Files/modules likely involved
+
+Inspection-only:
+
+- `README.md`
+- `config.yaml`
+- `pyproject.toml`
+- `src/exam_bank/ocr.py`
+- `src/exam_bank/pipeline.py`
+- `src/exam_bank/models.py`
+- `src/exam_bank/exporters.py`
+- `src/exam_bank/extraction_structure.py`
+- `src/exam_bank/trust.py`
+- `tests/test_ocr.py`
+- `tests/test_output_contract.py`
+- `tests/test_extraction_structure.py`
+- `output/json/question_bank.json`
+
+May be edited by Agent 2 or Agent 3:
 
-Recent completed work includes:
+- A small reporting script/module if one exists or is added, preferably under a tooling-appropriate path already used by the repo.
+- `src/exam_bank/cli.py` only if Agent 2 chooses a durable report command and keeps it narrow.
+- `tests/test_ocr.py` for candidate-selection/report input fixtures.
+- `tests/test_output_contract.py` for export metadata guard coverage if needed.
+- A focused new test file only if local patterns make that cleaner than expanding existing tests.
 
-* repo hygiene cleanup
-* GitHub Actions CI
-* dependency cleanup
-* versioned JSON export contract
-* DeepSeek sidecar failure semantics
-* mark-scheme refactor
-* QuestionRecord/internal model cleanup
-* centralized trust/failure semantics
-* classification refactor
-* question detection split partially/mostly completed
-* targeted text cleanup for CAIE/PDF glyph artifacts
-* conservative OCR/native text candidate-selection pass
+## 5. Full-bank measurement plan
 
-Current known posture:
+Agent 2 should build or run a report against a full-bank export that contains candidate-selection metadata. First detect whether the export is stale by checking whether `notes.text_candidate_source`, `notes.text_candidate_decision`, `notes.ocr_selected`, `notes.native_text_score`, `notes.ocr_text_score`, and `notes.selected_text_score` are populated. If they are absent across the bank, report that explicitly and produce either a fresh full-bank export with OCR enabled or a clear blocker explaining why the fresh run could not complete.
+
+Required summary counts:
 
-* The pipeline can export 1301 question records.
-* The bank is usable as an honest extraction/review staging system.
-* It is not yet a fully dependable automatic question-bank generator.
-* Many records remain image-first/review-gated.
-* The biggest project risks are bad extraction quality, bad crop/scope boundaries, misleading readiness flags, and downstream consumers treating weak text/OCR/topic labels as reliable.
+- total records
+- `ocr_selected` count
+- `text_candidate_source` distribution
+- top `text_candidate_decision` values
+- top `ocr_rejected_reasons`
+- native text score summary: count, min, p25, median, p75, max, mean
+- OCR text score summary: count, min, p25, median, p75, max, mean
+- selected text score summary: count, min, p25, median, p75, max, mean
+- `text_fidelity_status` distribution
+- `text_only_status` distribution
+- `visual_curation_status` distribution
+- `question_text_trust` distribution
 
-Current iteration goal
+The report should treat missing/null candidate fields as reportable data quality findings, not as zeroes.
 
-Plan one bounded improvement iteration.
+## 6. Before/after comparison plan
 
-For iteration_001, focus on:
-
-Full-bank OCR candidate-selection measurement and regression audit.
-
-The recent OCR candidate-selection implementation selected OCR for some benchmark records when it clearly improved prose, while keeping text-only readiness gated. The next step is not to add more OCR logic yet. The next step is to measure how the new candidate-selection layer behaves across the full 1301-record bank and decide whether it is safe, useful, too conservative, or too aggressive.
-
-Important non-goals
-
-Do not plan broad refactors.
-Do not plan a new OCR engine.
-Do not plan DeepSeek changes.
-Do not plan topic-classification changes unless they are only being audited as side effects.
-Do not plan crop/scope detection fixes in this iteration.
-Do not plan mark-scheme mapping fixes in this iteration.
-Do not plan adaptive trainer implementation in this iteration.
-Do not plan schema-breaking changes.
-Do not plan changes that make OCR or extracted text the student-facing source of truth.
-Do not plan changes that weaken trust gates to make metrics look better.
-Do not plan generated output files to be committed.
-
-Required input files to inspect
-
-Read at minimum:
-
-* README.md
-* pyproject.toml
-* config.yaml
-* src/exam_bank/ocr.py
-* src/exam_bank/pipeline.py
-* src/exam_bank/models.py
-* src/exam_bank/exporters.py
-* src/exam_bank/extraction_structure.py
-* src/exam_bank/trust.py
-* tests/test_ocr.py
-* tests/test_output_contract.py
-* tests/test_extraction_structure.py
-* output/json/question_bank.json, if present
-* any recent comparison/audit JSON files if present under /tmp/ or documented by the previous run
-
-If output/json/question_bank.json is missing, say so and plan how Agent 2/3 should handle that.
-
-Hard boundaries
-
-Do not propose changes that:
-
-* select OCR for hard scope failures
-* mark OCR-selected records as text-only ready without strong evidence
-* remove existing review/fail gates
-* weaken validation semantics
-* hide degraded text behind better-looking status fields
-* treat OCR confidence as truth
-* treat DeepSeek labels as truth
-* require API keys for base extraction/tests
-* require network access
-* commit generated PNGs, PDFs, .env, or large output folders
-* broaden this iteration into general extraction cleanup
-
-What Agent 1 must produce
-
-Write the plan to:
-
-agent_handoffs/iteration_001/agent1_plan.md
-
-Use this exact structure:
-
-Agent 1 Plan — Exam Bank Pipeline iteration_001
-
-1. Current repo state
-
-Briefly describe the current project state, recent OCR/text cleanup work, and why the next step should be full-bank measurement rather than another implementation pass.
-
-2. Iteration target
-
-Define the exact iteration_001 target in plain English.
-
-3. Non-goals
-
-List what this iteration must not do.
-
-4. Files/modules likely involved
-
-List likely files Agent 2 or Agent 3 may inspect or edit. Separate inspection-only files from files that may be edited.
-
-5. Full-bank measurement plan
-
-Describe how to measure OCR candidate-selection behavior across the full exported bank.
-
-Include required summary counts:
-
-* total records
-* ocr_selected count
-* text_candidate_source distribution
-* top text_candidate_decision values
-* top ocr_rejected_reasons
-* score distributions for native/OCR/selected text
-* text_fidelity_status distribution
-* text_only_status distribution
-* visual_curation_status distribution
-* question_text_trust distribution
-
-6. Before/after comparison plan
-
-Describe how to compare the latest full-bank export against the previous baseline export.
-
-Compare at minimum:
-
-* question_text changes
-* OCR selection changes
-* text_fidelity_status changes
-* text_only_status changes
-* visual_curation_status changes
-* question_text_trust changes
-* topic changes
-* mapping_status changes
-* validation_status changes
-* records that improved
-* records that worsened
-
-7. Representative sample plan
-
-Require a representative table of OCR-selected records.
-
-Include:
-
-* question_id
-* paper_family
-* old question_text
-* new question_text
-* ocr_text
-* native_text_score
-* ocr_text_score
-* selected_text_score
-* decision reasons
-* rejected reasons if any
-* text_only_status
-* visual_curation_status
-* human judgment: good selection / questionable / bad selection
-
-8. Risk checks
-
-List specific risks Agent 4 and Agent 5 should later audit, including:
-
-* OCR selected but lost marks/subparts/question number
-* OCR selected but introduced diagram/page-furniture noise
-* OCR selected for hard scope failures
-* OCR selection inflated readiness incorrectly
-* topic changed unexpectedly because selected text changed
-* status got worse without explanation
-* score margins are too loose or too strict
-
-9. Agent 3 test plan
-
-Specify focused tests Agent 3 should write or verify for this iteration.
-
-Do not ask Agent 3 to test future OCR preprocessing, DeepSeek, crop detection, or topic changes.
-
-10. Agent 2 implementation/reporting plan
-
-Specify what Agent 2 should do.
-
-For this iteration, Agent 2 should mostly build measurement/reporting, not tune scoring, unless Agent 1 identifies a tiny obvious bug.
-
-Agent 2 should produce either:
-
-* a script/CLI/report function that summarizes OCR candidate-selection behavior, or
-* a one-off documented comparison report if a permanent tool is premature.
-
-Agent 2 must not tune selection thresholds without explicit evidence and approval.
-
-11. Acceptance criteria
-
-Define black-and-white acceptance criteria.
-
-At minimum:
-
-* full tests pass
-* full-bank measurement is produced
-* before/after comparison is produced if baseline exists
-* OCR-selected records are sampled and manually categorized
-* no evidence of readiness inflation
-* no generated artifacts are accidentally tracked
-* any recommended scoring changes are deferred unless tiny and clearly justified
-
-12. Stop conditions
-
-List conditions where later agents should stop and report instead of continuing:
-
-* missing baseline export
-* generated output accidentally tracked
-* tests fail
-* full pipeline fails
-* OCR selected records show serious false positives
-* many readiness statuses improve without real text improvement
-* schema-breaking changes appear
-* scope expands beyond OCR candidate-selection measurement
-
-Keep the plan concise and actionable. Do not summarize the whole repo. Do not implement anything.
+Agent 2 should look for a previous baseline export before regenerating or comparing. Candidate locations include an explicitly documented previous run, a user-provided path, or a non-output baseline JSON if present. I found no baseline/comparison JSON outside `output/` during planning, so absence is likely and must be stated clearly.
+
+If a baseline exists, compare records by `question_id` and report:
+
+- question_text changes
+- OCR selection changes
+- `text_fidelity_status` changes
+- `text_only_status` changes
+- `visual_curation_status` changes
+- `question_text_trust` changes
+- topic changes
+- `mapping_status` changes
+- `validation_status` changes
+- records that improved
+- records that worsened
+
+If no baseline exists, Agent 2 must still produce current-bank measurement and mark before/after comparison as blocked by missing baseline, not failed.
+
+## 7. Representative sample plan
+
+Agent 2 should produce a representative table of OCR-selected records. If no records are OCR-selected after a fresh candidate-aware export, sample high-margin OCR candidates that were rejected and explain why no selected sample exists.
+
+Required columns:
+
+- `question_id`
+- `paper_family`
+- old question_text, if baseline exists
+- new question_text
+- `ocr_text`
+- `native_text_score`
+- `ocr_text_score`
+- `selected_text_score`
+- decision reasons
+- rejected reasons if any
+- `text_only_status`
+- `visual_curation_status`
+- human judgment: good selection / questionable / bad selection
+
+The sample should cover multiple paper families and include boundary cases near the selection threshold, not only obvious wins.
+
+## 8. Risk checks
+
+Agent 4 and Agent 5 should audit:
+
+- OCR selected but lost marks, subparts, or question number.
+- OCR selected but introduced diagram labels, page furniture, barcode/header text, or next-question text.
+- OCR selected for records with `scope_quality_status: fail`.
+- OCR selection inflated `text_only_status`, `visual_curation_status`, or `question_text_trust` without real text improvement.
+- Topic changed unexpectedly because selected text changed.
+- `text_fidelity_status`, `mapping_status`, or `validation_status` worsened without explanation.
+- Score margins are too loose and permit false positives.
+- Score margins are too strict and reject obvious OCR improvements.
+- Existing generated export lacks candidate metadata, causing misleading measurement unless regenerated or flagged.
+
+## 9. Agent 3 test plan
+
+Agent 3 should focus on tests and guards for measurement/reporting, not new OCR behavior. Verify or add tests that:
+
+- Candidate-selection metadata is present in exported notes for newly exported records.
+- A report handles missing/null candidate fields as stale or incomplete export data.
+- Score summaries ignore nulls instead of treating them as numeric values.
+- Rejected-reason aggregation handles empty and multi-reason lists.
+- OCR-selected records with math-heavy or degraded text do not automatically become `text_only_status: ready`.
+- Existing candidate-selection tests still cover hard rejections for scope failure, page furniture, next-question contamination, missing mark brackets, and missing expected structure.
+
+Do not test future OCR preprocessing, DeepSeek behavior, crop detection, mark-scheme mapping, or topic-classification tuning in this iteration.
+
+## 10. Agent 2 implementation/reporting plan
+
+Agent 2 should mostly build measurement/reporting, not tune scoring. A small durable report command or script is preferred if it can be added without broad CLI churn; a one-off documented report is acceptable if permanent tooling is premature.
+
+Agent 2 should:
+
+- Detect whether `output/json/question_bank.json` contains candidate-selection metadata.
+- If stale, regenerate or request/use a fresh candidate-aware export with OCR enabled.
+- Produce the full-bank summary counts from section 5.
+- Produce before/after comparison if a baseline exists.
+- Produce the representative OCR-selected sample table and manual judgments.
+- Report whether any readiness/status fields appear inflated by OCR selection.
+- Defer scoring threshold changes unless there is a tiny obvious bug with clear evidence.
+
+Agent 2 must not tune candidate thresholds without explicit evidence and approval.
+
+## 11. Acceptance criteria
+
+- Full tests pass.
+- Full-bank OCR candidate-selection measurement is produced from a candidate-aware export, or stale/missing metadata is explicitly reported as the blocker.
+- Before/after comparison is produced if a baseline exists.
+- Missing baseline is explicitly reported if no baseline exists.
+- OCR-selected records are sampled and manually categorized, or the report explains why no OCR-selected records exist.
+- No evidence of readiness inflation.
+- No generated artifacts are accidentally tracked.
+- Any recommended scoring changes are deferred unless tiny and clearly justified.
+
+## 12. Stop conditions
+
+- Generated output is accidentally tracked.
+- Tests fail.
+- Full pipeline or report command fails.
+- Candidate metadata remains missing after a fresh export attempt.
+- OCR-selected records show serious false positives.
+- Many readiness statuses improve without real text improvement.
+- Schema-breaking changes appear.
+- Scope expands beyond OCR candidate-selection measurement.
