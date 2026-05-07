@@ -281,7 +281,7 @@ def _extraction_quality_flags(
         flags.append("suspicious_symbol_run")
     if len(math_lines) >= max(2, len(body_text_normalized.splitlines()) // 2):
         flags.append("heavy_math_density")
-    if any(flag in flags for flag in {"broken_superscript_or_power", "broken_fraction_structure", "suspicious_symbol_run", "flattened_display_math"}):
+    if any(flag in flags for flag in {"broken_superscript_or_power", "broken_fraction_structure", "suspicious_symbol_run"}):
         flags.append("math_corruption_suspected")
     if "math_corruption_suspected" in flags or ("diagram_text_mixed_with_body" in flags and "heavy_math_density" in flags):
         flags.append("likely_needs_visual_review")

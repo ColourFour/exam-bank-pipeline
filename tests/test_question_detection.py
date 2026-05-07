@@ -447,6 +447,31 @@ def test_detect_question_spans_flags_mixed_question_scope_contamination() -> Non
     assert span.structure_detected["contamination_detected"] is True
 
 
+def test_detect_question_spans_does_not_treat_trig_coefficient_as_foreign_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "2 (a) Find the coordinates of A and B. [3]", 90),
+            block(
+                1,
+                "(b) Find the exact value of t that satisfies the equation\n"
+                "3 sin ^{-}1(3t) + 2 cos ^{-}1(1/2) = pi. [2]",
+                135,
+                x=72,
+            ),
+        ],
+    )
+
+    span = detect_question_spans([layout], Path("9709 Mathematics June 2024 Question paper  13.pdf"), config)[0]
+
+    assert "question_scope_contaminated" not in span.validation_flags
+    assert "possible_next_question_contamination" not in span.review_flags
+    assert span.structure_detected["contamination_indicators"]["foreign_question_anchors"] == []
+
+
 def test_detect_question_spans_flags_answer_space_contamination() -> None:
     config = AppConfig()
     layout = PageLayout(

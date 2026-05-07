@@ -90,12 +90,22 @@ def test_client_creation_uses_configured_base_url_and_env_key(monkeypatch: pytes
     }
 
 
+def test_prompt_requests_numeric_difficulty_score_with_cohort_scale() -> None:
+    payload = deepseek_enrich.build_enrichment_payload(_record())
+    system_message = deepseek_enrich.build_messages(payload)[0]
+
+    assert "difficulty must be a JSON number from 0 to 100" in system_message["content"]
+    assert "100 representative CAIE 9709 secondary students attempted this item" in system_message["content"]
+    assert "available marks not received" in system_message["content"]
+    assert "not a string label" in system_message["content"]
+
+
 def test_valid_json_response_parses_into_sidecar_schema() -> None:
     raw = json.dumps(
         {
             "topic": "trigonometry",
             "subtopic": "identities",
-            "difficulty": "medium",
+            "difficulty": 50,
             "confidence": "high",
             "rationale": "Uses a standard identity and one algebraic simplification.",
             "review_required": False,
@@ -112,7 +122,8 @@ def test_valid_json_response_parses_into_sidecar_schema() -> None:
 
     assert sidecar["deepseek_topic_raw"] == "trigonometry"
     assert sidecar["deepseek_subtopic_raw"] == "identities"
-    assert sidecar["deepseek_difficulty_raw"] == "medium"
+    assert sidecar["deepseek_difficulty_raw"] == 50
+    assert sidecar["deepseek_difficulty_score"] == 50
     assert sidecar["deepseek_confidence_raw"] == "high"
     assert sidecar["deepseek_confidence_normalized"] == "high"
     assert sidecar["deepseek_rationale_raw"] == "Uses a standard identity and one algebraic simplification."
@@ -126,13 +137,13 @@ def test_valid_json_response_parses_into_sidecar_schema() -> None:
     assert sidecar["final_review_required"] is False
     assert sidecar["final_review_reasons"] == []
     assert sidecar["enrichment_mode"] == "text_with_image_reference"
-    assert sidecar["image_was_sent_to_model"] is False    
+    assert sidecar["image_was_sent_to_model"] is False
     assert sidecar["image_available"] is True
     assert sidecar["vision_model_required"] is False
     assert sidecar["text_only_enrichment_risk"] == "low"
     assert sidecar["llm_provider"] == "deepseek"
     assert sidecar["llm_model"] == "deepseek-chat"
-    assert sidecar["llm_prompt_version"] == "v3"
+    assert sidecar["llm_prompt_version"] == "v4"
     assert sidecar["llm_run_timestamp"] == "2026-04-23T00:00:00+00:00"
 
 
@@ -151,6 +162,43 @@ def test_known_raw_topic_label_normalizes_to_internal_canonical_label() -> None:
 def test_known_raw_difficulty_label_normalizes_to_internal_canonical_label() -> None:
     assert deepseek_enrich.normalize_difficulty_label("Medium") == "average"
     assert deepseek_enrich.normalize_difficulty_label("Hard") == "difficult"
+    assert deepseek_enrich.normalize_difficulty_label(20) == "easy"
+    assert deepseek_enrich.normalize_difficulty_label(50) == "average"
+    assert deepseek_enrich.normalize_difficulty_label(80) == "difficult"
+    assert deepseek_enrich.normalize_difficulty_label("2") == "average"
+    assert deepseek_enrich.normalize_difficulty_label("50%") == "average"
+
+
+def test_model_difficulty_must_be_numeric_score() -> None:
+    raw = json.dumps(
+        {
+            "topic": "trigonometry",
+            "subtopic": "identities",
+            "difficulty": "average",
+            "confidence": "high",
+            "rationale": "String labels are no longer accepted for model difficulty output.",
+            "review_required": False,
+        }
+    )
+
+    with pytest.raises(ValueError, match="difficulty must be a numeric score"):
+        deepseek_enrich.parse_model_json(raw)
+
+
+def test_model_difficulty_score_must_be_in_range() -> None:
+    raw = json.dumps(
+        {
+            "topic": "trigonometry",
+            "subtopic": "identities",
+            "difficulty": 101,
+            "confidence": "high",
+            "rationale": "Out of range scores should not be accepted.",
+            "review_required": False,
+        }
+    )
+
+    with pytest.raises(ValueError, match="difficulty must be a numeric score"):
+        deepseek_enrich.parse_model_json(raw)
 
 
 def test_known_numeric_and_string_confidence_values_normalize_to_internal_buckets() -> None:
@@ -167,7 +215,7 @@ def test_unmapped_labels_are_preserved_and_marked_unmapped() -> None:
         {
             "topic": "Mechanics",
             "subtopic": "",
-            "difficulty": "Medium",
+            "difficulty": 50,
             "confidence": "high",
             "rationale": "Raw external label does not belong to P1 taxonomy.",
             "review_required": False,
@@ -189,7 +237,7 @@ def test_degraded_text_forces_final_review_even_when_deepseek_matches() -> None:
         {
             "topic": "Trigonometry",
             "subtopic": "general",
-            "difficulty": "easy",
+            "difficulty": 20,
             "confidence": "high",
             "rationale": "Clean conceptual match.",
             "review_required": False,
@@ -227,7 +275,7 @@ def test_scope_fail_forces_final_review_semantics() -> None:
         {
             "topic": "Mechanics",
             "subtopic": "Connected Particles",
-            "difficulty": "Medium",
+            "difficulty": 50,
             "confidence": "high",
             "rationale": "Broad label but clear subtopic.",
             "review_required": False,
@@ -248,7 +296,7 @@ def test_local_vs_deepseek_match_is_recorded_explicitly() -> None:
         {
             "topic": "Mechanics",
             "subtopic": "Connected Particles",
-            "difficulty": "Medium",
+            "difficulty": 50,
             "confidence": "high",
             "rationale": "Topic and subtopic align.",
             "review_required": False,
@@ -267,7 +315,7 @@ def test_local_vs_deepseek_mismatch_is_recorded_explicitly() -> None:
         {
             "topic": "Integration",
             "subtopic": "Definite Integrals",
-            "difficulty": "easy",
+            "difficulty": 20,
             "confidence": "high",
             "rationale": "Different topic from the local label.",
             "review_required": False,
@@ -309,7 +357,7 @@ def test_numeric_confidence_output_is_accepted_and_bucketed() -> None:
         {
             "topic": "trigonometry",
             "subtopic": "general",
-            "difficulty": "easy",
+            "difficulty": 20,
             "confidence": 0.91,
             "rationale": "Direct trig identity.",
             "review_required": False,
@@ -338,7 +386,7 @@ def test_provider_exception_becomes_per_record_error_without_aborting_batch() ->
                     {
                         "topic": "series_and_sequences",
                         "subtopic": "general",
-                        "difficulty": "hard",
+                        "difficulty": 80,
                         "confidence": "medium",
                         "rationale": "Requires linking AP and GP conditions before solving.",
                         "review_required": True,
@@ -387,7 +435,7 @@ def test_quoted_review_required_is_rejected_as_parse_error_and_logged(tmp_path: 
                             {
                                 "topic": "binomial_expansion",
                                 "subtopic": "general",
-                                "difficulty": "easy",
+                                "difficulty": 20,
                                 "confidence": "medium",
                                 "rationale": "Looks straightforward.",
                                 "review_required": "false",
@@ -422,7 +470,7 @@ def test_quoted_review_required_is_rejected_as_parse_error_and_logged(tmp_path: 
 def test_duplicate_json_keys_are_rejected() -> None:
     raw = (
         '{"topic":"binomial_expansion","topic":"trigonometry","subtopic":"general",'
-        '"difficulty":"easy","confidence":"high","rationale":"dup","review_required":false}'
+        '"difficulty":20,"confidence":"high","rationale":"dup","review_required":false}'
     )
 
     with pytest.raises(ValueError, match="duplicate key"):
@@ -445,7 +493,7 @@ def test_sidecar_file_is_keyed_by_question_id_and_original_input_is_untouched(tm
                             {
                                 "topic": "binomial_expansion",
                                 "subtopic": "general",
-                                "difficulty": "easy",
+                                "difficulty": 20,
                                 "confidence": "high",
                                 "rationale": "Direct expansion with a standard coefficient read-off.",
                                 "review_required": False,
@@ -472,11 +520,12 @@ def test_sidecar_file_is_keyed_by_question_id_and_original_input_is_untouched(tm
     enrichment = written_sidecar["enrichments"]["12spring24_q01"]
     assert enrichment["llm_provider"] == "deepseek"
     assert enrichment["llm_model"] == "deepseek-chat"
-    assert enrichment["llm_prompt_version"] == "v3"
+    assert enrichment["llm_prompt_version"] == "v4"
     assert "llm_run_timestamp" in enrichment
     assert enrichment["deepseek_topic_raw"] == "binomial_expansion"
     assert enrichment["deepseek_topic_normalized"] == "binomial_expansion"
-    assert enrichment["deepseek_difficulty_raw"] == "easy"
+    assert enrichment["deepseek_difficulty_raw"] == 20
+    assert enrichment["deepseek_difficulty_score"] == 20
     assert enrichment["deepseek_difficulty_normalized"] == "easy"
     assert enrichment["deepseek_confidence_raw"] == "high"
     assert enrichment["deepseek_confidence_normalized"] == "high"
@@ -512,7 +561,7 @@ def test_deepseek_sidecar_export_contract_includes_success_and_error_fields(tmp_
         {
             "topic": "trigonometry",
             "subtopic": "identities",
-            "difficulty": "medium",
+            "difficulty": 50,
             "confidence": "high",
             "rationale": "Uses a standard identity.",
             "review_required": False,
@@ -540,6 +589,7 @@ def test_deepseek_sidecar_export_contract_includes_success_and_error_fields(tmp_
         "deepseek_topic",
         "deepseek_subtopic",
         "deepseek_difficulty",
+        "deepseek_difficulty_score",
         "deepseek_confidence",
         "deepseek_confidence_normalized",
         "deepseek_rationale",
@@ -554,6 +604,7 @@ def test_deepseek_sidecar_export_contract_includes_success_and_error_fields(tmp_
         "deepseek_difficulty_normalized",
         "local_topic",
         "local_difficulty",
+        "local_difficulty_score",
         "topic_reconciliation_status",
         "difficulty_reconciliation_status",
         "final_review_required",
@@ -610,7 +661,7 @@ def test_cli_success_exits_zero_and_writes_sidecar(
                             {
                                 "topic": "binomial_expansion",
                                 "subtopic": "general",
-                                "difficulty": "easy",
+                                "difficulty": 20,
                                 "confidence": "high",
                                 "rationale": "Direct expansion.",
                                 "review_required": False,
@@ -648,7 +699,7 @@ def test_cli_partial_provider_failure_preserves_sidecar_and_exits_zero(
                     {
                         "topic": "series_and_sequences",
                         "subtopic": "general",
-                        "difficulty": "hard",
+                        "difficulty": 80,
                         "confidence": "medium",
                         "rationale": "Requires linking AP and GP facts.",
                         "review_required": True,
@@ -738,7 +789,32 @@ def test_numeric_difficulty_output_is_accepted_and_bucketed() -> None:
 
     assert parsed["difficulty"] == 1
     assert sidecar["deepseek_difficulty_raw"] == 1
+    assert sidecar["deepseek_difficulty_score"] == 1
     assert sidecar["deepseek_difficulty_normalized"] == "easy"
+
+
+def test_local_difficulty_score_zero_is_preserved_for_reconciliation() -> None:
+    record = _record(local_topic="trigonometry", local_difficulty=None)
+    record["difficulty_score"] = 0
+
+    sidecar = deepseek_enrich.build_sidecar_success(
+        record,
+        {
+            "topic": "trigonometry",
+            "subtopic": "general",
+            "difficulty": 0,
+            "confidence": "high",
+            "rationale": "Very routine.",
+            "review_required": False,
+        },
+        model="deepseek-v4-flash",
+        run_timestamp="2026-04-24T00:00:00+00:00",
+    )
+
+    assert sidecar["local_difficulty_score"] == 0
+    assert sidecar["local_difficulty"] == "easy"
+    assert sidecar["difficulty_reconciliation_status"] == "match"
+
 
 def test_mechanics_topic_aliases_normalize_when_valid_for_family() -> None:
     assert (

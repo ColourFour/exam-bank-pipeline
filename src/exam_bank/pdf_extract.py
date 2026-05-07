@@ -97,6 +97,10 @@ def _extract_text_blocks(page: Any, page_number: int, config: AppConfig) -> list
                 if str(span.get("text", "")).strip():
                     normalized_span = dict(span)
                     normalized_span["bbox"] = _visual_bbox(page, span.get("bbox", [0, 0, 0, 0]))
+                    if _is_control_artifact_span(normalized_span):
+                        continue
+                    if _is_margin_furniture_span(page, normalized_span, config):
+                        continue
                     spans.append(normalized_span)
 
     visual_lines = _group_spans_into_visual_lines(spans, config.detection.span_line_y_tolerance)
@@ -186,6 +190,13 @@ def _is_question_number_token(text: str) -> bool:
 
 
 def _line_text_from_spans(spans: list[dict[str, Any]]) -> str:
+    stacked_text = _stacked_fraction_line_text(spans)
+    if stacked_text is not None:
+        return stacked_text
+    return _flat_line_text_from_spans(spans)
+
+
+def _flat_line_text_from_spans(spans: list[dict[str, Any]]) -> str:
     if not spans:
         return ""
     spans = sorted(spans, key=lambda span: (_span_x0(span), _span_center_y(span)))
@@ -200,7 +211,7 @@ def _line_text_from_spans(spans: list[dict[str, Any]]) -> str:
     previous_text = ""
 
     for span in spans:
-        text = str(span.get("text", ""))
+        text = _span_text(span)
         if not text:
             continue
         x0, y0, x1, y1 = [float(value) for value in span.get("bbox", [0, 0, 0, 0])]
@@ -222,7 +233,7 @@ def _line_text_from_spans(spans: list[dict[str, Any]]) -> str:
         baseline_shift_from_previous = abs(span_mid - previous_mid)
         small_math_token = 0 < len(normalized) <= 2 and normalized not in {",", ".", ":", ";"}
         attached_to_previous = previous_span is not None and previous_gap <= max(2.0, median_size * 0.35)
-        previous_text_normalized = str(previous_span.get("text", "")).strip() if previous_span is not None else ""
+        previous_text_normalized = _span_text(previous_span).strip() if previous_span is not None else ""
         previous_supports_script = any(ch.isalnum() or ch in ")]" for ch in previous_text_normalized)
         is_script_candidate = (
             bool(normalized)
@@ -262,9 +273,255 @@ def _line_text_from_spans(spans: list[dict[str, Any]]) -> str:
     return _repair_line_spacing("".join(pieces))
 
 
+def _stacked_fraction_line_text(spans: list[dict[str, Any]]) -> str | None:
+    spans = [span for span in spans if _span_text(span).strip()]
+    if len(spans) < 4:
+        return None
+
+    font_sizes = [float(span.get("size", 0)) for span in spans if _span_text(span).strip()]
+    median_size = median(font_sizes) if font_sizes else 0
+    if median_size <= 0:
+        return None
+
+    centers = [_span_center_y(span) for span in spans]
+    top_center = min(centers)
+    bottom_center = max(centers)
+    if bottom_center - top_center < max(7.0, median_size * 0.65):
+        return None
+
+    top_cutoff = top_center + median_size * 0.45
+    bottom_cutoff = bottom_center - median_size * 0.45
+    if top_cutoff >= bottom_cutoff:
+        return None
+    top_bottom_spans = [
+        span
+        for span in spans
+        if (_span_center_y(span) <= top_cutoff or _span_center_y(span) >= bottom_cutoff)
+        and _is_fraction_row_span_candidate(span, median_size)
+    ]
+    components = _stacked_fraction_components(top_bottom_spans, median_size, top_cutoff, bottom_cutoff)
+    if not components:
+        return None
+
+    consumed_ids = {id(span) for component in components for span in component}
+    segments: list[dict[str, Any]] = []
+    for component in components:
+        top_spans = [span for span in component if _span_center_y(span) <= top_cutoff]
+        bottom_spans = [span for span in component if _span_center_y(span) >= bottom_cutoff]
+        top_text = _flat_line_text_from_spans(top_spans).strip()
+        bottom_text = _flat_line_text_from_spans(bottom_spans).strip()
+        if not top_text or not bottom_text:
+            continue
+        x0, y0, x1, y1 = _line_bbox_from_spans(component)
+        segments.append(
+            {
+                "text": f"({top_text})/({bottom_text})",
+                "bbox": [x0, y0, x1, y1],
+                "size": median_size,
+                "font": "",
+            }
+        )
+
+    if not segments:
+        return None
+    segments.extend(span for span in spans if id(span) not in consumed_ids)
+    return _flat_line_text_from_spans(segments)
+
+
+def _stacked_fraction_components(
+    spans: list[dict[str, Any]],
+    median_size: float,
+    top_cutoff: float,
+    bottom_cutoff: float,
+) -> list[list[dict[str, Any]]]:
+    components: list[list[dict[str, Any]]] = []
+    current: list[dict[str, Any]] = []
+    current_x1: float | None = None
+    max_gap = max(3.0, median_size * 0.75)
+
+    for span in sorted(spans, key=lambda item: (_span_x0(item), _span_center_y(item))):
+        x0, _y0, x1, _y1 = [float(value) for value in span.get("bbox", [0, 0, 0, 0])]
+        if current and current_x1 is not None and x0 > current_x1 + max_gap:
+            if _is_stacked_fraction_component(current, median_size, top_cutoff, bottom_cutoff):
+                components.append(current)
+            current = []
+            current_x1 = None
+        current.append(span)
+        current_x1 = max(current_x1 if current_x1 is not None else x1, x1)
+
+    if current and _is_stacked_fraction_component(current, median_size, top_cutoff, bottom_cutoff):
+        components.append(current)
+    return components
+
+
+def _is_stacked_fraction_component(
+    spans: list[dict[str, Any]],
+    median_size: float,
+    top_cutoff: float,
+    bottom_cutoff: float,
+) -> bool:
+    top_spans = [span for span in spans if _span_center_y(span) <= top_cutoff]
+    bottom_spans = [span for span in spans if _span_center_y(span) >= bottom_cutoff]
+    if not top_spans or not bottom_spans:
+        return False
+    top_text = _flat_line_text_from_spans(top_spans).strip()
+    bottom_text = _flat_line_text_from_spans(bottom_spans).strip()
+    if _looks_like_fraction_prose_text(top_text) or _looks_like_fraction_prose_text(bottom_text):
+        return False
+
+    top_bbox = _line_bbox_from_spans(top_spans)
+    bottom_bbox = _line_bbox_from_spans(bottom_spans)
+    overlap = max(0.0, min(top_bbox[2], bottom_bbox[2]) - max(top_bbox[0], bottom_bbox[0]))
+    top_width = top_bbox[2] - top_bbox[0]
+    bottom_width = bottom_bbox[2] - bottom_bbox[0]
+    narrower_width = max(0.1, min(top_width, bottom_width))
+    if overlap / narrower_width < 0.45:
+        return False
+    center_delta = abs(((top_bbox[0] + top_bbox[2]) / 2) - ((bottom_bbox[0] + bottom_bbox[2]) / 2))
+    if center_delta > max(median_size * 0.8, narrower_width * 0.45):
+        return False
+    if max(top_bbox[2], bottom_bbox[2]) - min(top_bbox[0], bottom_bbox[0]) < median_size * 1.4:
+        return False
+
+    combined_text = " ".join(_span_text(span).strip() for span in spans)
+    return bool(re.search(r"[+\-=−]|(?:sin|cos|tan|sec|cosec|cot|ln|log)|[A-Za-z]\s", combined_text))
+
+
+def _is_fraction_row_span_candidate(span: dict[str, Any], median_size: float) -> bool:
+    text = _span_text(span).strip()
+    if not text or _is_mark_token(text):
+        return False
+    if not re.search(r"[A-Za-z0-9θπ≡=+\-−*/]", text):
+        return False
+    if _looks_like_fraction_prose_text(text):
+        return False
+
+    x0, y0, x1, y1 = [float(value) for value in span.get("bbox", [0, 0, 0, 0])]
+    height = max(0.0, y1 - y0)
+    width = max(0.0, x1 - x0)
+    if height > median_size * 1.4 and not _is_control_parenthesis_text(text):
+        return False
+    if width > median_size * 22 and _span_prose_word_count(text) >= 1:
+        return False
+    return True
+
+
+def _looks_like_fraction_prose_text(text: str) -> bool:
+    normalized = " ".join(text.replace("\u00a0", " ").split())
+    if not normalized:
+        return False
+    if re.search(r"\([a-z]\)", normalized, re.IGNORECASE):
+        return True
+    if re.search(r"\b(?:DO NOT WRITE|UCLES|Turn over)\b", normalized, re.IGNORECASE):
+        return True
+    prose_words = [
+        word.lower()
+        for word in re.findall(r"[A-Za-z]{2,}", normalized)
+        if word.lower() not in _FRACTION_MATH_WORDS
+    ]
+    if any(word in _FRACTION_PROSE_WORDS for word in prose_words):
+        return True
+    return len(prose_words) >= 2
+
+
+def _span_prose_word_count(text: str) -> int:
+    return sum(
+        1
+        for word in re.findall(r"[A-Za-z]{2,}", text)
+        if word.lower() not in _FRACTION_MATH_WORDS
+    )
+
+
+def _is_control_parenthesis_text(text: str) -> bool:
+    stripped = text.strip()
+    return bool(stripped) and all(char in "()\x00\x01" for char in stripped)
+
+
+_FRACTION_MATH_WORDS = {
+    "sin",
+    "cos",
+    "tan",
+    "sec",
+    "cosec",
+    "csc",
+    "cot",
+    "ln",
+    "log",
+    "exp",
+}
+
+_FRACTION_PROSE_WORDS = {
+    "ascending",
+    "coefficient",
+    "coordinates",
+    "curve",
+    "equation",
+    "exact",
+    "expand",
+    "expansion",
+    "express",
+    "find",
+    "given",
+    "hence",
+    "identity",
+    "including",
+    "point",
+    "powers",
+    "prove",
+    "show",
+    "stationary",
+    "term",
+    "terms",
+    "value",
+    "where",
+}
+
+
+def _span_text(span: dict[str, Any] | None) -> str:
+    if span is None:
+        return ""
+    text = str(span.get("text", ""))
+    replacements = {
+        "\x00": "(",
+        "\x01": ")",
+        "\x8f": "≡",
+        "": "≡",
+        "Å": "°",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
 def _needs_operator_spacing(previous_text: str, text: str) -> bool:
     operators = {"+", "-", "=", "<", ">", "≤", "≥", "±"}
     return previous_text.strip() in operators or text.strip() in operators
+
+
+def _is_margin_furniture_span(page: Any, span: dict[str, Any], config: AppConfig) -> bool:
+    text = " ".join(str(span.get("text", "")).replace("\u00a0", " ").split())
+    if not text:
+        return False
+    if not re.search(r"DO NOT WRITE IN THIS MARGIN", text, re.IGNORECASE):
+        return False
+
+    x0, y0, x1, y1 = [float(value) for value in span.get("bbox", [0, 0, 0, 0])]
+    width = max(0.0, x1 - x0)
+    height = max(0.0, y1 - y0)
+    page_width = float(page.rect.width)
+    page_height = float(page.rect.height)
+    near_left = x0 <= config.detection.crop_left_margin
+    near_right = x1 >= page_width - config.detection.crop_right_margin
+    return width <= 80 and height >= page_height * 0.16 and (near_left or near_right)
+
+
+def _is_control_artifact_span(span: dict[str, Any]) -> bool:
+    text = str(span.get("text", ""))
+    control_count = sum(1 for char in text if ord(char) < 32 and char not in "\n\t\r")
+    if control_count < 4:
+        return False
+    visible_count = sum(1 for char in text if char.isalnum())
+    return control_count >= max(4, visible_count)
 
 
 def _repair_line_spacing(text: str) -> str:
@@ -274,6 +531,7 @@ def _repair_line_spacing(text: str) -> str:
     value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot)(?=[0-9θxyz])", r"\1 ", value)
     value = re.sub(r"(?<=[A-Za-z0-9}])(?=(?:cosec|sin|cos|tan|sec|cot)(?:[0-9θxyz]|\b))", " ", value)
     value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"(?<=\})(?=[A-Za-z]{2,}\b)", " ", value)
     value = re.sub(r"\b([A-Za-z]{2,})([A-Z][a-z]{2,})\b", r"\1 \2", value)
     return value
 

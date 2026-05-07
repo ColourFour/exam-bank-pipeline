@@ -15,10 +15,10 @@ DEFAULT_INPUT_PATH = Path("output/json/question_bank.json")
 DEFAULT_OUTPUT_PATH = Path("output/json/question_bank.deepseek.json")
 DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEFAULT_MODEL = "deepseek-v4-flash"
-PROMPT_VERSION = "v3"
+PROMPT_VERSION = "v4"
 LLM_PROVIDER = "deepseek"
 DEEPSEEK_SIDECAR_SCHEMA_NAME = "exam_bank.deepseek_sidecar"
-DEEPSEEK_SIDECAR_SCHEMA_VERSION = 1
+DEEPSEEK_SIDECAR_SCHEMA_VERSION = 2
 
 
 class StartupConfigurationError(RuntimeError):
@@ -218,15 +218,9 @@ def normalize_topic_label(raw_topic: Any, *, paper_family: Any, raw_subtopic: An
 def normalize_difficulty_label(raw_difficulty: Any) -> str | None:
     if isinstance(raw_difficulty, bool) or raw_difficulty is None:
         return None
-
     if isinstance(raw_difficulty, (int, float)):
-        if raw_difficulty <= 1:
-            return "easy"
-        if raw_difficulty <= 2:
-            return "average"
-        if raw_difficulty <= 3:
-            return "difficult"
-        return None
+        score = normalize_difficulty_score(raw_difficulty)
+        return _difficulty_label_for_score(score) if score is not None else None
 
     normalized = _normalize_free_text(raw_difficulty)
     if not normalized:
@@ -243,6 +237,36 @@ def normalize_difficulty_label(raw_difficulty: Any) -> str | None:
         return "difficult"
     if normalized in {"medium hard", "mediumhard", "average hard"}:
         return "difficult"
+    score = normalize_difficulty_score(raw_difficulty)
+    if score is not None:
+        return _difficulty_label_for_score(score)
+    return None
+
+
+def _difficulty_label_for_score(score: int) -> str:
+    if score <= 34:
+        return "easy"
+    if score <= 69:
+        return "average"
+    return "difficult"
+
+
+def normalize_difficulty_score(raw_difficulty: Any) -> int | None:
+    if isinstance(raw_difficulty, bool) or raw_difficulty is None:
+        return None
+    if isinstance(raw_difficulty, (int, float)):
+        if 0 <= float(raw_difficulty) <= 100:
+            return int(round(float(raw_difficulty)))
+        return None
+    raw_text = str(raw_difficulty).strip()
+    if not raw_text:
+        return None
+    try:
+        score = float(raw_text.rstrip("%"))
+    except ValueError:
+        return None
+    if 0 <= score <= 100:
+        return int(round(score))
     return None
 
 
@@ -487,7 +511,11 @@ def build_messages(payload: dict[str, Any]) -> list[dict[str, str]]:
         "Return one strict JSON object only, with no markdown, no prose, no code fences, and no extra keys. "
         "The object must contain exactly these keys: "
         "topic, subtopic, difficulty, confidence, rationale, review_required. "
-        "difficulty must be one of these strings only: easy, average, difficult. Do not use numbers for difficulty. "
+        "difficulty must be a JSON number from 0 to 100, not a string label. "
+        "If 100 representative CAIE 9709 secondary students attempted this item, estimate the percentage of "
+        "available marks not received across the cohort. "
+        "Use 0 when nearly all students would receive full marks, 50 when the cohort would receive about half "
+        "of the available marks, and 100 when almost no marks would be awarded. Higher means harder. "
         "confidence must be high, medium, low, or a number from 0 to 1. "
         "Use an empty string for subtopic when unavailable. "
         "Keep rationale short and concrete. "
@@ -548,7 +576,7 @@ def parse_model_json(raw_text: str) -> dict[str, Any]:
         )
 
     topic = _require_non_empty_string(payload["topic"], "topic")
-    difficulty = _require_label_value(payload["difficulty"], "difficulty")    
+    difficulty = _require_difficulty_score(payload["difficulty"])
     confidence = _require_confidence_value(payload["confidence"])
     rationale = _require_non_empty_string(payload["rationale"], "rationale")
 
@@ -579,14 +607,16 @@ def _require_non_empty_string(value: Any, field_name: str) -> str:
         raise ValueError(f"{field_name} must be a non-empty string.")
     return value.strip()
 
-def _require_label_value(value: Any, field_name: str) -> str | int | float:
+
+def _require_difficulty_score(value: Any) -> int:
     if isinstance(value, bool):
-        raise ValueError(f"{field_name} must be a non-empty string or numeric value.")
-    if isinstance(value, (int, float)):
-        return value
-    if isinstance(value, str) and value.strip():
-        return value.strip()
-    raise ValueError(f"{field_name} must be a non-empty string or numeric value.")
+        raise ValueError("difficulty must be a numeric score from 0 to 100.")
+    if not isinstance(value, (int, float)):
+        raise ValueError("difficulty must be a numeric score from 0 to 100.")
+    score = normalize_difficulty_score(value)
+    if score is None:
+        raise ValueError("difficulty must be a numeric score from 0 to 100.")
+    return score
 
 
 def _require_confidence_value(value: Any) -> str | int | float:
@@ -644,6 +674,11 @@ def build_sidecar_success(
 
     local_topic = _raw_or_none(record.get("topic"))
     local_difficulty = _raw_or_none(record.get("difficulty")) or _raw_or_none(note_map.get("difficulty"))
+    record_difficulty_score = _raw_or_none(record.get("difficulty_score"))
+    note_difficulty_score = _raw_or_none(note_map.get("difficulty_score"))
+    local_difficulty_score = normalize_difficulty_score(
+        record_difficulty_score if record_difficulty_score is not None else note_difficulty_score
+    )
 
     normalized_topic = normalize_topic_label(
         raw_topic,
@@ -651,13 +686,18 @@ def build_sidecar_success(
         raw_subtopic=raw_subtopic,
     )
     normalized_difficulty = normalize_difficulty_label(raw_difficulty)
+    deepseek_difficulty_score = normalize_difficulty_score(raw_difficulty)
 
     local_topic_normalized = normalize_topic_label(
         local_topic,
         paper_family=record.get("paper_family"),
         raw_subtopic=note_map.get("subtopic"),
     ) if local_topic else None
-    local_difficulty_normalized = normalize_difficulty_label(local_difficulty) if local_difficulty else None
+    local_difficulty_normalized = (
+        normalize_difficulty_label(local_difficulty)
+        if local_difficulty
+        else normalize_difficulty_label(local_difficulty_score)
+    )
 
     topic_reconciliation_status = _reconciliation_status(
         raw_value=raw_topic,
@@ -678,7 +718,7 @@ def build_sidecar_success(
         topic_trust_status=_raw_or_none(note_map.get("topic_trust_status")),
         topic_reconciliation_status=topic_reconciliation_status,
         difficulty_reconciliation_status=difficulty_reconciliation_status,
-        local_difficulty_present=local_difficulty_normalized is not None,
+        local_difficulty_present=local_difficulty_normalized is not None or local_difficulty_score is not None,
     )
     question_image_path = record.get("question_image_path") or _first_path(record.get("question_image_paths"))
     mark_scheme_image_path = record.get("mark_scheme_image_path") or _first_path(record.get("mark_scheme_image_paths"))
@@ -715,6 +755,7 @@ def build_sidecar_success(
         "deepseek_topic": raw_topic,
         "deepseek_subtopic": raw_subtopic,
         "deepseek_difficulty": raw_difficulty,
+        "deepseek_difficulty_score": deepseek_difficulty_score,
         "deepseek_confidence": raw_confidence,
         "deepseek_confidence_normalized": normalized_confidence,
         "deepseek_rationale": raw_rationale,
@@ -729,6 +770,7 @@ def build_sidecar_success(
         "deepseek_difficulty_normalized": normalized_difficulty,
         "local_topic": local_topic_normalized or local_topic,
         "local_difficulty": local_difficulty_normalized or local_difficulty,
+        "local_difficulty_score": local_difficulty_score,
         "topic_reconciliation_status": topic_reconciliation_status,
         "difficulty_reconciliation_status": difficulty_reconciliation_status,
         "final_review_required": bool(final_review_reasons),

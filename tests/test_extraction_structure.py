@@ -195,7 +195,7 @@ def test_normalizes_pdf_control_glyphs_without_dropping_math_structure() -> None
     assert "Ó" not in structured.combined_question_text
 
 
-def test_normalizes_common_ocr_math_substitutions_but_keeps_visual_review_flags() -> None:
+def test_normalizes_common_ocr_math_substitutions_without_marking_clean_math_corrupt() -> None:
     layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
     span = QuestionSpan(
         source_pdf=Path("paper.pdf"),
@@ -217,7 +217,8 @@ def test_normalizes_common_ocr_math_substitutions_but_keeps_visual_review_flags(
     assert "e^{2}x sin 2x" in structured.combined_question_text
     assert "0 ≤ x ≤ ^{1}_{2}π" in structured.combined_question_text
     assert "flattened_display_math" in structured.extraction_quality_flags
-    assert "likely_needs_visual_review" in structured.extraction_quality_flags
+    assert "math_corruption_suspected" not in structured.extraction_quality_flags
+    assert "likely_needs_visual_review" not in structured.extraction_quality_flags
 
 
 def test_repairs_selected_joined_prompt_words() -> None:

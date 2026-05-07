@@ -212,7 +212,6 @@ def assess_text_fidelity(
         "broken_fraction_structure",
         "broken_superscript_or_power",
         "suspicious_symbol_run",
-        "flattened_display_math",
         "diagram_text_mixed_with_body",
     }
     if any(flag in extraction_quality_flags for flag in strong_corruption_flags):
@@ -310,7 +309,6 @@ def visual_reason_flags(
         "broken_fraction_structure",
         "broken_superscript_or_power",
         "suspicious_symbol_run",
-        "flattened_display_math",
         "diagram_text_mixed_with_body",
     }:
         flags.add("contains_math_text_corruption")
@@ -639,6 +637,7 @@ def _contains_fraction_or_integral_layout(text: str) -> bool:
         re.search(r"\b(?:integral|differentiat|substitution)\b|∫", lowered)
         or re.search(r"\bd[xy]\b|d[xy]\s*/\s*d[xy]", lowered)
         or re.search(r"\b\d+\s*/\s*\d+\b|\\frac|over\s+\d", lowered)
+        or re.search(r"\([^)]{1,80}\)\s*/\s*\([^)]{1,80}\)", text)
         or "broken_fraction_structure" in lowered
     )
 

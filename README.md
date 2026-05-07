@@ -89,7 +89,9 @@ Useful options:
 - `--dry-run`
 - `--failure-log output/json/question_bank.deepseek.failures.jsonl`
 
-The DeepSeek sidecar keeps the raw model suggestion and adds Stage 2 reconciliation fields such as normalized topic/difficulty labels, local-vs-DeepSeek match status, and final review gating:
+The DeepSeek sidecar keeps the raw model suggestion and adds Stage 2 reconciliation fields such as normalized topic/difficulty labels, local-vs-DeepSeek match status, and final review gating.
+In prompt `v4`, the model must return `difficulty` as a JSON number from `0` to `100`, stored as `deepseek_difficulty_score`; this estimates the percentage of available marks a representative CAIE 9709 secondary cohort would not receive.
+The normalized `easy` / `average` / `difficult` bucket is retained only for reconciliation with local metadata.
 
 ```text
 output/json/question_bank.deepseek.json
@@ -181,6 +183,29 @@ Audit a JSON export with:
 ```bash
 python -m exam_bank.cli audit --input output/json/question_bank.json
 ```
+
+## Triage Iterations
+
+Use the triage loop to sample the largest hard-failure cluster, review examples visually, then compare a full rerun against the frozen baseline:
+
+```bash
+python -m exam_bank.cli triage-sample --input output/json/question_bank.json --sample-size 30
+python -m exam_bank.cli triage-serve --iteration output/triage/iteration_001
+python -m exam_bank.cli triage-compare --iteration output/triage/iteration_001 --current output/json/question_bank.json
+```
+
+`triage-sample` creates:
+
+```text
+output/triage/iteration_001/
+  baseline_question_bank.json
+  summary.json
+  sample.json
+  index.html
+  review.jsonl
+```
+
+By default it samples `hard-failures`, chooses the largest primary issue with `--target auto`, and uses deterministic sampling through `--seed`.
 
 Archived topic-PDF code is kept for reference under `archive/topic_pdfs_legacy/`. It is not part of the supported package runtime.
 

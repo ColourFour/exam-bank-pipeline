@@ -362,8 +362,7 @@ def _validate_span_blocks(
         flags.append("question_start_uncertain")
 
     for block in blocks[1:]:
-        parsed = parse_question_start(block.first_line, config)
-        if parsed and parsed[0] != start.question_number:
+        if _foreign_question_anchor(block.first_line, start.question_number, config):
             flags.append("possible_next_question_contamination")
         page = _layout_by_number(layouts, block.page_number)
         if _is_footer_or_header_block(block, page, config) or _is_boilerplate_text(block.text):
@@ -1375,9 +1374,9 @@ def _question_scope_contamination(
         or re.search(r"DO NOT WRITE IN THIS MARGIN|Turn over|write the question number", line, re.IGNORECASE)
     ]
     foreign_question_anchors = [
-        parsed[0]
+        anchor
         for line in lines[1:]
-        if (parsed := parse_question_start(line, config)) and parsed[0] != start.question_number
+        if (anchor := _foreign_question_anchor(line, start.question_number, config))
     ]
     review_hint_flags = sorted(
         {
@@ -1394,7 +1393,7 @@ def _question_scope_contamination(
         or _is_answer_space_text(line)
         or bool(re.search(r"(?:\.\s*){12,}|[._\-–—]{30,}", line))
         or line in embedded_furniture
-        or ((parsed := parse_question_start(line, config)) and parsed[0] != start.question_number)
+        or _foreign_question_anchor(line, start.question_number, config)
     }
     foreign_content_segments = 0
     foreign_content_examples: list[str] = []
@@ -1442,6 +1441,23 @@ def _question_scope_contamination(
         "signal_score": signal_score,
     }
     return contaminated, indicators
+
+
+def _foreign_question_anchor(line: str, current_question_number: str, config: AppConfig) -> str | None:
+    parsed = parse_question_start(line, config)
+    if not parsed or parsed[0] == current_question_number:
+        return None
+    if _parsed_anchor_is_math_coefficient(line):
+        return None
+    return parsed[0]
+
+
+def _parsed_anchor_is_math_coefficient(line: str) -> bool:
+    match = QUESTION_START_RE.match(line.strip())
+    if not match:
+        return False
+    remainder = line.strip()[match.end() :].lstrip(" ).,:;-–—")
+    return bool(re.match(r"(?i)^(?:sin|cos|tan|sec|cosec|csc|cot|ln|log|exp|sqrt)\b", remainder))
 
 
 def _contamination_content_tokens(line: str) -> set[str]:

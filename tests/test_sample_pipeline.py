@@ -35,6 +35,8 @@ REPO_N25_P55_QP = Path("input/question_papers/9709 Mathematics November 2025 Que
 REPO_N25_P55_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  55.pdf")
 REPO_J22_P52_QP = Path("input/question_papers/9709 Mathematics June 2022 Question paper  52.pdf")
 REPO_J22_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2022 Mark Scheme  52.pdf")
+REPO_J21_P11_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  11.pdf")
+REPO_J21_P11_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  11.pdf")
 REPO_J21_P42_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  42.pdf")
 REPO_J21_P42_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  42.pdf")
 REPO_N24_P12_QP = Path("input/question_papers/9709 Mathematics November 2024 Question paper  12.pdf")
@@ -149,7 +151,7 @@ def test_repo_s24_p3_recovers_hidden_middle_parts_on_question_side(tmp_path: Pat
     assert q7.markscheme_mapping_status == "pass"
 
 
-def test_repo_n25_p53_does_not_false_pass_incomplete_question_scope(tmp_path: Path) -> None:
+def test_repo_n25_p53_recovers_subparts_after_margin_furniture_cleanup(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -166,23 +168,25 @@ def test_repo_n25_p53_does_not_false_pass_incomplete_question_scope(tmp_path: Pa
     q6 = next(record for record in result.records if record.question_number == "6")
     q7 = next(record for record in result.records if record.question_number == "7")
 
-    assert q3.question_subparts == ["a"]
-    assert q3.markscheme_mapping_status == "fail"
-    assert q3.markscheme_failure_reason == "question_subparts_incomplete"
-    assert q3.validation_status == "fail"
-    assert q6.question_subparts == ["a", "c", "d"]
+    assert q3.question_subparts == ["a", "b"]
+    assert q3.markscheme_subparts == ["a", "b"]
+    assert q3.markscheme_mapping_status == "pass"
+    assert q3.validation_status == "review"
+    assert q3.question_marks_total == q3.markscheme_marks_total == 6
+    assert q6.question_subparts == ["a", "b", "c", "d"]
     assert q6.markscheme_subparts == ["a", "b", "c", "d"]
-    assert q6.markscheme_mapping_status == "fail"
-    assert q6.markscheme_failure_reason == "question_subparts_incomplete"
-    assert q6.validation_status == "fail"
-    assert q6.question_structure_detected.get("impossible_subpart_sequence_detected") is True
-    assert q6.question_structure_detected.get("missing_internal_subparts") == ["b"]
-    assert q7.question_subparts == ["a", "c"]
-    assert q7.markscheme_mapping_status == "fail"
-    assert q7.markscheme_failure_reason == "question_subparts_incomplete"
-    assert q7.validation_status == "fail"
-    assert q7.question_structure_detected.get("impossible_subpart_sequence_detected") is True
-    assert q7.question_structure_detected.get("missing_internal_subparts") == ["b"]
+    assert q6.markscheme_mapping_status == "pass"
+    assert q6.validation_status == "review"
+    assert q6.question_marks_total == q6.markscheme_marks_total == 10
+    assert q6.question_structure_detected.get("impossible_subpart_sequence_detected") is not True
+    assert q6.question_structure_detected.get("missing_internal_subparts") in (None, [])
+    assert q7.question_subparts == ["a", "b", "c"]
+    assert q7.markscheme_subparts == ["a", "b", "c"]
+    assert q7.markscheme_mapping_status == "pass"
+    assert q7.validation_status == "review"
+    assert q7.question_marks_total == q7.markscheme_marks_total == 10
+    assert q7.question_structure_detected.get("impossible_subpart_sequence_detected") is not True
+    assert q7.question_structure_detected.get("missing_internal_subparts") in (None, [])
 
 
 def test_repo_n23_p41_q1_keeps_full_mark_scheme_block_and_total(tmp_path: Path) -> None:
@@ -275,40 +279,30 @@ def test_repo_m24_p32_control_stays_clean_without_unnecessary_rescan(tmp_path: P
     assert "weak_question_anchor" not in q7.validation_flags
 
 
-def test_repo_n24_p32_same_page_lower_blocks_are_recovered_from_sparse_lower_region_ocr(tmp_path: Path) -> None:
+def test_repo_n24_p32_same_page_lower_blocks_are_recovered_from_pdf_text(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
-    pytest.importorskip("pytesseract")
 
     if not REPO_N24_P32_QP.exists() or not REPO_N24_P32_MS.exists():
         pytest.skip("Repo November 2024 P32 sample PDFs are not available.")
 
-    config_off = AppConfig()
-    _configure_test_output(config_off, tmp_path / "without_ocr")
-    config_off.ocr.enabled = False
-    without_ocr = process_sample(REPO_N24_P32_QP, config_off, mark_scheme_pdf=REPO_N24_P32_MS)
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+    result = process_sample(REPO_N24_P32_QP, config, mark_scheme_pdf=REPO_N24_P32_MS)
+    layouts = extract_pdf_layout(REPO_N24_P32_QP, config)
 
-    config_on = AppConfig()
-    _configure_test_output(config_on, tmp_path / "with_ocr")
-    config_on.ocr.enabled = True
-    with_ocr = process_sample(REPO_N24_P32_QP, config_on, mark_scheme_pdf=REPO_N24_P32_MS)
-    layouts = extract_pdf_layout(REPO_N24_P32_QP, config_on)
-
-    q2_before = next(record for record in without_ocr.records if record.question_number == "2")
-    q5_before = next(record for record in without_ocr.records if record.question_number == "5")
-    q2_after = next(record for record in with_ocr.records if record.question_number == "2")
-    q5_after = next(record for record in with_ocr.records if record.question_number == "5")
+    q2 = next(record for record in result.records if record.question_number == "2")
+    q5 = next(record for record in result.records if record.question_number == "5")
     page3 = layouts[2]
     page6 = layouts[5]
 
-    assert q2_before.question_subparts == ["a"]
-    assert q5_before.question_subparts == ["a"]
-    assert q2_after.question_subparts == ["a", "b"]
-    assert q5_after.question_subparts == ["a", "b"]
-    assert q2_after.markscheme_mapping_status == "pass"
-    assert q5_after.markscheme_mapping_status == "pass"
-    assert page3.extraction_warning == "ocr_merged_sparse_lower_region"
-    assert page6.extraction_warning == "ocr_merged_sparse_lower_region"
+    assert q2.question_subparts == ["a", "b"]
+    assert q5.question_subparts == ["a", "b"]
+    assert q2.markscheme_mapping_status == "pass"
+    assert q5.markscheme_mapping_status == "pass"
+    assert page3.extraction_warning is None
+    assert page6.extraction_warning is None
     assert any(block.text.startswith("(b)") and block.bbox.y0 > 350 for block in page3.blocks)
     assert any(block.text.startswith("(b)") and block.bbox.y0 > 350 for block in page6.blocks)
 
@@ -332,7 +326,8 @@ def test_repo_n24_p32_degraded_math_text_exports_degraded_text_fidelity_and_topi
 
     assert q2.markscheme_mapping_status == "pass"
     assert q2.text_fidelity_status == "degraded"
-    assert "ocr_math_notation_degraded" in q2.text_fidelity_flags
+    assert "sparse_or_merged_question_text" in q2.text_fidelity_flags
+    assert "weak_extracted_text" in q2.text_fidelity_flags
     assert q2.topic_trust_status == "degraded_text"
     assert q2.scope_quality_status == "review"
     assert q2_json["notes"]["mapping_status"] == "pass"
@@ -423,7 +418,7 @@ def test_repo_newer_format_scope_cleanup_tightens_p51_scopes_upstream(tmp_path: 
     assert q6.markscheme_image
 
 
-def test_repo_n25_p51_missing_visible_part_exports_unusable_text_semantics(tmp_path: Path) -> None:
+def test_repo_n25_p51_recovered_visible_parts_export_clean_text_semantics(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -438,17 +433,21 @@ def test_repo_n25_p51_missing_visible_part_exports_unusable_text_semantics(tmp_p
     q1 = next(record for record in result.records if record.question_number == "1")
     q1_json = next(item for item in payload if item["question_number"] == "1")
 
-    assert q1.markscheme_failure_reason == "question_subparts_incomplete"
-    assert q1.scope_quality_status in {"clean", "review"}
-    assert q1.text_fidelity_status == "unusable"
-    assert "missing_visible_structure_in_text" in q1.text_fidelity_flags
-    assert q1.topic_trust_status == "review_required"
-    assert q1_json["notes"]["scope_quality_status"] in {"clean", "review"}
-    assert q1_json["notes"]["text_fidelity_status"] == "unusable"
-    assert "missing_visible_structure_in_text" in q1_json["notes"]["text_fidelity_flags"]
+    assert q1.question_subparts == ["a", "b", "c"]
+    assert q1.markscheme_subparts == ["a", "b", "c"]
+    assert q1.markscheme_mapping_status == "pass"
+    assert q1.validation_status == "review"
+    assert q1.scope_quality_status == "review"
+    assert q1.text_fidelity_status == "clean"
+    assert "missing_visible_structure_in_text" not in q1.text_fidelity_flags
+    assert q1.topic_trust_status == "normal"
+    assert q1_json["notes"]["mapping_status"] == "pass"
+    assert q1_json["notes"]["scope_quality_status"] == "review"
+    assert q1_json["notes"]["text_fidelity_status"] == "clean"
+    assert "missing_visible_structure_in_text" not in q1_json["notes"]["text_fidelity_flags"]
 
 
-def test_repo_n25_p51_structure_mismatch_reasons_beat_weak_anchor(tmp_path: Path) -> None:
+def test_repo_n25_p51_structure_mismatch_cases_now_recover_subparts(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -464,14 +463,14 @@ def test_repo_n25_p51_structure_mismatch_reasons_beat_weak_anchor(tmp_path: Path
     q1 = next(record for record in result.records if record.question_number == "1")
     q3 = next(record for record in result.records if record.question_number == "3")
 
-    assert q1.markscheme_failure_reason == "question_subparts_incomplete"
-    assert "weak_question_anchor" not in {q1.markscheme_failure_reason}
-    assert q1.question_subparts == ["a"]
+    assert q1.markscheme_mapping_status == "pass"
+    assert "weak_question_anchor" not in q1.validation_flags
+    assert q1.question_subparts == ["a", "b", "c"]
     assert q1.markscheme_subparts == ["a", "b", "c"]
 
-    assert q3.markscheme_failure_reason == "question_subparts_incomplete"
-    assert "weak_question_anchor" not in {q3.markscheme_failure_reason}
-    assert q3.question_subparts == ["a"]
+    assert q3.markscheme_mapping_status == "pass"
+    assert "weak_question_anchor" not in q3.validation_flags
+    assert q3.question_subparts == ["a", "b"]
     assert q3.markscheme_subparts == ["a", "b"]
 
 
@@ -497,8 +496,9 @@ def test_repo_n25_p51_scope_cleanup_changes_ugly_cases_measurably(tmp_path: Path
     assert q2.question_structure_detected.get("contamination_detected") is not True
     assert "annual salaries" not in q2.combined_question_text
 
-    assert q3.markscheme_mapping_status == "fail"
-    assert q3.markscheme_failure_reason == "question_subparts_incomplete"
+    assert q3.markscheme_mapping_status == "pass"
+    assert q3.question_subparts == ["a", "b"]
+    assert q3.markscheme_subparts == ["a", "b"]
     assert "question_scope_contaminated" not in q3.validation_flags
     assert q3.question_structure_detected.get("contamination_detected") is not True
     assert "marbles chosen" not in q3.combined_question_text
@@ -564,9 +564,9 @@ def test_repo_newer_format_shaky_pass_gets_stricter_validation_without_hurting_c
     q4_p51 = next(record for record in p51.records if record.question_number == "4")
 
     assert q4_p53.markscheme_mapping_status == "pass"
-    assert q4_p53.validation_status == "fail"
-    assert "polluted_pass_requires_review" in q4_p53.validation_flags
-    assert q4_p53.question_crop_confidence == "low"
+    assert q4_p53.validation_status == "review"
+    assert "polluted_pass_requires_review" not in q4_p53.validation_flags
+    assert q4_p53.question_crop_confidence == "high"
     assert q4_p53.question_structure_detected.get("contamination_detected") is not True
 
     for record in [q1_p53, q2_p55, q3_p55]:
@@ -579,9 +579,8 @@ def test_repo_newer_format_shaky_pass_gets_stricter_validation_without_hurting_c
     assert q2_p51.validation_status == "review"
     assert "polluted_pass_requires_review" not in q2_p51.validation_flags
 
-    assert q3_p51.markscheme_mapping_status == "fail"
-    assert q3_p51.validation_status == "fail"
-    assert q3_p51.markscheme_failure_reason == "question_subparts_incomplete"
+    assert q3_p51.markscheme_mapping_status == "pass"
+    assert q3_p51.validation_status == "review"
     assert "polluted_pass_requires_review" not in q3_p51.validation_flags
 
     assert q4_p51.markscheme_mapping_status == "fail"
@@ -608,7 +607,40 @@ def test_repo_j24_p13_q3_starts_at_real_prompt_not_answer_space_junk(tmp_path: P
     assert q3.combined_question_text.startswith("3")
     assert "The diagram shows a sector of a circle" in q3.combined_question_text
     assert "................................" not in q3.combined_question_text[:180]
-    assert q3.markscheme_failure_reason == "question_subparts_incomplete"
+    assert q3.question_subparts == ["a", "b"]
+    assert q3.markscheme_mapping_status == "pass"
+    assert q3.validation_status == "pass"
+
+
+def test_repo_j21_p11_reconstructs_powers_and_stacked_trig_fractions(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    pytest.importorskip("PIL")
+
+    if not REPO_J21_P11_QP.exists() or not REPO_J21_P11_MS.exists():
+        pytest.skip("Repo June 2021 P11 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_J21_P11_QP, config, mark_scheme_pdf=REPO_J21_P11_MS)
+
+    q3 = next(record for record in result.records if record.question_number == "3")
+    q7 = next(record for record in result.records if record.question_number == "7")
+
+    assert "(3 -2x)^{5} in ascending powers" in q3.combined_question_text
+    assert "(4 + x)^{2}(3 -2x)^{5}" in q3.combined_question_text
+    assert q3.validation_status == "pass"
+    assert q3.markscheme_mapping_status == "pass"
+    assert "math_corruption_suspected" not in q3.extraction_quality_flags
+    assert "polluted_pass_requires_review" not in q3.validation_flags
+
+    assert "(1 -2 sin^{2} θ)/(1 -sin^{2} θ)" in q7.combined_question_text
+    assert "2 tan^{4} θ" in q7.combined_question_text
+    assert q7.validation_status == "pass"
+    assert q7.markscheme_mapping_status == "pass"
+    assert "math_corruption_suspected" not in q7.extraction_quality_flags
+    assert "polluted_pass_requires_review" not in q7.validation_flags
 
 
 def test_repo_n25_p55_q4_recovers_full_whole_question_scope(tmp_path: Path) -> None:
@@ -745,11 +777,12 @@ def test_repo_n24_p12_mismatch_is_localized_after_rescan(tmp_path: Path) -> None
     assert first.paper_total_status == "mismatch_after_rescan"
     assert first.rescan_triggered is True
     assert first.rescan_result == "no_improvement"
-    assert set(first.paper_total_focus_questions) >= {"1", "5", "7"}
-    assert 10 in first.paper_total_focus_pages
+    assert set(first.paper_total_focus_questions) >= {"1", "3", "5"}
+    assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6, 7, 8}
     assert focus_records
     assert any(record.question_number == "1" and "question_scope_contaminated" in record.paper_total_focus_reason for record in focus_records)
-    assert any(record.question_number == "7" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "3" and "anchor_or_boundary" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "5" and "question_scope_contaminated" in record.paper_total_focus_reason for record in focus_records)
 
 
 def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(tmp_path: Path) -> None:

@@ -1,4 +1,5 @@
-from exam_bank.pdf_extract import _group_spans_into_visual_lines, _line_text_from_spans
+from exam_bank.config import AppConfig
+from exam_bank.pdf_extract import _extract_text_blocks, _group_spans_into_visual_lines, _line_text_from_spans
 
 
 def span(text: str, x0: float, y0: float, x1: float, y1: float, size: float = 10) -> dict:
@@ -153,3 +154,175 @@ def test_line_text_repairs_joined_pdf_words_with_capital_boundary() -> None:
 
     assert len(lines) == 1
     assert _line_text_from_spans(lines[0]) == "valueof Express R"
+
+
+def test_line_text_attaches_exponent_after_pdf_parenthesis_glyph() -> None:
+    raw_order = [
+        span("(", 50, 10, 54, 28),
+        span("3", 54, 10, 60, 20),
+        span("-", 61, 10, 66, 20),
+        span("2x", 68, 10, 80, 20),
+        span(")", 80, 10, 84, 28),
+        span("5", 84, 7, 89, 14, size=7),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=6)
+
+    assert len(lines) == 1
+    assert _line_text_from_spans(lines[0]) == "(3 - 2x)^{5}"
+
+
+def test_line_text_repairs_pdf_control_parenthesis_before_exponent_detection() -> None:
+    raw_order = [
+        span("\x00", 50, 10, 54, 28),
+        span("3", 54, 10, 60, 20),
+        span("-", 61, 10, 66, 20),
+        span("2x", 68, 10, 80, 20),
+        span("\x01", 80, 10, 84, 28),
+        span("5", 84, 7, 89, 14, size=7),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=6)
+
+    assert len(lines) == 1
+    assert _line_text_from_spans(lines[0]) == "(3 - 2x)^{5}"
+
+
+def test_line_text_reconstructs_stacked_trig_fraction() -> None:
+    raw_order = [
+        span("tan", 50, 10, 66, 20),
+        span("x", 66, 10, 72, 20),
+        span("+", 73, 10, 78, 20),
+        span("sin", 80, 10, 96, 20),
+        span("x", 96, 10, 102, 20),
+        span("tan", 50, 26, 66, 36),
+        span("x", 66, 26, 72, 36),
+        span("-", 73, 26, 78, 36),
+        span("sin", 80, 26, 96, 36),
+        span("x", 96, 26, 102, 36),
+        span("=", 110, 18, 116, 28),
+        span("k", 120, 18, 126, 28),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=16)
+
+    assert len(lines) == 1
+    assert _line_text_from_spans(lines[0]) == "(tan x + sin x)/(tan x - sin x) = k"
+
+
+def test_line_text_keeps_prose_span_out_of_stacked_fraction() -> None:
+    raw_order = [
+        span("7 ", 49.6, 73.2, 58.3, 84.7),
+        span("(a) Prove the identity tan", 72.3, 73.2, 195.3, 93.8),
+        span("tan", 183.4, 67.1, 197.4, 78.6),
+        span("i", 199.0, 67.9, 204.9, 78.4),
+        span("+", 206.5, 67.1, 214.3, 78.6),
+        span("7", 215.9, 67.1, 221.6, 78.6),
+        span("i", 201.1, 83.1, 207.0, 93.6),
+        span("-", 208.6, 82.3, 216.4, 93.8),
+        span("3", 218.0, 82.3, 223.7, 93.8),
+        span(".", 330.9, 73.2, 336.7, 84.7),
+        span("[3]", 532.3, 73.2, 548.6, 84.7),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=16)
+    text = _line_text_from_spans(lines[0])
+
+    assert "(tani + 7)/(i - 3)" in text
+    assert "/((a)" not in text
+
+
+def test_line_text_does_not_reconstruct_derivative_prompt_as_fraction() -> None:
+    raw_order = [
+        span("(a) Express x", 72.3, 95.4, 146.8, 113.4),
+        span("d", 135.9, 87.5, 141.7, 99.0),
+        span("y", 141.7, 87.5, 146.8, 99.0),
+        span("d", 135.9, 101.9, 141.7, 113.4),
+        span("as a simplified fraction", 148.4, 95.4, 260.0, 106.9),
+        span("[4]", 532.3, 95.4, 545.7, 106.9),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=16)
+    text = _line_text_from_spans(lines[0])
+
+    assert "/" not in text
+    assert "(dy)/((a)" not in text
+
+
+def test_line_text_does_not_reconstruct_superscripts_as_fraction() -> None:
+    raw_order = [
+        span("1 ", 49.6, 72.1, 58.3, 83.6),
+        span("(a) Expand ", 72.3, 72.1, 133.0, 83.6),
+        span("b", 133.4, 71.9, 137.9, 83.7),
+        span("2", 137.5, 72.1, 143.2, 83.6),
+        span("-", 144.8, 72.1, 152.6, 83.6),
+        span("1", 155.5, 69.5, 159.6, 77.6, size=8.1),
+        span("2", 155.5, 78.8, 159.6, 86.8, size=8.1),
+        span("x", 161.3, 72.1, 166.4, 83.6),
+        span("l", 166.1, 71.9, 170.6, 83.7),
+        span("6", 170.0, 64.7, 174.1, 72.8, size=8.1),
+        span(" in ascending powers of x", 175.2, 72.1, 290.0, 83.6),
+        span("[3]", 532.3, 72.1, 545.7, 83.6),
+    ]
+
+    lines = _group_spans_into_visual_lines(raw_order, y_tolerance=16)
+
+    assert "/" not in _line_text_from_spans(lines[0])
+
+
+def test_extract_text_blocks_drops_tall_margin_furniture_before_grouping() -> None:
+    page = FakePage(
+        [
+            span("DO NOT WRITE IN THIS MARGIN " * 5, 6, 32, 14, 812),
+            span("(c) Make two comparisons between the times for the two teams.", 72, 505, 377, 517),
+        ]
+    )
+
+    blocks = _extract_text_blocks(page, 1, AppConfig())
+
+    assert len(blocks) == 1
+    assert blocks[0].text == "(c) Make two comparisons between the times for the two teams."
+    assert blocks[0].bbox.y0 == 505
+
+
+def test_extract_text_blocks_drops_control_artifact_runs_before_parenthesis_repair() -> None:
+    page = FakePage(
+        [
+            span("1 Find E(X). [2]", 72, 90, 180, 102),
+            span(",\x01\x01\x01\x01\x01\x01\x01\x01\x05,", 210, 92, 280, 104),
+            span("\x00", 72, 130, 76, 148),
+            span("x", 76, 130, 82, 142),
+            span("\x01", 82, 130, 86, 148),
+            span("2", 86, 127, 90, 135, size=7),
+        ]
+    )
+
+    blocks = _extract_text_blocks(page, 1, AppConfig())
+    text = "\n".join(block.text for block in blocks)
+
+    assert "))))" not in text
+    assert "(x)^{2}" in text
+
+
+class FakeRect:
+    width = 595
+    height = 842
+
+
+class FakePage:
+    rect = FakeRect()
+    rotation = 0
+
+    def __init__(self, spans: list[dict]) -> None:
+        self.spans = spans
+
+    def get_text(self, kind: str) -> dict:
+        assert kind == "dict"
+        return {
+            "blocks": [
+                {
+                    "type": 0,
+                    "lines": [{"spans": [span]} for span in self.spans],
+                }
+            ]
+        }
