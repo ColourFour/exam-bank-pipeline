@@ -83,7 +83,89 @@ def extract_pdf_layout(pdf_path: str | Path, config: AppConfig, use_ocr: bool | 
                 )
             )
 
-    return layouts
+    return _normalize_encoded_digit_text(layouts)
+
+
+def _normalize_encoded_digit_text(layouts: list[PageLayout]) -> list[PageLayout]:
+    digit_map = _encoded_digit_translation_from_page_numbers(layouts)
+    if not digit_map:
+        return layouts
+
+    normalized_layouts: list[PageLayout] = []
+    for layout in layouts:
+        blocks = [
+            TextBlock(
+                page_number=block.page_number,
+                text=_normalize_encoded_digit_block_text(block.text, digit_map),
+                bbox=block.bbox,
+                source=block.source,
+                confidence=block.confidence,
+                font_size=block.font_size,
+                font_name=block.font_name,
+                is_bold=block.is_bold,
+            )
+            for block in layout.blocks
+        ]
+        normalized_layouts.append(
+            PageLayout(
+                page_number=layout.page_number,
+                width=layout.width,
+                height=layout.height,
+                blocks=blocks,
+                graphics=layout.graphics,
+                text_source=layout.text_source,
+                extraction_warning=layout.extraction_warning,
+            )
+        )
+    return normalized_layouts
+
+
+def _encoded_digit_translation_from_page_numbers(layouts: list[PageLayout]) -> dict[str, str]:
+    assignments: dict[str, set[str]] = defaultdict(set)
+    for layout in layouts:
+        expected = str(layout.page_number)
+        if layout.page_number <= 1:
+            continue
+        for block in layout.blocks:
+            if not (260 <= block.bbox.x0 <= 330 and 28 <= block.bbox.y0 <= 46):
+                continue
+            token = "".join(block.text.split())
+            if not token or token == expected or token.isdigit() or len(token) != len(expected):
+                continue
+            for char, digit in zip(token, expected):
+                if char != digit:
+                    assignments[char].add(digit)
+
+    digit_map = {
+        char: next(iter(digits))
+        for char, digits in assignments.items()
+        if len(digits) == 1 and not char.isdigit()
+    }
+    if len(set(digit_map.values())) < 3:
+        return {}
+    return digit_map
+
+
+_ENCODED_DIGIT_SEPARATOR_CHARS = {"\x81", "\x82", "{", "~"}
+
+
+def _normalize_encoded_digit_block_text(text: str, digit_map: dict[str, str]) -> str:
+    compact = "".join(text.split())
+    if compact and len(compact) <= 3 and all(char.isdigit() or char in digit_map for char in compact):
+        return text.translate(str.maketrans(digit_map))
+
+    prefix: list[str] = []
+    index = 0
+    while index < len(text) and (text[index].isdigit() or text[index] in digit_map):
+        prefix.append(digit_map.get(text[index], text[index]))
+        index += 1
+    if not prefix:
+        return text
+    if index < len(text) and text[index] not in _ENCODED_DIGIT_SEPARATOR_CHARS and not text[index].isspace():
+        return text
+
+    separator = " " if index < len(text) and text[index] in _ENCODED_DIGIT_SEPARATOR_CHARS else ""
+    return "".join(prefix) + separator + text[index + len(separator) :]
 
 
 def _extract_text_blocks(page: Any, page_number: int, config: AppConfig) -> list[TextBlock]:

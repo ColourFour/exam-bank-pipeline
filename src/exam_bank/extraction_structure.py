@@ -5,6 +5,8 @@ import re
 
 from .config import AppConfig
 from .models import BoundingBox, PageLayout, QuestionSpan, TextBlock
+from .question_detection_layout import distance_to_box as _distance_to_box
+from .question_detection_layout import looks_like_diagram_axis_or_label_text as _shared_looks_like_diagram_axis_or_label_text
 
 
 _PART_LINE_RE = re.compile(
@@ -16,12 +18,6 @@ _MATH_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 _SUSPICIOUS_SYMBOL_RUN_RE = re.compile(r"[=<>^/*_]{4,}|[?�]{3,}|(?:[A-Za-z0-9][^A-Za-z0-9\s]){4,}")
-_SIMPLE_DIAGRAM_LABEL_RE = re.compile(
-    r"^(?:[A-Z](?:\^\{[′']\}|[′'])?(?:\s+[A-Z](?:\^\{[′']\}|[′'])?){0,4}|[xyXY]|θ|π|"
-    r"\d+(?:\.\d+)?\s*(?:cm|mm|m|kg|rad)|\d+(?:\.\d+)?°?)$"
-)
-
-
 @dataclass(frozen=True)
 class StructuredQuestionText:
     body_text_raw: str
@@ -120,9 +116,9 @@ def _looks_like_diagram_text(line: _LineItem, layout: PageLayout, span: Question
     if _PART_LINE_RE.match(cleaned):
         return False
 
-    near_graphic = any(_distance_to_box(line.bbox, graphic) <= 26 for graphic in layout.graphics)
+    near_graphic = any(_distance_to_box(line.bbox, graphic) <= 32 for graphic in layout.graphics)
     short = len(cleaned) <= 16 and len(cleaned.split()) <= 4
-    simple_label = bool(_SIMPLE_DIAGRAM_LABEL_RE.match(cleaned))
+    simple_label = _looks_like_diagram_axis_or_label_text(cleaned)
     sentence_like = bool(re.search(r"\b(the|find|show|calculate|solve|given|diagram)\b", cleaned, re.IGNORECASE))
 
     if near_graphic and short and not sentence_like:
@@ -146,7 +142,7 @@ def _split_question_anchor_diagram_label(
     match = re.match(rf"^\s*({re.escape(span.question_number)})\s+(.+?)\s*$", cleaned)
     if not match:
         return None
-    if not any(_distance_to_box(line.bbox, graphic) <= 26 for graphic in layout.graphics):
+    if not any(_distance_to_box(line.bbox, graphic) <= 32 for graphic in layout.graphics):
         return None
     diagram_tail = match.group(2)
     if not _looks_like_diagram_axis_or_label_text(diagram_tail):
@@ -158,23 +154,7 @@ def _looks_like_diagram_axis_or_label_text(text: str) -> bool:
     cleaned = _normalize_light(text)
     if not cleaned:
         return False
-    if _SIMPLE_DIAGRAM_LABEL_RE.match(cleaned):
-        return True
-    if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){2,}[xyXY]?", cleaned):
-        return True
-    if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){0,3}[xy]\s*=\s*[fg]\(?x\)?(?:\s*-?\d+(?:\.\d+)?)?", cleaned, re.IGNORECASE):
-        return True
-    if re.fullmatch(r"\d+_\{\d+\}π", cleaned):
-        return True
-    if re.fullmatch(r"(?:(?:Bag|Box)\s+[A-Z](?:\s+|$)){2,}\d?", cleaned):
-        return True
-
-    alpha_words = re.findall(r"[A-Za-z]{2,}", cleaned)
-    non_unit_words = [word for word in alpha_words if word.lower() not in {"cm", "mm", "kg", "rad"}]
-    has_diagram_symbols = bool(re.search(r"[0-9=π]|[A-Z]", cleaned))
-    if not non_unit_words and has_diagram_symbols:
-        return True
-    return False
+    return _shared_looks_like_diagram_axis_or_label_text(cleaned)
 
 
 def _body_already_has_question_anchor(body_lines: list[str], candidate: str) -> bool:
@@ -198,7 +178,7 @@ def _is_duplicate_question_number_diagram_label(
         return False
     if line.bbox.x0 <= config.detection.question_start_max_x + 40:
         return False
-    return any(_distance_to_box(line.bbox, graphic) <= 26 for graphic in layout.graphics)
+    return any(_distance_to_box(line.bbox, graphic) <= 32 for graphic in layout.graphics)
 
 
 def _looks_like_answer_filler_line(text: str) -> bool:
@@ -458,9 +438,3 @@ def _layout_by_number(layouts: list[PageLayout], page_number: int) -> PageLayout
         if layout.page_number == page_number:
             return layout
     raise KeyError(f"Missing layout for page {page_number}")
-
-
-def _distance_to_box(a: BoundingBox, b: BoundingBox) -> float:
-    dx = max(b.x0 - a.x1, a.x0 - b.x1, 0)
-    dy = max(b.y0 - a.y1, a.y0 - b.y1, 0)
-    return max(dx, dy)

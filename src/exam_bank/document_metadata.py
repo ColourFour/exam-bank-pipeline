@@ -147,10 +147,16 @@ def parse_internal_document_metadata(layouts: list[PageLayout]) -> DocumentMetad
 
 def reconcile_document_metadata(filename: DocumentMetadata, internal: DocumentMetadata) -> DocumentMetadata:
     warnings: list[str] = []
+    internal_has_strong_identity = any(
+        getattr(internal, field)
+        for field in ["syllabus", "year", "document_type", "component"]
+    )
 
     def choose(field: str) -> str:
         filename_value = getattr(filename, field)
         internal_value = getattr(internal, field)
+        if field in {"session", "original_session_label", "normalized_session_key"} and not internal_has_strong_identity:
+            return filename_value or internal_value
         if (
             internal_value
             and filename_value
@@ -169,7 +175,7 @@ def reconcile_document_metadata(filename: DocumentMetadata, internal: DocumentMe
         normalized_session_key=choose("normalized_session_key"),
         document_type=choose("document_type"),
         component=choose("component"),
-        source="internal" if any(getattr(internal, field) for field in ["syllabus", "year", "session", "document_type", "component"]) else "filename",
+        source="internal" if internal_has_strong_identity else "filename",
         warnings=tuple(warnings),
     )
 

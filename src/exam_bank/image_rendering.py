@@ -11,6 +11,7 @@ from .models import BoundingBox, PageLayout, QuestionSpan, RenderResult, TextBlo
 from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
 from .output_layout import question_image_output_path
+from .question_detection_layout import looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text
 from .question_detection import detect_question_anchor_candidates, extract_text_from_blocks, parse_question_start
 
 
@@ -665,6 +666,8 @@ def _segment_is_figure_label_only(segment: list[TextBlock], span: QuestionSpan, 
         return False
     if re.search(r"\[\d{1,2}\]", text):
         return False
+    if _looks_like_diagram_axis_or_label_text(text):
+        return True
     tokens = [token for token in re.split(r"\s+", text) if token]
     if not tokens or len(tokens) > 8 or len(text) > 24:
         return False

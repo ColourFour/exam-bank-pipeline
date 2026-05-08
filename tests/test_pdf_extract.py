@@ -40,6 +40,35 @@ def test_nearby_y_offsets_stay_on_same_visual_line() -> None:
     assert _line_text_from_spans(lines[0]) == "x + 1"
 
 
+def test_encoded_digit_normalization_uses_page_number_glyphs() -> None:
+    from exam_bank.models import BoundingBox, PageLayout, TextBlock
+    from exam_bank.pdf_extract import _normalize_encoded_digit_text
+
+    def text_block(page: int, text: str, x: float, y: float) -> TextBlock:
+        return TextBlock(page_number=page, text=text, bbox=BoundingBox(x, y, x + 30, y + 12))
+
+    layouts = [
+        PageLayout(page_number=2, width=612, height=792, blocks=[text_block(2, "t", 303, 36)]),
+        PageLayout(page_number=3, width=612, height=792, blocks=[text_block(3, "\x90", 303, 36)]),
+        PageLayout(page_number=10, width=612, height=792, blocks=[text_block(10, "\x99\xf6", 300, 36)]),
+        PageLayout(
+            page_number=11,
+            width=612,
+            height=792,
+            blocks=[
+                text_block(11, "\x99\x99", 300, 36),
+                text_block(11, "\x99~First question prompt", 72, 60),
+                text_block(11, "t~Second question prompt", 72, 120),
+            ],
+        ),
+    ]
+
+    normalized = _normalize_encoded_digit_text(layouts)
+
+    assert normalized[3].blocks[1].text == "1 First question prompt"
+    assert normalized[3].blocks[2].text == "2 Second question prompt"
+
+
 from exam_bank.pdf_extract import _group_spans_into_visual_lines, _line_text_from_spans
 
 

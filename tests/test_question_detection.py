@@ -24,7 +24,13 @@ from exam_bank.mark_schemes import (
 )
 from exam_bank.models import BoundingBox, PageLayout, QuestionRecord, TextBlock
 from exam_bank.pipeline import _question_subparts_from_span, _question_subparts_from_text
-from exam_bank.question_detection import detect_question_spans, extract_marks_from_text, extract_question_total_from_text, parse_question_start
+from exam_bank.question_detection import (
+    _foreign_question_anchor,
+    detect_question_spans,
+    extract_marks_from_text,
+    extract_question_total_from_text,
+    parse_question_start,
+)
 
 
 def block(page: int, text: str, y: float, x: float = 50) -> TextBlock:
@@ -140,6 +146,36 @@ def test_detect_question_spans_does_not_false_split_single_question_spanning_pag
     assert len(spans) == 1
     assert spans[0].question_number == "6"
     assert "Hence determine the nature" in spans[0].combined_text
+
+
+def test_garbled_caie_cover_layout_is_skipped() -> None:
+    config = AppConfig()
+    cover_blocks = [
+        block(1, "3", 238, x=45),
+        block(1, "4", 247, x=45),
+        block(1, "1", 274, x=45),
+        block(1, "6", 284, x=45),
+        block(1, "7", 293, x=45),
+        block(1, "8", 302, x=45),
+        block(1, "candidate box", 139, x=79),
+        block(1, "paper title", 223, x=79),
+        block(1, "instructions", 335, x=79),
+        block(1, "answer all questions", 347, x=79),
+        block(1, "use black pen", 359, x=79),
+        block(1, "write your name", 372, x=79),
+        block(1, "do not use correction fluid", 384, x=79),
+        block(1, "do not write on bar codes", 396, x=79),
+    ]
+    layouts = [
+        PageLayout(page_number=1, width=612, height=792, blocks=cover_blocks),
+        PageLayout(page_number=2, width=612, height=792, blocks=[block(2, "1 First real question. [4]", 60, x=72)]),
+    ]
+
+    spans = detect_question_spans(layouts, Path("9231_w25_qp_31.pdf"), config)
+
+    assert len(spans) == 1
+    assert spans[0].question_number == "1"
+    assert spans[0].start_page == 2
 
 
 def test_detect_question_spans_preserves_lower_same_page_multipart_continuation() -> None:
@@ -562,6 +598,45 @@ def test_graph_axis_labels_do_not_pollute_structured_question_text() -> None:
     assert "-8 (y = g x)" not in structured.body_text_normalized
     assert any("y = g x" in line for line in structured.diagram_text)
     assert "g(x). [4]" in structured.body_text_normalized
+
+
+def test_numbered_graph_equation_label_is_not_foreign_question_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "5 y", 65),
+            block(1, "12", 99, x=190),
+            block(1, "10", 122, x=190),
+            block(1, "8 y = a cos(bx) + c", 143, x=195),
+            block(1, "6", 167, x=195),
+            block(1, "4", 190, x=195),
+            block(1, "2", 213, x=195),
+            block(1, "0 π 2π x", 236, x=195),
+            block(1, "The diagram shows part of the graph of y = a cos(bx) + c.", 305, x=72),
+            block(1, "(a) Find the values of the positive integers a, b and c. [3]", 340, x=72),
+            block(1, "(b) Determine the number of solutions shown by the graph. [2]", 543, x=72),
+        ],
+        graphics=[BoundingBox(160, 95, 420, 285)],
+    )
+
+    span = detect_question_spans([layout], Path("9709 Mathematics November 2021 Question paper  11.pdf"), config)[0]
+    structured = build_structured_question_text(span, [layout], config)
+
+    assert "question_scope_contaminated" not in span.validation_flags
+    assert span.structure_detected["contamination_indicators"]["foreign_question_anchors"] == []
+    assert "8 y = a cos(bx) + c" not in structured.body_text_normalized
+    assert "8 y = a cos(bx) + c" in structured.diagram_text
+
+
+def test_left_margin_numbered_equation_prompt_can_still_flag_foreign_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    bbox = BoundingBox(50, 160, 320, 174)
+
+    assert _foreign_question_anchor("6 y = x^2 for x > 0.", "5", config, bbox=bbox, layout=layout) == "6"
 
 
 def test_question_text_trims_answer_filler_after_terminal_mark() -> None:

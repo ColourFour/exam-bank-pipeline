@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 from .config import AppConfig
 from .models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, TextBlock
+from .question_detection_layout import (
+    line_position_supports_diagram_label as _line_position_supports_diagram_label,
+    looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text,
+)
 from .question_detection_furniture import (
     boilerplate_reason as _boilerplate_reason,
     is_answer_space_text as _is_answer_space_text,
@@ -33,6 +38,15 @@ RECOVERABLE_QUESTION_VALIDATION_FLAGS = {
     "likely_truncated_question_crop",
     "weak_question_anchor",
 }
+
+
+@dataclass(frozen=True)
+class _ValidationLine:
+    text: str
+    page_number: int
+    bbox: BoundingBox
+
+
 def detect_question_spans(layouts: list[PageLayout], source_pdf: str | Path, config: AppConfig) -> list[QuestionSpan]:
     max_question_number = _max_question_number_for_source(source_pdf, config)
     starts = detect_question_starts(layouts, config, source_pdf=source_pdf)
@@ -362,9 +376,9 @@ def _validate_span_blocks(
         flags.append("question_start_uncertain")
 
     for block in blocks[1:]:
-        if _foreign_question_anchor(block.first_line, start.question_number, config):
-            flags.append("possible_next_question_contamination")
         page = _layout_by_number(layouts, block.page_number)
+        if _foreign_question_anchor(block.first_line, start.question_number, config, bbox=block.bbox, layout=page):
+            flags.append("possible_next_question_contamination")
         if _is_footer_or_header_block(block, page, config) or _is_boilerplate_text(block.text):
             flags.append("header_footer_contamination")
 
@@ -455,6 +469,31 @@ def _is_cover_instruction_page(page: PageLayout) -> bool:
         "instructions" in lowered
         and "information" in lowered
         and ("you will need" in lowered or "answer all questions" in lowered)
+    ) or _is_garbled_caie_cover_layout(page)
+
+
+def _is_garbled_caie_cover_layout(page: PageLayout) -> bool:
+    if page.page_number != 1:
+        return False
+    title_or_candidate_blocks = [
+        block
+        for block in page.blocks
+        if 40 <= block.bbox.x0 <= 460 and 90 <= block.bbox.y0 <= 330
+    ]
+    instruction_like_blocks = [
+        block
+        for block in page.blocks
+        if 70 <= block.bbox.x0 <= 540 and 330 <= block.bbox.y0 <= 650
+    ]
+    left_number_blocks = [
+        block
+        for block in page.blocks
+        if block.bbox.x0 <= 65 and 200 <= block.bbox.y0 <= 325 and _clean_text_line(block.text).isdigit()
+    ]
+    return (
+        len(title_or_candidate_blocks) >= 6
+        and len(instruction_like_blocks) >= 6
+        and len(left_number_blocks) >= 3
     )
 
 
@@ -959,8 +998,9 @@ def _question_validation_flags(
     missing_internal_subparts = _missing_internal_subparts(subparts)
     subpart_sequence_gap = bool(missing_internal_subparts)
     contamination_detected, contamination_indicators = _question_scope_contamination(
-        text=text,
         start=start,
+        blocks=blocks,
+        layouts=layouts,
         review_flags=review_flags,
         config=config,
     )
@@ -1339,15 +1379,40 @@ def _prefix_candidate_has_context_overlap(candidate_text: str, existing_blocks: 
     return bool(candidate_tokens & context_tokens)
 
 
+def _validation_lines_from_blocks(blocks: list[TextBlock]) -> list[_ValidationLine]:
+    lines: list[_ValidationLine] = []
+    for block in sorted(blocks, key=lambda item: (item.page_number, item.bbox.y0, item.bbox.x0)):
+        raw_lines = [line for line in block.text.splitlines() if _clean_text_line(line)]
+        if not raw_lines:
+            continue
+        line_height = max(1.0, (block.bbox.y1 - block.bbox.y0) / max(1, len(raw_lines)))
+        for index, raw_line in enumerate(raw_lines):
+            text = _clean_text_line(raw_line)
+            if not text:
+                continue
+            y0 = block.bbox.y0 + index * line_height
+            y1 = min(block.bbox.y1, y0 + line_height)
+            lines.append(
+                _ValidationLine(
+                    text=text,
+                    page_number=block.page_number,
+                    bbox=BoundingBox(block.bbox.x0, y0, block.bbox.x1, y1),
+                )
+            )
+    return lines
+
+
 def _question_scope_contamination(
     *,
-    text: str,
     start: QuestionStart,
+    blocks: list[TextBlock],
+    layouts: list[PageLayout],
     review_flags: list[str],
     config: AppConfig,
 ) -> tuple[bool, dict[str, object]]:
-    normalized_lines = [_clean_text_line(line) for line in _strip_control_chars(text).replace("\u00a0", " ").splitlines()]
-    lines = [line for line in normalized_lines if line]
+    layout_by_page = {layout.page_number: layout for layout in layouts}
+    line_items = _validation_lines_from_blocks(blocks)
+    lines = [line.text for line in line_items if line.text]
 
     label_counts: dict[str, int] = {}
     duplicate_labels: list[str] = []
@@ -1373,10 +1438,20 @@ def _question_scope_contamination(
         if _is_boilerplate_text(line)
         or re.search(r"DO NOT WRITE IN THIS MARGIN|Turn over|write the question number", line, re.IGNORECASE)
     ]
+
+    def foreign_anchor_for_line(line: _ValidationLine) -> str | None:
+        return _foreign_question_anchor(
+            line.text,
+            start.question_number,
+            config,
+            bbox=line.bbox,
+            layout=layout_by_page.get(line.page_number),
+        )
+
     foreign_question_anchors = [
         anchor
-        for line in lines[1:]
-        if (anchor := _foreign_question_anchor(line, start.question_number, config))
+        for line in line_items[1:]
+        if (anchor := foreign_anchor_for_line(line))
     ]
     review_hint_flags = sorted(
         {
@@ -1388,12 +1463,12 @@ def _question_scope_contamination(
 
     suspicious_indices = {
         index
-        for index, line in enumerate(lines)
+        for index, line in enumerate(line_items)
         if line_labels[index] in duplicate_labels
-        or _is_answer_space_text(line)
-        or bool(re.search(r"(?:\.\s*){12,}|[._\-–—]{30,}", line))
-        or line in embedded_furniture
-        or _foreign_question_anchor(line, start.question_number, config)
+        or _is_answer_space_text(line.text)
+        or bool(re.search(r"(?:\.\s*){12,}|[._\-–—]{30,}", line.text))
+        or line.text in embedded_furniture
+        or foreign_anchor_for_line(line)
     }
     foreign_content_segments = 0
     foreign_content_examples: list[str] = []
@@ -1443,7 +1518,14 @@ def _question_scope_contamination(
     return contaminated, indicators
 
 
-def _foreign_question_anchor(line: str, current_question_number: str, config: AppConfig) -> str | None:
+def _foreign_question_anchor(
+    line: str,
+    current_question_number: str,
+    config: AppConfig,
+    *,
+    bbox: BoundingBox | None = None,
+    layout: PageLayout | None = None,
+) -> str | None:
     parsed = parse_question_start(line, config)
     if not parsed or parsed[0] == current_question_number:
         return None
@@ -1456,7 +1538,12 @@ def _foreign_question_anchor(line: str, current_question_number: str, config: Ap
         return None
     if _parsed_anchor_is_math_coefficient(line):
         return None
-    if _parsed_anchor_is_diagram_axis_or_quantity(line):
+    if _parsed_anchor_is_diagram_axis_or_quantity(line) and _line_position_supports_diagram_label(
+        text=_diagram_label_candidate_text(line),
+        bbox=bbox,
+        layout=layout,
+        config=config,
+    ):
         return None
     if parsed_number != current_number + 1 and not _line_resembles_question_prompt(line, parsed[0], config):
         return None
@@ -1479,6 +1566,8 @@ def _parsed_anchor_is_diagram_axis_or_quantity(line: str) -> bool:
     remainder = stripped[match.end() :].strip(" ).,:;-–—")
     if not remainder:
         return True
+    if _looks_like_diagram_axis_or_label_text(remainder):
+        return True
     if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){1,}[xyXY]?", remainder):
         return True
     if re.fullmatch(r"[xyXY]", remainder):
@@ -1494,6 +1583,15 @@ def _parsed_anchor_is_diagram_axis_or_quantity(line: str) -> bool:
     if digit_count and not non_unit_words:
         return True
     return False
+
+
+def _diagram_label_candidate_text(line: str) -> str:
+    stripped = _clean_text_line(line).replace("−", "-")
+    match = QUESTION_START_RE.match(stripped)
+    if not match:
+        return stripped
+    remainder = stripped[match.end() :].strip(" ).,:;-–—")
+    return remainder or stripped
 
 
 def _line_resembles_question_prompt(line: str, question_number: str, config: AppConfig) -> bool:

@@ -87,6 +87,32 @@ def test_reconcile_metadata_treats_november_and_octnov_as_compatible() -> None:
     assert reconciled.warnings == ()
 
 
+def test_reconcile_metadata_ignores_lone_internal_session_mismatch() -> None:
+    filename = DocumentMetadata(
+        syllabus="9231",
+        year="2025",
+        session="OctNov",
+        original_session_label="OctNov",
+        normalized_session_key="OctNov",
+        document_type="question_paper",
+        component="33",
+        source="filename",
+    )
+    internal = DocumentMetadata(
+        session="MayJune",
+        original_session_label="MayJune",
+        normalized_session_key="MayJune",
+        source="internal",
+    )
+
+    reconciled = reconcile_document_metadata(filename, internal)
+
+    assert reconciled.session == "OctNov"
+    assert reconciled.normalized_session_key == "OctNov"
+    assert reconciled.source == "filename"
+    assert reconciled.warnings == ()
+
+
 def test_folder_registry_classifies_and_pairs_companion_files(tmp_path: Path) -> None:
     qp12 = touch_pdf(tmp_path / "9709 Mathematics November 2025 Question Paper 12.pdf")
     ms12 = touch_pdf(tmp_path / "9709 Mathematics November 2025 Mark Scheme 12.pdf")
