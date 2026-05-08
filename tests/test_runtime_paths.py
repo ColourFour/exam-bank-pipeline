@@ -65,7 +65,17 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     parser = build_parser()
     action = parser._subparsers._group_actions[0]  # type: ignore[attr-defined]
 
-    assert set(action.choices) == {"process", "audit", "triage-sample", "triage-serve", "triage-compare"}
+    assert set(action.choices) == {
+        "process",
+        "audit",
+        "triage-sample",
+        "triage-serve",
+        "triage-compare",
+        "auto-triage-status",
+        "auto-triage-plan",
+        "auto-triage-compare",
+        "auto-triage-runbook",
+    }
     process_parser = action.choices["process"]
     process_options = {option for parser_action in process_parser._actions for option in parser_action.option_strings}
     assert "--enable-ocr" in process_options
@@ -91,6 +101,13 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     assert "--sample-size" in triage_options
     assert "--target" in triage_options
     assert "--seed" in triage_options
+
+    auto_plan_parser = action.choices["auto-triage-plan"]
+    auto_plan_options = {
+        option for parser_action in auto_plan_parser._actions for option in parser_action.option_strings
+    }
+    assert "--target-max-hard-failures" in auto_plan_options
+    assert "--handoff-root" in auto_plan_options
 
 
 def test_legacy_runtime_files_are_removed_or_archived() -> None:

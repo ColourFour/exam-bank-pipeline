@@ -5,6 +5,12 @@ import json
 from pathlib import Path
 
 from .audit import write_audit
+from .auto_triage import (
+    build_auto_triage_runbook,
+    compare_auto_triage_iteration,
+    create_auto_triage_plan,
+    write_status_report,
+)
 from .config import AppConfig, load_config
 from .pipeline import PipelineResult, process_inputs
 from .triage import ISSUE_SET_ALL_NON_READY, ISSUE_SET_HARD_FAILURES, compare_iteration, create_triage_iteration, serve_iteration
@@ -91,6 +97,105 @@ def build_parser() -> argparse.ArgumentParser:
     triage_compare.add_argument("--current", default="output/json/question_bank.json", help="Current question_bank.json.")
     triage_compare.add_argument("--output", default="", help="Optional path to write the comparison report JSON.")
     triage_compare.set_defaults(func=cmd_triage_compare)
+
+    auto_status = subparsers.add_parser(
+        "auto-triage-status",
+        help="Report corpus health metrics used by the automated triage loop.",
+    )
+    auto_status.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    auto_status.add_argument("--output", default="", help="Optional path to write the status JSON report.")
+    auto_status.set_defaults(func=cmd_auto_triage_status)
+
+    auto_plan = subparsers.add_parser(
+        "auto-triage-plan",
+        help="Create the next evidence-gated auto-triage agent handoff iteration.",
+    )
+    auto_plan.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    auto_plan.add_argument(
+        "--handoff-root",
+        default="agent_handoffs/auto_triage",
+        help="Root folder for auto-triage handoff iterations.",
+    )
+    auto_plan.add_argument(
+        "--target-max-hard-failures",
+        type=int,
+        required=True,
+        help="Stop planning when hard failures are at or below this count.",
+    )
+    auto_plan.add_argument("--sample-size", type=int, default=30, help="Triage sample size for the selected target.")
+    auto_plan.add_argument("--seed", type=int, default=1, help="Deterministic triage sample seed.")
+    auto_plan.add_argument(
+        "--triage-root",
+        default="",
+        help="Output triage root. Defaults to the triage folder beside the input output root.",
+    )
+    auto_plan.add_argument(
+        "--candidate-output",
+        default="output_ocr_candidate",
+        help="Output folder to use in generated OCR rerun commands.",
+    )
+    auto_plan.set_defaults(func=cmd_auto_triage_plan)
+
+    auto_compare = subparsers.add_parser(
+        "auto-triage-compare",
+        help="Compare a completed auto-triage iteration and write an acceptance decision.",
+    )
+    auto_compare.add_argument("--iteration", required=True, help="Path to agent_handoffs/auto_triage/iteration_###.")
+    auto_compare.add_argument("--baseline-triage", required=True, help="Frozen output/triage/iteration_### baseline.")
+    auto_compare.add_argument("--current", default="output/json/question_bank.json", help="Current question_bank.json.")
+    auto_compare.add_argument("--output", default="", help="Optional path to write the triage comparison JSON.")
+    auto_compare.add_argument(
+        "--test-status",
+        choices=["pass", "fail", "unknown"],
+        default="unknown",
+        help="Full pytest result. Accepted decisions require pass.",
+    )
+    auto_compare.add_argument(
+        "--max-worsened-records",
+        type=int,
+        default=0,
+        help="Maximum allowed worsened_records sample count.",
+    )
+    auto_compare.add_argument(
+        "--target-material-decrease",
+        type=int,
+        default=1,
+        help="Minimum selected-target issue decrease that counts as material.",
+    )
+    auto_compare.add_argument(
+        "--max-hard-failure-increase",
+        type=int,
+        default=0,
+        help="Allowed hard-failure increase before rejection.",
+    )
+    auto_compare.add_argument(
+        "--max-status-regression",
+        type=int,
+        default=10,
+        help="Allowed increase in each broad bad-status bucket before rejection.",
+    )
+    auto_compare.set_defaults(func=cmd_auto_triage_compare)
+
+    auto_runbook = subparsers.add_parser(
+        "auto-triage-runbook",
+        help="Print the next commands for an auto-triage iteration.",
+    )
+    auto_runbook.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    auto_runbook.add_argument(
+        "--handoff-root",
+        default="agent_handoffs/auto_triage",
+        help="Root folder for auto-triage handoff iterations.",
+    )
+    auto_runbook.add_argument("--iteration", default="", help="Auto-triage handoff iteration path or name.")
+    auto_runbook.add_argument("--baseline-triage", default="", help="Frozen output/triage iteration path.")
+    auto_runbook.add_argument(
+        "--candidate-output",
+        default="output_ocr_candidate",
+        help="Output folder for generated OCR rerun commands.",
+    )
+    auto_runbook.add_argument("--sample-size", type=int, default=30, help="Fallback sample size.")
+    auto_runbook.add_argument("--seed", type=int, default=1, help="Fallback triage sample seed.")
+    auto_runbook.set_defaults(func=cmd_auto_triage_runbook)
     return parser
 
 
@@ -149,6 +254,59 @@ def cmd_triage_compare(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_auto_triage_status(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    report = write_status_report(args.input, output)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_auto_triage_plan(args: argparse.Namespace) -> int:
+    triage_root = Path(args.triage_root) if args.triage_root else None
+    report = create_auto_triage_plan(
+        args.input,
+        handoff_root=args.handoff_root,
+        target_max_hard_failures=args.target_max_hard_failures,
+        sample_size=args.sample_size,
+        seed=args.seed,
+        triage_root=triage_root,
+        candidate_output=args.candidate_output,
+    )
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_auto_triage_compare(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    report = compare_auto_triage_iteration(
+        iteration=args.iteration,
+        baseline_triage=args.baseline_triage,
+        current_path=args.current,
+        output_path=output,
+        test_status=args.test_status,
+        max_worsened_records=args.max_worsened_records,
+        target_material_decrease=args.target_material_decrease,
+        max_hard_failure_increase=args.max_hard_failure_increase,
+        max_status_regression=args.max_status_regression,
+    )
+    print(json.dumps(report["decision"], indent=2, ensure_ascii=False))
+    return 1 if report["decision"]["decision"] == "rejected" else 0
+
+
+def cmd_auto_triage_runbook(args: argparse.Namespace) -> int:
+    report = build_auto_triage_runbook(
+        input_path=args.input,
+        handoff_root=args.handoff_root,
+        iteration=Path(args.iteration) if args.iteration else None,
+        baseline_triage=Path(args.baseline_triage) if args.baseline_triage else None,
+        candidate_output=args.candidate_output,
+        sample_size=args.sample_size,
+        seed=args.seed,
+    )
+    print(_runbook_text(report))
+    return 0
+
+
 def _configure_runtime_paths(config: AppConfig, input_root: Path, output_root: Path) -> None:
     config.output.apply_root(output_root)
 
@@ -174,6 +332,30 @@ def _print_result(result: PipelineResult) -> None:
     print(f"Processed papers: {len(papers)}")
     print(f"Output root: {result.output_root}")
     print(f"JSON: {result.json_path}")
+
+
+def _runbook_text(report: dict[str, object]) -> str:
+    commands = report.get("commands") if isinstance(report.get("commands"), dict) else {}
+    selected_target = report.get("selected_target") if isinstance(report.get("selected_target"), dict) else {}
+    lines = [
+        f"Iteration: {report.get('iteration')}",
+        f"Baseline triage: {report.get('baseline_triage')}",
+        f"Selected target: {selected_target.get('issue', 'unknown')}",
+        "",
+        "Next commands:",
+    ]
+    for label in [
+        "triage_sample",
+        "triage_serve",
+        "full_ocr_rerun",
+        "ocr_verification",
+        "full_tests",
+        "triage_comparison",
+    ]:
+        command = commands.get(label)
+        if command:
+            lines.extend(["", f"{label}:", str(command)])
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":
