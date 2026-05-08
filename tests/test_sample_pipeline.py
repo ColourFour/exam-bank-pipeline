@@ -405,8 +405,9 @@ def test_repo_newer_format_scope_cleanup_tightens_p51_scopes_upstream(tmp_path: 
     assert q3.question_structure_detected.get("contamination_detected") is not True
     assert q4.question_subparts == ["a", "b"]
     assert q4.markscheme_subparts == ["a", "b"]
-    assert q4.markscheme_failure_reason == "question_scope_contaminated"
-    assert "question_scope_contaminated" in q4.validation_flags
+    assert q4.markscheme_mapping_status == "pass"
+    assert "question_scope_contaminated" not in q4.validation_flags
+    assert q4.question_structure_detected.get("contamination_detected") is not True
     assert q6.markscheme_subparts == ["a", "b", "c", "d"]
     assert q6.question_subparts in (["a", "c", "d"], ["a", "b", "c", "d"])
     if q6.markscheme_mapping_status == "fail":
@@ -503,9 +504,9 @@ def test_repo_n25_p51_scope_cleanup_changes_ugly_cases_measurably(tmp_path: Path
     assert q3.question_structure_detected.get("contamination_detected") is not True
     assert "marbles chosen" not in q3.combined_question_text
 
-    assert q4.markscheme_mapping_status == "fail"
-    assert q4.markscheme_failure_reason == "question_scope_contaminated"
-    assert "question_scope_contaminated" in q4.validation_flags or q4.question_structure_detected.get("contamination_detected") is True
+    assert q4.markscheme_mapping_status == "pass"
+    assert "question_scope_contaminated" not in q4.validation_flags
+    assert q4.question_structure_detected.get("contamination_detected") is not True
 
 
 def test_repo_newer_format_clean_passes_remain_non_contaminated(tmp_path: Path) -> None:
@@ -583,10 +584,10 @@ def test_repo_newer_format_shaky_pass_gets_stricter_validation_without_hurting_c
     assert q3_p51.validation_status == "review"
     assert "polluted_pass_requires_review" not in q3_p51.validation_flags
 
-    assert q4_p51.markscheme_mapping_status == "fail"
-    assert q4_p51.validation_status == "fail"
-    assert q4_p51.markscheme_failure_reason == "question_scope_contaminated"
-    assert "question_scope_contaminated" in q4_p51.validation_flags
+    assert q4_p51.markscheme_mapping_status == "pass"
+    assert q4_p51.validation_status == "review"
+    assert "question_scope_contaminated" not in q4_p51.validation_flags
+    assert q4_p51.question_structure_detected.get("contamination_detected") is not True
 
 
 def test_repo_j24_p13_q3_starts_at_real_prompt_not_answer_space_junk(tmp_path: Path) -> None:
@@ -780,9 +781,9 @@ def test_repo_n24_p12_mismatch_is_localized_after_rescan(tmp_path: Path) -> None
     assert set(first.paper_total_focus_questions) >= {"1", "3", "5"}
     assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6, 7, 8}
     assert focus_records
-    assert any(record.question_number == "1" and "question_scope_contaminated" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "1" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
     assert any(record.question_number == "3" and "anchor_or_boundary" in record.paper_total_focus_reason for record in focus_records)
-    assert any(record.question_number == "5" and "question_scope_contaminated" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "5" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
 
 
 def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(tmp_path: Path) -> None:
@@ -806,10 +807,10 @@ def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(t
     assert first.paper_total_before_rescan == 50
     assert first.paper_total_after_rescan == 50
     assert first.rescan_triggered is False
-    assert q4.markscheme_failure_reason == "question_scope_contaminated"
-    assert q4.validation_status == "fail"
-    assert q4.scope_quality_status == "fail"
-    assert q4.topic_trust_status == "review_required"
-    assert "question_scope_contaminated" in q4.validation_flags
-    assert q7.markscheme_failure_reason == "question_scope_contaminated"
-    assert q7.validation_status == "fail"
+    assert q4.markscheme_mapping_status == "pass"
+    assert q4.validation_status == "review"
+    assert q4.scope_quality_status == "review"
+    assert "question_scope_contaminated" not in q4.validation_flags
+    assert q7.markscheme_mapping_status == "pass"
+    assert q7.validation_status == "review"
+    assert "question_scope_contaminated" not in q7.validation_flags

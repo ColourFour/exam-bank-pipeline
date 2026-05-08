@@ -1447,7 +1447,18 @@ def _foreign_question_anchor(line: str, current_question_number: str, config: Ap
     parsed = parse_question_start(line, config)
     if not parsed or parsed[0] == current_question_number:
         return None
+    try:
+        parsed_number = int(parsed[0])
+        current_number = int(current_question_number)
+    except ValueError:
+        return None
+    if parsed_number <= current_number:
+        return None
     if _parsed_anchor_is_math_coefficient(line):
+        return None
+    if _parsed_anchor_is_diagram_axis_or_quantity(line):
+        return None
+    if parsed_number != current_number + 1 and not _line_resembles_question_prompt(line, parsed[0], config):
         return None
     return parsed[0]
 
@@ -1458,6 +1469,47 @@ def _parsed_anchor_is_math_coefficient(line: str) -> bool:
         return False
     remainder = line.strip()[match.end() :].lstrip(" ).,:;-–—")
     return bool(re.match(r"(?i)^(?:sin|cos|tan|sec|cosec|csc|cot|ln|log|exp|sqrt)\b", remainder))
+
+
+def _parsed_anchor_is_diagram_axis_or_quantity(line: str) -> bool:
+    stripped = _clean_text_line(line).replace("−", "-")
+    match = QUESTION_START_RE.match(stripped)
+    if not match:
+        return False
+    remainder = stripped[match.end() :].strip(" ).,:;-–—")
+    if not remainder:
+        return True
+    if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){1,}[xyXY]?", remainder):
+        return True
+    if re.fullmatch(r"[xyXY]", remainder):
+        return True
+    if re.fullmatch(r"[A-Z](?:\^\{[′']\}|[′'])?(?:\s+[A-Z](?:\^\{[′']\}|[′'])?){0,2}", remainder):
+        return True
+    if re.fullmatch(r"\d+(?:\.\d+)?\s*(?:cm|mm|m|kg|rad|°)", remainder, re.IGNORECASE):
+        return True
+
+    alpha_words = re.findall(r"[A-Za-z]{2,}", remainder)
+    non_unit_words = [word for word in alpha_words if word.lower() not in {"cm", "mm", "kg", "rad"}]
+    digit_count = sum(char.isdigit() for char in remainder)
+    if digit_count and not non_unit_words:
+        return True
+    return False
+
+
+def _line_resembles_question_prompt(line: str, question_number: str, config: AppConfig) -> bool:
+    stripped = _clean_text_line(line)
+    match = QUESTION_START_RE.match(stripped)
+    remainder = stripped[match.end() :].strip() if match else stripped
+    if len(re.findall(r"[A-Za-z]", remainder)) < 8:
+        return False
+    if re.search(
+        r"\b(?:Find|Show|Solve|Given|The|A|An|In|On|Use|State|Calculate|Determine|Prove|Verify|Sketch|Draw|"
+        r"Describe|A particle|Particles|The diagram|The function|The curve|A company|A fair|A group)\b",
+        remainder,
+        re.IGNORECASE,
+    ):
+        return True
+    return bool(re.search(r"\[\d{1,2}\]", remainder) and int(question_number) <= config.detection.max_question_number)
 
 
 def _contamination_content_tokens(line: str) -> set[str]:

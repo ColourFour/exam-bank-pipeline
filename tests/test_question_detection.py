@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from exam_bank.config import AppConfig
+from exam_bank.extraction_structure import build_structured_question_text
 from exam_bank.exporters import write_json
 from exam_bank.identifiers import normalize_question_id
 from exam_bank.image_rendering import _detect_prompt_regions
@@ -512,6 +513,73 @@ def test_detect_question_spans_does_not_false_flag_valid_long_multipart_question
     span = detect_question_spans([layout], Path("9709 Mathematics November 2025 Question Paper  55.pdf"), config)[0]
 
     assert "question_scope_contaminated" not in span.validation_flags
+
+
+def test_question_scope_ignores_wrapped_numeric_quantities() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "5 In a class there are 10 violinists, 6 guitarists and 5 pianists.", 90),
+            block(1, "2 violinists, at least 1 guitarist and at most 1 pianist.", 120, x=72),
+            block(1, "(a) In how many ways can the group be chosen? [2]", 155, x=72),
+            block(1, "6 Next question. [4]", 260),
+        ],
+    )
+
+    span = detect_question_spans([layout], Path("9709 Mathematics November 2024 Question paper  52.pdf"), config)[0]
+
+    assert "possible_next_question_contamination" not in span.review_flags
+    assert "question_scope_contaminated" not in span.validation_flags
+    assert span.structure_detected["contamination_indicators"]["foreign_question_anchors"] == []
+
+
+def test_graph_axis_labels_do_not_pollute_structured_question_text() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "3", 65),
+            block(1, "3 A", 80, x=157),
+            block(1, "6", 120, x=310),
+            block(1, "4", 166, x=310),
+            block(1, "-8 (y = g x)/(-6 -4)( ) -2 0 2y = f(x)4 6 x", 222, x=143),
+            block(1, "The diagram shows graphs with equations y = f(x) and y = g(x).", 423, x=72),
+            block(1, "Describe fully the transformation from y = f(x) to y = g(x[4]).", 448, x=72),
+        ],
+        graphics=[BoundingBox(120, 80, 420, 390)],
+    )
+
+    span = detect_question_spans([layout], Path("9709 Mathematics June 2023 Question paper  11.pdf"), config)[0]
+    structured = build_structured_question_text(span, [layout], config)
+
+    assert "question_scope_contaminated" not in span.validation_flags
+    assert structured.body_text_normalized.count("\n3\n") == 0
+    assert "-8 (y = g x)" not in structured.body_text_normalized
+    assert any("y = g x" in line for line in structured.diagram_text)
+    assert "g(x). [4]" in structured.body_text_normalized
+
+
+def test_question_text_trims_answer_filler_after_terminal_mark() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "4 Find the shaded area. [5]", 90),
+            block(1, "................................................................................ĬÙĊ®", 120),
+        ],
+    )
+
+    span = detect_question_spans([layout], Path("9709 Mathematics June 2025 Question Paper  11.pdf"), config)[0]
+    structured = build_structured_question_text(span, [layout], config)
+
+    assert structured.body_text_normalized == "4 Find the shaded area. [5]"
 
 
 def test_detect_question_spans_excludes_previous_tail_and_centered_page_number_from_new_question() -> None:

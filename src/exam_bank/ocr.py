@@ -62,6 +62,12 @@ _BARCODE_OR_HEADER_RE = re.compile(r"(?:PUTT|RT TT|VARTA|ARTY|RACY|[A-Z]{4,}\s+[
 _NEXT_QUESTION_RE = re.compile(r"\[\d{1,2}\]\s+(?:\d{1,2}\s+)?(?:Find|Show|Solve|Given|The diagram)", re.IGNORECASE)
 _OCR_SYMBOL_GARBAGE_RE = re.compile(r"(?:[@?]{2,}|[~`\"|]{2,}|[A-Za-z]\?+[A-Za-z]|[0-9]\?+[0-9])")
 _CONTROL_GARBAGE_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ufffd]")
+_MERGED_WORD_ARTIFACT_RE = re.compile(
+    r"\b(?:"
+    r"Thediagram|thediagram|thegraph|formgraph|straightof|andshows|shows[A-Z]|whichg|consistswhich|"
+    r"thethe|twostraight|ofapplying|sequenceand|Thetwo|Foranother|Usean|Findthe|findthe|showthat"
+    r")\b"
+)
 
 
 def disabled_ocr_result() -> OCRResult:
@@ -148,6 +154,11 @@ def score_text_candidate(
         score -= 8
         reasons.append("merged_or_sparse_prose")
 
+    merged_artifact_count = len(_MERGED_WORD_ARTIFACT_RE.findall(normalized))
+    if merged_artifact_count:
+        score -= min(40, merged_artifact_count * 10)
+        reasons.append("merged_word_artifacts")
+
     math_function_count = len(_MATH_FUNCTION_RE.findall(normalized))
     if math_function_count:
         score += min(math_function_count, 4) * 2
@@ -222,10 +233,13 @@ def select_text_candidate(
     rejected = list(ocr_score.rejection_reasons)
     if not ocr:
         rejected.append("empty_ocr_text")
-    if scope_quality_status == "fail":
+    if scope_quality_status == "fail" and ocr_score.rejection_reasons:
         rejected.append("scope_quality_failed")
     if expected_question_number and _contains_question_number(native, expected_question_number) and not _contains_question_number(ocr, expected_question_number):
-        rejected.append("ocr_missing_question_number")
+        if _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
+            reasons.append("ocr_missing_question_number_tolerated")
+        else:
+            rejected.append("ocr_missing_question_number")
     if expected_subparts:
         native_subparts = {label.lower() for label in _SUBPART_RE.findall(native)}
         ocr_subparts = {label.lower() for label in _SUBPART_RE.findall(ocr)}
@@ -268,6 +282,26 @@ def select_text_candidate(
         ocr_selected=False,
         ocr_rejected_reasons=sorted(set(rejected)),
     )
+
+
+def _ocr_missing_question_number_is_tolerable(
+    ocr_text: str,
+    expected_mark_count: int | None,
+    expected_subparts: list[str],
+) -> bool:
+    normalized = " ".join(str(ocr_text or "").replace("\u00a0", " ").split())
+    if len(_WORD_RE.findall(normalized)) < 8:
+        return False
+    if not _PROMPT_WORD_RE.search(normalized):
+        return False
+    if expected_mark_count is not None and len(_MARK_RE.findall(normalized)) < min(1, expected_mark_count):
+        return False
+    if expected_subparts:
+        ocr_subparts = {label.lower() for label in _SUBPART_RE.findall(normalized)}
+        required = {label.lower() for label in expected_subparts}
+        if required and not required.issubset(ocr_subparts):
+            return False
+    return True
 
 
 def _contains_question_number(text: str, question_number: str) -> bool:

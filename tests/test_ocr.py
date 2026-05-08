@@ -218,6 +218,26 @@ def test_candidate_selection_rejects_next_question_contamination() -> None:
     assert "next_question_contamination" in decision.ocr_rejected_reasons
 
 
+def test_candidate_selection_can_use_clean_ocr_when_native_scope_failed() -> None:
+    native = "1 3 A B' 2 C' linesThediagramA'B' andshowsB'C' theformgraphthe graphof y =off(xy). [4]"
+    ocr = (
+        "The diagram shows the graph of y = f(x), which consists of the two straight lines AB and BC. "
+        "The lines A'B' and B'C' form the graph of y = g(x). State fully the two transformations. [4]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="1",
+        expected_subparts=[],
+        scope_quality_status="fail",
+    )
+
+    assert decision.ocr_selected is True
+    assert decision.text_candidate_source == "ocr"
+    assert "ocr_missing_question_number_tolerated" in decision.text_candidate_decision_reasons
+
+
 def test_candidate_selection_rejects_ocr_that_loses_expected_mark_brackets() -> None:
     native = "6 (a) Find the power developed by the cyclist. [3] (b) Find the distance travelled. [4]"
     ocr = "6 (a) Find the power developed by the cyclist. (b) Find the distance travelled."

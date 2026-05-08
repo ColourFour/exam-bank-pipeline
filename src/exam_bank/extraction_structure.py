@@ -17,7 +17,8 @@ _MATH_TOKEN_RE = re.compile(
 )
 _SUSPICIOUS_SYMBOL_RUN_RE = re.compile(r"[=<>^/*_]{4,}|[?�]{3,}|(?:[A-Za-z0-9][^A-Za-z0-9\s]){4,}")
 _SIMPLE_DIAGRAM_LABEL_RE = re.compile(
-    r"^(?:[A-Z](?:\s*[A-Z]){0,4}|[xyXY]|θ|π|\d+(?:\.\d+)?\s*(?:cm|mm|m|kg)|\d+(?:\.\d+)?°?)$"
+    r"^(?:[A-Z](?:\^\{[′']\}|[′'])?(?:\s+[A-Z](?:\^\{[′']\}|[′'])?){0,4}|[xyXY]|θ|π|"
+    r"\d+(?:\.\d+)?\s*(?:cm|mm|m|kg|rad)|\d+(?:\.\d+)?°?)$"
 )
 
 
@@ -52,6 +53,18 @@ def build_structured_question_text(
 
     for line in lines:
         layout = _layout_by_number(layouts, line.page_number)
+        split_anchor = _split_question_anchor_diagram_label(line, layout, span, config)
+        if split_anchor is not None:
+            body_text, diagram_text = split_anchor
+            if not _body_already_has_question_anchor(body_lines, body_text):
+                body_lines.append(body_text)
+            diagram_lines.append(diagram_text)
+            continue
+        if _is_duplicate_question_number_diagram_label(line, layout, span, body_lines, config):
+            diagram_lines.append(line.text)
+            continue
+        if _looks_like_answer_filler_line(line.text):
+            continue
         if _looks_like_diagram_text(line, layout, span, config):
             diagram_lines.append(line.text)
         else:
@@ -111,15 +124,92 @@ def _looks_like_diagram_text(line: _LineItem, layout: PageLayout, span: Question
     short = len(cleaned) <= 16 and len(cleaned.split()) <= 4
     simple_label = bool(_SIMPLE_DIAGRAM_LABEL_RE.match(cleaned))
     sentence_like = bool(re.search(r"\b(the|find|show|calculate|solve|given|diagram)\b", cleaned, re.IGNORECASE))
-    math_like = _line_is_math_heavy(cleaned)
 
-    if near_graphic and short and not sentence_like and not math_like:
+    if near_graphic and short and not sentence_like:
+        return True
+    if near_graphic and _looks_like_diagram_axis_or_label_text(cleaned):
         return True
     if near_graphic and simple_label:
         return True
     if simple_label and short and line.bbox.x0 > config.detection.question_start_max_x + 40:
         return True
     return False
+
+
+def _split_question_anchor_diagram_label(
+    line: _LineItem,
+    layout: PageLayout,
+    span: QuestionSpan,
+    config: AppConfig,
+) -> tuple[str, str] | None:
+    cleaned = _normalize_light(line.text)
+    match = re.match(rf"^\s*({re.escape(span.question_number)})\s+(.+?)\s*$", cleaned)
+    if not match:
+        return None
+    if not any(_distance_to_box(line.bbox, graphic) <= 26 for graphic in layout.graphics):
+        return None
+    diagram_tail = match.group(2)
+    if not _looks_like_diagram_axis_or_label_text(diagram_tail):
+        return None
+    return match.group(1), diagram_tail
+
+
+def _looks_like_diagram_axis_or_label_text(text: str) -> bool:
+    cleaned = _normalize_light(text)
+    if not cleaned:
+        return False
+    if _SIMPLE_DIAGRAM_LABEL_RE.match(cleaned):
+        return True
+    if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){2,}[xyXY]?", cleaned):
+        return True
+    if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){0,3}[xy]\s*=\s*[fg]\(?x\)?(?:\s*-?\d+(?:\.\d+)?)?", cleaned, re.IGNORECASE):
+        return True
+    if re.fullmatch(r"\d+_\{\d+\}π", cleaned):
+        return True
+    if re.fullmatch(r"(?:(?:Bag|Box)\s+[A-Z](?:\s+|$)){2,}\d?", cleaned):
+        return True
+
+    alpha_words = re.findall(r"[A-Za-z]{2,}", cleaned)
+    non_unit_words = [word for word in alpha_words if word.lower() not in {"cm", "mm", "kg", "rad"}]
+    has_diagram_symbols = bool(re.search(r"[0-9=π]|[A-Z]", cleaned))
+    if not non_unit_words and has_diagram_symbols:
+        return True
+    return False
+
+
+def _body_already_has_question_anchor(body_lines: list[str], candidate: str) -> bool:
+    normalized_candidate = _normalize_light(candidate)
+    if not normalized_candidate.isdigit():
+        return False
+    return any(re.match(rf"^\s*{re.escape(normalized_candidate)}(?:\b|[.)])", _normalize_light(line)) for line in body_lines)
+
+
+def _is_duplicate_question_number_diagram_label(
+    line: _LineItem,
+    layout: PageLayout,
+    span: QuestionSpan,
+    body_lines: list[str],
+    config: AppConfig,
+) -> bool:
+    cleaned = _normalize_light(line.text)
+    if cleaned != span.question_number:
+        return False
+    if not _body_already_has_question_anchor(body_lines, cleaned):
+        return False
+    if line.bbox.x0 <= config.detection.question_start_max_x + 40:
+        return False
+    return any(_distance_to_box(line.bbox, graphic) <= 26 for graphic in layout.graphics)
+
+
+def _looks_like_answer_filler_line(text: str) -> bool:
+    cleaned = _normalize_light(text)
+    if not cleaned:
+        return False
+    if re.match(r"^(?:[._\-–—]\s*){12,}", cleaned):
+        return True
+    visible_alnum = len(re.findall(r"[A-Za-z0-9]", cleaned))
+    filler_count = len(re.findall(r"[._\-–—]", cleaned))
+    return filler_count >= 24 and visible_alnum <= 4
 
 
 def _normalize_preserving_structure(text: str) -> str:
@@ -182,8 +272,13 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
 
 def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = text
+    value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)([.?!])", r"\1(\2)\4 [\3]", value)
+    value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)", r"\1(\2) [\3]", value)
+    value = re.sub(r"(\[\d{1,2}\])\s*(?:[._\-–—]\s*){12,}.*$", r"\1", value)
     value = re.sub(r"\b([0-9])\s*G\s*([xXiIθ])", r"\1 ≤ \2", value)
     value = re.sub(r"\b([xXiIθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
+    value = re.sub(r"\b([0-9])G([A-Za-zθ])G([0-9])\b", r"\1 ≤ \2 ≤ \3", value)
+    value = re.sub(r"\br20\b", "r > 0", value)
     value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
     value = re.sub(r"\b(0|90|180|360)°?\s*<\s*1\s*<", r"\1° < θ <", value)
     value = re.sub(r"\b(0|90|180|360)°?\s*≤\s*1\s*≤", r"\1° ≤ θ ≤", value)
@@ -227,6 +322,14 @@ def _repair_common_joined_words(text: str) -> str:
         (r"\bmaybe\b", "may be"),
         (r"\bStatethe\b", "State the"),
         (r"\bstatethe\b", "state the"),
+        (r"\bForanothercompetition\b", "For another competition"),
+        (r"\bForanother\b", "For another"),
+        (r"\bateamof\b", "a team of"),
+        (r"\bconsistsof\b", "consists of"),
+        (r"\bUseanenergy\b", "Use an energy"),
+        (r"\bmethodtofindthe\b", "method to find the"),
+        (r"\bcoeﬃcientoffrictionbetweenthe\b", "coeﬃcient of friction between the"),
+        (r"\bcoefficientoffrictionbetweenthe\b", "coefficient of friction between the"),
     ]
     for pattern, replacement in replacements:
         value = re.sub(pattern, replacement, value)
