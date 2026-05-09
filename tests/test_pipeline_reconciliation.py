@@ -4,6 +4,7 @@ from exam_bank.pipeline import (
     _assess_text_fidelity,
     _derive_scope_quality_status,
     _derive_topic_trust_status,
+    _expected_paper_total,
     _paper_total_check,
     _polluted_pass_signal_groups,
     _reconcile_paper_topics,
@@ -28,6 +29,7 @@ def _record(
     extraction_quality_flags: list[str] | None = None,
     topic_evidence_details: dict | None = None,
     secondary_topics: list[str] | None = None,
+    syllabus_code: str = "",
 ) -> QuestionRecord:
     return QuestionRecord(
         source_pdf="input/question_papers/test.pdf",
@@ -45,6 +47,7 @@ def _record(
         part_texts=[],
         answer_text="",
         paper_family=paper_family,
+        syllabus_code=syllabus_code,
         source_paper_family=paper_family,
         inferred_paper_family=paper_family,
         paper_family_confidence="high",
@@ -609,6 +612,50 @@ def test_polluted_pass_signal_groups_collapse_overlap_into_named_clusters() -> N
         "pollution_signals",
         "question_validation_risk",
     }
+
+
+def test_expected_paper_total_preserves_9709_totals() -> None:
+    assert _expected_paper_total("12", "P1", syllabus_code="9709") == 75
+    assert _expected_paper_total("33", "P3", syllabus_code="9709") == 75
+    assert _expected_paper_total("43", "P4", syllabus_code="9709") == 50
+    assert _expected_paper_total("53", "P5", syllabus_code="9709") == 50
+    assert _expected_paper_total("33", "P3") == 75
+
+
+def test_expected_paper_total_ignores_9709_rules_for_9231() -> None:
+    assert _expected_paper_total("33", "P3", syllabus_code="9231") is None
+    assert _expected_paper_total("34", "P3", syllabus_code="9231") is None
+
+
+def test_paper_total_check_does_not_mismatch_9231_p3_against_9709_total() -> None:
+    records = [
+        _record(
+            question_number="1",
+            paper_family="P3",
+            topic="algebra",
+            topic_confidence="high",
+            combined_question_text="Q1",
+            syllabus_code="9231",
+        ),
+        _record(
+            question_number="2",
+            paper_family="P3",
+            topic="algebra",
+            topic_confidence="high",
+            combined_question_text="Q2",
+            syllabus_code="9231",
+        ),
+    ]
+    records[0].question_marks_total = 30
+    records[1].question_marks_total = 40
+
+    total_check = _paper_total_check(records, component="33", paper_family="P3")
+
+    assert total_check["expected_total"] is None
+    assert total_check["detected_total"] == 70
+    assert total_check["status"] == "unknown_expected_total"
+    assert total_check["difference"] is None
+    assert _should_trigger_paper_total_rescan(total_check) is False
 
 
 def test_paper_total_mismatch_triggers_rescan() -> None:

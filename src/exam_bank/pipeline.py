@@ -136,6 +136,7 @@ def build_records_for_pdf(
         initial_records,
         component=document_metadata.component or source_paper_code,
         paper_family=initial_records[0].paper_family if initial_records else "",
+        syllabus_code=document_metadata.syllabus,
     )
 
     final_spans = initial_spans
@@ -165,6 +166,7 @@ def build_records_for_pdf(
             rescanned_records,
             component=document_metadata.component or source_paper_code,
             paper_family=rescanned_records[0].paper_family if rescanned_records else "",
+            syllabus_code=document_metadata.syllabus,
         )
         (
             final_spans,
@@ -619,15 +621,47 @@ def _record_solution_marks(record: QuestionRecord) -> int | None:
     return None
 
 
-def _expected_paper_total(component: str, paper_family: str = "") -> int | None:
+_PAPER_TOTALS_BY_SYLLABUS: dict[str, dict[str, int]] = {
+    "9709": {"P1": 75, "P3": 75, "P4": 50, "P5": 50},
+}
+
+
+def _normalize_syllabus_code(syllabus_code: str = "") -> str:
+    match = re.search(r"\b\d{4}\b", str(syllabus_code or ""))
+    return match.group(0) if match else str(syllabus_code or "").strip()
+
+
+def _expected_paper_total(component: str, paper_family: str = "", syllabus_code: str = "") -> int | None:
+    syllabus = _normalize_syllabus_code(syllabus_code)
+    if syllabus and syllabus not in _PAPER_TOTALS_BY_SYLLABUS:
+        return None
+
+    totals = _PAPER_TOTALS_BY_SYLLABUS["9709"]
     family = (paper_family or "").strip().upper()
-    if family in {"P1", "P3", "P4", "P5"}:
-        return {"P1": 75, "P3": 75, "P4": 50, "P5": 50}[family]
+    if family in totals:
+        return totals[family]
 
     digits = "".join(char for char in str(component) if char.isdigit())
     if digits:
-        return {"1": 75, "3": 75, "4": 50, "5": 50}.get(digits[0])
+        return {family[-1]: total for family, total in totals.items()}.get(digits[0])
     return None
+
+
+def _paper_total_syllabus_code(records: list[QuestionRecord], syllabus_code: str = "") -> str:
+    explicit_syllabus = _normalize_syllabus_code(syllabus_code)
+    if explicit_syllabus:
+        return explicit_syllabus
+
+    record_syllabuses = {
+        normalized
+        for record in records
+        if (normalized := _normalize_syllabus_code(getattr(record, "syllabus_code", "")))
+    }
+    if len(record_syllabuses) == 1:
+        return next(iter(record_syllabuses))
+    if record_syllabuses:
+        return "unsupported"
+    return ""
 
 
 def _paper_total_check(
@@ -635,8 +669,13 @@ def _paper_total_check(
     *,
     component: str,
     paper_family: str,
+    syllabus_code: str = "",
 ) -> dict[str, int | str | bool | None]:
-    expected_total = _expected_paper_total(component, paper_family)
+    expected_total = _expected_paper_total(
+        component,
+        paper_family,
+        syllabus_code=_paper_total_syllabus_code(records, syllabus_code),
+    )
     detected_total = sum(mark for record in records if (mark := _record_solution_marks(record)) is not None)
     status = PaperTotalStatus.UNKNOWN_EXPECTED_TOTAL
     if expected_total is not None:
