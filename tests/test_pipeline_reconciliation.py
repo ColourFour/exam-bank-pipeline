@@ -1,6 +1,7 @@
 from exam_bank.config import AppConfig
 from exam_bank.models import QuestionRecord
 from exam_bank.pipeline import (
+    _apply_paper_total_metadata,
     _assess_text_fidelity,
     _derive_scope_quality_status,
     _derive_topic_trust_status,
@@ -8,9 +9,11 @@ from exam_bank.pipeline import (
     _paper_total_check,
     _polluted_pass_signal_groups,
     _reconcile_paper_topics,
+    _reconcile_question_mark_total_mismatches,
     _refine_validation_status,
     _should_trigger_paper_total_rescan,
 )
+from exam_bank.trust import MappingStatus, PaperTotalStatus, RescanResult, ValidationStatus
 
 
 def _record(
@@ -688,3 +691,115 @@ def test_paper_total_match_does_not_trigger_rescan() -> None:
     assert total_check["detected_total"] == 50
     assert total_check["status"] == "matched"
     assert _should_trigger_paper_total_rescan(total_check) is False
+
+
+def test_paper_total_mismatch_keeps_clean_records_as_review_evidence() -> None:
+    records = [
+        _record(question_number="1", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q1"),
+        _record(question_number="2", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q2"),
+    ]
+    for record in records:
+        record.validation_status = ValidationStatus.PASS
+        record.markscheme_mapping_status = MappingStatus.PASS
+
+    _apply_paper_total_metadata(
+        records,
+        initial_total_check={"expected_total": 75, "detected_total": 74, "status": PaperTotalStatus.MISMATCH},
+        total_check={"expected_total": 75, "detected_total": 74, "status": PaperTotalStatus.MISMATCH},
+        rescan_triggered=True,
+        rescan_result=RescanResult.NO_IMPROVEMENT,
+        focus={"question_numbers": [], "pages": [], "reasons_by_question": {}},
+    )
+
+    assert all(record.paper_total_status == PaperTotalStatus.MISMATCH_AFTER_RESCAN for record in records)
+    assert all("paper_total_mismatch" in record.review_flags for record in records)
+    assert all(record.validation_status == ValidationStatus.REVIEW for record in records)
+    assert all("paper_total_mismatch" not in record.validation_flags for record in records)
+
+
+def test_paper_total_mismatch_hard_fails_structurally_suspect_record() -> None:
+    record = _record(question_number="1", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q1")
+    record.validation_status = ValidationStatus.PASS
+    record.validation_flags = ["question_scope_contaminated"]
+    record.markscheme_mapping_status = MappingStatus.PASS
+
+    _apply_paper_total_metadata(
+        [record],
+        initial_total_check={"expected_total": 75, "detected_total": 70, "status": PaperTotalStatus.MISMATCH},
+        total_check={"expected_total": 75, "detected_total": 70, "status": PaperTotalStatus.MISMATCH},
+        rescan_triggered=True,
+        rescan_result=RescanResult.NO_IMPROVEMENT,
+        focus={"question_numbers": ["1"], "pages": [2], "reasons_by_question": {"1": "question_scope_contaminated"}},
+    )
+
+    assert record.validation_status == ValidationStatus.FAIL
+    assert record.validation_flags == ["paper_total_mismatch", "question_scope_contaminated"]
+    assert "paper_total_focus_candidate" in record.review_flags
+
+
+def test_matched_paper_demotes_question_mark_total_mismatch_to_review() -> None:
+    record = _record(question_number="9", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q9")
+    record.paper_total_expected = 75
+    record.paper_total_detected = 75
+    record.paper_total_status = PaperTotalStatus.MATCHED
+    record.question_marks_total = 4
+    record.markscheme_marks_total = 9
+    record.markscheme_image = "output/images/ms/q09.png"
+    record.markscheme_crop_confidence = "high"
+    record.question_crop_confidence = "high"
+    record.markscheme_mapping_status = MappingStatus.FAIL
+    record.markscheme_failure_reason = "question_mark_total_mismatch"
+    record.validation_status = ValidationStatus.FAIL
+    record.validation_flags = ["question_mark_total_mismatch"]
+    record.review_flags = ["question_mark_total_mismatch"]
+
+    _reconcile_question_mark_total_mismatches([record])
+
+    assert record.markscheme_mapping_status == MappingStatus.PASS
+    assert record.markscheme_failure_reason == ""
+    assert record.validation_status == ValidationStatus.REVIEW
+    assert record.validation_flags == []
+    assert "question_mark_total_review_only" in record.review_flags
+    assert record.scope_quality_status == "clean"
+    assert record.visual_curation_status == "review"
+
+
+def test_question_mark_total_mismatch_stays_hard_fail_when_paper_total_mismatches() -> None:
+    record = _record(question_number="9", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q9")
+    record.paper_total_expected = 75
+    record.paper_total_detected = 74
+    record.paper_total_status = PaperTotalStatus.MISMATCH_AFTER_RESCAN
+    record.question_marks_total = 4
+    record.markscheme_marks_total = 9
+    record.markscheme_image = "output/images/ms/q09.png"
+    record.markscheme_mapping_status = MappingStatus.FAIL
+    record.markscheme_failure_reason = "question_mark_total_mismatch"
+    record.validation_status = ValidationStatus.FAIL
+    record.validation_flags = ["question_mark_total_mismatch"]
+
+    _reconcile_question_mark_total_mismatches([record])
+
+    assert record.markscheme_mapping_status == MappingStatus.FAIL
+    assert record.markscheme_failure_reason == "question_mark_total_mismatch"
+    assert record.validation_status == ValidationStatus.FAIL
+    assert record.validation_flags == ["question_mark_total_mismatch"]
+
+
+def test_question_mark_total_mismatch_stays_hard_fail_with_structural_flag() -> None:
+    record = _record(question_number="9", paper_family="P1", topic="algebra", topic_confidence="high", combined_question_text="Q9")
+    record.paper_total_expected = 75
+    record.paper_total_detected = 75
+    record.paper_total_status = PaperTotalStatus.MATCHED
+    record.question_marks_total = 4
+    record.markscheme_marks_total = 9
+    record.markscheme_image = "output/images/ms/q09.png"
+    record.markscheme_mapping_status = MappingStatus.FAIL
+    record.markscheme_failure_reason = "question_mark_total_mismatch"
+    record.validation_status = ValidationStatus.FAIL
+    record.validation_flags = ["question_mark_total_mismatch", "question_subparts_incomplete"]
+
+    _reconcile_question_mark_total_mismatches([record])
+
+    assert record.markscheme_mapping_status == MappingStatus.FAIL
+    assert record.validation_status == ValidationStatus.FAIL
+    assert record.validation_flags == ["question_mark_total_mismatch", "question_subparts_incomplete"]

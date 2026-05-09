@@ -4,7 +4,7 @@ The pipeline is image-first. Question crops and mark-scheme crops are the source
 
 ## Core Rules
 
-Images are source truth:
+Images are source of truth:
 
 - `question_image_path` and `mark_scheme_image_path` should be used for student-visible question and answer content.
 - If an image is missing, wrong, or mismatched, the record is not student-ready even if the text looks good.
@@ -25,6 +25,12 @@ DeepSeek/topic enrichment is sidecar metadata:
 - `question_bank.deepseek.json` does not mutate `question_bank.json`.
 - Local and DeepSeek topic/difficulty labels support review and routing but should not replace visual evidence.
 - Final review flags from enrichment should be honored by downstream workflows.
+
+Auto-triage decisions are evidence gates:
+
+- `auto-triage-compare` can accept or reject an implementation pass, but it does not promote individual records into a student-ready subset.
+- Accepted auto-triage evidence still depends on record-level validation, mapping, scope, text-fidelity, topic-trust, and visual-curation gates.
+- A no-OCR output can help debug layout, but it cannot be used as production OCR proof.
 
 Validation statuses are gates:
 
@@ -196,3 +202,4 @@ Do not:
 - Load all records into a student practice app without filtering.
 - Assume `visual_curation_status=ready` means text is student-ready.
 - Assume `text_fidelity_status=clean` means the record has correct mark-scheme pairing.
+- Treat an accepted auto-triage decision as permission to bypass record-level trust filters.

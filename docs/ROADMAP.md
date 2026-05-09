@@ -4,7 +4,7 @@ This roadmap is evidence-gated, not feature-gated. Move forward when the extract
 
 ## v0.x: Extraction Correctness And Triage Loop
 
-Goal: keep improving the base PDF-to-crop pipeline with measurable, repeatable triage.
+Goal: keep improving the base PDF-to-crop pipeline with measurable, repeatable triage and auto-triage handoffs.
 
 Evidence required:
 
@@ -13,17 +13,21 @@ Evidence required:
 - OCR-enabled runs are compared against OCR-enabled baselines.
 - `worsened_records` is empty or every worsening is intentionally stricter and documented.
 - New regression tests cover fixed triage examples.
+- Auto-triage decisions are accepted only with passing tests, matching OCR mode, target improvement, and no broad trust-gate loosening.
 
 Current evidence:
 
 - Latest test run before docs: `293 passed, 3 skipped`.
 - Latest OCR-to-OCR comparison: `output/triage/iteration_003/comparison.math-repair-ocr.json`, hard failures `385 -> 259`, target `126 -> 3`, worsened `0`.
 - Latest current-output comparison: `output/triage/iteration_004/comparison.layout-review-current.json`, hard failures `259 -> 148`, target `114 -> 4`, worsened `0`, but not canonical for OCR because current output is no-OCR.
+- Current OCR candidate: `output_ocr_candidate/json/question_bank.json`, OCR-enabled for all `1301` records, hard failures `133`, dominant target `paper_total_mismatch: 86`.
+- Latest accepted auto-triage comparison: `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`, hard failures `153 -> 133`, `paper_total_mismatch` `107 -> 86`, worsened `0`.
 
 Next required evidence:
 
 - Source-pairing mismatch guard proves `33autumn25` cannot point at `12autumn21`.
 - Fresh OCR-enabled output is compared to an OCR-enabled baseline after the guard.
+- Continue auto-triage planning until the configured hard-failure threshold is met or the dominant target is no longer actionable without human source review.
 
 ## v0.y: Trusted-Subset Export
 

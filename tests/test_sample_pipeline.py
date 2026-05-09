@@ -808,8 +808,10 @@ def test_repo_n24_p12_paper_total_is_matched_without_hiding_question_failures(tm
     assert first.rescan_triggered is False
     assert first.rescan_result == "not_triggered"
     assert "paper_total_mismatch" not in first.validation_flags
-    assert q1.validation_status == "fail"
-    assert "question_mark_total_mismatch" in q1.validation_flags
+    assert q1.validation_status == "review"
+    assert q1.markscheme_mapping_status == "pass"
+    assert "question_mark_total_mismatch" not in q1.validation_flags
+    assert "question_mark_total_review_only" in q1.review_flags
     assert set(first.paper_total_focus_questions) >= {"1", "3", "5"}
     assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6, 7, 8}
     assert focus_records

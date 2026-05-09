@@ -4,9 +4,11 @@ This repository builds an image-first CAIE 9709 exam-bank dataset from question-
 
 The pipeline scans PDFs, detects top-level questions, renders question crops, renders matching mark-scheme crops, pairs those artifacts, exports structured JSON, and produces triage artifacts for repeatable review. The image crops are the source of truth. Extracted text is metadata for search, routing, topic labeling, review, enrichment, and downstream app behavior; it is trust-gated and must not be treated as a perfect transcription of the paper.
 
+The active runtime path is the extraction pipeline plus evidence-gated triage. DeepSeek enrichment is a separate sidecar step that does not mutate `question_bank.json`. Topic labels, OCR text, and extracted text are secondary metadata in the export; none of them override image evidence.
+
 ## Current Status
 
-Measured on `output/json/question_bank.json` on 2026-05-08:
+Measured on `output/json/question_bank.json` on 2026-05-09:
 
 - Corpus: `1301` question records from `148` question-paper PDFs.
 - Inputs: `148` question-paper PDFs and `147` mark-scheme PDFs. The registry reports one missing companion mark scheme: `9709 Mathematics November 2025 Question Paper  33.pdf`.
@@ -24,6 +26,8 @@ Measured on `output/json/question_bank.json` on 2026-05-08:
 The latest comparison against the iteration 004 frozen baseline is `output/triage/iteration_004/comparison.layout-review-current.json`: hard failures moved from `259` to `148` (`-111`), target `question_scope_contaminated` moved from `114` to `4` (`-110`), and `worsened_records` is `0`. This comparison uses the current no-OCR export, so it is useful for layout debugging but is not the canonical production OCR score.
 
 The latest OCR-to-OCR comparison is `output/triage/iteration_003/comparison.math-repair-ocr.json`: hard failures moved from `385` to `259` (`-126`), target `polluted_pass_requires_review` moved from `126` to `3` (`-123`), and `worsened_records` is `0`.
+
+The current OCR candidate at `output_ocr_candidate/json/question_bank.json` is OCR-enabled for all `1301` records. Auto-triage status reports `133` hard failures, with `paper_total_mismatch` as the dominant cluster (`86`). The latest accepted auto-triage comparison is `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`: hard failures moved from `153` to `133` (`-20`), target `paper_total_mismatch` moved from `107` to `86` (`-21`), and `worsened_records` is `0`.
 
 ## Install
 
@@ -53,6 +57,12 @@ Production-style runs should enable OCR so OCR candidate metadata and hybrid tex
 
 ```bash
 .venv/bin/python -m exam_bank.cli process --input input --output output --enable-ocr
+```
+
+For comparison or review candidates, write OCR-enabled output to a separate folder instead of replacing the current canonical export:
+
+```bash
+.venv/bin/python -m exam_bank.cli process --input input --output output_ocr_candidate --enable-ocr
 ```
 
 `--input` is scanned recursively. The usual layout is:
@@ -137,6 +147,52 @@ output/triage/iteration_001/
 
 Do not delete frozen baselines. Do not overwrite comparison files unless the new output has a clearly named comparison path.
 
+## Auto-Triage Loop
+
+Auto-triage wraps the manual triage loop with corpus metrics, selected-target planning, agent handoff files, runbook generation, and an acceptance decision. It does not edit code or data by itself.
+
+Measure a corpus:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-status \
+  --input output_ocr_candidate/json/question_bank.json
+```
+
+Create the next handoff iteration until the hard-failure target is met:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-plan \
+  --input output_ocr_candidate/json/question_bank.json \
+  --handoff-root agent_handoffs/auto_triage \
+  --candidate-output output_ocr_candidate \
+  --target-max-hard-failures 100 \
+  --sample-size 30
+```
+
+Print the runbook for a handoff created by the planner:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-runbook \
+  --input output_ocr_candidate/json/question_bank.json \
+  --candidate-output output_ocr_candidate \
+  --handoff-root agent_handoffs/auto_triage
+```
+
+For older or non-default handoffs, pass `--iteration` and `--baseline-triage` explicitly so generated comparison paths match the intended frozen baseline.
+
+After focused implementation, full tests, and an OCR-enabled rerun, compare and write the decision:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-compare \
+  --iteration agent_handoffs/auto_triage/iteration_003 \
+  --baseline-triage output_ocr_candidate/triage/iteration_002 \
+  --current output_ocr_candidate/json/question_bank.json \
+  --output output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json \
+  --test-status pass
+```
+
+Accepted auto-triage iterations require passing tests, OCR-enabled current and baseline outputs, a hard-failure or selected-target decrease, no `worsened_records`, no major unrelated status regression, and no broad validation or trust-gate loosening without extraction evidence.
+
 ## Audits
 
 General visual/text trust audit:
@@ -190,7 +246,7 @@ Run the suite with:
 
 Latest pre-documentation run in this review: `293 passed, 3 skipped in 111.54s`.
 
-Coverage is strongest around document classification, PDF layout extraction, question detection, crop-region behavior, mark-scheme mapping, OCR candidate selection, trust derivation, output contract, triage comparison, DeepSeek sidecar behavior, and representative sample-pipeline regressions. Gaps remain around full-corpus runtime assertions, source-pairing mismatch gates, visual pixel-level crop review, and a trusted-subset export.
+Coverage is strongest around document classification, PDF layout extraction, question detection, crop-region behavior, mark-scheme mapping, OCR candidate selection, trust derivation, output contract, triage comparison, auto-triage planning/decision gates, DeepSeek sidecar behavior, and representative sample-pipeline regressions. Gaps remain around full-corpus runtime assertions, source-pairing mismatch gates, visual pixel-level crop review, and a trusted-subset export.
 
 ## Downstream Use
 
@@ -206,5 +262,6 @@ Records with failed mapping, failed validation, failed scope, missing image file
 
 - [Project review](docs/PROJECT_REVIEW.md)
 - [Triage workflow](docs/TRIAGE_WORKFLOW.md)
+- [Auto-triage workflow](docs/AUTO_TRIAGE.md)
 - [Trust model](docs/TRUST_MODEL.md)
 - [Roadmap](docs/ROADMAP.md)

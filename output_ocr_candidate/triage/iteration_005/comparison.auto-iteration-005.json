@@ -1,0 +1,264 @@
+{
+  "iteration_dir": "output_ocr_candidate/triage/iteration_005",
+  "baseline_path": "output_ocr_candidate/triage/iteration_005/baseline_question_bank.json",
+  "current_path": "output_ocr_candidate/json/question_bank.json",
+  "issue_set": "hard-failures",
+  "target": "question_mark_total_mismatch",
+  "baseline_record_count": 1301,
+  "current_record_count": 1301,
+  "baseline_hard_failure_count": 71,
+  "current_hard_failure_count": 44,
+  "hard_failure_delta": -27,
+  "baseline_target_issue_count": 28,
+  "current_target_issue_count": 1,
+  "target_issue_delta": -27,
+  "baseline_issue_counts": {
+    "question_mark_total_mismatch": 28,
+    "paper_total_mismatch": 24,
+    "weak_question_anchor": 9,
+    "question_scope_contaminated": 4,
+    "polluted_pass_requires_review": 3,
+    "question_subparts_incomplete": 2,
+    "missing_terminal_mark_total": 1
+  },
+  "current_issue_counts": {
+    "paper_total_mismatch": 24,
+    "weak_question_anchor": 9,
+    "question_scope_contaminated": 4,
+    "polluted_pass_requires_review": 3,
+    "question_subparts_incomplete": 2,
+    "question_mark_total_mismatch": 1,
+    "missing_terminal_mark_total": 1
+  },
+  "issue_count_deltas": {
+    "missing_terminal_mark_total": 0,
+    "paper_total_mismatch": 0,
+    "polluted_pass_requires_review": 0,
+    "question_mark_total_mismatch": -27,
+    "question_scope_contaminated": 0,
+    "question_subparts_incomplete": 0,
+    "weak_question_anchor": 0
+  },
+  "shared_record_count": 1301,
+  "missing_from_current_count": 0,
+  "new_in_current_count": 0,
+  "improved_records": [
+    {
+      "question_id": "11autumn21_q05",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "11summer25_q05",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q01",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn25_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "12spring21_q09",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "12summer24_q08",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "12summer25_q10",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "13autumn22_q11",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "13autumn23_q04",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "13autumn25_q10",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "13summer25_q10",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "32autumn25_q10",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "32spring24_q01",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "32spring24_q10",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "33autumn21_q11",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "41autumn23_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "41autumn24_q07",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "41summer21_q07",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "41summer25_q04",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "42spring23_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "42summer24_q04",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "42summer24_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "43autumn22_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "51summer23_q04",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "51summer24_q02",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "53autumn23_q05",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    },
+    {
+      "question_id": "53autumn23_q06",
+      "fields": [
+        "validation_status",
+        "mapping_status",
+        "visual_curation_status"
+      ]
+    }
+  ],
+  "worsened_records": []
+}

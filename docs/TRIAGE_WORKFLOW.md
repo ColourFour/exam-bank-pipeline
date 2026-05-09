@@ -2,6 +2,8 @@
 
 Triage exists because full extraction quality cannot be judged from aggregate counts alone. A change can reduce one flag while silently worsening crops, mark-scheme pairing, or text trust. The triage loop freezes a baseline, samples a dominant failure cluster, records visual notes, reruns the pipeline, and compares current output back to the frozen baseline.
 
+Manual triage is the review mechanism. Auto-triage is the coordination layer around it: it measures the corpus, selects the next hard-failure target, creates agent handoff files, prints the runbook, and accepts or rejects a completed iteration only after tests and OCR-enabled comparison evidence. See [Auto-Triage](AUTO_TRIAGE.md) for the full auto-triage workflow.
+
 ## Basic Loop
 
 Create a deterministic sample:
@@ -42,6 +44,42 @@ After a full rerun, compare:
 ```
 
 Use a clearly named comparison file. Do not overwrite historical comparisons unless the replacement is intentionally the same run.
+
+## Auto-Triage Wrapper
+
+For repeated extraction-quality passes, use auto-triage to create the handoff and command sequence:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-status \
+  --input output_ocr_candidate/json/question_bank.json
+
+.venv/bin/python -m exam_bank.cli auto-triage-plan \
+  --input output_ocr_candidate/json/question_bank.json \
+  --handoff-root agent_handoffs/auto_triage \
+  --candidate-output output_ocr_candidate \
+  --target-max-hard-failures 100 \
+  --sample-size 30
+
+.venv/bin/python -m exam_bank.cli auto-triage-runbook \
+  --input output_ocr_candidate/json/question_bank.json \
+  --candidate-output output_ocr_candidate \
+  --handoff-root agent_handoffs/auto_triage
+```
+
+After implementation, full tests, and an OCR-enabled rerun, record the acceptance decision:
+
+```bash
+.venv/bin/python -m exam_bank.cli auto-triage-compare \
+  --iteration agent_handoffs/auto_triage/iteration_003 \
+  --baseline-triage output_ocr_candidate/triage/iteration_002 \
+  --current output_ocr_candidate/json/question_bank.json \
+  --output output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json \
+  --test-status pass
+```
+
+Use `auto-triage-plan` to select and document the target. Use manual `triage-sample` directly when you need exploratory visual review without creating an auto-triage handoff.
+
+For older or non-default handoffs, pass `--iteration` and `--baseline-triage` to `auto-triage-runbook` explicitly so generated comparison paths match the intended frozen baseline.
 
 ## Choosing The Next Target
 

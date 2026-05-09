@@ -2,11 +2,13 @@
 
 ## Executive Summary
 
-This project is an image-first CAIE 9709 extraction pipeline. It turns question-paper PDFs and mark-scheme PDFs into paper-organized question crops, mark-scheme crops, structured JSON records, trust statuses, validation flags, mapping statuses, text-fidelity statuses, and triage artifacts.
+This project is an image-first CAIE 9709 extraction pipeline. It turns question-paper PDFs and mark-scheme PDFs into paper-organized question crops, mark-scheme crops, structured JSON records, trust statuses, validation flags, mapping statuses, text-fidelity statuses, and triage artifacts. A new auto-triage layer now measures corpus health, selects the next hard-failure target, creates agent handoff iterations, prints runbooks, and records evidence-gated acceptance decisions.
 
 The current exported corpus in `output/json/question_bank.json` contains `1301` records across `148` paper instances. The current export is a no-OCR export: `ocr_ran=False` for all `1301` records and `notes.text_source_profile=native_pdf` for all records. Production-style runs should use `--enable-ocr`; the latest frozen OCR-style baseline is `output/triage/iteration_004/baseline_question_bank.json`.
 
 The pipeline is improving. The strongest measured OCR-to-OCR comparison is `output/triage/iteration_003/comparison.math-repair-ocr.json`, where hard failures moved from `385` to `259` and the target issue `polluted_pass_requires_review` moved from `126` to `3`, with no worsened records. The latest current-output comparison is `output/triage/iteration_004/comparison.layout-review-current.json`, where hard failures moved from `259` to `148` and `question_scope_contaminated` moved from `114` to `4`, also with no worsened records. That comparison is useful but not a canonical OCR score because the current export is no-OCR.
+
+The current OCR candidate in `output_ocr_candidate/json/question_bank.json` is OCR-enabled for all `1301` records and has `133` hard failures. Its latest accepted auto-triage comparison is `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`, where hard failures moved from `153` to `133`, `paper_total_mismatch` moved from `107` to `86`, and `worsened_records` stayed empty.
 
 The trust posture is appropriately conservative. Images remain the source of truth; extracted text is metadata. Current text fidelity is `clean: 1245`, `degraded: 48`, `unusable: 8`, but `visual_required=True` for `978` records in the current no-OCR export, so clean text does not mean text-only student readiness.
 
@@ -43,6 +45,7 @@ The processing flow is:
 7. `pipeline` builds `QuestionRecord` objects, applies validation refinement, selects native/OCR text candidates, derives trust statuses, classifies topics/difficulty, and applies paper-total metadata.
 8. `exporters` writes the schema-versioned JSON bank and paper-first image paths.
 9. `triage` creates deterministic samples, serves a local visual review gallery, captures `review.jsonl`, and compares current exports against frozen baselines.
+10. `auto_triage` builds status reports, plans handoff iterations, writes shared agent prompts, generates runbooks, and accepts/rejects completed passes using tests plus OCR-enabled comparison evidence.
 
 DeepSeek enrichment is a separate sidecar step (`output/json/question_bank.deepseek.json`). It should be treated as secondary metadata.
 
@@ -132,6 +135,14 @@ Internal code still uses names such as `markscheme_mapping_status` and `marksche
 - Review notes: `30` entries. Root causes: `question_crop_boundary: 15`, `text_ocr_quality: 10`, `unknown: 5`.
 - Canonical for production comparison: no, because current `output/json/question_bank.json` is no-OCR while the frozen baseline is OCR-enabled.
 
+### Auto-Triage Handoffs
+
+- Shared prompts live under `agent_handoffs/auto_triage/Prompt/` for supervisor, planner, builder, test gatekeeper, integration, and adversarial review roles.
+- Handoff iterations live under `agent_handoffs/auto_triage/iteration_*` and store `metrics_before.json`, `selected_target.json` when available, generated commands, `metrics_after.json`, and `decision.json`.
+- Accepted auto-triage decision `agent_handoffs/auto_triage/iteration_001/decision.json` targeted `paper_total_mismatch`, used OCR-enabled current and baseline outputs, moved the selected target by `-28`, and had `worsened_record_count: 0`.
+- Accepted auto-triage decision `agent_handoffs/auto_triage/iteration_003/decision.json` targeted `paper_total_mismatch`, used OCR-enabled current and baseline outputs, moved hard failures by `-20`, moved the target by `-21`, and had `worsened_record_count: 0`.
+- Auto-triage is an evidence gate, not an implementation agent. It does not change extraction code or promote records by itself.
+
 ### Failure Cluster Shift
 
 The dominant failure cluster shifted from scope contamination and polluted OCR/math-derived pass failures toward paper-total and mark-total mismatches:
@@ -151,6 +162,7 @@ This is a healthy movement pattern: earlier broad crop/text pollution failures h
 - Validation statuses and flags are not cosmetic; they drive visual, text-only, scope, topic, and downstream trust decisions.
 - Triage sampling is deterministic and creates frozen baselines, review galleries, review notes, and comparison files.
 - Worsened-record reporting is available and has caught regressions.
+- Auto-triage now turns the triage loop into a repeatable handoff with status metrics, selected targets, generated commands, test-status requirements, OCR-mode checks, and acceptance decisions.
 - OCR candidate scoring is conservative: current no-OCR audit shows candidate metadata is populated but OCR was not selected because OCR text was empty.
 - Recent math-layout repair reduced `polluted_pass_requires_review` by `123` in an OCR-to-OCR comparison.
 - The test suite is broad and currently passes.
@@ -179,6 +191,7 @@ This is a healthy movement pattern: earlier broad crop/text pollution failures h
 | OCR/native text disagreement | Medium | OCR can look plausible while losing marks, subparts, or notation. | Keep OCR as candidate/fallback; audit `ocr_rejected_reasons` and compare OCR runs only against OCR baselines. |
 | False confidence from topic labels | Medium | Topic search or adaptive routing can become misleading. | Treat local and DeepSeek topics as metadata; require `topic_trust_status=normal` for student routing. |
 | Comparing against wrong baseline | High | Mixed OCR/no-OCR comparisons can falsely claim improvement. | Preserve baseline OCR state in docs and comparison names; compare production runs only to OCR-enabled baselines. |
+| Unsafe automatic improvement loop | High | A tool could reduce counts by loosening gates or skipping visual evidence. | Keep auto-triage evidence-gated: tests must pass, OCR mode must match, `worsened_records` must be empty, and validation/trust-gate loosening is rejected without extraction evidence. |
 | Stale docs | Medium | Contributors may rerun the wrong profile or trust wrong fields. | Keep README and project review tied to measured command output. |
 | Visual review bottleneck | Medium | Remaining failures often need human judgment. | Improve triage notes capture and build a trusted-subset export. |
 | Overfitting fixes to a few papers | Medium | Heuristics can regress unseen layouts. | Add regression fixtures from triage notes and keep worsened-record checks. |
@@ -234,6 +247,8 @@ Exclude from student-facing practice until reviewed:
 
 ## Recommended Next Passes
 
+Use auto-triage as the control loop for these passes. The next target should come from `auto-triage-plan` on an OCR-enabled candidate, and the pass should not be reported as accepted unless `auto-triage-compare` has passing test evidence, OCR-enabled current and baseline outputs, target improvement, and no unexplained regressions.
+
 ### 1. Source-Pairing Guard
 
 - Goal: prevent wrong mark-scheme source pairing when a companion mark scheme is missing.
@@ -286,6 +301,6 @@ Exclude from student-facing practice until reviewed:
 
 ## Final Assessment
 
-The project is on the right track. The strongest part is the image-first extraction plus deterministic triage loop: it preserves visual evidence and makes improvement measurable. The weakest part is still trust around hard mathematical text and mark-scheme/source pairing. The most meaningful reliability improvement would be a source-pairing guard plus a trusted-subset export that downstream apps can consume without guessing.
+The project is on the right track. The strongest part is the image-first extraction plus deterministic triage loop: it preserves visual evidence and makes improvement measurable. Auto-triage now makes that loop easier to repeat without treating aggregate counts as proof. The weakest part is still trust around hard mathematical text and mark-scheme/source pairing. The most meaningful reliability improvement would be a source-pairing guard plus a trusted-subset export that downstream apps can consume without guessing.
 
 The next implementation agent should fix the source-pairing mismatch first, then rerun an OCR-enabled full export into a new output path, compare it against the OCR baseline, and only then continue math-layout repair or trusted-subset work.

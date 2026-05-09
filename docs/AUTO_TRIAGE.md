@@ -4,6 +4,14 @@ The auto-triage loop is a bounded, evidence-gated path for improving extraction 
 
 It does not edit code by itself. Agents or humans perform the targeted implementation work using the generated handoff files.
 
+## Relationship To Manual Triage
+
+Manual triage remains the visual review primitive. `triage-sample` freezes a baseline and creates the crop gallery; `triage-serve` records visual notes; `triage-compare` reports movement against the frozen baseline.
+
+Auto-triage coordinates that loop. It measures the corpus, chooses the next hard-failure target, writes agent handoff files, prints exact commands, and records whether a completed pass is accepted, rejected, or needs human review.
+
+An accepted auto-triage decision is not a trust override. Downstream consumers must still honor the record-level validation, mapping, scope, text-fidelity, topic-trust, and visual-curation gates.
+
 ## Why It Exists
 
 Aggregate counts alone are not enough for this project. A change can reduce a validation flag while making question crops, mark-scheme mapping, or text trust worse. Auto-triage keeps the loop repeatable:
@@ -15,6 +23,25 @@ Aggregate counts alone are not enough for this project. A change can reduce a va
 5. Run OCR-enabled production-style output.
 6. Compare against a frozen baseline.
 7. Accept only when evidence improves and tests pass.
+
+## Current Local Evidence
+
+Current no-OCR export:
+
+- `output/json/question_bank.json`
+- OCR profile: disabled for all `1301` records.
+- Hard failures: `148`.
+- Dominant hard-failure cluster: `paper_total_mismatch` (`107`).
+- Use this output for layout/debug comparisons only, not production OCR scoring.
+
+Current OCR candidate:
+
+- `output_ocr_candidate/json/question_bank.json`
+- OCR profile: enabled for all `1301` records.
+- Hard failures: `133`.
+- Dominant hard-failure cluster: `paper_total_mismatch` (`86`).
+- Latest accepted auto-triage comparison: `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`.
+- That comparison moved hard failures `153 -> 133`, moved `paper_total_mismatch` `107 -> 86`, and reported `worsened_records: []`.
 
 ## Hard-Failure Target
 
@@ -31,6 +58,7 @@ Set a stopping threshold with `--target-max-hard-failures`. For example, to cont
 .venv/bin/python -m exam_bank.cli auto-triage-plan \
   --input output_ocr_candidate/json/question_bank.json \
   --handoff-root agent_handoffs/auto_triage \
+  --candidate-output output_ocr_candidate \
   --target-max-hard-failures 100 \
   --sample-size 30
 ```
@@ -82,16 +110,20 @@ The shared five-agent prompts live under:
 agent_handoffs/auto_triage/Prompt/
 ```
 
-The planner also chooses an iteration number that avoids existing `agent_handoffs/auto_triage/iteration_*` and `output/triage/iteration_*` folders.
+The planner also chooses an iteration number that avoids existing `agent_handoffs/auto_triage/iteration_*` folders and the configured triage root, such as `output/triage/iteration_*` or `output_ocr_candidate/triage/iteration_*`.
 
 ## Runbook
 
-Print the next commands for the latest handoff:
+Print the next commands for a handoff created by the planner:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-runbook \
+  --input output_ocr_candidate/json/question_bank.json \
+  --candidate-output output_ocr_candidate \
   --handoff-root agent_handoffs/auto_triage
 ```
+
+For older or non-default handoffs, pass `--iteration` and `--baseline-triage` explicitly so generated comparison paths match the intended frozen baseline.
 
 The runbook includes:
 
@@ -153,6 +185,8 @@ Accepted requires:
 - `worsened_records` stays under the configured threshold
 - no major unrelated status regression
 - no broad validation or trust-gate loosening without evidence
+
+The command writes `metrics_after.json` and `decision.json` into the auto-triage handoff folder. It prints the decision object. A rejected decision exits non-zero; `accepted` and `needs-human-review` exit zero so the decision file must be read before making a quality claim.
 
 Rejected or paused conditions include:
 

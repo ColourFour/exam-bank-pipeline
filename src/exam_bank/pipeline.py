@@ -193,6 +193,7 @@ def build_records_for_pdf(
         rescan_result=rescan_result,
         focus=_paper_total_focus(final_records),
     )
+    _reconcile_question_mark_total_mismatches(final_records)
     if config.debug.enabled:
         _write_pdf_diagnostic(question_pdf, final_layouts, final_spans, final_records, config)
     return final_records
@@ -711,6 +712,101 @@ def _structural_failure_count(records: list[QuestionRecord]) -> int:
     return count
 
 
+_PAPER_TOTAL_RECORD_HARD_FLAGS = frozenset(
+    {
+        "question_subparts_incomplete",
+        "question_scope_contaminated",
+        "missing_terminal_mark_total",
+        "question_mark_total_mismatch",
+        "question_mark_total_missing",
+        "likely_truncated_question_crop",
+        "polluted_pass_requires_review",
+    }
+)
+
+
+def _paper_total_mismatch_should_fail_record(record: QuestionRecord) -> bool:
+    if record.validation_status == ValidationStatus.FAIL:
+        return True
+    if record.markscheme_mapping_status == MappingStatus.FAIL:
+        return True
+    if record.visual_curation_status == "fail":
+        return True
+    if set(record.validation_flags) & _PAPER_TOTAL_RECORD_HARD_FLAGS:
+        return True
+    if record.markscheme_failure_reason in _PAPER_TOTAL_RECORD_HARD_FLAGS:
+        return True
+    return False
+
+
+def _reconcile_question_mark_total_mismatches(records: list[QuestionRecord]) -> None:
+    for record in records:
+        if not _should_trust_markscheme_total_for_record(record):
+            continue
+
+        validation_flags = set(record.validation_flags)
+        validation_flags.discard("question_mark_total_mismatch")
+        record.validation_flags = sorted(validation_flags)
+        record.markscheme_mapping_status = MappingStatus.PASS
+        record.markscheme_failure_reason = ""
+
+        review_flags = set(record.review_flags)
+        review_flags.add("question_mark_total_mismatch")
+        review_flags.add("question_mark_total_review_only")
+        record.review_flags = sorted(review_flags)
+        record.validation_status = ValidationStatus.REVIEW
+        _refresh_validation_derivatives(record)
+
+
+def _should_trust_markscheme_total_for_record(record: QuestionRecord) -> bool:
+    if record.paper_total_status not in {PaperTotalStatus.MATCHED, PaperTotalStatus.RECOVERED_AFTER_RESCAN}:
+        return False
+    if record.paper_total_expected is None or record.paper_total_detected != record.paper_total_expected:
+        return False
+    if record.markscheme_mapping_status != MappingStatus.FAIL:
+        return False
+    if record.markscheme_failure_reason != "question_mark_total_mismatch":
+        return False
+    if record.question_marks_total is None or record.markscheme_marks_total is None:
+        return False
+    remaining_hard_flags = set(record.validation_flags) - {"question_mark_total_mismatch"}
+    if remaining_hard_flags & (_PAPER_TOTAL_RECORD_HARD_FLAGS - {"question_mark_total_mismatch"}):
+        return False
+    if not record.markscheme_image:
+        return False
+    return True
+
+
+def _refresh_validation_derivatives(record: QuestionRecord) -> None:
+    if not record.scope_quality_status:
+        record.scope_quality_status = _derive_scope_quality_status(
+            validation_flags=record.validation_flags,
+            review_flags=record.review_flags,
+            question_structure_detected=record.question_structure_detected,
+        )
+    record.visual_curation_status = _derive_visual_curation_status(
+        validation_status=record.validation_status,
+        scope_quality_status=record.scope_quality_status,
+        question_image_path=record.screenshot_path,
+        question_crop_confidence=record.question_crop_confidence,
+        mark_scheme_image_path=record.markscheme_image,
+        mark_scheme_crop_confidence=record.markscheme_crop_confidence,
+    )
+    record.text_only_status = _derive_text_only_status(
+        validation_status=record.validation_status,
+        scope_quality_status=record.scope_quality_status,
+        question_text_role=record.question_text_role,
+        question_text_trust=record.question_text_trust,
+    )
+    record.topic_trust_status = _derive_topic_trust_status(
+        topic_confidence=record.topic_confidence,
+        topic_uncertain=record.topic_uncertain,
+        text_fidelity_status=record.text_fidelity_status,
+        validation_status=record.validation_status,
+        scope_quality_status=record.scope_quality_status,
+    )
+
+
 def _paper_total_preference_key(
     total_check: dict[str, int | str | bool | None],
     records: list[QuestionRecord],
@@ -796,8 +892,11 @@ def _apply_paper_total_metadata(
 
         validation_flags = set(record.validation_flags)
         if status == PaperTotalStatus.MISMATCH_AFTER_RESCAN:
-            validation_flags.add("paper_total_mismatch")
-            record.validation_status = ValidationStatus.FAIL
+            if _paper_total_mismatch_should_fail_record(record):
+                validation_flags.add("paper_total_mismatch")
+                record.validation_status = ValidationStatus.FAIL
+            elif record.validation_status in {"", ValidationStatus.PASS}:
+                record.validation_status = ValidationStatus.REVIEW
         record.validation_flags = sorted(validation_flags)
 
 
