@@ -1,0 +1,178 @@
+{
+  "iteration_dir": "output_ocr_candidate/triage/iteration_002",
+  "baseline_path": "output_ocr_candidate/triage/iteration_002/baseline_question_bank.json",
+  "current_path": "output_ocr_candidate/json/question_bank.json",
+  "issue_set": "hard-failures",
+  "target": "paper_total_mismatch",
+  "baseline_record_count": 1301,
+  "current_record_count": 1301,
+  "baseline_hard_failure_count": 153,
+  "current_hard_failure_count": 133,
+  "hard_failure_delta": -20,
+  "baseline_target_issue_count": 107,
+  "current_target_issue_count": 86,
+  "target_issue_delta": -21,
+  "baseline_issue_counts": {
+    "paper_total_mismatch": 107,
+    "question_mark_total_mismatch": 27,
+    "weak_question_anchor": 9,
+    "question_scope_contaminated": 4,
+    "polluted_pass_requires_review": 3,
+    "question_subparts_incomplete": 1,
+    "mapping_failed:partial_question_block": 1,
+    "missing_terminal_mark_total": 1
+  },
+  "current_issue_counts": {
+    "paper_total_mismatch": 86,
+    "question_mark_total_mismatch": 28,
+    "weak_question_anchor": 9,
+    "question_scope_contaminated": 4,
+    "polluted_pass_requires_review": 3,
+    "question_subparts_incomplete": 2,
+    "missing_terminal_mark_total": 1
+  },
+  "issue_count_deltas": {
+    "mapping_failed:partial_question_block": -1,
+    "missing_terminal_mark_total": 0,
+    "paper_total_mismatch": -21,
+    "polluted_pass_requires_review": 0,
+    "question_mark_total_mismatch": 1,
+    "question_scope_contaminated": 0,
+    "question_subparts_incomplete": 1,
+    "weak_question_anchor": 0
+  },
+  "shared_record_count": 1301,
+  "missing_from_current_count": 0,
+  "new_in_current_count": 0,
+  "improved_records": [
+    {
+      "question_id": "12autumn24_q02",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q03",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q04",
+      "fields": [
+        "validation_status",
+        "mapping_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q05",
+      "fields": [
+        "mapping_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q06",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q07",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q08",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q09",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "12autumn24_q10",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "13summer23_q01",
+      "fields": [
+        "mapping_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q01",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q02",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q03",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q04",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q05",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q06",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q07",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q08",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q09",
+      "fields": [
+        "validation_status",
+        "mapping_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q10",
+      "fields": [
+        "validation_status"
+      ]
+    },
+    {
+      "question_id": "31autumn25_q11",
+      "fields": [
+        "validation_status"
+      ]
+    }
+  ],
+  "worsened_records": []
+}

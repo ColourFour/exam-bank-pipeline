@@ -29,6 +29,8 @@ REPO_J24_P52_QP = Path("input/question_papers/9709 Mathematics June 2024 Questio
 REPO_J24_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  52.pdf")
 REPO_N25_P51_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  51.pdf")
 REPO_N25_P51_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  51.pdf")
+REPO_N25_P31_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  31.pdf")
+REPO_N25_P31_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  31.pdf")
 REPO_J24_P13_QP = Path("input/question_papers/9709 Mathematics June 2024 Question paper  13.pdf")
 REPO_J24_P13_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  13.pdf")
 REPO_N25_P55_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  55.pdf")
@@ -708,6 +710,32 @@ def test_repo_mark_scheme_no_subparts_fix_j21_p42_q6(tmp_path: Path) -> None:
     assert q6.markscheme_mapping_status == "pass"
 
 
+def test_repo_n25_p31_q9_includes_earlier_mark_scheme_subparts(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    pytest.importorskip("PIL")
+
+    if not REPO_N25_P31_QP.exists() or not REPO_N25_P31_MS.exists():
+        pytest.skip("Repo November 2025 P31 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_N25_P31_QP, config, mark_scheme_pdf=REPO_N25_P31_MS)
+
+    first = result.records[0]
+    q9 = next(record for record in result.records if record.question_number == "9")
+
+    assert q9.question_subparts == ["a", "b", "c", "d"]
+    assert q9.markscheme_subparts == ["a", "b", "c", "d"]
+    assert q9.question_marks_total == 8
+    assert q9.markscheme_marks_total == 8
+    assert q9.markscheme_mapping_status == "pass"
+    assert first.paper_total_expected == 75
+    assert first.paper_total_detected == 75
+    assert first.paper_total_status in {"matched", "recovered_after_rescan"}
+
+
 @pytest.mark.parametrize(
     ("question_pdf", "mark_scheme_pdf", "paper_family", "expected_total"),
     [
@@ -756,7 +784,7 @@ def test_repo_2024_2025_papers_report_expected_totals_or_fail_clearly(
         assert any(item.validation_status == "fail" for item in result.records)
 
 
-def test_repo_n24_p12_mismatch_is_localized_after_rescan(tmp_path: Path) -> None:
+def test_repo_n24_p12_paper_total_is_matched_without_hiding_question_failures(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -770,20 +798,24 @@ def test_repo_n24_p12_mismatch_is_localized_after_rescan(tmp_path: Path) -> None
     result = process_sample(REPO_N24_P12_QP, config, mark_scheme_pdf=REPO_N24_P12_MS)
 
     first = result.records[0]
+    q1 = next(record for record in result.records if record.question_number == "1")
     focus_records = [record for record in result.records if "paper_total_focus_candidate" in record.review_flags]
 
     assert first.paper_total_expected == 75
-    assert first.paper_total_before_rescan == 72
-    assert first.paper_total_after_rescan == 72
-    assert first.paper_total_status == "mismatch_after_rescan"
-    assert first.rescan_triggered is True
-    assert first.rescan_result == "no_improvement"
+    assert first.paper_total_before_rescan == 75
+    assert first.paper_total_after_rescan == 75
+    assert first.paper_total_status == "matched"
+    assert first.rescan_triggered is False
+    assert first.rescan_result == "not_triggered"
+    assert "paper_total_mismatch" not in first.validation_flags
+    assert q1.validation_status == "fail"
+    assert "question_mark_total_mismatch" in q1.validation_flags
     assert set(first.paper_total_focus_questions) >= {"1", "3", "5"}
     assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6, 7, 8}
     assert focus_records
     assert any(record.question_number == "1" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
     assert any(record.question_number == "3" and "anchor_or_boundary" in record.paper_total_focus_reason for record in focus_records)
-    assert any(record.question_number == "5" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "5" and "cross_page_scope" in record.paper_total_focus_reason for record in focus_records)
 
 
 def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(tmp_path: Path) -> None:

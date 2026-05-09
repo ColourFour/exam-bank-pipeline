@@ -735,10 +735,22 @@ def _status_regressions(
     for counts_key, bad_values in BAD_STATUS_VALUES.items():
         before_counts = metrics_before.get(counts_key) if isinstance(metrics_before.get(counts_key), dict) else {}
         after_counts = metrics_after.get(counts_key) if isinstance(metrics_after.get(counts_key), dict) else {}
+        before_bad_total = sum(int(before_counts.get(status, 0)) for status in bad_values)
+        after_bad_total = sum(int(after_counts.get(status, 0)) for status in bad_values)
+        bad_total_delta = after_bad_total - before_bad_total
+        if bad_total_delta <= max_status_regression:
+            continue
         for status in sorted(bad_values):
             delta = int(after_counts.get(status, 0)) - int(before_counts.get(status, 0))
             if delta > max_status_regression:
-                regressions.append({"field": counts_key, "status": status, "delta": delta})
+                regressions.append(
+                    {
+                        "field": counts_key,
+                        "status": status,
+                        "delta": delta,
+                        "bad_status_delta": bad_total_delta,
+                    }
+                )
     return regressions
 
 

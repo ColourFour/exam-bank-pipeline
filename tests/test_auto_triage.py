@@ -146,6 +146,62 @@ def test_auto_triage_decision_accepts_improving_ocr_iteration() -> None:
     assert decision["accepted"] is True
 
 
+def test_auto_triage_decision_allows_fail_to_review_improvements() -> None:
+    comparison = {
+        "target": "paper_total_mismatch",
+        "hard_failure_delta": -20,
+        "target_issue_delta": -21,
+        "worsened_records": [],
+    }
+    metrics_before = _metrics(ocr_enabled=True, hard_failures=20)
+    metrics_after = _metrics(ocr_enabled=True, hard_failures=0)
+    metrics_before["validation_status_counts"] = {"fail": 20, "pass": 80}
+    metrics_after["validation_status_counts"] = {"review": 15, "pass": 85}
+
+    decision = decide_auto_triage_iteration(
+        comparison=comparison,
+        metrics_before=metrics_before,
+        metrics_after=metrics_after,
+        selected_target={"issue": "paper_total_mismatch"},
+        test_status="pass",
+    )
+
+    assert decision["decision"] == "accepted"
+    assert decision["status_regressions"] == []
+
+
+def test_auto_triage_decision_rejects_net_bad_status_regression() -> None:
+    comparison = {
+        "target": "paper_total_mismatch",
+        "hard_failure_delta": -1,
+        "target_issue_delta": -1,
+        "worsened_records": [],
+    }
+    metrics_before = _metrics(ocr_enabled=True, hard_failures=1)
+    metrics_after = _metrics(ocr_enabled=True, hard_failures=0)
+    metrics_before["validation_status_counts"] = {"fail": 1, "pass": 99}
+    metrics_after["validation_status_counts"] = {"review": 12, "pass": 88}
+
+    decision = decide_auto_triage_iteration(
+        comparison=comparison,
+        metrics_before=metrics_before,
+        metrics_after=metrics_after,
+        selected_target={"issue": "paper_total_mismatch"},
+        test_status="pass",
+    )
+
+    assert decision["decision"] == "rejected"
+    assert "major_status_regression" in decision["rejected_reasons"]
+    assert decision["status_regressions"] == [
+        {
+            "field": "validation_status_counts",
+            "status": "review",
+            "delta": 12,
+            "bad_status_delta": 11,
+        }
+    ]
+
+
 def test_auto_triage_decision_rejects_no_ocr_current_output() -> None:
     decision = decide_auto_triage_iteration(
         comparison={"target": "paper_total_mismatch", "hard_failure_delta": -1, "target_issue_delta": -1},

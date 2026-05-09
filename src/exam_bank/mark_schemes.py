@@ -706,7 +706,7 @@ def _detect_table_question_anchors_from_words(
         tolerance=5.0,
     )
     for row in rows:
-        label_zone_right = min(table.question_col_right, table.bbox.x0 + 70)
+        label_zone_right = _question_label_zone_right(table)
         question_words = [
             word
             for word in row
@@ -739,7 +739,16 @@ def _detect_table_question_anchors_from_words(
 def _is_plausible_question_anchor_bbox(bbox: BoundingBox, table: MarkSchemeTable) -> bool:
     question_column_width = max(20.0, table.question_col_right - table.bbox.x0)
     max_anchor_x0 = table.bbox.x0 + min(42.0, question_column_width * 0.6)
+    if table.bbox.x0 < 20:
+        max_anchor_x0 = max(max_anchor_x0, _question_label_zone_right(table))
     return bbox.x0 <= max_anchor_x0
+
+
+def _question_label_zone_right(table: MarkSchemeTable) -> float:
+    zone_right = table.bbox.x0 + 70
+    if table.bbox.x0 < 20:
+        zone_right = max(zone_right, table.question_col_right - 20)
+    return min(table.question_col_right, zone_right)
 
 
 def _leading_question_label_text(words: list[MarkSchemeWord]) -> str:
@@ -1173,7 +1182,7 @@ def _table_rows_for_question_block(
                 word
                 for word in row
                 if _box_center_x(word.bbox) <= table.question_col_right
-                and word.bbox.x0 <= min(table.question_col_right, table.bbox.x0 + 70)
+                and word.bbox.x0 <= _question_label_zone_right(table)
             ]
             marks_cell = " ".join(
                 word.text
