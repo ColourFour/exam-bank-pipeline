@@ -150,7 +150,10 @@ def detect_question_starts(layouts: list[PageLayout], config: AppConfig, source_
     raw_starts = [
         candidate
         for candidate in detect_question_anchor_candidates(layouts, config)
-        if candidate.confidence >= config.detection.anchor_min_confidence
+        if (
+            candidate.confidence >= config.detection.anchor_min_confidence
+            or _is_low_confidence_first_body_question_start(candidate, config)
+        )
         and int(candidate.question_number) <= max_question_number
     ]
     first_question_one_index = next((index for index, candidate in enumerate(raw_starts) if candidate.question_number == "1"), None)
@@ -175,6 +178,8 @@ def detect_question_starts(layouts: list[PageLayout], config: AppConfig, source_
         if number > last_number:
             if number > last_number + 1 and _future_candidate_exists(raw_starts, candidate_index, str(last_number + 1)):
                 continue
+            if starts and _future_better_duplicate_start_exists(raw_starts, candidate_index, candidate, starts[-1]):
+                continue
             starts.append(candidate)
             seen_numbers.add(candidate.question_number)
             last_number = number
@@ -182,8 +187,45 @@ def detect_question_starts(layouts: list[PageLayout], config: AppConfig, source_
     return starts
 
 
+def _is_low_confidence_first_body_question_start(candidate: QuestionStart, config: AppConfig) -> bool:
+    return bool(
+        candidate.confidence >= max(0.52, config.detection.anchor_min_confidence - 0.08)
+        and candidate.x0 <= config.detection.crop_left_margin + 25
+        and "first_body_block" in candidate.reasons
+        and "number_then_prompt" in candidate.reasons
+    )
+
+
 def _future_candidate_exists(candidates: list[QuestionStart], after_index: int, question_number: str) -> bool:
     return any(candidate.question_number == question_number for candidate in candidates[after_index + 1 :])
+
+
+def _future_better_duplicate_start_exists(
+    candidates: list[QuestionStart],
+    after_index: int,
+    candidate: QuestionStart,
+    previous_start: QuestionStart,
+) -> bool:
+    """Skip inline quantity false starts when a proper later duplicate exists."""
+
+    if candidate.question_number != str(int(previous_start.question_number) + 1):
+        return False
+    if candidate.page_number != previous_start.page_number:
+        return False
+    if candidate.y0 - previous_start.y0 > 90:
+        return False
+    if candidate.x0 <= previous_start.x0 + 12:
+        return False
+    return any(
+        future.question_number == candidate.question_number
+        and (
+            future.page_number > candidate.page_number
+            or future.y0 < candidate.y0 - 12
+            or future.x0 < candidate.x0 - 12
+        )
+        and future.x0 <= previous_start.x0 + 12
+        for future in candidates[after_index + 1 :]
+    )
 
 
 def detect_question_anchor_candidates(layouts: list[PageLayout], config: AppConfig) -> list[QuestionStart]:
@@ -912,6 +954,12 @@ def _ordered_subpart_labels(blocks: list[TextBlock]) -> list[str]:
         label = _subpart_label_from_text(block.first_line)
         if label and label not in labels:
             labels.append(label)
+    if labels and labels[0] != "a":
+        text = extract_text_from_blocks(blocks)
+        if _embedded_alpha_subpart_label_present(text, "a") and "a" not in labels:
+            labels.insert(0, "a")
+    if any(_is_alpha_subpart_label(label) for label in labels):
+        labels = [label for label in labels if _is_alpha_subpart_label(label)]
     sort_keys = [_subpart_sort_key(label) for label in labels]
     if labels and all(key is not None for key in sort_keys):
         return [label for label, _key in sorted(zip(labels, sort_keys), key=lambda item: item[1])]
@@ -921,13 +969,50 @@ def _ordered_subpart_labels(blocks: list[TextBlock]) -> list[str]:
 def _subpart_label_from_text(text: str) -> str | None:
     match = SUBPART_RE.match(text)
     if match:
-        return match.group("label").strip("()").lower()
+        return _primary_subpart_label(match.group("label"))
     parsed = QUESTION_START_RE.match(text.strip())
     if parsed and parsed.group("label"):
-        labels = re.findall(r"\(([a-zivxlcdm]+)\)", parsed.group("label"), re.IGNORECASE)
-        if labels:
-            return labels[-1].lower()
+        return _primary_subpart_label(parsed.group("label"))
     return None
+
+
+def _primary_subpart_label(label_text: str) -> str | None:
+    labels = re.findall(r"\(([a-zivxlcdm]+)\)", label_text, re.IGNORECASE)
+    if not labels:
+        return None
+    lowered = [label.lower() for label in labels]
+    for label in lowered:
+        if _is_alpha_subpart_label(label):
+            return label
+    return lowered[-1]
+
+
+def _is_alpha_subpart_label(label: str) -> bool:
+    return label in {"a", "b", "c", "d", "e", "f", "g", "h"}
+
+
+def _is_roman_subpart_label(label: str) -> bool:
+    return label in {"i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"}
+
+
+def _embedded_alpha_subpart_label_present(text: str, label: str) -> bool:
+    for match in re.finditer(rf"\({re.escape(label)}\)", text):
+        after = text[match.end() : match.end() + 240]
+        if MARK_RE.search(after):
+            return True
+    return False
+
+
+def _subpart_line_has_nested_label(text: str) -> bool:
+    match = SUBPART_RE.match(text)
+    label_text = match.group("label") if match else ""
+    if not label_text:
+        parsed = QUESTION_START_RE.match(text.strip())
+        label_text = parsed.group("label") if parsed and parsed.group("label") else ""
+    labels = [label.lower() for label in re.findall(r"\(([a-zivxlcdm]+)\)", label_text, re.IGNORECASE)]
+    return any(_is_alpha_subpart_label(label) for label in labels) and any(
+        _is_roman_subpart_label(label) for label in labels
+    )
 
 
 def _subpart_sequence_flags(blocks: list[TextBlock]) -> list[str]:
@@ -1417,10 +1502,17 @@ def _question_scope_contamination(
     label_counts: dict[str, int] = {}
     duplicate_labels: list[str] = []
     line_labels: list[str | None] = []
+    span_has_alpha_label = any(
+        (label := _subpart_label_from_text(line)) is not None and _is_alpha_subpart_label(label) for line in lines
+    )
     for line in lines:
         label = _subpart_label_from_text(line)
         line_labels.append(label)
         if not label:
+            continue
+        if _subpart_line_has_nested_label(line):
+            continue
+        if span_has_alpha_label and _is_roman_subpart_label(label):
             continue
         label_counts[label] = label_counts.get(label, 0) + 1
         if label_counts[label] == 2:
@@ -1538,6 +1630,8 @@ def _foreign_question_anchor(
         return None
     if _parsed_anchor_is_math_coefficient(line):
         return None
+    if _parsed_anchor_is_inline_quantity_continuation(line, parsed[0], config):
+        return None
     if _parsed_anchor_is_diagram_axis_or_quantity(line) and _line_position_supports_diagram_label(
         text=_diagram_label_candidate_text(line),
         bbox=bbox,
@@ -1556,6 +1650,28 @@ def _parsed_anchor_is_math_coefficient(line: str) -> bool:
         return False
     remainder = line.strip()[match.end() :].lstrip(" ).,:;-–—")
     return bool(re.match(r"(?i)^(?:sin|cos|tan|sec|cosec|csc|cot|ln|log|exp|sqrt)\b", remainder))
+
+
+def _parsed_anchor_is_inline_quantity_continuation(line: str, question_number: str, config: AppConfig) -> bool:
+    stripped = _clean_text_line(line)
+    match = QUESTION_START_RE.match(stripped)
+    if not match:
+        return False
+    remainder = stripped[match.end() :].strip(" ).,:;-–—")
+    if not remainder or not remainder[0].islower():
+        return False
+    first_word_match = re.match(r"[a-z][A-Za-z-]*\b", remainder)
+    if not first_word_match:
+        return False
+    first_word = first_word_match.group(0).lower()
+    if first_word in {"x", "y", "z", "r"}:
+        return False
+    if re.match(
+        r"(?i)^(?:find|show|solve|given|the|a|an|in|on|use|state|calculate|determine|prove|verify|sketch|draw|describe)\b",
+        remainder,
+    ):
+        return False
+    return True
 
 
 def _parsed_anchor_is_diagram_axis_or_quantity(line: str) -> bool:

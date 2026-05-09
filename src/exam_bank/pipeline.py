@@ -570,7 +570,7 @@ def _build_question_record(
 
 
 _QUESTION_SUBPART_LABEL_RE = re.compile(
-    r"^\s*(?:\d+\s*)?(?P<labels>(?:\((?:a|b|c|d|e|f|g|h|viii|vii|vi|iv|ix|iii|ii|i|v|x)\))+)",
+    r"^\s*(?:\d+\s*)?(?P<labels>\((?:a|b|c|d|e|f|g|h|viii|vii|vi|iv|ix|iii|ii|i|v|x)\)(?:\s*\((?:a|b|c|d|e|f|g|h|viii|vii|vi|iv|ix|iii|ii|i|v|x)\))*)",
     re.IGNORECASE,
 )
 
@@ -585,6 +585,8 @@ def _question_subparts_from_text(text: str) -> list[str]:
             normalized = label.lower()
             if normalized not in subparts:
                 subparts.append(normalized)
+    if subparts and "a" not in subparts and _embedded_alpha_subpart_label_present(text, "a"):
+        subparts.insert(0, "a")
     alpha_labels = ["a", "b", "c", "d", "e", "f", "g", "h"]
     roman_labels = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
     if any(label in alpha_labels for label in subparts):
@@ -592,6 +594,14 @@ def _question_subparts_from_text(text: str) -> list[str]:
     if any(label in roman_labels for label in subparts):
         return sorted({label for label in subparts if label in roman_labels}, key=roman_labels.index)
     return subparts
+
+
+def _embedded_alpha_subpart_label_present(text: str, label: str) -> bool:
+    for match in re.finditer(rf"\({re.escape(label)}\)", text):
+        after = text[match.end() : match.end() + 240]
+        if re.search(r"\[\d{1,2}\]", after):
+            return True
+    return False
 
 
 def _question_subparts_from_span(span: QuestionSpan) -> list[str]:

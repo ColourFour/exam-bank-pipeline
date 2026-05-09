@@ -24,6 +24,7 @@ def find_mark_scheme(
         candidates = companion_candidates(metadata, mark_schemes_dir, "MS")
         if candidates:
             return candidates[0]
+        return None
 
     for candidate_name in _auto_candidate_names(question_pdf.name):
         candidate = mark_schemes_dir / candidate_name

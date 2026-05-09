@@ -787,6 +787,8 @@ def _is_plausible_mark_scheme_label(text: str) -> bool:
     cleaned = _clean_cell_text(text)
     if not cleaned or cleaned.startswith("("):
         return False
+    if re.fullmatch(r"\d{1,2}[a-h]", cleaned, re.IGNORECASE):
+        return False
     label = _clean_question_label_candidate(cleaned)
     return bool(re.fullmatch(r"\d{1,2}(?:[a-h]|\([a-h]\))?(?:\((?:i{1,3}|iv|v|vi{0,3}|ix|x)\))?", label, re.IGNORECASE))
 
@@ -1101,11 +1103,29 @@ def _mark_total_for_question_block(
 def _is_standalone_total_row(row: list[MarkSchemeWord], table: MarkSchemeTable, marks_cell: str) -> bool:
     if not re.fullmatch(r"\s*\d{1,2}\s*", marks_cell):
         return False
+    if _is_terminal_total_guidance_row(" ".join(word.text for word in row), marks_cell):
+        return True
     if len(row) > 2:
         return False
     if any(not re.fullmatch(r"\d{1,2}", word.text.strip()) for word in row):
         return False
     return True
+
+
+def _is_terminal_total_guidance_row(row_text: str, marks_cell: str) -> bool:
+    value = marks_cell.strip()
+    cleaned = " ".join(row_text.replace("\u00a0", " ").split())
+    if not cleaned.startswith(value):
+        return False
+    remainder = cleaned[len(value) :].strip(" .:-–—")
+    if not remainder:
+        return False
+    return bool(
+        re.match(
+            r"(?i)^(?:N\.?B\.?|SC\d*|Special\s+case|See\s+diagram|Ignore|Allow|Accept|Condone|Max(?:imum)?|No\s+evidence)\b",
+            remainder,
+        )
+    )
 
 
 def _standalone_total_row_value(row: list[MarkSchemeWord], table: MarkSchemeTable, marks_cell: str) -> int | None:
@@ -1229,23 +1249,37 @@ def _group_rows_by_subpart(rows: list[MarkSchemeRow], parent_number: str) -> lis
 
 def _subpart_total_candidates(rows: list[MarkSchemeRow]) -> list[int]:
     branch_totals = [0]
-    explicit_totals: list[int] = []
+    explicit_totals: list[tuple[int, int]] = []
     current_branch = 0
-    for row in rows:
+    for index, row in enumerate(rows):
+        if row.standalone_total is not None:
+            explicit_totals.append((index, row.standalone_total))
+            continue
         if _is_alternative_method_row(row.text):
             if branch_totals[current_branch] > 0 or explicit_totals:
                 branch_totals.append(0)
                 current_branch = len(branch_totals) - 1
             continue
-        if row.standalone_total is not None:
-            explicit_totals.append(row.standalone_total)
-            continue
         if row.mark_values:
             branch_totals[current_branch] += sum(row.mark_values)
-    candidates = explicit_totals or [total for total in branch_totals if total > 0]
+    terminal_totals = [
+        value
+        for index, value in explicit_totals
+        if _standalone_total_is_terminal_or_before_alternative(rows, index)
+    ]
+    candidates = sorted(set(terminal_totals + [total for total in branch_totals if total > 0]))
     if not candidates:
         return []
     return sorted(set(candidates))
+
+
+def _standalone_total_is_terminal_or_before_alternative(rows: list[MarkSchemeRow], index: int) -> bool:
+    for later in rows[index + 1 :]:
+        if _is_alternative_method_row(later.text):
+            return True
+        if later.mark_values:
+            return False
+    return True
 
 
 def _select_total_from_candidates(candidate_groups: list[list[int]], expected_total: int | None) -> int | None:
@@ -1286,7 +1320,7 @@ def _is_alternative_method_row(text: str) -> bool:
     )
     return bool(
         re.match(
-            r"^(?:alternative(?:\s+method(?:\s+for\s+question\b.*)?)?|method\s*[23]\b|either\b|or\b)",
+            r"^(?:alternative(?:\s+method(?:\s+for\s+question\b.*)?)?|method\s*[23]\b|special\s+case\b|SC\d*:?\b|either\b)",
             cleaned,
             re.IGNORECASE,
         )
@@ -1304,7 +1338,7 @@ def _marks_from_marks_cell(text: str) -> list[int]:
         return [max(values)] if values else []
     coded_values = [
         int(match.group(1))
-        for match in re.finditer(r"(?<![A-Za-z])(?:[MBACE]|D?M|D?B|D?A|FT)\s*(\d{1,2})(?!\d)", cleaned, re.IGNORECASE)
+        for match in re.finditer(r"(?<![A-Za-z])(?:[MBACE]|D?M|D?B|D?A|FT)\s*(\d{1,2})(?!\d)", cleaned)
         if 0 < int(match.group(1)) <= 15
     ]
     if coded_values:

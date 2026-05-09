@@ -7,6 +7,7 @@ from exam_bank.identifiers import normalize_question_id
 from exam_bank.image_rendering import _detect_prompt_regions
 from exam_bank.mark_schemes import (
     MarkSchemeAnchor,
+    MarkSchemeRow,
     MarkSchemeTable,
     MarkSchemeWord,
     _blocks_for_table_anchor_bounds,
@@ -15,6 +16,7 @@ from exam_bank.mark_schemes import (
     _detect_table_question_anchors_from_words,
     _detected_subparts_for_question,
     _mark_total_for_question_block,
+    _mark_total_from_rows,
     _marks_from_marks_cell,
     _next_boundary_anchor,
     _parse_mark_scheme_question_cell,
@@ -639,6 +641,14 @@ def test_left_margin_numbered_equation_prompt_can_still_flag_foreign_anchor() ->
     assert _foreign_question_anchor("6 y = x^2 for x > 0.", "5", config, bbox=bbox, layout=layout) == "6"
 
 
+def test_inline_quantity_continuation_is_not_foreign_question_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    bbox = BoundingBox(72, 160, 360, 174)
+
+    assert _foreign_question_anchor("6 musicians are selected from these 20 to perform at a concert.", "5", config, bbox=bbox, layout=layout) is None
+
+
 def test_question_text_trims_answer_filler_after_terminal_mark() -> None:
     config = AppConfig()
     layout = PageLayout(
@@ -776,6 +786,22 @@ def test_extract_marks_sums_bracketed_marks() -> None:
     assert extract_marks_from_text("Find x. [2]\nHence find y. [3]") == 5
     assert extract_marks_from_text("No mark shown") is None
     assert extract_question_total_from_text("Find x. [2]\nHence find y. [3]\n[5]") == 5
+    assert (
+        extract_question_total_from_text(
+            "9 (a) (i) Show that the second term is cos theta sin^2 theta. [3]\n"
+            "(ii) Find the sum of the first 12 terms. [2]\n"
+            "(b) Find the 85th term. [4]"
+        )
+        == 9
+    )
+    assert extract_question_total_from_text("4 (a) Show a result. [3]\n(b) Hence find b. [3]") == 6
+    assert (
+        extract_question_total_from_text(
+            "11 (a) Find the value of a. [6]\n"
+            "(b) Express z^3 in the form r e^{i theta}. Give the exact values [3] of r and theta."
+        )
+        == 9
+    )
 
 
 def test_question_subparts_from_span_preserves_multiline_middle_parts() -> None:
@@ -808,6 +834,17 @@ def test_mark_scheme_auto_pairing(tmp_path: Path) -> None:
     ms.write_text("fake", encoding="utf-8")
 
     assert find_mark_scheme(qp, ms_dir) == ms
+
+
+def test_canonical_mark_scheme_pairing_does_not_fuzzy_match_missing_component(tmp_path: Path) -> None:
+    qp = tmp_path / "9709 Mathematics November 2025 Question Paper 33.pdf"
+    ms_dir = tmp_path / "mark_schemes"
+    ms_dir.mkdir()
+    qp.write_text("fake", encoding="utf-8")
+    (ms_dir / "9709 Mathematics November 2025 Mark Scheme 32.pdf").write_text("fake", encoding="utf-8")
+    (ms_dir / "9709 Mathematics November 2021 Mark Scheme 12.pdf").write_text("fake", encoding="utf-8")
+
+    assert find_mark_scheme(qp, ms_dir) is None
 
 
 def test_mark_scheme_table_mapping_merges_blank_question_number_continuation_rows() -> None:
@@ -875,10 +912,60 @@ def test_question_id_normalization_preserves_subparts() -> None:
     assert normalize_question_id("Question 3(a)") == "3(a)"
     assert normalize_question_id("8(iv)") == "8(iv)"
     assert _parse_mark_scheme_question_cell("3(b)", {"3(b)"}) == "3(b)"
+    assert _parse_mark_scheme_question_cell("3 a", {"3(a)"}) == "3(a)"
+    assert _parse_mark_scheme_question_cell("5G", {"5"}) is None
     assert _parse_mark_scheme_question_cell("8x4", {"8"}) is None
     assert _parse_mark_scheme_question_cell("2(x2", {"2"}) is None
     assert _parse_mark_scheme_question_cell("(5", {"5"}) is None
     assert _parse_mark_scheme_question_cell("4tan", {"4"}) is None
+
+
+def test_mark_scheme_total_prefers_terminal_guidance_total_rows() -> None:
+    rows = [
+        MarkSchemeRow(1, 10, "5 Use a method M1", "M1", (1,), None, "5"),
+        MarkSchemeRow(1, 20, "Obtain first answer A1", "A1", (1,), None, None),
+        MarkSchemeRow(1, 30, "4", "4", (), 4, None),
+        MarkSchemeRow(1, 40, "Obtain second answer A1", "A1", (1,), None, None),
+        MarkSchemeRow(1, 50, "6 SC: If A0A0 allow SC B1", "6", (), 6, None),
+    ]
+
+    assert _mark_total_from_rows(rows, "5", expected_total=6) == 6
+
+
+def test_mark_scheme_total_uses_guidance_text_total_after_or_rows() -> None:
+    rows = [
+        MarkSchemeRow(1, 10, "2 Show a circle B1", "B1", (1,), None, "2"),
+        MarkSchemeRow(1, 20, "Show radius B1", "B1", (1,), None, None),
+        MarkSchemeRow(1, 30, "Show half line B1", "B1", (1,), None, None),
+        MarkSchemeRow(1, 40, "or seen", "", (), None, None),
+        MarkSchemeRow(1, 50, "Shade the correct region B1", "B1", (1,), None, None),
+        MarkSchemeRow(1, 60, "4 N.B. Maximum 3 out of 4 if any errors seen.", "4", (), 4, None),
+    ]
+
+    assert _mark_total_from_rows(rows, "2", expected_total=4) == 4
+
+
+def test_mark_scheme_total_treats_special_case_as_alternative_branch() -> None:
+    rows = [
+        MarkSchemeRow(1, 10, "1 Work done by cyclist B1", "B1", (1,), None, "1"),
+        MarkSchemeRow(1, 20, "Use work energy equation M1", "M1", (1,), None, None),
+        MarkSchemeRow(1, 30, "mass = 80 kg A1", "A1", (1,), None, None),
+        MarkSchemeRow(1, 40, "SC: Acceleration considered as a constant", "", (), None, None),
+        MarkSchemeRow(1, 50, "Use v squared formula M1", "M1", (1,), None, None),
+        MarkSchemeRow(1, 60, "mass = 80 kg A1", "A1", (1,), None, None),
+    ]
+
+    assert _mark_total_from_rows(rows, "1", expected_total=3) == 3
+
+
+def test_question_subparts_recovers_embedded_first_alpha_label() -> None:
+    text = (
+        "9 The origin (a) Given that vector OC is parallel to AB, find D. [3]\n"
+        "(b) State a vector equation for the line through A and B. [1]\n"
+        "(c) Find the distance between the parallel sides. [5]"
+    )
+
+    assert _question_subparts_from_text(text) == ["a", "b", "c"]
 
 
 def test_mark_scheme_table_detection_requires_answer_table_headers() -> None:

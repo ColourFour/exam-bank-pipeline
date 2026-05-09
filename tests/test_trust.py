@@ -159,6 +159,41 @@ def test_clean_natural_language_text_can_be_readable() -> None:
     assert visual_required is False
 
 
+def test_instantaneously_is_not_treated_as_repeated_trig_corruption() -> None:
+    text = (
+        "A ball hits the ground and instantaneously loses 8 J of kinetic energy. "
+        "Find the greatest height after hitting the ground."
+    )
+    flags = _visual_flags(text)
+    status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=[],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="native_pdf",
+    )
+    role, trust, visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=status,
+        visual_reason_flags=flags,
+    )
+
+    assert "contains_math_text_corruption" not in flags
+    assert "text_order_unreliable" not in flags
+    assert fidelity_flags == []
+    assert role == "readable_text"
+    assert trust == "high"
+    assert visual_required is False
+
+
+def test_joined_trig_function_corruption_still_requires_visual_review() -> None:
+    flags = _visual_flags("Prove that (sini + coscos_{2} ii)^{2} = 1.")
+    assert "contains_math_text_corruption" in flags
+    assert "text_order_unreliable" in flags
+
+
 def test_page_furniture_and_barcode_garbage_demote_text() -> None:
     text = "DO NOT WRITE IN THIS MARGIN\n123456 789012 345678\n\ufffd\ufffd\ufffd\nBLANK PAGE"
     flags = _visual_flags(text)

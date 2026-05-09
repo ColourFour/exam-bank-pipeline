@@ -553,8 +553,8 @@ def _text_has_suspicious_ocr_noise(text: str) -> bool:
 def _text_has_corrupted_math_notation(text: str) -> bool:
     normalized = str(text)
     patterns = [
-        r"(?:sin|cos|tan|sec|cot){2,}",
-        r"\b[a-z]*(?:sin|cos|tan|sec|cot){2,}[a-z]*\b",
+        r"(?<![A-Za-z])(?:sin|cos|tan|sec|cot){2,}(?![A-Za-z])",
+        r"\b(?:sin|cos|tan|sec|cot)(?:sin|cos|tan|sec|cot)(?=\b|[_^({])",
         r"\^\{[^}]{1,4}\}_\{[^}]{1,4}\}r",
         r"[A-Za-z]{1,3},,",
     ]

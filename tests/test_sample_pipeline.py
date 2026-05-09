@@ -29,6 +29,10 @@ REPO_J24_P52_QP = Path("input/question_papers/9709 Mathematics June 2024 Questio
 REPO_J24_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  52.pdf")
 REPO_N25_P51_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  51.pdf")
 REPO_N25_P51_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  51.pdf")
+REPO_J25_P51_QP = Path("input/question_papers/9709 Mathematics June 2025 Question Paper  51.pdf")
+REPO_J25_P51_MS = Path("input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  51.pdf")
+REPO_J25_P33_QP = Path("input/question_papers/9709 Mathematics June 2025 Question Paper  33.pdf")
+REPO_J25_P33_MS = Path("input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  33.pdf")
 REPO_N25_P31_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  31.pdf")
 REPO_N25_P31_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  31.pdf")
 REPO_J24_P13_QP = Path("input/question_papers/9709 Mathematics June 2024 Question paper  13.pdf")
@@ -39,6 +43,8 @@ REPO_J22_P52_QP = Path("input/question_papers/9709 Mathematics June 2022 Questio
 REPO_J22_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2022 Mark Scheme  52.pdf")
 REPO_J21_P11_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  11.pdf")
 REPO_J21_P11_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  11.pdf")
+REPO_J21_P33_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  33.pdf")
+REPO_J21_P33_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  33.pdf")
 REPO_J21_P42_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  42.pdf")
 REPO_J21_P42_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  42.pdf")
 REPO_N24_P12_QP = Path("input/question_papers/9709 Mathematics November 2024 Question paper  12.pdf")
@@ -701,13 +707,44 @@ def test_repo_mark_scheme_no_subparts_fix_j21_p42_q6(tmp_path: Path) -> None:
 
     result = process_sample(REPO_J21_P42_QP, config, mark_scheme_pdf=REPO_J21_P42_MS)
 
+    q5 = next(record for record in result.records if record.question_number == "5")
     q6 = next(record for record in result.records if record.question_number == "6")
+
+    assert q5.question_subparts == ["a", "b"]
+    assert q5.question_marks_total == 11
+    assert q5.markscheme_marks_total == 11
+    assert q5.validation_status == "pass"
+    assert q5.markscheme_mapping_status == "pass"
+    assert "question_scope_contaminated" not in q5.validation_flags
 
     assert q6.question_subparts == []
     assert q6.markscheme_subparts == []
     assert q6.question_marks_total == 8
     assert q6.markscheme_marks_total == 8
     assert q6.markscheme_mapping_status == "pass"
+
+
+def test_repo_j21_p33_q9_recovers_embedded_part_a(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    pytest.importorskip("PIL")
+
+    if not REPO_J21_P33_QP.exists() or not REPO_J21_P33_MS.exists():
+        pytest.skip("Repo June 2021 P33 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_J21_P33_QP, config, mark_scheme_pdf=REPO_J21_P33_MS)
+
+    q9 = next(record for record in result.records if record.question_number == "9")
+
+    assert q9.question_subparts == ["a", "b", "c"]
+    assert q9.markscheme_subparts == ["a", "b", "c"]
+    assert q9.question_marks_total == 9
+    assert q9.markscheme_marks_total == 9
+    assert q9.validation_status == "pass"
+    assert q9.markscheme_mapping_status == "pass"
 
 
 def test_repo_n25_p31_q9_includes_earlier_mark_scheme_subparts(tmp_path: Path) -> None:
@@ -811,13 +848,15 @@ def test_repo_n24_p12_paper_total_is_matched_without_hiding_question_failures(tm
     assert q1.validation_status == "review"
     assert q1.markscheme_mapping_status == "pass"
     assert "question_mark_total_mismatch" not in q1.validation_flags
-    assert "question_mark_total_review_only" in q1.review_flags
-    assert set(first.paper_total_focus_questions) >= {"1", "3", "5"}
-    assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6, 7, 8}
+    assert "question_mark_total_review_only" not in q1.review_flags
+    assert q1.question_marks_total == 5
+    assert q1.markscheme_marks_total == 5
+    assert set(first.paper_total_focus_questions) >= {"1", "3", "4"}
+    assert set(first.paper_total_focus_pages) >= {2, 3, 4, 5, 6}
     assert focus_records
-    assert any(record.question_number == "1" and "question_mark_total_mismatch" in record.paper_total_focus_reason for record in focus_records)
+    assert all("question_mark_total_mismatch" not in record.paper_total_focus_reason for record in focus_records)
     assert any(record.question_number == "3" and "anchor_or_boundary" in record.paper_total_focus_reason for record in focus_records)
-    assert any(record.question_number == "5" and "cross_page_scope" in record.paper_total_focus_reason for record in focus_records)
+    assert any(record.question_number == "4" and "cross_page_scope" in record.paper_total_focus_reason for record in focus_records)
 
 
 def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(tmp_path: Path) -> None:
@@ -848,3 +887,55 @@ def test_repo_n25_p51_contamination_control_survives_without_rescan_regression(t
     assert q7.markscheme_mapping_status == "pass"
     assert q7.validation_status == "review"
     assert "question_scope_contaminated" not in q7.validation_flags
+
+
+def test_repo_j25_p51_does_not_split_question_5_at_inline_quantity(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    pytest.importorskip("PIL")
+
+    if not REPO_J25_P51_QP.exists() or not REPO_J25_P51_MS.exists():
+        pytest.skip("Repo June 2025 P51 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_J25_P51_QP, config, mark_scheme_pdf=REPO_J25_P51_MS)
+
+    q5 = next(record for record in result.records if record.question_number == "5")
+    q6 = next(record for record in result.records if record.question_number == "6")
+
+    assert "6 musicians are selected from these 20" in q5.combined_question_text
+    assert "A bag contains 10 marbles" in q6.combined_question_text
+    assert q5.question_marks_total == 7
+    assert q5.markscheme_marks_total == 7
+    assert q6.question_marks_total == 9
+    assert q6.markscheme_marks_total == 9
+    assert "question_scope_contaminated" not in q5.validation_flags
+    assert "question_scope_contaminated" not in q6.validation_flags
+
+
+def test_repo_j25_p33_keeps_low_confidence_question_4_anchor(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    pytest.importorskip("PIL")
+
+    if not REPO_J25_P33_QP.exists() or not REPO_J25_P33_MS.exists():
+        pytest.skip("Repo June 2025 P33 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_J25_P33_QP, config, mark_scheme_pdf=REPO_J25_P33_MS)
+
+    assert [record.question_number for record in result.records] == [str(index) for index in range(1, 12)]
+
+    q3 = next(record for record in result.records if record.question_number == "3")
+    q4 = next(record for record in result.records if record.question_number == "4")
+
+    assert q3.question_marks_total == 4
+    assert q3.markscheme_marks_total == 4
+    assert q4.question_marks_total == 6
+    assert q4.markscheme_marks_total == 6
+    assert "It is given that z" in q4.combined_question_text
+    assert "It is given that z" not in q3.combined_question_text
