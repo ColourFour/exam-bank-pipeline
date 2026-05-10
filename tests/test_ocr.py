@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+from argparse import Namespace
 from pathlib import Path
 
 import pytest
 
 from exam_bank.config import AppConfig
+from exam_bank.cli import cmd_process
 from exam_bank.exporters import export_records
 from exam_bank.models import QuestionRecord
 from exam_bank.ocr import disabled_ocr_result, score_text_candidate, select_text_candidate, run_question_crop_ocr
@@ -118,6 +120,39 @@ def test_ocr_enabled_failure_is_captured_without_crashing(monkeypatch: pytest.Mo
     assert result.ocr_text == ""
     assert result.ocr_text_trust == "unusable"
     assert "missing tesseract" in result.ocr_failure_reason
+
+
+def test_process_cli_enable_ocr_routes_enabled_config_to_pipeline(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_process_inputs(input_path: str, config: AppConfig) -> object:
+        captured["input_path"] = input_path
+        captured["ocr_enabled"] = config.ocr.enabled
+        captured["ocr_language"] = config.ocr.language
+        captured["tesseract_cmd"] = config.ocr.tesseract_cmd
+        captured["json_dir"] = config.output.json_dir
+        return object()
+
+    monkeypatch.setattr("exam_bank.cli.process_inputs", fake_process_inputs)
+    monkeypatch.setattr("exam_bank.cli._print_result", lambda _result: None)
+
+    exit_code = cmd_process(
+        Namespace(
+            input=str(tmp_path / "input"),
+            output=str(tmp_path / "output_ocr_candidate"),
+            config="config.yaml",
+            enable_ocr=True,
+            ocr_language="eng",
+            tesseract_cmd="/usr/local/bin/tesseract",
+        )
+    )
+
+    assert exit_code == 0
+    assert captured["input_path"] == str(tmp_path / "input")
+    assert captured["ocr_enabled"] is True
+    assert captured["ocr_language"] == "eng"
+    assert captured["tesseract_cmd"] == "/usr/local/bin/tesseract"
+    assert captured["json_dir"] == tmp_path / "output_ocr_candidate" / "json"
 
 
 def test_exported_ocr_fields_do_not_override_canonical_question_artifact(tmp_path: Path) -> None:
@@ -236,6 +271,26 @@ def test_candidate_selection_can_use_clean_ocr_when_native_scope_failed() -> Non
     assert decision.ocr_selected is True
     assert decision.text_candidate_source == "ocr"
     assert "ocr_missing_question_number_tolerated" in decision.text_candidate_decision_reasons
+
+
+def test_candidate_selection_rejects_missing_question_number_when_native_scope_is_clean() -> None:
+    native = "1 The diagram text is merged and sparse but still starts with the expected question number. [4]"
+    ocr = (
+        "The diagram shows the graph of y = f(x), which consists of two straight lines. "
+        "State fully the two transformations. [4]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="1",
+        expected_subparts=[],
+        scope_quality_status="clean",
+    )
+
+    assert decision.ocr_selected is False
+    assert decision.text_candidate_source == "native"
+    assert "ocr_missing_question_number" in decision.ocr_rejected_reasons
 
 
 def test_candidate_selection_rejects_ocr_that_loses_expected_mark_brackets() -> None:

@@ -1,177 +1,166 @@
-# Agent 2 Implementation Notes — iteration_001
+# Agent 2 Implementation Notes - iteration_001
 
 ## Scope
 
-Implemented the approved measurement/reporting batch only. No extraction behavior changed, no OCR thresholds changed, and no tests were edited.
+Implemented the deterministic reporting/tooling pass requested by Agent 1. No extraction behavior, OCR selection thresholds, crop logic, mapping logic, trust gates, topic classification, difficulty classification, DeepSeek behavior, tests, or exported schema were changed.
+
+## Required Repo State Verified
+
+Inspected:
+
+- `README.md`
+- `pyproject.toml`
+- `config.yaml`
+- `src/exam_bank/ocr.py`
+- `src/exam_bank/pipeline.py`
+- `src/exam_bank/models.py`
+- `src/exam_bank/exporters.py`
+- `src/exam_bank/extraction_structure.py`
+- `src/exam_bank/trust.py`
+- `tests/test_ocr.py`
+- `tests/test_output_contract.py`
+- `tests/test_extraction_structure.py`
+- `output/json/question_bank.json`
+- previous handoffs/comparison reports under `agent_handoffs/iteration_001`, `output/triage`, and `output_ocr_candidate/triage`
+- `agent_handoffs/iteration_001/Prompt/agent1_prompt.md`
+
+Important verified state:
+
+- The export is image-first. `exporters.py` writes contract fields at top level and diagnostic pipeline fields mostly under `notes`.
+- Preferred field source in the new audit: top-level for export-contract/student-facing fields, `notes` for diagnostic fields. Disagreements are recorded.
+- Current `output/json/question_bank.json` has schema `exam_bank.question_bank` version `2`, declared and actual record count `1301`.
+- Current canonical export has candidate-selection metadata, but OCR did not run: `ocr_ran=false` for all `1301`, `text_candidate_source=native` for all `1301`, `ocr_selected=false` for all `1301`, and `ocr_text`/`ocr_engine` are blank.
+- A baseline exists at `output/triage/iteration_004/baseline_question_bank.json` and was used for comparison.
 
 ## Files Changed
 
-- `src/exam_bank/audit.py`
-  - Added reusable OCR candidate audit helpers.
-  - Added stale/incomplete candidate metadata detection.
-  - Added score summaries that ignore missing/null scores.
-  - Added OCR rejected-reason aggregation.
-  - Added suspicious OCR-selected and readiness-inflation risk report sections.
-  - Added optional baseline comparison by `question_id`.
-- `scripts/audit_ocr_candidates.py`
-  - Added standalone report command because `tests/test_runtime_paths.py` intentionally limits the package CLI to `process` and `audit`.
+- `scripts/audit_question_bank_readiness.py`
+  - New standalone deterministic full-bank audit/report command.
+  - Reads top-level and `notes` fields through a documented source-of-truth helper.
+  - Produces field presence, OCR candidate, suspicious OCR, possible false-negative, readiness tier, blocker, crop, mapping/validation, subpart mark, representative sample, baseline comparison, summary, and recommendation reports.
+  - Supports optional `--baseline` and `--artifact-root`.
+- `agent_handoffs/iteration_001/agent2_impl_notes.md`
+  - Updated with this implementation and run evidence.
 
 ## Command Added
 
 ```bash
-.venv/bin/python scripts/audit_ocr_candidates.py --input output/json/question_bank.json
-```
-
-Optional baseline/output form:
-
-```bash
-.venv/bin/python scripts/audit_ocr_candidates.py \
+.venv/bin/python scripts/audit_question_bank_readiness.py \
   --input output/json/question_bank.json \
-  --baseline /path/to/baseline/question_bank.json \
-  --json-output /tmp/ocr_candidate_audit.json
+  --baseline output/triage/iteration_004/baseline_question_bank.json \
+  --artifact-root output \
+  --out-dir output/audits/iteration_001
 ```
 
-## Current Bank Report Summary
+## Output Files Produced
 
-Command run:
+`output/audits/iteration_001/` now contains:
 
-```bash
-.venv/bin/python scripts/audit_ocr_candidates.py --input output/json/question_bank.json --json-output /tmp/ocr_candidate_audit.json
-```
+- `audit_summary.md`
+- `audit_summary.json`
+- `field_presence_report.csv`
+- `ocr_candidate_audit.csv`
+- `ocr_suspicious_records.csv`
+- `possible_ocr_false_negatives.csv`
+- `readiness_tiers.csv`
+- `hard_blockers.csv`
+- `crop_quality_report.csv`
+- `mapping_validation_report.csv`
+- `subpart_marks_report.csv`
+- `representative_review_sample.csv`
+- `baseline_comparison.csv`
+- `baseline_comparison_summary.json`
+- `next_iteration_recommendations.md`
 
-Result:
+These are generated output artifacts under ignored `output/`; they should not be committed unless the human explicitly wants audit artifacts versioned.
 
-- Total records: `1301`
-- Candidate metadata presence:
-  - `text_candidate_source`: `0` present, `1301` missing
-  - `text_candidate_decision`: `0` present, `1301` missing
-  - `ocr_selected`: `0` present, `1301` missing
-  - `native_text_score`: `0` present, `1301` missing
-  - `ocr_text_score`: `0` present, `1301` missing
-  - `selected_text_score`: `0` present, `1301` missing
-- Data quality findings:
-  - `candidate_metadata_missing_for_all_records:text_candidate_source,text_candidate_decision,ocr_selected,native_text_score,ocr_text_score,selected_text_score`
-  - `stale_or_candidate_unaware_export`
-- OCR-selected count: `0`
-- Candidate source distribution: `missing: 1301`
-- Candidate decision distribution: `missing: 1301`
-- OCR rejected reasons: none reportable because candidate metadata is missing
-- Score summaries: all candidate score counts are `0`; nulls were not treated as zeroes
-- Text fidelity distribution:
-  - `clean: 310`
-  - `degraded: 938`
-  - `unusable: 53`
-- Text-only status distribution:
-  - `fail: 1043`
-  - `ready: 73`
-  - `review: 185`
-- Visual curation status distribution:
-  - `fail: 420`
-  - `ready: 217`
-  - `review: 664`
-- Question text trust distribution:
-  - `high: 86`
-  - `medium: 224`
-  - `low: 938`
-  - `unusable: 53`
+## Current Bank Results
+
+From `output/audits/iteration_001/audit_summary.json`:
+
+- Records audited: `1301`
+- OCR ran: `0`
+- OCR selected: `0`
+- Text candidate source: `native: 1301`
+- Text candidate decision: `native_retained: 1301`
+- OCR measurement blocker: `partial_ocr_candidate_fields_missing:ocr_engine,ocr_text`
+- Suspicious OCR-selected records: `0` because no OCR was selected
+- Possible OCR false negatives: `0` from this canonical export because OCR text is blank
+- Mapping status: `pass: 1281`, `fail: 20`
+- Validation status: `pass: 921`, `review: 371`, `fail: 9`
+- Asterion highest tier counts: `0: 23`, `1: 360`, `2: 185`, `3: 13`, `4: 52`, `5: 668`
+- Hard blocker count: `23`
+- Simple future-fillable subpart mark records: `920`
+- Missing top-level run metadata: `generated_at`, `run_id`, `pipeline_version`, `git_commit`, `model_versions`, `ocr_engine_version`, `input_manifest_sha256`, `artifact_root`, `qa_summary`
 
 ## Baseline Comparison
 
-No baseline/comparison export was found outside `output/`, matching Agent 1's plan. Baseline comparison is blocked by missing baseline, not by report failure.
+Baseline used:
 
-## Suspicious Records and Readiness Inflation
+```bash
+output/triage/iteration_004/baseline_question_bank.json
+```
 
-No OCR-selected records can be sampled from the current export because all candidate-selection metadata is missing. Therefore:
+Summary:
 
-- Suspicious OCR-selected records: none reportable from this export
-- Readiness inflation risk records: none reportable from this export
-- Representative OCR sample: unavailable until a fresh candidate-aware export exists
+- Reliable comparison: `true`
+- Records added: `0`
+- Records removed: `0`
+- Shared records: `1301`
+- Asterion tier movement: `improved: 630`, `unchanged: 671`
+- Main changed fields:
+  - `ocr_text_score: 1301`
+  - `text_only_status: 952`
+  - `question_text_trust: 906`
+  - `text_fidelity_status: 906`
+  - `question_crop_confidence: 870`
+  - `topic_confidence: 870`
+  - `visual_curation_status: 553`
+  - `question_text: 269`
+  - `validation_status: 250`
+  - `mapping_status: 161`
+- Worsened status counts:
+  - `mapping_status: 1`
+  - `mark_scheme_crop_confidence: 11`
+  - `text_fidelity_status: 1`
 
-## Tests Run
+## Next-Iteration Recommendation
+
+The limiting issue for OCR selection measurement is not threshold tuning. The current canonical export has no OCR text, so OCR selected/false-negative behavior cannot be judged from it.
+
+Recommended next priorities from the audit:
+
+1. Produce or select an OCR-enabled candidate export before tuning OCR selection.
+2. Address mapping/validation hard blockers and contradictions.
+3. Inspect crop/scope confidence limits on visual readiness.
+4. Plan a subpart mark promotion sprint using the `920` simple-fillable records.
+5. Add a future top-level run manifest for auditable freshness.
+6. Delay topic/difficulty reruns until text fidelity and mapping blockers are reduced.
+
+## Validation Commands
 
 Passed:
 
 ```bash
-.venv/bin/python -m pytest tests/test_audit.py tests/test_ocr.py tests/test_output_contract.py -q
+.venv/bin/python -m py_compile scripts/audit_question_bank_readiness.py
 ```
-
-Result: `17 passed in 0.05s`
 
 Passed:
 
 ```bash
-.venv/bin/python -m pytest tests/test_ocr.py::test_ocr_enabled_success_returns_low_trust_for_math_heavy_text tests/test_ocr.py::test_ocr_enabled_failure_is_captured_without_crashing -q -vv
+.venv/bin/python scripts/audit_question_bank_readiness.py \
+  --input output/json/question_bank.json \
+  --baseline output/triage/iteration_004/baseline_question_bank.json \
+  --artifact-root output \
+  --out-dir output/audits/iteration_001
 ```
-
-Result: `2 passed in 0.04s`
 
 Passed:
 
 ```bash
-.venv/bin/python -m pytest -q
+.venv/bin/python -m pytest tests/test_audit.py tests/test_ocr.py tests/test_output_contract.py tests/test_extraction_structure.py -q
 ```
 
-Result: `259 passed, 3 skipped in 133.15s`
+Result: `34 passed in 0.11s`
 
-Order-specific test issue observed but not changed:
-
-```bash
-.venv/bin/python -m pytest tests/test_audit.py tests/test_runtime_paths.py tests/test_ocr.py tests/test_output_contract.py -q
-```
-
-This failed two OCR monkeypatch tests after `tests/test_runtime_paths.py` reset `exam_bank.*` modules. The same OCR tests pass alone, and the required full suite passes in repository order. I did not edit tests because Agent 2 is not approved to do so.
-
-## Blockers
-
-- `output/json/question_bank.json` is stale or candidate-unaware for OCR candidate-selection measurement.
-- No baseline export is available for before/after comparison.
-- No OCR-selected representative sample can be produced until the bank is regenerated with candidate metadata.
-
-## Next-Loop Candidates
-
-Evidence-based candidates for Agent 3/4/5 and iteration 2:
-
-- Generate a fresh full-bank export with OCR enabled into a separate output path, then rerun `scripts/audit_ocr_candidates.py`.
-- Preserve the current stale export as an explicit baseline only if the human wants before/after comparison against this state.
-- If a durable package CLI command is desired, Agent 3 or the human should approve updating the runtime-front-door test contract first.
-- Do not tune OCR thresholds until the fresh candidate-aware report shows actual OCR-selected records or high-margin rejected candidates.
-
-## Agent 2 Fix Addendum After Agent 3 NEEDS FIX
-
-Fixed the suspicious OCR-selected audit gap identified by Agent 3. This is reporting-only; no OCR scoring, extraction behavior, crop handling, DeepSeek behavior, topic classification, or trust/readiness logic changed.
-
-Changed:
-
-- `src/exam_bank/audit.py`
-  - Added suspicious OCR-selected risk reasons for:
-    - `missing_question_number`
-    - `missing_marks`
-    - `selected_with_hard_failure`
-
-Commands run:
-
-```bash
-.venv/bin/python -m pytest tests/test_audit.py -q
-```
-
-Result: `6 passed in 0.02s`
-
-```bash
-.venv/bin/python -m pytest tests/test_ocr.py tests/test_output_contract.py -q
-```
-
-Result: `16 passed in 0.05s`
-
-```bash
-.venv/bin/python scripts/audit_ocr_candidates.py --input output/json/question_bank.json --json-output /tmp/ocr_candidate_audit_agent2_fix.json
-```
-
-Result: passed. Current export still has `1301` records with all OCR candidate metadata missing and remains `stale_or_candidate_unaware_export`.
-
-```bash
-.venv/bin/python -m pytest -q
-```
-
-Result: `264 passed, 3 skipped in 137.79s`
-
-Remaining blocker: Agent 4/5 still need a fresh candidate-aware full-bank export before auditing real OCR selection behavior.
+Agent 3 still owns focused tests for this new audit/reporting layer.

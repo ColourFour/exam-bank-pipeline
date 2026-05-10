@@ -236,7 +236,7 @@ def select_text_candidate(
     if scope_quality_status == "fail" and ocr_score.rejection_reasons:
         rejected.append("scope_quality_failed")
     if expected_question_number and _contains_question_number(native, expected_question_number) and not _contains_question_number(ocr, expected_question_number):
-        if _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
+        if scope_quality_status == "fail" and _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
             reasons.append("ocr_missing_question_number_tolerated")
         else:
             rejected.append("ocr_missing_question_number")
