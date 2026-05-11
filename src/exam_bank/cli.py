@@ -5,6 +5,12 @@ import json
 from pathlib import Path
 
 from .audit import write_audit
+from .asterion_export import (
+    ASTERION_EXPORT_FILENAME,
+    CONTENT_LAB_EXPORT_FILENAME,
+    export_asterion_content_lab_candidates,
+    export_asterion_question_bank,
+)
 from .auto_triage import (
     build_auto_triage_runbook,
     compare_auto_triage_iteration,
@@ -57,6 +63,54 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
     audit.add_argument("--output", default="", help="Optional path to write the audit JSON report.")
     audit.set_defaults(func=cmd_audit)
+
+    asterion = subparsers.add_parser(
+        "asterion-export",
+        help="Write the conservative Asterion-safe question-bank projection.",
+    )
+    asterion.add_argument("--input", default="output/json/question_bank.json", help="Path to schema v2 question_bank.json.")
+    asterion.add_argument(
+        "--output",
+        default="",
+        help=f"Output path. Defaults to {ASTERION_EXPORT_FILENAME} beside the input JSON.",
+    )
+    asterion.add_argument(
+        "--artifact-root",
+        default="",
+        help="Root used to resolve question and mark-scheme artifact paths. Defaults to the parent of the input json/ folder.",
+    )
+    asterion.add_argument(
+        "--skill-map",
+        default="",
+        help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Asterion subpart mark events.",
+    )
+    asterion.set_defaults(func=cmd_asterion_export)
+
+    content_lab = subparsers.add_parser(
+        "asterion-content-lab-candidates",
+        help="Write Asterion Content Lab candidate metadata without generating student-facing content.",
+    )
+    content_lab.add_argument(
+        "--input",
+        default="output/json/question_bank.json",
+        help="Path to schema v2 question_bank.json or asterion_question_bank_v1.json.",
+    )
+    content_lab.add_argument(
+        "--output",
+        default="",
+        help=f"Output path. Defaults to {CONTENT_LAB_EXPORT_FILENAME} beside the input JSON.",
+    )
+    content_lab.add_argument(
+        "--artifact-root",
+        default="",
+        help="Root used to resolve question and mark-scheme artifact paths when input is question_bank.json.",
+    )
+    content_lab.add_argument(
+        "--skill-map",
+        default="",
+        help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Content Lab mark-event candidates.",
+    )
+    content_lab.set_defaults(func=cmd_asterion_content_lab_candidates)
 
     triage_sample = subparsers.add_parser(
         "triage-sample",
@@ -223,6 +277,29 @@ def cmd_audit(args: argparse.Namespace) -> int:
     output = Path(args.output) if args.output else None
     report = write_audit(args.input, output)
     print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_asterion_export(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    artifact_root = Path(args.artifact_root) if args.artifact_root else None
+    skill_map_path = Path(args.skill_map) if args.skill_map else None
+    path = export_asterion_question_bank(args.input, output, artifact_root=artifact_root, skill_map_path=skill_map_path)
+    print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_asterion_content_lab_candidates(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    artifact_root = Path(args.artifact_root) if args.artifact_root else None
+    skill_map_path = Path(args.skill_map) if args.skill_map else None
+    path = export_asterion_content_lab_candidates(
+        args.input,
+        output,
+        artifact_root=artifact_root,
+        skill_map_path=skill_map_path,
+    )
+    print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
     return 0
 
 

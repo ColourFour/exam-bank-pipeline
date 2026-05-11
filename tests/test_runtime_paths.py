@@ -68,6 +68,8 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     assert set(action.choices) == {
         "process",
         "audit",
+        "asterion-export",
+        "asterion-content-lab-candidates",
         "triage-sample",
         "triage-serve",
         "triage-compare",
@@ -81,6 +83,12 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     assert "--enable-ocr" in process_options
     assert "--ocr-language" in process_options
     assert "--tesseract-cmd" in process_options
+    asterion_parser = action.choices["asterion-export"]
+    asterion_options = {option for parser_action in asterion_parser._actions for option in parser_action.option_strings}
+    assert "--skill-map" in asterion_options
+    content_lab_parser = action.choices["asterion-content-lab-candidates"]
+    content_lab_options = {option for parser_action in content_lab_parser._actions for option in parser_action.option_strings}
+    assert "--skill-map" in content_lab_options
 
     process_calls = _function_call_names(CLI_PATH, "cmd_process")
     assert process_calls >= {"load_config", "process_inputs", "_print_result"}

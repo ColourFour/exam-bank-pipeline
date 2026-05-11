@@ -207,9 +207,14 @@ def select_text_candidate(
     expected_question_number: str = "",
     expected_subparts: list[str] | None = None,
     scope_quality_status: str = "",
+    mapping_status: str = "",
+    validation_status: str = "",
 ) -> TextCandidateDecision:
     native = " ".join(str(native_text or "").replace("\u00a0", " ").split())
     ocr = " ".join(str(ocr_text or "").replace("\u00a0", " ").split())
+    scope_status = str(scope_quality_status or "").lower()
+    mapping_status_normalized = str(mapping_status or "").lower()
+    validation_status_normalized = str(validation_status or "").lower()
     expected_mark_count = max(len(_MARK_RE.findall(native)), 0) or None
     native_score = score_text_candidate(
         native,
@@ -233,10 +238,15 @@ def select_text_candidate(
     rejected = list(ocr_score.rejection_reasons)
     if not ocr:
         rejected.append("empty_ocr_text")
-    if scope_quality_status == "fail" and ocr_score.rejection_reasons:
+    if scope_status == "fail" and ocr_score.rejection_reasons:
         rejected.append("scope_quality_failed")
+    if scope_status != "fail":
+        if mapping_status_normalized and mapping_status_normalized != "pass":
+            rejected.append("ocr_mapping_status_not_pass")
+        if validation_status_normalized and validation_status_normalized != "pass":
+            rejected.append("ocr_validation_status_not_pass")
     if expected_question_number and _contains_question_number(native, expected_question_number) and not _contains_question_number(ocr, expected_question_number):
-        if scope_quality_status == "fail" and _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
+        if scope_status == "fail" and _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
             reasons.append("ocr_missing_question_number_tolerated")
         else:
             rejected.append("ocr_missing_question_number")

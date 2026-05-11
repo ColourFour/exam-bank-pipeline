@@ -74,8 +74,6 @@ Production-style runs should enable OCR so OCR candidate metadata and hybrid tex
 .venv/bin/python -m exam_bank.cli process --input input --output output --enable-ocr
 ```
 
-The current canonical audited export was not produced with active OCR candidate text, so do not use it to tune OCR selection thresholds.
-
 For comparison or review candidates, write OCR-enabled output to a separate folder instead of replacing the current canonical export:
 
 ```bash

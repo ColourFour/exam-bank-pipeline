@@ -350,6 +350,8 @@ def _build_question_record(
             expected_question_number=span.question_number,
             expected_subparts=question_subparts,
             scope_quality_status=preliminary_scope_quality_status,
+            mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else MappingStatus.FAIL,
+            validation_status=preliminary_validation_status,
         )
         question_text = text_candidate_decision.selected_text
         if text_candidate_decision.ocr_selected:

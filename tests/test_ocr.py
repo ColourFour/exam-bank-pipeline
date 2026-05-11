@@ -266,11 +266,34 @@ def test_candidate_selection_can_use_clean_ocr_when_native_scope_failed() -> Non
         expected_question_number="1",
         expected_subparts=[],
         scope_quality_status="fail",
+        mapping_status="fail",
+        validation_status="fail",
     )
 
     assert decision.ocr_selected is True
     assert decision.text_candidate_source == "ocr"
     assert "ocr_missing_question_number_tolerated" in decision.text_candidate_decision_reasons
+
+
+def test_candidate_selection_rejects_ocr_when_mapping_or_validation_not_pass_without_hard_scope_recovery() -> None:
+    native = "5 Solve the equation 4sinitani = 1 + 5cosi for - 180 1i1180. [6]"
+    ocr = "5 UTE RR TT TR Solve the equation 4 sin theta tan theta = 1 + 5 cos theta for -180 < theta < 180. [6]"
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="5",
+        expected_subparts=[],
+        scope_quality_status="review",
+        mapping_status="fail",
+        validation_status="fail",
+    )
+
+    assert decision.ocr_selected is False
+    assert decision.text_candidate_source == "native"
+    assert decision.ocr_text_score - decision.native_text_score >= 30
+    assert "ocr_mapping_status_not_pass" in decision.ocr_rejected_reasons
+    assert "ocr_validation_status_not_pass" in decision.ocr_rejected_reasons
 
 
 def test_candidate_selection_rejects_missing_question_number_when_native_scope_is_clean() -> None:
