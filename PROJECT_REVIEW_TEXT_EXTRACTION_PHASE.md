@@ -55,11 +55,11 @@ The README recommends production-style runs with OCR enabled:
 .venv/bin/python -m exam_bank.cli process --input input --output output --enable-ocr
 ```
 
-There is documentation drift: `README.md` and `agent_handoffs/auto_triage/iteration_007/residual_failure_burndown_report.md` describe a no-OCR canonical export, while the current `output/json/question_bank.json` in this workspace has `ocr_ran=true` for all 1301 records and 29 OCR-selected records. This should be clarified before Asterion ingestion so downstream consumers know which export is canonical.
+The current standard `output/json/question_bank.json` reviewed here is OCR-populated: `ocr_ran=true` for all 1301 records, with 29 OCR-selected records. Older handoff materials, especially `agent_handoffs/auto_triage/iteration_007/residual_failure_burndown_report.md`, describe an earlier no-OCR export state and should be read as historical evidence rather than current state.
 
 Files requested by the review:
 
-- `README.md`: present; useful, but current audited-state numbers are stale relative to this workspace.
+- `README.md`: present; useful, and should stay synchronized with the current OCR-enabled standard output.
 - `pyproject.toml`: present; project requires Python >=3.10 and uses PyMuPDF, pdfplumber, Pillow, pytesseract, PyYAML, and OpenAI.
 - `config.yaml`: present; operational overrides and OCR default.
 - `src/exam_bank/`: present.
@@ -99,7 +99,7 @@ Image risks:
 - 11 `33autumn25` records have no exact mark-scheme image path. They are safely marked through mapping failure rather than wrongly paired.
 - 895 records have `question_crop_confidence=low` in the current OCR-populated export. Low crop confidence does not mean the image is bad, but it means the image layer still needs QA sampling and should not be inflated into "fully reviewed."
 - 544 existing mark-scheme crops have `mark_scheme_crop_confidence=medium`, and 11 are blank/missing because there is no exact mark scheme.
-- Some current documentation describes a different no-OCR export state, so readers could misinterpret readiness counts.
+- Some older handoff documentation describes a previous no-OCR export state, so readers could misinterpret historical readiness counts as current.
 
 Text risks:
 
@@ -330,7 +330,7 @@ README strengths:
 
 README weaknesses:
 
-- The "Current Audited State" is stale relative to the current workspace export. It says `ocr_ran=false` for all records, while the reviewed current export has `ocr_ran=true` for all records.
+- The "Current Audited State" should be kept synchronized with the OCR-enabled standard output whenever the corpus is regenerated.
 - It does not yet frame the project transition clearly enough: Phase 1 succeeded because images are canonical; Phase 2 begins because text is not yet canonical.
 - It does not separate readability, math fidelity, structure, marks, student display, and generation gates.
 
@@ -810,7 +810,7 @@ Acceptance criteria:
 
 ## 18. Open Questions
 
-- Which export should be named the canonical current export: the no-OCR export described in README, or the OCR-populated `output/json/question_bank.json` currently in the workspace?
+- Should older no-OCR audit/handoff materials be archived or labeled more clearly so they cannot be confused with the current OCR-enabled standard output?
 - Is the missing exact `33autumn25` mark scheme available, or should those 11 records remain excluded from product-ready views?
 - Should `question_text_trust=high` be renamed or decomposed to avoid downstream overinterpretation?
 - What is the minimum review standard for `student_safe_text`?

@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "errors": [],
+  "warnings": [],
+  "validated_at": "2026-05-11T03:13:34.173444+00:00",
+  "checks": {
+    "valid_json_written": true,
+    "mapping_skill_ids_exist": true,
+    "prerequisite_skill_ids_exist": true,
+    "skill_ids_unique": true,
+    "mapping_confidence_present": true,
+    "low_confidence_not_reviewed": true,
+    "whole_question_limitations_marked": true,
+    "direct_and_prerequisite_counts_separate": true,
+    "component_specific_syllabus_sections": true
+  }
+}

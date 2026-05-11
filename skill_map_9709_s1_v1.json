@@ -1,0 +1,498 @@
+{
+  "schema_name": "exam_bank.skill_map",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:13:34.170977+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+  "component_label": "Probability & Statistics 1",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "official_syllabus_reference": {
+    "title": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+    "url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+    "notes": "Section structure follows the official CAIE 9709 syllabus. Skill decomposition is candidate-expanded for subpart mapping and requires review."
+  },
+  "sections": [
+    {
+      "section": "5.1",
+      "name": "Representation of data"
+    },
+    {
+      "section": "5.2",
+      "name": "Permutations and combinations"
+    },
+    {
+      "section": "5.3",
+      "name": "Probability"
+    },
+    {
+      "section": "5.4",
+      "name": "Discrete random variables"
+    },
+    {
+      "section": "5.5",
+      "name": "The normal distribution"
+    }
+  ],
+  "skills": [
+    {
+      "skill_id": "9709_s1_data_representation_stem_box",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.1 Representation of data",
+      "subsection": null,
+      "name": "Stem-and-leaf, box-and-whisker and comparative displays",
+      "description": "Represent and compare raw data using stem-and-leaf diagrams, box plots and related summaries.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "stem",
+        "box",
+        "whisker",
+        "quartile",
+        "median",
+        "interquartile",
+        "represent"
+      ],
+      "common_errors": [
+        "Misplacing quartiles in an ordered list",
+        "Comparing spread using only the range"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.1:9709-s1-data-representation-stem-box",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_data_histograms",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.1 Representation of data",
+      "subsection": null,
+      "name": "Histograms and frequency density",
+      "description": "Draw and interpret histograms for grouped data with unequal class widths.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "histogram",
+        "frequency density",
+        "class width",
+        "frequency",
+        "grouped"
+      ],
+      "common_errors": [
+        "Plotting frequency instead of frequency density",
+        "Using inconsistent class widths"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.1:9709-s1-data-histograms",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_data_cumulative_frequency",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.1 Representation of data",
+      "subsection": null,
+      "name": "Cumulative frequency and percentiles",
+      "description": "Use cumulative frequency graphs to estimate medians, quartiles, percentiles and counts.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "cumulative frequency",
+        "estimate",
+        "median",
+        "quartile",
+        "percentile",
+        "curve"
+      ],
+      "common_errors": [
+        "Reading from class midpoints instead of boundaries",
+        "Using less-than values as exact data"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.1:9709-s1-data-cumulative-frequency",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_data_mean_variance_coding",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.1 Representation of data",
+      "subsection": null,
+      "name": "Mean, variance, standard deviation and coding",
+      "description": "Calculate and transform measures of location and spread, including coded data and grouped estimates.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "mean",
+        "variance",
+        "standard deviation",
+        "Σx",
+        "Σx^2",
+        "coded",
+        "summary"
+      ],
+      "common_errors": [
+        "Using n minus 1 instead of n for syllabus variance",
+        "Forgetting to reverse coding transformations"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.1:9709-s1-data-mean-variance-coding",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_permutations_repeated_arrangements",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.2 Permutations and combinations",
+      "subsection": null,
+      "name": "Permutations and arrangements with restrictions",
+      "description": "Count arrangements of objects, including repeated letters and positional restrictions.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "arrangements",
+        "letters",
+        "word",
+        "together",
+        "at the beginning",
+        "no letter",
+        "different arrangements"
+      ],
+      "common_errors": [
+        "Not dividing by repeated factorials",
+        "Treating a grouped block as multiple objects"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.2:9709-s1-permutations-repeated-arrangements",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.2",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_combinations_selections",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.2 Permutations and combinations",
+      "subsection": null,
+      "name": "Combinations and selections with restrictions",
+      "description": "Count selections and committees using combinations, complementary cases and restrictions.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "selections",
+        "chosen",
+        "committee",
+        "group",
+        "at least",
+        "exactly",
+        "in how many ways"
+      ],
+      "common_errors": [
+        "Counting ordered arrangements when selections are unordered",
+        "Missing complementary cases"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.2:9709-s1-combinations-selections",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.2",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_probability_basic_rules",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.3 Probability",
+      "subsection": null,
+      "name": "Probability rules, mutually exclusive and independent events",
+      "description": "Use addition, multiplication, complement, mutually exclusive and independent event rules.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "probability",
+        "independently",
+        "fair",
+        "spinner",
+        "dice",
+        "coin",
+        "at least",
+        "fewer than"
+      ],
+      "common_errors": [
+        "Adding probabilities for non-mutually-exclusive events",
+        "Using independence without justification"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.3:9709-s1-probability-basic-rules",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.3",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_probability_conditional_tree_diagrams",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.3 Probability",
+      "subsection": null,
+      "name": "Conditional probability and tree diagrams",
+      "description": "Use tree diagrams, conditional probability and successive selection with or without replacement.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_probability_basic_rules"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "conditional",
+        "given that",
+        "tree diagram",
+        "without replacement",
+        "placed in",
+        "wears",
+        "if"
+      ],
+      "common_errors": [
+        "Using original denominators after an item is moved",
+        "Confusing P(A given B) with P(B given A)"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.3:9709-s1-probability-conditional-tree-diagrams",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.3",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_probability_repeated_trials_first_success",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.3 Probability",
+      "subsection": null,
+      "name": "Repeated trials and first-success probabilities",
+      "description": "Model repeated independent trials, including first success after a stated number of trials.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_probability_basic_rules"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "first time",
+        "first obtained",
+        "repeatedly",
+        "until",
+        "maximum of two attempts",
+        "7-day period"
+      ],
+      "common_errors": [
+        "Counting all successes rather than the first success",
+        "Forgetting failures before the first success"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.3:9709-s1-probability-repeated-trials-first-success",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.3",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_discrete_random_variables_distribution",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.4 Discrete random variables",
+      "subsection": null,
+      "name": "Discrete random variable distributions",
+      "description": "Construct and use probability distribution tables for discrete random variables.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_probability_basic_rules"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "random variable",
+        "probability distribution",
+        "takes the values",
+        "P(X",
+        "table",
+        "where k is a constant"
+      ],
+      "common_errors": [
+        "Not normalising probabilities to sum to 1",
+        "Omitting possible values of X"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.4:9709-s1-discrete-random-variables-distribution",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.4",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_discrete_random_variables_expectation_variance",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.4 Discrete random variables",
+      "subsection": null,
+      "name": "Expectation and variance of discrete random variables",
+      "description": "Calculate E(X), E(X squared), Var(X) and transform discrete random variables.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_discrete_random_variables_distribution"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "E(X",
+        "Var(X",
+        "expectation",
+        "mean of X",
+        "variance of X",
+        "E(X^2"
+      ],
+      "common_errors": [
+        "Using E(X squared) minus E(X) instead of E(X) squared",
+        "Ignoring transformed variable effects"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.4:9709-s1-discrete-random-variables-expectation-variance",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.4",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_binomial_distribution",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.4 Discrete random variables",
+      "subsection": null,
+      "name": "Binomial distribution",
+      "description": "Use binomial probabilities, cumulative probabilities and parameter conditions.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_probability_basic_rules"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "binomial",
+        "X ~ B",
+        "sample of",
+        "number who",
+        "less than",
+        "more than",
+        "successes"
+      ],
+      "common_errors": [
+        "Using nCx with the wrong power of p",
+        "Mixing less than and at most"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.4:9709-s1-binomial-distribution",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.4",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_normal_distribution_probabilities",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.5 The normal distribution",
+      "subsection": null,
+      "name": "Normal distribution probabilities and standardisation",
+      "description": "Use normal distribution models, z-scores and standardisation to calculate probabilities.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "normal distribution",
+        "normally distributed",
+        "mean",
+        "standard deviation",
+        "N(",
+        "probability that"
+      ],
+      "common_errors": [
+        "Failing to standardise",
+        "Using variance instead of standard deviation"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.5:9709-s1-normal-distribution-probabilities",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.5",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_s1_normal_distribution_inverse_parameters",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "section": "5.5 The normal distribution",
+      "subsection": null,
+      "name": "Inverse normal and unknown parameters",
+      "description": "Use normal probabilities or percentiles to find unknown means, standard deviations or thresholds.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_s1_normal_distribution_probabilities"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "find the value",
+        "unknown",
+        "standard deviation",
+        "mean",
+        "percentage",
+        "expected number",
+        "inverse"
+      ],
+      "common_errors": [
+        "Using the wrong tail probability",
+        "Rounding z-values too early"
+      ],
+      "asterion_region_id": "asterion:9709:p5:5.5:9709-s1-normal-distribution-inverse-parameters",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Probability & Statistics 1, section 5.5",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    }
+  ],
+  "mapping_file": "question_skill_mappings_9709_s1_v1.json",
+  "coverage_report_file": "coverage_report_9709_s1_v1.json",
+  "review_status": "needs_review",
+  "notes": "Candidate taxonomy generated from official syllabus sections plus exam-bank evidence. No new reviewed status has been asserted."
+}

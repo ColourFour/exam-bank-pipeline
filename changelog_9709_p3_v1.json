@@ -1,0 +1,67 @@
+{
+  "schema_name": "exam_bank.skill_map_changelog",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:13:34.264298+00:00",
+  "syllabus_code": "9709",
+  "component": "p3",
+  "component_label": "Pure Mathematics 3",
+  "source_file": "skill_map_9709_p3_v1.json",
+  "changes": [
+    {
+      "change_type": "schema_normalization",
+      "description": "Rewrote P3 skill map to include all requested taxonomy fields and split mappings/coverage into separate JSON files."
+    },
+    {
+      "change_type": "review_status_policy",
+      "description": "No mappings were promoted to reviewed; all generated and carried-forward machine mappings remain needs_review or machine candidates."
+    },
+    {
+      "change_type": "official_section_audit",
+      "description": "Confirmed P3 map covers official sections 3.1 through 3.9."
+    }
+  ],
+  "old_skill_count": 26,
+  "new_skill_count": 26,
+  "old_embedded_mapping_count": 1547,
+  "new_mapping_file": "question_skill_mappings_9709_p3_v1.json",
+  "new_mapping_count": 749,
+  "new_coverage_report_file": "coverage_report_9709_p3_v1.json",
+  "added_skill_ids": [],
+  "removed_or_replaced_skill_ids": [],
+  "skill_ids_preserved": [
+    "9709_p3_3_1_binomial_rational_expansion",
+    "9709_p3_3_1_modulus_equations_inequalities",
+    "9709_p3_3_1_partial_fractions",
+    "9709_p3_3_1_polynomial_division_factor_remainder",
+    "9709_p3_3_2_linearising_log_relationships",
+    "9709_p3_3_2_log_exponential_equations",
+    "9709_p3_3_3_identities_compound_double_angle_equations",
+    "9709_p3_3_3_reciprocal_trig_functions",
+    "9709_p3_3_3_rsin_rcos_form",
+    "9709_p3_3_4_derivative_rules",
+    "9709_p3_3_4_parametric_implicit_differentiation",
+    "9709_p3_3_4_tangents_normals_stationary_points",
+    "9709_p3_3_5_area_volume_applications",
+    "9709_p3_3_5_standard_integration",
+    "9709_p3_3_5_substitution_and_parts",
+    "9709_p3_3_5_trig_and_partial_fraction_integration",
+    "9709_p3_3_6_fixed_point_iteration",
+    "9709_p3_3_6_root_location",
+    "9709_p3_3_7_position_vectors_geometry",
+    "9709_p3_3_7_scalar_product_angles",
+    "9709_p3_3_7_vector_lines",
+    "9709_p3_3_8_initial_conditions_models",
+    "9709_p3_3_8_separable_differential_equations",
+    "9709_p3_3_9_argand_loci_geometry",
+    "9709_p3_3_9_complex_arithmetic_polar_form",
+    "9709_p3_3_9_complex_roots_polynomials"
+  ],
+  "coverage_summary": {
+    "total_skills": 26,
+    "total_subparts": 749,
+    "mapped_subparts": 749,
+    "mapping_coverage_percent": 100.0,
+    "high_priority_content_lab_gaps": []
+  },
+  "notes": "Existing P3 mappings in the old file were machine candidates only; no reviewed mappings were available to preserve as reviewed."
+}

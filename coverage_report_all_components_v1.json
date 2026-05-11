@@ -1,0 +1,371 @@
+{
+  "schema_name": "exam_bank.all_components_coverage_summary",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:13:34.173456+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "components": [
+    {
+      "component": "p1",
+      "output_component": "p1",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "total_skills": 20,
+      "total_questions": 401,
+      "total_subparts": 831,
+      "mapped_subparts": 831,
+      "unmapped_subparts": 0,
+      "mapping_coverage_percent": 100.0,
+      "mappings_needing_review": 831,
+      "high_priority_content_lab_gaps": [
+        "9709_p1_circular_measure_arc_sector",
+        "9709_p1_trigonometry_identities_exact_values",
+        "9709_p1_series_geometric_progressions",
+        "9709_p1_differentiation_stationary_rates",
+        "9709_p1_integration_area_volume"
+      ],
+      "coverage_report_file": "coverage_report_9709_p1_v1.json"
+    },
+    {
+      "component": "p3",
+      "output_component": "p3",
+      "caie_class_or_component": "Paper 3",
+      "component_label": "Pure Mathematics 3",
+      "total_skills": 26,
+      "total_questions": 396,
+      "total_subparts": 749,
+      "mapped_subparts": 749,
+      "unmapped_subparts": 0,
+      "mapping_coverage_percent": 100.0,
+      "mappings_needing_review": 749,
+      "high_priority_content_lab_gaps": [],
+      "coverage_report_file": "coverage_report_9709_p3_v1.json"
+    },
+    {
+      "component": "p4",
+      "output_component": "m1",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "total_skills": 13,
+      "total_questions": 258,
+      "total_subparts": 497,
+      "mapped_subparts": 497,
+      "unmapped_subparts": 0,
+      "mapping_coverage_percent": 100.0,
+      "mappings_needing_review": 497,
+      "high_priority_content_lab_gaps": [
+        "9709_m1_forces_components_resultants",
+        "9709_m1_equilibrium_coplanar_forces",
+        "9709_m1_friction_limiting_equilibrium",
+        "9709_m1_kinematics_constant_acceleration",
+        "9709_m1_kinematics_variable_acceleration_calculus",
+        "9709_m1_momentum_impulse_conservation",
+        "9709_m1_newtons_second_law_single_particle",
+        "9709_m1_connected_particles_tension",
+        "9709_m1_inclined_planes_dynamics",
+        "9709_m1_work_energy_kinetic_potential"
+      ],
+      "coverage_report_file": "coverage_report_9709_m1_v1.json"
+    },
+    {
+      "component": "p5",
+      "output_component": "s1",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "total_skills": 14,
+      "total_questions": 246,
+      "total_subparts": 639,
+      "mapped_subparts": 639,
+      "unmapped_subparts": 0,
+      "mapping_coverage_percent": 100.0,
+      "mappings_needing_review": 639,
+      "high_priority_content_lab_gaps": [
+        "9709_s1_data_histograms",
+        "9709_s1_data_cumulative_frequency",
+        "9709_s1_data_mean_variance_coding",
+        "9709_s1_permutations_repeated_arrangements",
+        "9709_s1_combinations_selections",
+        "9709_s1_probability_basic_rules",
+        "9709_s1_probability_conditional_tree_diagrams",
+        "9709_s1_discrete_random_variables_distribution",
+        "9709_s1_discrete_random_variables_expectation_variance",
+        "9709_s1_binomial_distribution"
+      ],
+      "coverage_report_file": "coverage_report_9709_s1_v1.json"
+    }
+  ],
+  "highest_priority_content_lab_gaps": [
+    {
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_id": "9709_p1_circular_measure_arc_sector",
+      "name": "Radians, arcs and sectors",
+      "gap_severity": "critical",
+      "direct_subpart_count": 56,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_id": "9709_p1_trigonometry_identities_exact_values",
+      "name": "Basic identities and exact trigonometric values",
+      "gap_severity": "critical",
+      "direct_subpart_count": 14,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_id": "9709_p1_series_geometric_progressions",
+      "name": "Geometric progressions and sum to infinity",
+      "gap_severity": "critical",
+      "direct_subpart_count": 47,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_id": "9709_p1_differentiation_stationary_rates",
+      "name": "Stationary points, classification and rates of change",
+      "gap_severity": "critical",
+      "direct_subpart_count": 35,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_id": "9709_p1_integration_area_volume",
+      "name": "Definite integration, areas and volumes",
+      "gap_severity": "critical",
+      "direct_subpart_count": 33,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_equilibrium_coplanar_forces",
+      "name": "Equilibrium of particles under coplanar forces",
+      "gap_severity": "critical",
+      "direct_subpart_count": 17,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_forces_components_resultants",
+      "name": "Force components and resultants",
+      "gap_severity": "critical",
+      "direct_subpart_count": 49,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_friction_limiting_equilibrium",
+      "name": "Friction and limiting equilibrium",
+      "gap_severity": "critical",
+      "direct_subpart_count": 59,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_kinematics_constant_acceleration",
+      "name": "Constant acceleration kinematics",
+      "gap_severity": "critical",
+      "direct_subpart_count": 45,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_kinematics_variable_acceleration_calculus",
+      "name": "Variable acceleration by calculus",
+      "gap_severity": "critical",
+      "direct_subpart_count": 10,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_momentum_impulse_conservation",
+      "name": "Momentum, impulse and direct collisions",
+      "gap_severity": "critical",
+      "direct_subpart_count": 70,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_connected_particles_tension",
+      "name": "Connected particles, strings and pulleys",
+      "gap_severity": "critical",
+      "direct_subpart_count": 47,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_inclined_planes_dynamics",
+      "name": "Dynamics on inclined and rough planes",
+      "gap_severity": "critical",
+      "direct_subpart_count": 40,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_newtons_second_law_single_particle",
+      "name": "Newton's second law for a single particle",
+      "gap_severity": "critical",
+      "direct_subpart_count": 7,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_power_resistance_driving_force",
+      "name": "Power, resistance and driving force",
+      "gap_severity": "critical",
+      "direct_subpart_count": 185,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_work_energy_kinetic_potential",
+      "name": "Work-energy and kinetic/potential energy",
+      "gap_severity": "critical",
+      "direct_subpart_count": 6,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p4",
+      "component_label": "Mechanics",
+      "skill_id": "9709_m1_work_energy_with_resistance_friction",
+      "name": "Work-energy with resistance and friction",
+      "gap_severity": "critical",
+      "direct_subpart_count": 28,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_data_cumulative_frequency",
+      "name": "Cumulative frequency and percentiles",
+      "gap_severity": "critical",
+      "direct_subpart_count": 59,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_data_histograms",
+      "name": "Histograms and frequency density",
+      "gap_severity": "critical",
+      "direct_subpart_count": 30,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_data_mean_variance_coding",
+      "name": "Mean, variance, standard deviation and coding",
+      "gap_severity": "critical",
+      "direct_subpart_count": 120,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_combinations_selections",
+      "name": "Combinations and selections with restrictions",
+      "gap_severity": "critical",
+      "direct_subpart_count": 62,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_permutations_repeated_arrangements",
+      "name": "Permutations and arrangements with restrictions",
+      "gap_severity": "critical",
+      "direct_subpart_count": 89,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_probability_basic_rules",
+      "name": "Probability rules, mutually exclusive and independent events",
+      "gap_severity": "critical",
+      "direct_subpart_count": 137,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_probability_conditional_tree_diagrams",
+      "name": "Conditional probability and tree diagrams",
+      "gap_severity": "critical",
+      "direct_subpart_count": 93,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_binomial_distribution",
+      "name": "Binomial distribution",
+      "gap_severity": "critical",
+      "direct_subpart_count": 23,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_discrete_random_variables_distribution",
+      "name": "Discrete random variable distributions",
+      "gap_severity": "critical",
+      "direct_subpart_count": 99,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_discrete_random_variables_expectation_variance",
+      "name": "Expectation and variance of discrete random variables",
+      "gap_severity": "critical",
+      "direct_subpart_count": 49,
+      "content_lab_support_level": "missing"
+    },
+    {
+      "component": "p5",
+      "component_label": "Probability & Statistics 1",
+      "skill_id": "9709_s1_normal_distribution_probabilities",
+      "name": "Normal distribution probabilities and standardisation",
+      "gap_severity": "critical",
+      "direct_subpart_count": 177,
+      "content_lab_support_level": "missing"
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "errors": [],
+    "warnings": [],
+    "validated_at": "2026-05-11T03:13:34.173444+00:00",
+    "checks": {
+      "valid_json_written": true,
+      "mapping_skill_ids_exist": true,
+      "prerequisite_skill_ids_exist": true,
+      "skill_ids_unique": true,
+      "mapping_confidence_present": true,
+      "low_confidence_not_reviewed": true,
+      "whole_question_limitations_marked": true,
+      "direct_and_prerequisite_counts_separate": true,
+      "component_specific_syllabus_sections": true
+    }
+  },
+  "notes": "Direct evidence is counted only from the same component. Prerequisite evidence is reported separately and is not used as readiness evidence for later components."
+}
