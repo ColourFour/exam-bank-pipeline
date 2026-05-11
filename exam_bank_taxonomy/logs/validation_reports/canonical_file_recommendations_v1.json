@@ -1,0 +1,487 @@
+{
+  "schema_name": "exam_bank.canonical_file_recommendations",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T05:18:24.393201+00:00",
+  "canonical_sources": [
+    {
+      "source_file": "changelog_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/logs/changelogs/changelog_9709_p3_v1.json",
+      "file_type": "changelog",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "coverage_report_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_m1_v1.json",
+      "file_type": "coverage_report",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "coverage_report_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p1_v1.json",
+      "file_type": "coverage_report",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "coverage_report_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p3_v1.json",
+      "file_type": "coverage_report",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "coverage_report_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_s1_v1.json",
+      "file_type": "coverage_report",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "coverage_report_all_components_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_all_components_v1.json",
+      "file_type": "coverage_report",
+      "syllabus_code": "9709",
+      "component": null,
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_m1_v1.json",
+      "file_type": "question_skill_mappings",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p1_v1.json",
+      "file_type": "question_skill_mappings",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json",
+      "file_type": "question_skill_mappings",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_s1_v1.json",
+      "file_type": "question_skill_mappings",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_m1_v1.json",
+      "file_type": "question_topic_assignments",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p1_v1.json",
+      "file_type": "question_topic_assignments",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p3_v1.json",
+      "file_type": "question_topic_assignments",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_s1_v1.json",
+      "file_type": "question_topic_assignments",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "skill_map_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_m1_v1.json",
+      "file_type": "skill_map",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "skill_map_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p1_v1.json",
+      "file_type": "skill_map",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "skill_map_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
+      "file_type": "skill_map",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "skill_map_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_s1_v1.json",
+      "file_type": "skill_map",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "skill_map_index_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/indexes/skill_map_index_v1.json",
+      "file_type": "index",
+      "syllabus_code": null,
+      "component": null,
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_m1_v1.json",
+      "file_type": "strict_topic_filtering_report",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p1_v1.json",
+      "file_type": "strict_topic_filtering_report",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p3_v1.json",
+      "file_type": "strict_topic_filtering_report",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_s1_v1.json",
+      "file_type": "strict_topic_filtering_report",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_all_components_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_all_components_v1.json",
+      "file_type": "strict_topic_filtering_report",
+      "syllabus_code": null,
+      "component": null,
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "topic_filter_map_9709_m1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_m1_v1.json",
+      "file_type": "topic_filter_map",
+      "syllabus_code": "9709",
+      "component": "m1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "topic_filter_map_9709_p1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p1_v1.json",
+      "file_type": "topic_filter_map",
+      "syllabus_code": "9709",
+      "component": "p1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "topic_filter_map_9709_p3_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p3_v1.json",
+      "file_type": "topic_filter_map",
+      "syllabus_code": "9709",
+      "component": "p3",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "topic_filter_map_9709_s1_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_s1_v1.json",
+      "file_type": "topic_filter_map",
+      "syllabus_code": "9709",
+      "component": "s1",
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    },
+    {
+      "source_file": "topic_filter_map_index_v1.json",
+      "recommended_canonical_file": "exam_bank_taxonomy/canonical/indexes/topic_filter_map_index_v1.json",
+      "file_type": "index",
+      "syllabus_code": null,
+      "component": null,
+      "reason": "Best available component-specific artifact; preserve as canonical candidate with review queues for unresolved records.",
+      "caveat": "Contains machine-generated data unless reviewed_record_count is greater than zero."
+    }
+  ],
+  "reference_sources": [
+    {
+      "file_path": "output/json/question_bank.deepseek.json",
+      "recommended_role": "source_reference_not_canonical_taxonomy",
+      "reason": "LLM enrichment output, not a canonical taxonomy source."
+    },
+    {
+      "file_path": "output/json/question_bank.json",
+      "recommended_role": "source_reference_not_canonical_taxonomy",
+      "reason": "Legacy extraction question bank with broad topic labels and OCR quality metadata."
+    },
+    {
+      "file_path": "output_ocr_candidate/json/asterion_content_lab_candidates_v1.json",
+      "recommended_role": "source_reference_not_canonical_taxonomy",
+      "reason": "Generated content-lab candidates used as weak evidence for taxonomy mapping."
+    },
+    {
+      "file_path": "output_ocr_candidate/json/asterion_question_bank_v1.json",
+      "recommended_role": "source_reference_not_canonical_taxonomy",
+      "reason": "Asterion-ready question bank with subpart-level records."
+    },
+    {
+      "file_path": "output_ocr_candidate/json/question_bank.json",
+      "recommended_role": "source_reference_not_canonical_taxonomy",
+      "reason": "OCR candidate question bank used as source material for generated mappings."
+    }
+  ],
+  "archive_candidates": [
+    {
+      "source_file": "changelog_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/logs/changelogs/changelog_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "coverage_report_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "coverage_report_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "coverage_report_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "coverage_report_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "coverage_report_all_components_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_all_components_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_skill_mappings_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "question_topic_assignments_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_index_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/indexes/skill_map_index_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "skill_map_validation_v1.json",
+      "archive_bucket": "deprecated",
+      "replacement_file": "exam_bank_taxonomy/logs/validation_reports/skill_map_validation_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "strict_topic_filtering_report_all_components_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_all_components_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "topic_filter_map_9709_m1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_m1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "topic_filter_map_9709_p1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "topic_filter_map_9709_p3_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p3_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "topic_filter_map_9709_s1_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_s1_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    },
+    {
+      "source_file": "topic_filter_map_index_v1.json",
+      "archive_bucket": "superseded",
+      "replacement_file": "exam_bank_taxonomy/canonical/indexes/topic_filter_map_index_v1.json",
+      "reason": "Root-level artifact superseded by organized exam_bank_taxonomy structure."
+    }
+  ],
+  "do_not_promote_to_strict_filtering": [
+    "low_confidence_skill_mappings",
+    "low_confidence_topic_assignments",
+    "whole_question_only_mappings",
+    "prerequisite_only_assignments",
+    "context_only_assignments",
+    "legacy_topic_cleanup",
+    "invalid_reference_records",
+    "missing_evidence_records"
+  ]
+}

@@ -1,0 +1,841 @@
+{
+  "schema_name": "exam_bank.strict_topic_filtering_report",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:42.941359+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Paper 1",
+  "component_label": "Pure Mathematics 1",
+  "component_key": "p1",
+  "total_questions": 401,
+  "total_subparts": 831,
+  "subparts_with_topic_assignments": 831,
+  "subparts_strict_filter_eligible": 154,
+  "subparts_missing_topic_assignments": [],
+  "topics_with_no_questions": [],
+  "subtopics_with_no_questions": [
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_power_chain",
+      "subtopic_name": "Differentiation of powers and simple composites"
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "topic_name": "Functions",
+      "subtopic_id": "9709_p1_subtopic_functions_domain_range_one_one",
+      "subtopic_name": "Domain, range and one-one restrictions"
+    },
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "topic_name": "Quadratics",
+      "subtopic_id": "9709_p1_subtopic_quadratics_completed_square",
+      "subtopic_name": "Completing the square and quadratic form"
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p1_subtopic_trigonometry_graphs",
+      "subtopic_name": "Graphs of sine, cosine and tangent"
+    }
+  ],
+  "topics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure"
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation"
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration"
+    },
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "topic_name": "Quadratics"
+    }
+  ],
+  "subtopics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure",
+      "subtopic_id": "9709_p1_subtopic_circular_measure_arc_sector",
+      "subtopic_name": "Radians, arcs and sectors"
+    },
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure",
+      "subtopic_id": "9709_p1_subtopic_circular_measure_segments_perimeters",
+      "subtopic_name": "Segments, composite regions and perimeters"
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_stationary_rates",
+      "subtopic_name": "Stationary points, classification and rates of change"
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_tangents_normals",
+      "subtopic_name": "Tangents and normals"
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p1_subtopic_integration_area_volume",
+      "subtopic_name": "Definite integration, areas and volumes"
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p1_subtopic_integration_reverse_differentiation",
+      "subtopic_name": "Reverse differentiation and constants"
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": "9709_p1_subtopic_series_arithmetic_progressions",
+      "subtopic_name": "Arithmetic progressions"
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": "9709_p1_subtopic_series_geometric_progressions",
+      "subtopic_name": "Geometric progressions and sum to infinity"
+    }
+  ],
+  "prerequisite_only_topics": [],
+  "duplicate_or_overlapping_topics": [],
+  "legacy_topics_needing_cleanup": [
+    {
+      "legacy_topic": "algebra",
+      "legacy_subtopic": "general",
+      "question_count": 6,
+      "uncertain_count": 5,
+      "confidence_breakdown": {
+        "low": 5,
+        "high": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "binomial_expansion",
+      "legacy_subtopic": "general",
+      "question_count": 38,
+      "uncertain_count": 25,
+      "confidence_breakdown": {
+        "low": 25,
+        "medium": 3,
+        "high": 10
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "circular_measure",
+      "legacy_subtopic": "general",
+      "question_count": 38,
+      "uncertain_count": 22,
+      "confidence_breakdown": {
+        "low": 22,
+        "medium": 7,
+        "high": 9
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "coordinate_geometry",
+      "legacy_subtopic": "general",
+      "question_count": 42,
+      "uncertain_count": 31,
+      "confidence_breakdown": {
+        "low": 31,
+        "high": 9,
+        "medium": 2
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "differentiation",
+      "legacy_subtopic": "general",
+      "question_count": 69,
+      "uncertain_count": 42,
+      "confidence_breakdown": {
+        "low": 42,
+        "high": 24,
+        "medium": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "functions",
+      "legacy_subtopic": "general",
+      "question_count": 73,
+      "uncertain_count": 51,
+      "confidence_breakdown": {
+        "low": 51,
+        "high": 22
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "integration",
+      "legacy_subtopic": "general",
+      "question_count": 22,
+      "uncertain_count": 12,
+      "confidence_breakdown": {
+        "low": 12,
+        "high": 10
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "quadratics",
+      "legacy_subtopic": "general",
+      "question_count": 16,
+      "uncertain_count": 11,
+      "confidence_breakdown": {
+        "low": 11,
+        "high": 3,
+        "medium": 2
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "series_and_sequences",
+      "legacy_subtopic": "general",
+      "question_count": 46,
+      "uncertain_count": 35,
+      "confidence_breakdown": {
+        "low": 35,
+        "high": 10,
+        "medium": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "trigonometry",
+      "legacy_subtopic": "general",
+      "question_count": 51,
+      "uncertain_count": 34,
+      "confidence_breakdown": {
+        "low": 34,
+        "high": 14,
+        "medium": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    }
+  ],
+  "strict_filter_coverage_percent": 18.53,
+  "review_queue_summary": {
+    "total_topic_assignment_count": 2148,
+    "strict_filter_eligible_assignment_count": 154,
+    "excluded_from_strict_filtering_count": 1994,
+    "medium_confidence_assignment_count": 584,
+    "low_confidence_assignment_count": 1261,
+    "very_low_confidence_assignment_count": 0,
+    "prerequisite_assignment_count": 1030,
+    "context_only_assignment_count": 0,
+    "whole_question_assignment_count": 226
+  },
+  "default_strict_filter_set": {
+    "criteria": {
+      "strict_filter_eligible": true,
+      "assignment_type": [
+        "primary_assessed",
+        "secondary_assessed"
+      ],
+      "minimum_confidence": 0.85,
+      "review_status": [
+        "high-confidence machine_candidate",
+        "reviewed"
+      ]
+    },
+    "assignment_count": 154,
+    "subpart_count": 154
+  },
+  "broader_review_filter_set": {
+    "criteria": {
+      "minimum_confidence": 0.5,
+      "includes_prerequisite_mappings": true,
+      "student_facing_default": false
+    },
+    "assignment_count": 2071
+  },
+  "recommended_cleanup_actions": [
+    "Use only default_strict_filter_set for student-facing topic filters.",
+    "Review medium-confidence direct mappings before promoting them into strict filters.",
+    "Keep prerequisite and context-only mappings out of default strict filters.",
+    "Retire legacy question.topic labels as a filtering source after canonical assignments are reviewed."
+  ],
+  "topic_quality": [
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_circular_measure_arc_sector",
+        "9709_p1_circular_measure_segments_perimeters"
+      ],
+      "direct_assessed_question_count": 35,
+      "direct_assessed_subpart_count": 60,
+      "prerequisite_only_count": 4,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.588,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 83,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_coordinate_geometry",
+      "topic_name": "Coordinate geometry",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_coordinate_circle_geometry",
+        "9709_p1_coordinate_line_geometry"
+      ],
+      "direct_assessed_question_count": 98,
+      "direct_assessed_subpart_count": 162,
+      "prerequisite_only_count": 250,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 42,
+      "average_confidence": 0.684,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 417,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_differentiation_power_chain",
+        "9709_p1_differentiation_stationary_rates",
+        "9709_p1_differentiation_tangents_normals"
+      ],
+      "direct_assessed_question_count": 67,
+      "direct_assessed_subpart_count": 134,
+      "prerequisite_only_count": 176,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.613,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 326,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "topic_name": "Functions",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_functions_composition_inverse",
+        "9709_p1_functions_domain_range_one_one",
+        "9709_p1_functions_transformations"
+      ],
+      "direct_assessed_question_count": 79,
+      "direct_assessed_subpart_count": 186,
+      "prerequisite_only_count": 186,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 46,
+      "average_confidence": 0.704,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 387,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_integration_area_volume",
+        "9709_p1_integration_reverse_differentiation"
+      ],
+      "direct_assessed_question_count": 47,
+      "direct_assessed_subpart_count": 62,
+      "prerequisite_only_count": 15,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.595,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 95,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "topic_name": "Quadratics",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_quadratics_completed_square",
+        "9709_p1_quadratics_discriminant_intersections"
+      ],
+      "direct_assessed_question_count": 65,
+      "direct_assessed_subpart_count": 85,
+      "prerequisite_only_count": 230,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.632,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 315,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_series_arithmetic_progressions",
+        "9709_p1_series_binomial_positive_integer",
+        "9709_p1_series_geometric_progressions"
+      ],
+      "direct_assessed_question_count": 85,
+      "direct_assessed_subpart_count": 143,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 47,
+      "average_confidence": 0.713,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 160,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals",
+        "9709_p1_trigonometry_graphs",
+        "9709_p1_trigonometry_identities_exact_values"
+      ],
+      "direct_assessed_question_count": 121,
+      "direct_assessed_subpart_count": 183,
+      "prerequisite_only_count": 169,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 19,
+      "average_confidence": 0.666,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 365,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    }
+  ],
+  "topic_subtopic_quality": [
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure",
+      "subtopic_id": "9709_p1_subtopic_circular_measure_arc_sector",
+      "subtopic_name": "Radians, arcs and sectors",
+      "linked_skill_ids": [
+        "9709_p1_circular_measure_arc_sector"
+      ],
+      "direct_assessed_question_count": 34,
+      "direct_assessed_subpart_count": 56,
+      "prerequisite_only_count": 4,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.595,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 60,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "topic_name": "Circular measure",
+      "subtopic_id": "9709_p1_subtopic_circular_measure_segments_perimeters",
+      "subtopic_name": "Segments, composite regions and perimeters",
+      "linked_skill_ids": [
+        "9709_p1_circular_measure_segments_perimeters"
+      ],
+      "direct_assessed_question_count": 18,
+      "direct_assessed_subpart_count": 23,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.57,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 23,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_coordinate_geometry",
+      "topic_name": "Coordinate geometry",
+      "subtopic_id": "9709_p1_subtopic_coordinate_circle_geometry",
+      "subtopic_name": "Circle equations, chords and tangents",
+      "linked_skill_ids": [
+        "9709_p1_coordinate_circle_geometry"
+      ],
+      "direct_assessed_question_count": 98,
+      "direct_assessed_subpart_count": 161,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 42,
+      "average_confidence": 0.697,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 161,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_coordinate_geometry",
+      "topic_name": "Coordinate geometry",
+      "subtopic_id": "9709_p1_subtopic_coordinate_line_geometry",
+      "subtopic_name": "Straight lines, gradients and perpendicularity",
+      "linked_skill_ids": [
+        "9709_p1_coordinate_line_geometry"
+      ],
+      "direct_assessed_question_count": 6,
+      "direct_assessed_subpart_count": 6,
+      "prerequisite_only_count": 250,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.676,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 256,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_power_chain",
+      "subtopic_name": "Differentiation of powers and simple composites",
+      "linked_skill_ids": [
+        "9709_p1_differentiation_power_chain"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 176,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.613,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 176,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_stationary_rates",
+      "subtopic_name": "Stationary points, classification and rates of change",
+      "linked_skill_ids": [
+        "9709_p1_differentiation_stationary_rates"
+      ],
+      "direct_assessed_question_count": 26,
+      "direct_assessed_subpart_count": 35,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.563,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 35,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p1_subtopic_differentiation_tangents_normals",
+      "subtopic_name": "Tangents and normals",
+      "linked_skill_ids": [
+        "9709_p1_differentiation_tangents_normals"
+      ],
+      "direct_assessed_question_count": 64,
+      "direct_assessed_subpart_count": 115,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.63,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 115,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "topic_name": "Functions",
+      "subtopic_id": "9709_p1_subtopic_functions_composition_inverse",
+      "subtopic_name": "Composite and inverse functions",
+      "linked_skill_ids": [
+        "9709_p1_functions_composition_inverse"
+      ],
+      "direct_assessed_question_count": 71,
+      "direct_assessed_subpart_count": 162,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 46,
+      "average_confidence": 0.702,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 162,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "topic_name": "Functions",
+      "subtopic_id": "9709_p1_subtopic_functions_domain_range_one_one",
+      "subtopic_name": "Domain, range and one-one restrictions",
+      "linked_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 186,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.707,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 186,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "topic_name": "Functions",
+      "subtopic_id": "9709_p1_subtopic_functions_transformations",
+      "subtopic_name": "Graph transformations",
+      "linked_skill_ids": [
+        "9709_p1_functions_transformations"
+      ],
+      "direct_assessed_question_count": 34,
+      "direct_assessed_subpart_count": 39,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.693,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 39,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p1_subtopic_integration_area_volume",
+      "subtopic_name": "Definite integration, areas and volumes",
+      "linked_skill_ids": [
+        "9709_p1_integration_area_volume"
+      ],
+      "direct_assessed_question_count": 24,
+      "direct_assessed_subpart_count": 33,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.601,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 33,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p1_subtopic_integration_reverse_differentiation",
+      "subtopic_name": "Reverse differentiation and constants",
+      "linked_skill_ids": [
+        "9709_p1_integration_reverse_differentiation"
+      ],
+      "direct_assessed_question_count": 41,
+      "direct_assessed_subpart_count": 47,
+      "prerequisite_only_count": 15,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.592,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 62,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "topic_name": "Quadratics",
+      "subtopic_id": "9709_p1_subtopic_quadratics_completed_square",
+      "subtopic_name": "Completing the square and quadratic form",
+      "linked_skill_ids": [
+        "9709_p1_quadratics_completed_square"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 85,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.56,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 85,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "topic_name": "Quadratics",
+      "subtopic_id": "9709_p1_subtopic_quadratics_discriminant_intersections",
+      "subtopic_name": "Discriminants, roots and intersections",
+      "linked_skill_ids": [
+        "9709_p1_quadratics_discriminant_intersections"
+      ],
+      "direct_assessed_question_count": 65,
+      "direct_assessed_subpart_count": 85,
+      "prerequisite_only_count": 145,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.659,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 230,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": "9709_p1_subtopic_series_arithmetic_progressions",
+      "subtopic_name": "Arithmetic progressions",
+      "linked_skill_ids": [
+        "9709_p1_series_arithmetic_progressions"
+      ],
+      "direct_assessed_question_count": 34,
+      "direct_assessed_subpart_count": 46,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.607,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 46,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": "9709_p1_subtopic_series_binomial_positive_integer",
+      "subtopic_name": "Binomial expansion for positive integer powers",
+      "linked_skill_ids": [
+        "9709_p1_series_binomial_positive_integer"
+      ],
+      "direct_assessed_question_count": 39,
+      "direct_assessed_subpart_count": 67,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 44,
+      "average_confidence": 0.832,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 67,
+      "filter_quality_rating": "good",
+      "recommended_action": "Use in default strict filters; schedule expert review before marking as reviewed."
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "topic_name": "Series",
+      "subtopic_id": "9709_p1_subtopic_series_geometric_progressions",
+      "subtopic_name": "Geometric progressions and sum to infinity",
+      "linked_skill_ids": [
+        "9709_p1_series_geometric_progressions"
+      ],
+      "direct_assessed_question_count": 35,
+      "direct_assessed_subpart_count": 47,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 3,
+      "average_confidence": 0.647,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 47,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p1_subtopic_trigonometry_equations_intervals",
+      "subtopic_name": "Trigonometric equations and intervals",
+      "linked_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
+      ],
+      "direct_assessed_question_count": 120,
+      "direct_assessed_subpart_count": 182,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 19,
+      "average_confidence": 0.666,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 182,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p1_subtopic_trigonometry_graphs",
+      "subtopic_name": "Graphs of sine, cosine and tangent",
+      "linked_skill_ids": [
+        "9709_p1_trigonometry_graphs"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": null,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 0,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p1_subtopic_trigonometry_identities_exact_values",
+      "subtopic_name": "Basic identities and exact trigonometric values",
+      "linked_skill_ids": [
+        "9709_p1_trigonometry_identities_exact_values"
+      ],
+      "direct_assessed_question_count": 13,
+      "direct_assessed_subpart_count": 14,
+      "prerequisite_only_count": 169,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.665,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 183,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:42.934587+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

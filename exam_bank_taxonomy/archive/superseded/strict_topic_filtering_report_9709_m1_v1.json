@@ -1,0 +1,635 @@
+{
+  "schema_name": "exam_bank.strict_topic_filtering_report",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.128517+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Mechanics 1 (Paper 4)",
+  "component_label": "Mechanics",
+  "component_key": "m1",
+  "total_questions": 258,
+  "total_subparts": 497,
+  "subparts_with_topic_assignments": 497,
+  "subparts_strict_filter_eligible": 47,
+  "subparts_missing_topic_assignments": [],
+  "topics_with_no_questions": [],
+  "subtopics_with_no_questions": [],
+  "topics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium"
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line"
+    }
+  ],
+  "subtopics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_equilibrium_coplanar_forces",
+      "subtopic_name": "Equilibrium of particles under coplanar forces"
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_forces_components_resultants",
+      "subtopic_name": "Force components and resultants"
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_friction_limiting_equilibrium",
+      "subtopic_name": "Friction and limiting equilibrium"
+    },
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "topic_name": "Newton's laws of motion",
+      "subtopic_id": "9709_m1_subtopic_inclined_planes_dynamics",
+      "subtopic_name": "Dynamics on inclined and rough planes"
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_constant_acceleration",
+      "subtopic_name": "Constant acceleration kinematics"
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_graphs",
+      "subtopic_name": "Motion graphs"
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_variable_acceleration_calculus",
+      "subtopic_name": "Variable acceleration by calculus"
+    },
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "topic_name": "Energy, work and power",
+      "subtopic_id": "9709_m1_subtopic_work_energy_with_resistance_friction",
+      "subtopic_name": "Work-energy with resistance and friction"
+    }
+  ],
+  "prerequisite_only_topics": [],
+  "duplicate_or_overlapping_topics": [],
+  "legacy_topics_needing_cleanup": [
+    {
+      "legacy_topic": "connected_particles",
+      "legacy_subtopic": "general",
+      "question_count": 25,
+      "uncertain_count": 19,
+      "confidence_breakdown": {
+        "low": 19,
+        "high": 6
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "equilibrium_coplanar_forces",
+      "legacy_subtopic": "general",
+      "question_count": 25,
+      "uncertain_count": 16,
+      "confidence_breakdown": {
+        "low": 16,
+        "medium": 3,
+        "high": 6
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "equilibrium_particle",
+      "legacy_subtopic": "general",
+      "question_count": 6,
+      "uncertain_count": 3,
+      "confidence_breakdown": {
+        "low": 3,
+        "high": 2,
+        "medium": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "forces_newtons_second_law",
+      "legacy_subtopic": "general",
+      "question_count": 4,
+      "uncertain_count": 2,
+      "confidence_breakdown": {
+        "low": 2,
+        "high": 2
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "friction_rough_plane",
+      "legacy_subtopic": "general",
+      "question_count": 33,
+      "uncertain_count": 18,
+      "confidence_breakdown": {
+        "low": 18,
+        "high": 12,
+        "medium": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "kinematics_constant_acceleration",
+      "legacy_subtopic": "general",
+      "question_count": 26,
+      "uncertain_count": 18,
+      "confidence_breakdown": {
+        "medium": 4,
+        "low": 18,
+        "high": 4
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "kinematics_graphs",
+      "legacy_subtopic": "general",
+      "question_count": 19,
+      "uncertain_count": 13,
+      "confidence_breakdown": {
+        "low": 13,
+        "high": 6
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "kinematics_variable_functions",
+      "legacy_subtopic": "general",
+      "question_count": 4,
+      "uncertain_count": 3,
+      "confidence_breakdown": {
+        "low": 3,
+        "high": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "momentum_impulse",
+      "legacy_subtopic": "general",
+      "question_count": 35,
+      "uncertain_count": 24,
+      "confidence_breakdown": {
+        "low": 24,
+        "medium": 3,
+        "high": 8
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "power_and_resistance",
+      "legacy_subtopic": "general",
+      "question_count": 19,
+      "uncertain_count": 13,
+      "confidence_breakdown": {
+        "low": 13,
+        "high": 5,
+        "medium": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "rough_plane_energy",
+      "legacy_subtopic": "general",
+      "question_count": 1,
+      "uncertain_count": 1,
+      "confidence_breakdown": {
+        "low": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "work_energy_power",
+      "legacy_subtopic": "general",
+      "question_count": 61,
+      "uncertain_count": 27,
+      "confidence_breakdown": {
+        "low": 27,
+        "high": 12,
+        "medium": 22
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    }
+  ],
+  "strict_filter_coverage_percent": 9.46,
+  "review_queue_summary": {
+    "total_topic_assignment_count": 1293,
+    "strict_filter_eligible_assignment_count": 47,
+    "excluded_from_strict_filtering_count": 1246,
+    "medium_confidence_assignment_count": 633,
+    "low_confidence_assignment_count": 520,
+    "very_low_confidence_assignment_count": 0,
+    "prerequisite_assignment_count": 681,
+    "context_only_assignment_count": 0,
+    "whole_question_assignment_count": 209
+  },
+  "default_strict_filter_set": {
+    "criteria": {
+      "strict_filter_eligible": true,
+      "assignment_type": [
+        "primary_assessed",
+        "secondary_assessed"
+      ],
+      "minimum_confidence": 0.85,
+      "review_status": [
+        "high-confidence machine_candidate",
+        "reviewed"
+      ]
+    },
+    "assignment_count": 47,
+    "subpart_count": 47
+  },
+  "broader_review_filter_set": {
+    "criteria": {
+      "minimum_confidence": 0.5,
+      "includes_prerequisite_mappings": true,
+      "student_facing_default": false
+    },
+    "assignment_count": 1254
+  },
+  "recommended_cleanup_actions": [
+    "Use only default_strict_filter_set for student-facing topic filters.",
+    "Review medium-confidence direct mappings before promoting them into strict filters.",
+    "Keep prerequisite and context-only mappings out of default strict filters.",
+    "Retire legacy question.topic labels as a filtering source after canonical assignments are reviewed."
+  ],
+  "topic_quality": [
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "topic_name": "Energy, work and power",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_m1_power_resistance_driving_force",
+        "9709_m1_work_energy_kinetic_potential",
+        "9709_m1_work_energy_with_resistance_friction"
+      ],
+      "direct_assessed_question_count": 122,
+      "direct_assessed_subpart_count": 213,
+      "prerequisite_only_count": 207,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 46,
+      "average_confidence": 0.746,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 426,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_m1_equilibrium_coplanar_forces",
+        "9709_m1_forces_components_resultants",
+        "9709_m1_friction_limiting_equilibrium"
+      ],
+      "direct_assessed_question_count": 67,
+      "direct_assessed_subpart_count": 107,
+      "prerequisite_only_count": 74,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.61,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 199,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_m1_kinematics_constant_acceleration",
+        "9709_m1_kinematics_graphs",
+        "9709_m1_kinematics_variable_acceleration_calculus"
+      ],
+      "direct_assessed_question_count": 47,
+      "direct_assessed_subpart_count": 104,
+      "prerequisite_only_count": 132,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.587,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 236,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_momentum",
+      "topic_name": "Momentum",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_m1_momentum_impulse_conservation"
+      ],
+      "direct_assessed_question_count": 36,
+      "direct_assessed_subpart_count": 70,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.669,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 70,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "topic_name": "Newton's laws of motion",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_m1_connected_particles_tension",
+        "9709_m1_inclined_planes_dynamics",
+        "9709_m1_newtons_second_law_single_particle"
+      ],
+      "direct_assessed_question_count": 61,
+      "direct_assessed_subpart_count": 93,
+      "prerequisite_only_count": 268,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 1,
+      "average_confidence": 0.725,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 362,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    }
+  ],
+  "topic_subtopic_quality": [
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "topic_name": "Newton's laws of motion",
+      "subtopic_id": "9709_m1_subtopic_connected_particles_tension",
+      "subtopic_name": "Connected particles, strings and pulleys",
+      "linked_skill_ids": [
+        "9709_m1_connected_particles_tension"
+      ],
+      "direct_assessed_question_count": 29,
+      "direct_assessed_subpart_count": 47,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 1,
+      "average_confidence": 0.76,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 47,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_equilibrium_coplanar_forces",
+      "subtopic_name": "Equilibrium of particles under coplanar forces",
+      "linked_skill_ids": [
+        "9709_m1_equilibrium_coplanar_forces"
+      ],
+      "direct_assessed_question_count": 12,
+      "direct_assessed_subpart_count": 17,
+      "prerequisite_only_count": 59,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.604,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 76,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_forces_components_resultants",
+      "subtopic_name": "Force components and resultants",
+      "linked_skill_ids": [
+        "9709_m1_forces_components_resultants"
+      ],
+      "direct_assessed_question_count": 37,
+      "direct_assessed_subpart_count": 49,
+      "prerequisite_only_count": 10,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.619,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 59,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "subtopic_id": "9709_m1_subtopic_friction_limiting_equilibrium",
+      "subtopic_name": "Friction and limiting equilibrium",
+      "linked_skill_ids": [
+        "9709_m1_friction_limiting_equilibrium"
+      ],
+      "direct_assessed_question_count": 33,
+      "direct_assessed_subpart_count": 59,
+      "prerequisite_only_count": 5,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.609,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 64,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "topic_name": "Newton's laws of motion",
+      "subtopic_id": "9709_m1_subtopic_inclined_planes_dynamics",
+      "subtopic_name": "Dynamics on inclined and rough planes",
+      "linked_skill_ids": [
+        "9709_m1_inclined_planes_dynamics"
+      ],
+      "direct_assessed_question_count": 30,
+      "direct_assessed_subpart_count": 40,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.595,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 40,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_constant_acceleration",
+      "subtopic_name": "Constant acceleration kinematics",
+      "linked_skill_ids": [
+        "9709_m1_kinematics_constant_acceleration"
+      ],
+      "direct_assessed_question_count": 24,
+      "direct_assessed_subpart_count": 45,
+      "prerequisite_only_count": 132,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.596,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 177,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_graphs",
+      "subtopic_name": "Motion graphs",
+      "linked_skill_ids": [
+        "9709_m1_kinematics_graphs"
+      ],
+      "direct_assessed_question_count": 19,
+      "direct_assessed_subpart_count": 49,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.565,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 49,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "subtopic_id": "9709_m1_subtopic_kinematics_variable_acceleration_calculus",
+      "subtopic_name": "Variable acceleration by calculus",
+      "linked_skill_ids": [
+        "9709_m1_kinematics_variable_acceleration_calculus"
+      ],
+      "direct_assessed_question_count": 4,
+      "direct_assessed_subpart_count": 10,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.539,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 10,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_m1_topic_momentum",
+      "topic_name": "Momentum",
+      "subtopic_id": "9709_m1_subtopic_momentum_impulse_conservation",
+      "subtopic_name": "Momentum, impulse and direct collisions",
+      "linked_skill_ids": [
+        "9709_m1_momentum_impulse_conservation"
+      ],
+      "direct_assessed_question_count": 36,
+      "direct_assessed_subpart_count": 70,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.669,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 70,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "topic_name": "Newton's laws of motion",
+      "subtopic_id": "9709_m1_subtopic_newtons_second_law_single_particle",
+      "subtopic_name": "Newton's second law for a single particle",
+      "linked_skill_ids": [
+        "9709_m1_newtons_second_law_single_particle"
+      ],
+      "direct_assessed_question_count": 4,
+      "direct_assessed_subpart_count": 7,
+      "prerequisite_only_count": 268,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.737,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 275,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "topic_name": "Energy, work and power",
+      "subtopic_id": "9709_m1_subtopic_power_resistance_driving_force",
+      "subtopic_name": "Power, resistance and driving force",
+      "linked_skill_ids": [
+        "9709_m1_power_resistance_driving_force"
+      ],
+      "direct_assessed_question_count": 100,
+      "direct_assessed_subpart_count": 185,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 46,
+      "average_confidence": 0.767,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 185,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "topic_name": "Energy, work and power",
+      "subtopic_id": "9709_m1_subtopic_work_energy_kinetic_potential",
+      "subtopic_name": "Work-energy and kinetic/potential energy",
+      "linked_skill_ids": [
+        "9709_m1_work_energy_kinetic_potential"
+      ],
+      "direct_assessed_question_count": 6,
+      "direct_assessed_subpart_count": 6,
+      "prerequisite_only_count": 207,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.746,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 213,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "topic_name": "Energy, work and power",
+      "subtopic_id": "9709_m1_subtopic_work_energy_with_resistance_friction",
+      "subtopic_name": "Work-energy with resistance and friction",
+      "linked_skill_ids": [
+        "9709_m1_work_energy_with_resistance_friction"
+      ],
+      "direct_assessed_question_count": 23,
+      "direct_assessed_subpart_count": 28,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.61,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 28,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:43.124882+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

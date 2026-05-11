@@ -1,0 +1,398 @@
+{
+  "schema_name": "exam_bank.validation_report_after_optimization",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T05:18:25.410151+00:00",
+  "status": "pass",
+  "checks": {
+    "all_json_valid": true,
+    "canonical_filenames_valid": true,
+    "skill_ids_unique_within_component": true,
+    "topic_ids_unique_within_component": true,
+    "subtopic_ids_unique_within_component": true,
+    "subtopic_parents_valid": true,
+    "mapping_skill_references_valid": true,
+    "topic_assignment_references_valid": true,
+    "linked_skill_references_valid": true,
+    "confidence_values_valid": true,
+    "review_status_values_valid": true,
+    "assignment_type_values_valid": true,
+    "no_low_confidence_reviewed": true,
+    "strict_filter_rules_valid": true,
+    "canonical_index_covers_all_canonical_files": true,
+    "review_queue_index_covers_review_files": true,
+    "archive_index_covers_archived_files": true,
+    "component_topic_structures_separate": true,
+    "no_p3_structure_reused_as_default": true,
+    "no_prerequisite_or_context_strict": true,
+    "no_prerequisite_evidence_counted_as_p3_readiness": true
+  },
+  "errors": [],
+  "warnings": [],
+  "json_validation": [
+    {
+      "file_path": "exam_bank_taxonomy/archive/deprecated/skill_map_validation_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/changelog_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/coverage_report_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/coverage_report_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/coverage_report_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/coverage_report_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/coverage_report_all_components_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_skill_mappings_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_skill_mappings_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_skill_mappings_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_skill_mappings_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_topic_assignments_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_topic_assignments_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_topic_assignments_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/question_topic_assignments_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/skill_map_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/skill_map_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/skill_map_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/skill_map_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/skill_map_index_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/strict_topic_filtering_report_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/strict_topic_filtering_report_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/strict_topic_filtering_report_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/strict_topic_filtering_report_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/strict_topic_filtering_report_all_components_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/topic_filter_map_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/topic_filter_map_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/topic_filter_map_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/topic_filter_map_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/archive/superseded/topic_filter_map_index_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_all_components_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/indexes/skill_map_index_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/indexes/topic_filter_map_index_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/question_topic_assignments/question_topic_assignments_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/strict_filtering_reports/strict_topic_filtering_report_all_components_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_m1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_s1_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/logs/changelogs/changelog_9709_p3_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/logs/validation_reports/canonical_file_recommendations_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/logs/validation_reports/cleanup_plan_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/logs/validation_reports/file_inventory_report_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/logs/validation_reports/file_quality_audit_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/duplicate_conflict_records_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/invalid_reference_records_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/legacy_topic_cleanup_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/low_confidence_candidates/low_confidence_skill_mappings_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/low_confidence_candidates/low_confidence_topic_assignments_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/missing_evidence_records_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/questionable_reviewed_records_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/whole_question_only_mappings_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/topic_assignment_review/context_only_assignments_v1.json",
+      "valid_json": true,
+      "error": null
+    },
+    {
+      "file_path": "exam_bank_taxonomy/review_queue/topic_assignment_review/prerequisite_only_assignments_v1.json",
+      "valid_json": true,
+      "error": null
+    }
+  ]
+}

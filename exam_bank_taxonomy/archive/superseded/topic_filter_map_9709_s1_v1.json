@@ -1,0 +1,669 @@
+{
+  "schema_name": "exam_bank.topic_filter_map",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.211815+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+  "component_label": "Probability & Statistics 1",
+  "component_key": "s1",
+  "source_skill_map_file": "skill_map_9709_s1_v1.json",
+  "source_mapping_file": "question_skill_mappings_9709_s1_v1.json",
+  "source_coverage_report_file": "coverage_report_9709_s1_v1.json",
+  "review_status": "needs_review",
+  "notes": "Canonical topic filter map generated from official CAIE syllabus sections and component-local skill mappings. Parent topics are syllabus sections; subtopics are filterable assessable skill groups.",
+  "topics": [
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "official_section_code": "5.1",
+      "official_section_name": "Representation of data",
+      "topic_name": "Representation of data",
+      "topic_description": "Official CAIE syllabus section 5.1 for Probability & Statistics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_s1_subtopic_data_representation_stem_box",
+          "parent_topic_id": "9709_s1_topic_representation_of_data",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.1",
+          "official_section_name": "Representation of data",
+          "subtopic_name": "Stem-and-leaf, box-and-whisker and comparative displays",
+          "subtopic_description": "Represent and compare raw data using stem-and-leaf diagrams, box plots and related summaries.",
+          "linked_skill_ids": [
+            "9709_s1_data_representation_stem_box"
+          ],
+          "recognizer_signals": [
+            "stem",
+            "box",
+            "whisker",
+            "quartile",
+            "median",
+            "interquartile",
+            "represent"
+          ],
+          "common_errors": [
+            "Misplacing quartiles in an ordered list",
+            "Comparing spread using only the range"
+          ],
+          "question_count": 19,
+          "subpart_count": 28,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 28,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_data_histograms",
+          "parent_topic_id": "9709_s1_topic_representation_of_data",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.1",
+          "official_section_name": "Representation of data",
+          "subtopic_name": "Histograms and frequency density",
+          "subtopic_description": "Draw and interpret histograms for grouped data with unequal class widths.",
+          "linked_skill_ids": [
+            "9709_s1_data_histograms"
+          ],
+          "recognizer_signals": [
+            "histogram",
+            "frequency density",
+            "class width",
+            "frequency",
+            "grouped"
+          ],
+          "common_errors": [
+            "Plotting frequency instead of frequency density",
+            "Using inconsistent class widths"
+          ],
+          "question_count": 22,
+          "subpart_count": 30,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 30,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_data_cumulative_frequency",
+          "parent_topic_id": "9709_s1_topic_representation_of_data",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.1",
+          "official_section_name": "Representation of data",
+          "subtopic_name": "Cumulative frequency and percentiles",
+          "subtopic_description": "Use cumulative frequency graphs to estimate medians, quartiles, percentiles and counts.",
+          "linked_skill_ids": [
+            "9709_s1_data_cumulative_frequency"
+          ],
+          "recognizer_signals": [
+            "cumulative frequency",
+            "estimate",
+            "median",
+            "quartile",
+            "percentile",
+            "curve"
+          ],
+          "common_errors": [
+            "Reading from class midpoints instead of boundaries",
+            "Using less-than values as exact data"
+          ],
+          "question_count": 29,
+          "subpart_count": 59,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 59,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_data_mean_variance_coding",
+          "parent_topic_id": "9709_s1_topic_representation_of_data",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.1",
+          "official_section_name": "Representation of data",
+          "subtopic_name": "Mean, variance, standard deviation and coding",
+          "subtopic_description": "Calculate and transform measures of location and spread, including coded data and grouped estimates.",
+          "linked_skill_ids": [
+            "9709_s1_data_mean_variance_coding"
+          ],
+          "recognizer_signals": [
+            "mean",
+            "variance",
+            "standard deviation",
+            "\u03a3x",
+            "\u03a3x^2",
+            "coded",
+            "summary"
+          ],
+          "common_errors": [
+            "Using n minus 1 instead of n for syllabus variance",
+            "Forgetting to reverse coding transformations"
+          ],
+          "question_count": 72,
+          "subpart_count": 120,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 120,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_s1_data_cumulative_frequency",
+        "9709_s1_data_histograms",
+        "9709_s1_data_mean_variance_coding",
+        "9709_s1_data_representation_stem_box"
+      ],
+      "question_count": 89,
+      "subpart_count": 186,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 237,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "official_section_code": "5.2",
+      "official_section_name": "Permutations and combinations",
+      "topic_name": "Permutations and combinations",
+      "topic_description": "Official CAIE syllabus section 5.2 for Probability & Statistics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_s1_subtopic_permutations_repeated_arrangements",
+          "parent_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.2",
+          "official_section_name": "Permutations and combinations",
+          "subtopic_name": "Permutations and arrangements with restrictions",
+          "subtopic_description": "Count arrangements of objects, including repeated letters and positional restrictions.",
+          "linked_skill_ids": [
+            "9709_s1_permutations_repeated_arrangements"
+          ],
+          "recognizer_signals": [
+            "arrangements",
+            "letters",
+            "word",
+            "together",
+            "at the beginning",
+            "no letter",
+            "different arrangements"
+          ],
+          "common_errors": [
+            "Not dividing by repeated factorials",
+            "Treating a grouped block as multiple objects"
+          ],
+          "question_count": 37,
+          "subpart_count": 89,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 89,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_combinations_selections",
+          "parent_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.2",
+          "official_section_name": "Permutations and combinations",
+          "subtopic_name": "Combinations and selections with restrictions",
+          "subtopic_description": "Count selections and committees using combinations, complementary cases and restrictions.",
+          "linked_skill_ids": [
+            "9709_s1_combinations_selections"
+          ],
+          "recognizer_signals": [
+            "selections",
+            "chosen",
+            "committee",
+            "group",
+            "at least",
+            "exactly",
+            "in how many ways"
+          ],
+          "common_errors": [
+            "Counting ordered arrangements when selections are unordered",
+            "Missing complementary cases"
+          ],
+          "question_count": 38,
+          "subpart_count": 62,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 62,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_s1_combinations_selections",
+        "9709_s1_permutations_repeated_arrangements"
+      ],
+      "question_count": 44,
+      "subpart_count": 127,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 151,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "official_section_code": "5.3",
+      "official_section_name": "Probability",
+      "topic_name": "Probability",
+      "topic_description": "Official CAIE syllabus section 5.3 for Probability & Statistics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_s1_subtopic_probability_basic_rules",
+          "parent_topic_id": "9709_s1_topic_probability",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.3",
+          "official_section_name": "Probability",
+          "subtopic_name": "Probability rules, mutually exclusive and independent events",
+          "subtopic_description": "Use addition, multiplication, complement, mutually exclusive and independent event rules.",
+          "linked_skill_ids": [
+            "9709_s1_probability_basic_rules"
+          ],
+          "recognizer_signals": [
+            "probability",
+            "independently",
+            "fair",
+            "spinner",
+            "dice",
+            "coin",
+            "at least",
+            "fewer than"
+          ],
+          "common_errors": [
+            "Adding probabilities for non-mutually-exclusive events",
+            "Using independence without justification"
+          ],
+          "question_count": 58,
+          "subpart_count": 137,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 260,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_probability_conditional_tree_diagrams",
+          "parent_topic_id": "9709_s1_topic_probability",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.3",
+          "official_section_name": "Probability",
+          "subtopic_name": "Conditional probability and tree diagrams",
+          "subtopic_description": "Use tree diagrams, conditional probability and successive selection with or without replacement.",
+          "linked_skill_ids": [
+            "9709_s1_probability_conditional_tree_diagrams"
+          ],
+          "recognizer_signals": [
+            "conditional",
+            "given that",
+            "tree diagram",
+            "without replacement",
+            "placed in",
+            "wears",
+            "if"
+          ],
+          "common_errors": [
+            "Using original denominators after an item is moved",
+            "Confusing P(A given B) with P(B given A)"
+          ],
+          "question_count": 48,
+          "subpart_count": 93,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 93,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_probability_repeated_trials_first_success",
+          "parent_topic_id": "9709_s1_topic_probability",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.3",
+          "official_section_name": "Probability",
+          "subtopic_name": "Repeated trials and first-success probabilities",
+          "subtopic_description": "Model repeated independent trials, including first success after a stated number of trials.",
+          "linked_skill_ids": [
+            "9709_s1_probability_repeated_trials_first_success"
+          ],
+          "recognizer_signals": [
+            "first time",
+            "first obtained",
+            "repeatedly",
+            "until",
+            "maximum of two attempts",
+            "7-day period"
+          ],
+          "common_errors": [
+            "Counting all successes rather than the first success",
+            "Forgetting failures before the first success"
+          ],
+          "question_count": 2,
+          "subpart_count": 5,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 5,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_s1_probability_basic_rules",
+        "9709_s1_probability_conditional_tree_diagrams",
+        "9709_s1_probability_repeated_trials_first_success"
+      ],
+      "question_count": 60,
+      "subpart_count": 146,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 358,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "official_section_code": "5.4",
+      "official_section_name": "Discrete random variables",
+      "topic_name": "Discrete random variables",
+      "topic_description": "Official CAIE syllabus section 5.4 for Probability & Statistics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_s1_subtopic_discrete_random_variables_distribution",
+          "parent_topic_id": "9709_s1_topic_discrete_random_variables",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.4",
+          "official_section_name": "Discrete random variables",
+          "subtopic_name": "Discrete random variable distributions",
+          "subtopic_description": "Construct and use probability distribution tables for discrete random variables.",
+          "linked_skill_ids": [
+            "9709_s1_discrete_random_variables_distribution"
+          ],
+          "recognizer_signals": [
+            "random variable",
+            "probability distribution",
+            "takes the values",
+            "P(X",
+            "table",
+            "where k is a constant"
+          ],
+          "common_errors": [
+            "Not normalising probabilities to sum to 1",
+            "Omitting possible values of X"
+          ],
+          "question_count": 43,
+          "subpart_count": 99,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 106,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_discrete_random_variables_expectation_variance",
+          "parent_topic_id": "9709_s1_topic_discrete_random_variables",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.4",
+          "official_section_name": "Discrete random variables",
+          "subtopic_name": "Expectation and variance of discrete random variables",
+          "subtopic_description": "Calculate E(X), E(X squared), Var(X) and transform discrete random variables.",
+          "linked_skill_ids": [
+            "9709_s1_discrete_random_variables_expectation_variance"
+          ],
+          "recognizer_signals": [
+            "E(X",
+            "Var(X",
+            "expectation",
+            "mean of X",
+            "variance of X",
+            "E(X^2"
+          ],
+          "common_errors": [
+            "Using E(X squared) minus E(X) instead of E(X) squared",
+            "Ignoring transformed variable effects"
+          ],
+          "question_count": 36,
+          "subpart_count": 49,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 49,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_binomial_distribution",
+          "parent_topic_id": "9709_s1_topic_discrete_random_variables",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.4",
+          "official_section_name": "Discrete random variables",
+          "subtopic_name": "Binomial distribution",
+          "subtopic_description": "Use binomial probabilities, cumulative probabilities and parameter conditions.",
+          "linked_skill_ids": [
+            "9709_s1_binomial_distribution"
+          ],
+          "recognizer_signals": [
+            "binomial",
+            "X ~ B",
+            "sample of",
+            "number who",
+            "less than",
+            "more than",
+            "successes"
+          ],
+          "common_errors": [
+            "Using nCx with the wrong power of p",
+            "Mixing less than and at most"
+          ],
+          "question_count": 12,
+          "subpart_count": 23,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 23,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_s1_binomial_distribution",
+        "9709_s1_discrete_random_variables_distribution",
+        "9709_s1_discrete_random_variables_expectation_variance"
+      ],
+      "question_count": 55,
+      "subpart_count": 129,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 178,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "official_section_code": "5.5",
+      "official_section_name": "The normal distribution",
+      "topic_name": "The normal distribution",
+      "topic_description": "Official CAIE syllabus section 5.5 for Probability & Statistics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_s1_subtopic_normal_distribution_probabilities",
+          "parent_topic_id": "9709_s1_topic_the_normal_distribution",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.5",
+          "official_section_name": "The normal distribution",
+          "subtopic_name": "Normal distribution probabilities and standardisation",
+          "subtopic_description": "Use normal distribution models, z-scores and standardisation to calculate probabilities.",
+          "linked_skill_ids": [
+            "9709_s1_normal_distribution_probabilities"
+          ],
+          "recognizer_signals": [
+            "normal distribution",
+            "normally distributed",
+            "mean",
+            "standard deviation",
+            "N(",
+            "probability that"
+          ],
+          "common_errors": [
+            "Failing to standardise",
+            "Using variance instead of standard deviation"
+          ],
+          "question_count": 78,
+          "subpart_count": 177,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 177,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_s1_subtopic_normal_distribution_inverse_parameters",
+          "parent_topic_id": "9709_s1_topic_the_normal_distribution",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+          "component_label": "Probability & Statistics 1",
+          "official_section_code": "5.5",
+          "official_section_name": "The normal distribution",
+          "subtopic_name": "Inverse normal and unknown parameters",
+          "subtopic_description": "Use normal probabilities or percentiles to find unknown means, standard deviations or thresholds.",
+          "linked_skill_ids": [
+            "9709_s1_normal_distribution_inverse_parameters"
+          ],
+          "recognizer_signals": [
+            "find the value",
+            "unknown",
+            "standard deviation",
+            "mean",
+            "percentage",
+            "expected number",
+            "inverse"
+          ],
+          "common_errors": [
+            "Using the wrong tail probability",
+            "Rounding z-values too early"
+          ],
+          "question_count": 0,
+          "subpart_count": 0,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 0,
+          "content_lab_priority": "high",
+          "filter_visibility": "hidden_until_populated",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_s1_normal_distribution_inverse_parameters",
+        "9709_s1_normal_distribution_probabilities"
+      ],
+      "question_count": 78,
+      "subpart_count": 177,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 177,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:43.210182+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

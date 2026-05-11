@@ -18,6 +18,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
+from . import deepseek_enrich
 from .pipeline import PipelineResult, process_inputs
 from .triage import ISSUE_SET_ALL_NON_READY, ISSUE_SET_HARD_FAILURES, compare_iteration, create_triage_iteration, serve_iteration
 
@@ -111,6 +112,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Content Lab mark-event candidates.",
     )
     content_lab.set_defaults(func=cmd_asterion_content_lab_candidates)
+
+    enrich_ai = subparsers.add_parser(
+        "enrich-ai",
+        help="Run DeepSeek AI-assisted enrichment against canonical topic/subtopic/skill IDs.",
+    )
+    deepseek_enrich.add_ai_assisted_cli_arguments(enrich_ai)
+    enrich_ai.set_defaults(func=cmd_enrich_ai)
 
     triage_sample = subparsers.add_parser(
         "triage-sample",
@@ -301,6 +309,11 @@ def cmd_asterion_content_lab_candidates(args: argparse.Namespace) -> int:
     )
     print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
     return 0
+
+
+def cmd_enrich_ai(args: argparse.Namespace) -> int:
+    deepseek_enrich.finalize_ai_assisted_args(args)
+    return deepseek_enrich.run_ai_assisted_from_args(args)
 
 
 def cmd_triage_sample(args: argparse.Namespace) -> int:

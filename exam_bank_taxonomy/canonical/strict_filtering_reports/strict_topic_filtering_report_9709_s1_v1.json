@@ -1,0 +1,646 @@
+{
+  "schema_name": "exam_bank.strict_topic_filtering_report",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.213571+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+  "component_label": "Probability & Statistics 1",
+  "component_key": "s1",
+  "total_questions": 246,
+  "total_subparts": 639,
+  "subparts_with_topic_assignments": 639,
+  "subparts_strict_filter_eligible": 16,
+  "subparts_missing_topic_assignments": [],
+  "topics_with_no_questions": [],
+  "subtopics_with_no_questions": [
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution",
+      "subtopic_id": "9709_s1_subtopic_normal_distribution_inverse_parameters",
+      "subtopic_name": "Inverse normal and unknown parameters"
+    }
+  ],
+  "topics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables"
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations"
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability"
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data"
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution"
+    }
+  ],
+  "subtopics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_binomial_distribution",
+      "subtopic_name": "Binomial distribution"
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations",
+      "subtopic_id": "9709_s1_subtopic_combinations_selections",
+      "subtopic_name": "Combinations and selections with restrictions"
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_cumulative_frequency",
+      "subtopic_name": "Cumulative frequency and percentiles"
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_histograms",
+      "subtopic_name": "Histograms and frequency density"
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_mean_variance_coding",
+      "subtopic_name": "Mean, variance, standard deviation and coding"
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_representation_stem_box",
+      "subtopic_name": "Stem-and-leaf, box-and-whisker and comparative displays"
+    },
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_discrete_random_variables_distribution",
+      "subtopic_name": "Discrete random variable distributions"
+    },
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_discrete_random_variables_expectation_variance",
+      "subtopic_name": "Expectation and variance of discrete random variables"
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution",
+      "subtopic_id": "9709_s1_subtopic_normal_distribution_probabilities",
+      "subtopic_name": "Normal distribution probabilities and standardisation"
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations",
+      "subtopic_id": "9709_s1_subtopic_permutations_repeated_arrangements",
+      "subtopic_name": "Permutations and arrangements with restrictions"
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_basic_rules",
+      "subtopic_name": "Probability rules, mutually exclusive and independent events"
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_conditional_tree_diagrams",
+      "subtopic_name": "Conditional probability and tree diagrams"
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_repeated_trials_first_success",
+      "subtopic_name": "Repeated trials and first-success probabilities"
+    }
+  ],
+  "prerequisite_only_topics": [],
+  "duplicate_or_overlapping_topics": [],
+  "legacy_topics_needing_cleanup": [
+    {
+      "legacy_topic": "binomial_distribution",
+      "legacy_subtopic": "general",
+      "question_count": 12,
+      "uncertain_count": 0,
+      "confidence_breakdown": {
+        "high": 1,
+        "medium": 11
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "data_representation",
+      "legacy_subtopic": "general",
+      "question_count": 17,
+      "uncertain_count": 11,
+      "confidence_breakdown": {
+        "low": 11,
+        "high": 6
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "geometric_distribution",
+      "legacy_subtopic": "general",
+      "question_count": 2,
+      "uncertain_count": 1,
+      "confidence_breakdown": {
+        "high": 1,
+        "low": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "measures_of_central_tendency_and_dispersion",
+      "legacy_subtopic": "general",
+      "question_count": 78,
+      "uncertain_count": 51,
+      "confidence_breakdown": {
+        "low": 51,
+        "medium": 9,
+        "high": 18
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "permutations_and_combinations",
+      "legacy_subtopic": "general",
+      "question_count": 44,
+      "uncertain_count": 32,
+      "confidence_breakdown": {
+        "low": 32,
+        "medium": 1,
+        "high": 11
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "probability",
+      "legacy_subtopic": "general",
+      "question_count": 51,
+      "uncertain_count": 33,
+      "confidence_breakdown": {
+        "low": 33,
+        "high": 18
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "probability_distributions",
+      "legacy_subtopic": "general",
+      "question_count": 42,
+      "uncertain_count": 29,
+      "confidence_breakdown": {
+        "low": 29,
+        "high": 12,
+        "medium": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    }
+  ],
+  "strict_filter_coverage_percent": 2.5,
+  "review_queue_summary": {
+    "total_topic_assignment_count": 1101,
+    "strict_filter_eligible_assignment_count": 16,
+    "excluded_from_strict_filtering_count": 1085,
+    "medium_confidence_assignment_count": 225,
+    "low_confidence_assignment_count": 860,
+    "very_low_confidence_assignment_count": 0,
+    "prerequisite_assignment_count": 130,
+    "context_only_assignment_count": 0,
+    "whole_question_assignment_count": 30
+  },
+  "default_strict_filter_set": {
+    "criteria": {
+      "strict_filter_eligible": true,
+      "assignment_type": [
+        "primary_assessed",
+        "secondary_assessed"
+      ],
+      "minimum_confidence": 0.85,
+      "review_status": [
+        "high-confidence machine_candidate",
+        "reviewed"
+      ]
+    },
+    "assignment_count": 16,
+    "subpart_count": 16
+  },
+  "broader_review_filter_set": {
+    "criteria": {
+      "minimum_confidence": 0.5,
+      "includes_prerequisite_mappings": true,
+      "student_facing_default": false
+    },
+    "assignment_count": 922
+  },
+  "recommended_cleanup_actions": [
+    "Use only default_strict_filter_set for student-facing topic filters.",
+    "Review medium-confidence direct mappings before promoting them into strict filters.",
+    "Keep prerequisite and context-only mappings out of default strict filters.",
+    "Retire legacy question.topic labels as a filtering source after canonical assignments are reviewed."
+  ],
+  "topic_quality": [
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_s1_binomial_distribution",
+        "9709_s1_discrete_random_variables_distribution",
+        "9709_s1_discrete_random_variables_expectation_variance"
+      ],
+      "direct_assessed_question_count": 55,
+      "direct_assessed_subpart_count": 129,
+      "prerequisite_only_count": 7,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.577,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 178,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_s1_combinations_selections",
+        "9709_s1_permutations_repeated_arrangements"
+      ],
+      "direct_assessed_question_count": 44,
+      "direct_assessed_subpart_count": 127,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.628,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 151,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_s1_probability_basic_rules",
+        "9709_s1_probability_conditional_tree_diagrams",
+        "9709_s1_probability_repeated_trials_first_success"
+      ],
+      "direct_assessed_question_count": 60,
+      "direct_assessed_subpart_count": 146,
+      "prerequisite_only_count": 123,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.584,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 358,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_s1_data_cumulative_frequency",
+        "9709_s1_data_histograms",
+        "9709_s1_data_mean_variance_coding",
+        "9709_s1_data_representation_stem_box"
+      ],
+      "direct_assessed_question_count": 89,
+      "direct_assessed_subpart_count": 186,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 1,
+      "average_confidence": 0.553,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 237,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_s1_normal_distribution_inverse_parameters",
+        "9709_s1_normal_distribution_probabilities"
+      ],
+      "direct_assessed_question_count": 78,
+      "direct_assessed_subpart_count": 177,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 15,
+      "average_confidence": 0.589,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 177,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    }
+  ],
+  "topic_subtopic_quality": [
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_binomial_distribution",
+      "subtopic_name": "Binomial distribution",
+      "linked_skill_ids": [
+        "9709_s1_binomial_distribution"
+      ],
+      "direct_assessed_question_count": 12,
+      "direct_assessed_subpart_count": 23,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.612,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 23,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations",
+      "subtopic_id": "9709_s1_subtopic_combinations_selections",
+      "subtopic_name": "Combinations and selections with restrictions",
+      "linked_skill_ids": [
+        "9709_s1_combinations_selections"
+      ],
+      "direct_assessed_question_count": 38,
+      "direct_assessed_subpart_count": 62,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.601,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 62,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_cumulative_frequency",
+      "subtopic_name": "Cumulative frequency and percentiles",
+      "linked_skill_ids": [
+        "9709_s1_data_cumulative_frequency"
+      ],
+      "direct_assessed_question_count": 29,
+      "direct_assessed_subpart_count": 59,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.565,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 59,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_histograms",
+      "subtopic_name": "Histograms and frequency density",
+      "linked_skill_ids": [
+        "9709_s1_data_histograms"
+      ],
+      "direct_assessed_question_count": 22,
+      "direct_assessed_subpart_count": 30,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 1,
+      "average_confidence": 0.582,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 30,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_mean_variance_coding",
+      "subtopic_name": "Mean, variance, standard deviation and coding",
+      "linked_skill_ids": [
+        "9709_s1_data_mean_variance_coding"
+      ],
+      "direct_assessed_question_count": 72,
+      "direct_assessed_subpart_count": 120,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.539,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 120,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_representation_of_data",
+      "topic_name": "Representation of data",
+      "subtopic_id": "9709_s1_subtopic_data_representation_stem_box",
+      "subtopic_name": "Stem-and-leaf, box-and-whisker and comparative displays",
+      "linked_skill_ids": [
+        "9709_s1_data_representation_stem_box"
+      ],
+      "direct_assessed_question_count": 19,
+      "direct_assessed_subpart_count": 28,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.556,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 28,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_discrete_random_variables_distribution",
+      "subtopic_name": "Discrete random variable distributions",
+      "linked_skill_ids": [
+        "9709_s1_discrete_random_variables_distribution"
+      ],
+      "direct_assessed_question_count": 43,
+      "direct_assessed_subpart_count": 99,
+      "prerequisite_only_count": 7,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.584,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 106,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_discrete_random_variables",
+      "topic_name": "Discrete random variables",
+      "subtopic_id": "9709_s1_subtopic_discrete_random_variables_expectation_variance",
+      "subtopic_name": "Expectation and variance of discrete random variables",
+      "linked_skill_ids": [
+        "9709_s1_discrete_random_variables_expectation_variance"
+      ],
+      "direct_assessed_question_count": 36,
+      "direct_assessed_subpart_count": 49,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.544,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 49,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution",
+      "subtopic_id": "9709_s1_subtopic_normal_distribution_inverse_parameters",
+      "subtopic_name": "Inverse normal and unknown parameters",
+      "linked_skill_ids": [
+        "9709_s1_normal_distribution_inverse_parameters"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": null,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 0,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_s1_topic_the_normal_distribution",
+      "topic_name": "The normal distribution",
+      "subtopic_id": "9709_s1_subtopic_normal_distribution_probabilities",
+      "subtopic_name": "Normal distribution probabilities and standardisation",
+      "linked_skill_ids": [
+        "9709_s1_normal_distribution_probabilities"
+      ],
+      "direct_assessed_question_count": 78,
+      "direct_assessed_subpart_count": 177,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 15,
+      "average_confidence": 0.589,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 177,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_s1_topic_permutations_and_combinations",
+      "topic_name": "Permutations and combinations",
+      "subtopic_id": "9709_s1_subtopic_permutations_repeated_arrangements",
+      "subtopic_name": "Permutations and arrangements with restrictions",
+      "linked_skill_ids": [
+        "9709_s1_permutations_repeated_arrangements"
+      ],
+      "direct_assessed_question_count": 37,
+      "direct_assessed_subpart_count": 89,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.647,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 89,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_basic_rules",
+      "subtopic_name": "Probability rules, mutually exclusive and independent events",
+      "linked_skill_ids": [
+        "9709_s1_probability_basic_rules"
+      ],
+      "direct_assessed_question_count": 58,
+      "direct_assessed_subpart_count": 137,
+      "prerequisite_only_count": 123,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.585,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 260,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_conditional_tree_diagrams",
+      "subtopic_name": "Conditional probability and tree diagrams",
+      "linked_skill_ids": [
+        "9709_s1_probability_conditional_tree_diagrams"
+      ],
+      "direct_assessed_question_count": 48,
+      "direct_assessed_subpart_count": 93,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.584,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 93,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_s1_topic_probability",
+      "topic_name": "Probability",
+      "subtopic_id": "9709_s1_subtopic_probability_repeated_trials_first_success",
+      "subtopic_name": "Repeated trials and first-success probabilities",
+      "linked_skill_ids": [
+        "9709_s1_probability_repeated_trials_first_success"
+      ],
+      "direct_assessed_question_count": 2,
+      "direct_assessed_subpart_count": 5,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.51,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 5,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:43.210182+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

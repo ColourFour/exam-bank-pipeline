@@ -70,6 +70,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "audit",
         "asterion-export",
         "asterion-content-lab-candidates",
+        "enrich-ai",
         "triage-sample",
         "triage-serve",
         "triage-compare",

@@ -1,0 +1,236 @@
+{
+  "schema_name": "exam_bank.file_quality_audit",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T05:18:24.391854+00:00",
+  "summary": {
+    "file_count": 39,
+    "by_file_type": {
+      "asterion_question_bank": 1,
+      "changelog": 1,
+      "content_lab_candidates": 1,
+      "coverage_report": 5,
+      "deepseek_enrichment": 1,
+      "extraction_audit": 1,
+      "extraction_status": 1,
+      "generator_script": 2,
+      "index": 2,
+      "legacy_question_bank": 1,
+      "ocr_candidate_question_bank": 1,
+      "question_skill_mappings": 4,
+      "question_topic_assignments": 4,
+      "skill_map": 4,
+      "strict_topic_filtering_report": 5,
+      "topic_filter_map": 4,
+      "validation_report": 1
+    },
+    "by_quality_rating": {
+      "deprecated": 1,
+      "good": 21,
+      "usable_needs_cleanup": 17
+    },
+    "by_status": {
+      "canonical_candidate": 18,
+      "canonical_candidate_needs_cleanup": 4,
+      "canonical_log": 1,
+      "canonical_supporting_code": 2,
+      "legacy_or_reference": 4,
+      "machine_candidate": 4,
+      "machine_candidate_reference": 3,
+      "stale": 2,
+      "stale_validation": 1
+    },
+    "issue_counts": {
+      "contains_no_reviewed_records": 4,
+      "stale_root_reference": 2,
+      "subtopic_machine_candidate_only": 4
+    }
+  },
+  "what_is_good": [
+    "Root skill maps are component-specific and official-syllabus-section anchored.",
+    "Topic filter maps are component-local and do not appear to reuse P3 topic IDs for other components.",
+    "Question-skill mappings and topic assignments preserve confidence, evidence snippets, mapping_source, and review_status.",
+    "Strict topic-filter reports separate strict-filter eligibility from broader review-only assignments.",
+    "Generator scripts explicitly avoid promoting generated mappings to reviewed status."
+  ],
+  "what_is_bad_or_risky": [
+    "Canonical source-of-truth files live at repository root alongside logs and generated reports, making ownership ambiguous.",
+    "Most product-facing mapping files contain machine-candidate data only; reviewed_record_count is zero across current mapping artifacts.",
+    "Strict filters include high-confidence machine candidates, not human-reviewed mappings.",
+    "Legacy output/json/question_bank.json contains broad topic labels and low-confidence topic metadata that should remain reference-only.",
+    "Root index and validation files reference root paths and become stale after organization unless regenerated."
+  ],
+  "specific_risks": [
+    {
+      "risk": "machine_candidates_powering_strict_filters",
+      "severity": "high",
+      "details": "Strict eligibility is present for high-confidence machine candidates. This is structurally valid but should not be treated as human-reviewed."
+    },
+    {
+      "risk": "ambiguous_canonical_location",
+      "severity": "high",
+      "details": "Root files are named like canonical files but are mixed with generated logs and validation reports."
+    },
+    {
+      "risk": "legacy_topic_labels",
+      "severity": "medium",
+      "details": "Legacy question.topic labels are useful historical evidence but are broad, sometimes low-confidence, and should not power strict filters directly."
+    }
+  ],
+  "good_files": [
+    "changelog_9709_p3_v1.json",
+    "coverage_report_9709_m1_v1.json",
+    "coverage_report_9709_p1_v1.json",
+    "coverage_report_9709_p3_v1.json",
+    "coverage_report_9709_s1_v1.json",
+    "coverage_report_all_components_v1.json",
+    "question_topic_assignments_9709_m1_v1.json",
+    "question_topic_assignments_9709_p1_v1.json",
+    "question_topic_assignments_9709_p3_v1.json",
+    "question_topic_assignments_9709_s1_v1.json",
+    "skill_map_9709_m1_v1.json",
+    "skill_map_9709_p1_v1.json",
+    "skill_map_9709_p3_v1.json",
+    "skill_map_9709_s1_v1.json",
+    "strict_topic_filtering_report_9709_m1_v1.json",
+    "strict_topic_filtering_report_9709_p1_v1.json",
+    "strict_topic_filtering_report_9709_p3_v1.json",
+    "strict_topic_filtering_report_9709_s1_v1.json",
+    "strict_topic_filtering_report_all_components_v1.json"
+  ],
+  "risky_or_cleanup_files": [
+    {
+      "file_path": "output/json/audit.current.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_reference"
+    },
+    {
+      "file_path": "output/json/question_bank.deepseek.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_reference"
+    },
+    {
+      "file_path": "output/json/question_bank.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_reference"
+    },
+    {
+      "file_path": "output/json/status.current.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_reference"
+    },
+    {
+      "file_path": "output_ocr_candidate/json/asterion_content_lab_candidates_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_source_reference"
+    },
+    {
+      "file_path": "output_ocr_candidate/json/asterion_question_bank_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_source_reference"
+    },
+    {
+      "file_path": "output_ocr_candidate/json/question_bank.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [],
+      "recommended_action": "keep_as_source_reference"
+    },
+    {
+      "file_path": "question_skill_mappings_9709_m1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "contains_no_reviewed_records"
+      ],
+      "recommended_action": "canonical_with_review_queues"
+    },
+    {
+      "file_path": "question_skill_mappings_9709_p1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "contains_no_reviewed_records"
+      ],
+      "recommended_action": "canonical_with_review_queues"
+    },
+    {
+      "file_path": "question_skill_mappings_9709_p3_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "contains_no_reviewed_records"
+      ],
+      "recommended_action": "canonical_with_review_queues"
+    },
+    {
+      "file_path": "question_skill_mappings_9709_s1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "contains_no_reviewed_records"
+      ],
+      "recommended_action": "canonical_with_review_queues"
+    },
+    {
+      "file_path": "skill_map_index_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "stale_root_reference"
+      ],
+      "recommended_action": "replace_with_canonical_index"
+    },
+    {
+      "file_path": "skill_map_validation_v1.json",
+      "quality_rating": "deprecated",
+      "issues_found": [],
+      "recommended_action": "archive"
+    },
+    {
+      "file_path": "topic_filter_map_9709_m1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "subtopic_machine_candidate_only"
+      ],
+      "recommended_action": "canonicalize_and_validate"
+    },
+    {
+      "file_path": "topic_filter_map_9709_p1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "subtopic_machine_candidate_only"
+      ],
+      "recommended_action": "canonicalize_and_validate"
+    },
+    {
+      "file_path": "topic_filter_map_9709_p3_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "subtopic_machine_candidate_only"
+      ],
+      "recommended_action": "canonicalize_and_validate"
+    },
+    {
+      "file_path": "topic_filter_map_9709_s1_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "subtopic_machine_candidate_only"
+      ],
+      "recommended_action": "canonicalize_and_validate"
+    },
+    {
+      "file_path": "topic_filter_map_index_v1.json",
+      "quality_rating": "usable_needs_cleanup",
+      "issues_found": [
+        "stale_root_reference"
+      ],
+      "recommended_action": "replace_with_canonical_index"
+    }
+  ],
+  "review_queue_counts": {
+    "low_confidence_skill_mappings": 1150,
+    "low_confidence_topic_assignments": 2768,
+    "prerequisite_only_assignments": 2054,
+    "whole_question_only_mappings": 1025
+  }
+}

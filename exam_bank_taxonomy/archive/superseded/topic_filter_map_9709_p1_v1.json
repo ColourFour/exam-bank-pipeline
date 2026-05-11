@@ -1,0 +1,961 @@
+{
+  "schema_name": "exam_bank.topic_filter_map",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:42.937975+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Paper 1",
+  "component_label": "Pure Mathematics 1",
+  "component_key": "p1",
+  "source_skill_map_file": "skill_map_9709_p1_v1.json",
+  "source_mapping_file": "question_skill_mappings_9709_p1_v1.json",
+  "source_coverage_report_file": "coverage_report_9709_p1_v1.json",
+  "review_status": "needs_review",
+  "notes": "Canonical topic filter map generated from official CAIE syllabus sections and component-local skill mappings. Parent topics are syllabus sections; subtopics are filterable assessable skill groups.",
+  "topics": [
+    {
+      "topic_id": "9709_p1_topic_quadratics",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.1",
+      "official_section_name": "Quadratics",
+      "topic_name": "Quadratics",
+      "topic_description": "Official CAIE syllabus section 1.1 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_quadratics_completed_square",
+          "parent_topic_id": "9709_p1_topic_quadratics",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.1",
+          "official_section_name": "Quadratics",
+          "subtopic_name": "Completing the square and quadratic form",
+          "subtopic_description": "Rewrite quadratic expressions and use completed-square form to identify roots, ranges and turning points.",
+          "linked_skill_ids": [
+            "9709_p1_quadratics_completed_square"
+          ],
+          "recognizer_signals": [
+            "complete the square",
+            "completed square",
+            "(x + a)^2",
+            "(x-a)^2",
+            "turning point",
+            "maximum possible value"
+          ],
+          "common_errors": [
+            "Incorrect sign inside the completed square",
+            "Forgetting to adjust the constant term"
+          ],
+          "question_count": 0,
+          "subpart_count": 0,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 85,
+          "content_lab_priority": "high",
+          "filter_visibility": "hidden_until_populated",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_quadratics_discriminant_intersections",
+          "parent_topic_id": "9709_p1_topic_quadratics",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.1",
+          "official_section_name": "Quadratics",
+          "subtopic_name": "Discriminants, roots and intersections",
+          "subtopic_description": "Use the discriminant and algebraic intersections of lines and curves to classify real roots and tangency.",
+          "linked_skill_ids": [
+            "9709_p1_quadratics_discriminant_intersections"
+          ],
+          "recognizer_signals": [
+            "discriminant",
+            "two distinct",
+            "exactly one root",
+            "does not intersect",
+            "tangent to the curve",
+            "line and curve"
+          ],
+          "common_errors": [
+            "Using the wrong inequality for two roots",
+            "Not forming the quadratic in one variable before using the discriminant"
+          ],
+          "question_count": 65,
+          "subpart_count": 85,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 230,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_quadratics_completed_square",
+        "9709_p1_quadratics_discriminant_intersections"
+      ],
+      "question_count": 65,
+      "subpart_count": 85,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 315,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_functions",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.2",
+      "official_section_name": "Functions",
+      "topic_name": "Functions",
+      "topic_description": "Official CAIE syllabus section 1.2 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_functions_domain_range_one_one",
+          "parent_topic_id": "9709_p1_topic_functions",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.2",
+          "official_section_name": "Functions",
+          "subtopic_name": "Domain, range and one-one restrictions",
+          "subtopic_description": "Determine domains, ranges and restrictions that make a function one-one.",
+          "linked_skill_ids": [
+            "9709_p1_functions_domain_range_one_one"
+          ],
+          "recognizer_signals": [
+            "domain",
+            "range",
+            "one-one",
+            "largest possible value",
+            "for x <",
+            "for x \u2265",
+            "decreasing function"
+          ],
+          "common_errors": [
+            "Giving the unrestricted range",
+            "Ignoring the stated domain when finding the range"
+          ],
+          "question_count": 0,
+          "subpart_count": 0,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 186,
+          "content_lab_priority": "high",
+          "filter_visibility": "hidden_until_populated",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_functions_composition_inverse",
+          "parent_topic_id": "9709_p1_topic_functions",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.2",
+          "official_section_name": "Functions",
+          "subtopic_name": "Composite and inverse functions",
+          "subtopic_description": "Find and use composite functions and inverse functions, including solving equations involving them.",
+          "linked_skill_ids": [
+            "9709_p1_functions_composition_inverse"
+          ],
+          "recognizer_signals": [
+            "fg(x)",
+            "gf(x)",
+            "ff(x)",
+            "composite",
+            "inverse",
+            "f^{-",
+            "f\u22121",
+            "find an expression for"
+          ],
+          "common_errors": [
+            "Applying functions in the wrong order",
+            "Not restricting the domain before finding an inverse"
+          ],
+          "question_count": 71,
+          "subpart_count": 162,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 162,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_functions_transformations",
+          "parent_topic_id": "9709_p1_topic_functions",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.2",
+          "official_section_name": "Functions",
+          "subtopic_name": "Graph transformations",
+          "subtopic_description": "Describe and apply transformations of graphs including stretches, translations and reflections.",
+          "linked_skill_ids": [
+            "9709_p1_functions_transformations"
+          ],
+          "recognizer_signals": [
+            "transformation",
+            "transformed to",
+            "describe fully",
+            "y = f(x",
+            "2f",
+            "f(2x",
+            "broken lines"
+          ],
+          "common_errors": [
+            "Confusing horizontal and vertical stretch factors",
+            "Using the wrong sign for translations inside f(x)"
+          ],
+          "question_count": 34,
+          "subpart_count": 39,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 39,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_functions_composition_inverse",
+        "9709_p1_functions_domain_range_one_one",
+        "9709_p1_functions_transformations"
+      ],
+      "question_count": 79,
+      "subpart_count": 186,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 387,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_coordinate_geometry",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.3",
+      "official_section_name": "Coordinate geometry",
+      "topic_name": "Coordinate geometry",
+      "topic_description": "Official CAIE syllabus section 1.3 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_coordinate_line_geometry",
+          "parent_topic_id": "9709_p1_topic_coordinate_geometry",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.3",
+          "official_section_name": "Coordinate geometry",
+          "subtopic_name": "Straight lines, gradients and perpendicularity",
+          "subtopic_description": "Use gradient, intercept, parallel and perpendicular line relationships in coordinate geometry.",
+          "linked_skill_ids": [
+            "9709_p1_coordinate_line_geometry"
+          ],
+          "recognizer_signals": [
+            "gradient",
+            "line has equation",
+            "perpendicular bisector",
+            "parallel",
+            "midpoint",
+            "straight line"
+          ],
+          "common_errors": [
+            "Using the same gradient for a perpendicular line",
+            "Dropping a negative reciprocal"
+          ],
+          "question_count": 6,
+          "subpart_count": 6,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 256,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_coordinate_circle_geometry",
+          "parent_topic_id": "9709_p1_topic_coordinate_geometry",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.3",
+          "official_section_name": "Coordinate geometry",
+          "subtopic_name": "Circle equations, chords and tangents",
+          "subtopic_description": "Find and use equations of circles, radii, tangents, chords and circle-line intersections.",
+          "linked_skill_ids": [
+            "9709_p1_coordinate_circle_geometry"
+          ],
+          "recognizer_signals": [
+            "circle",
+            "circumference",
+            "radius",
+            "centre",
+            "chord",
+            "tangent to the circle",
+            "x^2 + y^2"
+          ],
+          "common_errors": [
+            "Forgetting to complete the square in both x and y",
+            "Using tangent length instead of radius perpendicularity"
+          ],
+          "question_count": 98,
+          "subpart_count": 161,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 161,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_coordinate_circle_geometry",
+        "9709_p1_coordinate_line_geometry"
+      ],
+      "question_count": 98,
+      "subpart_count": 162,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 417,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_circular_measure",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.4",
+      "official_section_name": "Circular measure",
+      "topic_name": "Circular measure",
+      "topic_description": "Official CAIE syllabus section 1.4 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_circular_measure_arc_sector",
+          "parent_topic_id": "9709_p1_topic_circular_measure",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.4",
+          "official_section_name": "Circular measure",
+          "subtopic_name": "Radians, arcs and sectors",
+          "subtopic_description": "Use radian measure with arc length and sector area formulae.",
+          "linked_skill_ids": [
+            "9709_p1_circular_measure_arc_sector"
+          ],
+          "recognizer_signals": [
+            "radians",
+            "sector",
+            "arc",
+            "radius",
+            "angle",
+            "area of the sector",
+            "arc length"
+          ],
+          "common_errors": [
+            "Using degrees in radian formulae",
+            "Confusing arc length and sector area"
+          ],
+          "question_count": 34,
+          "subpart_count": 56,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 60,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_circular_measure_segments_perimeters",
+          "parent_topic_id": "9709_p1_topic_circular_measure",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.4",
+          "official_section_name": "Circular measure",
+          "subtopic_name": "Segments, composite regions and perimeters",
+          "subtopic_description": "Solve geometry problems involving sectors, segments, triangles and composite perimeters.",
+          "linked_skill_ids": [
+            "9709_p1_circular_measure_segments_perimeters"
+          ],
+          "recognizer_signals": [
+            "segment",
+            "perimeter",
+            "metal plate",
+            "rope",
+            "semicircle",
+            "composite",
+            "equal areas"
+          ],
+          "common_errors": [
+            "Omitting straight boundary lengths",
+            "Using sector area where segment area is needed"
+          ],
+          "question_count": 18,
+          "subpart_count": 23,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 23,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_circular_measure_arc_sector",
+        "9709_p1_circular_measure_segments_perimeters"
+      ],
+      "question_count": 35,
+      "subpart_count": 60,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 83,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_trigonometry",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.5",
+      "official_section_name": "Trigonometry",
+      "topic_name": "Trigonometry",
+      "topic_description": "Official CAIE syllabus section 1.5 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_trigonometry_identities_exact_values",
+          "parent_topic_id": "9709_p1_topic_trigonometry",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.5",
+          "official_section_name": "Trigonometry",
+          "subtopic_name": "Basic identities and exact trigonometric values",
+          "subtopic_description": "Use standard trigonometric identities and exact values in algebraic simplification.",
+          "linked_skill_ids": [
+            "9709_p1_trigonometry_identities_exact_values"
+          ],
+          "recognizer_signals": [
+            "identity",
+            "prove",
+            "sin^2",
+            "cos^2",
+            "tan",
+            "exact value",
+            "sec",
+            "cosec"
+          ],
+          "common_errors": [
+            "Dividing by an expression that may be zero",
+            "Mixing exact values and rounded decimals"
+          ],
+          "question_count": 13,
+          "subpart_count": 14,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 183,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_trigonometry_equations_intervals",
+          "parent_topic_id": "9709_p1_topic_trigonometry",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.5",
+          "official_section_name": "Trigonometry",
+          "subtopic_name": "Trigonometric equations and intervals",
+          "subtopic_description": "Solve trigonometric equations over stated degree or radian intervals.",
+          "linked_skill_ids": [
+            "9709_p1_trigonometry_equations_intervals"
+          ],
+          "recognizer_signals": [
+            "solve the equation",
+            "for 0",
+            "\u03b8",
+            "theta",
+            "degrees",
+            "\u03c0",
+            "tan x",
+            "cos x",
+            "sin x"
+          ],
+          "common_errors": [
+            "Missing secondary solutions",
+            "Using degree mode for radian intervals or conversely"
+          ],
+          "question_count": 120,
+          "subpart_count": 182,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 182,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_trigonometry_graphs",
+          "parent_topic_id": "9709_p1_topic_trigonometry",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.5",
+          "official_section_name": "Trigonometry",
+          "subtopic_name": "Graphs of sine, cosine and tangent",
+          "subtopic_description": "Interpret and use transformations and key features of trigonometric graphs.",
+          "linked_skill_ids": [
+            "9709_p1_trigonometry_graphs"
+          ],
+          "recognizer_signals": [
+            "graph of y = a",
+            "tan(x",
+            "cos(bx",
+            "sin",
+            "period",
+            "amplitude",
+            "number of solutions"
+          ],
+          "common_errors": [
+            "Reading the period as the horizontal scale factor",
+            "Ignoring vertical translation"
+          ],
+          "question_count": 0,
+          "subpart_count": 0,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 0,
+          "content_lab_priority": "medium",
+          "filter_visibility": "hidden_until_populated",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals",
+        "9709_p1_trigonometry_graphs",
+        "9709_p1_trigonometry_identities_exact_values"
+      ],
+      "question_count": 121,
+      "subpart_count": 183,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 365,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_series",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.6",
+      "official_section_name": "Series",
+      "topic_name": "Series",
+      "topic_description": "Official CAIE syllabus section 1.6 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_series_arithmetic_progressions",
+          "parent_topic_id": "9709_p1_topic_series",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.6",
+          "official_section_name": "Series",
+          "subtopic_name": "Arithmetic progressions",
+          "subtopic_description": "Use nth term and sum formulae for arithmetic progressions.",
+          "linked_skill_ids": [
+            "9709_p1_series_arithmetic_progressions"
+          ],
+          "recognizer_signals": [
+            "arithmetic progression",
+            "common difference",
+            "sum of the first",
+            "nth term",
+            "60th term"
+          ],
+          "common_errors": [
+            "Confusing common difference with common ratio",
+            "Using n instead of n minus 1 in the nth term"
+          ],
+          "question_count": 34,
+          "subpart_count": 46,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 46,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_series_geometric_progressions",
+          "parent_topic_id": "9709_p1_topic_series",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.6",
+          "official_section_name": "Series",
+          "subtopic_name": "Geometric progressions and sum to infinity",
+          "subtopic_description": "Use nth term, finite sum and sum-to-infinity formulae for geometric progressions.",
+          "linked_skill_ids": [
+            "9709_p1_series_geometric_progressions"
+          ],
+          "recognizer_signals": [
+            "geometric progression",
+            "common ratio",
+            "sum to infinity",
+            "|r|",
+            "second term"
+          ],
+          "common_errors": [
+            "Using the sum-to-infinity formula when |r| is not less than 1",
+            "Confusing r with d"
+          ],
+          "question_count": 35,
+          "subpart_count": 47,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 47,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_series_binomial_positive_integer",
+          "parent_topic_id": "9709_p1_topic_series",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.6",
+          "official_section_name": "Series",
+          "subtopic_name": "Binomial expansion for positive integer powers",
+          "subtopic_description": "Expand binomial expressions with positive integer powers and use coefficients in linked products.",
+          "linked_skill_ids": [
+            "9709_p1_series_binomial_positive_integer"
+          ],
+          "recognizer_signals": [
+            "binomial",
+            "expansion",
+            "ascending powers",
+            "coefficient of",
+            "(1 + x)^",
+            "(a + bx)^"
+          ],
+          "common_errors": [
+            "Using too few terms for a linked coefficient",
+            "Dropping signs in negative terms"
+          ],
+          "question_count": 39,
+          "subpart_count": 67,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 67,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_series_arithmetic_progressions",
+        "9709_p1_series_binomial_positive_integer",
+        "9709_p1_series_geometric_progressions"
+      ],
+      "question_count": 85,
+      "subpart_count": 143,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 160,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_differentiation",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.7",
+      "official_section_name": "Differentiation",
+      "topic_name": "Differentiation",
+      "topic_description": "Official CAIE syllabus section 1.7 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_differentiation_power_chain",
+          "parent_topic_id": "9709_p1_topic_differentiation",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.7",
+          "official_section_name": "Differentiation",
+          "subtopic_name": "Differentiation of powers and simple composites",
+          "subtopic_description": "Differentiate powers and simple composite functions using the chain rule where appropriate.",
+          "linked_skill_ids": [
+            "9709_p1_differentiation_power_chain"
+          ],
+          "recognizer_signals": [
+            "differentiate",
+            "f\u2032",
+            "dy/dx",
+            "gradient",
+            "d/dx",
+            "x^",
+            "chain"
+          ],
+          "common_errors": [
+            "Reducing the power but not multiplying by the old power",
+            "Missing a chain-rule factor"
+          ],
+          "question_count": 0,
+          "subpart_count": 0,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 176,
+          "content_lab_priority": "high",
+          "filter_visibility": "hidden_until_populated",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_differentiation_tangents_normals",
+          "parent_topic_id": "9709_p1_topic_differentiation",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.7",
+          "official_section_name": "Differentiation",
+          "subtopic_name": "Tangents and normals",
+          "subtopic_description": "Use derivatives to find gradients and equations of tangents and normals.",
+          "linked_skill_ids": [
+            "9709_p1_differentiation_tangents_normals"
+          ],
+          "recognizer_signals": [
+            "tangent",
+            "normal",
+            "gradient at",
+            "equation of the tangent",
+            "equation of the normal"
+          ],
+          "common_errors": [
+            "Using tangent gradient for the normal",
+            "Not substituting the point after finding the gradient"
+          ],
+          "question_count": 64,
+          "subpart_count": 115,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 115,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_differentiation_stationary_rates",
+          "parent_topic_id": "9709_p1_topic_differentiation",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.7",
+          "official_section_name": "Differentiation",
+          "subtopic_name": "Stationary points, classification and rates of change",
+          "subtopic_description": "Find and classify stationary points and solve simple rates-of-change problems.",
+          "linked_skill_ids": [
+            "9709_p1_differentiation_stationary_rates"
+          ],
+          "recognizer_signals": [
+            "stationary point",
+            "maximum",
+            "minimum",
+            "d^2y",
+            "rate of increase",
+            "units per second",
+            "increasing"
+          ],
+          "common_errors": [
+            "Not checking the second derivative or sign change",
+            "Confusing dy/dt with dy/dx"
+          ],
+          "question_count": 26,
+          "subpart_count": 35,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 35,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_differentiation_power_chain",
+        "9709_p1_differentiation_stationary_rates",
+        "9709_p1_differentiation_tangents_normals"
+      ],
+      "question_count": 67,
+      "subpart_count": 134,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 326,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_p1_topic_integration",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "official_section_code": "1.8",
+      "official_section_name": "Integration",
+      "topic_name": "Integration",
+      "topic_description": "Official CAIE syllabus section 1.8 for Pure Mathematics 1; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_p1_subtopic_integration_reverse_differentiation",
+          "parent_topic_id": "9709_p1_topic_integration",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.8",
+          "official_section_name": "Integration",
+          "subtopic_name": "Reverse differentiation and constants",
+          "subtopic_description": "Integrate powers and simple functions, including using a point to find the constant of integration.",
+          "linked_skill_ids": [
+            "9709_p1_integration_reverse_differentiation"
+          ],
+          "recognizer_signals": [
+            "integrate",
+            "find f(x)",
+            "passes through",
+            "constant of integration",
+            "gradient is given",
+            "dy/dx"
+          ],
+          "common_errors": [
+            "Omitting the constant of integration",
+            "Substituting a point before integrating"
+          ],
+          "question_count": 41,
+          "subpart_count": 47,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 62,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_p1_subtopic_integration_area_volume",
+          "parent_topic_id": "9709_p1_topic_integration",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Paper 1",
+          "component_label": "Pure Mathematics 1",
+          "official_section_code": "1.8",
+          "official_section_name": "Integration",
+          "subtopic_name": "Definite integration, areas and volumes",
+          "subtopic_description": "Use definite integration to find areas and volumes of revolution in P1 contexts.",
+          "linked_skill_ids": [
+            "9709_p1_integration_area_volume"
+          ],
+          "recognizer_signals": [
+            "area",
+            "shaded region",
+            "rotated through 360",
+            "volume",
+            "definite integral",
+            "limits"
+          ],
+          "common_errors": [
+            "Using signed area unintentionally",
+            "Forgetting to square the radius for volume of revolution"
+          ],
+          "question_count": 24,
+          "subpart_count": 33,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 33,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_p1_integration_area_volume",
+        "9709_p1_integration_reverse_differentiation"
+      ],
+      "question_count": 47,
+      "subpart_count": 62,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 95,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:42.934587+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

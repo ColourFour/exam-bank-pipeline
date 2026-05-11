@@ -59,6 +59,63 @@ def _chat_response(content: str) -> SimpleNamespace:
     )
 
 
+def _reasoning_response(reasoning_content: str) -> SimpleNamespace:
+    return SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content="",
+                    reasoning_content=reasoning_content,
+                )
+            )
+        ]
+    )
+
+
+def _taxonomy() -> deepseek_enrich.CanonicalTaxonomy:
+    return deepseek_enrich.load_canonical_taxonomy("exam_bank_taxonomy/canonical", "p1")
+
+
+def _ai_item(**overrides: object) -> dict[str, object]:
+    item: dict[str, object] = {
+        "question_id": "12spring24_q01",
+        "subpart_id": None,
+        "paper_family": "p1",
+        "primary_topic_id": "9709_p1_topic_series",
+        "secondary_topic_ids": [],
+        "subtopic_ids": ["9709_p1_subtopic_series_binomial_positive_integer"],
+        "skill_ids": ["9709_p1_series_binomial_positive_integer"],
+        "method_families": ["binomial expansion"],
+        "prerequisite_skill_ids": [],
+        "exam_techniques": ["use ascending powers"],
+        "common_mistakes": ["dropping powers of x"],
+        "worked_example_seed": "Use binomial expansion and collect the requested coefficient.",
+        "warmup_seed": "Expand (1 + x)^4 up to the x^2 term.",
+        "strict_filter_candidate": True,
+        "strict_filter_reason": "Direct assessed binomial expansion with clear evidence.",
+        "evidence_used": ["question_text", "mark_scheme_text"],
+        "evidence_missing": [],
+        "confidence": 0.9,
+        "review_required": False,
+        "review_reasons": [],
+        "ai_difficulty_estimate": "easy",
+        "ai_difficulty_score": 0.2,
+        "ai_difficulty_factors": ["single method family"],
+        "needs_new_subtopic_candidate": False,
+        "suggested_new_subtopic": None,
+        "needs_new_skill_candidate": False,
+        "suggested_new_skill": None,
+        "mapping_source": "deepseek_ai_assisted",
+        "reviewed_status": "machine_candidate",
+    }
+    item.update(overrides)
+    return item
+
+
+def _ai_payload(*items: dict[str, object]) -> str:
+    return json.dumps({"items": list(items)})
+
+
 def test_missing_api_key_fails_clearly(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     input_path = tmp_path / "question_bank.json"
@@ -857,3 +914,365 @@ def test_cli_allow_provider_failure_keeps_total_failure_soft(
     assert exit_code == 0
     assert payload["enrichments"]["12spring24_q01"]["error"]["type"] == "provider_error"
     assert "All attempted DeepSeek enrichments failed" not in captured.out
+
+
+def test_existing_sidecar_v1_is_still_readable(tmp_path: Path) -> None:
+    path = tmp_path / "question_bank.deepseek.full.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.deepseek_sidecar",
+                "schema_version": 1,
+                "record_count": 1,
+                "enrichments": {"12spring24_q01": {"deepseek_topic": "binomial expansion"}},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    loaded = deepseek_enrich.load_existing_sidecar(path)
+
+    assert loaded["12spring24_q01"]["deepseek_topic"] == "binomial expansion"
+
+
+def test_ai_assisted_record_preserves_v1_fields_where_appropriate() -> None:
+    taxonomy = _taxonomy()
+    existing = {
+        "deepseek_topic": "binomial expansion",
+        "deepseek_difficulty_score": 25,
+        "topic_reconciliation_status": "match",
+    }
+    item = deepseek_enrich.validate_ai_assisted_item(_ai_item(), taxonomy=taxonomy)
+
+    merged = deepseek_enrich.build_ai_assisted_record(
+        _record(),
+        items=[item],
+        existing_enrichment=existing,
+        model="deepseek-v4-flash",
+        prompt_version="ai_assisted_v2",
+        run_timestamp="2026-05-11T00:00:00+00:00",
+        batch_id="p1_12spring24",
+        batch_input_hash="abc",
+        taxonomy=taxonomy,
+    )
+
+    assert merged["deepseek_topic"] == "binomial expansion"
+    assert merged["deepseek_difficulty_score"] == 25
+    assert merged["ai_assisted_items"][0]["primary_topic_id"] == "9709_p1_topic_series"
+    assert merged["strict_filter_candidates"][0]["skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
+
+
+def test_ai_assisted_validation_enforces_unknown_topic_subtopic_and_skill_ids() -> None:
+    taxonomy = _taxonomy()
+
+    with pytest.raises(ValueError, match="primary_topic_id"):
+        deepseek_enrich.validate_ai_assisted_item(_ai_item(primary_topic_id="invented_topic"), taxonomy=taxonomy)
+
+    with pytest.raises(ValueError, match="subtopic_ids"):
+        deepseek_enrich.validate_ai_assisted_item(_ai_item(subtopic_ids=["invented_subtopic"]), taxonomy=taxonomy)
+
+    with pytest.raises(ValueError, match="skill_ids"):
+        deepseek_enrich.validate_ai_assisted_item(_ai_item(skill_ids=["invented_skill"]), taxonomy=taxonomy)
+
+
+def test_suggested_new_subtopics_and_skills_are_review_only() -> None:
+    taxonomy = _taxonomy()
+    item = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(
+            strict_filter_candidate=False,
+            needs_new_subtopic_candidate=True,
+            suggested_new_subtopic="binomial product coefficient extraction",
+            needs_new_skill_candidate=True,
+            suggested_new_skill="multiply two binomial expansions and collect x^2",
+            review_required=True,
+            review_reasons=["taxonomy_gap_suggestion"],
+        ),
+        taxonomy=taxonomy,
+    )
+
+    assert item["suggested_new_subtopic"] == "binomial product coefficient extraction"
+    assert item["suggested_new_skill"] == "multiply two binomial expansions and collect x^2"
+    assert item["subtopic_ids"] == ["9709_p1_subtopic_series_binomial_positive_integer"]
+    assert item["skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
+    assert item["strict_filter_candidate"] is False
+
+
+def test_strict_filter_candidate_fails_closed_for_low_confidence_prerequisite_and_review_required() -> None:
+    taxonomy = _taxonomy()
+
+    low_confidence = deepseek_enrich.validate_ai_assisted_item(_ai_item(confidence=0.3), taxonomy=taxonomy)
+    assert low_confidence["strict_filter_candidate"] is False
+    assert "confidence_below_strict_filter_threshold" in low_confidence["review_reasons"]
+
+    prerequisite_only = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(
+            skill_ids=[],
+            prerequisite_skill_ids=["9709_p1_series_binomial_positive_integer"],
+            strict_filter_reason="Prerequisite only algebra support.",
+        ),
+        taxonomy=taxonomy,
+    )
+    assert prerequisite_only["strict_filter_candidate"] is False
+    assert "prerequisite_only_mapping" in prerequisite_only["review_reasons"]
+
+    review_required = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(review_required=True, review_reasons=["visual_confirmation_needed"]),
+        taxonomy=taxonomy,
+    )
+    assert review_required["strict_filter_candidate"] is False
+    assert "review_required" in review_required["review_reasons"]
+
+
+def test_human_reviewed_records_are_never_overwritten() -> None:
+    taxonomy = _taxonomy()
+    existing = {"reviewed_status": "reviewed", "primary_topic_id": "human_choice"}
+    item = deepseek_enrich.validate_ai_assisted_item(_ai_item(), taxonomy=taxonomy)
+
+    merged = deepseek_enrich.build_ai_assisted_record(
+        _record(),
+        items=[item],
+        existing_enrichment=existing,
+        model="deepseek-v4-flash",
+        prompt_version="ai_assisted_v2",
+        run_timestamp="2026-05-11T00:00:00+00:00",
+        batch_id="p1_12spring24",
+        batch_input_hash="abc",
+        taxonomy=taxonomy,
+    )
+
+    assert merged["primary_topic_id"] == "human_choice"
+    assert merged["ai_assisted_preserved_human_review"] is True
+    assert "ai_assisted_items" not in merged
+
+
+def test_parse_recovery_can_extract_json_from_reasoning_content_and_raw_provider_output() -> None:
+    taxonomy = _taxonomy()
+    parsed, metadata = deepseek_enrich.parse_response_with_recovery(
+        _reasoning_response(_ai_payload(_ai_item())),
+        lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
+    )
+
+    assert parsed["items"][0]["primary_topic_id"] == "9709_p1_topic_series"
+    assert metadata["parse_recovered"] is True
+    assert metadata["parse_recovery_source"] == "reasoning_content"
+
+    class RawOnlyResponse:
+        def model_dump_json(self, indent: int | None = None) -> str:
+            return "provider prefix " + _ai_payload(_ai_item()) + " provider suffix"
+
+    parsed_raw, metadata_raw = deepseek_enrich.parse_response_with_recovery(
+        RawOnlyResponse(),
+        lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
+    )
+
+    assert parsed_raw["items"][0]["skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
+    assert metadata_raw["parse_recovery_source"] == "raw_provider_output"
+
+
+def test_provider_errors_and_old_prompt_versions_are_resumable() -> None:
+    records = [_record("12spring24_q01"), _record("12spring24_q02"), _record("12spring24_q03")]
+    existing = {
+        "12spring24_q01": {"error": {"type": "provider_error"}, "llm_prompt_version": "ai_assisted_v2"},
+        "12spring24_q02": {"ai_assisted_items": [], "llm_prompt_version": "old_prompt"},
+        "12spring24_q03": {"ai_assisted_items": [], "llm_prompt_version": "ai_assisted_v2"},
+    }
+
+    selected = deepseek_enrich.select_ai_assisted_records(
+        records,
+        existing_sidecar=existing,
+        resume=True,
+        prompt_version="ai_assisted_v2",
+    )
+
+    assert [record["question_id"] for record in selected] == ["12spring24_q01", "12spring24_q02"]
+
+
+def test_ai_assisted_dry_run_does_not_call_network(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    input_path.write_text(json.dumps([_record("12spring24_q01")]), encoding="utf-8")
+
+    def fail_create_client(**_: object) -> object:
+        raise AssertionError("dry-run should not create a network client")
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", fail_create_client)
+
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--dry-run",
+        ]
+    )
+
+    assert exit_code == 0
+    assert not output_path.exists()
+
+
+def test_ai_assisted_prompt_includes_allowed_ids_and_no_invention_instruction() -> None:
+    taxonomy = _taxonomy()
+    payload = deepseek_enrich.build_ai_assisted_batch_payload([_record()], taxonomy=taxonomy)
+    messages = deepseek_enrich.build_ai_assisted_messages(payload)
+
+    assert "Do not invent canonical topic IDs" in messages[0]["content"]
+    assert "9709_p1_topic_series" in messages[1]["content"]
+    assert "9709_p1_subtopic_series_binomial_positive_integer" in messages[1]["content"]
+    assert "9709_p1_series_binomial_positive_integer" in messages[1]["content"]
+
+
+def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not_corrupt_successes(tmp_path: Path) -> None:
+    responses = iter(
+        [
+            _chat_response(_ai_payload(_ai_item(question_id="12spring24_q01"))),
+            RuntimeError("temporary provider issue"),
+        ]
+    )
+
+    class FakeClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    result = next(responses)
+                    if isinstance(result, Exception):
+                        raise result
+                    return result
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    records = [
+        _record("12spring24_q01"),
+        {**_record("13spring24_q01"), "paper": "13spring24"},
+    ]
+
+    enrichments, manifest = deepseek_enrich.enrich_ai_assisted_records(
+        records,
+        client=FakeClient(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "question_bank.ai_assisted.v2.json",
+        model="deepseek-v4-flash",
+        include_subparts=True,
+        batch_by_paper=True,
+    )
+
+    assert manifest["batch_count"] == 2
+    assert enrichments["12spring24_q01"]["ai_assisted_items"][0]["question_id"] == "12spring24_q01"
+    assert enrichments["13spring24_q01"]["error"]["type"] == "provider_error"
+    assert enrichments["12spring24_q01"]["batch_id"] != enrichments["13spring24_q01"]["batch_id"]
+
+
+def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibrated_difficulty(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    records = [
+        {**_record("12spring24_q01"), "question_solution_marks": 2},
+        {**_record("12spring24_q02"), "question_solution_marks": 10},
+    ]
+    input_path.write_text(json.dumps(records), encoding="utf-8")
+    responses = iter(
+        [
+            _chat_response(
+                _ai_payload(
+                    _ai_item(question_id="12spring24_q01", ai_difficulty_score=0.1),
+                    _ai_item(question_id="12spring24_q02", ai_difficulty_score=0.95, ai_difficulty_estimate="difficult"),
+                )
+            )
+        ]
+    )
+
+    class FakeClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    return next(responses)
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: FakeClient())
+
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--limit",
+            "2",
+            "--include-subparts",
+            "--recompute-difficulty",
+        ]
+    )
+
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    enrichments = payload["enrichments"]
+    assert exit_code == 0
+    assert payload["schema_name"] == "exam_bank.ai_assisted_sidecar"
+    assert payload["metadata"]["prompt_version"] == "ai_assisted_v2"
+    assert payload["metadata"]["run_manifest"]["batches"][0]["batch_id"] == "p1_12spring24"
+    assert enrichments["12spring24_q01"]["llm_model"] == "deepseek-v4-flash"
+    assert enrichments["12spring24_q01"]["llm_prompt_version"] == "ai_assisted_v2"
+    assert "input_hash" in enrichments["12spring24_q01"]
+    assert "batch_id" in enrichments["12spring24_q01"]
+    assert enrichments["12spring24_q02"]["difficulty_rank_within_paper_family"] == 1
+    assert enrichments["12spring24_q02"]["deterministic_difficulty_band"] == "advanced"
+    assert enrichments["12spring24_q01"]["deterministic_difficulty_band"] == "foundation"
+
+
+def test_difficulty_percentile_is_computed_within_paper_family_not_globally() -> None:
+    enrichments = {
+        "p1_easy": {"paper_family": "p1", "ai_assisted_items": [_ai_item(question_id="p1_easy", ai_difficulty_score=0.1)]},
+        "p1_hard": {"paper_family": "p1", "ai_assisted_items": [_ai_item(question_id="p1_hard", ai_difficulty_score=0.9)]},
+        "p3_easy": {
+            "paper_family": "p3",
+            "ai_assisted_items": [
+                {
+                    **_ai_item(question_id="p3_easy", paper_family="p3", ai_difficulty_score=0.1),
+                    "primary_topic_id": "9709_p3_topic_algebra",
+                    "subtopic_ids": ["9709_p3_subtopic_polynomial_division_factor_remainder"],
+                    "skill_ids": ["9709_p3_3_1_polynomial_division_factor_remainder"],
+                }
+            ],
+        },
+        "p3_hard": {
+            "paper_family": "p3",
+            "ai_assisted_items": [
+                {
+                    **_ai_item(question_id="p3_hard", paper_family="p3", ai_difficulty_score=0.9),
+                    "primary_topic_id": "9709_p3_topic_algebra",
+                    "subtopic_ids": ["9709_p3_subtopic_polynomial_division_factor_remainder"],
+                    "skill_ids": ["9709_p3_3_1_polynomial_division_factor_remainder"],
+                }
+            ],
+        },
+    }
+    records = [
+        {**_record("p1_easy"), "paper_family": "p1"},
+        {**_record("p1_hard"), "paper_family": "p1"},
+        {**_record("p3_easy"), "paper_family": "p3"},
+        {**_record("p3_hard"), "paper_family": "p3"},
+    ]
+
+    calibrated = deepseek_enrich.calibrate_difficulty_by_paper_family(enrichments, records)
+
+    assert calibrated["p1_hard"]["deterministic_difficulty_percentile"] == 100
+    assert calibrated["p1_easy"]["deterministic_difficulty_percentile"] == 0
+    assert calibrated["p3_hard"]["deterministic_difficulty_percentile"] == 100
+    assert calibrated["p3_easy"]["deterministic_difficulty_percentile"] == 0
+    assert {calibrated["p1_easy"]["deterministic_difficulty_band"], calibrated["p1_hard"]["deterministic_difficulty_band"]} == {
+        "foundation",
+        "advanced",
+    }

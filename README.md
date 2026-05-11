@@ -327,6 +327,25 @@ python -m exam_bank.deepseek_enrich \
 
 Current sidecar evidence in `output/json/question_bank.deepseek.json` has `1301` enrichment entries, with `1246` marked `final_review_required=True`, `44` marked `False`, and `11` without that field because provider failures were logged. Treat this as review/enrichment evidence, not canonical truth.
 
+The newer AI-assisted v2 pass enriches against the active canonical topic, subtopic, and skill IDs under `exam_bank_taxonomy/canonical/`. It preserves v1 sidecar evidence where useful, batches by paper, supports resume/retry, and computes deterministic difficulty percentiles within each paper family:
+
+```bash
+export DEEPSEEK_API_KEY=...
+.venv/bin/python -m exam_bank.cli enrich-ai \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/canonical \
+  --existing-sidecar output/json/question_bank.deepseek.json \
+  --output output/json/question_bank.ai_assisted.v2.json \
+  --component p3 \
+  --limit 20 \
+  --resume \
+  --model deepseek-v4-flash \
+  --include-subparts \
+  --recompute-difficulty
+```
+
+Strict product filters should use only canonical IDs inside `strict_filter_candidates`. Suggestions for new subtopics or skills are review-only. See `docs/AI_ASSISTED_ENRICHMENT.md` for Asterion routing, Content Lab seed usage, strict-filter rules, and difficulty calibration details.
+
 ## Tests
 
 Run the full suite with:

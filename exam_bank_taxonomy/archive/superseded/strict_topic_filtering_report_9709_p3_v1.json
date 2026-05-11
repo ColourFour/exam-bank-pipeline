@@ -1,0 +1,963 @@
+{
+  "schema_name": "exam_bank.strict_topic_filtering_report",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.038718+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Paper 3",
+  "component_label": "Pure Mathematics 3",
+  "component_key": "p3",
+  "total_questions": 396,
+  "total_subparts": 749,
+  "subparts_with_topic_assignments": 749,
+  "subparts_strict_filter_eligible": 235,
+  "subparts_missing_topic_assignments": [],
+  "topics_with_no_questions": [],
+  "subtopics_with_no_questions": [
+    {
+      "topic_id": "9709_p3_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p3_subtopic_reciprocal_trig_functions",
+      "subtopic_name": "Reciprocal trigonometric functions"
+    }
+  ],
+  "topics_with_only_low_confidence_assignments": [],
+  "subtopics_with_only_low_confidence_assignments": [
+    {
+      "topic_id": "9709_p3_topic_differential_equations",
+      "topic_name": "Differential equations",
+      "subtopic_id": "9709_p3_subtopic_initial_conditions_models",
+      "subtopic_name": "Initial conditions and model interpretation"
+    },
+    {
+      "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "topic_name": "Logarithmic and exponential functions",
+      "subtopic_id": "9709_p3_subtopic_linearising_log_relationships",
+      "subtopic_name": "Linearising logarithmic relationships"
+    },
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p3_subtopic_substitution_and_parts",
+      "subtopic_name": "Integration by substitution and by parts"
+    }
+  ],
+  "prerequisite_only_topics": [],
+  "duplicate_or_overlapping_topics": [],
+  "legacy_topics_needing_cleanup": [
+    {
+      "legacy_topic": "algebra",
+      "legacy_subtopic": "general",
+      "question_count": 7,
+      "uncertain_count": 6,
+      "confidence_breakdown": {
+        "low": 6,
+        "high": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "binomial_expansion",
+      "legacy_subtopic": "general",
+      "question_count": 8,
+      "uncertain_count": 5,
+      "confidence_breakdown": {
+        "low": 5,
+        "high": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "complex_numbers",
+      "legacy_subtopic": "general",
+      "question_count": 46,
+      "uncertain_count": 34,
+      "confidence_breakdown": {
+        "low": 34,
+        "high": 12
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "differential_equations",
+      "legacy_subtopic": "general",
+      "question_count": 14,
+      "uncertain_count": 12,
+      "confidence_breakdown": {
+        "low": 12,
+        "high": 2
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "differentiation",
+      "legacy_subtopic": "general",
+      "question_count": 2,
+      "uncertain_count": 0,
+      "confidence_breakdown": {
+        "high": 2
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "functions",
+      "legacy_subtopic": "general",
+      "question_count": 3,
+      "uncertain_count": 2,
+      "confidence_breakdown": {
+        "low": 2,
+        "high": 1
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "integration",
+      "legacy_subtopic": "general",
+      "question_count": 11,
+      "uncertain_count": 8,
+      "confidence_breakdown": {
+        "low": 8,
+        "high": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "logarithms_and_exponentials",
+      "legacy_subtopic": "general",
+      "question_count": 56,
+      "uncertain_count": 37,
+      "confidence_breakdown": {
+        "low": 37,
+        "medium": 6,
+        "high": 13
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "modulus",
+      "legacy_subtopic": "general",
+      "question_count": 3,
+      "uncertain_count": 3,
+      "confidence_breakdown": {
+        "low": 3
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "numerical_methods",
+      "legacy_subtopic": "general",
+      "question_count": 33,
+      "uncertain_count": 21,
+      "confidence_breakdown": {
+        "low": 21,
+        "high": 12
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "parametric_equations",
+      "legacy_subtopic": "general",
+      "question_count": 91,
+      "uncertain_count": 44,
+      "confidence_breakdown": {
+        "high": 24,
+        "medium": 23,
+        "low": 44
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "partial_fractions",
+      "legacy_subtopic": "general",
+      "question_count": 28,
+      "uncertain_count": 19,
+      "confidence_breakdown": {
+        "low": 19,
+        "high": 9
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "polynomials",
+      "legacy_subtopic": "general",
+      "question_count": 22,
+      "uncertain_count": 14,
+      "confidence_breakdown": {
+        "low": 14,
+        "medium": 1,
+        "high": 7
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "trigonometry",
+      "legacy_subtopic": "general",
+      "question_count": 35,
+      "uncertain_count": 28,
+      "confidence_breakdown": {
+        "low": 28,
+        "high": 7
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    },
+    {
+      "legacy_topic": "vectors",
+      "legacy_subtopic": "general",
+      "question_count": 37,
+      "uncertain_count": 27,
+      "confidence_breakdown": {
+        "low": 27,
+        "high": 10
+      },
+      "recommended_action": "Replace with canonical topic/subtopic assignments; do not use this legacy label as strict-filter evidence."
+    }
+  ],
+  "strict_filter_coverage_percent": 31.38,
+  "review_queue_summary": {
+    "total_topic_assignment_count": 1274,
+    "strict_filter_eligible_assignment_count": 293,
+    "excluded_from_strict_filtering_count": 981,
+    "medium_confidence_assignment_count": 786,
+    "low_confidence_assignment_count": 127,
+    "very_low_confidence_assignment_count": 0,
+    "prerequisite_assignment_count": 213,
+    "context_only_assignment_count": 0,
+    "whole_question_assignment_count": 227
+  },
+  "default_strict_filter_set": {
+    "criteria": {
+      "strict_filter_eligible": true,
+      "assignment_type": [
+        "primary_assessed",
+        "secondary_assessed"
+      ],
+      "minimum_confidence": 0.85,
+      "review_status": [
+        "high-confidence machine_candidate",
+        "reviewed"
+      ]
+    },
+    "assignment_count": 293,
+    "subpart_count": 235
+  },
+  "broader_review_filter_set": {
+    "criteria": {
+      "minimum_confidence": 0.5,
+      "includes_prerequisite_mappings": true,
+      "student_facing_default": false
+    },
+    "assignment_count": 1254
+  },
+  "recommended_cleanup_actions": [
+    "Use only default_strict_filter_set for student-facing topic filters.",
+    "Review medium-confidence direct mappings before promoting them into strict filters.",
+    "Keep prerequisite and context-only mappings out of default strict filters.",
+    "Retire legacy question.topic labels as a filtering source after canonical assignments are reviewed."
+  ],
+  "topic_quality": [
+    {
+      "topic_id": "9709_p3_topic_algebra",
+      "topic_name": "Algebra",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_1_binomial_rational_expansion",
+        "9709_p3_3_1_modulus_equations_inequalities",
+        "9709_p3_3_1_partial_fractions",
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "direct_assessed_question_count": 79,
+      "direct_assessed_subpart_count": 124,
+      "prerequisite_only_count": 17,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 7,
+      "average_confidence": 0.74,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 150,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_complex_numbers",
+      "topic_name": "Complex numbers",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_9_argand_loci_geometry",
+        "9709_p3_3_9_complex_arithmetic_polar_form",
+        "9709_p3_3_9_complex_roots_polynomials"
+      ],
+      "direct_assessed_question_count": 55,
+      "direct_assessed_subpart_count": 105,
+      "prerequisite_only_count": 2,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 30,
+      "average_confidence": 0.769,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 131,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_differential_equations",
+      "topic_name": "Differential equations",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_8_initial_conditions_models",
+        "9709_p3_3_8_separable_differential_equations"
+      ],
+      "direct_assessed_question_count": 16,
+      "direct_assessed_subpart_count": 27,
+      "prerequisite_only_count": 1,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 11,
+      "average_confidence": 0.749,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 29,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_4_derivative_rules",
+        "9709_p3_3_4_parametric_implicit_differentiation",
+        "9709_p3_3_4_tangents_normals_stationary_points"
+      ],
+      "direct_assessed_question_count": 107,
+      "direct_assessed_subpart_count": 160,
+      "prerequisite_only_count": 105,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 71,
+      "average_confidence": 0.796,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 298,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_5_area_volume_applications",
+        "9709_p3_3_5_standard_integration",
+        "9709_p3_3_5_substitution_and_parts",
+        "9709_p3_3_5_trig_and_partial_fraction_integration"
+      ],
+      "direct_assessed_question_count": 53,
+      "direct_assessed_subpart_count": 60,
+      "prerequisite_only_count": 28,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 10,
+      "average_confidence": 0.74,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 106,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "topic_name": "Logarithmic and exponential functions",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_2_linearising_log_relationships",
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "direct_assessed_question_count": 75,
+      "direct_assessed_subpart_count": 97,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 41,
+      "average_confidence": 0.806,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 98,
+      "filter_quality_rating": "good",
+      "recommended_action": "Use in default strict filters; schedule expert review before marking as reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "topic_name": "Numerical solution of equations",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration",
+        "9709_p3_3_6_root_location"
+      ],
+      "direct_assessed_question_count": 35,
+      "direct_assessed_subpart_count": 100,
+      "prerequisite_only_count": 29,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 78,
+      "average_confidence": 0.785,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 169,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations",
+        "9709_p3_3_3_reciprocal_trig_functions",
+        "9709_p3_3_3_rsin_rcos_form"
+      ],
+      "direct_assessed_question_count": 81,
+      "direct_assessed_subpart_count": 119,
+      "prerequisite_only_count": 27,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 41,
+      "average_confidence": 0.768,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 147,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_vectors",
+      "topic_name": "Vectors",
+      "subtopic_id": null,
+      "subtopic_name": null,
+      "linked_skill_ids": [
+        "9709_p3_3_7_position_vectors_geometry",
+        "9709_p3_3_7_scalar_product_angles",
+        "9709_p3_3_7_vector_lines"
+      ],
+      "direct_assessed_question_count": 37,
+      "direct_assessed_subpart_count": 99,
+      "prerequisite_only_count": 4,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 4,
+      "average_confidence": 0.708,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 146,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    }
+  ],
+  "topic_subtopic_quality": [
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p3_subtopic_area_volume_applications",
+      "subtopic_name": "Area and volume applications of integration",
+      "linked_skill_ids": [
+        "9709_p3_3_5_area_volume_applications"
+      ],
+      "direct_assessed_question_count": 1,
+      "direct_assessed_subpart_count": 1,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.75,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 1,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_complex_numbers",
+      "topic_name": "Complex numbers",
+      "subtopic_id": "9709_p3_subtopic_argand_loci_geometry",
+      "subtopic_name": "Argand diagrams and loci",
+      "linked_skill_ids": [
+        "9709_p3_3_9_argand_loci_geometry"
+      ],
+      "direct_assessed_question_count": 23,
+      "direct_assessed_subpart_count": 24,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 10,
+      "average_confidence": 0.801,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 24,
+      "filter_quality_rating": "good",
+      "recommended_action": "Use in default strict filters; schedule expert review before marking as reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_algebra",
+      "topic_name": "Algebra",
+      "subtopic_id": "9709_p3_subtopic_binomial_rational_expansion",
+      "subtopic_name": "Binomial expansion for rational powers",
+      "linked_skill_ids": [
+        "9709_p3_3_1_binomial_rational_expansion"
+      ],
+      "direct_assessed_question_count": 16,
+      "direct_assessed_subpart_count": 19,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 2,
+      "average_confidence": 0.746,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 19,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_complex_numbers",
+      "topic_name": "Complex numbers",
+      "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form",
+      "subtopic_name": "Complex arithmetic, modulus, argument and polar form",
+      "linked_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "direct_assessed_question_count": 54,
+      "direct_assessed_subpart_count": 103,
+      "prerequisite_only_count": 2,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 20,
+      "average_confidence": 0.762,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 105,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_complex_numbers",
+      "topic_name": "Complex numbers",
+      "subtopic_id": "9709_p3_subtopic_complex_roots_polynomials",
+      "subtopic_name": "Complex roots and polynomial equations",
+      "linked_skill_ids": [
+        "9709_p3_3_9_complex_roots_polynomials"
+      ],
+      "direct_assessed_question_count": 1,
+      "direct_assessed_subpart_count": 2,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.76,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 2,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p3_subtopic_derivative_rules",
+      "subtopic_name": "Derivative rules for P3 functions",
+      "linked_skill_ids": [
+        "9709_p3_3_4_derivative_rules"
+      ],
+      "direct_assessed_question_count": 51,
+      "direct_assessed_subpart_count": 55,
+      "prerequisite_only_count": 105,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 28,
+      "average_confidence": 0.799,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 160,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "topic_name": "Numerical solution of equations",
+      "subtopic_id": "9709_p3_subtopic_fixed_point_iteration",
+      "subtopic_name": "Fixed-point iteration",
+      "linked_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "direct_assessed_question_count": 35,
+      "direct_assessed_subpart_count": 69,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 43,
+      "average_confidence": 0.784,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 69,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations",
+      "subtopic_name": "Identities, compound angles and trigonometric equations",
+      "linked_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "direct_assessed_question_count": 79,
+      "direct_assessed_subpart_count": 116,
+      "prerequisite_only_count": 27,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 41,
+      "average_confidence": 0.771,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 143,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_differential_equations",
+      "topic_name": "Differential equations",
+      "subtopic_id": "9709_p3_subtopic_initial_conditions_models",
+      "subtopic_name": "Initial conditions and model interpretation",
+      "linked_skill_ids": [
+        "9709_p3_3_8_initial_conditions_models"
+      ],
+      "direct_assessed_question_count": 1,
+      "direct_assessed_subpart_count": 2,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.59,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 2,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "topic_name": "Logarithmic and exponential functions",
+      "subtopic_id": "9709_p3_subtopic_linearising_log_relationships",
+      "subtopic_name": "Linearising logarithmic relationships",
+      "linked_skill_ids": [
+        "9709_p3_3_2_linearising_log_relationships"
+      ],
+      "direct_assessed_question_count": 1,
+      "direct_assessed_subpart_count": 1,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.59,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 1,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "topic_name": "Logarithmic and exponential functions",
+      "subtopic_id": "9709_p3_subtopic_log_exponential_equations",
+      "subtopic_name": "Logarithmic and exponential equations",
+      "linked_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "direct_assessed_question_count": 75,
+      "direct_assessed_subpart_count": 97,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 41,
+      "average_confidence": 0.808,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 97,
+      "filter_quality_rating": "good",
+      "recommended_action": "Use in default strict filters; schedule expert review before marking as reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_algebra",
+      "topic_name": "Algebra",
+      "subtopic_id": "9709_p3_subtopic_modulus_equations_inequalities",
+      "subtopic_name": "Modulus equations and inequalities",
+      "linked_skill_ids": [
+        "9709_p3_3_1_modulus_equations_inequalities"
+      ],
+      "direct_assessed_question_count": 22,
+      "direct_assessed_subpart_count": 27,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 3,
+      "average_confidence": 0.757,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 27,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation",
+      "subtopic_name": "Parametric and implicit differentiation",
+      "linked_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "direct_assessed_question_count": 89,
+      "direct_assessed_subpart_count": 137,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 43,
+      "average_confidence": 0.793,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 137,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_algebra",
+      "topic_name": "Algebra",
+      "subtopic_id": "9709_p3_subtopic_partial_fractions",
+      "subtopic_name": "Partial fractions",
+      "linked_skill_ids": [
+        "9709_p3_3_1_partial_fractions"
+      ],
+      "direct_assessed_question_count": 28,
+      "direct_assessed_subpart_count": 53,
+      "prerequisite_only_count": 17,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.713,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 70,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_algebra",
+      "topic_name": "Algebra",
+      "subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder",
+      "subtopic_name": "Polynomial division, factors and remainders",
+      "linked_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "direct_assessed_question_count": 22,
+      "direct_assessed_subpart_count": 34,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 2,
+      "average_confidence": 0.777,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 34,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_vectors",
+      "topic_name": "Vectors",
+      "subtopic_id": "9709_p3_subtopic_position_vectors_geometry",
+      "subtopic_name": "Position vectors and vector geometry",
+      "linked_skill_ids": [
+        "9709_p3_3_7_position_vectors_geometry"
+      ],
+      "direct_assessed_question_count": 9,
+      "direct_assessed_subpart_count": 12,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.694,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 12,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p3_subtopic_reciprocal_trig_functions",
+      "subtopic_name": "Reciprocal trigonometric functions",
+      "linked_skill_ids": [
+        "9709_p3_3_3_reciprocal_trig_functions"
+      ],
+      "direct_assessed_question_count": 0,
+      "direct_assessed_subpart_count": 0,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": null,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 0,
+      "filter_quality_rating": "not_ready",
+      "recommended_action": "Hide from student-facing filters until directly assessed questions are mapped."
+    },
+    {
+      "topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "topic_name": "Numerical solution of equations",
+      "subtopic_id": "9709_p3_subtopic_root_location",
+      "subtopic_name": "Root location and uniqueness evidence",
+      "linked_skill_ids": [
+        "9709_p3_3_6_root_location"
+      ],
+      "direct_assessed_question_count": 33,
+      "direct_assessed_subpart_count": 71,
+      "prerequisite_only_count": 29,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 35,
+      "average_confidence": 0.785,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 100,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_trigonometry",
+      "topic_name": "Trigonometry",
+      "subtopic_id": "9709_p3_subtopic_rsin_rcos_form",
+      "subtopic_name": "R sin(x plus alpha) and R cos(x plus alpha) form",
+      "linked_skill_ids": [
+        "9709_p3_3_3_rsin_rcos_form"
+      ],
+      "direct_assessed_question_count": 3,
+      "direct_assessed_subpart_count": 4,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.652,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 4,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_vectors",
+      "topic_name": "Vectors",
+      "subtopic_id": "9709_p3_subtopic_scalar_product_angles",
+      "subtopic_name": "Scalar product, angles and perpendicularity",
+      "linked_skill_ids": [
+        "9709_p3_3_7_scalar_product_angles"
+      ],
+      "direct_assessed_question_count": 30,
+      "direct_assessed_subpart_count": 49,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 1,
+      "average_confidence": 0.719,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 49,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_differential_equations",
+      "topic_name": "Differential equations",
+      "subtopic_id": "9709_p3_subtopic_separable_differential_equations",
+      "subtopic_name": "Separable differential equations",
+      "linked_skill_ids": [
+        "9709_p3_3_8_separable_differential_equations"
+      ],
+      "direct_assessed_question_count": 16,
+      "direct_assessed_subpart_count": 26,
+      "prerequisite_only_count": 1,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 11,
+      "average_confidence": 0.761,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 27,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p3_subtopic_standard_integration",
+      "subtopic_name": "Standard integration",
+      "linked_skill_ids": [
+        "9709_p3_3_5_standard_integration"
+      ],
+      "direct_assessed_question_count": 43,
+      "direct_assessed_subpart_count": 47,
+      "prerequisite_only_count": 28,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 10,
+      "average_confidence": 0.755,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 75,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    },
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p3_subtopic_substitution_and_parts",
+      "subtopic_name": "Integration by substitution and by parts",
+      "linked_skill_ids": [
+        "9709_p3_3_5_substitution_and_parts"
+      ],
+      "direct_assessed_question_count": 2,
+      "direct_assessed_subpart_count": 3,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.643,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 3,
+      "filter_quality_rating": "weak",
+      "recommended_action": "Keep as review-only; inspect source text and mark-scheme evidence."
+    },
+    {
+      "topic_id": "9709_p3_topic_differentiation",
+      "topic_name": "Differentiation",
+      "subtopic_id": "9709_p3_subtopic_tangents_normals_stationary_points",
+      "subtopic_name": "Tangents, normals and stationary points",
+      "linked_skill_ids": [
+        "9709_p3_3_4_tangents_normals_stationary_points"
+      ],
+      "direct_assessed_question_count": 1,
+      "direct_assessed_subpart_count": 1,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.73,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 1,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_integration",
+      "topic_name": "Integration",
+      "subtopic_id": "9709_p3_subtopic_trig_and_partial_fraction_integration",
+      "subtopic_name": "Trigonometric and partial-fraction integration",
+      "linked_skill_ids": [
+        "9709_p3_3_5_trig_and_partial_fraction_integration"
+      ],
+      "direct_assessed_question_count": 26,
+      "direct_assessed_subpart_count": 27,
+      "prerequisite_only_count": 0,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 0,
+      "average_confidence": 0.709,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 27,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Keep out of default strict filters until medium-confidence mappings are reviewed."
+    },
+    {
+      "topic_id": "9709_p3_topic_vectors",
+      "topic_name": "Vectors",
+      "subtopic_id": "9709_p3_subtopic_vector_lines",
+      "subtopic_name": "Vector equations of lines and intersections",
+      "linked_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "direct_assessed_question_count": 35,
+      "direct_assessed_subpart_count": 81,
+      "prerequisite_only_count": 4,
+      "context_only_count": 0,
+      "strict_filter_eligible_count": 3,
+      "average_confidence": 0.704,
+      "reviewed_assignment_count": 0,
+      "machine_candidate_assignment_count": 85,
+      "filter_quality_rating": "usable_needs_review",
+      "recommended_action": "Allow high-confidence assignments in strict filters and review the remaining candidates."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:43.034522+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

@@ -1,0 +1,633 @@
+{
+  "schema_name": "exam_bank.topic_filter_map",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.126727+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Mechanics 1 (Paper 4)",
+  "component_label": "Mechanics",
+  "component_key": "m1",
+  "source_skill_map_file": "skill_map_9709_m1_v1.json",
+  "source_mapping_file": "question_skill_mappings_9709_m1_v1.json",
+  "source_coverage_report_file": "coverage_report_9709_m1_v1.json",
+  "review_status": "needs_review",
+  "notes": "Canonical topic filter map generated from official CAIE syllabus sections and component-local skill mappings. Parent topics are syllabus sections; subtopics are filterable assessable skill groups.",
+  "topics": [
+    {
+      "topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "official_section_code": "4.1",
+      "official_section_name": "Forces and equilibrium",
+      "topic_name": "Forces and equilibrium",
+      "topic_description": "Official CAIE syllabus section 4.1 for Mechanics; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_m1_subtopic_forces_components_resultants",
+          "parent_topic_id": "9709_m1_topic_forces_and_equilibrium",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.1",
+          "official_section_name": "Forces and equilibrium",
+          "subtopic_name": "Force components and resultants",
+          "subtopic_description": "Resolve coplanar forces into components and find resultant magnitude and direction.",
+          "linked_skill_ids": [
+            "9709_m1_forces_components_resultants"
+          ],
+          "recognizer_signals": [
+            "component",
+            "resultant",
+            "forces",
+            "direction",
+            "magnitude",
+            "sin",
+            "cos"
+          ],
+          "common_errors": [
+            "Resolving with sine and cosine interchanged",
+            "Not preserving direction signs"
+          ],
+          "question_count": 37,
+          "subpart_count": 49,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 59,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_equilibrium_coplanar_forces",
+          "parent_topic_id": "9709_m1_topic_forces_and_equilibrium",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.1",
+          "official_section_name": "Forces and equilibrium",
+          "subtopic_name": "Equilibrium of particles under coplanar forces",
+          "subtopic_description": "Apply zero resultant force conditions to particles held in equilibrium.",
+          "linked_skill_ids": [
+            "9709_m1_equilibrium_coplanar_forces"
+          ],
+          "recognizer_signals": [
+            "equilibrium",
+            "held",
+            "light string",
+            "tension",
+            "forces act at a point",
+            "suspended"
+          ],
+          "common_errors": [
+            "Assuming equal tensions without evidence",
+            "Ignoring weight direction"
+          ],
+          "question_count": 12,
+          "subpart_count": 17,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 76,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_friction_limiting_equilibrium",
+          "parent_topic_id": "9709_m1_topic_forces_and_equilibrium",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.1",
+          "official_section_name": "Forces and equilibrium",
+          "subtopic_name": "Friction and limiting equilibrium",
+          "subtopic_description": "Use F <= mu R and limiting-friction conditions on rough horizontal or inclined surfaces.",
+          "linked_skill_ids": [
+            "9709_m1_friction_limiting_equilibrium"
+          ],
+          "recognizer_signals": [
+            "friction",
+            "rough",
+            "coefficient",
+            "limiting",
+            "about to slide",
+            "stationary on a rough plane"
+          ],
+          "common_errors": [
+            "Using F = mu R when friction is not limiting",
+            "Taking the normal reaction as mg on an inclined plane"
+          ],
+          "question_count": 33,
+          "subpart_count": 59,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 64,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_m1_equilibrium_coplanar_forces",
+        "9709_m1_forces_components_resultants",
+        "9709_m1_friction_limiting_equilibrium"
+      ],
+      "question_count": 67,
+      "subpart_count": 107,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 199,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "official_section_code": "4.2",
+      "official_section_name": "Kinematics of motion in a straight line",
+      "topic_name": "Kinematics of motion in a straight line",
+      "topic_description": "Official CAIE syllabus section 4.2 for Mechanics; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_m1_subtopic_kinematics_constant_acceleration",
+          "parent_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.2",
+          "official_section_name": "Kinematics of motion in a straight line",
+          "subtopic_name": "Constant acceleration kinematics",
+          "subtopic_description": "Use constant-acceleration formulae for one-dimensional and vertical motion.",
+          "linked_skill_ids": [
+            "9709_m1_kinematics_constant_acceleration"
+          ],
+          "recognizer_signals": [
+            "constant acceleration",
+            "starts from rest",
+            "uniformly",
+            "projected",
+            "maximum height",
+            "s = ut",
+            "v^2"
+          ],
+          "common_errors": [
+            "Using the wrong sign for acceleration due to gravity",
+            "Mixing distance and displacement"
+          ],
+          "question_count": 24,
+          "subpart_count": 45,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 177,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_kinematics_graphs",
+          "parent_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.2",
+          "official_section_name": "Kinematics of motion in a straight line",
+          "subtopic_name": "Motion graphs",
+          "subtopic_description": "Interpret velocity-time and displacement-time graphs, including gradients and areas.",
+          "linked_skill_ids": [
+            "9709_m1_kinematics_graphs"
+          ],
+          "recognizer_signals": [
+            "velocity-time graph",
+            "graph",
+            "segments",
+            "area under",
+            "accelerates",
+            "decelerates"
+          ],
+          "common_errors": [
+            "Treating graph height as distance instead of velocity",
+            "Missing negative areas below the axis"
+          ],
+          "question_count": 19,
+          "subpart_count": 49,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 49,
+          "content_lab_priority": "medium",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_kinematics_variable_acceleration_calculus",
+          "parent_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.2",
+          "official_section_name": "Kinematics of motion in a straight line",
+          "subtopic_name": "Variable acceleration by calculus",
+          "subtopic_description": "Use calculus relationships between displacement, velocity and acceleration for variable motion.",
+          "linked_skill_ids": [
+            "9709_m1_kinematics_variable_acceleration_calculus"
+          ],
+          "recognizer_signals": [
+            "velocity at time",
+            "acceleration at time",
+            "v =",
+            "a =",
+            "t s after",
+            "integrate",
+            "differentiate"
+          ],
+          "common_errors": [
+            "Omitting constants after integration",
+            "Confusing v = ds/dt and a = dv/dt"
+          ],
+          "question_count": 4,
+          "subpart_count": 10,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 10,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_m1_kinematics_constant_acceleration",
+        "9709_m1_kinematics_graphs",
+        "9709_m1_kinematics_variable_acceleration_calculus"
+      ],
+      "question_count": 47,
+      "subpart_count": 104,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 236,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_m1_topic_momentum",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "official_section_code": "4.3",
+      "official_section_name": "Momentum",
+      "topic_name": "Momentum",
+      "topic_description": "Official CAIE syllabus section 4.3 for Mechanics; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_m1_subtopic_momentum_impulse_conservation",
+          "parent_topic_id": "9709_m1_topic_momentum",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.3",
+          "official_section_name": "Momentum",
+          "subtopic_name": "Momentum, impulse and direct collisions",
+          "subtopic_description": "Use conservation of momentum and impulse in direct collisions and impact problems.",
+          "linked_skill_ids": [
+            "9709_m1_momentum_impulse_conservation"
+          ],
+          "recognizer_signals": [
+            "momentum",
+            "impulse",
+            "collide",
+            "collision",
+            "after",
+            "before",
+            "smooth horizontal plane"
+          ],
+          "common_errors": [
+            "Not assigning a consistent positive direction",
+            "Assuming kinetic energy is conserved"
+          ],
+          "question_count": 36,
+          "subpart_count": 70,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 70,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_m1_momentum_impulse_conservation"
+      ],
+      "question_count": 36,
+      "subpart_count": 70,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 70,
+      "content_lab_priority": "high",
+      "filter_visibility": "review_only",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "official_section_code": "4.4",
+      "official_section_name": "Newton's laws of motion",
+      "topic_name": "Newton's laws of motion",
+      "topic_description": "Official CAIE syllabus section 4.4 for Mechanics; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_m1_subtopic_newtons_second_law_single_particle",
+          "parent_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.4",
+          "official_section_name": "Newton's laws of motion",
+          "subtopic_name": "Newton's second law for a single particle",
+          "subtopic_description": "Apply F = ma to a particle with resolved forces, weight, normal reaction and resistance.",
+          "linked_skill_ids": [
+            "9709_m1_newtons_second_law_single_particle"
+          ],
+          "recognizer_signals": [
+            "resultant force",
+            "F = ma",
+            "acceleration",
+            "resistance",
+            "driving force",
+            "mass"
+          ],
+          "common_errors": [
+            "Omitting resistance from the force balance",
+            "Using kg as a force unit"
+          ],
+          "question_count": 4,
+          "subpart_count": 7,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 275,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_connected_particles_tension",
+          "parent_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.4",
+          "official_section_name": "Newton's laws of motion",
+          "subtopic_name": "Connected particles, strings and pulleys",
+          "subtopic_description": "Model connected particles with common acceleration and tensions in light strings or rods.",
+          "linked_skill_ids": [
+            "9709_m1_connected_particles_tension"
+          ],
+          "recognizer_signals": [
+            "connected",
+            "light inextensible string",
+            "smooth pulley",
+            "tow-bar",
+            "rope",
+            "tension",
+            "particles"
+          ],
+          "common_errors": [
+            "Assigning different accelerations to a taut string system",
+            "Getting tension direction wrong on one body"
+          ],
+          "question_count": 29,
+          "subpart_count": 47,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 47,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_inclined_planes_dynamics",
+          "parent_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.4",
+          "official_section_name": "Newton's laws of motion",
+          "subtopic_name": "Dynamics on inclined and rough planes",
+          "subtopic_description": "Apply Newton's laws to particles moving on smooth or rough inclined planes.",
+          "linked_skill_ids": [
+            "9709_m1_inclined_planes_dynamics"
+          ],
+          "recognizer_signals": [
+            "inclined plane",
+            "line of greatest slope",
+            "rough plane",
+            "smooth plane",
+            "sin",
+            "normal reaction"
+          ],
+          "common_errors": [
+            "Resolving weight in the wrong direction",
+            "Using friction in the wrong direction"
+          ],
+          "question_count": 30,
+          "subpart_count": 40,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 40,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_m1_connected_particles_tension",
+        "9709_m1_inclined_planes_dynamics",
+        "9709_m1_newtons_second_law_single_particle"
+      ],
+      "question_count": 61,
+      "subpart_count": 93,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 362,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    },
+    {
+      "topic_id": "9709_m1_topic_energy_work_and_power",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "official_section_code": "4.5",
+      "official_section_name": "Energy, work and power",
+      "topic_name": "Energy, work and power",
+      "topic_description": "Official CAIE syllabus section 4.5 for Mechanics; parent filter for related assessable subtopics.",
+      "parent_topic_id": null,
+      "subtopics": [
+        {
+          "subtopic_id": "9709_m1_subtopic_work_energy_kinetic_potential",
+          "parent_topic_id": "9709_m1_topic_energy_work_and_power",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.5",
+          "official_section_name": "Energy, work and power",
+          "subtopic_name": "Work-energy and kinetic/potential energy",
+          "subtopic_description": "Use work-energy principles with kinetic energy, gravitational potential energy and work done.",
+          "linked_skill_ids": [
+            "9709_m1_work_energy_kinetic_potential"
+          ],
+          "recognizer_signals": [
+            "energy method",
+            "kinetic energy",
+            "potential energy",
+            "work done",
+            "speed",
+            "height",
+            "released from rest"
+          ],
+          "common_errors": [
+            "Using mass instead of weight in potential energy",
+            "Forgetting energy lost or gained by work done"
+          ],
+          "question_count": 6,
+          "subpart_count": 6,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 213,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_power_resistance_driving_force",
+          "parent_topic_id": "9709_m1_topic_energy_work_and_power",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.5",
+          "official_section_name": "Energy, work and power",
+          "subtopic_name": "Power, resistance and driving force",
+          "subtopic_description": "Use P = Fv and work-rate relationships for vehicles, engines and resistance forces.",
+          "linked_skill_ids": [
+            "9709_m1_power_resistance_driving_force"
+          ],
+          "recognizer_signals": [
+            "power",
+            "working at",
+            "constant speed",
+            "engine",
+            "rate",
+            "resistance",
+            "kW",
+            "W"
+          ],
+          "common_errors": [
+            "Forgetting to convert kW to W",
+            "Using total force rather than driving force in P = Fv"
+          ],
+          "question_count": 100,
+          "subpart_count": 185,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 185,
+          "content_lab_priority": "high",
+          "filter_visibility": "default_strict",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        },
+        {
+          "subtopic_id": "9709_m1_subtopic_work_energy_with_resistance_friction",
+          "parent_topic_id": "9709_m1_topic_energy_work_and_power",
+          "syllabus_code": "9709",
+          "subject_name": "Cambridge International AS & A Level Mathematics",
+          "caie_class_or_component": "Mechanics 1 (Paper 4)",
+          "component_label": "Mechanics",
+          "official_section_code": "4.5",
+          "official_section_name": "Energy, work and power",
+          "subtopic_name": "Work-energy with resistance and friction",
+          "subtopic_description": "Apply energy methods where non-conservative resistance or friction does work.",
+          "linked_skill_ids": [
+            "9709_m1_work_energy_with_resistance_friction"
+          ],
+          "recognizer_signals": [
+            "resistance",
+            "friction",
+            "rough",
+            "work done against",
+            "energy lost",
+            "constant force"
+          ],
+          "common_errors": [
+            "Using friction as positive work when it opposes motion",
+            "Omitting vertical height change"
+          ],
+          "question_count": 23,
+          "subpart_count": 28,
+          "reviewed_mapping_count": 0,
+          "machine_candidate_mapping_count": 28,
+          "content_lab_priority": "high",
+          "filter_visibility": "review_only",
+          "review_status": "needs_review",
+          "notes": "Canonical assessable subtopic generated from the component skill map."
+        }
+      ],
+      "linked_skill_ids": [
+        "9709_m1_power_resistance_driving_force",
+        "9709_m1_work_energy_kinetic_potential",
+        "9709_m1_work_energy_with_resistance_friction"
+      ],
+      "question_count": 122,
+      "subpart_count": 213,
+      "reviewed_mapping_count": 0,
+      "machine_candidate_mapping_count": 426,
+      "content_lab_priority": "high",
+      "filter_visibility": "default_strict",
+      "review_status": "needs_review",
+      "notes": "Canonical parent topic aligned to an official CAIE syllabus section."
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "validated_at": "2026-05-11T03:59:43.124882+00:00",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "topic_ids_unique": true,
+      "subtopic_ids_unique": true,
+      "subtopic_parent_topics_valid": true,
+      "linked_skill_ids_exist": true,
+      "all_skill_ids_have_subtopics": true,
+      "assignment_topic_references_valid": true,
+      "strict_assignments_have_confidence_ge_0_85": true,
+      "no_prerequisite_or_context_strict": true,
+      "assignment_component_scope_valid": true,
+      "strict_assignments_not_legacy_only": true,
+      "strict_assignments_have_direct_evidence": true,
+      "valid_json_written": true
+    }
+  }
+}

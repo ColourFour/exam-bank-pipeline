@@ -1,0 +1,715 @@
+{
+  "schema_name": "exam_bank.skill_map",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:13:30.021240+00:00",
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "caie_class_or_component": "Paper 1",
+  "component_label": "Pure Mathematics 1",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "official_syllabus_reference": {
+    "title": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+    "url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+    "notes": "Section structure follows the official CAIE 9709 syllabus. Skill decomposition is candidate-expanded for subpart mapping and requires review."
+  },
+  "sections": [
+    {
+      "section": "1.1",
+      "name": "Quadratics"
+    },
+    {
+      "section": "1.2",
+      "name": "Functions"
+    },
+    {
+      "section": "1.3",
+      "name": "Coordinate geometry"
+    },
+    {
+      "section": "1.4",
+      "name": "Circular measure"
+    },
+    {
+      "section": "1.5",
+      "name": "Trigonometry"
+    },
+    {
+      "section": "1.6",
+      "name": "Series"
+    },
+    {
+      "section": "1.7",
+      "name": "Differentiation"
+    },
+    {
+      "section": "1.8",
+      "name": "Integration"
+    }
+  ],
+  "skills": [
+    {
+      "skill_id": "9709_p1_quadratics_completed_square",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.1 Quadratics",
+      "subsection": null,
+      "name": "Completing the square and quadratic form",
+      "description": "Rewrite quadratic expressions and use completed-square form to identify roots, ranges and turning points.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "complete the square",
+        "completed square",
+        "(x + a)^2",
+        "(x-a)^2",
+        "turning point",
+        "maximum possible value"
+      ],
+      "common_errors": [
+        "Incorrect sign inside the completed square",
+        "Forgetting to adjust the constant term"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.1:9709-p1-quadratics-completed-square",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_quadratics_discriminant_intersections",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.1 Quadratics",
+      "subsection": null,
+      "name": "Discriminants, roots and intersections",
+      "description": "Use the discriminant and algebraic intersections of lines and curves to classify real roots and tangency.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_quadratics_completed_square"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "discriminant",
+        "two distinct",
+        "exactly one root",
+        "does not intersect",
+        "tangent to the curve",
+        "line and curve"
+      ],
+      "common_errors": [
+        "Using the wrong inequality for two roots",
+        "Not forming the quadratic in one variable before using the discriminant"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.1:9709-p1-quadratics-discriminant-intersections",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.1",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_functions_domain_range_one_one",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.2 Functions",
+      "subsection": null,
+      "name": "Domain, range and one-one restrictions",
+      "description": "Determine domains, ranges and restrictions that make a function one-one.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_quadratics_completed_square"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "domain",
+        "range",
+        "one-one",
+        "largest possible value",
+        "for x <",
+        "for x \u2265",
+        "decreasing function"
+      ],
+      "common_errors": [
+        "Giving the unrestricted range",
+        "Ignoring the stated domain when finding the range"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.2:9709-p1-functions-domain-range-one-one",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.2",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_functions_composition_inverse",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.2 Functions",
+      "subsection": null,
+      "name": "Composite and inverse functions",
+      "description": "Find and use composite functions and inverse functions, including solving equations involving them.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "fg(x)",
+        "gf(x)",
+        "ff(x)",
+        "composite",
+        "inverse",
+        "f^{-",
+        "f\u22121",
+        "find an expression for"
+      ],
+      "common_errors": [
+        "Applying functions in the wrong order",
+        "Not restricting the domain before finding an inverse"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.2:9709-p1-functions-composition-inverse",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.2",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_functions_transformations",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.2 Functions",
+      "subsection": null,
+      "name": "Graph transformations",
+      "description": "Describe and apply transformations of graphs including stretches, translations and reflections.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "transformation",
+        "transformed to",
+        "describe fully",
+        "y = f(x",
+        "2f",
+        "f(2x",
+        "broken lines"
+      ],
+      "common_errors": [
+        "Confusing horizontal and vertical stretch factors",
+        "Using the wrong sign for translations inside f(x)"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.2:9709-p1-functions-transformations",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.2",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_coordinate_line_geometry",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.3 Coordinate geometry",
+      "subsection": null,
+      "name": "Straight lines, gradients and perpendicularity",
+      "description": "Use gradient, intercept, parallel and perpendicular line relationships in coordinate geometry.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "gradient",
+        "line has equation",
+        "perpendicular bisector",
+        "parallel",
+        "midpoint",
+        "straight line"
+      ],
+      "common_errors": [
+        "Using the same gradient for a perpendicular line",
+        "Dropping a negative reciprocal"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.3:9709-p1-coordinate-line-geometry",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.3",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_coordinate_circle_geometry",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.3 Coordinate geometry",
+      "subsection": null,
+      "name": "Circle equations, chords and tangents",
+      "description": "Find and use equations of circles, radii, tangents, chords and circle-line intersections.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_coordinate_line_geometry",
+        "9709_p1_quadratics_discriminant_intersections"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "circle",
+        "circumference",
+        "radius",
+        "centre",
+        "chord",
+        "tangent to the circle",
+        "x^2 + y^2"
+      ],
+      "common_errors": [
+        "Forgetting to complete the square in both x and y",
+        "Using tangent length instead of radius perpendicularity"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.3:9709-p1-coordinate-circle-geometry",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.3",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_circular_measure_arc_sector",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.4 Circular measure",
+      "subsection": null,
+      "name": "Radians, arcs and sectors",
+      "description": "Use radian measure with arc length and sector area formulae.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "radians",
+        "sector",
+        "arc",
+        "radius",
+        "angle",
+        "area of the sector",
+        "arc length"
+      ],
+      "common_errors": [
+        "Using degrees in radian formulae",
+        "Confusing arc length and sector area"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.4:9709-p1-circular-measure-arc-sector",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.4",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_circular_measure_segments_perimeters",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.4 Circular measure",
+      "subsection": null,
+      "name": "Segments, composite regions and perimeters",
+      "description": "Solve geometry problems involving sectors, segments, triangles and composite perimeters.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_circular_measure_arc_sector"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "segment",
+        "perimeter",
+        "metal plate",
+        "rope",
+        "semicircle",
+        "composite",
+        "equal areas"
+      ],
+      "common_errors": [
+        "Omitting straight boundary lengths",
+        "Using sector area where segment area is needed"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.4:9709-p1-circular-measure-segments-perimeters",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.4",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_trigonometry_identities_exact_values",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.5 Trigonometry",
+      "subsection": null,
+      "name": "Basic identities and exact trigonometric values",
+      "description": "Use standard trigonometric identities and exact values in algebraic simplification.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "identity",
+        "prove",
+        "sin^2",
+        "cos^2",
+        "tan",
+        "exact value",
+        "sec",
+        "cosec"
+      ],
+      "common_errors": [
+        "Dividing by an expression that may be zero",
+        "Mixing exact values and rounded decimals"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.5:9709-p1-trigonometry-identities-exact-values",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.5",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_trigonometry_equations_intervals",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.5 Trigonometry",
+      "subsection": null,
+      "name": "Trigonometric equations and intervals",
+      "description": "Solve trigonometric equations over stated degree or radian intervals.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_trigonometry_identities_exact_values"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "solve the equation",
+        "for 0",
+        "\u03b8",
+        "theta",
+        "degrees",
+        "\u03c0",
+        "tan x",
+        "cos x",
+        "sin x"
+      ],
+      "common_errors": [
+        "Missing secondary solutions",
+        "Using degree mode for radian intervals or conversely"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.5:9709-p1-trigonometry-equations-intervals",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.5",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_trigonometry_graphs",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.5 Trigonometry",
+      "subsection": null,
+      "name": "Graphs of sine, cosine and tangent",
+      "description": "Interpret and use transformations and key features of trigonometric graphs.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_functions_transformations",
+        "9709_p1_trigonometry_equations_intervals"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "graph of y = a",
+        "tan(x",
+        "cos(bx",
+        "sin",
+        "period",
+        "amplitude",
+        "number of solutions"
+      ],
+      "common_errors": [
+        "Reading the period as the horizontal scale factor",
+        "Ignoring vertical translation"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.5:9709-p1-trigonometry-graphs",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.5",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_series_arithmetic_progressions",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.6 Series",
+      "subsection": null,
+      "name": "Arithmetic progressions",
+      "description": "Use nth term and sum formulae for arithmetic progressions.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "arithmetic progression",
+        "common difference",
+        "sum of the first",
+        "nth term",
+        "60th term"
+      ],
+      "common_errors": [
+        "Confusing common difference with common ratio",
+        "Using n instead of n minus 1 in the nth term"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.6:9709-p1-series-arithmetic-progressions",
+      "content_lab_priority": "medium",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.6",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_series_geometric_progressions",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.6 Series",
+      "subsection": null,
+      "name": "Geometric progressions and sum to infinity",
+      "description": "Use nth term, finite sum and sum-to-infinity formulae for geometric progressions.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "geometric progression",
+        "common ratio",
+        "sum to infinity",
+        "|r|",
+        "second term"
+      ],
+      "common_errors": [
+        "Using the sum-to-infinity formula when |r| is not less than 1",
+        "Confusing r with d"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.6:9709-p1-series-geometric-progressions",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.6",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_series_binomial_positive_integer",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.6 Series",
+      "subsection": null,
+      "name": "Binomial expansion for positive integer powers",
+      "description": "Expand binomial expressions with positive integer powers and use coefficients in linked products.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "binomial",
+        "expansion",
+        "ascending powers",
+        "coefficient of",
+        "(1 + x)^",
+        "(a + bx)^"
+      ],
+      "common_errors": [
+        "Using too few terms for a linked coefficient",
+        "Dropping signs in negative terms"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.6:9709-p1-series-binomial-positive-integer",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.6",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_differentiation_power_chain",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.7 Differentiation",
+      "subsection": null,
+      "name": "Differentiation of powers and simple composites",
+      "description": "Differentiate powers and simple composite functions using the chain rule where appropriate.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "differentiate",
+        "f\u2032",
+        "dy/dx",
+        "gradient",
+        "d/dx",
+        "x^",
+        "chain"
+      ],
+      "common_errors": [
+        "Reducing the power but not multiplying by the old power",
+        "Missing a chain-rule factor"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.7:9709-p1-differentiation-power-chain",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.7",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_differentiation_tangents_normals",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.7 Differentiation",
+      "subsection": null,
+      "name": "Tangents and normals",
+      "description": "Use derivatives to find gradients and equations of tangents and normals.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_differentiation_power_chain",
+        "9709_p1_coordinate_line_geometry"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "tangent",
+        "normal",
+        "gradient at",
+        "equation of the tangent",
+        "equation of the normal"
+      ],
+      "common_errors": [
+        "Using tangent gradient for the normal",
+        "Not substituting the point after finding the gradient"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.7:9709-p1-differentiation-tangents-normals",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.7",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_differentiation_stationary_rates",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.7 Differentiation",
+      "subsection": null,
+      "name": "Stationary points, classification and rates of change",
+      "description": "Find and classify stationary points and solve simple rates-of-change problems.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_differentiation_power_chain"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "stationary point",
+        "maximum",
+        "minimum",
+        "d^2y",
+        "rate of increase",
+        "units per second",
+        "increasing"
+      ],
+      "common_errors": [
+        "Not checking the second derivative or sign change",
+        "Confusing dy/dt with dy/dx"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.7:9709-p1-differentiation-stationary-rates",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.7",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_integration_reverse_differentiation",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.8 Integration",
+      "subsection": null,
+      "name": "Reverse differentiation and constants",
+      "description": "Integrate powers and simple functions, including using a point to find the constant of integration.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_differentiation_power_chain"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "integrate",
+        "find f(x)",
+        "passes through",
+        "constant of integration",
+        "gradient is given",
+        "dy/dx"
+      ],
+      "common_errors": [
+        "Omitting the constant of integration",
+        "Substituting a point before integrating"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.8:9709-p1-integration-reverse-differentiation",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.8",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    },
+    {
+      "skill_id": "9709_p1_integration_area_volume",
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "section": "1.8 Integration",
+      "subsection": null,
+      "name": "Definite integration, areas and volumes",
+      "description": "Use definite integration to find areas and volumes of revolution in P1 contexts.",
+      "assessment_role": "direct_assessed",
+      "prerequisite_skill_ids": [
+        "9709_p1_integration_reverse_differentiation"
+      ],
+      "related_skill_ids": [],
+      "recognizer_signals": [
+        "area",
+        "shaded region",
+        "rotated through 360",
+        "volume",
+        "definite integral",
+        "limits"
+      ],
+      "common_errors": [
+        "Using signed area unintentionally",
+        "Forgetting to square the radius for volume of revolution"
+      ],
+      "asterion_region_id": "asterion:9709:p1:1.8:9709-p1-integration-area-volume",
+      "content_lab_priority": "high",
+      "official_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content, Pure Mathematics 1, section 1.8",
+      "review_status": "needs_review",
+      "notes": "Machine-expanded candidate skill from official syllabus section; requires subject expert review."
+    }
+  ],
+  "mapping_file": "question_skill_mappings_9709_p1_v1.json",
+  "coverage_report_file": "coverage_report_9709_p1_v1.json",
+  "review_status": "needs_review",
+  "notes": "Candidate taxonomy generated from official syllabus sections plus exam-bank evidence. No new reviewed status has been asserted."
+}

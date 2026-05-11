@@ -1,0 +1,107 @@
+{
+  "schema_name": "exam_bank.review_queue_index",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T05:18:25.411225+00:00",
+  "review_queues": [
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/low_confidence_candidates/low_confidence_skill_mappings_v1.json",
+      "review_type": "low_confidence_skill_mappings",
+      "syllabus_code": "9709",
+      "component": "m1,p1,p3,s1",
+      "record_count": 1150,
+      "reason_for_review": "low confidence skill mappings",
+      "priority": "medium",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/low_confidence_candidates/low_confidence_topic_assignments_v1.json",
+      "review_type": "low_confidence_topic_assignments",
+      "syllabus_code": "9709",
+      "component": "m1,p1,p3,s1",
+      "record_count": 2768,
+      "reason_for_review": "low confidence topic assignments",
+      "priority": "medium",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/whole_question_only_mappings_v1.json",
+      "review_type": "whole_question_only_mappings",
+      "syllabus_code": "9709",
+      "component": "m1,p1,p3,s1",
+      "record_count": 1025,
+      "reason_for_review": "whole question only mappings",
+      "priority": "high",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/topic_assignment_review/prerequisite_only_assignments_v1.json",
+      "review_type": "prerequisite_only_assignments",
+      "syllabus_code": "9709",
+      "component": "m1,p1,p3,s1",
+      "record_count": 2054,
+      "reason_for_review": "prerequisite only assignments",
+      "priority": "medium",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/topic_assignment_review/context_only_assignments_v1.json",
+      "review_type": "context_only_assignments",
+      "syllabus_code": null,
+      "component": null,
+      "record_count": 0,
+      "reason_for_review": "context only assignments",
+      "priority": "low",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/invalid_reference_records_v1.json",
+      "review_type": "invalid_reference_records",
+      "syllabus_code": null,
+      "component": null,
+      "record_count": 0,
+      "reason_for_review": "invalid reference records",
+      "priority": "low",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/duplicate_conflict_records_v1.json",
+      "review_type": "duplicate_conflict_records",
+      "syllabus_code": null,
+      "component": null,
+      "record_count": 0,
+      "reason_for_review": "duplicate conflict records",
+      "priority": "low",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/missing_evidence_records_v1.json",
+      "review_type": "missing_evidence_records",
+      "syllabus_code": null,
+      "component": null,
+      "record_count": 0,
+      "reason_for_review": "missing evidence records",
+      "priority": "low",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/skill_mapping_review/questionable_reviewed_records_v1.json",
+      "review_type": "questionable_reviewed_records",
+      "syllabus_code": null,
+      "component": null,
+      "record_count": 0,
+      "reason_for_review": "questionable reviewed records",
+      "priority": "low",
+      "notes": "Generated from audit rules; empty files are intentional placeholders for required review categories."
+    },
+    {
+      "review_file_path": "exam_bank_taxonomy/review_queue/legacy_cleanup/legacy_topic_cleanup_v1.json",
+      "review_type": "legacy_topic_cleanup",
+      "syllabus_code": "9709",
+      "component": "p1,p3",
+      "record_count": 842,
+      "reason_for_review": "legacy broad topic labels are not strict-filter safe",
+      "priority": "medium",
+      "notes": "Generated from output/json/question_bank.json topic confidence fields."
+    }
+  ]
+}

@@ -19,10 +19,19 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+TAXONOMY_ROOT = ROOT / "exam_bank_taxonomy"
+CANONICAL_ROOT = TAXONOMY_ROOT / "canonical"
+CANONICAL_SKILL_MAPS = CANONICAL_ROOT / "skill_maps"
+CANONICAL_SKILL_MAPPINGS = CANONICAL_ROOT / "question_skill_mappings"
+CANONICAL_COVERAGE_REPORTS = CANONICAL_ROOT / "coverage_reports"
+CANONICAL_INDEXES = CANONICAL_ROOT / "indexes"
+TAXONOMY_LOGS = TAXONOMY_ROOT / "logs"
+TAXONOMY_CHANGELOGS = TAXONOMY_LOGS / "changelogs"
+TAXONOMY_VALIDATION_REPORTS = TAXONOMY_LOGS / "validation_reports"
 QUESTION_BANK = ROOT / "output_ocr_candidate/json/question_bank.json"
 ASTERION_QB = ROOT / "output_ocr_candidate/json/asterion_question_bank_v1.json"
 CONTENT_LAB = ROOT / "output_ocr_candidate/json/asterion_content_lab_candidates_v1.json"
-OLD_P3_SKILL_MAP = ROOT / "skill_map_9709_p3_v1.json"
+OLD_P3_SKILL_MAP = CANONICAL_SKILL_MAPS / "skill_map_9709_p3_v1.json"
 
 SYLLABUS_CODE = "9709"
 SUBJECT_NAME = "Cambridge International AS & A Level Mathematics"
@@ -66,6 +75,10 @@ def ref(section: str, component_label: str) -> str:
 
 def output_component(component: str) -> str:
     return COMPONENTS[component]["output_component"]
+
+
+def rel(path: Path) -> str:
+    return path.relative_to(ROOT).as_posix()
 
 
 def skill(
@@ -1043,6 +1056,7 @@ def load_json(path: Path) -> Any:
 
 
 def dump_json(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
         json.dump(data, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
@@ -1519,8 +1533,8 @@ def make_skill_map(component: str, skills: list[dict[str, Any]]) -> dict[str, An
         },
         "sections": [{"section": number, "name": name} for number, name in SECTIONS[component]],
         "skills": skills,
-        "mapping_file": f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
-        "coverage_report_file": f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json",
+        "mapping_file": rel(CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json"),
+        "coverage_report_file": rel(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json"),
         "review_status": "needs_review",
         "notes": "Candidate taxonomy generated from official syllabus sections plus exam-bank evidence. No new reviewed status has been asserted.",
     }
@@ -1659,9 +1673,9 @@ def p3_changelog(old: dict[str, Any], old_path: Path, new_map: dict[str, Any], p
         "old_skill_count": len(old_skills),
         "new_skill_count": len(new_skills),
         "old_embedded_mapping_count": len(old_mappings),
-        "new_mapping_file": f"question_skill_mappings_{SYLLABUS_CODE}_p3_v1.json",
+        "new_mapping_file": rel(CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_p3_v1.json"),
         "new_mapping_count": len(p3_mappings),
-        "new_coverage_report_file": f"coverage_report_{SYLLABUS_CODE}_p3_v1.json",
+        "new_coverage_report_file": rel(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_p3_v1.json"),
         "added_skill_ids": sorted(set(new_skills) - set(old_skills)),
         "removed_or_replaced_skill_ids": sorted(set(old_skills) - set(new_skills)),
         "skill_ids_preserved": sorted(set(old_skills) & set(new_skills)),
@@ -1732,14 +1746,18 @@ def main() -> None:
         out_component = output_component(component)
         entry = {
             "syllabus_code": SYLLABUS_CODE,
+            "component": out_component,
             "subject_name": SUBJECT_NAME,
             "caie_class_or_component": COMPONENTS[component]["caie_class_or_component"],
             "component_label": COMPONENTS[component]["component_label"],
             "source_syllabus_reference": SYLLABUS_REFERENCE,
             "source_syllabus_url": SYLLABUS_URL,
-            "skill_map_file": f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json",
-            "mapping_file": f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
-            "coverage_report_file": f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json",
+            "skill_map_file": rel(CANONICAL_SKILL_MAPS / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json"),
+            "mapping_file": rel(CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json"),
+            "coverage_report_file": rel(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json"),
+            "skill_count": len(maps[component]["skills"]),
+            "mapping_count": len(mappings_by_component[component]),
+            "canonical_status": "canonical_candidate",
             "review_status": "needs_review",
             "notes": "Candidate component-specific skill map based on official CAIE syllabus section structure and local exam-bank evidence.",
         }
@@ -1769,7 +1787,7 @@ def main() -> None:
                     1 for mapping in mappings_by_component[component] if mapping["review_status"] != "reviewed"
                 ),
                 "high_priority_content_lab_gaps": reports[component]["high_priority_content_lab_gaps"][:10],
-                "coverage_report_file": f"coverage_report_{SYLLABUS_CODE}_{output_component(component)}_v1.json",
+                "coverage_report_file": rel(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{output_component(component)}_v1.json"),
             }
             for component in sorted(COMPONENTS)
         ],
@@ -1803,9 +1821,9 @@ def main() -> None:
 
     for component in sorted(COMPONENTS):
         out_component = output_component(component)
-        dump_json(ROOT / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json", maps[component])
+        dump_json(CANONICAL_SKILL_MAPS / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json", maps[component])
         dump_json(
-            ROOT / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
+            CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
             {
                 "schema_name": "exam_bank.question_skill_mappings",
                 "schema_version": 1,
@@ -1820,13 +1838,13 @@ def main() -> None:
                 "mappings": mappings_by_component[component],
             },
         )
-        dump_json(ROOT / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json", reports[component])
+        dump_json(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json", reports[component])
 
-    dump_json(ROOT / "skill_map_index_v1.json", index)
-    dump_json(ROOT / "coverage_report_all_components_v1.json", coverage_summary)
-    dump_json(ROOT / "skill_map_validation_v1.json", validation)
+    dump_json(CANONICAL_INDEXES / "skill_map_index_v1.json", index)
+    dump_json(CANONICAL_COVERAGE_REPORTS / "coverage_report_all_components_v1.json", coverage_summary)
+    dump_json(TAXONOMY_VALIDATION_REPORTS / "skill_map_validation_v1.json", validation)
     dump_json(
-        ROOT / "changelog_9709_p3_v1.json",
+        TAXONOMY_CHANGELOGS / "changelog_9709_p3_v1.json",
         p3_changelog(old_p3_baseline, OLD_P3_SKILL_MAP, maps["p3"], mappings_by_component["p3"], reports["p3"]),
     )
 

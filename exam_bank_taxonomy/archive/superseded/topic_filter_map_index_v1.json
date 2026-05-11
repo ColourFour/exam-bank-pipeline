@@ -1,0 +1,60 @@
+{
+  "schema_name": "exam_bank.topic_filter_map_index",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T03:59:43.283101+00:00",
+  "source_skill_map_index_file": "skill_map_index_v1.json",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "components": [
+    {
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "topic_filter_file": "topic_filter_map_9709_p1_v1.json",
+      "source_skill_map_file": "skill_map_9709_p1_v1.json",
+      "source_mapping_file": "question_skill_mappings_9709_p1_v1.json",
+      "source_coverage_report_file": "coverage_report_9709_p1_v1.json",
+      "review_status": "needs_review",
+      "notes": "Generated canonical topic filter hierarchy. Strict default filters should use only high-confidence direct topic assignments."
+    },
+    {
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Paper 3",
+      "component_label": "Pure Mathematics 3",
+      "topic_filter_file": "topic_filter_map_9709_p3_v1.json",
+      "source_skill_map_file": "skill_map_9709_p3_v1.json",
+      "source_mapping_file": "question_skill_mappings_9709_p3_v1.json",
+      "source_coverage_report_file": "coverage_report_9709_p3_v1.json",
+      "review_status": "needs_review",
+      "notes": "Generated canonical topic filter hierarchy. Strict default filters should use only high-confidence direct topic assignments."
+    },
+    {
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Mechanics 1 (Paper 4)",
+      "component_label": "Mechanics",
+      "topic_filter_file": "topic_filter_map_9709_m1_v1.json",
+      "source_skill_map_file": "skill_map_9709_m1_v1.json",
+      "source_mapping_file": "question_skill_mappings_9709_m1_v1.json",
+      "source_coverage_report_file": "coverage_report_9709_m1_v1.json",
+      "review_status": "needs_review",
+      "notes": "Generated canonical topic filter hierarchy. Strict default filters should use only high-confidence direct topic assignments."
+    },
+    {
+      "syllabus_code": "9709",
+      "subject_name": "Cambridge International AS & A Level Mathematics",
+      "caie_class_or_component": "Probability & Statistics 1 (Paper 5)",
+      "component_label": "Probability & Statistics 1",
+      "topic_filter_file": "topic_filter_map_9709_s1_v1.json",
+      "source_skill_map_file": "skill_map_9709_s1_v1.json",
+      "source_mapping_file": "question_skill_mappings_9709_s1_v1.json",
+      "source_coverage_report_file": "coverage_report_9709_s1_v1.json",
+      "review_status": "needs_review",
+      "notes": "Generated canonical topic filter hierarchy. Strict default filters should use only high-confidence direct topic assignments."
+    }
+  ],
+  "review_status": "needs_review",
+  "notes": "Index of canonical component-specific topic filter maps. Topic files use official CAIE sections as parent topics and component-local skill groups as subtopics."
+}

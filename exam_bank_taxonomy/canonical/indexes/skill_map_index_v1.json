@@ -1,0 +1,64 @@
+{
+  "schema_name": "exam_bank.skill_map_index",
+  "schema_version": 1,
+  "generated_at": "2026-05-11T05:18:24.696626+00:00",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "components": [
+    {
+      "syllabus_code": "9709",
+      "component": "p1",
+      "component_label": "Pure Mathematics 1",
+      "skill_map_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p1_v1.json",
+      "mapping_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p1_v1.json",
+      "coverage_report_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p1_v1.json",
+      "skill_count": 20,
+      "mapping_count": 831,
+      "canonical_status": "canonical_candidate",
+      "review_status": "needs_review"
+    },
+    {
+      "syllabus_code": "9709",
+      "component": "p3",
+      "component_label": "Pure Mathematics 3",
+      "skill_map_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
+      "mapping_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json",
+      "coverage_report_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_p3_v1.json",
+      "skill_count": 26,
+      "mapping_count": 749,
+      "canonical_status": "canonical_candidate",
+      "review_status": "needs_review"
+    },
+    {
+      "syllabus_code": "9709",
+      "component": "m1",
+      "component_label": "Mechanics",
+      "skill_map_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_m1_v1.json",
+      "mapping_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_m1_v1.json",
+      "coverage_report_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_m1_v1.json",
+      "skill_count": 13,
+      "mapping_count": 497,
+      "canonical_status": "canonical_candidate",
+      "review_status": "needs_review"
+    },
+    {
+      "syllabus_code": "9709",
+      "component": "s1",
+      "component_label": "Probability & Statistics 1",
+      "skill_map_file": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_s1_v1.json",
+      "mapping_file": "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_s1_v1.json",
+      "coverage_report_file": "exam_bank_taxonomy/canonical/coverage_reports/coverage_report_9709_s1_v1.json",
+      "skill_count": 14,
+      "mapping_count": 639,
+      "canonical_status": "canonical_candidate",
+      "review_status": "needs_review"
+    }
+  ],
+  "validation": {
+    "status": "pass",
+    "checks": {
+      "uses_canonical_paths": true,
+      "components_are_separate": true
+    }
+  }
+}
