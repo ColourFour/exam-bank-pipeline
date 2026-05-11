@@ -1,6 +1,9 @@
-from pathlib import Path
+from datetime import datetime
 import json
+from pathlib import Path
+import re
 
+from exam_bank import __version__
 from exam_bank.config import AppConfig
 from exam_bank.exporters import QUESTION_BANK_SCHEMA_NAME, QUESTION_BANK_SCHEMA_VERSION, export_records
 from exam_bank.models import QuestionRecord
@@ -69,6 +72,7 @@ def _record() -> QuestionRecord:
         visual_reason_flags=[],
         visual_curation_status="ready",
         text_only_status="ready",
+        validation_status="pass",
         mark_scheme_source_pdf="input/mark_schemes/9709 Mathematics March 2021 Mark Scheme  12.pdf",
     )
 
@@ -171,10 +175,54 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     json_path = export_records([record], config)
     payload = json.loads(json_path.read_text(encoding="utf-8"))
 
-    assert set(payload) == {"schema_name", "schema_version", "record_count", "questions"}
+    assert set(payload) == {"schema_name", "schema_version", "record_count", "run_manifest", "questions"}
     assert payload["schema_name"] == QUESTION_BANK_SCHEMA_NAME
     assert payload["schema_version"] == QUESTION_BANK_SCHEMA_VERSION
     assert payload["record_count"] == len(payload["questions"]) == 1
+    manifest = payload["run_manifest"]
+    assert {
+        "schema_version",
+        "generated_at",
+        "run_id",
+        "pipeline_version",
+        "git_commit",
+        "model_versions",
+        "ocr_engine_version",
+        "input_manifest_sha256",
+        "artifact_root",
+        "qa_summary",
+    } == set(manifest)
+    assert manifest["schema_version"] == 1
+    assert datetime.fromisoformat(manifest["generated_at"])
+    assert re.fullmatch(r"\d{8}T\d{6}Z-[0-9a-f]{12}", manifest["run_id"])
+    assert manifest["pipeline_version"] == __version__
+    assert isinstance(manifest["git_commit"], str)
+    assert manifest["model_versions"] == {
+        "topic_classifier": "local-topic-heuristics-v1",
+        "difficulty_classifier": ["local-difficulty-v1"],
+        "openai_classifier": "",
+    }
+    assert manifest["ocr_engine_version"] == ""
+    assert re.fullmatch(r"[0-9a-f]{64}", manifest["input_manifest_sha256"])
+    assert manifest["artifact_root"] == str(tmp_path / "output")
+    assert manifest["qa_summary"]["record_count"] == 1
+    assert manifest["qa_summary"]["paper_family_counts"] == {"p1": 1}
+    assert manifest["qa_summary"]["validation_status_counts"] == {"pass": 1}
+    assert manifest["qa_summary"]["mapping_status_counts"] == {"pass": 1}
+    assert manifest["qa_summary"]["scope_quality_status_counts"] == {"clean": 1}
+    assert manifest["qa_summary"]["text_fidelity_status_counts"] == {"clean": 1}
+    assert manifest["qa_summary"]["visual_curation_status_counts"] == {"ready": 1}
+    assert manifest["qa_summary"]["text_only_status_counts"] == {"ready": 1}
+    assert manifest["qa_summary"]["question_crop_confidence_counts"] == {"high": 1}
+    assert manifest["qa_summary"]["ocr_summary"] == {
+        "ran_count": 0,
+        "selected_count": 0,
+        "engine_counts": {},
+    }
+    assert manifest["qa_summary"]["artifact_path_counts"] == {
+        "missing_question_image_path": 0,
+        "missing_mark_scheme_image_path": 0,
+    }
 
     question = payload["questions"][0]
     assert {

@@ -83,11 +83,18 @@ export DEEPSEEK_API_KEY=...
   --component p3 \
   --limit 20 \
   --resume \
+  --status-dir output/run_status \
   --model deepseek-v4-flash \
   --include-subparts \
   --recompute-difficulty
 ```
 
-Processing is batched by paper by default. Each batch writes a cache file under `<output-stem>.batches/`, and the final sidecar metadata includes a run manifest with batch IDs, input hashes, model, prompt version, and cache paths.
+Processing is batched by paper by default. Each batch writes a cache file under `<output-stem>.batches/`, and every run writes live status files under `output/run_status/<run_id>/` by default:
+
+- `run_status.json`
+- `batch_status.jsonl`
+- `run_manifest.json`
+
+The terminal progress line includes the current phase, paper, batch count, record count, elapsed time, ETA when enough data exists, failed/skipped counts, and output path. The final sidecar metadata includes a run manifest with batch IDs, input hashes, model, prompt version, and cache paths.
 
 Use `--dry-run` to inspect selected records without creating a client or calling the network. Use `--only-errors`, `--paper`, `--question-id`, or `--component` for targeted resume/retry runs.

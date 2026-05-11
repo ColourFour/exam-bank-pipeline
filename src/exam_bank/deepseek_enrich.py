@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from openai import OpenAI
+from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
 from .runtime_profile import DIFFICULTY_LABELS, PAPER_FAMILY_TAXONOMY
 from .trust import Confidence, DeepSeekErrorType, ReconciliationStatus, final_review_reasons as _final_review_reasons
 
@@ -221,6 +222,22 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Print which records would be sent without making external API calls or writing an output file.",
+    )
+    progress = parser.add_mutually_exclusive_group()
+    progress.add_argument("--progress", dest="progress", action="store_true", default=True, help="Show terminal progress updates.")
+    progress.add_argument("--no-progress", dest="progress", action="store_false", help="Disable terminal progress updates.")
+    parser.add_argument(
+        "--status-dir",
+        type=Path,
+        default=None,
+        help="Directory that stores run_status/<run_id> files. Defaults under the output root.",
+    )
+    parser.add_argument("--run-id", default="", help="Optional stable run ID for status files and resume.")
+    parser.add_argument("--resume", action="store_true", help="Resume from an existing sidecar and skip successful records.")
+    parser.add_argument(
+        "--force-rerun",
+        action="store_true",
+        help="With --resume, rerun successful existing records instead of skipping them.",
     )
     parser.add_argument(
         "--allow-provider-failure",
@@ -1010,15 +1027,35 @@ def enrich_records(
     client: OpenAI,
     model: str,
     failure_log_path: str | Path | None = None,
+    progress: RunStatusTracker | None = None,
 ) -> dict[str, dict[str, Any]]:
     run_timestamp = datetime.now(timezone.utc).isoformat()
     sidecar: dict[str, dict[str, Any]] = {}
+    if progress:
+        progress.set_totals(total_batches=len(records), total_records=len(records))
     for record in records:
         question_id = str(record["question_id"])
         payload = build_enrichment_payload(record)
+        paper = str(record.get("paper") or "") or None
+        paper_family = str(record.get("paper_family") or "") or None
+        if progress:
+            progress.start_batch(
+                batch_id=question_id,
+                paper=paper,
+                paper_family=paper_family,
+                record_count=1,
+                phase="sending_batch_to_provider",
+            )
         try:
             suggestion = request_suggestion(client, model=model, payload=payload)
         except ModelResponseError as exc:
+            if progress:
+                progress.update_phase(
+                    "recovering_parse_errors",
+                    current_batch_id=question_id,
+                    current_paper=paper,
+                    current_paper_family=paper_family,
+                )
             error_record = build_sidecar_error(
                 error_type="parse_error",
                 message=str(exc),
@@ -1037,8 +1074,24 @@ def enrich_records(
                 raw_provider_output=exc.raw_provider_output,
                 request_payload=payload,
             )
+            if progress:
+                progress.fail_batch(
+                    batch_id=question_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=1,
+                    failed_records=1,
+                    error_message=str(exc),
+                )
             continue
         except ValueError as exc:
+            if progress:
+                progress.update_phase(
+                    "recovering_parse_errors",
+                    current_batch_id=question_id,
+                    current_paper=paper,
+                    current_paper_family=paper_family,
+                )
             error_record = build_sidecar_error(
                 error_type="parse_error",
                 message=str(exc),
@@ -1056,8 +1109,24 @@ def enrich_records(
                 raw_provider_output=None,
                 request_payload=payload,
             )
+            if progress:
+                progress.fail_batch(
+                    batch_id=question_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=1,
+                    failed_records=1,
+                    error_message=str(exc),
+                )
             continue
         except Exception as exc:
+            if progress:
+                progress.update_phase(
+                    "recovering_parse_errors",
+                    current_batch_id=question_id,
+                    current_paper=paper,
+                    current_paper_family=paper_family,
+                )
             error_record = build_sidecar_error(
                 error_type=DeepSeekErrorType.PROVIDER_ERROR,
                 message=f"{exc.__class__.__name__}: {exc}",
@@ -1075,14 +1144,38 @@ def enrich_records(
                 raw_provider_output=None,
                 request_payload=payload,
             )
+            if progress:
+                progress.fail_batch(
+                    batch_id=question_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=1,
+                    failed_records=1,
+                    error_message=f"{exc.__class__.__name__}: {exc}",
+                )
             continue
 
+        if progress:
+            progress.update_phase(
+                "validating_ai_output",
+                current_batch_id=question_id,
+                current_paper=paper,
+                current_paper_family=paper_family,
+            )
         sidecar[question_id] = build_sidecar_success(
             record,
             suggestion,
             model=model,
             run_timestamp=run_timestamp,
         )
+        if progress:
+            progress.complete_batch(
+                batch_id=question_id,
+                paper=paper,
+                paper_family=paper_family,
+                record_count=1,
+                successful_records=1,
+            )
     return sidecar
 
 
@@ -2128,6 +2221,9 @@ def enrich_ai_assisted_records(
     batch_by_paper: bool = True,
     resume: bool = False,
     failure_log_path: str | Path | None = None,
+    progress: RunStatusTracker | None = None,
+    resume_completed_batch_ids: set[str] | None = None,
+    force_rerun: bool = False,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     run_timestamp = datetime.now(timezone.utc).isoformat()
     existing_sidecar = existing_sidecar or {}
@@ -2135,8 +2231,20 @@ def enrich_ai_assisted_records(
     manifest_batches: list[dict[str, Any]] = []
 
     batches = batch_records(records, batch_by_paper=batch_by_paper)
+    if progress:
+        progress.set_totals(total_batches=len(batches), total_records=len(records))
     for batch in batches:
         batch_id = stable_batch_id(batch, batch_by_paper=batch_by_paper)
+        batch_paper = str(batch[0].get("paper") or "") or None
+        batch_paper_family = str(batch[0].get("paper_family") or "") or None
+        if progress:
+            progress.start_batch(
+                batch_id=batch_id,
+                paper=batch_paper,
+                paper_family=batch_paper_family,
+                record_count=len(batch),
+                phase="sending_batch_to_provider",
+            )
         taxonomy = load_canonical_taxonomy(taxonomy_root, batch[0].get("paper_family"))
         batch_payload = build_ai_assisted_batch_payload(
             batch,
@@ -2147,11 +2255,15 @@ def enrich_ai_assisted_records(
         batch_input_hash = stable_json_hash(batch_payload)
         question_ids = [str(record["question_id"]) for record in batch]
 
-        cached = (
-            read_successful_batch_cache(output_path, batch_id, batch_input_hash=batch_input_hash)
-            if output_path and resume
-            else None
-        )
+        cached = None
+        if resume_completed_batch_ids and batch_id in resume_completed_batch_ids and not force_rerun and output_path:
+            cached = read_successful_batch_cache(output_path, batch_id, batch_input_hash=batch_input_hash)
+        if cached is None and not force_rerun:
+            cached = (
+                read_successful_batch_cache(output_path, batch_id, batch_input_hash=batch_input_hash)
+                if output_path and resume
+                else None
+            )
         if cached:
             items = cached.get("items", [])
             parse_metadata = cached.get("parse_metadata", {})
@@ -2159,6 +2271,13 @@ def enrich_ai_assisted_records(
             raw_provider_output = cached.get("raw_provider_output")
         else:
             try:
+                if progress:
+                    progress.update_phase(
+                        "sending_batch_to_provider",
+                        current_batch_id=batch_id,
+                        current_paper=batch_paper,
+                        current_paper_family=batch_paper_family,
+                    )
                 items, parse_metadata, raw_provider_output = request_ai_assisted_batch(
                     client,
                     model=model,
@@ -2173,6 +2292,13 @@ def enrich_ai_assisted_records(
                 items = []
                 parse_metadata = {}
                 raw_provider_output = exc.raw_provider_output
+                if progress:
+                    progress.update_phase(
+                        "recovering_parse_errors",
+                        current_batch_id=batch_id,
+                        current_paper=batch_paper,
+                        current_paper_family=batch_paper_family,
+                    )
                 for record in batch:
                     question_id = str(record["question_id"])
                     enrichments[question_id] = build_ai_assisted_error_record(
@@ -2203,6 +2329,13 @@ def enrich_ai_assisted_records(
                 parse_metadata = {}
                 raw_provider_output = None
                 message = f"{exc.__class__.__name__}: {exc}"
+                if progress:
+                    progress.update_phase(
+                        "recovering_parse_errors",
+                        current_batch_id=batch_id,
+                        current_paper=batch_paper,
+                        current_paper_family=batch_paper_family,
+                    )
                 for record in batch:
                     question_id = str(record["question_id"])
                     enrichments[question_id] = build_ai_assisted_error_record(
@@ -2228,6 +2361,13 @@ def enrich_ai_assisted_records(
                     )
 
         if status in {"success", "success_cached"}:
+            if progress:
+                progress.update_phase(
+                    "validating_ai_output",
+                    current_batch_id=batch_id,
+                    current_paper=batch_paper,
+                    current_paper_family=batch_paper_family,
+                )
             for record in batch:
                 question_id = str(record["question_id"])
                 enrichments[question_id] = build_ai_assisted_record(
@@ -2257,7 +2397,40 @@ def enrich_ai_assisted_records(
             "parse_metadata": parse_metadata,
             "raw_provider_output": raw_provider_output,
         }
+        if progress:
+            progress.update_phase(
+                "writing_batch_output",
+                current_batch_id=batch_id,
+                current_paper=batch_paper,
+                current_paper_family=batch_paper_family,
+                output_path=output_path,
+            )
         cache_path = write_batch_cache(output_path, cache_payload) if output_path else None
+        if progress:
+            if status == "success_cached":
+                progress.skip_batch(
+                    batch_id=batch_id,
+                    paper=batch_paper,
+                    paper_family=batch_paper_family,
+                    record_count=len(batch),
+                )
+            elif status == "success":
+                progress.complete_batch(
+                    batch_id=batch_id,
+                    paper=batch_paper,
+                    paper_family=batch_paper_family,
+                    record_count=len(batch),
+                    successful_records=len(batch),
+                )
+            else:
+                progress.fail_batch(
+                    batch_id=batch_id,
+                    paper=batch_paper,
+                    paper_family=batch_paper_family,
+                    record_count=len(batch),
+                    failed_records=len(batch),
+                    error_message=str(status),
+                )
         manifest_batches.append(
             {
                 "batch_id": batch_id,
@@ -2312,6 +2485,21 @@ def add_ai_assisted_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--question-id", action="append", default=None, help="Question ID to enrich. Repeatable.")
     parser.add_argument("--limit", type=int, default=25)
     parser.add_argument("--resume", action="store_true")
+    progress = parser.add_mutually_exclusive_group()
+    progress.add_argument("--progress", dest="progress", action="store_true", default=True, help="Show terminal progress updates.")
+    progress.add_argument("--no-progress", dest="progress", action="store_false", help="Disable terminal progress updates.")
+    parser.add_argument(
+        "--status-dir",
+        type=Path,
+        default=None,
+        help="Directory that stores run_status/<run_id> files. Defaults under the output root.",
+    )
+    parser.add_argument("--run-id", default="", help="Optional stable run ID for status files and resume.")
+    parser.add_argument(
+        "--force-rerun",
+        action="store_true",
+        help="With --resume, rerun completed batches instead of skipping them.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--prompt-version", default=AI_ASSISTED_PROMPT_VERSION)
@@ -2346,109 +2534,174 @@ def run_ai_assisted(argv: Sequence[str] | None = None) -> int:
 
 def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
     validate_paths(input_path=args.input, output_path=args.output)
-    records = load_question_bank(args.input)
-    existing_sidecar: dict[str, dict[str, Any]] = {}
-    if args.existing_sidecar:
-        existing_sidecar.update(load_existing_sidecar(args.existing_sidecar))
-    if args.output.exists():
-        existing_sidecar.update(load_existing_sidecar(args.output))
-
-    selected = select_ai_assisted_records(
-        records,
-        existing_sidecar=existing_sidecar,
-        component=args.component,
-        paper=args.paper,
-        question_ids=args.question_ids,
-        limit=args.limit,
-        resume=args.resume,
-        prompt_version=args.prompt_version,
-        only_errors=args.only_errors,
-        only_review_required=args.only_review_required,
-        only_topic_mismatch=args.only_topic_mismatch,
-        only_unmapped_labels=args.only_unmapped_labels,
+    status_root = Path(args.status_dir) if getattr(args, "status_dir", None) else default_status_root_for_output(args.output)
+    run_id = resolve_run_id(
+        status_root=status_root,
+        run_type="ai_enrichment",
+        requested_run_id=getattr(args, "run_id", "") or None,
+        resume=bool(getattr(args, "resume", False)),
     )
+    tracker = RunStatusTracker(
+        run_id=run_id,
+        run_type="ai_enrichment",
+        status_root=status_root,
+        command=_command_text(args, "enrich-ai"),
+        input_paths=[args.input],
+        output_paths=[args.output],
+        config_paths=[args.taxonomy, args.existing_sidecar],
+        model=args.model,
+        prompt_version=args.prompt_version,
+        progress=bool(getattr(args, "progress", True)),
+    )
+    tracker.start(phase="loading_existing_sidecar")
+    try:
+        records = load_question_bank(args.input)
+        existing_sidecar: dict[str, dict[str, Any]] = {}
+        if args.existing_sidecar:
+            existing_sidecar.update(load_existing_sidecar(args.existing_sidecar))
+        if args.output.exists():
+            existing_sidecar.update(load_existing_sidecar(args.output))
 
-    if args.dry_run:
-        summary = {
-            "input": str(args.input),
-            "taxonomy": str(args.taxonomy),
-            "existing_sidecar": str(args.existing_sidecar) if args.existing_sidecar else None,
-            "output": str(args.output),
-            "selected_count": len(selected),
-            "question_ids": [record["question_id"] for record in selected],
-            "batch_by_paper": args.batch_by_paper,
-            "would_call_network": False,
-        }
-        print(json.dumps(summary, indent=2, ensure_ascii=False))
-        return 0
-
-    failure_log_path = args.failure_log or default_failure_log_path(args.output)
-    if selected:
-        client = create_client(base_url=args.base_url)
-        enrichments, run_manifest = enrich_ai_assisted_records(
-            selected,
-            client=client,
-            taxonomy_root=args.taxonomy,
+        tracker.update_phase("preparing_batches", force_render=True)
+        selection_resume = bool(args.resume and not getattr(args, "force_rerun", False))
+        selected = select_ai_assisted_records(
+            records,
             existing_sidecar=existing_sidecar,
-            output_path=args.output,
-            model=args.model,
+            component=args.component,
+            paper=args.paper,
+            question_ids=args.question_ids,
+            limit=args.limit,
+            resume=selection_resume,
             prompt_version=args.prompt_version,
-            include_subparts=args.include_subparts,
-            batch_by_paper=args.batch_by_paper,
-            resume=args.resume,
-            failure_log_path=failure_log_path,
+            only_errors=args.only_errors,
+            only_review_required=args.only_review_required,
+            only_topic_mismatch=args.only_topic_mismatch,
+            only_unmapped_labels=args.only_unmapped_labels,
         )
-    else:
-        enrichments = {}
-        run_manifest = {
-            "run_timestamp": datetime.now(timezone.utc).isoformat(),
-            "batch_count": 0,
-            "batches": [],
+        planned_batches = batch_records(selected, batch_by_paper=args.batch_by_paper)
+        tracker.set_totals(total_batches=len(planned_batches), total_records=len(selected))
+
+        if args.dry_run:
+            for batch in planned_batches:
+                batch_id = stable_batch_id(batch, batch_by_paper=args.batch_by_paper)
+                paper = str(batch[0].get("paper") or "") or None
+                paper_family = str(batch[0].get("paper_family") or "") or None
+                tracker.start_batch(
+                    batch_id=batch_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=len(batch),
+                    phase="preparing_batches",
+                )
+                tracker.skip_batch(batch_id=batch_id, paper=paper, paper_family=paper_family, record_count=len(batch))
+            tracker.finish("completed")
+            summary = {
+                "input": str(args.input),
+                "taxonomy": str(args.taxonomy),
+                "existing_sidecar": str(args.existing_sidecar) if args.existing_sidecar else None,
+                "output": str(args.output),
+                "selected_count": len(selected),
+                "question_ids": [record["question_id"] for record in selected],
+                "batch_by_paper": args.batch_by_paper,
+                "would_call_network": False,
+                "run_id": tracker.run_id,
+                "status_path": str(tracker.run_status_path),
+            }
+            print(json.dumps(summary, indent=2, ensure_ascii=False))
+            print(tracker.final_summary())
+            return 0
+
+        failure_log_path = args.failure_log or default_failure_log_path(args.output)
+        resume_batches = (
+            completed_batch_ids(tracker.status_dir)
+            if getattr(args, "resume", False) and not getattr(args, "force_rerun", False)
+            else set()
+        )
+        if selected:
+            client = create_client(base_url=args.base_url)
+            enrichments, run_manifest = enrich_ai_assisted_records(
+                selected,
+                client=client,
+                taxonomy_root=args.taxonomy,
+                existing_sidecar=existing_sidecar,
+                output_path=args.output,
+                model=args.model,
+                prompt_version=args.prompt_version,
+                include_subparts=args.include_subparts,
+                batch_by_paper=args.batch_by_paper,
+                resume=args.resume,
+                failure_log_path=failure_log_path,
+                progress=tracker,
+                resume_completed_batch_ids=resume_batches,
+                force_rerun=bool(getattr(args, "force_rerun", False)),
+            )
+        else:
+            enrichments = {}
+            run_manifest = {
+                "run_timestamp": datetime.now(timezone.utc).isoformat(),
+                "batch_count": 0,
+                "batches": [],
+                "model": args.model,
+                "prompt_version": args.prompt_version,
+            }
+
+        tracker.update_phase("merging_batches", output_path=args.output, force_render=True)
+        merged = dict(existing_sidecar)
+        merged.update(enrichments)
+        if args.recompute_difficulty or enrichments:
+            tracker.update_phase("calibrating_difficulty", output_path=args.output, force_render=True)
+            merged = calibrate_difficulty_by_paper_family(merged, records)
+
+        metadata = {
+            "input_path": str(args.input),
+            "taxonomy_path": str(args.taxonomy),
+            "existing_sidecar_path": str(args.existing_sidecar) if args.existing_sidecar else None,
             "model": args.model,
             "prompt_version": args.prompt_version,
-        }
-
-    merged = dict(existing_sidecar)
-    merged.update(enrichments)
-    if args.recompute_difficulty or enrichments:
-        merged = calibrate_difficulty_by_paper_family(merged, records)
-
-    metadata = {
-        "input_path": str(args.input),
-        "taxonomy_path": str(args.taxonomy),
-        "existing_sidecar_path": str(args.existing_sidecar) if args.existing_sidecar else None,
-        "model": args.model,
-        "prompt_version": args.prompt_version,
-        "selected_count": len(selected),
-        "resume": bool(args.resume),
-        "batch_by_paper": bool(args.batch_by_paper),
-        "difficulty_calibration": {
-            "scope": "within paper_family",
-            "bands": {
-                "foundation": "0 <= percentile < 25",
-                "standard": "25 <= percentile < 60",
-                "challenging": "60 <= percentile < 85",
-                "advanced": "85 <= percentile <= 100",
+            "selected_count": len(selected),
+            "resume": bool(args.resume),
+            "batch_by_paper": bool(args.batch_by_paper),
+            "difficulty_calibration": {
+                "scope": "within paper_family",
+                "bands": {
+                    "foundation": "0 <= percentile < 25",
+                    "standard": "25 <= percentile < 60",
+                    "challenging": "60 <= percentile < 85",
+                    "advanced": "85 <= percentile <= 100",
+                },
             },
-        },
-        "run_manifest": run_manifest,
-    }
-    write_ai_assisted_sidecar(merged, args.output, metadata=metadata)
-    print(f"Wrote {len(merged)} AI-assisted enrichment records to {args.output}")
-    counts = enrichment_failure_counts(enrichments)
-    if counts["failed"]:
-        print(
-            f"AI-assisted enrichment completed with {counts['succeeded']} successes and "
-            f"{counts['failed']} failures ({counts['provider_failed']} provider/API failures)."
+            "run_manifest": run_manifest,
+        }
+        tracker.update_phase("writing_final_sidecar", output_path=args.output, force_render=True)
+        write_ai_assisted_sidecar(merged, args.output, metadata=metadata)
+        print(f"Wrote {len(merged)} AI-assisted enrichment records to {args.output}")
+        counts = enrichment_failure_counts(enrichments)
+        if counts["failed"]:
+            print(
+                f"AI-assisted enrichment completed with {counts['succeeded']} successes and "
+                f"{counts['failed']} failures ({counts['provider_failed']} provider/API failures)."
+            )
+            print(f"Logged failure details to {failure_log_path}")
+        failed_for_provider = should_fail_for_provider_errors(
+            enrichments,
+            allow_provider_failure=args.allow_provider_failure,
         )
-        print(f"Logged failure details to {failure_log_path}")
-    if should_fail_for_provider_errors(enrichments, allow_provider_failure=args.allow_provider_failure):
-        print(
-            "All attempted AI-assisted enrichments failed with provider/API errors. "
-            "Use --allow-provider-failure to preserve the sidecar and exit 0."
-        )
-        return 1
-    return 0
+        if failed_for_provider:
+            print(
+                "All attempted AI-assisted enrichments failed with provider/API errors. "
+                "Use --allow-provider-failure to preserve the sidecar and exit 0."
+            )
+        tracker.finish("failed" if failed_for_provider else "completed")
+        print(tracker.final_summary())
+        return 1 if failed_for_provider else 0
+    except KeyboardInterrupt:
+        tracker.finish("interrupted", error_summary="KeyboardInterrupt")
+        print(tracker.final_summary())
+        return 130
+    except Exception as exc:
+        tracker.finish("failed", error_summary=f"{exc.__class__.__name__}: {exc}")
+        print(tracker.final_summary())
+        raise
 
 
 def enrichment_failure_counts(sidecar: dict[str, dict[str, Any]]) -> dict[str, int]:
@@ -2474,6 +2727,23 @@ def should_fail_for_provider_errors(sidecar: dict[str, dict[str, Any]], *, allow
         return False
     counts = enrichment_failure_counts(sidecar)
     return counts["attempted"] > 0 and counts["provider_failed"] == counts["attempted"]
+
+
+def _command_text(args: argparse.Namespace, fallback: str) -> str:
+    command = getattr(args, "command", fallback) or fallback
+    parts = [str(command)]
+    for key, value in sorted(vars(args).items()):
+        if key in {"func", "command"} or value is None or value == "" or value is False:
+            continue
+        option = f"--{key.replace('_', '-')}"
+        if value is True:
+            parts.append(option)
+        elif isinstance(value, list):
+            for item in value:
+                parts.extend([option, str(item)])
+        else:
+            parts.extend([option, str(value)])
+    return " ".join(parts)
 
 
 def default_failure_log_path(output_path: str | Path) -> Path:
@@ -2521,44 +2791,110 @@ def validate_paths(*, input_path: Path, output_path: Path) -> None:
 def run(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     validate_paths(input_path=args.input, output_path=args.output)
-    failure_log_path = args.failure_log or default_failure_log_path(args.output)
-    records = load_question_bank(args.input)
-    selected = select_records(
-        records,
-        limit=args.limit,
-        question_ids=args.question_ids,
-        paper_family=args.paper_family,
+    status_root = Path(args.status_dir) if getattr(args, "status_dir", None) else default_status_root_for_output(args.output)
+    run_id = resolve_run_id(
+        status_root=status_root,
+        run_type="ai_enrichment",
+        requested_run_id=getattr(args, "run_id", "") or None,
+        resume=bool(getattr(args, "resume", False)),
     )
-
-    if args.dry_run:
-        summary = {
-            "input": str(args.input),
-            "output": str(args.output),
-            "failure_log": str(failure_log_path),
-            "selected_count": len(selected),
-            "question_ids": [record["question_id"] for record in selected],
-        }
-        print(json.dumps(summary, indent=2, ensure_ascii=False))
-        return 0
-
-    client = create_client(base_url=args.base_url)
-    sidecar = enrich_records(selected, client=client, model=args.model, failure_log_path=failure_log_path)
-    write_sidecar(sidecar, args.output)
-    print(f"Wrote {len(sidecar)} DeepSeek enrichment records to {args.output}")
-    counts = enrichment_failure_counts(sidecar)
-    if counts["failed"]:
-        print(
-            f"DeepSeek enrichment completed with {counts['succeeded']} successes and "
-            f"{counts['failed']} failures ({counts['provider_failed']} provider/API failures)."
+    tracker = RunStatusTracker(
+        run_id=run_id,
+        run_type="ai_enrichment",
+        status_root=status_root,
+        command=_command_text(args, "deepseek-enrich"),
+        input_paths=[args.input],
+        output_paths=[args.output],
+        model=args.model,
+        prompt_version=PROMPT_VERSION,
+        progress=bool(getattr(args, "progress", True)),
+    )
+    tracker.start(phase="loading_question_bank")
+    failure_log_path = args.failure_log or default_failure_log_path(args.output)
+    try:
+        records = load_question_bank(args.input)
+        selected = select_records(
+            records,
+            limit=args.limit,
+            question_ids=args.question_ids,
+            paper_family=args.paper_family,
         )
-        print(f"Logged failure details to {failure_log_path}")
-    if should_fail_for_provider_errors(sidecar, allow_provider_failure=args.allow_provider_failure):
-        print(
-            "All attempted DeepSeek enrichments failed with provider/API errors. "
-            "Use --allow-provider-failure to preserve the sidecar and exit 0."
+        existing_sidecar = load_existing_sidecar(args.output) if args.resume and args.output.exists() else {}
+        if args.resume and not args.force_rerun:
+            resumable_records: list[dict[str, Any]] = []
+            for record in selected:
+                question_id = str(record["question_id"])
+                existing = existing_sidecar.get(question_id)
+                if not isinstance(existing, dict) or isinstance(existing.get("error"), dict):
+                    resumable_records.append(record)
+            selected = resumable_records
+        tracker.update_phase("preparing_batches", force_render=True)
+        tracker.set_totals(total_batches=len(selected), total_records=len(selected))
+
+        if args.dry_run:
+            for record in selected:
+                question_id = str(record["question_id"])
+                paper = str(record.get("paper") or "") or None
+                paper_family = str(record.get("paper_family") or "") or None
+                tracker.start_batch(
+                    batch_id=question_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=1,
+                    phase="preparing_batches",
+                )
+                tracker.skip_batch(batch_id=question_id, paper=paper, paper_family=paper_family, record_count=1)
+            tracker.finish("completed")
+            summary = {
+                "input": str(args.input),
+                "output": str(args.output),
+                "failure_log": str(failure_log_path),
+                "selected_count": len(selected),
+                "question_ids": [record["question_id"] for record in selected],
+                "run_id": tracker.run_id,
+                "status_path": str(tracker.run_status_path),
+            }
+            print(json.dumps(summary, indent=2, ensure_ascii=False))
+            print(tracker.final_summary())
+            return 0
+
+        client = create_client(base_url=args.base_url)
+        sidecar = enrich_records(
+            selected,
+            client=client,
+            model=args.model,
+            failure_log_path=failure_log_path,
+            progress=tracker,
         )
-        return 1
-    return 0
+        merged = dict(existing_sidecar)
+        merged.update(sidecar)
+        tracker.update_phase("writing_final_sidecar", output_path=args.output, force_render=True)
+        write_sidecar(merged, args.output)
+        print(f"Wrote {len(merged)} DeepSeek enrichment records to {args.output}")
+        counts = enrichment_failure_counts(sidecar)
+        if counts["failed"]:
+            print(
+                f"DeepSeek enrichment completed with {counts['succeeded']} successes and "
+                f"{counts['failed']} failures ({counts['provider_failed']} provider/API failures)."
+            )
+            print(f"Logged failure details to {failure_log_path}")
+        failed_for_provider = should_fail_for_provider_errors(sidecar, allow_provider_failure=args.allow_provider_failure)
+        if failed_for_provider:
+            print(
+                "All attempted DeepSeek enrichments failed with provider/API errors. "
+                "Use --allow-provider-failure to preserve the sidecar and exit 0."
+            )
+        tracker.finish("failed" if failed_for_provider else "completed")
+        print(tracker.final_summary())
+        return 1 if failed_for_provider else 0
+    except KeyboardInterrupt:
+        tracker.finish("interrupted", error_summary="KeyboardInterrupt")
+        print(tracker.final_summary())
+        return 130
+    except Exception as exc:
+        tracker.finish("failed", error_summary=f"{exc.__class__.__name__}: {exc}")
+        print(tracker.final_summary())
+        raise
 
 
 def main() -> None:

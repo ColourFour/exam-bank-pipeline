@@ -7,6 +7,35 @@ from types import SimpleNamespace
 import pytest
 
 from exam_bank import deepseek_enrich
+from exam_bank.run_status import RunStatusTracker
+
+
+REQUIRED_RUN_STATUS_KEYS = {
+    "run_id",
+    "run_type",
+    "command",
+    "started_at",
+    "updated_at",
+    "finished_at",
+    "status",
+    "current_phase",
+    "current_batch_id",
+    "current_paper",
+    "current_paper_family",
+    "completed_batches",
+    "total_batches",
+    "completed_records",
+    "total_records",
+    "percent_complete",
+    "elapsed_seconds",
+    "estimated_remaining_seconds",
+    "successful_records",
+    "failed_records",
+    "skipped_records",
+    "retry_count",
+    "output_path",
+    "error_summary",
+}
 
 
 def _record(
@@ -1106,11 +1135,21 @@ def test_ai_assisted_dry_run_does_not_call_network(monkeypatch: pytest.MonkeyPat
             "--output",
             str(output_path),
             "--dry-run",
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-dry-run",
+            "--no-progress",
         ]
     )
 
     assert exit_code == 0
     assert not output_path.exists()
+    status = json.loads((tmp_path / "run_status" / "ai-dry-run" / "run_status.json").read_text(encoding="utf-8"))
+    assert REQUIRED_RUN_STATUS_KEYS <= set(status)
+    assert status["run_type"] == "ai_enrichment"
+    assert status["status"] == "completed"
+    assert status["skipped_records"] == 1
 
 
 def test_ai_assisted_prompt_includes_allowed_ids_and_no_invention_instruction() -> None:
@@ -1150,6 +1189,14 @@ def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not
         _record("12spring24_q01"),
         {**_record("13spring24_q01"), "paper": "13spring24"},
     ]
+    tracker = RunStatusTracker(
+        run_id="ai-partial",
+        run_type="ai_enrichment",
+        status_root=tmp_path / "run_status",
+        command="enrich-ai",
+        progress=False,
+    )
+    tracker.start(phase="preparing_batches")
 
     enrichments, manifest = deepseek_enrich.enrich_ai_assisted_records(
         records,
@@ -1159,12 +1206,20 @@ def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not
         model="deepseek-v4-flash",
         include_subparts=True,
         batch_by_paper=True,
+        progress=tracker,
     )
+    tracker.finish("completed")
 
     assert manifest["batch_count"] == 2
     assert enrichments["12spring24_q01"]["ai_assisted_items"][0]["question_id"] == "12spring24_q01"
     assert enrichments["13spring24_q01"]["error"]["type"] == "provider_error"
     assert enrichments["12spring24_q01"]["batch_id"] != enrichments["13spring24_q01"]["batch_id"]
+    batch_statuses = [
+        json.loads(line)["status"]
+        for line in tracker.batch_status_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert batch_statuses == ["completed", "failed"]
 
 
 def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibrated_difficulty(
@@ -1214,12 +1269,30 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
             "2",
             "--include-subparts",
             "--recompute-difficulty",
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-status",
+            "--no-progress",
         ]
     )
 
     payload = json.loads(output_path.read_text(encoding="utf-8"))
+    status = json.loads((tmp_path / "run_status" / "ai-status" / "run_status.json").read_text(encoding="utf-8"))
+    batches = [
+        json.loads(line)
+        for line in (tmp_path / "run_status" / "ai-status" / "batch_status.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
     enrichments = payload["enrichments"]
     assert exit_code == 0
+    assert REQUIRED_RUN_STATUS_KEYS <= set(status)
+    assert status["run_type"] == "ai_enrichment"
+    assert status["status"] == "completed"
+    assert status["successful_records"] == 2
+    assert batches[0]["status"] == "completed"
     assert payload["schema_name"] == "exam_bank.ai_assisted_sidecar"
     assert payload["metadata"]["prompt_version"] == "ai_assisted_v2"
     assert payload["metadata"]["run_manifest"]["batches"][0]["batch_id"] == "p1_12spring24"
@@ -1230,6 +1303,86 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
     assert enrichments["12spring24_q02"]["difficulty_rank_within_paper_family"] == 1
     assert enrichments["12spring24_q02"]["deterministic_difficulty_band"] == "advanced"
     assert enrichments["12spring24_q01"]["deterministic_difficulty_band"] == "foundation"
+
+
+def test_ai_resume_uses_completed_batch_cache_without_calling_provider(tmp_path: Path) -> None:
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    records = [_record("12spring24_q01")]
+
+    class FirstClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    return _chat_response(_ai_payload(_ai_item(question_id="12spring24_q01")))
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    first_tracker = RunStatusTracker(
+        run_id="first",
+        run_type="ai_enrichment",
+        status_root=tmp_path / "run_status",
+        command="enrich-ai",
+        progress=False,
+    )
+    first_tracker.start(phase="preparing_batches")
+    deepseek_enrich.enrich_ai_assisted_records(
+        records,
+        client=FirstClient(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=output_path,
+        model="deepseek-v4-flash",
+        batch_by_paper=True,
+        progress=first_tracker,
+    )
+    first_tracker.finish("completed")
+
+    class FailingClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    raise AssertionError("resume should read the completed batch cache")
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    second_tracker = RunStatusTracker(
+        run_id="second",
+        run_type="ai_enrichment",
+        status_root=tmp_path / "run_status",
+        command="enrich-ai --resume",
+        progress=False,
+    )
+    second_tracker.start(phase="preparing_batches")
+    enrichments, _manifest = deepseek_enrich.enrich_ai_assisted_records(
+        records,
+        client=FailingClient(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=output_path,
+        model="deepseek-v4-flash",
+        batch_by_paper=True,
+        resume=True,
+        progress=second_tracker,
+        resume_completed_batch_ids={"p1_12spring24"},
+    )
+    second_tracker.finish("completed")
+
+    status = json.loads(second_tracker.run_status_path.read_text(encoding="utf-8"))
+    batches = [
+        json.loads(line)
+        for line in second_tracker.batch_status_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert enrichments["12spring24_q01"]["ai_assisted_items"][0]["question_id"] == "12spring24_q01"
+    assert len(batches) == 1
+    assert batches[0]["status"] == "skipped"
+    assert batches[0]["record_count"] == 1
+    assert batches[0]["skipped_records"] == 1
+    assert status["skipped_records"] == 1
 
 
 def test_difficulty_percentile_is_computed_within_paper_family_not_globally() -> None:

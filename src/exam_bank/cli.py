@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
 from .audit import write_audit
 from .asterion_export import (
     ASTERION_EXPORT_FILENAME,
@@ -55,6 +56,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     process.add_argument("--ocr-language", default="", help="Optional Tesseract language override, e.g. eng.")
     process.add_argument("--tesseract-cmd", default="", help="Optional path to the tesseract binary.")
+    _add_run_tracking_arguments(process)
     process.set_defaults(func=cmd_process)
 
     audit = subparsers.add_parser(
@@ -261,6 +263,26 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _add_run_tracking_arguments(parser: argparse.ArgumentParser, *, include_resume: bool = True) -> None:
+    progress = parser.add_mutually_exclusive_group()
+    progress.add_argument("--progress", dest="progress", action="store_true", default=True, help="Show terminal progress updates.")
+    progress.add_argument("--no-progress", dest="progress", action="store_false", help="Disable terminal progress updates.")
+    parser.add_argument(
+        "--status-dir",
+        type=Path,
+        default=None,
+        help="Directory that stores run_status/<run_id> files. Defaults under the output root.",
+    )
+    parser.add_argument("--run-id", default="", help="Optional stable run ID for status files and resume.")
+    if include_resume:
+        parser.add_argument("--resume", action="store_true", help="Resume a previous run and skip completed batches.")
+    parser.add_argument(
+        "--force-rerun",
+        action="store_true",
+        help="With --resume, rerun completed batches instead of skipping them.",
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -276,8 +298,44 @@ def cmd_process(args: argparse.Namespace) -> int:
     if args.tesseract_cmd:
         config.ocr.tesseract_cmd = args.tesseract_cmd
     _configure_runtime_paths(config, Path(args.input), Path(args.output))
-    result = process_inputs(args.input, config)
+    status_root = Path(args.status_dir) if getattr(args, "status_dir", None) else default_status_root_for_output(args.output)
+    run_id = resolve_run_id(
+        status_root=status_root,
+        run_type="standard",
+        requested_run_id=getattr(args, "run_id", "") or None,
+        resume=bool(getattr(args, "resume", False)),
+    )
+    tracker = RunStatusTracker(
+        run_id=run_id,
+        run_type="standard",
+        status_root=status_root,
+        command=_command_text(args, "process"),
+        input_paths=[args.input],
+        output_paths=[Path(args.output) / "json" / config.naming.json_name],
+        config_paths=[args.config],
+        progress=bool(getattr(args, "progress", True)),
+    )
+    tracker.start(phase="scanning_inputs")
+    resume_batches = completed_batch_ids(tracker.status_dir) if getattr(args, "resume", False) else set()
+    try:
+        result = process_inputs(
+            args.input,
+            config,
+            progress=tracker,
+            resume_completed_batch_ids=resume_batches,
+            force_rerun=bool(getattr(args, "force_rerun", False)),
+        )
+        tracker.finish("completed")
+    except KeyboardInterrupt:
+        tracker.finish("interrupted", error_summary="KeyboardInterrupt")
+        print(tracker.final_summary())
+        return 130
+    except Exception as exc:
+        tracker.finish("failed", error_summary=f"{exc.__class__.__name__}: {exc}")
+        print(tracker.final_summary())
+        raise
     _print_result(result)
+    print(tracker.final_summary())
     return 0
 
 
@@ -418,10 +476,24 @@ def _configure_runtime_paths(config: AppConfig, input_root: Path, output_root: P
 
 def _print_result(result: PipelineResult) -> None:
     papers = sorted({record.paper_name for record in result.records})
-    print(f"Processed questions: {len(result.records)}")
-    print(f"Processed papers: {len(papers)}")
+    print(f"Processed questions: {result.question_count if result.question_count is not None else len(result.records)}")
+    print(f"Processed papers: {result.paper_count if result.paper_count is not None else len(papers)}")
     print(f"Output root: {result.output_root}")
     print(f"JSON: {result.json_path}")
+
+
+def _command_text(args: argparse.Namespace, fallback: str) -> str:
+    command = getattr(args, "command", fallback) or fallback
+    parts = [str(command)]
+    for key, value in sorted(vars(args).items()):
+        if key in {"func", "command"} or value is None or value == "" or value is False:
+            continue
+        option = f"--{key.replace('_', '-')}"
+        if value is True:
+            parts.append(option)
+        else:
+            parts.extend([option, str(value)])
+    return " ".join(parts)
 
 
 def _runbook_text(report: dict[str, object]) -> str:

@@ -125,7 +125,7 @@ def test_ocr_enabled_failure_is_captured_without_crashing(monkeypatch: pytest.Mo
 def test_process_cli_enable_ocr_routes_enabled_config_to_pipeline(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     captured: dict[str, object] = {}
 
-    def fake_process_inputs(input_path: str, config: AppConfig) -> object:
+    def fake_process_inputs(input_path: str, config: AppConfig, **_: object) -> object:
         captured["input_path"] = input_path
         captured["ocr_enabled"] = config.ocr.enabled
         captured["ocr_language"] = config.ocr.language
@@ -144,6 +144,11 @@ def test_process_cli_enable_ocr_routes_enabled_config_to_pipeline(monkeypatch: p
             enable_ocr=True,
             ocr_language="eng",
             tesseract_cmd="/usr/local/bin/tesseract",
+            progress=False,
+            status_dir=tmp_path / "output_ocr_candidate" / "run_status",
+            run_id="ocr-test",
+            resume=False,
+            force_rerun=False,
         )
     )
 

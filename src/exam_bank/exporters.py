@@ -1,38 +1,59 @@
 from __future__ import annotations
 
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
+import subprocess
 from typing import Any
 
+from . import __version__
 from .config import AppConfig
 from .models import QuestionRecord
-from .output_layout import component_code_from_values, paper_family_dir_name, paper_instance_id, question_id
+from .ocr import OCR_ENGINE
+from .output_layout import (
+    component_code_from_values,
+    paper_family_dir_name,
+    paper_instance_id,
+    question_id,
+)
 from .trust import CropConfidence
 
 
 QUESTION_BANK_SCHEMA_NAME = "exam_bank.question_bank"
 QUESTION_BANK_SCHEMA_VERSION = 2
+QUESTION_BANK_RUN_MANIFEST_VERSION = 1
 
 
 def export_records(records: list[QuestionRecord], config: AppConfig, basename: str | None = None) -> Path:
     config.ensure_output_dirs()
     json_name = f"{basename}.json" if basename else config.naming.json_name
     json_path = config.output.json_dir / json_name
-    write_json(records, json_path, output_root=config.output.root_dir())
+    write_json(records, json_path, output_root=config.output.root_dir(), config=config)
     return json_path
 
 
-def write_json(records: list[QuestionRecord], output_path: str | Path, *, output_root: str | Path | None = None) -> Path:
+def records_to_output_questions(records: list[QuestionRecord], output_root: str | Path | None = None) -> list[dict[str, Any]]:
+    root = Path(output_root) if output_root is not None else None
+    return [_record_to_output_dict(record, root) for record in records]
+
+
+def write_question_bank_payload(
+    question_payload: list[dict[str, Any]],
+    output_path: str | Path,
+    *,
+    run_manifest: dict[str, Any] | None = None,
+) -> Path:
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    root = Path(output_root) if output_root is not None else None
-    question_payload = [_record_to_output_dict(record, root) for record in records]
     output_path.write_text(
         json.dumps(
             {
                 "schema_name": QUESTION_BANK_SCHEMA_NAME,
                 "schema_version": QUESTION_BANK_SCHEMA_VERSION,
                 "record_count": len(question_payload),
+                "run_manifest": run_manifest or _build_payload_run_manifest(question_payload, output_path=output_path),
                 "questions": question_payload,
             },
             indent=2,
@@ -41,6 +62,225 @@ def write_json(records: list[QuestionRecord], output_path: str | Path, *, output
         encoding="utf-8",
     )
     return output_path
+
+
+def write_json(
+    records: list[QuestionRecord],
+    output_path: str | Path,
+    *,
+    output_root: str | Path | None = None,
+    config: AppConfig | None = None,
+) -> Path:
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    root = Path(output_root) if output_root is not None else None
+    question_payload = records_to_output_questions(records, root)
+    run_manifest = _build_run_manifest(
+        records,
+        question_payload,
+        output_path=output_path,
+        output_root=root,
+        config=config,
+    )
+    return write_question_bank_payload(question_payload, output_path, run_manifest=run_manifest)
+
+
+def _build_run_manifest(
+    records: list[QuestionRecord],
+    question_payload: list[dict[str, Any]],
+    *,
+    output_path: Path,
+    output_root: Path | None,
+    config: AppConfig | None,
+) -> dict[str, Any]:
+    generated_at_dt = datetime.now(timezone.utc)
+    generated_at = generated_at_dt.isoformat()
+    input_manifest_sha256 = _input_manifest_sha256(records)
+    return {
+        "schema_version": QUESTION_BANK_RUN_MANIFEST_VERSION,
+        "generated_at": generated_at,
+        "run_id": f"{generated_at_dt.strftime('%Y%m%dT%H%M%SZ')}-{input_manifest_sha256[:12]}",
+        "pipeline_version": __version__,
+        "git_commit": _git_commit(),
+        "model_versions": _model_versions(records, config),
+        "ocr_engine_version": _ocr_engine_version(records, config),
+        "input_manifest_sha256": input_manifest_sha256,
+        "artifact_root": _artifact_root_value(output_root, output_path),
+        "qa_summary": _qa_summary(records, question_payload),
+    }
+
+
+def _input_manifest_sha256(records: list[QuestionRecord]) -> str:
+    manifest = {
+        "schema_version": 1,
+        "sources": _input_sources(records),
+    }
+    encoded = json.dumps(manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _input_sources(records: list[QuestionRecord]) -> list[dict[str, Any]]:
+    sources: dict[tuple[str, str], dict[str, Any]] = {}
+    for record in records:
+        for role, path_value in [
+            ("question_paper", record.extraction.source_pdf),
+            ("mark_scheme", record.mark_scheme.source_pdf),
+        ]:
+            normalized_path = str(path_value or "").strip()
+            if not normalized_path:
+                continue
+            key = (role, normalized_path)
+            if key in sources:
+                continue
+            path = Path(normalized_path)
+            exists = path.is_file()
+            sources[key] = {
+                "role": role,
+                "path": normalized_path,
+                "exists": exists,
+                "sha256": _sha256_file(path) if exists else "",
+            }
+    return [sources[key] for key in sorted(sources)]
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _git_commit() -> str:
+    repo_root = Path(__file__).resolve().parents[2]
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=2,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return "unknown"
+    return result.stdout.strip() or "unknown"
+
+
+def _model_versions(records: list[QuestionRecord], config: AppConfig | None) -> dict[str, Any]:
+    difficulty_versions = sorted(
+        {
+            record.classification.difficulty_model_version
+            for record in records
+            if record.classification.difficulty_model_version
+        }
+    )
+    openai_model = ""
+    if config is not None and config.classification.enable_openai:
+        openai_model = config.classification.openai_model
+    return {
+        "topic_classifier": "local-topic-heuristics-v1",
+        "difficulty_classifier": difficulty_versions,
+        "openai_classifier": openai_model,
+    }
+
+
+def _ocr_engine_version(records: list[QuestionRecord], config: AppConfig | None) -> str:
+    engines = {
+        record.extraction.ocr_engine
+        for record in records
+        if record.extraction.ocr_engine
+    }
+    if config is not None and config.ocr.enabled:
+        engines.add(OCR_ENGINE)
+    if OCR_ENGINE not in engines:
+        return ""
+    try:
+        import pytesseract
+
+        return str(pytesseract.get_tesseract_version())
+    except Exception:
+        tesseract_cmd = config.ocr.tesseract_cmd if config is not None and config.ocr.tesseract_cmd else OCR_ENGINE
+        try:
+            result = subprocess.run(
+                [tesseract_cmd, "--version"],
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=2,
+            )
+        except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            return "unavailable"
+        return (result.stdout.splitlines() or [""])[0].strip() or "unavailable"
+
+
+def _artifact_root_value(output_root: Path | None, output_path: Path) -> str:
+    root = output_root if output_root is not None else output_path.parent.parent
+    return str(root)
+
+
+def _qa_summary(records: list[QuestionRecord], question_payload: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "record_count": len(records),
+        "paper_family_counts": _counts(question.get("paper_family", "") for question in question_payload),
+        "validation_status_counts": _counts(record.validation.validation_status for record in records),
+        "mapping_status_counts": _counts(record.mark_scheme.mapping_status for record in records),
+        "scope_quality_status_counts": _counts(record.validation.scope_quality_status for record in records),
+        "text_fidelity_status_counts": _counts(record.validation.text_fidelity_status for record in records),
+        "visual_curation_status_counts": _counts(record.validation.visual_curation_status for record in records),
+        "text_only_status_counts": _counts(record.validation.text_only_status for record in records),
+        "question_crop_confidence_counts": _counts(
+            record.images.question_crop_confidence
+            or (CropConfidence.LOW if record.images.crop_uncertain else CropConfidence.HIGH)
+            for record in records
+        ),
+        "mark_scheme_crop_confidence_counts": _counts(record.mark_scheme.crop_confidence for record in records),
+        "ocr_summary": {
+            "ran_count": sum(1 for record in records if record.extraction.ocr_ran),
+            "selected_count": sum(1 for record in records if record.extraction.ocr_selected),
+            "engine_counts": _counts(record.extraction.ocr_engine for record in records if record.extraction.ocr_engine),
+        },
+        "artifact_path_counts": {
+            "missing_question_image_path": sum(1 for record in records if not record.images.screenshot_path),
+            "missing_mark_scheme_image_path": sum(1 for record in records if not record.mark_scheme.image_path),
+        },
+    }
+
+
+def _counts(values: Any) -> dict[str, int]:
+    counter: Counter[str] = Counter()
+    for value in values:
+        key = str(value or "unknown")
+        counter[key] += 1
+    return {key: counter[key] for key in sorted(counter)}
+
+
+def _build_payload_run_manifest(question_payload: list[dict[str, Any]], *, output_path: Path) -> dict[str, Any]:
+    generated_at_dt = datetime.now(timezone.utc)
+    generated_at = generated_at_dt.isoformat()
+    payload_hash = hashlib.sha256(
+        json.dumps(question_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema_version": QUESTION_BANK_RUN_MANIFEST_VERSION,
+        "generated_at": generated_at,
+        "run_id": f"{generated_at_dt.strftime('%Y%m%dT%H%M%SZ')}-{payload_hash[:12]}",
+        "pipeline_version": __version__,
+        "git_commit": _git_commit(),
+        "model_versions": {},
+        "ocr_engine_version": "",
+        "input_manifest_sha256": payload_hash,
+        "artifact_root": _artifact_root_value(None, output_path),
+        "qa_summary": {
+            "record_count": len(question_payload),
+            "paper_family_counts": _counts(question.get("paper_family", "") for question in question_payload),
+            "validation_status_counts": _counts(
+                (question.get("notes") or {}).get("validation_status", "unknown")
+                for question in question_payload
+                if isinstance(question.get("notes") or {}, dict)
+            ),
+        },
+    }
 
 
 def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> dict[str, Any]:

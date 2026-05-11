@@ -36,7 +36,7 @@ Measured on `output/json/question_bank.json` on 2026-05-10 with:
 - Current Asterion readiness tiers: Tier 0 `23`, Tier 1 `360`, Tier 2 `185`, Tier 3 `13`, Tier 4 `52`, Tier 5 `668`.
 - Current hard blockers: `23`. Dominant blockers are mapping failures, validation failures, missing mark-scheme text/image paths, and local question/mark-scheme total mismatches.
 - Subpart marks are not yet promoted: `968` records have subparts with all subpart marks null, and `920` records appear simple-fillable from detected mark brackets.
-- The export has no top-level run manifest yet. Missing metadata includes `generated_at`, `run_id`, `pipeline_version`, `git_commit`, `model_versions`, `ocr_engine_version`, `input_manifest_sha256`, `artifact_root`, and `qa_summary`.
+- New exports include a top-level `run_manifest` with `generated_at`, `run_id`, `pipeline_version`, `git_commit`, `model_versions`, `ocr_engine_version`, `input_manifest_sha256`, `artifact_root`, and `qa_summary`.
 
 The latest readiness audit outputs are written under `output/audits/iteration_001/`. This folder is generated output and is ignored by git.
 
@@ -80,6 +80,16 @@ For comparison or review candidates, write OCR-enabled output to a separate fold
 .venv/bin/python -m exam_bank.cli process --input input --output output_ocr_candidate --enable-ocr
 ```
 
+Long-running commands write live status files and show a built-in text progress bar by default. Standard process runs write:
+
+```text
+output/run_status/<run_id>/run_status.json
+output/run_status/<run_id>/batch_status.jsonl
+output/run_status/<run_id>/run_manifest.json
+```
+
+Use `--no-progress` to silence terminal updates while still writing status files. Use `--status-dir`, `--run-id`, `--resume`, and `--force-rerun` for resumable batch runs.
+
 `--input` is scanned recursively. The usual layout is:
 
 ```text
@@ -112,7 +122,14 @@ Paper folders use `{component}{season}{yy}`, for example `12spring21`, `33summer
 
 ## What The JSON Contains
 
-`output/json/question_bank.json` is a versioned document with `schema_name`, `schema_version`, `record_count`, and `questions`.
+`output/json/question_bank.json` is a versioned document with `schema_name`, `schema_version`, `record_count`, `run_manifest`, and `questions`.
+
+The top-level `run_manifest` records export provenance and corpus QA rollups:
+
+- `generated_at`, `run_id`, `pipeline_version`, `git_commit`
+- `model_versions`, `ocr_engine_version`
+- `input_manifest_sha256`, `artifact_root`
+- `qa_summary` counts for paper families, validation status, mapping status, text fidelity, curation status, OCR usage, and missing artifact paths
 
 Important record fields include:
 
@@ -339,6 +356,7 @@ export DEEPSEEK_API_KEY=...
   --component p3 \
   --limit 20 \
   --resume \
+  --status-dir output/run_status \
   --model deepseek-v4-flash \
   --include-subparts \
   --recompute-difficulty
