@@ -154,6 +154,16 @@ STRUCTURAL_MAPPING_FAILURES = frozenset(
     }
 )
 
+_JOINED_WORD_ARTIFACT_RE = re.compile(
+    r"\b(?:"
+    r"Thediagram|thediagram|thegraph|formgraph|straightof|andshows|shows[A-Z]|whichg|consistswhich|"
+    r"thethe|twostraight|ofapplying|sequenceand|Thetwo|Foranother|Usean|Findthe|findthe|showthat|"
+    r"Describefully|describefully|Statethe|statethe|resultingtransformation|singletransformation|"
+    r"coefficientoffriction|methodtofindthe|firstexpressing|firstexpanding|theequation|solvethe|"
+    r"Giveyour|giveyour|intheform|answerintheform"
+    r")\b"
+)
+
 
 def derive_scope_quality_status(
     *,
@@ -274,7 +284,7 @@ def visual_reason_flags(
         flags.add("native_text_missing_or_sparse")
     if text_source_profile != TextSourceProfile.NATIVE_PDF and (
         "weak_question_text" in review_flags or any(flag.startswith("ocr_merged") for flag in review_flags)
-    ):
+    ) and _text_has_sparse_or_merged_question_text(normalized):
         flags.add("ocr_text_sparse_or_merged")
 
     if _text_has_pdf_control_garbage(text):
@@ -297,6 +307,8 @@ def visual_reason_flags(
         flags.add("contains_inequality_or_region_prompt")
     if _contains_graph_or_diagram_prompt(normalized):
         flags.add("contains_graph_or_diagram_prompt")
+    if _contains_table_or_data_prompt(normalized):
+        flags.add("contains_table_or_data_prompt")
     if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\b", lowered):
         flags.add("contains_trig_expression")
     if re.search(r"\b(?:ln|log|exp)\b|\be\s*(?:\^|[0-9]*x\b|[-+])", lowered):
@@ -338,6 +350,7 @@ def derive_question_text_semantics(
             "contains_complex_number_notation",
             "contains_inequality_or_region_prompt",
             "contains_graph_or_diagram_prompt",
+            "contains_table_or_data_prompt",
             "contains_trig_expression",
             "contains_log_exponential_expression",
             "contains_math_text_corruption",
@@ -413,10 +426,16 @@ def derive_topic_trust_status(
     text_fidelity_status: str,
     validation_status: str,
     scope_quality_status: str,
+    question_text_role: str = "",
+    visual_required: bool | None = None,
 ) -> str:
     if validation_status == ValidationStatus.FAIL or scope_quality_status == ScopeQualityStatus.FAIL:
         return TopicTrustStatus.REVIEW_REQUIRED
     if text_fidelity_status != TextFidelityStatus.CLEAN:
+        return TopicTrustStatus.DEGRADED_TEXT
+    if question_text_role and question_text_role != QuestionTextRole.READABLE_TEXT:
+        return TopicTrustStatus.DEGRADED_TEXT
+    if visual_required is True:
         return TopicTrustStatus.DEGRADED_TEXT
     if topic_uncertain or topic_confidence == Confidence.LOW:
         return TopicTrustStatus.REVIEW_REQUIRED
@@ -592,6 +611,50 @@ def _text_has_page_furniture(text: str) -> bool:
     return any(item in lowered for item in furniture)
 
 
+def _text_has_sparse_or_merged_question_text(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    if not normalized:
+        return True
+
+    alnum_count = len(re.findall(r"[A-Za-z0-9]", normalized))
+    words = re.findall(r"[A-Za-z]{2,}", normalized)
+    if alnum_count < 24 or len(words) < 5:
+        return True
+    if _JOINED_WORD_ARTIFACT_RE.search(normalized):
+        return True
+
+    long_tokens = [word for word in words if len(word) >= 24]
+    if len(long_tokens) >= 2:
+        return True
+    if long_tokens and any(_joined_token_has_prompt_fragments(token) for token in long_tokens):
+        return True
+
+    letters = sum(1 for char in normalized if char.isalpha())
+    if letters >= 60 and normalized.count(" ") / max(letters, 1) < 0.08:
+        return True
+    return False
+
+
+def _joined_token_has_prompt_fragments(token: str) -> bool:
+    lowered = token.lower()
+    fragments = [
+        "find",
+        "show",
+        "solve",
+        "given",
+        "diagram",
+        "graph",
+        "state",
+        "describe",
+        "calculate",
+        "determine",
+        "equation",
+        "transformation",
+        "probability",
+    ]
+    return sum(1 for fragment in fragments if fragment in lowered) >= 2
+
+
 def _text_has_math_corruption(text: str) -> bool:
     normalized = _normalize_for_visual_flags(text)
     lowered = normalized.lower()
@@ -664,3 +727,14 @@ def _contains_inequality_or_region_prompt(text: str) -> bool:
 def _contains_graph_or_diagram_prompt(text: str) -> bool:
     lowered = text.lower()
     return bool(re.search(r"\b(?:sketch|draw|graph|diagram|curve|asymptote|argand diagram)\b", lowered))
+
+
+def _contains_table_or_data_prompt(text: str) -> bool:
+    lowered = text.lower()
+    return bool(
+        re.search(
+            r"\b(?:table|stem-and-leaf|stem and leaf|box-and-whisker|box and whisker|histogram|cumulative frequency|"
+            r"frequency table|frequency polygon|scatter diagram|data shown|data in the table)\b",
+            lowered,
+        )
+    )

@@ -261,7 +261,7 @@ def test_repo_m24_p1_diagram_sensitive_controls_do_not_fail_on_weak_anchor_only(
         assert record.validation_status == "pass"
         assert record.scope_quality_status == "clean"
         assert record.text_fidelity_status == "clean"
-        assert record.topic_trust_status == "normal"
+        assert record.topic_trust_status == "degraded_text"
         assert "weak_question_anchor" not in record.validation_flags
 
 
@@ -315,7 +315,7 @@ def test_repo_n24_p32_same_page_lower_blocks_are_recovered_from_pdf_text(tmp_pat
     assert any(block.text.startswith("(b)") and block.bbox.y0 > 350 for block in page6.blocks)
 
 
-def test_repo_n24_p32_degraded_math_text_exports_degraded_text_fidelity_and_topic_trust(tmp_path: Path) -> None:
+def test_repo_n24_p32_readable_visual_math_text_exports_clean_fidelity_and_degraded_topic_trust(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
     pytest.importorskip("pytesseract")
@@ -333,14 +333,14 @@ def test_repo_n24_p32_degraded_math_text_exports_degraded_text_fidelity_and_topi
     q2_json = next(item for item in payload if item["question_number"] == "2")
 
     assert q2.markscheme_mapping_status == "pass"
-    assert q2.text_fidelity_status == "degraded"
-    assert "sparse_or_merged_question_text" in q2.text_fidelity_flags
-    assert "weak_extracted_text" in q2.text_fidelity_flags
+    assert q2.text_fidelity_status == "clean"
+    assert q2.text_fidelity_flags == []
+    assert q2.visual_required is True
     assert q2.topic_trust_status == "degraded_text"
     assert q2.scope_quality_status == "review"
     assert q2_json["notes"]["mapping_status"] == "pass"
     assert q2_json["notes"]["text_source_profile"] == "hybrid"
-    assert q2_json["notes"]["text_fidelity_status"] == "degraded"
+    assert q2_json["notes"]["text_fidelity_status"] == "clean"
     assert q2_json["notes"]["topic_trust_status"] == "degraded_text"
 
 
@@ -449,7 +449,7 @@ def test_repo_n25_p51_recovered_visible_parts_export_clean_text_semantics(tmp_pa
     assert q1.scope_quality_status == "review"
     assert q1.text_fidelity_status == "clean"
     assert "missing_visible_structure_in_text" not in q1.text_fidelity_flags
-    assert q1.topic_trust_status == "normal"
+    assert q1.topic_trust_status == "degraded_text"
     assert q1_json["notes"]["mapping_status"] == "pass"
     assert q1_json["notes"]["scope_quality_status"] == "review"
     assert q1_json["notes"]["text_fidelity_status"] == "clean"

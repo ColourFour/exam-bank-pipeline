@@ -604,6 +604,8 @@ def _build_question_record(
             text_fidelity_status=text_fidelity_status,
             validation_status=validation_status,
             scope_quality_status=scope_quality_status,
+            question_text_role=question_text_role,
+            visual_required=visual_required,
         )
 
         return QuestionRecord(
@@ -973,6 +975,8 @@ def _refresh_validation_derivatives(record: QuestionRecord) -> None:
         text_fidelity_status=record.text_fidelity_status,
         validation_status=record.validation_status,
         scope_quality_status=record.scope_quality_status,
+        question_text_role=record.question_text_role,
+        visual_required=record.visual_required,
     )
 
 

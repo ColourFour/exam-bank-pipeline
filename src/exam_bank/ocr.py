@@ -54,6 +54,10 @@ _SUBPART_RE = re.compile(r"\(([a-h]|i{1,3}|iv|v|vi{0,3}|ix|x)\)", re.IGNORECASE)
 _MARK_RE = re.compile(r"\[\d{1,2}\]")
 _WORD_RE = re.compile(r"[A-Za-z]{3,}")
 _MATH_FUNCTION_RE = re.compile(r"\b(?:sin|cos|tan|ln|log)\s*[A-Za-z0-9(]")
+_MATH_STRUCTURE_RE = re.compile(
+    r"(?:\\frac|∫|√|≤|≥|[<>=]|\b(?:sin|cos|tan|sec|cosec|cot|ln|log|arg|vector|matrix|modulus|complex)\b)",
+    re.IGNORECASE,
+)
 _PAGE_FURNITURE_RE = re.compile(
     r"\b(?:UCLES|Cambridge|BLANK PAGE|Additional Materials|READ THESE INSTRUCTIONS|INSTRUCTIONS|Question Paper|Mark Scheme)\b",
     re.IGNORECASE,
@@ -260,6 +264,8 @@ def select_text_candidate(
     ocr_mark_count = len(_MARK_RE.findall(ocr))
     if native_mark_count >= 2 and ocr_mark_count < native_mark_count:
         rejected.append("ocr_lost_mark_brackets")
+    if _ocr_lost_math_structure(native, ocr):
+        rejected.append("ocr_lost_math_structure")
 
     margin = ocr_score.score - native_score.score
     if rejected:
@@ -312,6 +318,14 @@ def _ocr_missing_question_number_is_tolerable(
         if required and not required.issubset(ocr_subparts):
             return False
     return True
+
+
+def _ocr_lost_math_structure(native_text: str, ocr_text: str) -> bool:
+    native_count = len(_MATH_STRUCTURE_RE.findall(native_text))
+    if native_count < 3:
+        return False
+    ocr_count = len(_MATH_STRUCTURE_RE.findall(ocr_text))
+    return ocr_count < max(1, native_count // 2)
 
 
 def _contains_question_number(text: str, question_number: str) -> bool:

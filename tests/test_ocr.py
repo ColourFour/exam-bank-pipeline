@@ -206,6 +206,33 @@ def test_candidate_selection_selects_ocr_when_native_has_merged_prose_and_contro
     assert "ocr_score_clear_margin" in decision.text_candidate_decision_reasons
 
 
+def test_candidate_selection_selects_ocr_when_it_preserves_question_marks_and_subparts() -> None:
+    native = (
+        "3 Alisahas7cardsnumbered1to7. (a) Findtheprobabilitythatshetakesanevennumber. [2] "
+        "(b) Giventhatthenumberiseven,findtheprobabilitythatitisgreaterthan4. [3]"
+    )
+    ocr = (
+        "3 Alisa has 7 cards numbered 1 to 7. (a) Find the probability that she takes an even number. [2] "
+        "(b) Given that the number is even, find the probability that it is greater than 4. [3]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="3",
+        expected_subparts=["a", "b"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is True
+    assert decision.selected_text == ocr
+    assert "expected_question_number_present" in decision.text_candidate_decision_reasons
+    assert "expected_subparts_present" in decision.text_candidate_decision_reasons
+    assert "expected_mark_brackets_present" in decision.text_candidate_decision_reasons
+
+
 def test_candidate_selection_retains_native_when_ocr_has_symbol_garbage() -> None:
     native = "2 Find the value of x for which 3(2 - x) = 12. Give your answer in exact form. [4]"
     ocr = "2 Find the value @@@ x ??? 3(2 - x) == ||||. Give answer?? [4]"
@@ -335,6 +362,24 @@ def test_candidate_selection_rejects_ocr_that_loses_expected_mark_brackets() -> 
 
     assert decision.ocr_selected is False
     assert "ocr_lost_mark_brackets" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_ocr_that_loses_math_structure() -> None:
+    native = "4 Solve sin θ + cos θ = 1 and hence show that tan θ = 2. [5]"
+    ocr = "4 Solve the trigonometric equation and hence show the required result. [5]"
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="4",
+        expected_subparts=[],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is False
+    assert "ocr_lost_math_structure" in decision.ocr_rejected_reasons
 
 
 def test_selected_ocr_math_text_remains_text_only_gated() -> None:

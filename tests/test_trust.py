@@ -95,6 +95,21 @@ def test_validation_refinement_and_deepseek_review_reasons_share_status_constant
     ]
 
 
+def test_topic_trust_downgrades_for_visual_search_hint_even_with_clean_text() -> None:
+    assert (
+        derive_topic_trust_status(
+            topic_confidence="high",
+            topic_uncertain=False,
+            text_fidelity_status="clean",
+            validation_status="pass",
+            scope_quality_status="clean",
+            question_text_role="search_hint",
+            visual_required=True,
+        )
+        == "degraded_text"
+    )
+
+
 def _visual_flags(text: str, *, review_flags: list[str] | None = None, extraction_flags: list[str] | None = None) -> list[str]:
     return visual_reason_flags(
         question_text=text,
@@ -157,6 +172,110 @@ def test_clean_natural_language_text_can_be_readable() -> None:
     assert role == "readable_text"
     assert trust == "high"
     assert visual_required is False
+
+
+def test_weak_crop_or_hybrid_flag_alone_does_not_degrade_clean_text() -> None:
+    text = "8 A committee has 5 members chosen from 8 people. Find the number of possible committees. [3]"
+    review_flags = ["weak_question_text", "low_confidence_question_crop", "ocr_merged_sparse_lower_region"]
+    flags = visual_reason_flags(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=review_flags,
+        question_structure_detected={},
+        text_source_profile="hybrid",
+    )
+    status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=review_flags,
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="hybrid",
+    )
+    role, trust, visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=status,
+        visual_reason_flags=flags,
+    )
+
+    assert flags == []
+    assert fidelity_flags == []
+    assert status == "clean"
+    assert role == "readable_text"
+    assert trust == "high"
+    assert visual_required is False
+    assert (
+        derive_text_only_status(
+            validation_status="pass",
+            scope_quality_status="clean",
+            question_text_role=role,
+            question_text_trust=trust,
+        )
+        == "ready"
+    )
+
+
+def test_merged_hybrid_prose_still_degrades_text_confidence() -> None:
+    text = "5 In the diagram, Describefullythetwosingletransformationsofy = f(x) that give the result. [4]"
+    flags = visual_reason_flags(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=["weak_question_text", "ocr_merged_sparse_lower_region"],
+        question_structure_detected={},
+        text_source_profile="hybrid",
+    )
+    status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=["weak_question_text", "ocr_merged_sparse_lower_region"],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="hybrid",
+    )
+
+    assert "ocr_text_sparse_or_merged" in flags
+    assert status == "degraded"
+    assert "sparse_or_merged_question_text" in fidelity_flags
+
+
+def test_table_dependent_readable_text_is_review_not_ready() -> None:
+    text = (
+        "4 The heights of 15 players from each team are given in the table. "
+        "Draw a back-to-back stem-and-leaf diagram and find the median. [4]"
+    )
+    flags = _visual_flags(text)
+    status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=[],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="native_pdf",
+    )
+    role, trust, visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=status,
+        visual_reason_flags=flags,
+    )
+
+    assert status == "clean"
+    assert fidelity_flags == []
+    assert "contains_table_or_data_prompt" in flags
+    assert role == "search_hint"
+    assert trust == "medium"
+    assert visual_required is True
+    assert (
+        derive_text_only_status(
+            validation_status="pass",
+            scope_quality_status="clean",
+            question_text_role=role,
+            question_text_trust=trust,
+        )
+        == "review"
+    )
 
 
 def test_instantaneously_is_not_treated_as_repeated_trig_corruption() -> None:
