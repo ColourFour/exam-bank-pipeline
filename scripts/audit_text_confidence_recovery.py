@@ -28,6 +28,12 @@ HARD_CORRUPTION_FLAGS = {
     "broken_superscript_or_power",
     "suspicious_symbol_run",
     "diagram_text_mixed_with_body",
+    "native_compacted_math_corruption",
+    "symbol_loss_detected",
+    "malformed_unit_notation",
+    "contains_native_compacted_math_corruption",
+    "contains_symbol_loss",
+    "contains_unit_corruption",
 }
 DIAGRAM_TABLE_FLAGS = {
     "contains_graph_or_diagram_prompt",
@@ -41,14 +47,60 @@ MATH_LAYOUT_FLAGS = {
     "contains_inequality_or_region_prompt",
     "contains_trig_expression",
     "contains_log_exponential_expression",
+    "contains_flattened_math_structure",
 }
 OCR_STRUCTURAL_REJECTION_REASONS = {
     "ocr_missing_question_number",
     "ocr_lost_mark_brackets",
     "ocr_missing_subpart_labels",
     "ocr_lost_math_structure",
+    "ocr_lost_visual_dependency_prompt",
+    "ocr_lost_function_structure",
+    "ocr_lost_greek_symbol",
+    "ocr_lost_radical_structure",
+    "ocr_lost_unit_structure",
+    "ocr_introduced_unit_corruption",
+    "ocr_introduced_symbol_loss",
+    "ocr_introduced_compacted_math_corruption",
+    "ocr_introduced_flattened_math_structure",
     "page_furniture_or_header_text",
     "next_question_contamination",
+}
+NEW_DETECTOR_FLAGS = {
+    "native_compacted_math_corruption": {
+        "native_compacted_math_corruption",
+        "contains_native_compacted_math_corruption",
+        "ocr_introduced_compacted_math_corruption",
+    },
+    "merged_diagram_table_prompt": {
+        "contains_graph_or_diagram_prompt",
+        "contains_table_or_data_prompt",
+        "ocr_lost_visual_dependency_prompt",
+    },
+    "flattened_math_structure": {
+        "flattened_math_structure",
+        "contains_flattened_math_structure",
+        "ocr_introduced_flattened_math_structure",
+        "ocr_lost_function_structure",
+        "ocr_lost_math_structure",
+    },
+    "symbol_loss": {
+        "symbol_loss_detected",
+        "contains_symbol_loss",
+        "ocr_introduced_symbol_loss",
+        "ocr_lost_greek_symbol",
+        "ocr_lost_radical_structure",
+    },
+    "unit_corruption": {
+        "malformed_unit_notation",
+        "contains_unit_corruption",
+        "ocr_introduced_unit_corruption",
+        "ocr_lost_unit_structure",
+    },
+    "ocr_large_margin_structural_rejection": {
+        "ocr_large_margin_blocked_by_structural_rejection",
+        "ocr_large_margin_structural_rejection",
+    },
 }
 
 
@@ -69,6 +121,9 @@ def main() -> int:
     write_csv(out_dir / "text_confidence_grouped_audit.csv", report["grouped_audit_rows"])
     write_csv(out_dir / "text_confidence_failure_type_audit.csv", report["failure_type_rows"])
     write_csv(out_dir / "text_confidence_promoted_records.csv", report["promoted_records"])
+    write_csv(out_dir / "text_confidence_status_movements.csv", report["status_movement_rows"])
+    write_csv(out_dir / "text_confidence_detector_blocks.csv", report["blocked_from_ready_by_detector_rows"])
+    write_csv(out_dir / "text_confidence_ocr_decision_changes.csv", report["ocr_decision_changes"])
     write_markdown(out_dir / "text_confidence_recovery_audit.md", render_markdown(report))
     return 0
 
@@ -90,6 +145,9 @@ def build_report(before_payload: dict[str, Any], after_payload: dict[str, Any]) 
     failure_type_rows = build_failure_type_rows(before_records, after_records)
     grouped_rows = build_grouped_rows(before_records, after_records, promoted_records)
     guardrails = build_guardrails(before_records, after_records, promoted_records)
+    movement = build_movement_rows(before_by_id, after_by_id, shared_ids)
+    blocked_by_detector = build_blocked_by_detector(before_by_id, after_by_id, shared_ids)
+    ocr_decision_changes = build_ocr_decision_changes(before_by_id, after_by_id, shared_ids)
 
     return {
         "audit_version": "text_confidence_recovery_v1",
@@ -108,6 +166,12 @@ def build_report(before_payload: dict[str, Any], after_payload: dict[str, Any]) 
         "promoted_record_count": len(promoted_records),
         "promoted_records": promoted_records,
         "guardrails": guardrails,
+        "status_movement_counts": movement["counts"],
+        "status_movement_rows": movement["rows"],
+        "blocked_from_ready_by_detector_counts": blocked_by_detector["counts"],
+        "blocked_from_ready_by_detector_rows": blocked_by_detector["rows"],
+        "ocr_decision_change_count": len(ocr_decision_changes),
+        "ocr_decision_changes": ocr_decision_changes,
         "failure_type_counts": {
             "before": failure_type_counts(before_records),
             "after": failure_type_counts(after_records),
@@ -153,19 +217,122 @@ def build_guardrails(
         if row["after_text_only_status"] == "ready"
         and any(item in row["after_failure_type_flags"] for item in {"hard_text_corruption", "flattened_display_math"})
     ]
+    diagram_table_ready = [
+        row["question_id"]
+        for row in promoted_records
+        if row["after_text_only_status"] == "ready"
+        and any(item in row["after_failure_type_flags"] for item in {"diagram_table_dependent_but_readable_text"})
+    ]
     return {
         "validation_status_fail_delta": after_validation_fail - before_validation_fail,
         "mapping_status_fail_delta": after_mapping_fail - before_mapping_fail,
         "missing_image_path_delta": after_missing_images - before_missing_images,
         "known_math_corruption_promoted_to_ready_count": len(math_corrupt_ready),
         "known_math_corruption_promoted_to_ready_ids": math_corrupt_ready,
+        "diagram_table_promoted_to_ready_count": len(diagram_table_ready),
+        "diagram_table_promoted_to_ready_ids": diagram_table_ready,
         "passes_acceptance_guardrails": (
             after_validation_fail <= before_validation_fail
             and after_mapping_fail <= before_mapping_fail
             and after_missing_images <= before_missing_images
             and not math_corrupt_ready
+            and not diagram_table_ready
         ),
     }
+
+
+def build_movement_rows(
+    before_by_id: dict[str, dict[str, Any]],
+    after_by_id: dict[str, dict[str, Any]],
+    shared_ids: list[str],
+) -> dict[str, Any]:
+    counts: Counter[str] = Counter()
+    rows: list[dict[str, Any]] = []
+    for qid in shared_ids:
+        before = before_by_id[qid]
+        after = after_by_id[qid]
+        before_status = str(value(before, "text_only_status") or "missing")
+        after_status = str(value(after, "text_only_status") or "missing")
+        movement = f"{before_status}->{after_status}"
+        counts[movement] += 1
+        if before_status != after_status or value(before, "text_fidelity_status") != value(after, "text_fidelity_status"):
+            rows.append(
+                {
+                    "question_id": qid,
+                    "paper": value(after, "paper"),
+                    "before_text_only_status": before_status,
+                    "after_text_only_status": after_status,
+                    "before_text_fidelity_status": value(before, "text_fidelity_status"),
+                    "after_text_fidelity_status": value(after, "text_fidelity_status"),
+                    "detectors": detector_hits(after),
+                    "ocr_changed": value(before, "text_candidate_source") != value(after, "text_candidate_source"),
+                    "reason_flags": sorted(set(list_value(after, "text_fidelity_flags") + list_value(after, "visual_reason_flags"))),
+                }
+            )
+    return {"counts": dict(sorted(counts.items())), "rows": rows}
+
+
+def build_blocked_by_detector(
+    before_by_id: dict[str, dict[str, Any]],
+    after_by_id: dict[str, dict[str, Any]],
+    shared_ids: list[str],
+) -> dict[str, Any]:
+    counts: Counter[str] = Counter({detector: 0 for detector in NEW_DETECTOR_FLAGS})
+    rows: list[dict[str, Any]] = []
+    for qid in shared_ids:
+        before = before_by_id[qid]
+        after = after_by_id[qid]
+        if value(before, "text_only_status") != "ready" or value(after, "text_only_status") == "ready":
+            continue
+        hits = detector_hits(after)
+        if not hits:
+            continue
+        for hit in hits:
+            counts[hit] += 1
+        rows.append(
+            {
+                "question_id": qid,
+                "paper": value(after, "paper"),
+                "before_text_only_status": value(before, "text_only_status"),
+                "after_text_only_status": value(after, "text_only_status"),
+                "after_text_fidelity_status": value(after, "text_fidelity_status"),
+                "detectors": hits,
+                "text_fidelity_flags": list_value(after, "text_fidelity_flags"),
+                "visual_reason_flags": list_value(after, "visual_reason_flags"),
+                "question_text_snippet": str(value(after, "question_text") or "")[:240],
+            }
+        )
+    return {"counts": dict(sorted(counts.items())), "rows": rows}
+
+
+def build_ocr_decision_changes(
+    before_by_id: dict[str, dict[str, Any]],
+    after_by_id: dict[str, dict[str, Any]],
+    shared_ids: list[str],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for qid in shared_ids:
+        before = before_by_id[qid]
+        after = after_by_id[qid]
+        if value(before, "text_candidate_source") == value(after, "text_candidate_source") and as_bool(value(before, "ocr_selected")) == as_bool(
+            value(after, "ocr_selected")
+        ):
+            continue
+        rows.append(
+            {
+                "question_id": qid,
+                "paper": value(after, "paper"),
+                "before_text_candidate_source": value(before, "text_candidate_source"),
+                "after_text_candidate_source": value(after, "text_candidate_source"),
+                "before_ocr_selected": value(before, "ocr_selected"),
+                "after_ocr_selected": value(after, "ocr_selected"),
+                "native_text_score": value(after, "native_text_score"),
+                "ocr_text_score": value(after, "ocr_text_score"),
+                "after_ocr_rejected_reasons": list_value(after, "ocr_rejected_reasons"),
+                "after_text_candidate_decision_reasons": list_value(after, "text_candidate_decision_reasons"),
+            }
+        )
+    return rows
 
 
 def build_grouped_rows(
@@ -353,6 +520,16 @@ def ocr_selected_rejected_reason_values(record: dict[str, Any]) -> list[str]:
 def failure_type_counts(records: list[dict[str, Any]]) -> dict[str, int]:
     counts = Counter(flag for record in records for flag in failure_type_flags(record))
     return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0])))
+
+
+def detector_hits(record: dict[str, Any]) -> list[str]:
+    record_flags = (
+        set(list_value(record, "text_fidelity_flags"))
+        | set(list_value(record, "visual_reason_flags"))
+        | set(list_value(record, "ocr_rejected_reasons"))
+    )
+    hits = [detector for detector, flags in NEW_DETECTOR_FLAGS.items() if record_flags & flags]
+    return sorted(hits)
 
 
 def failure_type_flags(record: dict[str, Any]) -> list[str]:
@@ -573,6 +750,9 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"- OCR selected: before `{before['ocr_selected_count']}`, after `{after['ocr_selected_count']}`",
             f"- Primary target promoted: `{report['target_pool']['promoted_count']}` of `{report['target_pool']['before_count']}`",
             f"- Total promoted records: `{report['promoted_record_count']}`",
+            f"- Text-only movement: `{json.dumps(report['status_movement_counts'], sort_keys=True)}`",
+            f"- Blocked from ready by new detectors: `{json.dumps(report['blocked_from_ready_by_detector_counts'], sort_keys=True)}`",
+            f"- OCR/native decisions changed: `{report['ocr_decision_change_count']}`",
             "",
             "## Guardrails",
             "",
@@ -580,6 +760,7 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"- Mapping fail delta: `{guardrails['mapping_status_fail_delta']}`",
             f"- Missing image path delta: `{guardrails['missing_image_path_delta']}`",
             f"- Known math corruption promoted to ready: `{guardrails['known_math_corruption_promoted_to_ready_count']}`",
+            f"- Diagram/table dependent promoted to ready: `{guardrails['diagram_table_promoted_to_ready_count']}`",
             f"- Guardrails passed: `{guardrails['passes_acceptance_guardrails']}`",
             "",
             "## Failure Types",
@@ -587,7 +768,7 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"- Before: `{json.dumps(report['failure_type_counts']['before'], sort_keys=True)}`",
             f"- After: `{json.dumps(report['failure_type_counts']['after'], sort_keys=True)}`",
             "",
-            "Detailed grouped rows, failure-type rows, and promoted-record reasons are in the CSV/JSON outputs next to this file.",
+            "Detailed grouped rows, failure-type rows, detector blocks, status movements, OCR decision changes, and promoted-record reasons are in the CSV/JSON outputs next to this file.",
             "",
         ]
     )

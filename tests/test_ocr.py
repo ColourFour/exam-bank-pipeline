@@ -233,6 +233,33 @@ def test_candidate_selection_selects_ocr_when_it_preserves_question_marks_and_su
     assert "expected_mark_brackets_present" in decision.text_candidate_decision_reasons
 
 
+def test_candidate_selection_selects_ocr_with_large_safe_margin_below_old_threshold() -> None:
+    native = (
+        "2 Avanofmass3600 kgistowingatrailerofmass1200 kgalongastraighthorizontalroadusinga light horizontal rope. "
+        "There are resistance forces of 700 N on the van and 300 N on the trailer. (a) Find the tension in the rope. [4] "
+        "Thedriving force is now removed and thevan driver applies a braking force. (b) Find the braking force. [2]"
+    )
+    ocr = (
+        "2 A van of mass 3600 kg is towing a trailer of mass 1200 kg along a straight horizontal road using a light horizontal rope. "
+        "There are resistance forces of 700 N on the van and 300 N on the trailer. (a) Find the tension in the rope. [4] "
+        "The driving force is now removed and the van driver applies a braking force. (b) Find the braking force. [2]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="2",
+        expected_subparts=["a", "b"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is True
+    assert 20 <= decision.ocr_text_score - decision.native_text_score < 30
+    assert "ocr_score_clear_margin" in decision.text_candidate_decision_reasons
+
+
 def test_candidate_selection_retains_native_when_ocr_has_symbol_garbage() -> None:
     native = "2 Find the value of x for which 3(2 - x) = 12. Give your answer in exact form. [4]"
     ocr = "2 Find the value @@@ x ??? 3(2 - x) == ||||. Give answer?? [4]"
@@ -247,7 +274,7 @@ def test_candidate_selection_retains_native_when_ocr_has_symbol_garbage() -> Non
 
     assert decision.ocr_selected is False
     assert decision.text_candidate_source == "native"
-    assert "ocr_not_clearly_better" in decision.ocr_rejected_reasons
+    assert "ocr_introduced_compacted_math_corruption" in decision.ocr_rejected_reasons
 
 
 def test_candidate_selection_rejects_page_furniture_or_barcode_text() -> None:
@@ -380,6 +407,90 @@ def test_candidate_selection_rejects_ocr_that_loses_math_structure() -> None:
 
     assert decision.ocr_selected is False
     assert "ocr_lost_math_structure" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_large_margin_ocr_with_unit_corruption() -> None:
+    native = (
+        "6 Acarofmass1750kgispullingacaravanofmass500kg. Thecarandthecaravanareconnected "
+        "byalightrigidtow-bar. (a) The car and caravan are moving at a constant speed of 24ms^{-}1. [2] "
+        "(b) The car travels up a hill at a constant speed of vms^{-}1. Find v. [3]"
+    )
+    ocr = (
+        "6 A car of mass 1750 kg is pulling a caravan of mass 500 kg. "
+        "(a) The car and caravan are moving at a constant speed of 24ms7!. [2] "
+        "(b) The car travels up a hill at a constant speed of vms~!. Find v. [3]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="6",
+        expected_subparts=["a", "b"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is False
+    assert "ocr_introduced_unit_corruption" in decision.ocr_rejected_reasons
+    assert "ocr_large_margin_blocked_by_structural_rejection" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_large_margin_ocr_with_missing_equation_operand() -> None:
+    native = "4 ThetablegivesP(X=x).(a)Showthata=1/5andfindbandc.[4](b)FindE(X).[1]"
+    ocr = "4 The probability distribution table is shown. (a) Show that a = + and find b and c. [4] (b) Find E(X). [1]"
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="4",
+        expected_subparts=["a", "b"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is False
+    assert "ocr_lost_math_structure" in decision.ocr_rejected_reasons
+    assert "ocr_large_margin_blocked_by_structural_rejection" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_ocr_that_loses_function_greek_radical_or_unit_structure() -> None:
+    cases = [
+        (
+            "5 The function f(x) = x^2 + 1 is transformed to g(x). Find g(x). [3]",
+            "5 The function is transformed. Find the new expression. [3]",
+            "ocr_lost_function_structure",
+        ),
+        (
+            "4 Solve sin θ + cos θ = 1 for 0 < θ < π. [4]",
+            "4 Solve the trigonometric equation for the given interval. [4]",
+            "ocr_lost_greek_symbol",
+        ),
+        (
+            "5 Find the square roots of -4 + 6√5i in exact Cartesian form. [5]",
+            "5 Find the square roots of -4 + 6 5i in exact Cartesian form. [5]",
+            "ocr_lost_radical_structure",
+        ),
+        (
+            "2 A particle is projected with speed 10 m s^{-1}. Find the height. [2]",
+            "2 A particle is projected with speed 10. Find the height. [2]",
+            "ocr_lost_unit_structure",
+        ),
+    ]
+
+    for native, ocr, reason in cases:
+        decision = select_text_candidate(
+            native_text=native,
+            ocr_text=ocr,
+            expected_question_number=native.split()[0],
+            expected_subparts=[],
+            scope_quality_status="clean",
+            mapping_status="pass",
+            validation_status="pass",
+        )
+        assert decision.ocr_selected is False
+        assert reason in decision.ocr_rejected_reasons
 
 
 def test_selected_ocr_math_text_remains_text_only_gated() -> None:

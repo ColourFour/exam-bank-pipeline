@@ -8,6 +8,14 @@ from exam_bank.config import AppConfig
 from exam_bank.exporters import QUESTION_BANK_SCHEMA_NAME, QUESTION_BANK_SCHEMA_VERSION, export_records
 from exam_bank.models import QuestionRecord
 from exam_bank.output_layout import mark_scheme_image_output_path, paper_instance_id, question_image_output_path
+from exam_bank.output_layout import (
+    CANONICAL_LAYOUT_PROFILE,
+    OCR_CANDIDATE_LAYOUT_PROFILE,
+    default_asterion_export_path,
+    default_triage_comparison_path,
+    generated_output_contract,
+    output_profile_for_root,
+)
 
 
 def _record() -> QuestionRecord:
@@ -190,6 +198,7 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "ocr_engine_version",
         "input_manifest_sha256",
         "artifact_root",
+        "output_layout",
         "qa_summary",
     } == set(manifest)
     assert manifest["schema_version"] == 1
@@ -205,6 +214,7 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     assert manifest["ocr_engine_version"] == ""
     assert re.fullmatch(r"[0-9a-f]{64}", manifest["input_manifest_sha256"])
     assert manifest["artifact_root"] == str(tmp_path / "output")
+    assert manifest["output_layout"] == {"version": 1, "profile": CANONICAL_LAYOUT_PROFILE}
     assert manifest["qa_summary"]["record_count"] == 1
     assert manifest["qa_summary"]["paper_family_counts"] == {"p1": 1}
     assert manifest["qa_summary"]["validation_status_counts"] == {"pass": 1}
@@ -321,3 +331,28 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "paper_total_before_rescan",
         "paper_total_focus_questions",
     }.issubset(question["notes"])
+
+
+def test_generated_output_contract_paths_are_single_source_of_truth(tmp_path: Path) -> None:
+    contract = generated_output_contract(tmp_path / "output")
+
+    assert contract.run_root("20260513T010000Z-standard-abcd1234") == (
+        tmp_path / "output" / "runs" / "20260513T010000Z-standard-abcd1234"
+    )
+    assert contract.canonical_current_dir() == tmp_path / "output" / "current"
+    assert contract.ocr_candidate_root("iteration_005") == tmp_path / "output" / "candidates" / "ocr" / "iteration_005"
+    assert contract.triage_iteration_dir("iteration_005") == tmp_path / "output" / "triage" / "iteration_005"
+    assert default_triage_comparison_path(
+        tmp_path / "output" / "triage" / "iteration_005",
+        "comparison.auto-iteration-005.json",
+    ) == tmp_path / "output" / "triage" / "iteration_005" / "comparisons" / "comparison.auto-iteration-005.json"
+    assert default_asterion_export_path(
+        tmp_path / "output" / "json" / "question_bank.json",
+        "asterion_question_bank_v1.json",
+    ) == tmp_path / "output" / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json"
+
+
+def test_output_profile_detection_preserves_legacy_ocr_candidate_root() -> None:
+    assert output_profile_for_root("output") == CANONICAL_LAYOUT_PROFILE
+    assert output_profile_for_root("output_ocr_candidate") == OCR_CANDIDATE_LAYOUT_PROFILE
+    assert output_profile_for_root("output/candidates/ocr/latest") == OCR_CANDIDATE_LAYOUT_PROFILE

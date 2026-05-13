@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 import re
 
@@ -16,6 +17,112 @@ _SESSION_FOLDER_LABELS = {
     "October": "autumn",
     "OctNov": "autumn",
 }
+
+LEGACY_LAYOUT_PROFILE = "legacy"
+CANONICAL_LAYOUT_PROFILE = "canonical"
+OCR_CANDIDATE_LAYOUT_PROFILE = "ocr-candidate"
+OUTPUT_LAYOUT_VERSION = 1
+
+QUESTION_BANK_FILENAME = "question_bank.json"
+TRIAGE_BASELINE_FILENAME = "baseline_question_bank.json"
+TRIAGE_COMPARISONS_DIRNAME = "comparisons"
+
+PAPER_ARTIFACT_DIR_RE = re.compile(r"^p[1-6]$")
+ITERATION_DIR_RE = re.compile(r"^iteration_\d{3}$")
+
+
+@dataclass(frozen=True)
+class GeneratedOutputContract:
+    """Central path contract for generated output roots."""
+
+    root: Path
+
+    def run_root(self, run_id: str) -> Path:
+        return self.root / "runs" / _safe_segment(run_id)
+
+    def canonical_current_dir(self) -> Path:
+        return self.root / "current"
+
+    def ocr_candidate_root(self, run_id: str = "latest") -> Path:
+        return self.root / "candidates" / "ocr" / _safe_segment(run_id)
+
+    def triage_root(self) -> Path:
+        return self.root / "triage"
+
+    def triage_iteration_dir(self, iteration: str) -> Path:
+        return self.triage_root() / _safe_segment(iteration)
+
+    def triage_comparisons_dir(self, iteration: str | Path) -> Path:
+        iteration_path = Path(iteration)
+        if iteration_path.is_absolute() or iteration_path.parent != Path("."):
+            return iteration_path / TRIAGE_COMPARISONS_DIRNAME
+        return self.triage_iteration_dir(str(iteration)) / TRIAGE_COMPARISONS_DIRNAME
+
+    def audit_dir(self, audit_id: str) -> Path:
+        return self.root / "audits" / _safe_segment(audit_id)
+
+    def asterion_reports_dir(self, run_id: str = "latest") -> Path:
+        return self.root / "asterion" / "reports" / _safe_segment(run_id)
+
+    def asterion_exports_dir(self, run_id: str = "latest") -> Path:
+        return self.root / "asterion" / "exports" / _safe_segment(run_id)
+
+
+def generated_output_contract(root: str | Path = "output") -> GeneratedOutputContract:
+    return GeneratedOutputContract(Path(root))
+
+
+def default_asterion_export_path(
+    input_path: str | Path,
+    filename: str,
+    *,
+    run_id: str = "latest",
+) -> Path:
+    contract = generated_output_contract(infer_generated_root(input_path))
+    return contract.asterion_exports_dir(run_id) / filename
+
+
+def default_triage_comparison_path(iteration_dir: str | Path, comparison_name: str) -> Path:
+    return Path(iteration_dir) / TRIAGE_COMPARISONS_DIRNAME / comparison_name
+
+
+def infer_generated_root(path: str | Path) -> Path:
+    """Infer the generated-output root from a file or folder inside that root."""
+
+    path = Path(path)
+    candidates = [path, *path.parents]
+    for candidate in candidates:
+        if candidate.name == "json":
+            return candidate.parent
+        if candidate.name in {"current", "artifacts", "audits", "run_status", "logs"}:
+            return candidate.parent
+        if candidate.name in {"exports", "reports"} and candidate.parent.name == "asterion":
+            return candidate.parent.parent
+        if candidate.name == "asterion":
+            return candidate.parent
+        if candidate.name == "triage":
+            return candidate.parent
+        if candidate.name == "ocr" and candidate.parent.name == "candidates":
+            return candidate.parent.parent
+        if candidate.parent.name == "ocr" and candidate.parent.parent.name == "candidates":
+            return candidate.parent.parent.parent
+        if candidate.parent.name == "runs":
+            return candidate.parent.parent
+    if path.suffix:
+        return path.parent
+    return path
+
+
+def output_profile_for_root(root: str | Path) -> str:
+    root_path = Path(root)
+    parts = root_path.parts
+    if len(parts) >= 3 and parts[-3:-1] == ("candidates", "ocr"):
+        return OCR_CANDIDATE_LAYOUT_PROFILE
+    if root_path.name == "output_ocr_candidate":
+        return OCR_CANDIDATE_LAYOUT_PROFILE
+    if root_path.parent.name == "runs" or root_path.name in {"output", "current"}:
+        return CANONICAL_LAYOUT_PROFILE
+    return LEGACY_LAYOUT_PROFILE
 
 
 def question_image_output_path(

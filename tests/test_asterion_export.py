@@ -173,7 +173,7 @@ def test_asterion_export_writes_sidecar_without_mutating_question_bank(tmp_path:
 
     output_path = export_asterion_question_bank(input_path, artifact_root=artifact_root, base_dir=tmp_path)
 
-    assert output_path == input_path.with_name(ASTERION_EXPORT_FILENAME)
+    assert output_path == tmp_path / "output_ocr_candidate" / "asterion" / "exports" / "latest" / ASTERION_EXPORT_FILENAME
     assert input_path.read_text(encoding="utf-8") == original
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["schema_name"] == ASTERION_SCHEMA_NAME
@@ -312,7 +312,7 @@ def test_content_lab_candidates_export_writes_sidecar_from_question_bank(tmp_pat
         skill_map_path=skill_map_path,
     )
 
-    assert output_path == input_path.with_name(CONTENT_LAB_EXPORT_FILENAME)
+    assert output_path == tmp_path / "output_ocr_candidate" / "asterion" / "exports" / "latest" / CONTENT_LAB_EXPORT_FILENAME
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["schema_name"] == CONTENT_LAB_SCHEMA_NAME
     assert payload["record_count"] >= 1

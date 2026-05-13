@@ -20,6 +20,14 @@ from .auto_triage import (
 )
 from .config import AppConfig, load_config
 from . import deepseek_enrich
+from .output_management import (
+    build_cleanup_plan,
+    build_output_inventory,
+    render_cleanup_plan_markdown,
+    render_inventory_markdown,
+    write_cleanup_plan_outputs,
+    write_inventory_outputs,
+)
 from .pipeline import PipelineResult, process_inputs
 from .triage import ISSUE_SET_ALL_NON_READY, ISSUE_SET_HARD_FAILURES, compare_iteration, create_triage_iteration, serve_iteration
 
@@ -75,7 +83,7 @@ def build_parser() -> argparse.ArgumentParser:
     asterion.add_argument(
         "--output",
         default="",
-        help=f"Output path. Defaults to {ASTERION_EXPORT_FILENAME} beside the input JSON.",
+        help=f"Output path. Defaults to output-root/asterion/exports/latest/{ASTERION_EXPORT_FILENAME}.",
     )
     asterion.add_argument(
         "--artifact-root",
@@ -101,7 +109,7 @@ def build_parser() -> argparse.ArgumentParser:
     content_lab.add_argument(
         "--output",
         default="",
-        help=f"Output path. Defaults to {CONTENT_LAB_EXPORT_FILENAME} beside the input JSON.",
+        help=f"Output path. Defaults to output-root/asterion/exports/latest/{CONTENT_LAB_EXPORT_FILENAME}.",
     )
     content_lab.add_argument(
         "--artifact-root",
@@ -260,6 +268,28 @@ def build_parser() -> argparse.ArgumentParser:
     auto_runbook.add_argument("--sample-size", type=int, default=30, help="Fallback sample size.")
     auto_runbook.add_argument("--seed", type=int, default=1, help="Fallback triage sample seed.")
     auto_runbook.set_defaults(func=cmd_auto_triage_runbook)
+
+    inventory = subparsers.add_parser(
+        "output-inventory",
+        help="Inventory generated output roots without modifying files.",
+    )
+    inventory.add_argument("--root", action="append", default=[], help="Generated output root to inspect. May be repeated.")
+    inventory.add_argument("--write", default="", help="Optional Markdown report path.")
+    inventory.add_argument("--json", default="", help="Optional JSON report path.")
+    inventory.add_argument("--include-size", action="store_true", help="Include recursive byte sizes for reported paths.")
+    inventory.add_argument("--max-depth", type=int, default=6, help="Maximum scan depth below each root.")
+    inventory.set_defaults(func=cmd_output_inventory)
+
+    cleanup = subparsers.add_parser(
+        "output-cleanup-plan",
+        help="Create a dry-run cleanup plan for generated output roots.",
+    )
+    cleanup.add_argument("--root", action="append", default=[], help="Generated output root to inspect. May be repeated.")
+    cleanup.add_argument("--write", default="", help="Optional Markdown cleanup plan path.")
+    cleanup.add_argument("--json", default="", help="Optional JSON cleanup plan path.")
+    cleanup.add_argument("--include-size", action="store_true", help="Include recursive byte sizes for planned paths.")
+    cleanup.add_argument("--max-depth", type=int, default=6, help="Maximum scan depth below each root.")
+    cleanup.set_defaults(func=cmd_output_cleanup_plan)
     return parser
 
 
@@ -452,6 +482,36 @@ def cmd_auto_triage_runbook(args: argparse.Namespace) -> int:
         seed=args.seed,
     )
     print(_runbook_text(report))
+    return 0
+
+
+def cmd_output_inventory(args: argparse.Namespace) -> int:
+    roots = args.root or ["output"]
+    report = build_output_inventory(roots, include_size=args.include_size, max_depth=args.max_depth)
+    write_inventory_outputs(
+        report,
+        json_path=Path(args.json) if args.json else None,
+        markdown_path=Path(args.write) if args.write else None,
+    )
+    if args.write:
+        print(f"Wrote output inventory to {args.write}")
+    else:
+        print(render_inventory_markdown(report), end="")
+    return 0
+
+
+def cmd_output_cleanup_plan(args: argparse.Namespace) -> int:
+    roots = args.root or ["output"]
+    plan = build_cleanup_plan(roots, include_size=args.include_size, max_depth=args.max_depth)
+    write_cleanup_plan_outputs(
+        plan,
+        json_path=Path(args.json) if args.json else None,
+        markdown_path=Path(args.write) if args.write else None,
+    )
+    if args.write:
+        print(f"Wrote output cleanup plan to {args.write}")
+    else:
+        print(render_cleanup_plan_markdown(plan), end="")
     return 0
 
 

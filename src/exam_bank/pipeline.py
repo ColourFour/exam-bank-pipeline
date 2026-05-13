@@ -515,6 +515,8 @@ def _build_question_record(
             flags.extend(["ocr_question_text", "ocr_selected_for_question_text"])
             if marks is None:
                 marks = extract_question_total_from_text(question_text)
+        elif "ocr_large_margin_blocked_by_structural_rejection" in text_candidate_decision.ocr_rejected_reasons:
+            flags.append("ocr_large_margin_blocked_by_structural_rejection")
         classification = classify_question(
             question_text,
             marks,

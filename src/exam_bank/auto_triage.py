@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 from typing import Any
 
+from .output_layout import default_triage_comparison_path
 from .triage import ISSUE_SET_HARD_FAILURES, compare_iteration, issue_counts, is_hard_failure, load_question_bank
 
 
@@ -316,7 +317,7 @@ def build_runbook_commands(
     candidate_output = Path(candidate_output)
     iteration_name = triage_iteration.name
     comparison_name = f"comparison.auto-{iteration_name.replace('_', '-')}.json"
-    comparison_output = triage_iteration / comparison_name
+    comparison_output = default_triage_comparison_path(triage_iteration, comparison_name)
     current_candidate = candidate_output / "json" / "question_bank.json"
 
     return {

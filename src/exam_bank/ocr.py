@@ -58,6 +58,7 @@ _MATH_STRUCTURE_RE = re.compile(
     r"(?:\\frac|∫|√|≤|≥|[<>=]|\b(?:sin|cos|tan|sec|cosec|cot|ln|log|arg|vector|matrix|modulus|complex)\b)",
     re.IGNORECASE,
 )
+_LARGE_SAFE_OCR_MARGIN = 20
 _PAGE_FURNITURE_RE = re.compile(
     r"\b(?:UCLES|Cambridge|BLANK PAGE|Additional Materials|READ THESE INSTRUCTIONS|INSTRUCTIONS|Question Paper|Mark Scheme)\b",
     re.IGNORECASE,
@@ -266,11 +267,50 @@ def select_text_candidate(
         rejected.append("ocr_lost_mark_brackets")
     if _ocr_lost_math_structure(native, ocr):
         rejected.append("ocr_lost_math_structure")
+    if _ocr_lost_visual_dependency_prompt(native, ocr):
+        rejected.append("ocr_lost_visual_dependency_prompt")
+    if _ocr_lost_function_structure(native, ocr):
+        rejected.append("ocr_lost_function_structure")
+    if _ocr_lost_greek_symbol(native, ocr):
+        rejected.append("ocr_lost_greek_symbol")
+    if _ocr_lost_radical_structure(native, ocr):
+        rejected.append("ocr_lost_radical_structure")
+    if _ocr_lost_unit_structure(native, ocr):
+        rejected.append("ocr_lost_unit_structure")
+
+    ocr_visual_flags = set(
+        visual_reason_flags(
+            question_text=ocr,
+            extraction_quality_flags=[],
+            review_flags=["ocr_question_text"],
+            question_structure_detected={},
+            text_source_profile="ocr",
+        )
+    )
+    if "contains_unit_corruption" in ocr_visual_flags:
+        rejected.append("ocr_introduced_unit_corruption")
+    if "contains_symbol_loss" in ocr_visual_flags:
+        rejected.append("ocr_introduced_symbol_loss")
+    if "contains_native_compacted_math_corruption" in ocr_visual_flags:
+        rejected.append("ocr_introduced_compacted_math_corruption")
+    if "contains_flattened_math_structure" in ocr_visual_flags and "contains_flattened_math_structure" not in set(
+        visual_reason_flags(
+            question_text=native,
+            extraction_quality_flags=[],
+            review_flags=[],
+            question_structure_detected={},
+            text_source_profile="native_pdf",
+        )
+    ):
+        rejected.append("ocr_introduced_flattened_math_structure")
 
     margin = ocr_score.score - native_score.score
     if rejected:
+        if margin >= _LARGE_SAFE_OCR_MARGIN:
+            rejected.append("ocr_large_margin_blocked_by_structural_rejection")
+            reasons.append("ocr_large_margin_blocked_by_structural_rejection")
         reasons.append("ocr_rejected")
-    elif margin >= 30:
+    elif margin >= _LARGE_SAFE_OCR_MARGIN:
         reasons.append("ocr_score_clear_margin")
         return TextCandidateDecision(
             selected_text=ocr,
@@ -321,11 +361,111 @@ def _ocr_missing_question_number_is_tolerable(
 
 
 def _ocr_lost_math_structure(native_text: str, ocr_text: str) -> bool:
+    if _has_missing_math_operand(ocr_text):
+        return True
     native_count = len(_MATH_STRUCTURE_RE.findall(native_text))
     if native_count < 3:
         return False
     ocr_count = len(_MATH_STRUCTURE_RE.findall(ocr_text))
     return ocr_count < max(1, native_count // 2)
+
+
+def _has_missing_math_operand(text: str) -> bool:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
+    return bool(
+        re.search(r"=\s*[+\-*/]\s*(?:and|or|[.;,)\]]|$)", normalized, re.IGNORECASE)
+        or re.search(r"(?:^|\s)[+\-*/]\s*(?:and|or|[.;,)\]]|$)", normalized, re.IGNORECASE)
+    )
+
+
+def _ocr_lost_visual_dependency_prompt(native_text: str, ocr_text: str) -> bool:
+    native_flags = set(
+        visual_reason_flags(
+            question_text=native_text,
+            extraction_quality_flags=[],
+            review_flags=[],
+            question_structure_detected={},
+            text_source_profile="native_pdf",
+        )
+    )
+    if not native_flags & {"contains_graph_or_diagram_prompt", "contains_table_or_data_prompt"}:
+        return False
+    ocr_flags = set(
+        visual_reason_flags(
+            question_text=ocr_text,
+            extraction_quality_flags=[],
+            review_flags=["ocr_question_text"],
+            question_structure_detected={},
+            text_source_profile="ocr",
+        )
+    )
+    return not bool(ocr_flags & {"contains_graph_or_diagram_prompt", "contains_table_or_data_prompt"})
+
+
+def _ocr_lost_function_structure(native_text: str, ocr_text: str) -> bool:
+    return _function_structure_count(native_text) > 0 and _function_structure_count(ocr_text) == 0
+
+
+def _function_structure_count(text: str) -> int:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
+    return len(
+        re.findall(
+            r"\b(?:[fgh]\s*\(\s*x\s*\)|[fgh]\s*:\s*x|(?:sin|cos|tan|sec|cosec|cot|ln|log)\s*(?:\^\{?-?1\}?|\(|[A-Za-z0-9θ]))",
+            normalized,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _ocr_lost_greek_symbol(native_text: str, ocr_text: str) -> bool:
+    return bool(_greek_symbols(native_text)) and not _greek_symbols(ocr_text)
+
+
+def _greek_symbols(text: str) -> set[str]:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split()).lower()
+    symbols: set[str] = set()
+    for symbol, names in {
+        "theta": ("θ", "theta"),
+        "pi": ("π", " pi "),
+        "sigma": ("σ", "sigma"),
+        "alpha": ("α", "alpha"),
+        "lambda": ("λ", "lambda"),
+        "mu": ("μ", " mu "),
+    }.items():
+        if any(name in f" {normalized} " for name in names):
+            symbols.add(symbol)
+    return symbols
+
+
+def _ocr_lost_radical_structure(native_text: str, ocr_text: str) -> bool:
+    return _radical_signal_count(native_text) > 0 and _radical_signal_count(ocr_text) == 0
+
+
+def _radical_signal_count(text: str) -> int:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
+    return len(re.findall(r"√|\\sqrt|\bsqrt\b|\bsurd\b", normalized, re.IGNORECASE))
+
+
+def _ocr_lost_unit_structure(native_text: str, ocr_text: str) -> bool:
+    native_count = _valid_unit_signal_count(native_text)
+    if native_count == 0:
+        return False
+    ocr_count = _valid_unit_signal_count(ocr_text)
+    return ocr_count < max(1, native_count // 2)
+
+
+def _valid_unit_signal_count(text: str) -> int:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
+    unit_re = re.compile(
+        r"(?<![A-Za-z0-9])(?:"
+        r"kg|J|kW|"
+        r"m\s*s\^\s*-?\d|m\s*s\^\{-?\d\}|m\s*s\^\{-?\}\s*\d|m\s*s\^-?\d|"
+        r"ms\^-?\d|ms\^\{-?\d\}|ms\^\{-?\}\s*\d|m/s(?:\^?-?\d)?"
+        r")(?=$|[^A-Za-z0-9])",
+        re.IGNORECASE,
+    )
+    force_unit_re = re.compile(r"\b\d+(?:\.\d+)?\s*N\b")
+    return len(unit_re.findall(normalized)) + len(force_unit_re.findall(normalized))
 
 
 def _contains_question_number(text: str, question_number: str) -> bool:

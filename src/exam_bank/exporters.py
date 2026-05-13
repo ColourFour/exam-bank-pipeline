@@ -14,6 +14,8 @@ from .models import QuestionRecord
 from .ocr import OCR_ENGINE
 from .output_layout import (
     component_code_from_values,
+    OUTPUT_LAYOUT_VERSION,
+    output_profile_for_root,
     paper_family_dir_name,
     paper_instance_id,
     question_id,
@@ -106,6 +108,10 @@ def _build_run_manifest(
         "ocr_engine_version": _ocr_engine_version(records, config),
         "input_manifest_sha256": input_manifest_sha256,
         "artifact_root": _artifact_root_value(output_root, output_path),
+        "output_layout": {
+            "version": OUTPUT_LAYOUT_VERSION,
+            "profile": output_profile_for_root(output_root or output_path.parent.parent),
+        },
         "qa_summary": _qa_summary(records, question_payload),
     }
 
@@ -271,6 +277,10 @@ def _build_payload_run_manifest(question_payload: list[dict[str, Any]], *, outpu
         "ocr_engine_version": "",
         "input_manifest_sha256": payload_hash,
         "artifact_root": _artifact_root_value(None, output_path),
+        "output_layout": {
+            "version": OUTPUT_LAYOUT_VERSION,
+            "profile": output_profile_for_root(output_path.parent.parent),
+        },
         "qa_summary": {
             "record_count": len(question_payload),
             "paper_family_counts": _counts(question.get("paper_family", "") for question in question_payload),

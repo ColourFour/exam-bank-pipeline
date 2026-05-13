@@ -80,6 +80,17 @@ For comparison or review candidates, write OCR-enabled output to a separate fold
 .venv/bin/python -m exam_bank.cli process --input input --output output_ocr_candidate --enable-ocr
 ```
 
+The preferred candidate home for new runs is:
+
+```bash
+.venv/bin/python -m exam_bank.cli process \
+  --input input \
+  --output output/candidates/ocr/latest \
+  --enable-ocr
+```
+
+`output_ocr_candidate/` remains a supported compatibility root for historical commands and comparisons.
+
 Long-running commands write live status files and show a built-in text progress bar by default. Standard process runs write:
 
 ```text
@@ -119,6 +130,69 @@ output/
 ```
 
 Paper folders use `{component}{season}{yy}`, for example `12spring21`, `33summer24`, and `53autumn25`.
+
+## Generated Output Layout
+
+The current compatibility contract keeps `process --output <root>` working exactly as before: the selected output root contains paper artifact folders, `json/question_bank.json`, and `run_status/<run_id>/`. New `question_bank.json` manifests include an `output_layout` block that labels the profile, such as `canonical`, `ocr-candidate`, or `legacy`.
+
+Recommended layout for new generated output:
+
+```text
+output/
+  json/question_bank.json                 # canonical compatibility path
+  p1/ p3/ p4/ p5/                         # canonical compatibility artifacts
+  current/                                # pointer/copy area for future canonical promotion
+  runs/<run_id>/                          # archival canonical run roots
+  candidates/ocr/<run_id>/                # OCR candidate run roots
+  triage/iteration_###/
+    baseline_question_bank.json           # frozen; never edit in place
+    summary.json
+    sample.json
+    review.jsonl
+    index.html
+    comparisons/
+  audits/<audit_id>/
+  asterion/exports/<run_id-or-latest>/
+  asterion/reports/<run_id-or-latest>/
+```
+
+Canonical image artifacts are the `p*/<paper>/questions/*.png` and `p*/<paper>/mark_scheme/*.png` files under the output root that produced the JSON. `question_bank.json`, OCR text, topic labels, readiness tiers, audit CSVs, and Asterion JSONs are metadata or downstream projections.
+
+Frozen triage baselines must not be deleted, moved, or overwritten: `output*/triage/iteration_*/baseline_question_bank.json`. Generated reports, candidate folders, run-status folders, and inventories can be regenerated, but archive or review them first when they support an active comparison.
+
+Git should ignore generated output roots and local inventory reports: `output/`, `output_ocr_candidate/`, `repo_file_inventory.txt`, `generated_output_inventory.txt`, `output_inventory.*`, and `output_cleanup_plan.md`. Commit only source, tests, docs, schemas, and intentionally small fixtures or snapshots.
+
+Inventory generated output roots:
+
+```bash
+.venv/bin/python -m exam_bank.cli output-inventory \
+  --root output \
+  --root output_ocr_candidate \
+  --write output/output_inventory.md \
+  --json output/output_inventory.json
+```
+
+Create a dry-run cleanup plan:
+
+```bash
+.venv/bin/python -m exam_bank.cli output-cleanup-plan \
+  --root output \
+  --root output_ocr_candidate \
+  --write output/output_cleanup_plan.md
+```
+
+Cleanup planning does not delete or move files.
+
+### Where Did My Files Go?
+
+- Canonical compatibility JSON: `output/json/question_bank.json`.
+- Canonical compatibility crops: `output/p*/<paper>/questions/` and `output/p*/<paper>/mark_scheme/`.
+- OCR candidates: historical `output_ocr_candidate/` or preferred `output/candidates/ocr/<run_id>/`.
+- Triage baselines: `output*/triage/iteration_*/baseline_question_bank.json`.
+- New triage comparisons: `output*/triage/iteration_*/comparisons/`.
+- Readiness audits: `output/audits/<audit_id>/`.
+- Asterion exports: `output*/asterion/exports/latest/` unless `--output` is supplied.
+- Run status: `<selected-output-root>/run_status/<run_id>/`.
 
 ## What The JSON Contains
 
@@ -189,16 +263,16 @@ Measure a corpus:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-status \
-  --input output_ocr_candidate/json/question_bank.json
+  --input output/candidates/ocr/latest/json/question_bank.json
 ```
 
 Create the next handoff iteration until the hard-failure target is met:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-plan \
-  --input output_ocr_candidate/json/question_bank.json \
+  --input output/candidates/ocr/latest/json/question_bank.json \
   --handoff-root agent_handoffs/auto_triage \
-  --candidate-output output_ocr_candidate \
+  --candidate-output output/candidates/ocr/latest \
   --target-max-hard-failures 100 \
   --sample-size 30
 ```
@@ -207,8 +281,8 @@ Print the runbook for a handoff created by the planner:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-runbook \
-  --input output_ocr_candidate/json/question_bank.json \
-  --candidate-output output_ocr_candidate \
+  --input output/candidates/ocr/latest/json/question_bank.json \
+  --candidate-output output/candidates/ocr/latest \
   --handoff-root agent_handoffs/auto_triage
 ```
 
@@ -221,7 +295,7 @@ After focused implementation, full tests, and an OCR-enabled rerun, compare and 
   --iteration agent_handoffs/auto_triage/iteration_003 \
   --baseline-triage output_ocr_candidate/triage/iteration_002 \
   --current output_ocr_candidate/json/question_bank.json \
-  --output output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json \
+  --output output_ocr_candidate/triage/iteration_002/comparisons/comparison.auto-iteration-003.json \
   --test-status pass
 ```
 
@@ -295,7 +369,17 @@ Quality gate against a frozen triage iteration:
 
 ## Asterion Readiness
 
-Asterion handoff should be tiered, not all-or-nothing. The master JSON may contain every record, including review and fail records, but Asterion-facing exports should eventually be separated into slices such as:
+Asterion handoff should be tiered, not all-or-nothing. The conservative projection commands write under `output*/asterion/exports/latest/` by default:
+
+```bash
+.venv/bin/python -m exam_bank.cli asterion-export \
+  --input output/json/question_bank.json
+
+.venv/bin/python -m exam_bank.cli asterion-content-lab-candidates \
+  --input output/json/question_bank.json
+```
+
+Future Asterion-facing exports should be separated into slices such as:
 
 ```text
 asterion_gold.json
@@ -303,7 +387,7 @@ asterion_multimodal.json
 question_bank_master.json
 ```
 
-These exports do not exist yet. Until they do, downstream users should treat image artifacts as canonical unless a record is explicitly text-ready.
+Until tiered exports are implemented, downstream users should treat image artifacts as canonical unless a record is explicitly text-ready.
 
 The readiness audit currently classifies records as:
 

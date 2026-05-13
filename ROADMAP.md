@@ -240,6 +240,8 @@ Principles:
 
 Goal: make future JSONs auditable from the file alone.
 
+Status: substantially implemented. New exports include `run_manifest`, `artifact_root`, QA rollups, and `output_layout` profile metadata. Generated-output inventory and dry-run cleanup planning are available through `exam_bank.cli output-inventory` and `exam_bank.cli output-cleanup-plan`.
+
 Add top-level run metadata such as:
 
 ```json
@@ -266,10 +268,14 @@ Acceptance criteria:
 - Model/pipeline versions are explicit.
 - Artifact root is explicit.
 - QA summary is embedded.
+- Output layout profile is explicit.
+- Generated output can be inventoried without deleting or moving files.
 
 ## iteration_010 - Tiered Asterion exports
 
 Goal: generate separate exports for different uses.
+
+Current compatibility step: conservative Asterion exports now default to `output*/asterion/exports/latest/` instead of mixing sidecars into `json/` or paper artifact folders. Tiered slices remain future work.
 
 Suggested exports:
 

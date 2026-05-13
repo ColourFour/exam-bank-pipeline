@@ -113,6 +113,7 @@ def test_auto_triage_plan_creates_handoff_iteration_and_prompts(tmp_path: Path) 
     commands = json.loads((iteration_dir / "commands.json").read_text(encoding="utf-8"))
     assert "--iteration iteration_005" in commands["triage_sample"]
     assert "--enable-ocr" in commands["full_ocr_rerun"]
+    assert "output/triage/iteration_005/comparisons/comparison.auto-iteration-005.json" in commands["triage_comparison"]
     prompt_files = {path.name for path in (handoff_root / "Prompt").iterdir()}
     assert prompt_files == {
         "supervisor_prompt.md",

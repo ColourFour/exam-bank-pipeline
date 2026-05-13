@@ -43,6 +43,8 @@ Current OCR candidate:
 - Latest accepted auto-triage comparison: `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`.
 - That comparison moved hard failures `153 -> 133`, moved `paper_total_mismatch` `107 -> 86`, and reported `worsened_records: []`.
 
+For new candidate runs, prefer `output/candidates/ocr/<run_id>/` or `output/candidates/ocr/latest/`. The historical `output_ocr_candidate/` root remains supported for compatibility and evidence review.
+
 ## Hard-Failure Target
 
 Set a stopping threshold with `--target-max-hard-failures`. For example, to continue until the corpus has at most 100 hard failures:
@@ -50,15 +52,15 @@ Set a stopping threshold with `--target-max-hard-failures`. For example, to cont
 ```bash
 .venv/bin/python -m exam_bank.cli process \
   --input input \
-  --output output_ocr_candidate \
+  --output output/candidates/ocr/latest \
   --enable-ocr
 ```
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-plan \
-  --input output_ocr_candidate/json/question_bank.json \
+  --input output/candidates/ocr/latest/json/question_bank.json \
   --handoff-root agent_handoffs/auto_triage \
-  --candidate-output output_ocr_candidate \
+  --candidate-output output/candidates/ocr/latest \
   --target-max-hard-failures 100 \
   --sample-size 30
 ```
@@ -118,8 +120,8 @@ Print the next commands for a handoff created by the planner:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-runbook \
-  --input output_ocr_candidate/json/question_bank.json \
-  --candidate-output output_ocr_candidate \
+  --input output/candidates/ocr/latest/json/question_bank.json \
+  --candidate-output output/candidates/ocr/latest \
   --handoff-root agent_handoffs/auto_triage
 ```
 
@@ -143,7 +145,7 @@ Run the OCR export into a candidate folder:
 ```bash
 .venv/bin/python -m exam_bank.cli process \
   --input input \
-  --output output_ocr_candidate \
+  --output output/candidates/ocr/latest \
   --enable-ocr
 ```
 
@@ -151,7 +153,7 @@ Then verify OCR state:
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-status \
-  --input output_ocr_candidate/json/question_bank.json
+  --input output/candidates/ocr/latest/json/question_bank.json
 ```
 
 Do not claim production improvement from a no-OCR current output. No-OCR comparisons can help debug layout or crop behavior, but they must not be mixed into the canonical OCR score.
@@ -164,8 +166,8 @@ After Agent 3 has run full tests and Agent 4 has produced OCR-enabled output:
 .venv/bin/python -m exam_bank.cli auto-triage-compare \
   --iteration agent_handoffs/auto_triage/iteration_005 \
   --baseline-triage output/triage/iteration_005 \
-  --current output_ocr_candidate/json/question_bank.json \
-  --output output/triage/iteration_005/comparison.auto-iteration-005.json \
+  --current output/candidates/ocr/latest/json/question_bank.json \
+  --output output/triage/iteration_005/comparisons/comparison.auto-iteration-005.json \
   --test-status pass
 ```
 

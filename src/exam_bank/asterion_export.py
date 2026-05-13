@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .output_layout import default_asterion_export_path
+
 
 ASTERION_SCHEMA_NAME = "asterion.question_bank"
 ASTERION_SCHEMA_VERSION = 1
@@ -36,7 +38,7 @@ def export_asterion_question_bank(
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
-    output = Path(output_path) if output_path is not None else input_path.with_name(ASTERION_EXPORT_FILENAME)
+    output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path) if skill_map_path else None
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
@@ -62,7 +64,7 @@ def export_asterion_content_lab_candidates(
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
-    output = Path(output_path) if output_path is not None else input_path.with_name(CONTENT_LAB_EXPORT_FILENAME)
+    output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, CONTENT_LAB_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path) if skill_map_path else None
     asterion_payload = _ensure_asterion_payload(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings)
     output.parent.mkdir(parents=True, exist_ok=True)

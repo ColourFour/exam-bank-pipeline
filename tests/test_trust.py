@@ -120,6 +120,31 @@ def _visual_flags(text: str, *, review_flags: list[str] | None = None, extractio
     )
 
 
+def _text_only_outcome(text: str) -> tuple[str, str, list[str], list[str]]:
+    flags = _visual_flags(text)
+    fidelity_status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=[],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="native_pdf",
+    )
+    role, trust, _visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=fidelity_status,
+        visual_reason_flags=flags,
+    )
+    text_status = derive_text_only_status(
+        validation_status="pass",
+        scope_quality_status="clean",
+        question_text_role=role,
+        question_text_trust=trust,
+    )
+    return text_status, fidelity_status, flags, fidelity_flags
+
+
 def test_visual_flags_catch_reordered_graph_equation_text() -> None:
     flags = _visual_flags("Sketch the graph of y x 3 6 = -.")
     role, trust, visual_required = derive_question_text_semantics(
@@ -391,3 +416,140 @@ def test_repeated_trig_corruption_stays_text_only_fail_after_cleanup() -> None:
     assert role == "untrusted_math_text"
     assert visual_required is True
     assert text_status == "fail"
+
+
+def test_compacted_native_math_tokens_block_ready() -> None:
+    examples = [
+        "1 (a) Expand@1 -21xA_{2}. [1]",
+        "3 Find the term independent of x in @3x + x2_{2}A_{6}. [3]",
+        "1 The coefficient of x^{3} in the expansion of@p + p1xA_{4} is 144. [4]",
+    ]
+
+    for text in examples:
+        text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+        assert text_status != "ready"
+        assert fidelity_status == "degraded"
+        assert "contains_native_compacted_math_corruption" in flags
+        assert "native_compacted_math_corruption" in fidelity_flags
+
+
+def test_valid_latex_like_subscript_does_not_trigger_compacted_math_corruption() -> None:
+    text = "The sequence A_{n} is defined by A_{n+1} = A_{n} + 3. Find A_{5}. [3]"
+    text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+
+    assert "contains_native_compacted_math_corruption" not in flags
+    assert "native_compacted_math_corruption" not in fidelity_flags
+    assert fidelity_status == "clean"
+    assert text_status == "review"
+
+
+def test_merged_diagram_and_table_prompt_wording_blocks_ready() -> None:
+    diagram_variants = [
+        "5 Thediagramshowsasector OAB of a circle. Find the area of the shaded segment. [4]",
+        "5 Thediagram shows a sector OAB of a circle. Find the area of the shaded segment. [4]",
+        "5 The diagram shows a sector OAB of a circle. Find the area of the shaded segment. [4]",
+        "12 Thepointtangent meets thediagram A with coordinatesshows y-axis. [2]",
+        "5 Fig. 1 shows a shaded sector. Find its perimeter. [4]",
+    ]
+    for text in diagram_variants:
+        text_status, fidelity_status, flags, _fidelity_flags = _text_only_outcome(text)
+        assert text_status == "review"
+        assert fidelity_status == "clean"
+        assert "contains_graph_or_diagram_prompt" in flags
+
+    table_text = "4 Thetableshows the values of x and P(X = x). Find E(X). [3]"
+    text_status, _fidelity_status, flags, _fidelity_flags = _text_only_outcome(table_text)
+    assert text_status == "review"
+    assert "contains_table_or_data_prompt" in flags
+
+
+def test_materially_flattened_math_blocks_ready() -> None:
+    examples = [
+        "1 Expand (1 + 3x)^{2}_{3} in ascending powers of x. [4]",
+        "8 The first three terms are a, 3_{2}a and b respectively. [5]",
+        "2 Show that the coefficient of friction is _{3}^{1}3. [3]",
+        "2 Expand (6 - x)(1 - 2x)^{-} 2^{3} in ascending powers of x. [4]",
+    ]
+
+    for text in examples:
+        text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+        assert text_status != "ready"
+        assert fidelity_status == "clean"
+        assert "contains_flattened_math_structure" in flags
+        assert "flattened_math_structure" not in fidelity_flags
+
+
+def test_symbol_loss_for_sigma_radicals_theta_and_pi_blocks_ready() -> None:
+    examples = [
+        "2 The weights are normally distributed with mean 1.04 kg and standard deviation 3 kg. Find the value of 3. [4]",
+        "2 A geometric progression has first term 3 + 4 2 and second term 5 - 2. Give your answer in exact form. [3]",
+        "5 The square roots of - 4 + 6 5i can be expressed in exact Cartesian form. [5]",
+        "4 Solve sin i + cos i = 1 for 0 < i < π. [4]",
+    ]
+
+    for text in examples:
+        text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+        assert text_status != "ready"
+        assert fidelity_status == "degraded"
+        assert "contains_symbol_loss" in flags
+        assert "symbol_loss_detected" in fidelity_flags
+
+
+def test_malformed_units_block_ready_but_clear_plain_text_units_are_allowed() -> None:
+    malformed = [
+        "4 The car moves at a constant speed of 36ms7!. Find the power. [2]",
+        "5 The cyclist has speed 4ms~! and acceleration 0.3ms~?. Find the power. [3]",
+        "2 A particle is projected vertically upwards with speed 10ms\"!. [2]",
+        "4 The car travels at 32 ms™! up a hill. [2]",
+    ]
+    for text in malformed:
+        text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+        assert text_status != "ready"
+        assert fidelity_status == "degraded"
+        assert "contains_unit_corruption" in flags
+        assert "malformed_unit_notation" in fidelity_flags
+
+    valid = [
+        "4 The car moves at a constant speed of 36 m s^-1. Find the power. [2]",
+        "4 The car moves at a constant speed of 36ms^-1. Find the power. [2]",
+        "4 The car moves at a constant speed of 36 m/s. Find the power. [2]",
+        "4 The car moves at a constant speed of 36 m s^{-1}. Find the power. [2]",
+    ]
+    for text in valid:
+        _text_status, fidelity_status, flags, fidelity_flags = _text_only_outcome(text)
+        assert "contains_unit_corruption" not in flags
+        assert "malformed_unit_notation" not in fidelity_flags
+        assert fidelity_status == "clean"
+
+
+def test_large_margin_ocr_structural_rejection_blocks_ready_without_marking_corrupt() -> None:
+    text = "2 A particle moves with speed 6 m s^{-1}. Find the impulse. [3]"
+    flags = _visual_flags(text, review_flags=["ocr_large_margin_blocked_by_structural_rejection"])
+    fidelity_status, fidelity_flags = assess_text_fidelity(
+        question_text=text,
+        extraction_quality_flags=[],
+        review_flags=["ocr_large_margin_blocked_by_structural_rejection"],
+        validation_flags=[],
+        question_structure_detected={},
+        mapping_failure_reason="",
+        text_source_profile="native_pdf",
+    )
+    role, trust, visual_required = derive_question_text_semantics(
+        question_text=text,
+        text_fidelity_status=fidelity_status,
+        visual_reason_flags=flags,
+    )
+    text_status = derive_text_only_status(
+        validation_status="pass",
+        scope_quality_status="clean",
+        question_text_role=role,
+        question_text_trust=trust,
+    )
+
+    assert "ocr_large_margin_structural_rejection" in flags
+    assert fidelity_status == "clean"
+    assert fidelity_flags == []
+    assert role == "search_hint"
+    assert trust == "medium"
+    assert visual_required is True
+    assert text_status == "review"

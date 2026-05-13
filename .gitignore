@@ -17,6 +17,12 @@ output/*
 !output/json/
 output/json/*
 !output/json/.gitkeep
+output_ocr_candidate/
+repo_file_inventory.txt
+generated_output_inventory.txt
+output_inventory.json
+output_inventory.md
+output_cleanup_plan.md
 
 # Legacy/generated practice output
 practice/

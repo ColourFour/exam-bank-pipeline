@@ -239,6 +239,12 @@ def assess_text_fidelity(
     )
     if "contains_math_text_corruption" in visual_flags:
         flags.add("math_text_corruption_detected")
+    if "contains_native_compacted_math_corruption" in visual_flags:
+        flags.add("native_compacted_math_corruption")
+    if "contains_symbol_loss" in visual_flags:
+        flags.add("symbol_loss_detected")
+    if "contains_unit_corruption" in visual_flags:
+        flags.add("malformed_unit_notation")
     if "contains_pdf_control_garbage" in visual_flags:
         flags.add("pdf_control_garbage_detected")
     if "native_text_missing_or_sparse" in visual_flags or "ocr_text_sparse_or_merged" in visual_flags:
@@ -286,12 +292,26 @@ def visual_reason_flags(
         "weak_question_text" in review_flags or any(flag.startswith("ocr_merged") for flag in review_flags)
     ) and _text_has_sparse_or_merged_question_text(normalized):
         flags.add("ocr_text_sparse_or_merged")
+    if "ocr_large_margin_blocked_by_structural_rejection" in review_flags:
+        flags.add("ocr_large_margin_structural_rejection")
 
     if _text_has_pdf_control_garbage(text):
         flags.add("contains_pdf_control_garbage")
     if _text_has_page_furniture(text):
         flags.add("contains_page_furniture")
-    if _text_has_math_corruption(text):
+    compacted_math_corruption = _text_has_native_compacted_math_corruption(text)
+    flattened_math_structure = _text_has_materially_flattened_math(text)
+    symbol_loss = _text_has_symbol_loss(text)
+    unit_corruption = _text_has_unit_corruption(text)
+    if compacted_math_corruption:
+        flags.add("contains_native_compacted_math_corruption")
+    if flattened_math_structure:
+        flags.add("contains_flattened_math_structure")
+    if symbol_loss:
+        flags.add("contains_symbol_loss")
+    if unit_corruption:
+        flags.add("contains_unit_corruption")
+    if _text_has_math_corruption(text) or compacted_math_corruption or symbol_loss or unit_corruption:
         flags.add("contains_math_text_corruption")
         flags.add("text_order_unreliable")
 
@@ -353,8 +373,13 @@ def derive_question_text_semantics(
             "contains_table_or_data_prompt",
             "contains_trig_expression",
             "contains_log_exponential_expression",
+            "contains_flattened_math_structure",
+            "contains_unit_corruption",
+            "contains_symbol_loss",
+            "contains_native_compacted_math_corruption",
             "contains_math_text_corruption",
             "contains_pdf_control_garbage",
+            "ocr_large_margin_structural_rejection",
             "text_order_unreliable",
             "native_text_missing_or_sparse",
             "ocr_text_sparse_or_merged",
@@ -584,6 +609,10 @@ def _normalize_for_visual_flags(text: str) -> str:
     return " ".join(str(text or "").replace("\u00a0", " ").split())
 
 
+def _compact_for_visual_flags(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", _normalize_for_visual_flags(text).lower())
+
+
 def _text_has_pdf_control_garbage(text: str) -> bool:
     raw = str(text or "")
     if any(char == "\ufffd" or ord(char) in {*range(0, 9), *range(14, 32)} for char in raw):
@@ -690,8 +719,92 @@ def _text_has_math_corruption(text: str) -> bool:
     return short_math_lines >= 2
 
 
+def _text_has_native_compacted_math_corruption(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    if not normalized:
+        return False
+
+    if "@" in normalized:
+        return True
+    if re.search(r"\b[A-Za-z0-9]+_\{\d+\}A_\{\d+\}", normalized):
+        return True
+    if re.search(r"\b[A-Za-z]?\d+_\{\d+\}A_\{\d+\}", normalized):
+        return True
+    if re.search(r"\b[bx]\d?_\{\d+\}[A-Za-z]\b", normalized):
+        return True
+    if re.search(r"\bb[^()\n]{0,18}l\^\{\d+\}", normalized):
+        return True
+    return False
+
+
+def _text_has_materially_flattened_math(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    if not normalized:
+        return False
+
+    patterns = [
+        r"\([^)]{1,80}\)\^\{\d+\}_\{\d+\}",
+        r"\^\{-\}\s*\d+\^\{\d+\}",
+        r"\b\d+_\{\d+\}[A-Za-z]\b",
+        r"\b[A-Za-z]_\{\d+\}[A-Za-z]\b",
+        r"\b_\{\d+\}\^\{\d+\}\d?\b",
+        r"\b(?:sin|cos|tan|sec|cosec|cot)_\{\d+\}\^\{\d+\}",
+        r"\b(?:sin|cos|tan|sec|cosec|cot)\^\{-\}\s*1\d",
+        r"\b(?:f|g|h)\s*x\)",
+        r"\bddyx\b|\bxddy\b",
+    ]
+    if any(re.search(pattern, normalized, re.IGNORECASE) for pattern in patterns):
+        return True
+
+    lowered = normalized.lower()
+    if "vector" in lowered and re.search(r"[`¿]{1,}|--[A-Z]{1,3}", normalized):
+        return True
+    if "matrix" in lowered and re.search(r"\b\d+\s+\d+\s+\d+\s+\d+\b", normalized):
+        return True
+    return False
+
+
+def _text_has_symbol_loss(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    lowered = normalized.lower()
+    if not normalized:
+        return False
+
+    if "standard deviation" in lowered and re.search(r"\bfind\s+the\s+value\s+of\s+3\b", lowered):
+        return True
+    if re.search(r"\bstandard deviation\s+3\s*(?:kg|g|cm|m|minutes?|seconds?)\b", lowered):
+        return True
+    if re.search(r"\bdenoted\s+by\s+!\b|\bwhere\s+(?:tan|sin|cos)\s+!\b", lowered):
+        return True
+    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\s+[i1]\b", lowered):
+        return True
+    if re.search(r"\b[0-9]\s*[<≤]\s*[i1]\s*[<≤]\s*[0-9π]", lowered):
+        return True
+
+    radical_context = re.search(r"\b(?:surd|exact|square roots?|geometric progression|common ratio)\b", lowered)
+    if radical_context and re.search(r"\b\d+\s*[+\-]\s*\d+\s+[2357]\b", normalized):
+        return True
+    if radical_context and re.search(r"\b\d+\s+[2357]i\b", normalized):
+        return True
+    if radical_context and re.search(r"\bin\s+the\s+form\s+[2357]\s*[+\-]\s*[A-Za-z]\b", lowered):
+        return True
+    return False
+
+
+def _text_has_unit_corruption(text: str) -> bool:
+    normalized = _normalize_for_visual_flags(text)
+    if not normalized:
+        return False
+    malformed_speed_units = [
+        r"\b\d+(?:\.\d+)?\s*m?s(?:7!|~[!?]?|\"!|™!|-!|-\*|!)(?=$|[^A-Za-z0-9])",
+        r"\b\d+(?:\.\d+)?\s*m?s[~\"™][!?]?",
+        r"\bm?s(?:7!|~[!?]?|\"!|™!|-!|-\*|!)(?=$|[^A-Za-z0-9])",
+    ]
+    return any(re.search(pattern, normalized, re.IGNORECASE) for pattern in malformed_speed_units)
+
+
 def _contains_equation_layout(text: str) -> bool:
-    return bool(re.search(r"[A-Za-z0-9)]\s*=\s*[-+A-Za-z0-9(|]", text) or re.search(r"\by\s*=", text, re.I))
+    return bool(re.search(r"[A-Za-z0-9)}\]]\s*=\s*[-+A-Za-z0-9({\[]", text) or re.search(r"\by\s*=", text, re.I))
 
 
 def _contains_fraction_or_integral_layout(text: str) -> bool:
@@ -726,15 +839,51 @@ def _contains_inequality_or_region_prompt(text: str) -> bool:
 
 def _contains_graph_or_diagram_prompt(text: str) -> bool:
     lowered = text.lower()
-    return bool(re.search(r"\b(?:sketch|draw|graph|diagram|curve|asymptote|argand diagram)\b", lowered))
+    compacted = _compact_for_visual_flags(text)
+    return bool(
+        re.search(r"\b(?:sketch|draw|graph|diagram|curve|asymptote|argand diagram|fig\.?|figure|shaded|sector)\b", lowered)
+        or any(
+            phrase in compacted
+            for phrase in {
+                "thediagramshows",
+                "thediagram",
+                "diagramshows",
+                "thegraph",
+                "thegraphshows",
+                "graphshows",
+                "showninthediagram",
+                "asshowninthediagram",
+                "shadedregion",
+                "shadedsegment",
+                "shadedsector",
+                "arganddiagram",
+                "scatterdiagram",
+            }
+        )
+    )
 
 
 def _contains_table_or_data_prompt(text: str) -> bool:
     lowered = text.lower()
+    compacted = _compact_for_visual_flags(text)
     return bool(
         re.search(
             r"\b(?:table|stem-and-leaf|stem and leaf|box-and-whisker|box and whisker|histogram|cumulative frequency|"
-            r"frequency table|frequency polygon|scatter diagram|data shown|data in the table)\b",
+            r"frequency table|frequency polygon|scatter diagram|data shown|data in the table|table below|following table)\b",
             lowered,
+        )
+        or any(
+            phrase in compacted
+            for phrase in {
+                "thetableshows",
+                "thetable",
+                "tableshows",
+                "tablebelow",
+                "followingtable",
+                "datainthetable",
+                "probabilitydistributiontable",
+                "frequencytable",
+                "stemandleaf",
+            }
         )
     )

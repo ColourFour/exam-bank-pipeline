@@ -30,3 +30,17 @@ def test_package_metadata_matches_extraction_only_runtime() -> None:
     assert 'description = "CAIE 9709 question-paper and mark-scheme extraction pipeline."' in pyproject
     assert '"pandas>=2.0.0"' not in pyproject
     assert '"reportlab>=4.0.0"' not in pyproject
+
+
+def test_generated_inventory_files_are_ignored() -> None:
+    gitignore = Path(".gitignore").read_text(encoding="utf-8")
+
+    for pattern in [
+        "repo_file_inventory.txt",
+        "generated_output_inventory.txt",
+        "output_inventory.json",
+        "output_inventory.md",
+        "output_cleanup_plan.md",
+        "output_ocr_candidate/",
+    ]:
+        assert pattern in gitignore
