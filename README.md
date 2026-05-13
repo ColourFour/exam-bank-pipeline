@@ -416,6 +416,41 @@ question_bank_master.json
 
 Until tiered exports are implemented, downstream users should treat image artifacts as canonical unless a record is explicitly text-ready.
 
+Topic routing for Asterion should use the strict DeepSeek topic-routing sidecar, not the broad AI-assisted v2 enrichment sidecar. The current sidecar target is:
+
+```text
+output/json/question_bank.topic_routing.v1.json
+```
+
+This sidecar is intentionally narrow: it records only canonical parent-topic routing from `exam_bank_taxonomy/canonical/`, with `primary_topic_id`, `topic_distribution`, confidence, review flags, and the limited text evidence actually sent to the model. It does not contain difficulty, skills, subtopics, rationales, Content Lab metadata, or Asterion readiness decisions. Records marked `review_required=true` must not enter strict Asterion topic filters.
+
+Normal full run:
+
+```bash
+set -a; source .env; set +a
+
+.venv/bin/python -m exam_bank.cli topic-route-ai \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/canonical \
+  --output output/json/question_bank.topic_routing.v1.json \
+  --model deepseek-v4-flash \
+  --status-dir output/run_status
+```
+
+Resume:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-route-ai \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/canonical \
+  --output output/json/question_bank.topic_routing.v1.json \
+  --model deepseek-v4-flash \
+  --status-dir output/run_status \
+  --resume
+```
+
+Use `question_bank.ai_assisted.v2*.json` only as review/debug evidence for now. The broad v2 attempt includes a larger task surface and is not the recommended Asterion strict-filter input unless a separate audit explicitly approves it.
+
 The readiness audit currently classifies records as:
 
 - Tier 0 - Hard blocker: any hard blocker, including missing IDs or image/text paths, mapping or validation failure, local question/mark-scheme total disagreement, unusable marks, scope failure, truncation/contamination flags, or missing artifact files when `--artifact-root` is supplied.
@@ -445,6 +480,12 @@ The high-level gates currently audited are:
 
 DeepSeek/topic enrichment is secondary sidecar metadata. It does not change extraction and does not mutate `question_bank.json`.
 
+Current recommendation:
+
+- Use `output/json/question_bank.topic_routing.v1.json` for audited Asterion topic routing after a successful `topic-route-ai` run.
+- Treat `output/json/question_bank.deepseek.json` as the older broad suggestion sidecar.
+- Treat `output/json/question_bank.ai_assisted.v2*.json` as broad review/debug evidence until it passes a separate audit. Do not promote broad v2 failures, suggestions, skills, subtopics, rationales, or difficulty fields into strict Asterion filters.
+
 ```bash
 export DEEPSEEK_API_KEY=...
 python -m exam_bank.deepseek_enrich \
@@ -455,7 +496,7 @@ python -m exam_bank.deepseek_enrich \
 
 Current sidecar evidence in `output/json/question_bank.deepseek.json` has `1301` enrichment entries, with `1246` marked `final_review_required=True`, `44` marked `False`, and `11` without that field because provider failures were logged. Treat this as review/enrichment evidence, not canonical truth.
 
-The newer AI-assisted v2 pass enriches against the active canonical topic, subtopic, and skill IDs under `exam_bank_taxonomy/canonical/`. It preserves v1 sidecar evidence where useful, batches by paper, supports resume/retry, and computes deterministic difficulty percentiles within each paper family:
+The broad AI-assisted v2 pass enriches against the active canonical topic, subtopic, and skill IDs under `exam_bank_taxonomy/canonical/`. It preserves v1 sidecar evidence where useful, batches by paper, supports resume/retry, and computes deterministic difficulty percentiles within each paper family. This is currently a review/debug path, not the preferred Asterion topic-routing path:
 
 ```bash
 export DEEPSEEK_API_KEY=...
@@ -473,7 +514,7 @@ export DEEPSEEK_API_KEY=...
   --recompute-difficulty
 ```
 
-Strict product filters should use only canonical IDs inside `strict_filter_candidates`. Suggestions for new subtopics or skills are review-only. See `docs/AI_ASSISTED_ENRICHMENT.md` for Asterion routing, Content Lab seed usage, strict-filter rules, and difficulty calibration details.
+Strict product filters should use only audited canonical IDs from approved sidecars. For topic filters, use non-review-required records from `question_bank.topic_routing.v1.json`. For broad v2, suggestions for new subtopics or skills are review-only, and `strict_filter_candidates` must be audited before any Asterion use. See `docs/AI_ASSISTED_ENRICHMENT.md` for the current sidecar policy.
 
 ## Tests
 
