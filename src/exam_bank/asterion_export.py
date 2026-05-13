@@ -15,6 +15,7 @@ ASTERION_EXPORT_FILENAME = "asterion_question_bank_v1.json"
 CONTENT_LAB_SCHEMA_NAME = "asterion.content_lab_candidates"
 CONTENT_LAB_SCHEMA_VERSION = 1
 CONTENT_LAB_EXPORT_FILENAME = "asterion_content_lab_candidates_v1.json"
+AI_ASSISTED_SIDECAR_SCHEMA_NAME = "exam_bank.ai_assisted_sidecar"
 MARK_EVENT_REVIEW_STATUS = "machine_candidate"
 MARK_EVENT_QUARANTINED_STATUS = "quarantined"
 MARK_EVENT_TOTAL_DISAGREEMENT = "question_mark_scheme_total_disagreement"
@@ -33,13 +34,14 @@ def export_asterion_question_bank(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_map_path: str | Path | None = None,
+    allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
-    skill_mappings = load_skill_mappings(skill_map_path) if skill_map_path else None
+    skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         json.dumps(
@@ -59,13 +61,14 @@ def export_asterion_content_lab_candidates(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_map_path: str | Path | None = None,
+    allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, CONTENT_LAB_EXPORT_FILENAME)
-    skill_mappings = load_skill_mappings(skill_map_path) if skill_map_path else None
+    skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
     asterion_payload = _ensure_asterion_payload(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
@@ -200,8 +203,13 @@ def infer_artifact_root(input_path: str | Path) -> Path | None:
     return path.parent
 
 
-def load_skill_mappings(path: str | Path) -> dict[str, list[str]]:
+def load_skill_mappings(path: str | Path, *, allow_unusable_ai_sidecar: bool = False) -> dict[str, list[str]]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if payload.get("schema_name") == AI_ASSISTED_SIDECAR_SCHEMA_NAME:
+        return load_ai_assisted_strict_filter_mappings(
+            payload,
+            allow_unusable_ai_sidecar=allow_unusable_ai_sidecar,
+        )
     mappings = payload.get("mappings")
     if not isinstance(mappings, list):
         return {}
@@ -221,6 +229,36 @@ def load_skill_mappings(path: str | Path) -> dict[str, list[str]]:
         )
         if skill_ids:
             by_subpart[subpart_id] = skill_ids
+    return by_subpart
+
+
+def load_ai_assisted_strict_filter_mappings(
+    payload: dict[str, Any],
+    *,
+    allow_unusable_ai_sidecar: bool = False,
+) -> dict[str, list[str]]:
+    from .deepseek_enrich import audit_ai_assisted_sidecar_payload
+
+    audit = audit_ai_assisted_sidecar_payload(payload)
+    if not audit["safe_to_use_for_asterion_export"] and not allow_unusable_ai_sidecar:
+        raise ValueError(
+            "AI-assisted sidecar is not safe for Asterion export. "
+            f"new_successes={audit['new_successes']}, new_failures={audit['new_failures']}, "
+            f"mixed_prompt_versions={audit['mixed_prompt_versions']}. "
+            "Pass --allow-unusable-ai-sidecar only for an explicitly documented fallback."
+        )
+    enrichments = payload.get("enrichments") if isinstance(payload.get("enrichments"), dict) else {}
+    by_subpart: dict[str, list[str]] = {}
+    for question_id, enrichment in enrichments.items():
+        if not isinstance(enrichment, dict) or isinstance(enrichment.get("error"), dict):
+            continue
+        for candidate in enrichment.get("strict_filter_candidates", []):
+            if not isinstance(candidate, dict):
+                continue
+            subpart_id = str(candidate.get("subpart_id") or "").strip() or f"{question_id}_whole"
+            skill_ids = _dedupe(_list_string_values(candidate.get("skill_ids")))
+            if skill_ids:
+                by_subpart[subpart_id] = skill_ids
     return by_subpart
 
 

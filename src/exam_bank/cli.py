@@ -19,7 +19,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich
+from . import deepseek_enrich, topic_routing
 from .output_management import (
     build_cleanup_plan,
     build_output_inventory,
@@ -95,6 +95,11 @@ def build_parser() -> argparse.ArgumentParser:
         default="",
         help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Asterion subpart mark events.",
     )
+    asterion.add_argument(
+        "--allow-unusable-ai-sidecar",
+        action="store_true",
+        help="Allow using a failed or mixed AI-assisted sidecar as an explicitly documented fallback.",
+    )
     asterion.set_defaults(func=cmd_asterion_export)
 
     content_lab = subparsers.add_parser(
@@ -121,6 +126,11 @@ def build_parser() -> argparse.ArgumentParser:
         default="",
         help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Content Lab mark-event candidates.",
     )
+    content_lab.add_argument(
+        "--allow-unusable-ai-sidecar",
+        action="store_true",
+        help="Allow using a failed or mixed AI-assisted sidecar as an explicitly documented fallback.",
+    )
     content_lab.set_defaults(func=cmd_asterion_content_lab_candidates)
 
     enrich_ai = subparsers.add_parser(
@@ -129,6 +139,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     deepseek_enrich.add_ai_assisted_cli_arguments(enrich_ai)
     enrich_ai.set_defaults(func=cmd_enrich_ai)
+
+    topic_route_ai = subparsers.add_parser(
+        "topic-route-ai",
+        help="Run strict DeepSeek topic routing against canonical parent topic IDs only.",
+    )
+    topic_routing.add_topic_routing_cli_arguments(topic_route_ai)
+    topic_route_ai.set_defaults(func=cmd_topic_route_ai)
+
+    ai_sidecar_audit = subparsers.add_parser(
+        "ai-sidecar-audit",
+        help="Audit an AI-assisted enrichment sidecar for freshness, failures, and Asterion usability.",
+    )
+    ai_sidecar_audit.add_argument("--input", required=True, help="Path to question_bank.ai_assisted sidecar JSON.")
+    ai_sidecar_audit.set_defaults(func=cmd_ai_sidecar_audit)
 
     triage_sample = subparsers.add_parser(
         "triage-sample",
@@ -380,7 +404,13 @@ def cmd_asterion_export(args: argparse.Namespace) -> int:
     output = Path(args.output) if args.output else None
     artifact_root = Path(args.artifact_root) if args.artifact_root else None
     skill_map_path = Path(args.skill_map) if args.skill_map else None
-    path = export_asterion_question_bank(args.input, output, artifact_root=artifact_root, skill_map_path=skill_map_path)
+    path = export_asterion_question_bank(
+        args.input,
+        output,
+        artifact_root=artifact_root,
+        skill_map_path=skill_map_path,
+        allow_unusable_ai_sidecar=bool(getattr(args, "allow_unusable_ai_sidecar", False)),
+    )
     print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
     return 0
 
@@ -394,6 +424,7 @@ def cmd_asterion_content_lab_candidates(args: argparse.Namespace) -> int:
         output,
         artifact_root=artifact_root,
         skill_map_path=skill_map_path,
+        allow_unusable_ai_sidecar=bool(getattr(args, "allow_unusable_ai_sidecar", False)),
     )
     print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
     return 0
@@ -402,6 +433,17 @@ def cmd_asterion_content_lab_candidates(args: argparse.Namespace) -> int:
 def cmd_enrich_ai(args: argparse.Namespace) -> int:
     deepseek_enrich.finalize_ai_assisted_args(args)
     return deepseek_enrich.run_ai_assisted_from_args(args)
+
+
+def cmd_topic_route_ai(args: argparse.Namespace) -> int:
+    topic_routing.finalize_topic_routing_args(args)
+    return topic_routing.run_topic_routing_from_args(args)
+
+
+def cmd_ai_sidecar_audit(args: argparse.Namespace) -> int:
+    report = deepseek_enrich.audit_ai_assisted_sidecar(args.input)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
 
 
 def cmd_triage_sample(args: argparse.Namespace) -> int:

@@ -101,6 +101,33 @@ output/run_status/<run_id>/run_manifest.json
 
 Use `--no-progress` to silence terminal updates while still writing status files. Use `--status-dir`, `--run-id`, `--resume`, and `--force-rerun` for resumable batch runs.
 
+Strict topic routing is a narrow DeepSeek pass that writes a compact sidecar without mutating `question_bank.json`. Progress is visible by default:
+
+```bash
+set -a; source .env; set +a
+
+.venv/bin/python -m exam_bank.cli topic-route-ai \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/canonical \
+  --output output/json/question_bank.topic_routing.v1.json \
+  --model deepseek-v4-flash \
+  --status-dir output/run_status
+```
+
+Resume the same sidecar with:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-route-ai \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/canonical \
+  --output output/json/question_bank.topic_routing.v1.json \
+  --model deepseek-v4-flash \
+  --status-dir output/run_status \
+  --resume
+```
+
+Add `--no-progress` only for quiet mode; status files are still written.
+
 `--input` is scanned recursively. The usual layout is:
 
 ```text

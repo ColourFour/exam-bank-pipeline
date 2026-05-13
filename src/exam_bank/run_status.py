@@ -228,6 +228,11 @@ class TerminalProgressRenderer:
         skipped = int(status.get("skipped_records") or 0)
         if success or failed or skipped:
             parts.append(f"ok {success} fail {failed} skip {skipped}")
+        review_required = int(status.get("review_required_records") or 0)
+        provider_failures = int(status.get("provider_failure_records") or 0)
+        if status.get("run_type") == "topic_routing" or review_required or provider_failures:
+            parts.append(f"review {review_required}")
+            parts.append(f"provider_fail {provider_failures}")
         output_path = status.get("output_path")
         if output_path:
             parts.append(f"output {output_path}")
@@ -292,6 +297,8 @@ class RunStatusTracker:
             "successful_records": 0,
             "failed_records": 0,
             "skipped_records": 0,
+            "review_required_records": 0,
+            "provider_failure_records": 0,
             "retry_count": 0,
             "output_path": self.output_paths[0] if self.output_paths else "",
             "error_summary": "",
@@ -347,6 +354,19 @@ class RunStatusTracker:
             self._status["output_path"] = str(output_path)
         if retry_count is not None:
             self._status["retry_count"] = max(0, int(retry_count))
+        self._write_status(force_render=force_render)
+
+    def update_extra_counts(
+        self,
+        *,
+        review_required_records: int | None = None,
+        provider_failure_records: int | None = None,
+        force_render: bool = False,
+    ) -> None:
+        if review_required_records is not None:
+            self._status["review_required_records"] = max(0, int(review_required_records))
+        if provider_failure_records is not None:
+            self._status["provider_failure_records"] = max(0, int(provider_failure_records))
         self._write_status(force_render=force_render)
 
     def start_batch(
@@ -526,6 +546,8 @@ class RunStatusTracker:
             f"  successful records: {status['successful_records']}",
             f"  failed records: {status['failed_records']}",
             f"  skipped records: {status['skipped_records']}",
+            f"  review-required records: {status.get('review_required_records', 0)}",
+            f"  provider/API failures: {status.get('provider_failure_records', 0)}",
             f"  total elapsed time: {_format_duration(status['elapsed_seconds'])}",
             f"  final output path: {status.get('output_path') or 'n/a'}",
             f"  status file path: {self.run_status_path}",

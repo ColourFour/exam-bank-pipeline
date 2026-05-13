@@ -5,6 +5,8 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
+import pytest
+
 from exam_bank.asterion_export import (
     ASTERION_EXPORT_FILENAME,
     ASTERION_SCHEMA_NAME,
@@ -212,6 +214,48 @@ def test_asterion_export_loads_optional_skill_map_for_mark_events(tmp_path: Path
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     q1 = payload["questions"][0]
     assert q1["subparts"][0]["mark_events"][0]["skill_ids"] == ["primary", "secondary", "prerequisite"]
+
+
+def test_asterion_export_refuses_unusable_ai_assisted_sidecar_skill_map(tmp_path: Path) -> None:
+    ai_sidecar_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    ai_sidecar_path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.ai_assisted_sidecar",
+                "schema_version": 2,
+                "metadata": {
+                    "prompt_version": "ai_assisted_v2",
+                    "run_manifest": {
+                        "run_timestamp": "2026-05-13T00:00:00+00:00",
+                        "prompt_version": "ai_assisted_v2",
+                        "batches": [{"status": "invalid_json", "question_ids": ["12spring21_q01"]}],
+                    },
+                },
+                "enrichments": {
+                    "12spring21_q01": {
+                        "llm_prompt_version": "ai_assisted_v2",
+                        "llm_run_timestamp": "2026-05-13T00:00:00+00:00",
+                        "error": {"type": "invalid_json", "message": "bad json"},
+                        "ai_assisted_items": [],
+                        "strict_filter_candidates": [],
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    input_path = tmp_path / "output_ocr_candidate" / "json" / "question_bank.json"
+    input_path.parent.mkdir(parents=True)
+    input_path.write_text(json.dumps(_question_bank_fixture(), indent=2), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="not safe for Asterion export"):
+        export_asterion_question_bank(
+            input_path,
+            tmp_path / "asterion.json",
+            artifact_root=_write_artifacts(tmp_path),
+            base_dir=tmp_path,
+            skill_map_path=ai_sidecar_path,
+        )
 
 
 def test_content_lab_candidates_emit_roles_and_block_warmup_until_reviewed(tmp_path: Path) -> None:

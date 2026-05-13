@@ -145,6 +145,52 @@ def _ai_payload(*items: dict[str, object]) -> str:
     return json.dumps({"items": list(items)})
 
 
+def _fake_ai_client(*responses: object) -> object:
+    calls: list[dict[str, object]] = []
+    response_iter = iter(responses)
+
+    class FakeClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**kwargs: object) -> SimpleNamespace:
+                    calls.append(kwargs)
+                    result = next(response_iter)
+                    if isinstance(result, Exception):
+                        raise result
+                    return result
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    client = FakeClient()
+    setattr(client, "calls", calls)
+    return client
+
+
+def _ai_sidecar_record(
+    question_id: str,
+    *,
+    prompt_version: str = "ai_assisted_v2",
+    run_timestamp: str = "2026-05-12T00:00:00+00:00",
+) -> dict[str, object]:
+    return {
+        "question_id": question_id,
+        "paper": "12spring24",
+        "paper_family": "p1",
+        "ai_assisted_schema_version": 2,
+        "ai_assisted_items": [_ai_item(question_id=question_id)],
+        "strict_filter_candidates": [{"subpart_id": None, "skill_ids": ["9709_p1_series_binomial_positive_integer"]}],
+        "mapping_source": "deepseek_ai_assisted",
+        "reviewed_status": "machine_candidate",
+        "llm_provider": "deepseek",
+        "llm_model": "deepseek-v4-flash",
+        "llm_prompt_version": prompt_version,
+        "llm_run_timestamp": run_timestamp,
+    }
+
+
 def test_missing_api_key_fails_clearly(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     input_path = tmp_path / "question_bank.json"
@@ -1004,6 +1050,56 @@ def test_ai_assisted_validation_enforces_unknown_topic_subtopic_and_skill_ids() 
         deepseek_enrich.validate_ai_assisted_item(_ai_item(skill_ids=["invented_skill"]), taxonomy=taxonomy)
 
 
+def test_ai_assisted_subpart_id_validation_handles_parent_empty_valid_and_invalid_subparts() -> None:
+    taxonomy = _taxonomy()
+    parent = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(subpart_id=None),
+        taxonomy=taxonomy,
+        expected_question_ids={"12spring24_q01"},
+        expected_subpart_ids=set(),
+        expected_subpart_ids_by_question={"12spring24_q01": set()},
+    )
+    assert parent["subpart_id"] is None
+
+    normalized_empty_parent = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(subpart_id=""),
+        taxonomy=taxonomy,
+        expected_question_ids={"12spring24_q01"},
+        expected_subpart_ids=set(),
+        expected_subpart_ids_by_question={"12spring24_q01": set()},
+    )
+    assert normalized_empty_parent["subpart_id"] is None
+
+    subpart = deepseek_enrich.validate_ai_assisted_item(
+        _ai_item(subpart_id="12spring24_q01_a"),
+        taxonomy=taxonomy,
+        expected_question_ids={"12spring24_q01"},
+        expected_subpart_ids={"12spring24_q01_a"},
+        expected_subpart_ids_by_question={"12spring24_q01": {"12spring24_q01_a"}},
+    )
+    assert subpart["subpart_id"] == "12spring24_q01_a"
+
+    with pytest.raises(ValueError) as empty_exc:
+        deepseek_enrich.validate_ai_assisted_item(
+            _ai_item(subpart_id=""),
+            taxonomy=taxonomy,
+            expected_question_ids={"12spring24_q01"},
+            expected_subpart_ids={"12spring24_q01_a"},
+            expected_subpart_ids_by_question={"12spring24_q01": {"12spring24_q01_a"}},
+        )
+    assert getattr(empty_exc.value, "error_type") == deepseek_enrich.AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING
+
+    with pytest.raises(ValueError) as invalid_exc:
+        deepseek_enrich.validate_ai_assisted_item(
+            _ai_item(subpart_id="a"),
+            taxonomy=taxonomy,
+            expected_question_ids={"12spring24_q01"},
+            expected_subpart_ids={"12spring24_q01_a"},
+            expected_subpart_ids_by_question={"12spring24_q01": {"12spring24_q01_a"}},
+        )
+    assert getattr(invalid_exc.value, "error_type") == deepseek_enrich.AI_FAILURE_UNEXPECTED_SUBPART_ID
+
+
 def test_suggested_new_subtopics_and_skills_are_review_only() -> None:
     taxonomy = _taxonomy()
     item = deepseek_enrich.validate_ai_assisted_item(
@@ -1074,28 +1170,107 @@ def test_human_reviewed_records_are_never_overwritten() -> None:
     assert "ai_assisted_items" not in merged
 
 
-def test_parse_recovery_can_extract_json_from_reasoning_content_and_raw_provider_output() -> None:
+def test_ai_assisted_error_record_clears_old_strict_filter_candidates() -> None:
+    record = deepseek_enrich.build_ai_assisted_error_record(
+        _record(),
+        existing_enrichment={
+            "strict_filter_candidates": [{"subpart_id": None, "skill_ids": ["old_skill"]}],
+            "ai_assisted_items": [_ai_item()],
+        },
+        error_type=deepseek_enrich.AI_FAILURE_INVALID_JSON,
+        message="bad json",
+        model="deepseek-v4-flash",
+        prompt_version="ai_assisted_v2",
+        run_timestamp="2026-05-13T00:00:00+00:00",
+        batch_id="p1_12spring24",
+        batch_input_hash="abc",
+    )
+
+    assert record["ai_assisted_items"] == []
+    assert record["strict_filter_candidates"] == []
+
+
+def test_parse_recovery_extracts_json_wrapped_in_final_content_but_rejects_reasoning_only() -> None:
     taxonomy = _taxonomy()
     parsed, metadata = deepseek_enrich.parse_response_with_recovery(
-        _reasoning_response(_ai_payload(_ai_item())),
+        _chat_response("provider prefix " + _ai_payload(_ai_item()) + " provider suffix"),
         lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
     )
 
-    assert parsed["items"][0]["primary_topic_id"] == "9709_p1_topic_series"
+    assert parsed["items"][0]["skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
     assert metadata["parse_recovered"] is True
-    assert metadata["parse_recovery_source"] == "reasoning_content"
+    assert metadata["parse_recovery_source"] == "message.content"
 
-    class RawOnlyResponse:
-        def model_dump_json(self, indent: int | None = None) -> str:
-            return "provider prefix " + _ai_payload(_ai_item()) + " provider suffix"
+    with pytest.raises(ValueError) as excinfo:
+        deepseek_enrich.parse_response_with_recovery(
+            _reasoning_response(_ai_payload(_ai_item())),
+            lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
+        )
+    assert getattr(excinfo.value, "error_type") == deepseek_enrich.AI_FAILURE_REASONING_CONTENT_ONLY
 
-    parsed_raw, metadata_raw = deepseek_enrich.parse_response_with_recovery(
-        RawOnlyResponse(),
-        lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
+    with pytest.raises(ValueError) as empty_exc:
+        deepseek_enrich.parse_response_with_recovery(
+            _chat_response(""),
+            lambda raw: deepseek_enrich.parse_ai_assisted_model_json(raw, taxonomy=taxonomy),
+        )
+    assert getattr(empty_exc.value, "error_type") == deepseek_enrich.AI_FAILURE_EMPTY_CONTENT
+
+
+def test_ai_assisted_invalid_json_is_classified() -> None:
+    taxonomy = _taxonomy()
+
+    with pytest.raises(ValueError) as excinfo:
+        deepseek_enrich.parse_ai_assisted_model_json("{not valid json", taxonomy=taxonomy)
+
+    assert getattr(excinfo.value, "error_type") == deepseek_enrich.AI_FAILURE_INVALID_JSON
+
+
+def test_ai_assisted_accepts_deepseek_smoke_shape_with_null_strict_filter_reason() -> None:
+    taxonomy = _taxonomy()
+    raw = _ai_payload(
+        _ai_item(
+            question_id="11autumn21_q01",
+            ai_difficulty_factors="Binomial expansion with fractional term",
+            common_mistakes="Sign errors",
+            exam_techniques="Apply binomial expansion formula carefully",
+            evidence_missing=None,
+            strict_filter_candidate=True,
+            strict_filter_reason=None,
+            review_required=False,
+            review_reasons=[],
+            confidence=0.85,
+        )
     )
 
-    assert parsed_raw["items"][0]["skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
-    assert metadata_raw["parse_recovery_source"] == "raw_provider_output"
+    parsed = deepseek_enrich.parse_ai_assisted_model_json(
+        raw,
+        taxonomy=taxonomy,
+        expected_records=[_record("11autumn21_q01")],
+    )
+
+    item = parsed["items"][0]
+    assert item["question_id"] == "11autumn21_q01"
+    assert item["subpart_id"] is None
+    assert item["ai_difficulty_factors"] == ["Binomial expansion with fractional term"]
+    assert item["common_mistakes"] == ["Sign errors"]
+    assert item["exam_techniques"] == ["Apply binomial expansion formula carefully"]
+    assert item["evidence_missing"] == []
+    assert item["strict_filter_candidate"] is True
+    assert item["strict_filter_reason"] == "Direct assessed evidence maps to validated canonical topic, subtopic, and skill IDs."
+
+
+def test_ai_assisted_schema_error_includes_item_index_and_field_path() -> None:
+    taxonomy = _taxonomy()
+
+    with pytest.raises(ValueError) as excinfo:
+        deepseek_enrich.parse_ai_assisted_model_json(
+            _ai_payload(_ai_item(confidence="high")),
+            taxonomy=taxonomy,
+            expected_records=[_record()],
+        )
+
+    assert getattr(excinfo.value, "error_type") == deepseek_enrich.AI_FAILURE_SCHEMA_VALIDATION_ERROR
+    assert str(excinfo.value) == "items[0].confidence must be a JSON number from 0 to 1."
 
 
 def test_provider_errors_and_old_prompt_versions_are_resumable() -> None:
@@ -1154,10 +1329,18 @@ def test_ai_assisted_dry_run_does_not_call_network(monkeypatch: pytest.MonkeyPat
 
 def test_ai_assisted_prompt_includes_allowed_ids_and_no_invention_instruction() -> None:
     taxonomy = _taxonomy()
-    payload = deepseek_enrich.build_ai_assisted_batch_payload([_record()], taxonomy=taxonomy)
+    record = {**_record(), "subparts": ["a", "b"]}
+    payload = deepseek_enrich.build_ai_assisted_batch_payload([record], taxonomy=taxonomy, include_subparts=True)
     messages = deepseek_enrich.build_ai_assisted_messages(payload)
 
     assert "Do not invent canonical topic IDs" in messages[0]["content"]
+    assert "Do not invent subpart IDs" in messages[0]["content"]
+    assert "Return exactly one valid JSON object" in messages[0]["content"]
+    assert "Do not include markdown" in messages[0]["content"]
+    assert "exactly one parent/top-level object per input question" in messages[0]["content"]
+    assert "Do not output subpart-level items in this pass" in messages[0]["content"]
+    assert "allowed_subpart_ids" in messages[1]["content"]
+    assert "12spring24_q01_a" in messages[1]["content"]
     assert "9709_p1_topic_series" in messages[1]["content"]
     assert "9709_p1_subtopic_series_binomial_positive_integer" in messages[1]["content"]
     assert "9709_p1_series_binomial_positive_integer" in messages[1]["content"]
@@ -1212,7 +1395,7 @@ def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not
 
     assert manifest["batch_count"] == 2
     assert enrichments["12spring24_q01"]["ai_assisted_items"][0]["question_id"] == "12spring24_q01"
-    assert enrichments["13spring24_q01"]["error"]["type"] == "provider_error"
+    assert enrichments["13spring24_q01"]["error"]["type"] == deepseek_enrich.AI_FAILURE_PROVIDER_API_ERROR
     assert enrichments["12spring24_q01"]["batch_id"] != enrichments["13spring24_q01"]["batch_id"]
     batch_statuses = [
         json.loads(line)["status"]
@@ -1220,6 +1403,55 @@ def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not
         if line.strip()
     ]
     assert batch_statuses == ["completed", "failed"]
+
+
+def test_invalid_multi_record_ai_batch_retries_individual_records(tmp_path: Path) -> None:
+    responses = iter(
+        [
+            _chat_response('{"items": ['),
+            _chat_response(_ai_payload(_ai_item(question_id="12spring24_q01", strict_filter_reason=None))),
+            _chat_response(_ai_payload(_ai_item(question_id="12spring24_q02", strict_filter_reason=None))),
+        ]
+    )
+
+    class FakeClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    return next(responses)
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    tracker = RunStatusTracker(
+        run_id="ai-individual-retry",
+        run_type="ai_enrichment",
+        status_root=tmp_path / "run_status",
+        command="enrich-ai",
+        progress=False,
+    )
+    tracker.start(phase="preparing_batches")
+    records = [_record("12spring24_q01"), _record("12spring24_q02")]
+
+    enrichments, manifest = deepseek_enrich.enrich_ai_assisted_records(
+        records,
+        client=FakeClient(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "question_bank.ai_assisted.v2.json",
+        model="deepseek-v4-flash",
+        batch_by_paper=True,
+        progress=tracker,
+    )
+    tracker.finish("completed")
+
+    assert manifest["batches"][0]["status"] == "success_individual_retry"
+    assert enrichments["12spring24_q01"]["ai_assisted_items"]
+    assert enrichments["12spring24_q02"]["ai_assisted_items"]
+    status = json.loads(tracker.run_status_path.read_text(encoding="utf-8"))
+    assert status["successful_records"] == 2
+    assert status["failed_records"] == 0
 
 
 def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibrated_difficulty(
@@ -1295,6 +1527,12 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
     assert batches[0]["status"] == "completed"
     assert payload["schema_name"] == "exam_bank.ai_assisted_sidecar"
     assert payload["metadata"]["prompt_version"] == "ai_assisted_v2"
+    assert payload["metadata"]["run_summary"]["total_records_written"] == 2
+    assert payload["metadata"]["run_summary"]["attempted_records"] == 2
+    assert payload["metadata"]["run_summary"]["successful_new_records"] == 2
+    assert payload["metadata"]["run_summary"]["failed_new_records"] == 0
+    assert payload["metadata"]["run_summary"]["preserved_records"] == 0
+    assert payload["metadata"]["run_summary"]["current_run_usable_for_asterion"] is True
     assert payload["metadata"]["run_manifest"]["batches"][0]["batch_id"] == "p1_12spring24"
     assert enrichments["12spring24_q01"]["llm_model"] == "deepseek-v4-flash"
     assert enrichments["12spring24_q01"]["llm_prompt_version"] == "ai_assisted_v2"
@@ -1303,6 +1541,392 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
     assert enrichments["12spring24_q02"]["difficulty_rank_within_paper_family"] == 1
     assert enrichments["12spring24_q02"]["deterministic_difficulty_band"] == "advanced"
     assert enrichments["12spring24_q01"]["deterministic_difficulty_band"] == "foundation"
+
+
+def test_ai_sidecar_audit_reports_mixed_preserved_attempted_and_failure_reasons(tmp_path: Path) -> None:
+    path = tmp_path / "question_bank.ai_assisted.v2.json"
+    payload = {
+        "schema_name": "exam_bank.ai_assisted_sidecar",
+        "schema_version": 2,
+        "metadata": {
+            "prompt_version": "ai_assisted_v2",
+            "run_manifest": {
+                "run_timestamp": "2026-05-13T00:00:00+00:00",
+                "prompt_version": "ai_assisted_v2",
+                "batches": [
+                    {
+                        "status": deepseek_enrich.AI_FAILURE_INVALID_JSON,
+                        "question_ids": ["new_fail"],
+                    }
+                ],
+            },
+        },
+        "enrichments": {
+            "old_success": {
+                "llm_prompt_version": "v4",
+                "llm_run_timestamp": "2026-05-07T00:00:00+00:00",
+                "ai_assisted_items": [_ai_item(question_id="old_success")],
+                "strict_filter_candidates": [{"subpart_id": None, "skill_ids": ["old_skill"]}],
+            },
+            "new_fail": {
+                "llm_prompt_version": "ai_assisted_v2",
+                "llm_run_timestamp": "2026-05-13T00:00:00+00:00",
+                "error": {"type": deepseek_enrich.AI_FAILURE_INVALID_JSON, "message": "bad json"},
+                "ai_assisted_items": [],
+                "strict_filter_candidates": [],
+            },
+        },
+    }
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    report = deepseek_enrich.audit_ai_assisted_sidecar(path)
+
+    assert report["total_records_written"] == 2
+    assert report["preserved_records"] == 1
+    assert report["attempted_records"] == 1
+    assert report["successful_new_records"] == 0
+    assert report["failed_new_records"] == 1
+    assert report["parse_failures"] == 1
+    assert report["new_failures_by_reason"] == {deepseek_enrich.AI_FAILURE_INVALID_JSON: 1}
+    assert report["mixed_prompt_versions"] is True
+    assert report["current_run_usable_for_asterion"] is False
+
+
+def test_ai_assisted_fresh_run_attempts_all_filtered_records_without_existing_sidecar(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    input_path.write_text(
+        json.dumps([_record("12spring24_q01"), _record("12spring24_q02"), _record("12spring24_q03")]),
+        encoding="utf-8",
+    )
+    client = _fake_ai_client(
+        _chat_response(
+            _ai_payload(
+                _ai_item(question_id="12spring24_q01"),
+                _ai_item(question_id="12spring24_q02"),
+                _ai_item(question_id="12spring24_q03"),
+            )
+        )
+    )
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: client)
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-fresh",
+            "--no-progress",
+        ]
+    )
+
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    report = deepseek_enrich.audit_ai_assisted_sidecar(output_path)
+
+    assert exit_code == 0
+    assert len(getattr(client, "calls")) == 1
+    assert payload["metadata"]["fresh_run"] is True
+    assert payload["metadata"]["resume"] is False
+    assert payload["metadata"]["selected_count"] == 3
+    assert payload["metadata"]["records_to_attempt_count"] == 3
+    assert payload["metadata"]["preserving_existing_records"] is False
+    assert payload["metadata"]["preservation_source"] is None
+    assert report["total_records"] == 3
+    assert report["attempted_records"] == 3
+    assert report["successful_new_records"] == 3
+    assert report["preserved_records"] == 0
+    assert report["records_by_llm_prompt_version"] == {"ai_assisted_v2": 3}
+    assert report["mixed_prompt_versions"] is False
+    assert report["safe_to_use_for_asterion_export"] is True
+
+
+def test_ai_assisted_fresh_run_fails_if_output_already_exists(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    input_path.write_text(json.dumps([_record("12spring24_q01")]), encoding="utf-8")
+    original_payload = {
+        "schema_name": "exam_bank.ai_assisted_sidecar",
+        "schema_version": 2,
+        "enrichments": {
+            "12spring24_q01": _ai_sidecar_record("12spring24_q01", prompt_version="v4"),
+        },
+    }
+    output_path.write_text(json.dumps(original_payload), encoding="utf-8")
+
+    def fail_create_client(**_: object) -> object:
+        raise AssertionError("fresh output-exists failure should happen before provider setup")
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", fail_create_client)
+
+    with pytest.raises(deepseek_enrich.StartupConfigurationError, match="Output path already exists"):
+        deepseek_enrich.run_ai_assisted(
+            [
+                "--input",
+                str(input_path),
+                "--taxonomy",
+                "exam_bank_taxonomy/canonical",
+                "--output",
+                str(output_path),
+                "--status-dir",
+                str(tmp_path / "run_status"),
+                "--run-id",
+                "ai-output-exists",
+                "--no-progress",
+            ]
+        )
+
+    assert json.loads(output_path.read_text(encoding="utf-8")) == original_payload
+
+
+def test_ai_assisted_resume_preserves_completed_output_records_and_attempts_stale_or_missing(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    input_path.write_text(
+        json.dumps([_record("12spring24_q01"), _record("12spring24_q02"), _record("12spring24_q03")]),
+        encoding="utf-8",
+    )
+    output_path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.ai_assisted_sidecar",
+                "schema_version": 2,
+                "enrichments": {
+                    "12spring24_q01": _ai_sidecar_record("12spring24_q01"),
+                    "12spring24_q02": _ai_sidecar_record("12spring24_q02", prompt_version="v4"),
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = _fake_ai_client(
+        _chat_response(
+            _ai_payload(
+                _ai_item(question_id="12spring24_q02"),
+                _ai_item(question_id="12spring24_q03"),
+            )
+        )
+    )
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: client)
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--resume",
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-resume",
+            "--no-progress",
+        ]
+    )
+
+    assert exit_code == 0
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    report = deepseek_enrich.audit_ai_assisted_sidecar(output_path)
+    assert len(getattr(client, "calls")) == 1
+    assert payload["metadata"]["resume"] is True
+    assert payload["metadata"]["preservation_source"] == "output_resume"
+    assert payload["metadata"]["preserving_existing_records"] is True
+    assert report["total_records"] == 3
+    assert report["attempted_records"] == 2
+    assert report["successful_new_records"] == 2
+    assert report["preserved_records"] == 1
+    assert report["records_by_llm_prompt_version"] == {"ai_assisted_v2": 3}
+    assert report["safe_to_use_for_asterion_export"] is True
+
+
+def test_ai_assisted_resume_force_rerun_replaces_stale_output_records(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    input_path.write_text(
+        json.dumps([_record("12spring24_q01"), _record("12spring24_q02"), _record("12spring24_q03")]),
+        encoding="utf-8",
+    )
+    output_path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.ai_assisted_sidecar",
+                "schema_version": 2,
+                "enrichments": {
+                    question_id: _ai_sidecar_record(question_id, prompt_version="v4")
+                    for question_id in ["12spring24_q01", "12spring24_q02", "12spring24_q03"]
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = _fake_ai_client(
+        _chat_response(
+            _ai_payload(
+                _ai_item(question_id="12spring24_q01"),
+                _ai_item(question_id="12spring24_q02"),
+                _ai_item(question_id="12spring24_q03"),
+            )
+        )
+    )
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: client)
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--resume",
+            "--force-rerun",
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-force-rerun",
+            "--no-progress",
+        ]
+    )
+
+    report = deepseek_enrich.audit_ai_assisted_sidecar(output_path)
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+
+    assert exit_code == 0
+    assert len(getattr(client, "calls")) == 1
+    assert payload["metadata"]["force_rerun"] is True
+    assert report["total_records"] == 3
+    assert report["attempted_records"] == 3
+    assert report["preserved_records"] == 0
+    assert report["records_by_llm_prompt_version"] == {"ai_assisted_v2": 3}
+    assert report["stale_records_from_existing_sidecar"] == 0
+    assert report["safe_to_use_for_asterion_export"] is True
+
+
+def test_ai_assisted_existing_sidecar_is_evidence_not_final_preservation(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    existing_path = tmp_path / "existing.json"
+    input_path.write_text(json.dumps([_record("12spring24_q01"), _record("12spring24_q02")]), encoding="utf-8")
+    existing_path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.ai_assisted_sidecar",
+                "schema_version": 2,
+                "enrichments": {
+                    "12spring24_q02": {
+                        **_ai_sidecar_record("12spring24_q02", prompt_version="v4"),
+                        "deepseek_topic": "binomial expansion",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = _fake_ai_client(
+        _chat_response(
+            _ai_payload(
+                _ai_item(question_id="12spring24_q01"),
+                _ai_item(question_id="12spring24_q02"),
+            )
+        )
+    )
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: client)
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--existing-sidecar",
+            str(existing_path),
+            "--output",
+            str(output_path),
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-existing-evidence",
+            "--no-progress",
+        ]
+    )
+
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    report = deepseek_enrich.audit_ai_assisted_sidecar(output_path)
+    request_payload = json.loads(getattr(client, "calls")[0]["messages"][1]["content"])
+
+    assert exit_code == 0
+    assert "existing_deepseek_v1" in request_payload["questions"][1]
+    assert payload["metadata"]["existing_sidecar_path"] == str(existing_path)
+    assert payload["metadata"]["preservation_source"] is None
+    assert report["total_records"] == 2
+    assert report["attempted_records"] == 2
+    assert report["preserved_records"] == 0
+    assert report["records_by_llm_prompt_version"] == {"ai_assisted_v2": 2}
+    assert report["safe_to_use_for_asterion_export"] is True
+
+
+def test_ai_assisted_limit_run_writes_only_limited_records(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    input_path = tmp_path / "question_bank.json"
+    output_path = tmp_path / "question_bank.ai_assisted.v2.json"
+    records = [_record(f"12spring24_q{index:02d}") for index in range(1, 13)]
+    input_path.write_text(json.dumps(records), encoding="utf-8")
+    client = _fake_ai_client(
+        _chat_response(
+            _ai_payload(*[_ai_item(question_id=f"12spring24_q{index:02d}") for index in range(1, 11)])
+        )
+    )
+
+    monkeypatch.setattr(deepseek_enrich, "create_client", lambda **_: client)
+    exit_code = deepseek_enrich.run_ai_assisted(
+        [
+            "--input",
+            str(input_path),
+            "--taxonomy",
+            "exam_bank_taxonomy/canonical",
+            "--output",
+            str(output_path),
+            "--limit",
+            "10",
+            "--status-dir",
+            str(tmp_path / "run_status"),
+            "--run-id",
+            "ai-limit",
+            "--no-progress",
+        ]
+    )
+
+    report = deepseek_enrich.audit_ai_assisted_sidecar(output_path)
+
+    assert exit_code == 0
+    assert report["total_records"] == 10
+    assert report["attempted_records"] == 10
+    assert report["preserved_records"] == 0
+    assert report["records_by_llm_prompt_version"] == {"ai_assisted_v2": 10}
 
 
 def test_ai_resume_uses_completed_batch_cache_without_calling_provider(tmp_path: Path) -> None:

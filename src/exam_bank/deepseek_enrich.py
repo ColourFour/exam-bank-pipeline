@@ -6,7 +6,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
@@ -27,6 +27,26 @@ DEEPSEEK_SIDECAR_SCHEMA_NAME = "exam_bank.deepseek_sidecar"
 DEEPSEEK_SIDECAR_SCHEMA_VERSION = 2
 AI_ASSISTED_SIDECAR_SCHEMA_NAME = "exam_bank.ai_assisted_sidecar"
 AI_ASSISTED_SIDECAR_SCHEMA_VERSION = 2
+AI_FAILURE_INVALID_JSON = "invalid_json"
+AI_FAILURE_EMPTY_CONTENT = "empty_content"
+AI_FAILURE_REASONING_CONTENT_ONLY = "reasoning_content_only"
+AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING = "invalid_subpart_id_empty_string"
+AI_FAILURE_UNEXPECTED_SUBPART_ID = "unexpected_subpart_id"
+AI_FAILURE_SCHEMA_VALIDATION_ERROR = "schema_validation_error"
+AI_FAILURE_TAXONOMY_VALIDATION_ERROR = "taxonomy_validation_error"
+AI_FAILURE_PROVIDER_API_ERROR = "provider_api_error"
+AI_ASSISTED_RETRYABLE_ERROR_TYPES = {
+    DeepSeekErrorType.PROVIDER_ERROR,
+    AI_FAILURE_PROVIDER_API_ERROR,
+    "parse_error",
+    AI_FAILURE_INVALID_JSON,
+    AI_FAILURE_EMPTY_CONTENT,
+    AI_FAILURE_REASONING_CONTENT_ONLY,
+    AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING,
+    AI_FAILURE_UNEXPECTED_SUBPART_ID,
+    AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+    AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
+}
 
 PAPER_FAMILY_TO_CANONICAL_COMPONENT = {
     "p1": "p1",
@@ -103,9 +123,24 @@ class StartupConfigurationError(RuntimeError):
 class ModelResponseError(ValueError):
     """Raised when provider output is present but cannot be accepted."""
 
-    def __init__(self, message: str, *, raw_provider_output: str | None = None) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        raw_provider_output: str | None = None,
+        error_type: str = "parse_error",
+    ) -> None:
         super().__init__(message)
         self.raw_provider_output = raw_provider_output
+        self.error_type = error_type
+
+
+class ClassifiedModelOutputError(ValueError):
+    """Raised when model output is rejected with a stable failure category."""
+
+    def __init__(self, message: str, *, error_type: str) -> None:
+        super().__init__(message)
+        self.error_type = error_type
 
 
 _UNIQUE_TOPIC_ALIASES: dict[str, str] = {}
@@ -682,11 +717,27 @@ def parse_response_with_recovery(
     parser: Any,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     candidates = response_text_candidates(response)
+    final_content_sources = {"message.content", "output_text", "structured_response"}
+    has_final_content = any(source in final_content_sources for source, _ in candidates)
+    has_reasoning_content = any(source == "reasoning_content" for source, _ in candidates)
+    if not has_final_content:
+        error_type = AI_FAILURE_REASONING_CONTENT_ONLY if has_reasoning_content else AI_FAILURE_EMPTY_CONTENT
+        message = (
+            "Provider response only contained reasoning_content; final JSON content was empty."
+            if has_reasoning_content
+            else "Provider response did not contain final JSON content."
+        )
+        error = ClassifiedModelOutputError(message, error_type=error_type)
+        setattr(error, "raw_provider_output", _response_snapshot(response))
+        raise error
+
     first_error: ValueError | None = None
     first_text: str | None = None
     first_source: str | None = None
 
     for source, text in candidates:
+        if source == "reasoning_content":
+            continue
         for candidate_text in _candidate_json_texts(text, source=source):
             try:
                 parsed = parser(candidate_text)
@@ -705,9 +756,13 @@ def parse_response_with_recovery(
         error = ValueError(str(first_error))
         setattr(error, "raw_provider_output", first_text)
         setattr(error, "parse_recovery_source", first_source)
+        setattr(error, "error_type", getattr(first_error, "error_type", AI_FAILURE_SCHEMA_VALIDATION_ERROR))
         raise error
 
-    error = ValueError("Provider response did not contain parseable JSON content.")
+    error = ClassifiedModelOutputError(
+        "Provider response did not contain parseable JSON content.",
+        error_type=AI_FAILURE_INVALID_JSON,
+    )
     setattr(error, "raw_provider_output", _response_snapshot(response))
     raise error
 
@@ -742,7 +797,6 @@ def _candidate_json_texts(text: str, *, source: str) -> list[str]:
 
 def extract_final_json_object(text: str) -> str | None:
     decoder = json.JSONDecoder(object_pairs_hook=_strict_json_object)
-    best: tuple[int, int, str] | None = None
     for match in re.finditer(r"\{", text):
         start = match.start()
         try:
@@ -751,11 +805,8 @@ def extract_final_json_object(text: str) -> str | None:
             continue
         if not isinstance(value, dict):
             continue
-        candidate = text[start : start + end]
-        candidate_length = len(candidate)
-        if best is None or candidate_length > best[1] or (candidate_length == best[1] and start > best[0]):
-            best = (start, end, candidate)
-    return best[2] if best else None
+        return text[start : start + end]
+    return None
 
 
 def parse_model_json(raw_text: str) -> dict[str, Any]:
@@ -1369,6 +1420,7 @@ def build_ai_assisted_question_payload(
             "paper": record.get("paper"),
             "question_solution_marks": record.get("question_solution_marks"),
             "subparts": record.get("subparts", []) if include_subparts else [],
+            "allowed_subpart_ids": sorted(_expected_subpart_ids([record])) if include_subparts else [],
             "subparts_solution_marks": record.get("subparts_solution_marks", {}) if include_subparts else {},
             "page_refs": record.get("page_refs", {}),
             "local_topic": record.get("topic"),
@@ -1428,17 +1480,29 @@ def build_ai_assisted_messages(payload: dict[str, Any], *, prompt_version: str =
         "or needs_new_skill_candidate/suggested_new_skill; suggestions are review-only and must not be inserted into ID fields. "
         "DeepSeek enriches and explains; deterministic code validates, normalizes, ranks, merges, and decides usability. "
         "Use image paths only as evidence references; the text/OCR and mark-scheme text may be lossy. "
-        "Return one strict JSON object only, with no markdown and no prose. "
+        "Return exactly one valid JSON object. "
+        "Do not include markdown, prose before or after JSON, comments, chain-of-thought, reasoning text, "
+        "trailing commas, or unescaped quotes inside string fields. "
+        "Use double quotes for all JSON keys and strings. "
+        "Use null, not an empty string, when a field is unknown or not applicable. "
         "The top-level object must contain exactly one key named items. "
-        "items must be an array containing one object for each whole-question mapping and, where useful, each subpart mapping. "
+        "For this v2 pass, items must contain exactly one parent/top-level object per input question. "
+        "Do not output subpart-level items in this pass, even when subparts or allowed_subpart_ids are listed. "
+        "For every parent/top-level question item, set subpart_id to null. "
+        "If a future prompt asks for subpart items, subpart_id may only be one of the allowed_subpart_ids listed on that input question. "
+        "Do not invent subpart IDs. "
+        "Output must match the parser schema exactly. "
         f"Prompt version: {prompt_version}. "
         "Every item must contain exactly these keys: "
         + ", ".join(sorted(AI_ASSISTED_REQUIRED_ITEM_KEYS))
         + ". confidence and ai_difficulty_score must be JSON numbers from 0 to 1. "
         "ai_difficulty_estimate must be easy, average, or difficult. "
+        "secondary_topic_ids, subtopic_ids, skill_ids, prerequisite_skill_ids, method_families, exam_techniques, "
+        "common_mistakes, evidence_used, evidence_missing, review_reasons, and ai_difficulty_factors must be JSON arrays. "
         "reviewed_status must be machine_candidate. mapping_source must be deepseek_ai_assisted. "
         "strict_filter_candidate may be true only when direct assessed evidence is strong, confidence is not low, "
         "review_required is false, evidence_missing has no required evidence, and the mapping is not prerequisite-only. "
+        "strict_filter_reason should be a concise string when strict_filter_candidate is true; use null if no strict-filter rationale applies. "
         "Prerequisite skills should stay in prerequisite_skill_ids and should not become primary topics unless they are "
         "the main assessment target. "
         "worked_example_seed and warmup_seed must be concise lesson-generation seeds, not full lessons. "
@@ -1477,7 +1541,11 @@ def request_ai_assisted_batch(
         )
     except ValueError as exc:
         raw_output = getattr(exc, "raw_provider_output", None)
-        raise ModelResponseError(str(exc), raw_provider_output=raw_output or _response_snapshot(response)) from exc
+        raise ModelResponseError(
+            str(exc),
+            raw_provider_output=raw_output or _response_snapshot(response),
+            error_type=getattr(exc, "error_type", AI_FAILURE_SCHEMA_VALIDATION_ERROR),
+        ) from exc
     return parsed["items"], parse_metadata, _response_snapshot(response)
 
 
@@ -1491,28 +1559,67 @@ def parse_ai_assisted_model_json(
     try:
         payload = json.loads(raw_text, object_pairs_hook=_strict_json_object)
     except json.JSONDecodeError as exc:
-        raise ValueError("AI-assisted model output was not valid JSON.") from exc
+        raise ClassifiedModelOutputError(
+            "AI-assisted model output was not valid JSON.",
+            error_type=AI_FAILURE_INVALID_JSON,
+        ) from exc
     if not isinstance(payload, dict):
-        raise ValueError("AI-assisted model output must be a JSON object.")
+        _raise_ai_output_error(
+            "AI-assisted model output must be a JSON object.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        )
     if set(payload) != {"items"}:
-        raise ValueError("AI-assisted model output must contain exactly one top-level key: items.")
+        _raise_ai_output_error(
+            "AI-assisted model output must contain exactly one top-level key: items.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        )
     items = payload["items"]
     if not isinstance(items, list):
-        raise ValueError("AI-assisted model output items must be an array.")
+        _raise_ai_output_error(
+            "AI-assisted model output items must be an array.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        )
 
     expected_question_ids = {str(record.get("question_id")) for record in expected_records or []}
     expected_subpart_ids = _expected_subpart_ids(expected_records or [])
-    validated_items = [
-        validate_ai_assisted_item(
-            item,
-            taxonomy=taxonomy,
-            expected_question_ids=expected_question_ids,
-            expected_subpart_ids=expected_subpart_ids,
-            allow_review_override=allow_review_override,
-        )
-        for item in items
-    ]
+    expected_subpart_ids_by_question = _expected_subpart_ids_by_question(expected_records or [])
+    validated_items: list[dict[str, Any]] = []
+    for index, item in enumerate(items):
+        try:
+            validated_items.append(
+                validate_ai_assisted_item(
+                    item,
+                    taxonomy=taxonomy,
+                    expected_question_ids=expected_question_ids,
+                    expected_subpart_ids=expected_subpart_ids,
+                    expected_subpart_ids_by_question=expected_subpart_ids_by_question,
+                    allow_review_override=allow_review_override,
+                )
+            )
+        except ClassifiedModelOutputError as exc:
+            _raise_ai_output_error(_prefix_item_error(str(exc), index), exc.error_type)
+        except ValueError as exc:
+            _raise_ai_output_error(_prefix_item_error(str(exc), index), AI_FAILURE_SCHEMA_VALIDATION_ERROR)
     return {"items": validated_items}
+
+
+def _raise_ai_output_error(message: str, error_type: str) -> None:
+    raise ClassifiedModelOutputError(message, error_type=error_type)
+
+
+def _prefix_item_error(message: str, index: int) -> str:
+    if message.startswith("items["):
+        return message
+    if message.startswith("AI-assisted item returned unexpected subpart_id:"):
+        got = message.rsplit(":", 1)[-1].strip()
+        return f"items[{index}].subpart_id expected null or an allowed subpart ID, got {got}."
+    if message.startswith("AI-assisted item returned unexpected question_id:"):
+        got = message.rsplit(":", 1)[-1].strip()
+        return f"items[{index}].question_id expected one of the input question IDs, got {got}."
+    for field_name in sorted(AI_ASSISTED_REQUIRED_ITEM_KEYS, key=len, reverse=True):
+        if message.startswith(f"{field_name} "):
+            return f"items[{index}].{message}"
+    return f"items[{index}] {message}"
 
 
 def _expected_subpart_ids(records: Sequence[dict[str, Any]]) -> set[str]:
@@ -1526,41 +1633,76 @@ def _expected_subpart_ids(records: Sequence[dict[str, Any]]) -> set[str]:
     return subpart_ids
 
 
+def _expected_subpart_ids_by_question(records: Sequence[dict[str, Any]]) -> dict[str, set[str]]:
+    by_question: dict[str, set[str]] = {}
+    for record in records:
+        question_id = str(record.get("question_id", "")).strip()
+        if not question_id:
+            continue
+        allowed: set[str] = set()
+        for subpart in record.get("subparts", []) or []:
+            label = str(subpart).strip()
+            if label:
+                allowed.add(f"{question_id}_{label}")
+        by_question[question_id] = allowed
+    return by_question
+
+
 def validate_ai_assisted_item(
     item: Any,
     *,
     taxonomy: CanonicalTaxonomy,
     expected_question_ids: set[str] | None = None,
     expected_subpart_ids: set[str] | None = None,
+    expected_subpart_ids_by_question: dict[str, set[str]] | None = None,
     allow_review_override: bool = False,
 ) -> dict[str, Any]:
     if not isinstance(item, dict):
-        raise ValueError("AI-assisted item must be a JSON object.")
+        _raise_ai_output_error("AI-assisted item must be a JSON object.", AI_FAILURE_SCHEMA_VALIDATION_ERROR)
     actual_keys = set(item)
     if actual_keys != AI_ASSISTED_REQUIRED_ITEM_KEYS:
-        raise ValueError(
+        _raise_ai_output_error(
             "AI-assisted item keys did not match the required schema. "
-            f"Expected {sorted(AI_ASSISTED_REQUIRED_ITEM_KEYS)}, got {sorted(actual_keys)}."
+            f"Expected {sorted(AI_ASSISTED_REQUIRED_ITEM_KEYS)}, got {sorted(actual_keys)}.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
         )
 
     question_id = _require_non_empty_string(item["question_id"], "question_id")
     if expected_question_ids and question_id not in expected_question_ids:
-        raise ValueError(f"AI-assisted item returned unexpected question_id: {question_id}")
+        _raise_ai_output_error(
+            f"AI-assisted item returned unexpected question_id: {question_id}",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        )
 
     subpart_id_raw = item["subpart_id"]
     if subpart_id_raw is None:
         subpart_id = None
+    elif isinstance(subpart_id_raw, str) and not subpart_id_raw.strip():
+        allowed_for_question = (expected_subpart_ids_by_question or {}).get(question_id)
+        if allowed_for_question:
+            _raise_ai_output_error(
+                "subpart_id must be null for parent items or one of the allowed subpart IDs for subpart items; empty string is not allowed.",
+                AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING,
+            )
+        subpart_id = None
     elif isinstance(subpart_id_raw, str) and subpart_id_raw.strip():
         subpart_id = subpart_id_raw.strip()
         if expected_subpart_ids and subpart_id not in expected_subpart_ids:
-            raise ValueError(f"AI-assisted item returned unexpected subpart_id: {subpart_id}")
+            _raise_ai_output_error(
+                f"AI-assisted item returned unexpected subpart_id: {subpart_id}",
+                AI_FAILURE_UNEXPECTED_SUBPART_ID,
+            )
     else:
-        raise ValueError("subpart_id must be null or a non-empty string.")
+        _raise_ai_output_error(
+            "subpart_id must be null or a non-empty string.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        )
 
     paper_family = str(item["paper_family"]).strip().lower()
     if paper_family != taxonomy.paper_family:
-        raise ValueError(
-            f"paper_family must be {taxonomy.paper_family} for component {taxonomy.component_key}, got {paper_family}."
+        _raise_ai_output_error(
+            f"paper_family must be {taxonomy.paper_family} for component {taxonomy.component_key}, got {paper_family}.",
+            AI_FAILURE_SCHEMA_VALIDATION_ERROR,
         )
 
     primary_topic_id = _require_known_id(item["primary_topic_id"], "primary_topic_id", taxonomy.topics)
@@ -1590,6 +1732,15 @@ def validate_ai_assisted_item(
         "needs_new_subtopic_candidate",
     )
     needs_new_skill_candidate = _require_bool(item["needs_new_skill_candidate"], "needs_new_skill_candidate")
+    evidence_missing = _coerce_string_list(item["evidence_missing"], "evidence_missing")
+    review_reasons = _coerce_string_list(item["review_reasons"], "review_reasons")
+    strict_filter_reason = _normalize_strict_filter_reason(
+        item["strict_filter_reason"],
+        strict_filter_candidate=strict_filter_candidate,
+        review_required=review_required,
+        evidence_missing=evidence_missing,
+        review_reasons=review_reasons,
+    )
 
     normalized = {
         "question_id": question_id,
@@ -1599,22 +1750,22 @@ def validate_ai_assisted_item(
         "secondary_topic_ids": secondary_topic_ids,
         "subtopic_ids": subtopic_ids,
         "skill_ids": skill_ids,
-        "method_families": _require_string_list(item["method_families"], "method_families"),
+        "method_families": _coerce_string_list(item["method_families"], "method_families"),
         "prerequisite_skill_ids": prerequisite_skill_ids,
-        "exam_techniques": _require_string_list(item["exam_techniques"], "exam_techniques"),
-        "common_mistakes": _require_string_list(item["common_mistakes"], "common_mistakes"),
+        "exam_techniques": _coerce_string_list(item["exam_techniques"], "exam_techniques"),
+        "common_mistakes": _coerce_string_list(item["common_mistakes"], "common_mistakes"),
         "worked_example_seed": _require_non_empty_string(item["worked_example_seed"], "worked_example_seed"),
         "warmup_seed": _require_non_empty_string(item["warmup_seed"], "warmup_seed"),
         "strict_filter_candidate": strict_filter_candidate,
-        "strict_filter_reason": _require_non_empty_string(item["strict_filter_reason"], "strict_filter_reason"),
-        "evidence_used": _require_string_list(item["evidence_used"], "evidence_used"),
-        "evidence_missing": _require_string_list(item["evidence_missing"], "evidence_missing"),
+        "strict_filter_reason": strict_filter_reason,
+        "evidence_used": _coerce_string_list(item["evidence_used"], "evidence_used"),
+        "evidence_missing": evidence_missing,
         "confidence": confidence_score,
         "review_required": review_required,
-        "review_reasons": _require_string_list(item["review_reasons"], "review_reasons"),
+        "review_reasons": review_reasons,
         "ai_difficulty_estimate": ai_difficulty_estimate,
         "ai_difficulty_score": ai_difficulty_score,
-        "ai_difficulty_factors": _require_string_list(item["ai_difficulty_factors"], "ai_difficulty_factors"),
+        "ai_difficulty_factors": _coerce_string_list(item["ai_difficulty_factors"], "ai_difficulty_factors"),
         "needs_new_subtopic_candidate": needs_new_subtopic_candidate,
         "suggested_new_subtopic": _nullable_string(item["suggested_new_subtopic"], "suggested_new_subtopic"),
         "needs_new_skill_candidate": needs_new_skill_candidate,
@@ -1638,7 +1789,10 @@ def validate_ai_assisted_item(
 def _require_known_id(value: Any, field_name: str, allowed: dict[str, Any]) -> str:
     cleaned = _require_non_empty_string(value, field_name)
     if cleaned not in allowed:
-        raise ValueError(f"{field_name} is not in the canonical taxonomy: {cleaned}")
+        _raise_ai_output_error(
+            f"{field_name} is not in the canonical taxonomy: {cleaned}",
+            AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
+        )
     return cleaned
 
 
@@ -1646,7 +1800,10 @@ def _require_known_id_list(value: Any, field_name: str, allowed: dict[str, Any])
     ids = _require_string_list(value, field_name)
     unknown = [item for item in ids if item not in allowed]
     if unknown:
-        raise ValueError(f"{field_name} contains unknown canonical IDs: {', '.join(unknown)}")
+        _raise_ai_output_error(
+            f"{field_name} contains unknown canonical IDs: {', '.join(unknown)}",
+            AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
+        )
     return ids
 
 
@@ -1661,6 +1818,15 @@ def _require_string_list(value: Any, field_name: str) -> list[str]:
         if cleaned:
             strings.append(cleaned)
     return strings
+
+
+def _coerce_string_list(value: Any, field_name: str) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        cleaned = value.strip()
+        return [cleaned] if cleaned else []
+    return _require_string_list(value, field_name)
 
 
 def _require_bool(value: Any, field_name: str) -> bool:
@@ -1694,6 +1860,30 @@ def _nullable_string(value: Any, field_name: str) -> str | None:
     raise ValueError(f"{field_name} must be a string or null.")
 
 
+def _normalize_strict_filter_reason(
+    value: Any,
+    *,
+    strict_filter_candidate: bool,
+    review_required: bool,
+    evidence_missing: Sequence[str],
+    review_reasons: Sequence[str],
+) -> str:
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    if value is not None and not isinstance(value, str):
+        raise ValueError(f"strict_filter_reason must be a string or null, got {type(value).__name__}.")
+    if strict_filter_candidate:
+        return "Direct assessed evidence maps to validated canonical topic, subtopic, and skill IDs."
+    reasons = [*review_reasons]
+    if review_required:
+        reasons.append("review_required")
+    if evidence_missing:
+        reasons.append("required_evidence_missing")
+    if reasons:
+        return "Excluded from strict filtering: " + ", ".join(sorted(set(reasons))) + "."
+    return "Not selected for strict filtering by the model."
+
+
 def _validate_subtopic_topic_links(
     primary_topic_id: str,
     secondary_topic_ids: list[str],
@@ -1708,9 +1898,10 @@ def _validate_subtopic_topic_links(
         if taxonomy.subtopic_to_topic.get(subtopic_id) not in allowed_topics
     ]
     if mismatched:
-        raise ValueError(
+        _raise_ai_output_error(
             "subtopic_ids must belong to primary_topic_id or secondary_topic_ids: "
-            + ", ".join(mismatched)
+            + ", ".join(mismatched),
+            AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
         )
 
 
@@ -1728,9 +1919,10 @@ def _validate_skill_topic_links(
         if taxonomy.skill_to_topic.get(skill_id) and taxonomy.skill_to_topic.get(skill_id) not in allowed_topics
     ]
     if mismatched:
-        raise ValueError(
+        _raise_ai_output_error(
             "skill IDs must belong to primary_topic_id or secondary_topic_ids: "
-            + ", ".join(mismatched)
+            + ", ".join(mismatched),
+            AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
         )
 
 
@@ -1844,7 +2036,7 @@ def should_rerun_ai_assisted_record(
         isinstance(existing_enrichment, dict)
         and existing_enrichment.get("llm_prompt_version") != prompt_version
     )
-    resumable_error = error_type in {DeepSeekErrorType.PROVIDER_ERROR, "parse_error"}
+    resumable_error = error_type in AI_ASSISTED_RETRYABLE_ERROR_TYPES
 
     if only_errors and not (missing or resumable_error):
         return False
@@ -1874,7 +2066,7 @@ def select_ai_assisted_records(
     component: str | None = None,
     paper: str | None = None,
     question_ids: Sequence[str] | None = None,
-    limit: int = 25,
+    limit: int | None = None,
     resume: bool = False,
     prompt_version: str = AI_ASSISTED_PROMPT_VERSION,
     only_errors: bool = False,
@@ -1882,16 +2074,15 @@ def select_ai_assisted_records(
     only_topic_mismatch: bool = False,
     only_unmapped_labels: bool = False,
 ) -> list[dict[str, Any]]:
-    selected = list(records)
+    selected = filter_ai_assisted_input_records(
+        records,
+        component=component,
+        paper=paper,
+        question_ids=question_ids,
+        limit=None,
+    )
     existing_sidecar = existing_sidecar or {}
-    if component:
-        wanted_family = product_paper_family_for_component(canonical_component_for_paper_family(component))
-        selected = [record for record in selected if str(record.get("paper_family", "")).lower() == wanted_family]
-    if paper:
-        selected = [record for record in selected if str(record.get("paper", "")).strip() == paper]
     explicit_ids = {value.strip() for value in question_ids or [] if value.strip()}
-    if explicit_ids:
-        selected = [record for record in selected if str(record.get("question_id", "")).strip() in explicit_ids]
 
     selected = [
         record
@@ -1909,7 +2100,30 @@ def select_ai_assisted_records(
         )
     ]
     selected.sort(key=lambda record: (str(record.get("paper_family", "")), str(record.get("paper", "")), str(record.get("question_id", ""))))
-    if limit >= 0:
+    if limit is not None and limit >= 0:
+        selected = selected[:limit]
+    return selected
+
+
+def filter_ai_assisted_input_records(
+    records: Sequence[dict[str, Any]],
+    *,
+    component: str | None = None,
+    paper: str | None = None,
+    question_ids: Sequence[str] | None = None,
+    limit: int | None = None,
+) -> list[dict[str, Any]]:
+    selected = list(records)
+    if component:
+        wanted_family = product_paper_family_for_component(canonical_component_for_paper_family(component))
+        selected = [record for record in selected if str(record.get("paper_family", "")).lower() == wanted_family]
+    if paper:
+        selected = [record for record in selected if str(record.get("paper", "")).strip() == paper]
+    explicit_ids = {value.strip() for value in question_ids or [] if value.strip()}
+    if explicit_ids:
+        selected = [record for record in selected if str(record.get("question_id", "")).strip() in explicit_ids]
+    selected.sort(key=lambda record: (str(record.get("paper_family", "")), str(record.get("paper", "")), str(record.get("question_id", ""))))
+    if limit is not None and limit >= 0:
         selected = selected[:limit]
     return selected
 
@@ -2020,6 +2234,7 @@ def build_ai_assisted_error_record(
             "paper_family": record.get("paper_family"),
             "error": error,
             "ai_assisted_items": [],
+            "strict_filter_candidates": [],
             "ai_final_review_required": True,
             "ai_final_review_reasons": [f"ai_assisted_{error_type}"],
             "llm_provider": LLM_PROVIDER,
@@ -2175,6 +2390,146 @@ def write_ai_assisted_sidecar(
     return path
 
 
+def audit_ai_assisted_sidecar_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    if payload.get("schema_name") != AI_ASSISTED_SIDECAR_SCHEMA_NAME:
+        raise ValueError("AI sidecar audit requires exam_bank.ai_assisted_sidecar input")
+    enrichments = payload.get("enrichments")
+    if not isinstance(enrichments, dict):
+        raise ValueError("AI sidecar audit requires an enrichments object")
+    metadata = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
+    run_manifest = metadata.get("run_manifest") if isinstance(metadata.get("run_manifest"), dict) else {}
+    latest_run_timestamp = str(run_manifest.get("run_timestamp") or "")
+    latest_prompt_version = str(run_manifest.get("prompt_version") or metadata.get("prompt_version") or "")
+    manifest_batches = [
+        batch
+        for batch in run_manifest.get("batches", [])
+        if isinstance(batch, dict) and isinstance(batch.get("question_ids"), list)
+    ]
+    attempted_ids = {
+        str(question_id)
+        for batch in manifest_batches
+        if batch.get("status") != "success_cached"
+        for question_id in batch.get("question_ids", [])
+    }
+    skipped_ids = {
+        str(question_id)
+        for batch in manifest_batches
+        if batch.get("status") == "success_cached"
+        for question_id in batch.get("question_ids", [])
+    }
+    prompt_versions = Counter(str(value.get("llm_prompt_version") or "missing") for value in enrichments.values())
+    run_timestamps = Counter(str(value.get("llm_run_timestamp") or "missing") for value in enrichments.values())
+    error_records = {
+        question_id: value
+        for question_id, value in enrichments.items()
+        if isinstance(value, dict) and isinstance(value.get("error"), dict)
+    }
+    failures_by_reason = Counter(str(value["error"].get("type") or "unknown") for value in error_records.values())
+    if manifest_batches:
+        attempted_records = {
+            question_id: value
+            for question_id, value in enrichments.items()
+            if question_id in attempted_ids
+        }
+    elif latest_run_timestamp:
+        attempted_records = {
+            question_id: value
+            for question_id, value in enrichments.items()
+            if value.get("llm_run_timestamp") == latest_run_timestamp
+        }
+    else:
+        attempted_records = {}
+    attempted_failures = {
+        question_id: value
+        for question_id, value in attempted_records.items()
+        if isinstance(value.get("error"), dict)
+    }
+    attempted_successes = {
+        question_id: value
+        for question_id, value in attempted_records.items()
+        if not isinstance(value.get("error"), dict)
+    }
+    copied_from_existing = max(0, len(enrichments) - len(attempted_records))
+    mixed_prompt_versions = len(prompt_versions) > 1
+    full_sidecar_usable = bool(enrichments) and not error_records and not mixed_prompt_versions
+    if latest_prompt_version:
+        full_sidecar_usable = full_sidecar_usable and set(prompt_versions) <= {latest_prompt_version}
+    current_run_usable = bool(attempted_successes) and not attempted_failures and full_sidecar_usable
+    if latest_prompt_version:
+        stale_records = sum(
+            1
+            for question_id, value in enrichments.items()
+            if question_id not in attempted_records and value.get("llm_prompt_version") != latest_prompt_version
+        )
+    else:
+        stale_records = copied_from_existing
+    parse_failure_types = {
+        "parse_error",
+        AI_FAILURE_INVALID_JSON,
+        AI_FAILURE_EMPTY_CONTENT,
+        AI_FAILURE_REASONING_CONTENT_ONLY,
+    }
+    validation_failure_types = {
+        AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING,
+        AI_FAILURE_UNEXPECTED_SUBPART_ID,
+        AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+        AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
+    }
+    latest_failures_by_reason = Counter(
+        str(value["error"].get("type") or "unknown") for value in attempted_failures.values()
+    )
+    return {
+        "total_records": len(enrichments),
+        "records_by_llm_prompt_version": dict(sorted(prompt_versions.items())),
+        "records_by_llm_run_timestamp": dict(sorted(run_timestamps.items())),
+        "records_with_error": len(error_records),
+        "records_with_ai_assisted_items": sum(
+            1 for value in enrichments.values() if isinstance(value.get("ai_assisted_items"), list) and value["ai_assisted_items"]
+        ),
+        "records_with_strict_filter_candidates": sum(
+            1
+            for value in enrichments.values()
+            if not isinstance(value.get("error"), dict)
+            and isinstance(value.get("strict_filter_candidates"), list)
+            and value["strict_filter_candidates"]
+        ),
+        "records_copied_from_existing_sidecar": copied_from_existing,
+        "records_newly_attempted_in_latest_run": len(attempted_records),
+        "new_successes": len(attempted_successes),
+        "new_failures": len(attempted_failures),
+        "new_failures_by_reason": dict(sorted(latest_failures_by_reason.items())),
+        "total_records_written": len(enrichments),
+        "preserved_records": copied_from_existing,
+        "attempted_records": len(attempted_records),
+        "successful_new_records": len(attempted_successes),
+        "failed_new_records": len(attempted_failures),
+        "skipped_records": len(skipped_ids),
+        "provider_api_failures": latest_failures_by_reason.get(AI_FAILURE_PROVIDER_API_ERROR, 0)
+        + latest_failures_by_reason.get(DeepSeekErrorType.PROVIDER_ERROR, 0),
+        "parse_failures": sum(latest_failures_by_reason.get(error_type, 0) for error_type in parse_failure_types),
+        "validation_failures": sum(latest_failures_by_reason.get(error_type, 0) for error_type in validation_failure_types),
+        "stale_records_from_existing_sidecar": stale_records,
+        "mixed_prompt_versions": mixed_prompt_versions,
+        "current_run_usable_for_asterion": current_run_usable,
+        "safe_to_use_for_asterion_export": full_sidecar_usable,
+        "all_failures_by_reason": dict(sorted(failures_by_reason.items())),
+        "latest_run_timestamp": latest_run_timestamp or None,
+        "latest_prompt_version": latest_prompt_version or None,
+        "fresh_run": metadata.get("fresh_run"),
+        "resume": metadata.get("resume"),
+        "force_rerun": metadata.get("force_rerun"),
+        "existing_sidecar_path": metadata.get("existing_sidecar_path"),
+        "output_path_existed_before_run": metadata.get("output_path_existed_before_run"),
+        "preserving_existing_records": metadata.get("preserving_existing_records"),
+        "preservation_source": metadata.get("preservation_source"),
+    }
+
+
+def audit_ai_assisted_sidecar(path: str | Path) -> dict[str, Any]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    return audit_ai_assisted_sidecar_payload(payload)
+
+
 def batch_cache_dir(output_path: str | Path) -> Path:
     output = Path(output_path)
     stem = output.stem
@@ -2206,6 +2561,136 @@ def read_successful_batch_cache(output_path: str | Path, batch_id: str, *, batch
     if payload.get("batch_input_hash") != batch_input_hash:
         return None
     return payload
+
+
+def _recover_ai_assisted_batch_individually(
+    batch: Sequence[dict[str, Any]],
+    *,
+    client: OpenAI,
+    taxonomy: CanonicalTaxonomy,
+    existing_sidecar: dict[str, dict[str, Any]],
+    output_path: str | Path | None,
+    model: str,
+    prompt_version: str,
+    include_subparts: bool,
+    failure_log_path: str | Path | None,
+    run_timestamp: str,
+    parent_batch_id: str,
+    original_error: ModelResponseError,
+) -> tuple[dict[str, dict[str, Any]], str, list[dict[str, Any]], dict[str, Any], str | None]:
+    recovered: dict[str, dict[str, Any]] = {}
+    recovered_items: list[dict[str, Any]] = []
+    latest_parse_metadata: dict[str, Any] = {}
+    latest_raw_provider_output: str | None = original_error.raw_provider_output
+
+    for record in batch:
+        question_id = str(record["question_id"])
+        single_batch_id = f"{parent_batch_id}__{question_id}"
+        single_payload = build_ai_assisted_batch_payload(
+            [record],
+            taxonomy=taxonomy,
+            existing_sidecar=existing_sidecar,
+            include_subparts=include_subparts,
+        )
+        single_input_hash = stable_json_hash(single_payload)
+        try:
+            items, parse_metadata, raw_provider_output = request_ai_assisted_batch(
+                client,
+                model=model,
+                payload=single_payload,
+                taxonomy=taxonomy,
+                expected_records=[record],
+                prompt_version=prompt_version,
+            )
+            latest_parse_metadata = parse_metadata
+            latest_raw_provider_output = raw_provider_output
+            recovered_items.extend(items)
+            recovered[question_id] = build_ai_assisted_record(
+                record,
+                items=items,
+                existing_enrichment=existing_sidecar.get(question_id),
+                model=model,
+                prompt_version=prompt_version,
+                run_timestamp=run_timestamp,
+                batch_id=single_batch_id,
+                batch_input_hash=single_input_hash,
+                taxonomy=taxonomy,
+                parse_metadata=parse_metadata,
+            )
+            if output_path:
+                write_batch_cache(
+                    output_path,
+                    {
+                        "batch_id": single_batch_id,
+                        "status": "success_individual_retry",
+                        "question_ids": [question_id],
+                        "paper": record.get("paper"),
+                        "paper_family": record.get("paper_family"),
+                        "batch_input_hash": single_input_hash,
+                        "llm_model": model,
+                        "llm_prompt_version": prompt_version,
+                        "llm_run_timestamp": run_timestamp,
+                        "items": items,
+                        "parse_metadata": parse_metadata,
+                        "raw_provider_output": raw_provider_output,
+                        "recovered_from_batch_id": parent_batch_id,
+                    },
+                )
+        except ModelResponseError as exc:
+            recovered[question_id] = build_ai_assisted_error_record(
+                record,
+                existing_enrichment=existing_sidecar.get(question_id),
+                error_type=exc.error_type,
+                message=str(exc),
+                model=model,
+                prompt_version=prompt_version,
+                run_timestamp=run_timestamp,
+                batch_id=single_batch_id,
+                batch_input_hash=single_input_hash,
+                raw_provider_output=exc.raw_provider_output,
+            )
+            _append_failure_log(
+                failure_log_path,
+                question_id=question_id,
+                error_type=exc.error_type,
+                error_message=str(exc),
+                model=model,
+                run_timestamp=run_timestamp,
+                raw_provider_output=exc.raw_provider_output,
+                request_payload=single_payload,
+            )
+        except Exception as exc:
+            message = f"{exc.__class__.__name__}: {exc}"
+            recovered[question_id] = build_ai_assisted_error_record(
+                record,
+                existing_enrichment=existing_sidecar.get(question_id),
+                error_type=AI_FAILURE_PROVIDER_API_ERROR,
+                message=message,
+                model=model,
+                prompt_version=prompt_version,
+                run_timestamp=run_timestamp,
+                batch_id=single_batch_id,
+                batch_input_hash=single_input_hash,
+            )
+            _append_failure_log(
+                failure_log_path,
+                question_id=question_id,
+                error_type=AI_FAILURE_PROVIDER_API_ERROR,
+                error_message=message,
+                model=model,
+                run_timestamp=run_timestamp,
+                raw_provider_output=None,
+                request_payload=single_payload,
+            )
+
+    success_count = sum(1 for value in recovered.values() if not isinstance(value.get("error"), dict))
+    if success_count == len(batch):
+        status = "success_individual_retry"
+    elif success_count:
+        status = "partial_success_individual_retry"
+    else:
+        status = original_error.error_type
+    return recovered, status, recovered_items, latest_parse_metadata, latest_raw_provider_output
 
 
 def enrich_ai_assisted_records(
@@ -2288,43 +2773,74 @@ def enrich_ai_assisted_records(
                 )
                 status = "success"
             except ModelResponseError as exc:
-                status = "parse_error"
                 items = []
                 parse_metadata = {}
                 raw_provider_output = exc.raw_provider_output
-                if progress:
-                    progress.update_phase(
-                        "recovering_parse_errors",
-                        current_batch_id=batch_id,
-                        current_paper=batch_paper,
-                        current_paper_family=batch_paper_family,
-                    )
-                for record in batch:
-                    question_id = str(record["question_id"])
-                    enrichments[question_id] = build_ai_assisted_error_record(
-                        record,
-                        existing_enrichment=existing_sidecar.get(question_id),
-                        error_type="parse_error",
-                        message=str(exc),
+                if len(batch) > 1 and exc.error_type in {
+                    AI_FAILURE_INVALID_JSON,
+                    AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+                    AI_FAILURE_INVALID_SUBPART_ID_EMPTY_STRING,
+                    AI_FAILURE_UNEXPECTED_SUBPART_ID,
+                    AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
+                }:
+                    if progress:
+                        progress.update_phase(
+                            "retrying_batch_individually",
+                            current_batch_id=batch_id,
+                            current_paper=batch_paper,
+                            current_paper_family=batch_paper_family,
+                            retry_count=1,
+                        )
+                    recovered, status, items, parse_metadata, raw_provider_output = _recover_ai_assisted_batch_individually(
+                        batch,
+                        client=client,
+                        taxonomy=taxonomy,
+                        existing_sidecar=existing_sidecar,
+                        output_path=output_path,
                         model=model,
                         prompt_version=prompt_version,
+                        include_subparts=include_subparts,
+                        failure_log_path=failure_log_path,
                         run_timestamp=run_timestamp,
-                        batch_id=batch_id,
-                        batch_input_hash=batch_input_hash,
-                        raw_provider_output=exc.raw_provider_output,
+                        parent_batch_id=batch_id,
+                        original_error=exc,
                     )
-                    _append_failure_log(
-                        failure_log_path,
-                        question_id=question_id,
-                        error_type="parse_error",
-                        error_message=str(exc),
-                        model=model,
-                        run_timestamp=run_timestamp,
-                        raw_provider_output=exc.raw_provider_output,
-                        request_payload=batch_payload,
-                    )
+                    enrichments.update(recovered)
+                else:
+                    status = exc.error_type
+                    if progress:
+                        progress.update_phase(
+                            "recovering_parse_errors",
+                            current_batch_id=batch_id,
+                            current_paper=batch_paper,
+                            current_paper_family=batch_paper_family,
+                        )
+                    for record in batch:
+                        question_id = str(record["question_id"])
+                        enrichments[question_id] = build_ai_assisted_error_record(
+                            record,
+                            existing_enrichment=existing_sidecar.get(question_id),
+                            error_type=exc.error_type,
+                            message=str(exc),
+                            model=model,
+                            prompt_version=prompt_version,
+                            run_timestamp=run_timestamp,
+                            batch_id=batch_id,
+                            batch_input_hash=batch_input_hash,
+                            raw_provider_output=exc.raw_provider_output,
+                        )
+                        _append_failure_log(
+                            failure_log_path,
+                            question_id=question_id,
+                            error_type=exc.error_type,
+                            error_message=str(exc),
+                            model=model,
+                            run_timestamp=run_timestamp,
+                            raw_provider_output=exc.raw_provider_output,
+                            request_payload=batch_payload,
+                        )
             except Exception as exc:
-                status = DeepSeekErrorType.PROVIDER_ERROR
+                status = AI_FAILURE_PROVIDER_API_ERROR
                 items = []
                 parse_metadata = {}
                 raw_provider_output = None
@@ -2341,7 +2857,7 @@ def enrich_ai_assisted_records(
                     enrichments[question_id] = build_ai_assisted_error_record(
                         record,
                         existing_enrichment=existing_sidecar.get(question_id),
-                        error_type=DeepSeekErrorType.PROVIDER_ERROR,
+                        error_type=AI_FAILURE_PROVIDER_API_ERROR,
                         message=message,
                         model=model,
                         prompt_version=prompt_version,
@@ -2352,7 +2868,7 @@ def enrich_ai_assisted_records(
                     _append_failure_log(
                         failure_log_path,
                         question_id=question_id,
-                        error_type=DeepSeekErrorType.PROVIDER_ERROR,
+                        error_type=AI_FAILURE_PROVIDER_API_ERROR,
                         error_message=message,
                         model=model,
                         run_timestamp=run_timestamp,
@@ -2407,6 +2923,18 @@ def enrich_ai_assisted_records(
             )
         cache_path = write_batch_cache(output_path, cache_payload) if output_path else None
         if progress:
+            batch_successes = sum(
+                1
+                for question_id in question_ids
+                if isinstance(enrichments.get(question_id), dict)
+                and not isinstance(enrichments[question_id].get("error"), dict)
+            )
+            batch_failures = sum(
+                1
+                for question_id in question_ids
+                if isinstance(enrichments.get(question_id), dict)
+                and isinstance(enrichments[question_id].get("error"), dict)
+            )
             if status == "success_cached":
                 progress.skip_batch(
                     batch_id=batch_id,
@@ -2414,13 +2942,13 @@ def enrich_ai_assisted_records(
                     paper_family=batch_paper_family,
                     record_count=len(batch),
                 )
-            elif status == "success":
+            elif batch_failures == 0:
                 progress.complete_batch(
                     batch_id=batch_id,
                     paper=batch_paper,
                     paper_family=batch_paper_family,
                     record_count=len(batch),
-                    successful_records=len(batch),
+                    successful_records=batch_successes or len(batch),
                 )
             else:
                 progress.fail_batch(
@@ -2428,7 +2956,8 @@ def enrich_ai_assisted_records(
                     paper=batch_paper,
                     paper_family=batch_paper_family,
                     record_count=len(batch),
-                    failed_records=len(batch),
+                    successful_records=batch_successes,
+                    failed_records=batch_failures or len(batch),
                     error_message=str(status),
                 )
         manifest_batches.append(
@@ -2472,7 +3001,7 @@ def add_ai_assisted_cli_arguments(parser: argparse.ArgumentParser) -> None:
         "--existing-sidecar",
         type=Path,
         default=None,
-        help="Optional existing DeepSeek sidecar to preserve and use as evidence.",
+        help="Optional existing DeepSeek sidecar to use as prompt evidence. It is not preserved into the final output.",
     )
     parser.add_argument(
         "--output",
@@ -2483,7 +3012,12 @@ def add_ai_assisted_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--component", choices=["p1", "p3", "p4", "p5", "m1", "s1"], default=None)
     parser.add_argument("--paper", default=None)
     parser.add_argument("--question-id", action="append", default=None, help="Question ID to enrich. Repeatable.")
-    parser.add_argument("--limit", type=int, default=25)
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Maximum number of filtered input records to enrich. Defaults to all filtered records.",
+    )
     parser.add_argument("--resume", action="store_true")
     progress = parser.add_mutually_exclusive_group()
     progress.add_argument("--progress", dest="progress", action="store_true", default=True, help="Show terminal progress updates.")
@@ -2521,7 +3055,7 @@ def add_ai_assisted_cli_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def finalize_ai_assisted_args(args: argparse.Namespace) -> argparse.Namespace:
-    if args.limit < 0:
+    if args.limit is not None and args.limit < 0:
         raise StartupConfigurationError("--limit must be zero or greater.")
     args.question_ids = _parse_question_ids(args.question_id)
     return args
@@ -2556,21 +3090,35 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
     tracker.start(phase="loading_existing_sidecar")
     try:
         records = load_question_bank(args.input)
-        existing_sidecar: dict[str, dict[str, Any]] = {}
+        output_path_existed_before_run = args.output.exists()
+        if output_path_existed_before_run and not args.resume:
+            raise StartupConfigurationError(
+                "Output path already exists. Use --resume to continue, --force-rerun with --resume to rerun batches, "
+                "or choose a new output path."
+            )
+
+        existing_sidecar_evidence: dict[str, dict[str, Any]] = {}
         if args.existing_sidecar:
-            existing_sidecar.update(load_existing_sidecar(args.existing_sidecar))
-        if args.output.exists():
-            existing_sidecar.update(load_existing_sidecar(args.output))
+            existing_sidecar_evidence.update(load_existing_sidecar(args.existing_sidecar))
+        resume_sidecar = load_existing_sidecar(args.output) if args.resume and output_path_existed_before_run else {}
+        prompt_evidence_sidecar = dict(existing_sidecar_evidence)
+        prompt_evidence_sidecar.update(resume_sidecar)
 
         tracker.update_phase("preparing_batches", force_render=True)
         selection_resume = bool(args.resume and not getattr(args, "force_rerun", False))
-        selected = select_ai_assisted_records(
+        input_selected = filter_ai_assisted_input_records(
             records,
-            existing_sidecar=existing_sidecar,
             component=args.component,
             paper=args.paper,
             question_ids=args.question_ids,
             limit=args.limit,
+        )
+        selection_sidecar = resume_sidecar if args.resume else existing_sidecar_evidence
+        selected = select_ai_assisted_records(
+            input_selected,
+            existing_sidecar=selection_sidecar,
+            question_ids=args.question_ids,
+            limit=None,
             resume=selection_resume,
             prompt_version=args.prompt_version,
             only_errors=args.only_errors,
@@ -2600,7 +3148,8 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
                 "taxonomy": str(args.taxonomy),
                 "existing_sidecar": str(args.existing_sidecar) if args.existing_sidecar else None,
                 "output": str(args.output),
-                "selected_count": len(selected),
+                "selected_count": len(input_selected),
+                "records_to_attempt_count": len(selected),
                 "question_ids": [record["question_id"] for record in selected],
                 "batch_by_paper": args.batch_by_paper,
                 "would_call_network": False,
@@ -2623,7 +3172,7 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
                 selected,
                 client=client,
                 taxonomy_root=args.taxonomy,
-                existing_sidecar=existing_sidecar,
+                existing_sidecar=prompt_evidence_sidecar,
                 output_path=args.output,
                 model=args.model,
                 prompt_version=args.prompt_version,
@@ -2646,20 +3195,44 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
             }
 
         tracker.update_phase("merging_batches", output_path=args.output, force_render=True)
-        merged = dict(existing_sidecar)
+        selected_ids = {str(record.get("question_id", "")).strip() for record in input_selected}
+        merged = {
+            question_id: enrichment
+            for question_id, enrichment in resume_sidecar.items()
+            if question_id in selected_ids
+        } if args.resume else {}
         merged.update(enrichments)
         if args.recompute_difficulty or enrichments:
             tracker.update_phase("calibrating_difficulty", output_path=args.output, force_render=True)
-            merged = calibrate_difficulty_by_paper_family(merged, records)
+            merged = calibrate_difficulty_by_paper_family(merged, input_selected)
+
+        skipped_batch_records = sum(
+            len(batch.get("question_ids", []))
+            for batch in run_manifest.get("batches", [])
+            if isinstance(batch, dict) and batch.get("status") == "success_cached"
+        )
+        preserved_from_output = bool(args.resume and (set(merged) - set(enrichments)))
+        preservation_source = None
+        if preserved_from_output:
+            preservation_source = "output_resume"
+        elif skipped_batch_records:
+            preservation_source = "batch_cache"
 
         metadata = {
             "input_path": str(args.input),
             "taxonomy_path": str(args.taxonomy),
             "existing_sidecar_path": str(args.existing_sidecar) if args.existing_sidecar else None,
+            "output_path": str(args.output),
             "model": args.model,
             "prompt_version": args.prompt_version,
-            "selected_count": len(selected),
+            "fresh_run": not bool(args.resume),
+            "selected_count": len(input_selected),
+            "records_to_attempt_count": len(selected),
             "resume": bool(args.resume),
+            "force_rerun": bool(getattr(args, "force_rerun", False)),
+            "output_path_existed_before_run": output_path_existed_before_run,
+            "preserving_existing_records": bool(preserved_from_output or skipped_batch_records),
+            "preservation_source": preservation_source,
             "batch_by_paper": bool(args.batch_by_paper),
             "difficulty_calibration": {
                 "scope": "within paper_family",
@@ -2672,13 +3245,30 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
             },
             "run_manifest": run_manifest,
         }
+        metadata["run_summary"] = audit_ai_assisted_sidecar_payload(
+            {
+                "schema_name": AI_ASSISTED_SIDECAR_SCHEMA_NAME,
+                "schema_version": AI_ASSISTED_SIDECAR_SCHEMA_VERSION,
+                "metadata": metadata,
+                "enrichments": merged,
+            }
+        )
         tracker.update_phase("writing_final_sidecar", output_path=args.output, force_render=True)
         write_ai_assisted_sidecar(merged, args.output, metadata=metadata)
-        print(f"Wrote {len(merged)} AI-assisted enrichment records to {args.output}")
+        run_summary = metadata["run_summary"]
+        print(f"Wrote {run_summary['total_records_written']} AI-assisted enrichment records to {args.output}")
+        print(
+            "AI-assisted sidecar summary: "
+            f"{run_summary['attempted_records']} attempted, "
+            f"{run_summary['successful_new_records']} new successes, "
+            f"{run_summary['failed_new_records']} new failures, "
+            f"{run_summary['preserved_records']} preserved, "
+            f"usable_for_asterion={run_summary['safe_to_use_for_asterion_export']}."
+        )
         counts = enrichment_failure_counts(enrichments)
         if counts["failed"]:
             print(
-                f"AI-assisted enrichment completed with {counts['succeeded']} successes and "
+                f"AI-assisted attempted-record enrichment completed with {counts['succeeded']} successes and "
                 f"{counts['failed']} failures ({counts['provider_failed']} provider/API failures)."
             )
             print(f"Logged failure details to {failure_log_path}")
@@ -2717,7 +3307,7 @@ def enrichment_failure_counts(sidecar: dict[str, dict[str, Any]]) -> dict[str, i
             counts["succeeded"] += 1
             continue
         counts["failed"] += 1
-        if error.get("type") == DeepSeekErrorType.PROVIDER_ERROR:
+        if error.get("type") in {DeepSeekErrorType.PROVIDER_ERROR, AI_FAILURE_PROVIDER_API_ERROR}:
             counts["provider_failed"] += 1
     return counts
 
