@@ -9,6 +9,7 @@ import subprocess
 from typing import Any
 
 from . import __version__
+from .atomic_json import write_atomic_json
 from .config import AppConfig
 from .models import QuestionRecord
 from .ocr import OCR_ENGINE
@@ -48,20 +49,15 @@ def write_question_bank_payload(
     run_manifest: dict[str, Any] | None = None,
 ) -> Path:
     output_path = Path(output_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(
-            {
-                "schema_name": QUESTION_BANK_SCHEMA_NAME,
-                "schema_version": QUESTION_BANK_SCHEMA_VERSION,
-                "record_count": len(question_payload),
-                "run_manifest": run_manifest or _build_payload_run_manifest(question_payload, output_path=output_path),
-                "questions": question_payload,
-            },
-            indent=2,
-            ensure_ascii=False,
-        ),
-        encoding="utf-8",
+    write_atomic_json(
+        {
+            "schema_name": QUESTION_BANK_SCHEMA_NAME,
+            "schema_version": QUESTION_BANK_SCHEMA_VERSION,
+            "record_count": len(question_payload),
+            "run_manifest": run_manifest or _build_payload_run_manifest(question_payload, output_path=output_path),
+            "questions": question_payload,
+        },
+        output_path,
     )
     return output_path
 

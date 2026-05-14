@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from openai import OpenAI
+from .atomic_json import write_atomic_json
 from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
 from .runtime_profile import DIFFICULTY_LABELS, PAPER_FAMILY_TAXONOMY
 from .trust import Confidence, DeepSeekErrorType, ReconciliationStatus, final_review_reasons as _final_review_reasons
@@ -1232,15 +1233,13 @@ def enrich_records(
 
 def write_sidecar(payload: dict[str, Any], output_path: str | Path) -> Path:
     path = Path(output_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
     document = {
         "schema_name": DEEPSEEK_SIDECAR_SCHEMA_NAME,
         "schema_version": DEEPSEEK_SIDECAR_SCHEMA_VERSION,
         "record_count": len(payload),
         "enrichments": payload,
     }
-    path.write_text(json.dumps(document, indent=2, ensure_ascii=False), encoding="utf-8")
-    return path
+    return write_atomic_json(document, path)
 
 
 def load_existing_sidecar(path: str | Path | None) -> dict[str, dict[str, Any]]:
@@ -2377,7 +2376,6 @@ def write_ai_assisted_sidecar(
     metadata: dict[str, Any] | None = None,
 ) -> Path:
     path = Path(output_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
     document = {
         "schema_name": AI_ASSISTED_SIDECAR_SCHEMA_NAME,
         "schema_version": AI_ASSISTED_SIDECAR_SCHEMA_VERSION,
@@ -2386,8 +2384,7 @@ def write_ai_assisted_sidecar(
         "metadata": metadata or {},
         "enrichments": enrichments,
     }
-    path.write_text(json.dumps(document, indent=2, ensure_ascii=False), encoding="utf-8")
-    return path
+    return write_atomic_json(document, path)
 
 
 def audit_ai_assisted_sidecar_payload(payload: dict[str, Any]) -> dict[str, Any]:
@@ -2543,9 +2540,7 @@ def batch_cache_path(output_path: str | Path, batch_id: str) -> Path:
 
 def write_batch_cache(output_path: str | Path, batch_payload: dict[str, Any]) -> Path:
     path = batch_cache_path(output_path, str(batch_payload["batch_id"]))
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(batch_payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    return path
+    return write_atomic_json(batch_payload, path)
 
 
 def read_successful_batch_cache(output_path: str | Path, batch_id: str, *, batch_input_hash: str) -> dict[str, Any] | None:

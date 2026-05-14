@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .atomic_json import write_atomic_json
 from .output_layout import default_asterion_export_path
 
 
@@ -42,14 +43,9 @@ def export_asterion_question_bank(
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        json.dumps(
-            build_asterion_export(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings),
-            indent=2,
-            ensure_ascii=False,
-        ),
-        encoding="utf-8",
+    write_atomic_json(
+        build_asterion_export(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings),
+        output,
     )
     return output
 
@@ -70,15 +66,7 @@ def export_asterion_content_lab_candidates(
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, CONTENT_LAB_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
     asterion_payload = _ensure_asterion_payload(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        json.dumps(
-            build_content_lab_candidates(asterion_payload),
-            indent=2,
-            ensure_ascii=False,
-        ),
-        encoding="utf-8",
-    )
+    write_atomic_json(build_content_lab_candidates(asterion_payload), output)
     return output
 
 

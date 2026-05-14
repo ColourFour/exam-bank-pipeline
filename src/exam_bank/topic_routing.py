@@ -10,6 +10,7 @@ from typing import Any, Sequence
 
 from openai import OpenAI
 
+from .atomic_json import write_atomic_json
 from .deepseek_enrich import (
     AI_FAILURE_INVALID_JSON,
     AI_FAILURE_PROVIDER_API_ERROR,
@@ -893,11 +894,7 @@ def build_topic_routing_sidecar(
 
 def write_topic_routing_sidecar_payload(payload: dict[str, Any], output_path: str | Path) -> Path:
     path = Path(output_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    tmp.replace(path)
-    return path
+    return write_atomic_json(payload, path)
 
 
 def load_topic_routing_sidecar_records(path: str | Path) -> dict[str, dict[str, Any]]:

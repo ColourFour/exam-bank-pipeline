@@ -854,71 +854,52 @@ Continue Phase 2/3 documentation and low-risk operational cleanup.
 Keep any future exam-report or grade-boundary work behind a separate audited proposal.
 
 
-**Start here!**
 Phase 3 goals: low-risk optimization
 
 Goal 13: add atomic JSON writes for exports
+Implemented atomic JSON writes for the requested export surfaces.
 
-Goal: make generated JSON writes atomic for main exports and sidecars.
-Context:
-The audit found that long runs can leave ambiguous partial outputs if interrupted. JSON outputs should be written atomically where practical.
-Scope:
-Review export-writing code, especially:
-- src/exam_bank/exporters.py
-- src/exam_bank/asterion_export.py
-- topic routing sidecar writing
-- AI sidecar writing if centralized and safe to update
-Tasks:
-1. Add a shared atomic JSON write helper if one does not exist.
-2. Write to a temporary file in the same directory.
-3. Flush/close safely.
-4. Replace target file atomically.
-5. Preserve formatting and schema content.
-6. Add tests for atomic write behavior.
-7. Ensure partial temp files are not mistaken for valid outputs.
-Do not:
-- Change export schemas.
-- Change field names.
-- Change readiness/status logic.
-- Change output paths unless necessary for temp files.
-Validation:
-Run targeted export tests.
-Run full pytest.
-Optionally regenerate a small fixture export and compare expected content.
-Final summary required:
-List files changed, commands run, validation results, behavior changes, risks/concerns, and suggested next steps.
+Files Changed
+
+src/exam_bank/atomic_json.py
+src/exam_bank/exporters.py
+src/exam_bank/asterion_export.py
+src/exam_bank/topic_routing.py
+src/exam_bank/deepseek_enrich.py
+tests/test_atomic_json.py
+Note: docs/GOALS.md is also modified in the worktree, but I did not touch it.
+
+Behavior Changes
+
+Main question bank exports now write through a shared atomic JSON helper.
+Asterion exports and content-lab exports now write atomically.
+Topic routing sidecar writes now use the shared helper instead of a local temp-file pattern.
+DeepSeek sidecar, AI-assisted sidecar, and AI batch cache writes now use the shared helper.
+Temp files are created in the target directory as hidden .tmp files, flushed/fsynced, then replaced with os.replace.
+Temp files do not end in .json, so normal JSON output discovery should not treat them as complete outputs.
+JSON payloads, schemas, field names, paths, and formatting intent were preserved.
+Commands Run
+
+pytest ... failed: pytest not on PATH.
+python -m pytest ... failed: python not on PATH.
+python3 -m pytest ... failed: global Python lacks pytest.
+.venv/bin/python -m pytest tests/test_atomic_json.py tests/test_output_contract.py tests/test_asterion_export.py tests/test_topic_routing.py tests/test_deepseek_enrich.py
+.venv/bin/python -m pytest
+Validation Results
+
+Targeted tests: 94 passed
+Full suite: 430 passed, 3 skipped
+Risks / Concerns
+
+Atomicity depends on the target filesystem supporting same-directory os.replace, which is the expected local behavior.
+Interrupted processes can still leave .tmp files behind, but those are intentionally not valid output names.
+Suggested Next Steps
+
+Optionally extend the same helper to non-requested JSON report/debug writers later, such as audit or triage outputs, if you want all generated JSON artifacts covered uniformly.
 
 Goal 14: improve run-status terminal output for standard runs
 
-Goal: improve progress/status reporting for standard non-AI runs.
-Context:
-Standard runs can take around 20 minutes. The project already has run-status primitives. Improve visibility without changing extraction behavior.
-Scope:
-Review:
-- src/exam_bank/run_status.py
-- CLI process command progress output
-- pipeline stage reporting
-Tasks:
-1. Show elapsed time.
-2. Show current stage.
-3. Show current paper/session/component when available.
-4. Show completed/total records or papers where available.
-5. Show percentage where reliable.
-6. Show output path and run ID.
-7. Preserve existing run-status files and tests.
-8. Add or update tests for progress metadata.
-Do not:
-- Change extraction logic.
-- Change OCR selection logic.
-- Change output schema.
-- Add noisy per-record spam unless behind a verbosity flag.
-Validation:
-Run run-status tests.
-Run a small/sample pipeline test.
-Run full pytest if practical.
-Final summary required:
-List files changed, commands run, validation results, user-visible progress changes, risks/concerns, and suggested next steps.
-
+**Start here!**
 Goal 15: improve run-status output for AI-heavy runs
 
 Goal: improve progress/status reporting for AI-heavy sidecar runs.
