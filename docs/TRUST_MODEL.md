@@ -181,14 +181,22 @@ Tier 3: fully trusted practice item
 - topic and difficulty metadata are stable
 - reviewed or strong automated confidence exists
 
-## Current Measured Tier Counts
+## Measured Tier Counts
 
-Using a strict local filter on 2026-05-08:
+Tier counts are audit evidence, not policy. Do not treat older count snapshots in historical reviews as current state. Use the current audit baseline in [Project Audit and Optimization Review](PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md) for measured counts, OCR status, and known risks, or refresh the evidence with:
 
-- Current no-OCR `output/json/question_bank.json`: Tier 1 `616`, Tier 2 `567`, Tier 3 `150`.
-- Frozen OCR `output/triage/iteration_004/baseline_question_bank.json`: Tier 1 `208`, Tier 2 `178`, Tier 3 `41`.
+```bash
+.venv/bin/python -m exam_bank.cli audit \
+  --input output/json/question_bank.json
 
-These counts are not exported yet. They are evidence for why a trusted-subset export should be built rather than asking downstream apps to infer the tier logic.
+.venv/bin/python scripts/audit_question_bank_readiness.py \
+  --input output/json/question_bank.json \
+  --baseline output/triage/iteration_004/baseline_question_bank.json \
+  --artifact-root output \
+  --out-dir output/audits/manual
+```
+
+Tier counts are still not exported as a dedicated trusted-subset artifact. They remain evidence for why a trusted-subset export should be built rather than asking downstream apps to infer the tier logic.
 
 ## Anti-Patterns
 

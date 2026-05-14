@@ -4,20 +4,22 @@ This roadmap is evidence-gated. The pipeline remains image-first: rendered quest
 
 ## Current Evidence
 
-The `iteration_001` readiness audit was run against `output/json/question_bank.json` with baseline `output/triage/iteration_004/baseline_question_bank.json`.
+The current measured-state baseline is [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Use that report for current counts, OCR status, generated-output names, known risks, and validation status. As of that audit, dated `2026-05-14`, `output/json/question_bank.json` is OCR-enabled; older roadmap entries that describe a no-OCR canonical export are historical iteration evidence, not current state.
 
-Key findings:
+Refresh current evidence with:
 
-- Records audited: `1301`.
-- Baseline comparison was reliable: `0` records added, `0` removed, `1301` shared.
-- Current canonical export is candidate-aware but not OCR-enabled: `ocr_ran=0`, `ocr_selected=0`, `text_candidate_source=native: 1301`, and blank `ocr_text`.
-- Historical/uploaded schema v2 exports may contain populated OCR candidate fields. That proves the schema shape supports candidate-aware OCR fields, not that the current canonical repo export is OCR-active.
-- OCR false positives, OCR false negatives, and OCR-selection quality cannot be meaningfully judged from this canonical export because OCR text is blank.
-- Hard blockers: `23`.
-- Mapping: `pass: 1281`, `fail: 20`.
-- Validation: `pass: 921`, `review: 371`, `fail: 9`.
-- Asterion tier counts: `0: 23`, `1: 360`, `2: 185`, `3: 13`, `4: 52`, `5: 668`.
-- Future subpart mark sprint: `920` records look simple-fillable.
+```bash
+.venv/bin/python -m exam_bank.cli audit \
+  --input output/json/question_bank.json
+
+.venv/bin/python scripts/audit_question_bank_readiness.py \
+  --input output/json/question_bank.json \
+  --baseline output/triage/iteration_004/baseline_question_bank.json \
+  --artifact-root output \
+  --out-dir output/audits/manual
+```
+
+The iteration sections below preserve useful planning rationale and prior audit evidence. Do not copy their measured counts into current-state docs without rerunning the audit commands above.
 
 ## iteration_001 - Audit/reporting layer
 
@@ -31,9 +33,9 @@ Completed:
 - Confirmed reliable baseline comparison: `0` added, `0` removed, `1301` shared.
 - Passed validation commands including `py_compile` and the focused existing test set: `34 passed`.
 
-Documented audit result:
+Historical documented audit result from `iteration_001`:
 
-- Current canonical export is not OCR-enabled.
+- At that iteration, the audited canonical export was not OCR-enabled.
 - OCR-selection quality cannot yet be judged because OCR text is blank.
 - Hard blockers: `23`.
 - Mapping: `pass: 1281`, `fail: 20`.

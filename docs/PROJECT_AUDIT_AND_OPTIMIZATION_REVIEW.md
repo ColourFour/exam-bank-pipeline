@@ -6,6 +6,8 @@ Repository: `exam-bank-pipeline`
 
 Scope: full project audit before cleanup or optimization. This report is intentionally documentation-only. It does not recommend treating advisory text, OCR, AI enrichment, or topic routing as canonical unless deterministic gates explicitly allow that use.
 
+Post-audit documentation cleanup note: `docs/PROJECT_REVIEW.md` has been moved to `docs/history/PROJECT_REVIEW.md` and marked historical. Path references below describe the file location at audit time unless they explicitly refer to the new history path.
+
 ## 1. Executive Summary
 
 The project has a strong engineering foundation for an image-first CAIE 9709 exam-bank pipeline. The core source-of-truth policy is reflected in code, tests, and export shape: canonical question and mark-scheme images are preserved separately from advisory native text, OCR text, AI sidecars, topic routing, and Asterion eligibility metadata.

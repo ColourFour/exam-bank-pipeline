@@ -24,26 +24,32 @@ Aggregate counts alone are not enough for this project. A change can reduce a va
 6. Compare against a frozen baseline.
 7. Accept only when evidence improves and tests pass.
 
-## Current Local Evidence
+## Current Evidence Source
 
-Current no-OCR export:
+Measured hard-failure counts, OCR status, and dominant issue clusters are time-bound audit evidence. Do not keep count snapshots in this workflow doc. Use [Project Audit and Optimization Review](PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md) as the current baseline, or refresh local evidence before planning:
 
-- `output/json/question_bank.json`
-- OCR profile: disabled for all `1301` records.
-- Hard failures: `148`.
-- Dominant hard-failure cluster: `paper_total_mismatch` (`107`).
-- Use this output for layout/debug comparisons only, not production OCR scoring.
+```bash
+.venv/bin/python -m exam_bank.cli audit \
+  --input output/json/question_bank.json
 
-Current OCR candidate:
+.venv/bin/python -m exam_bank.cli auto-triage-status \
+  --input output/json/question_bank.json \
+  --output output/triage/auto-status.json
+```
 
-- `output_ocr_candidate/json/question_bank.json`
-- OCR profile: enabled for all `1301` records.
-- Hard failures: `133`.
-- Dominant hard-failure cluster: `paper_total_mismatch` (`86`).
-- Latest accepted auto-triage comparison: `output_ocr_candidate/triage/iteration_002/comparison.auto-iteration-003.json`.
-- That comparison moved hard failures `153 -> 133`, moved `paper_total_mismatch` `107 -> 86`, and reported `worsened_records: []`.
+For new OCR candidate runs, prefer `output/candidates/ocr/<run_id>/` or `output/candidates/ocr/latest/`:
 
-For new candidate runs, prefer `output/candidates/ocr/<run_id>/` or `output/candidates/ocr/latest/`. The historical `output_ocr_candidate/` root remains supported for compatibility and evidence review.
+```bash
+.venv/bin/python -m exam_bank.cli process \
+  --input input \
+  --output output/candidates/ocr/latest \
+  --enable-ocr
+
+.venv/bin/python -m exam_bank.cli auto-triage-status \
+  --input output/candidates/ocr/latest/json/question_bank.json
+```
+
+The legacy `output_ocr_candidate/` root is historical/compatibility evidence unless a specific pass explicitly selects it as the candidate input.
 
 ## Hard-Failure Target
 
@@ -112,7 +118,7 @@ The shared five-agent prompts live under:
 agent_handoffs/auto_triage/Prompt/
 ```
 
-The planner also chooses an iteration number that avoids existing `agent_handoffs/auto_triage/iteration_*` folders and the configured triage root, such as `output/triage/iteration_*` or `output_ocr_candidate/triage/iteration_*`.
+The planner also chooses an iteration number that avoids existing `agent_handoffs/auto_triage/iteration_*` folders and the configured triage root, such as `output/triage/iteration_*` or a legacy root like `output_ocr_candidate/triage/iteration_*`.
 
 ## Runbook
 

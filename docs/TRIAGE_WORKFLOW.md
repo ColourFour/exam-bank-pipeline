@@ -17,7 +17,7 @@ Create a deterministic sample:
 This writes a new iteration folder under `output/triage/`, for example:
 
 ```text
-output/triage/iteration_004/
+output/triage/iteration_005/
   baseline_question_bank.json
   summary.json
   sample.json
@@ -30,7 +30,7 @@ Serve the gallery:
 
 ```bash
 .venv/bin/python -m exam_bank.cli triage-serve \
-  --iteration output/triage/iteration_004
+  --iteration output/triage/iteration_005
 ```
 
 Open the printed local URL, inspect the question crop and mark-scheme crop side by side, select a root cause, and save notes. Notes append to `review.jsonl`; they do not mutate the baseline.
@@ -39,9 +39,9 @@ After a full rerun, compare:
 
 ```bash
 .venv/bin/python -m exam_bank.cli triage-compare \
-  --iteration output/triage/iteration_004 \
+  --iteration output/triage/iteration_005 \
   --current output/json/question_bank.json \
-  --output output/triage/iteration_004/comparisons/comparison.my-new-run.json
+  --output output/triage/iteration_005/comparisons/comparison.my-new-run.json
 ```
 
 Use a clearly named comparison file under `comparisons/`. Older iteration folders may still contain comparison JSONs directly in the iteration root; keep them as historical reports and write new comparisons into `comparisons/`.
@@ -71,10 +71,10 @@ After implementation, full tests, and an OCR-enabled rerun, record the acceptanc
 
 ```bash
 .venv/bin/python -m exam_bank.cli auto-triage-compare \
-  --iteration agent_handoffs/auto_triage/iteration_003 \
-  --baseline-triage output_ocr_candidate/triage/iteration_002 \
-  --current output_ocr_candidate/json/question_bank.json \
-  --output output_ocr_candidate/triage/iteration_002/comparisons/comparison.auto-iteration-003.json \
+  --iteration agent_handoffs/auto_triage/iteration_005 \
+  --baseline-triage output/triage/iteration_005 \
+  --current output/candidates/ocr/latest/json/question_bank.json \
+  --output output/triage/iteration_005/comparisons/comparison.auto-iteration-005.json \
   --test-status pass
 ```
 
@@ -138,12 +138,12 @@ Do not use a mixed OCR/no-OCR comparison as the main production score. OCR chang
 
 Mixed comparisons can still be useful for debugging layout or crop behavior, but the report must say that the comparison is not canonical for production OCR.
 
-Current examples:
+Historical examples:
 
-- `output/triage/iteration_003/comparison.math-repair-ocr.json` is OCR-to-OCR and is a canonical production-style comparison.
-- `output/triage/iteration_004/comparison.layout-review-current.json` compares an OCR baseline against the current no-OCR export; it is useful but not a canonical OCR score.
+- `output/triage/iteration_003/comparison.math-repair-ocr.json` was OCR-to-OCR and is historical production-style evidence.
+- `output/triage/iteration_004/comparison.layout-review-current.json` compared mixed OCR/no-OCR states and is historical debugging evidence, not a current production OCR score.
 
-New comparison files should use `output*/triage/iteration_###/comparisons/`. Root-level comparison files remain readable historical artifacts.
+New comparison files should use `output*/triage/iteration_<n>/comparisons/`. Root-level comparison files remain readable historical artifacts.
 
 ## Interpreting Comparison Files
 
@@ -205,27 +205,27 @@ Suspicious improvement means:
 - OCR text is selected while missing question numbers, marks, subparts, or mark brackets.
 - A no-OCR output is used to claim production OCR progress.
 
-## Example Current Commands
+## Example Commands
 
-Compare current no-OCR output against iteration 004 for debugging:
+Compare a candidate output against its frozen baseline:
 
 ```bash
 .venv/bin/python -m exam_bank.cli triage-compare \
-  --iteration output/triage/iteration_004 \
-  --current output/json/question_bank.json \
-  --output output/triage/iteration_004/comparisons/comparison.current-no-ocr-debug.json
+  --iteration output/triage/iteration_005 \
+  --current output/candidates/ocr/latest/json/question_bank.json \
+  --output output/triage/iteration_005/comparisons/comparison.ocr-candidate.json
 ```
 
-Run the quality gate against iteration 004:
+Run the quality gate against the same frozen iteration:
 
 ```bash
 .venv/bin/python scripts/quality_gate.py \
-  --iteration output/triage/iteration_004 \
-  --current output/json/question_bank.json \
+  --iteration output/triage/iteration_005 \
+  --current output/candidates/ocr/latest/json/question_bank.json \
   --require-target-improvement
 ```
 
-For production-style OCR work, generate a separate OCR-enabled output path and compare it to an OCR baseline:
+For production-style OCR work, generate a separate OCR-enabled output path and compare it to an OCR-enabled baseline:
 
 ```bash
 .venv/bin/python -m exam_bank.cli process \
@@ -234,9 +234,9 @@ For production-style OCR work, generate a separate OCR-enabled output path and c
   --enable-ocr
 
 .venv/bin/python -m exam_bank.cli triage-compare \
-  --iteration output/triage/iteration_004 \
+  --iteration output/triage/iteration_005 \
   --current output/candidates/ocr/latest/json/question_bank.json \
-  --output output/triage/iteration_004/comparisons/comparison.ocr-candidate.json
+  --output output/triage/iteration_005/comparisons/comparison.ocr-candidate.json
 ```
 
 Do not replace `output/json/question_bank.json` until the comparison is understood.

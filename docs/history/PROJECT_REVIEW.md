@@ -1,5 +1,7 @@
 # Project Review
 
+> Historical snapshot. This review preserves measured evidence and rationale from an earlier project state. It is not the current-state baseline. For current measured counts, generated-output names, OCR status, risks, and validation status, use [`../PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md`](../PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md) and rerun the audit commands documented there.
+
 ## Executive Summary
 
 This project is an image-first CAIE 9709 extraction pipeline. It turns question-paper PDFs and mark-scheme PDFs into paper-organized question crops, mark-scheme crops, structured JSON records, trust statuses, validation flags, mapping statuses, text-fidelity statuses, and triage artifacts. A new auto-triage layer now measures corpus health, selects the next hard-failure target, creates agent handoff iterations, prints runbooks, and records evidence-gated acceptance decisions.
