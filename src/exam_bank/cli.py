@@ -20,6 +20,7 @@ from .auto_triage import (
 )
 from .config import AppConfig, load_config
 from . import deepseek_enrich, topic_routing
+from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .output_management import (
     build_cleanup_plan,
     build_output_inventory,
@@ -328,6 +329,14 @@ def build_parser() -> argparse.ArgumentParser:
     cleanup.add_argument("--include-size", action="store_true", help="Include recursive byte sizes for planned paths.")
     cleanup.add_argument("--max-depth", type=int, default=6, help="Maximum scan depth below each root.")
     cleanup.set_defaults(func=cmd_output_cleanup_plan)
+
+    summary_diff = subparsers.add_parser(
+        "export-summary-diff",
+        help="Print a concise before/after summary diff for comparable generated exports.",
+    )
+    summary_diff.add_argument("before", help="Earlier export or sidecar JSON path.")
+    summary_diff.add_argument("after", help="Later comparable export or sidecar JSON path.")
+    summary_diff.set_defaults(func=cmd_export_summary_diff)
     return parser
 
 
@@ -581,6 +590,16 @@ def cmd_output_cleanup_plan(args: argparse.Namespace) -> int:
         print(f"Wrote output cleanup plan to {args.write}")
     else:
         print(render_cleanup_plan_markdown(plan), end="")
+    return 0
+
+
+def cmd_export_summary_diff(args: argparse.Namespace) -> int:
+    try:
+        report = compare_export_summaries(args.before, args.after)
+    except ExportSummaryDiffError as exc:
+        print(f"Invalid export summary comparison: {exc}")
+        return 2
+    print(render_export_summary_diff(report), end="")
     return 0
 
 

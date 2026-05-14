@@ -1030,32 +1030,103 @@ Add an operator-facing run-status CLI view if you want a compact readout from ru
 Consider adding per-batch retry metadata to batch_status.jsonl later if operators need retry provenance at batch granularity.
 
 Goal 16: add export summary diffing
+Implemented export summary diffing as a read-only CLI command.
+
+Files Changed
+
+
+src/exam_bank/export_summary_diff.py: new summarizer, comparator, and concise renderer.
+
+src/exam_bank/cli.py: added export-summary-diff before after.
+
+tests/test_export_summary_diff.py: fixtures/tests for question bank, Asterion, topic sidecar, Content Lab, CLI success, and invalid comparisons.
+
+tests/test_runtime_paths.py: added the new CLI command to the expected front-door list.
+
+
+Commands Run
+
+
+pytest tests/test_export_summary_diff.py failed because pytest was not on PATH.
+
+.venv/bin/python -m pytest tests/test_export_summary_diff.py
+
+.venv/bin/python -m exam_bank.cli export-summary-diff --help
+
+.venv/bin/python -m pytest tests/test_export_summary_diff.py tests/test_runtime_paths.py tests/test_output_management.py
+
+.venv/bin/python -m exam_bank.cli export-summary-diff ...question_bank.json ...question_bank.json
+
+.venv/bin/python -m exam_bank.cli export-summary-diff ...asterion_question_bank_v1.json ...asterion_question_bank_v1.json
+
+.venv/bin/python -m exam_bank.cli export-summary-diff ...question_bank.topic_routing.v1.smoke.json output/json/question_bank.topic_routing.v1.json
+
+.venv/bin/python -m pytest
+
+
+Validation
+
+
+Targeted tests: 12 passed.
+
+Full suite: 438 passed, 3 skipped in 120.30s.
+
+Real export diffs all exited 0.
+
+
+Example Diff Output
+
+text
+
+
+
+Record count: 1301 -> 1301 (+0)
+
+Role-gate counts:
+  usage_roles.quick_check_source.allow: 57 -> 51 (-6)
+  usage_roles.quick_check_source.block_until_reviewed: 1216 -> 1222 (+6)
+  usage_roles.warmup_generator_source.allow: 232 -> 228 (-4)
+  usage_roles.warmup_generator_source.block_until_reviewed: 1041 -> 1045 (+4)
+
+Missing image counts:
+  no changes
+
+
+
+Real Export Notes
+
+
+Question bank archive vs current: 1301 -> 1301; missing mark-scheme image path count stayed 11.
+
+Asterion archive vs current: 1301 -> 1301; canonical practice and Guardian counts unchanged; quick-check and warmup gates shifted.
+
+Topic routing: only a previous smoke sidecar was available, so the comparison was schema-compatible but not a full-run baseline: 10 -> 1301, current strict-filter safety is false.
+
+
+Risks / Concerns
+
+
+This is a summary diff, not a policy gate; normal count changes return 0.
+
+Invalid JSON, unsupported schemas, or mismatched schema_name return 2.
+
+Older exports without run manifests show qa.* counters as new because that metadata did not exist in the older file.
+
+Current git status also shows unrelated untracked input/examiner_reports/*.pdf; I did not touch those.
+
+
+Suggested Next Steps
+
+
+Add a documented release workflow command using export-summary-diff before cleanup/export handoff.
+
+If operators need fail thresholds later, add a separate gate mode rather than changing this diff command’s normal-count-change exit behavior.
 
 
 **Start here!**
 Goal 17: split test suite into fast and integration groups
 
-Goal: add test markers or organization so fast tests and integration/rendering tests can be run separately while preserving current full-test behavior.
-Context:
-The full suite is healthy but takes around 2 minutes. This is acceptable, but optimization work would benefit from a fast local loop.
-Scope:
-Review test structure and pytest configuration.
-Tasks:
-1. Identify slower integration/rendering/sample-pipeline tests.
-2. Add pytest markers or documented command groups.
-3. Preserve `python -m pytest` or `python -m pytest -q` as the full suite.
-4. Add README/command atlas examples for fast and full validation.
-5. Avoid weakening CI coverage.
-Do not:
-- Skip important tests by default in CI.
-- Remove regression coverage.
-- Rewrite large test fixtures unnecessarily.
-Validation:
-Run fast test command.
-Run full pytest.
-Confirm CI command remains full coverage.
-Final summary required:
-List files changed, commands run, fast/full test timings if available, risks/concerns, and suggested next steps.
+
 
 Goal 18: update stale script default paths
 

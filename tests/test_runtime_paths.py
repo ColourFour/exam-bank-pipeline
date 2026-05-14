@@ -83,6 +83,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "auto-triage-runbook",
         "output-inventory",
         "output-cleanup-plan",
+        "export-summary-diff",
     }
     process_parser = action.choices["process"]
     process_options = {option for parser_action in process_parser._actions for option in parser_action.option_strings}
