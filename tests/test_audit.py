@@ -4,13 +4,16 @@ import json
 from pathlib import Path
 
 from exam_bank.audit import (
+    audit_current_output_integrity,
     audit_difficulty,
     audit_ocr_candidates,
     audit_question_bank,
     write_audit,
+    write_current_output_integrity_audit,
     write_difficulty_audit,
     write_ocr_candidate_audit,
 )
+from exam_bank.cli import main as cli_main
 
 
 def test_visual_first_audit_reports_text_and_curation_distributions(tmp_path: Path) -> None:
@@ -378,3 +381,157 @@ def test_difficulty_audit_reports_distribution_and_missing_metadata(tmp_path: Pa
     written_report = write_difficulty_audit(input_path, output_path=output_path)
 
     assert json.loads(output_path.read_text(encoding="utf-8")) == written_report
+
+
+def test_current_output_integrity_allows_documented_missing_mark_scheme_companion(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    question_path = "p1/12spring24/questions/q01.png"
+    mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
+    known_missing_question_path = "p3/33autumn25/questions/q01.png"
+    _write_file(artifact_root / question_path)
+    _write_file(artifact_root / mark_scheme_path)
+    _write_file(artifact_root / known_missing_question_path)
+
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=question_path,
+            mark_scheme_image_path=mark_scheme_path,
+        ),
+        _integrity_record(
+            "33autumn25_q01",
+            paper="33autumn25",
+            question_number="1",
+            question_image_path=known_missing_question_path,
+            mark_scheme_image_path="",
+            source_pdf="input/question_papers/9709 Mathematics November 2025 Question Paper  33.pdf",
+        ),
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    output_path = tmp_path / "integrity.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = write_current_output_integrity_audit(input_path, output_path=output_path)
+
+    assert report["ok"] is True
+    assert report["counts"]["unique_question_id_count"] == 2
+    assert report["counts"]["missing_question_image_path_count"] == 0
+    assert report["counts"]["missing_question_image_file_count"] == 0
+    assert report["counts"]["nonblank_mark_scheme_image_record_count"] == 1
+    assert report["counts"]["allowed_missing_mark_scheme_image_path_count"] == 1
+    assert report["counts"]["unexpected_missing_mark_scheme_image_path_count"] == 0
+    assert report["known_missing_mark_scheme_companions"] == [
+        {
+            "source_companion": "9709_2025_November_33",
+            "paper": "33autumn25",
+            "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
+            "observed_missing_count": 1,
+            "observed_question_ids": ["33autumn25_q01"],
+        }
+    ]
+    assert json.loads(output_path.read_text(encoding="utf-8")) == report
+    assert cli_main(["output-integrity-audit", "--input", str(input_path)]) == 0
+
+
+def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    good_question_path = "p1/12spring24/questions/q01.png"
+    good_mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
+    _write_file(artifact_root / good_question_path)
+    _write_file(artifact_root / good_mark_scheme_path)
+
+    absolute_question_path = str((tmp_path / "outside.png").resolve())
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=good_question_path,
+            mark_scheme_image_path=good_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=absolute_question_path,
+            mark_scheme_image_path="p1/12spring24/mark_scheme/missing.png",
+        ),
+        _integrity_record(
+            "12spring24_q03",
+            paper="12spring24",
+            question_number="3",
+            question_image_path="",
+            mark_scheme_image_path="",
+        ),
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert {failure["code"] for failure in report["failures"]} >= {
+        "duplicate_question_id",
+        "duplicate_paper_question",
+        "missing_question_image_path",
+        "absolute_question_image_path",
+        "missing_question_image_file",
+        "missing_mark_scheme_image_path",
+        "missing_mark_scheme_image_file",
+    }
+    assert report["counts"]["duplicate_question_id_value_count"] == 1
+    assert report["counts"]["duplicate_paper_question_pair_count"] == 1
+    assert report["counts"]["unexpected_missing_mark_scheme_image_path_count"] == 1
+    assert cli_main(["output-integrity-audit", "--input", str(input_path)]) == 1
+
+
+def _integrity_record(
+    question_id: str,
+    *,
+    paper: str,
+    question_number: str,
+    question_image_path: str,
+    mark_scheme_image_path: str,
+    source_pdf: str = "input/question_papers/9709 Mathematics March 2024 Question Paper  12.pdf",
+) -> dict[str, object]:
+    return {
+        "question_id": question_id,
+        "paper": paper,
+        "paper_family": "p1",
+        "question_number": question_number,
+        "canonical_question_artifact": question_image_path,
+        "question_image_path": question_image_path,
+        "question_image_paths": [question_image_path] if question_image_path else [],
+        "mark_scheme_image_path": mark_scheme_image_path,
+        "mark_scheme_image_paths": [mark_scheme_image_path] if mark_scheme_image_path else [],
+        "mark_scheme_text": "M1 A1" if mark_scheme_image_path else "",
+        "notes": {
+            "source_pdf": source_pdf,
+            "mark_scheme_source_pdf": (
+                "input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  12.pdf" if mark_scheme_image_path else ""
+            ),
+        },
+    }
+
+
+def _write_integrity_bank(path: Path, records: list[dict[str, object]], *, artifact_root: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.question_bank",
+                "schema_version": 2,
+                "record_count": len(records),
+                "run_manifest": {"artifact_root": str(artifact_root)},
+                "questions": records,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def _write_file(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(b"fake png")

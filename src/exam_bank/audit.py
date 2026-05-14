@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from collections import Counter
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+import re
 from statistics import mean
 from typing import Any, Iterable
 
@@ -33,6 +34,22 @@ _CURATION_ORDER = {"ready": 0, "review": 1, "fail": 2}
 _TRUST_ORDER = {"high": 0, "medium": 1, "low": 2, "unusable": 3}
 _VALIDATION_ORDER = {"pass": 0, "review": 1, "fail": 2}
 _MAPPING_ORDER = {"pass": 0, "fail": 1}
+
+CURRENT_OUTPUT_INTEGRITY_SCHEMA_NAME = "exam_bank.current_output_integrity_audit"
+CURRENT_OUTPUT_INTEGRITY_SCHEMA_VERSION = 1
+
+KNOWN_MISSING_MARK_SCHEME_COMPANIONS = {
+    "9709_2025_November_33": {
+        "paper": "33autumn25",
+        "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
+    },
+}
+
+_SOURCE_COMPANION_RE = re.compile(
+    r"(?P<syllabus>\d{4}).*?(?P<session>March|June|November)\s+"
+    r"(?P<year>20\d{2}).*?(?P<component>\d{2})(?!.*\d)",
+    re.IGNORECASE,
+)
 
 
 def load_question_records(path: str | Path) -> list[dict[str, Any]]:
@@ -71,6 +88,260 @@ def audit_question_bank(records: Iterable[dict[str, Any]], *, example_limit: int
         "examples_clean_text_fidelity_but_visual_required": clean_but_visual,
         "examples_readable_text_with_corruption_flags": readable_with_corruption,
     }
+
+
+def audit_current_output_integrity(
+    input_path: str | Path,
+    *,
+    artifact_root: str | Path | None = None,
+    example_limit: int = 10,
+) -> dict[str, Any]:
+    input_path = Path(input_path)
+    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    records = _records_from_payload(payload)
+    root = Path(artifact_root) if artifact_root is not None else _infer_artifact_root(input_path, payload)
+    return audit_current_output_integrity_records(
+        records,
+        payload=payload,
+        input_path=input_path,
+        artifact_root=root,
+        example_limit=example_limit,
+    )
+
+
+def audit_current_output_integrity_records(
+    records: Iterable[dict[str, Any]],
+    *,
+    payload: dict[str, Any] | None = None,
+    input_path: str | Path | None = None,
+    artifact_root: str | Path,
+    example_limit: int = 10,
+) -> dict[str, Any]:
+    rows = list(records)
+    root = Path(artifact_root)
+
+    missing_question_ids: list[dict[str, Any]] = []
+    missing_paper_question_pairs: list[dict[str, Any]] = []
+    question_id_records: list[tuple[int, str, dict[str, Any]]] = []
+    paper_question_records: list[tuple[int, tuple[str, str], dict[str, Any]]] = []
+
+    missing_question_image_paths: list[dict[str, Any]] = []
+    bad_question_path_entries: dict[str, list[dict[str, Any]]] = {
+        "absolute_question_image_path": [],
+        "missing_question_image_file": [],
+    }
+    missing_mark_scheme_paths: list[dict[str, Any]] = []
+    allowed_missing_mark_scheme_paths: list[dict[str, Any]] = []
+    bad_mark_scheme_path_entries: dict[str, list[dict[str, Any]]] = {
+        "absolute_mark_scheme_image_path": [],
+        "missing_mark_scheme_image_file": [],
+    }
+    observed_allowed_companions: dict[str, list[str]] = {key: [] for key in KNOWN_MISSING_MARK_SCHEME_COMPANIONS}
+
+    question_path_entry_count = 0
+    mark_scheme_path_entry_count = 0
+    nonblank_mark_scheme_record_count = 0
+
+    for index, record in enumerate(rows):
+        question_id = _clean_text(record.get("question_id"))
+        paper = _clean_text(record.get("paper"))
+        question_number = _clean_text(record.get("question_number"))
+        companion = _source_companion_key(record)
+
+        if question_id:
+            question_id_records.append((index, question_id, record))
+        else:
+            missing_question_ids.append(_record_ref(index, record, companion=companion))
+
+        if paper and question_number:
+            paper_question_records.append((index, (paper, question_number), record))
+        else:
+            missing_paper_question_pairs.append(_record_ref(index, record, companion=companion))
+
+        question_entries = _question_image_path_entries(record)
+        primary_question_path = _clean_text(record.get("question_image_path"))
+        if not primary_question_path:
+            missing_question_image_paths.append(_record_ref(index, record, companion=companion))
+        question_path_entry_count += len(question_entries)
+        for entry in question_entries:
+            _check_path_entry(
+                entry,
+                index=index,
+                record=record,
+                companion=companion,
+                artifact_root=root,
+                absolute_code="absolute_question_image_path",
+                missing_file_code="missing_question_image_file",
+                failures=bad_question_path_entries,
+            )
+
+        mark_scheme_entries = _mark_scheme_image_path_entries(record)
+        if mark_scheme_entries:
+            nonblank_mark_scheme_record_count += 1
+        else:
+            ref = _record_ref(index, record, companion=companion)
+            if companion in KNOWN_MISSING_MARK_SCHEME_COMPANIONS:
+                allowed_missing_mark_scheme_paths.append(ref)
+                observed_allowed_companions.setdefault(companion, []).append(question_id or f"index:{index}")
+            else:
+                missing_mark_scheme_paths.append(ref)
+        mark_scheme_path_entry_count += len(mark_scheme_entries)
+        for entry in mark_scheme_entries:
+            _check_path_entry(
+                entry,
+                index=index,
+                record=record,
+                companion=companion,
+                artifact_root=root,
+                absolute_code="absolute_mark_scheme_image_path",
+                missing_file_code="missing_mark_scheme_image_file",
+                failures=bad_mark_scheme_path_entries,
+            )
+
+    duplicate_question_id_values = {
+        value for value, count in Counter(value for _, value, _ in question_id_records).items() if count > 1
+    }
+    duplicate_paper_question_values = {
+        value for value, count in Counter(value for _, value, _ in paper_question_records).items() if count > 1
+    }
+    duplicate_question_id_records = [
+        _record_ref(index, record, companion=_source_companion_key(record), duplicate_key=question_id)
+        for index, question_id, record in question_id_records
+        if question_id in duplicate_question_id_values
+    ]
+    duplicate_paper_question_records = [
+        _record_ref(index, record, companion=_source_companion_key(record), duplicate_key=f"{pair[0]}:{pair[1]}")
+        for index, pair, record in paper_question_records
+        if pair in duplicate_paper_question_values
+    ]
+
+    record_count_mismatch = []
+    declared_count = payload.get("record_count") if isinstance(payload, dict) else None
+    if isinstance(declared_count, int) and declared_count != len(rows):
+        record_count_mismatch.append(
+            {
+                "declared_record_count": declared_count,
+                "actual_record_count": len(rows),
+            }
+        )
+
+    failures = [
+        _failure(
+            "record_count_mismatch",
+            "Top-level record_count does not match the number of question records.",
+            record_count_mismatch,
+            example_limit=example_limit,
+        ),
+        _failure("missing_question_id", "One or more records are missing question_id.", missing_question_ids, example_limit=example_limit),
+        _failure(
+            "duplicate_question_id",
+            "question_id values must be unique.",
+            duplicate_question_id_records,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "missing_paper_or_question_number",
+            "One or more records are missing paper or question_number.",
+            missing_paper_question_pairs,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "duplicate_paper_question",
+            "(paper, question_number) pairs must be unique.",
+            duplicate_paper_question_records,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "missing_question_image_path",
+            "Every record must have a question_image_path.",
+            missing_question_image_paths,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "absolute_question_image_path",
+            "Question image paths must be relative artifact paths.",
+            bad_question_path_entries["absolute_question_image_path"],
+            example_limit=example_limit,
+        ),
+        _failure(
+            "missing_question_image_file",
+            "Question image paths must resolve to files under the artifact root.",
+            bad_question_path_entries["missing_question_image_file"],
+            example_limit=example_limit,
+        ),
+        _failure(
+            "missing_mark_scheme_image_path",
+            "Missing mark-scheme image paths are only allowed for documented source companions.",
+            missing_mark_scheme_paths,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "absolute_mark_scheme_image_path",
+            "Nonblank mark-scheme image paths must be relative artifact paths.",
+            bad_mark_scheme_path_entries["absolute_mark_scheme_image_path"],
+            example_limit=example_limit,
+        ),
+        _failure(
+            "missing_mark_scheme_image_file",
+            "Nonblank mark-scheme image paths must resolve to files under the artifact root.",
+            bad_mark_scheme_path_entries["missing_mark_scheme_image_file"],
+            example_limit=example_limit,
+        ),
+    ]
+    failures = [item for item in failures if item["count"]]
+
+    report = {
+        "schema_name": CURRENT_OUTPUT_INTEGRITY_SCHEMA_NAME,
+        "schema_version": CURRENT_OUTPUT_INTEGRITY_SCHEMA_VERSION,
+        "input": str(input_path) if input_path is not None else "",
+        "artifact_root": str(root),
+        "ok": not failures,
+        "record_count": len(rows),
+        "checks": {
+            "declared_record_count_matches": not record_count_mismatch,
+            "question_id_present_and_unique": not missing_question_ids and not duplicate_question_id_records,
+            "paper_question_pairs_present_and_unique": not missing_paper_question_pairs and not duplicate_paper_question_records,
+            "question_image_paths_relative_and_exist": not missing_question_image_paths
+            and not bad_question_path_entries["absolute_question_image_path"]
+            and not bad_question_path_entries["missing_question_image_file"],
+            "nonblank_mark_scheme_image_paths_relative_and_exist": not bad_mark_scheme_path_entries["absolute_mark_scheme_image_path"]
+            and not bad_mark_scheme_path_entries["missing_mark_scheme_image_file"],
+            "missing_mark_scheme_paths_only_known_companions": not missing_mark_scheme_paths,
+        },
+        "counts": {
+            "declared_record_count": declared_count if isinstance(declared_count, int) else None,
+            "unique_question_id_count": len({value for _, value, _ in question_id_records}),
+            "missing_question_id_count": len(missing_question_ids),
+            "duplicate_question_id_value_count": len(duplicate_question_id_values),
+            "duplicate_question_id_record_count": len(duplicate_question_id_records),
+            "missing_paper_or_question_number_count": len(missing_paper_question_pairs),
+            "duplicate_paper_question_pair_count": len(duplicate_paper_question_values),
+            "duplicate_paper_question_record_count": len(duplicate_paper_question_records),
+            "question_image_path_entry_count": question_path_entry_count,
+            "missing_question_image_path_count": len(missing_question_image_paths),
+            "absolute_question_image_path_count": len(bad_question_path_entries["absolute_question_image_path"]),
+            "missing_question_image_file_count": len(bad_question_path_entries["missing_question_image_file"]),
+            "nonblank_mark_scheme_image_record_count": nonblank_mark_scheme_record_count,
+            "mark_scheme_image_path_entry_count": mark_scheme_path_entry_count,
+            "missing_mark_scheme_image_path_count": len(missing_mark_scheme_paths) + len(allowed_missing_mark_scheme_paths),
+            "allowed_missing_mark_scheme_image_path_count": len(allowed_missing_mark_scheme_paths),
+            "unexpected_missing_mark_scheme_image_path_count": len(missing_mark_scheme_paths),
+            "absolute_mark_scheme_image_path_count": len(bad_mark_scheme_path_entries["absolute_mark_scheme_image_path"]),
+            "missing_mark_scheme_image_file_count": len(bad_mark_scheme_path_entries["missing_mark_scheme_image_file"]),
+        },
+        "known_missing_mark_scheme_companions": [
+            {
+                "source_companion": key,
+                "paper": str(details["paper"]),
+                "reason": str(details["reason"]),
+                "observed_missing_count": len(observed_allowed_companions.get(key, [])),
+                "observed_question_ids": sorted(observed_allowed_companions.get(key, [])),
+            }
+            for key, details in sorted(KNOWN_MISSING_MARK_SCHEME_COMPANIONS.items())
+        ],
+        "failures": failures,
+    }
+    return report
 
 
 def audit_ocr_candidates(
@@ -137,6 +408,20 @@ def write_audit(input_path: str | Path, output_path: str | Path | None = None) -
     return report
 
 
+def write_current_output_integrity_audit(
+    input_path: str | Path,
+    output_path: str | Path | None = None,
+    *,
+    artifact_root: str | Path | None = None,
+    example_limit: int = 10,
+) -> dict[str, Any]:
+    report = audit_current_output_integrity(input_path, artifact_root=artifact_root, example_limit=example_limit)
+    if output_path is not None:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(output_path).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    return report
+
+
 def write_ocr_candidate_audit(
     input_path: str | Path,
     *,
@@ -157,6 +442,135 @@ def write_difficulty_audit(input_path: str | Path, *, output_path: str | Path | 
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         Path(output_path).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report
+
+
+def _records_from_payload(payload: Any) -> list[dict[str, Any]]:
+    if isinstance(payload, dict) and isinstance(payload.get("questions"), list):
+        return list(payload["questions"])
+    if isinstance(payload, list):
+        return list(payload)
+    raise ValueError("Integrity audit input must be a question bank document or a list of question records.")
+
+
+def _infer_artifact_root(input_path: Path, payload: Any) -> Path:
+    if isinstance(payload, dict):
+        manifest = payload.get("run_manifest")
+        if isinstance(manifest, dict) and _clean_text(manifest.get("artifact_root")):
+            return Path(str(manifest["artifact_root"]))
+    if input_path.parent.name == "json":
+        return input_path.parent.parent
+    return input_path.parent
+
+
+def _question_image_path_entries(record: dict[str, Any]) -> list[dict[str, str]]:
+    return _path_entries(record, "question_image_path") + _path_entries(record, "canonical_question_artifact") + _path_entries(
+        record,
+        "question_image_paths",
+    )
+
+
+def _mark_scheme_image_path_entries(record: dict[str, Any]) -> list[dict[str, str]]:
+    return _path_entries(record, "mark_scheme_image_path") + _path_entries(record, "mark_scheme_image_paths")
+
+
+def _path_entries(record: dict[str, Any], field: str) -> list[dict[str, str]]:
+    value = record.get(field)
+    if isinstance(value, list):
+        return [
+            {"field": f"{field}[{index}]", "path": str(item).strip()}
+            for index, item in enumerate(value)
+            if str(item).strip()
+        ]
+    if _clean_text(value):
+        return [{"field": field, "path": str(value).strip()}]
+    return []
+
+
+def _check_path_entry(
+    entry: dict[str, str],
+    *,
+    index: int,
+    record: dict[str, Any],
+    companion: str,
+    artifact_root: Path,
+    absolute_code: str,
+    missing_file_code: str,
+    failures: dict[str, list[dict[str, Any]]],
+) -> None:
+    path_value = entry["path"]
+    ref = _record_ref(index, record, companion=companion)
+    ref["field"] = entry["field"]
+    ref["path"] = path_value
+
+    if not _is_relative_artifact_path(path_value):
+        failures[absolute_code].append(ref)
+    if not _artifact_file_exists(path_value, artifact_root):
+        missing_ref = dict(ref)
+        missing_ref["resolved_path"] = str(artifact_root / path_value) if _is_relative_artifact_path(path_value) else path_value
+        failures[missing_file_code].append(missing_ref)
+
+
+def _is_relative_artifact_path(value: str) -> bool:
+    stripped = value.strip()
+    if not stripped or "://" in stripped:
+        return False
+    path = Path(stripped)
+    windows_path = PureWindowsPath(stripped)
+    return not path.is_absolute() and not windows_path.is_absolute() and not windows_path.drive
+
+
+def _artifact_file_exists(value: str, artifact_root: Path) -> bool:
+    if not _is_relative_artifact_path(value):
+        return Path(value).is_file()
+    return (artifact_root / value).is_file()
+
+
+def _record_ref(index: int, record: dict[str, Any], *, companion: str, duplicate_key: str = "") -> dict[str, Any]:
+    ref = {
+        "index": index,
+        "question_id": _clean_text(record.get("question_id")),
+        "paper": _clean_text(record.get("paper")),
+        "question_number": _clean_text(record.get("question_number")),
+        "source_companion": companion,
+    }
+    if duplicate_key:
+        ref["duplicate_key"] = duplicate_key
+    return ref
+
+
+def _failure(code: str, message: str, items: list[dict[str, Any]], *, example_limit: int) -> dict[str, Any]:
+    return {
+        "code": code,
+        "message": message,
+        "count": len(items),
+        "examples": items[:example_limit],
+    }
+
+
+def _source_companion_key(record: dict[str, Any]) -> str:
+    for field in ["mark_scheme_source_pdf", "source_pdf"]:
+        value = _clean_text(_note_or_top(record, field))
+        if not value:
+            continue
+        match = _SOURCE_COMPANION_RE.search(Path(value).name)
+        if match:
+            return "_".join(
+                [
+                    match.group("syllabus"),
+                    match.group("year"),
+                    match.group("session").title(),
+                    match.group("component"),
+                ]
+            )
+    paper = _clean_text(record.get("paper"))
+    for key, details in KNOWN_MISSING_MARK_SCHEME_COMPANIONS.items():
+        if paper and paper == details.get("paper"):
+            return key
+    return ""
+
+
+def _clean_text(value: Any) -> str:
+    return str(value).strip() if value is not None else ""
 
 
 def _counts(records: list[dict[str, Any]], key: str) -> dict[str, int]:

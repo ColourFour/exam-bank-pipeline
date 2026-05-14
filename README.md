@@ -336,6 +336,14 @@ General visual/text trust audit:
 python -m exam_bank.cli audit --input output/json/question_bank.json
 ```
 
+Current output integrity audit:
+
+```bash
+.venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output
+```
+
+This fails on duplicate IDs, duplicate `(paper, question_number)` pairs, missing question images, missing nonblank mark-scheme images, absolute image paths, or unexpected missing mark-scheme paths. The only documented missing mark-scheme companion is `9709_2025_November_33`.
+
 OCR candidate audit:
 
 ```bash

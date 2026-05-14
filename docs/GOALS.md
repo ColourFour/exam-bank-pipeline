@@ -152,38 +152,78 @@ Suggested Next Steps
 Apply the same inspection-safety pattern to any other generator scripts before broader cleanup.
 
 Goal 3: add current-output integrity audit/test
+Files Changed
 
-Begin here!
+
+src/exam_bank/audit.py: added integrity audit, counts, failure groups, and documented allow-list for 9709_2025_November_33.
+
+src/exam_bank/cli.py: added output-integrity-audit.
+
+tests/test_audit.py: added pass/fail integrity tests.
+
+tests/test_runtime_paths.py: updated CLI surface assertion.
+
+README.md: documented the new audit command and known exception.
+
+
+Validation also generated ignored report output at output/json/audit.current.integrity.json.
+
+Commands Run
+
+
+.venv/bin/python -m py_compile src/exam_bank/audit.py
+
+.venv/bin/python -m pytest tests/test_audit.py tests/test_runtime_paths.py -q -> 13 passed
+
+.venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output output/json/audit.current.integrity.json -> passed
+
+.venv/bin/python -m pytest tests/test_output_contract.py tests/test_asterion_export.py tests/test_output_management.py tests/test_question_bank_readiness_audit.py -q -> 28 passed
+
+.venv/bin/python -m pytest -q -> 427 passed, 3 skipped
+
+git diff --check -> passed
+
+
+Note: initial python -m py_compile ... failed because there is no python shim; validation used .venv/bin/python.
+
+Current Integrity Counts
+
+
+Records: 1301; declared count matches.
+
+Unique question_id: 1301; duplicate IDs: 0.
+
+Duplicate (paper, question_number) pairs: 0.
+
+Question image path entries checked: 3903; missing paths: 0; absolute paths: 0; missing files: 0.
+
+Records with nonblank mark-scheme image paths: 1290.
+
+Mark-scheme path entries checked: 2580; absolute paths: 0; missing files: 0.
+
+Missing mark-scheme image paths: 11, all allowed for 9709_2025_November_33 / 33autumn25_q01 through 33autumn25_q11.
+
+Unexpected missing mark schemes: 0.
+
+
+Risks / Concerns
+
+
+The audit verifies path integrity and duplicate identity constraints, not visual crop correctness.
+
+The known missing mark-scheme companion remains an explicit allow-list item until the source PDF is added.
+
+
+Suggested Next Steps
+
+
+Add the missing 9709_2025_November_33 source mark scheme when available, rerun the export and integrity audit, then remove the allow-list entry.
+
+Use output-integrity-audit as a required pre-cleanup gate before deleting or reorganizing generated artifacts.
+
 Goal 4: document Asterion export contract
 
-Goal: create or update the Asterion export contract documentation.
-Context:
-The audit found that Asterion-facing exports are useful but must be consumed through role gates. Asterion must not treat the full question bank projection as globally student-facing safe.
-Scope:
-Document the current contract for:
-- output/asterion/exports/latest/asterion_question_bank_v1.json
-- output/asterion/exports/latest/asterion_content_lab_candidates_v1.json
-Tasks:
-1. Explain the purpose of each Asterion-facing export.
-2. Define which fields are canonical versus advisory.
-3. Explain role gates for canonical practice, field guide source, quick-check source, warmup source, Guardian candidate, and readiness metrics.
-4. Explain that role-specific allow/block/block-until-reviewed decisions must be honored exactly.
-5. Explain that canonical images remain source of truth.
-6. Explain that OCR/native text is advisory unless a specific role gate permits use.
-7. Include current known limitations: limited student-facing readiness, missing subpart marks, and missing mark scheme for 9709_2025_November_33.
-8. Add a short consumer checklist for Asterion.
-Do not:
-- Change export schema fields.
-- Change role-gate logic.
-- Inflate student-facing eligibility.
-- Remove blocked/review states.
-Validation:
-Run docs checks if any exist.
-Run Asterion export tests if available.
-Run full pytest if practical.
-Final summary required:
-List files changed, validation run, key contract decisions, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 5: document topic routing sidecar contract
 
 Goal: create or update the topic routing sidecar contract documentation.

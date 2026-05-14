@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
-from .audit import write_audit
+from .audit import write_audit, write_current_output_integrity_audit
 from .asterion_export import (
     ASTERION_EXPORT_FILENAME,
     CONTENT_LAB_EXPORT_FILENAME,
@@ -74,6 +74,20 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
     audit.add_argument("--output", default="", help="Optional path to write the audit JSON report.")
     audit.set_defaults(func=cmd_audit)
+
+    output_integrity = subparsers.add_parser(
+        "output-integrity-audit",
+        help="Fail-fast integrity audit for the current generated question-bank output and image artifacts.",
+    )
+    output_integrity.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    output_integrity.add_argument(
+        "--artifact-root",
+        default="",
+        help="Root used to resolve relative image artifact paths. Defaults to the input run manifest or output root.",
+    )
+    output_integrity.add_argument("--output", default="", help="Optional path to write the audit JSON report.")
+    output_integrity.add_argument("--example-limit", type=int, default=10, help="Maximum examples per failure group.")
+    output_integrity.set_defaults(func=cmd_output_integrity_audit)
 
     asterion = subparsers.add_parser(
         "asterion-export",
@@ -398,6 +412,19 @@ def cmd_audit(args: argparse.Namespace) -> int:
     report = write_audit(args.input, output)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
+
+
+def cmd_output_integrity_audit(args: argparse.Namespace) -> int:
+    output = Path(args.output) if args.output else None
+    artifact_root = Path(args.artifact_root) if args.artifact_root else None
+    report = write_current_output_integrity_audit(
+        args.input,
+        output,
+        artifact_root=artifact_root,
+        example_limit=args.example_limit,
+    )
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["ok"] else 1
 
 
 def cmd_asterion_export(args: argparse.Namespace) -> int:
