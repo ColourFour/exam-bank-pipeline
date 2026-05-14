@@ -55,7 +55,9 @@ Content Lab candidate `role_statuses` are separate from question-bank `usage_rol
 
 ## Current Export State
 
-The current `asterion_question_bank_v1.json` has `1301` records:
+Measured release evidence as of audit date `2026-05-14`, source run `20260513T070200Z-56d469c1dd52`:
+
+That dated `asterion_question_bank_v1.json` has `1301` records:
 
 - Canonical practice: `252 allow`, `1049 block`.
 - Field guide source: `252 allow`, `1021 block_until_reviewed`, `28 block`.
@@ -64,19 +66,19 @@ The current `asterion_question_bank_v1.json` has `1301` records:
 - Guardian candidate: `252 allow`, `1049 block`.
 - P3 readiness metric: `396 include`, `905 exclude`.
 
-The current `asterion_content_lab_candidates_v1.json` has `2416` candidates:
+That dated `asterion_content_lab_candidates_v1.json` has `2416` candidates:
 
 - Candidate `review_status`: `502 machine_candidate`, `1914 blocked_until_reviewed`.
 - Candidate `generation_gate.status`: all current candidates are `blocked_until_reviewed`.
 - The dominant generation blocker is missing source skill IDs, followed by unreviewed mark events and unreviewed mappings or subparts.
 
-These counts are release evidence, not eligibility rules. Regenerated exports may change counts, but the role-gate semantics above must remain conservative unless the contract is intentionally revised.
+These counts are dated release evidence, not eligibility rules. Regenerated exports may change counts, but the role-gate semantics above must remain conservative unless the contract is intentionally revised.
 
 ## Known Limitations
 
 Student-facing readiness is limited. The current export is useful for review and controlled downstream workflows, but only role-allowed subsets are eligible for student-facing practice, quick checks, Guardian candidate flows, or generation inputs.
 
-Subpart marks are incomplete. The current Asterion export has `968` records with labeled subparts, and `48` records currently have missing subpart marks in the Asterion projection. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
+Subpart marks are incomplete. In the dated export evidence above, the Asterion projection has `968` records with labeled subparts, and `48` records have missing subpart marks. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
 
 The source set is missing the mark scheme for `9709_2025_November_33`. This accounts for `11` records with missing mark-scheme image paths, including `33autumn25_q01` through `33autumn25_q11`. These records must remain blocked or review-only until the source companion mark scheme is added and the export is regenerated and validated.
 

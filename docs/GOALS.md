@@ -1319,5 +1319,61 @@ Resolve the missing 9709_2025_November_33 mark scheme, regenerate, and remove th
 
 **Start here!**
 Goal 20: README and docs final consistency pass for Phases 1–3
+Implemented the docs consistency pass with scoped documentation-only edits.
 
-I’d run them in this order: Goals 1–7 for Phase 1, then 8–12 for Phase 2, then 13–20 for Phase 3. The future exam reports and grade boundaries idea is a good one, but I’d keep it parked as a roadmap note until the project is cleaner, safer, and easier to operate.
+Files Changed
+
+
+docs/ASTERION_EXPORT_CONTRACT.md
+
+docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md
+
+docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md
+
+docs/RELEASE_VALIDATION_CHECKLIST.md
+
+
+Contradictions Fixed
+
+
+Labeled Asterion/export/topic/current-state counts with audit date 2026-05-14 and source run 20260513T070200Z-56d469c1dd52.
+
+Clarified that old OCR/no-OCR documentation drift in the audit is historical audit context, while README/ROADMAP now define the current OCR-enabled state.
+
+Clarified the audit is a dated baseline, not a live count source.
+
+Reconciled cleanup/optimization scope: Phases 1-3 are the active path; Phase 4 is deferred deeper-refactor work; Phase 5 is not separate current implementation scope.
+
+Added the deferred exam report / grade boundary note to topic routing and release validation docs.
+
+Reaffirmed strict topic routing fail-closed behavior and Asterion role-gate semantics.
+
+
+Validation Run
+
+
+git diff --check: passed.
+
+Searched for docs/markdown check tooling; none found beyond pyproject.toml, which has no docs check configuration.
+
+pytest not run because only docs changed.
+
+
+Remaining Docs Risks
+
+
+Historical docs still contain old OCR/native-only examples, but they are now framed as historical where in scope.
+
+docs/TRUST_MODEL.md, docs/AUTO_TRIAGE.md, and docs/TRIAGE_WORKFLOW.md were outside this focused edit pass and may still carry stale measured snapshots.
+
+Current topic sidecar remains unsafe for strict filters until regenerated/audited with safe_for_strict_filters=true.
+
+
+Suggested Next Steps
+
+
+Do a separate historical-doc banner pass for TRUST_MODEL, AUTO_TRIAGE, and TRIAGE_WORKFLOW.
+
+Keep measured counts centralized in audit outputs or clearly dated docs.
+
+Regenerate and audit topic routing before enabling any strict topic filters.

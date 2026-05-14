@@ -212,7 +212,7 @@ Blocking:
 Warning:
 
 - The current known state has `safe_for_strict_filters=false` and failed records, so strict topic filters must remain disabled. The sidecar can still be used as review evidence if the failed and review-required states are preserved.
-- Local `topic`, `difficulty`, and exam-report-derived metadata are advisory unless a separate release review approves their consumer role.
+- Local `topic`, `difficulty`, and any future exam-report or grade-boundary-derived metadata are advisory unless a separate release review approves their consumer role. Exam report and grade-boundary leverage is deferred until after deeper refactors.
 
 ### 7. Run Output Inventory And Cleanup Plan
 
@@ -282,4 +282,3 @@ Record the final release decision with:
 - Blocking issues found and how each was fixed, waived, or scoped out.
 - Warnings carried forward, including the `9709_2025_November_33` missing mark-scheme exception if still unresolved.
 - Downstream role restrictions, especially Asterion role gates and strict topic-filter status.
-

@@ -41,7 +41,7 @@ If this field is missing, false, or unreadable, consumers must default to not us
 
 The current `output/json/question_bank.topic_routing.v1.json` is not safe for strict filters.
 
-Current audited sidecar state:
+Current audited sidecar state as of `2026-05-14`, generated from source run `20260513T070200Z-56d469c1dd52`:
 
 - `schema_name=exam_bank.topic_routing_sidecar`
 - `schema_version=1`
@@ -175,6 +175,10 @@ Strict topic routing is the narrow `topic-route-ai` sidecar path. It sends each 
 
 Strict routing is the only sidecar path documented here for parent-topic distributions. It still remains advisory unless sidecar-level safety metadata allows strict filtering.
 
+### Deferred Evidence Sources
+
+Future topic and difficulty leverage may use exam reports and grade boundaries as additional evidence, but that work is deferred until after deeper refactors. Until a separate contract and audited implementation exist, those sources must not change strict topic routing, difficulty algorithms, canonical question-bank records, or Asterion role gates.
+
 ## AI Topic Structure Rule
 
 AI must not invent the main curriculum or topic structure.
@@ -197,4 +201,3 @@ Before using the sidecar for strict topic filtering:
 8. Reject distributions that do not total exactly `100`.
 9. Preserve failed and review-required records for QA/review queues, not strict filters.
 10. Do not merge sidecar topic output into `question_bank.json` canonical records.
-

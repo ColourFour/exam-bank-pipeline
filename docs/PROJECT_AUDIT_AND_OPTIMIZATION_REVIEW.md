@@ -8,23 +8,25 @@ Scope: full project audit before cleanup or optimization. This report is intenti
 
 Post-audit documentation cleanup note: `docs/PROJECT_REVIEW.md` has been moved to `docs/history/PROJECT_REVIEW.md` and marked historical. Path references below describe the file location at audit time unless they explicitly refer to the new history path.
 
+Post-Phase 1 through Phase 3 consistency note: this audit remains the dated measured baseline for run `20260513T070200Z-56d469c1dd52`, not a live count source. Later docs now carry the current command atlas, Asterion contract, topic sidecar contract, archive manifest, atomic-write/status-reporting notes, and validation checklist. Where this report says a doc or command "needs" one of those items, read that as original audit context unless the same risk is repeated in a current contract or checklist.
+
 ## 1. Executive Summary
 
 The project has a strong engineering foundation for an image-first CAIE 9709 exam-bank pipeline. The core source-of-truth policy is reflected in code, tests, and export shape: canonical question and mark-scheme images are preserved separately from advisory native text, OCR text, AI sidecars, topic routing, and Asterion eligibility metadata.
 
 The current canonical question bank is `output/json/question_bank.json`, schema `exam_bank.question_bank` version 2. It contains 1301 records generated on `2026-05-13T07:02:00.448742+00:00` from run `20260513T070200Z-56d469c1dd52`. All 1301 question images exist. Nonblank mark-scheme image paths also exist, but 11 records have no mark-scheme image path because the source input is missing the companion mark scheme for `9709_2025_November_33`.
 
-The project is currently operational and well tested. A full test run passed: 419 passed, 3 skipped in 110.63 seconds. The tests cover extraction, OCR selection, trust gates, output contracts, Asterion exports, topic routing, run status, hygiene, and several regression cases.
+At the time of this audit, the project was operational and well tested. A full test run passed: 419 passed, 3 skipped in 110.63 seconds. Later Phase 1 closeout validation recorded a newer full-suite result. Treat this line as dated audit evidence, not the current test count. The tests cover extraction, OCR selection, trust gates, output contracts, Asterion exports, topic routing, run status, hygiene, and several regression cases.
 
 The main risks before cleanup are operational and semantic rather than architectural:
 
-- Current generated outputs and some documentation disagree about OCR state and readiness counts.
+- Some generated outputs and documentation disagreed about OCR state and readiness counts at audit time. Current README and roadmap docs now state that the canonical export is OCR-enabled and avoid duplicating unlabeled count snapshots.
 - Output artifacts are large and include both current and archived generated trees.
 - Some generator scripts are not safe when invoked with `--help`; one taxonomy generator executed and rewrote generated taxonomy files during inspection before its changes were reverted.
 - Asterion-facing exports are structurally useful, but only a limited subset is student-facing safe today.
 - Topic routing is strict about allowed topic IDs, but the current routing sidecar has 153 schema-validation failures and is marked `safe_for_strict_filters=false`.
 - Mark-scheme display is mostly usable, but subpart mark breakdowns are not populated and 3 records have question/mark-scheme total mismatches.
-- Documentation is valuable but stale in several places, especially around OCR activation, current counts, archived output names, and hard blocker totals.
+- Documentation was stale in several places at audit time, especially around OCR activation, current counts, archived output names, and hard blocker totals. Current operator docs should prefer `README.md`, `ROADMAP.md`, `docs/COMMAND_ATLAS.md`, `docs/ASTERION_EXPORT_CONTRACT.md`, `docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`, and `docs/RELEASE_VALIDATION_CHECKLIST.md`.
 
 Overall grade: B+. The core architecture and regression protection are strong. The cleanup readiness grade is closer to B- because generated artifact hygiene, documentation freshness, and command safety need work before broad reorganization.
 
@@ -32,7 +34,7 @@ Overall grade: B+. The core architecture and regression protection are strong. T
 
 The repository is a Python package with CLI entry points under `src/exam_bank`, tests under `tests`, operational scripts under `scripts`, input PDFs under `input`, generated outputs under `output`, and taxonomy/supporting assets under `exam_bank_taxonomy`.
 
-Current important facts:
+Current important facts as of audit date `2026-05-14`, source run `20260513T070200Z-56d469c1dd52`:
 
 | Area | State |
 | --- | --- |
@@ -64,7 +66,7 @@ Top-level size profile:
 | `agent_handoffs/` | 432K | Historical evidence/handoffs, preserve until reviewed |
 | `docs/` | 68K before this report | Active and historical documentation |
 
-Current generated output state:
+Current generated output state at audit time:
 
 - `output/json/question_bank.json`: current canonical question bank.
 - `output/json/question_bank.topic_routing.v1.json`: current topic routing sidecar.
@@ -116,7 +118,7 @@ The run-status system already has useful primitives for long runs: stage trackin
 
 ### Documentation Drift
 
-Several docs describe a previous no-OCR canonical state. The current `question_bank.json` has `ocr_ran=true` for all 1301 records and 27 OCR-selected records. README, ROADMAP, TRUST_MODEL, AUTO_TRIAGE, TRIAGE_WORKFLOW, and PROJECT_REVIEW contain stale measured counts or old output layout references.
+Several docs described a previous no-OCR canonical state at audit time. The current `question_bank.json` for run `20260513T070200Z-56d469c1dd52` has `ocr_ran=true` for all 1301 records and 27 OCR-selected records. README and ROADMAP have since been reconciled; historical workflow docs may still contain dated evidence and should not be used as current state unless they name the same run/date.
 
 Risk: operators may run the wrong workflow, trust stale readiness numbers, or regenerate from old assumptions.
 
@@ -146,7 +148,7 @@ Risk: downstream consumers might treat the sidecar as safe for strict filters wi
 
 ### Asterion Student-Facing Readiness Is Limited
 
-Current Asterion export roles show only 252 records allowed for canonical practice and Guardian candidate use. Quick-check source allows 51 records. Most records are blocked or blocked until reviewed because of visual requirements, crop confidence, topic uncertainty, mark-scheme confidence, or text-only trust limits.
+Audit-measured Asterion export roles show only 252 records allowed for canonical practice and Guardian candidate use. Quick-check source allows 51 records. Most records are blocked or blocked until reviewed because of visual requirements, crop confidence, topic uncertainty, mark-scheme confidence, or text-only trust limits.
 
 Risk: Asterion can consume the projection, but it must respect role gates and must not treat the full file as student-facing safe.
 
@@ -391,7 +393,7 @@ Interpretation:
 
 ## 9. Text Extraction and Trust Review
 
-Current text/OCR state:
+Audit-measured text/OCR state for run `20260513T070200Z-56d469c1dd52`:
 
 | Field | Count |
 | --- | ---: |
@@ -510,7 +512,7 @@ Important statuses currently in use:
 - `topic_trust_status`: whether topic metadata is normal or degraded/review required.
 - Asterion role statuses: per-use allow/block/block-until-reviewed decisions.
 
-Current status counts show the distinction is meaningful:
+Audit-measured status counts for run `20260513T070200Z-56d469c1dd52` show the distinction is meaningful:
 
 - 252 visual-ready records versus 177 text-only-ready records.
 - 271 high-trust readable-text records versus 1030 records still visual-required.
@@ -548,7 +550,7 @@ The project has two related but separate AI/topic paths:
 
 The strict runtime topic profile is in `src/exam_bank/runtime_profile.json`. Current question-bank topics validated against that profile produced zero invalid current `topic` values.
 
-Current topic distribution by paper family is plausible and paper-specific:
+Audit-measured topic distribution by paper family for run `20260513T070200Z-56d469c1dd52` is plausible and paper-specific:
 
 P1 top topics:
 
@@ -584,7 +586,7 @@ P5 top topics:
 - distributions: 42
 - data representation: 17
 
-Current topic confidence state:
+Audit-measured topic confidence state for run `20260513T070200Z-56d469c1dd52`:
 
 - `topic_confidence=high`: 333
 - `topic_confidence=medium`: 113
@@ -594,7 +596,7 @@ Current topic confidence state:
 - `topic_trust_status=review_required`: 208
 - `topic_trust_status=normal`: 77
 
-Current routing sidecar state:
+Audit-measured routing sidecar state for run `20260513T070200Z-56d469c1dd52`:
 
 - Schema: `exam_bank.topic_routing_sidecar` v1.
 - Records: 1301.
@@ -628,7 +630,7 @@ Recommendations:
 
 ## 12. Asterion Export Readiness Review
 
-Current Asterion files:
+Audit-measured Asterion files for run `20260513T070200Z-56d469c1dd52`:
 
 | File | Current | Regenerable | Role |
 | --- | --- | --- | --- |
@@ -637,7 +639,7 @@ Current Asterion files:
 | `output/json/question_bank.topic_routing.v1.json` | Yes | Yes, AI/API dependent | Topic routing sidecar |
 | archived AI sidecars | Historical | Yes, AI/API dependent | Evidence or optional enrichment |
 
-Main Asterion export state:
+Main Asterion export state for run `20260513T070200Z-56d469c1dd52`:
 
 - Schema: `asterion.question_bank` v1.
 - Records: 1301.
@@ -700,7 +702,7 @@ Recommendations:
 
 ## 13. Mark-Scheme Readiness Review
 
-Current mark-scheme state:
+Audit-measured mark-scheme state for run `20260513T070200Z-56d469c1dd52`:
 
 | Check | Result |
 | --- | ---: |
@@ -789,7 +791,7 @@ Before broad cleanup, create lightweight schema contract docs or JSON Schemas fo
 
 ## 15. Test Coverage Review
 
-Full test run:
+Full test run at audit time:
 
 ```text
 419 passed, 3 skipped in 110.63s (0:01:50)
@@ -1222,6 +1224,8 @@ Acceptance gate:
 
 - A new operator can run standard, OCR-enabled, audit, topic, AI, and Asterion workflows from docs.
 - Consumer-facing safety semantics are unambiguous.
+
+Post-audit scope clarification: the accepted active path after Phase 1 through Phase 3 keeps Phase 4 as future deeper-refactor work and does not treat Phase 5 as separate current implementation scope. Future topic/difficulty leverage may eventually use exam reports and grade boundaries, but that remains deferred until after deeper refactors and a separate audited plan.
 
 ## 23. Do-Not-Break Constraints
 
