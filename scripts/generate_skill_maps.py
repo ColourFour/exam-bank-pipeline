@@ -7,6 +7,7 @@ unless a separate human review artifact proves otherwise.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import re
@@ -28,9 +29,9 @@ CANONICAL_INDEXES = CANONICAL_ROOT / "indexes"
 TAXONOMY_LOGS = TAXONOMY_ROOT / "logs"
 TAXONOMY_CHANGELOGS = TAXONOMY_LOGS / "changelogs"
 TAXONOMY_VALIDATION_REPORTS = TAXONOMY_LOGS / "validation_reports"
-QUESTION_BANK = ROOT / "output_ocr_candidate/json/question_bank.json"
-ASTERION_QB = ROOT / "output_ocr_candidate/json/asterion_question_bank_v1.json"
-CONTENT_LAB = ROOT / "output_ocr_candidate/json/asterion_content_lab_candidates_v1.json"
+QUESTION_BANK = ROOT / "output/json/question_bank.json"
+ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_question_bank_v1.json"
+CONTENT_LAB = ROOT / "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json"
 OLD_P3_SKILL_MAP = CANONICAL_SKILL_MAPS / "skill_map_9709_p3_v1.json"
 
 SYLLABUS_CODE = "9709"
@@ -79,6 +80,17 @@ def output_component(component: str) -> str:
 
 def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
+
+
+def resolve_project_path(path: Path) -> Path:
+    return path if path.is_absolute() else ROOT / path
+
+
+def display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
 def skill(
@@ -1690,10 +1702,69 @@ def p3_changelog(old: dict[str, Any], old_path: Path, new_map: dict[str, Any], p
     }
 
 
-def main() -> None:
-    question_bank = load_json(QUESTION_BANK)["questions"]
-    asterion_questions = load_json(ASTERION_QB)["questions"]
-    content_lab_candidates = load_json(CONTENT_LAB)["candidates"]
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Generate candidate CAIE 9709 skill maps, question-skill mappings, and coverage reports.",
+    )
+    parser.add_argument(
+        "--question-bank",
+        "--input",
+        dest="question_bank",
+        type=Path,
+        default=QUESTION_BANK,
+        help="Path to the current question_bank.json input.",
+    )
+    parser.add_argument(
+        "--asterion-question-bank",
+        type=Path,
+        default=ASTERION_QB,
+        help="Path to the current Asterion question-bank export.",
+    )
+    parser.add_argument(
+        "--content-lab-candidates",
+        type=Path,
+        default=CONTENT_LAB,
+        help="Path to the current Asterion Content Lab candidates export.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Build and validate outputs, then print the write plan without writing files.",
+    )
+    return parser
+
+
+def planned_output_paths() -> list[Path]:
+    paths: list[Path] = []
+    for component in sorted(COMPONENTS):
+        out_component = output_component(component)
+        paths.extend(
+            [
+                CANONICAL_SKILL_MAPS / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json",
+                CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
+                CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json",
+            ]
+        )
+    paths.extend(
+        [
+            CANONICAL_INDEXES / "skill_map_index_v1.json",
+            CANONICAL_COVERAGE_REPORTS / "coverage_report_all_components_v1.json",
+            TAXONOMY_VALIDATION_REPORTS / "skill_map_validation_v1.json",
+            TAXONOMY_CHANGELOGS / "changelog_9709_p3_v1.json",
+        ]
+    )
+    return paths
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    question_bank_path = resolve_project_path(args.question_bank)
+    asterion_question_bank_path = resolve_project_path(args.asterion_question_bank)
+    content_lab_candidates_path = resolve_project_path(args.content_lab_candidates)
+
+    question_bank = load_json(question_bank_path)["questions"]
+    asterion_questions = load_json(asterion_question_bank_path)["questions"]
+    content_lab_candidates = load_json(content_lab_candidates_path)["candidates"]
     old_p3_baseline = load_git_baseline(OLD_P3_SKILL_MAP)
     content_lab_lookup = build_content_lab_lookup(content_lab_candidates)
     question_notes = {q["question_id"]: q for q in question_bank}
@@ -1819,35 +1890,6 @@ def main() -> None:
         "validation": validation,
     }
 
-    for component in sorted(COMPONENTS):
-        out_component = output_component(component)
-        dump_json(CANONICAL_SKILL_MAPS / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json", maps[component])
-        dump_json(
-            CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
-            {
-                "schema_name": "exam_bank.question_skill_mappings",
-                "schema_version": 1,
-                "generated_at": datetime.now(timezone.utc).isoformat(),
-                "syllabus_code": SYLLABUS_CODE,
-                "subject_name": SUBJECT_NAME,
-                "caie_class_or_component": COMPONENTS[component]["caie_class_or_component"],
-                "component_label": COMPONENTS[component]["component_label"],
-                "source_syllabus_reference": SYLLABUS_REFERENCE,
-                "source_syllabus_url": SYLLABUS_URL,
-                "mapping_count": len(mappings_by_component[component]),
-                "mappings": mappings_by_component[component],
-            },
-        )
-        dump_json(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json", reports[component])
-
-    dump_json(CANONICAL_INDEXES / "skill_map_index_v1.json", index)
-    dump_json(CANONICAL_COVERAGE_REPORTS / "coverage_report_all_components_v1.json", coverage_summary)
-    dump_json(TAXONOMY_VALIDATION_REPORTS / "skill_map_validation_v1.json", validation)
-    dump_json(
-        TAXONOMY_CHANGELOGS / "changelog_9709_p3_v1.json",
-        p3_changelog(old_p3_baseline, OLD_P3_SKILL_MAP, maps["p3"], mappings_by_component["p3"], reports["p3"]),
-    )
-
     summary = {
         "components": {
             component: {
@@ -1860,8 +1902,51 @@ def main() -> None:
         },
         "validation": validation["status"],
     }
+
+    if args.dry_run:
+        summary = {
+            "dry_run": True,
+            "inputs": {
+                "question_bank": display_path(question_bank_path),
+                "asterion_question_bank": display_path(asterion_question_bank_path),
+                "content_lab_candidates": display_path(content_lab_candidates_path),
+            },
+            "would_write": [display_path(path) for path in planned_output_paths()],
+            **summary,
+        }
+    else:
+        for component in sorted(COMPONENTS):
+            out_component = output_component(component)
+            dump_json(CANONICAL_SKILL_MAPS / f"skill_map_{SYLLABUS_CODE}_{out_component}_v1.json", maps[component])
+            dump_json(
+                CANONICAL_SKILL_MAPPINGS / f"question_skill_mappings_{SYLLABUS_CODE}_{out_component}_v1.json",
+                {
+                    "schema_name": "exam_bank.question_skill_mappings",
+                    "schema_version": 1,
+                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "syllabus_code": SYLLABUS_CODE,
+                    "subject_name": SUBJECT_NAME,
+                    "caie_class_or_component": COMPONENTS[component]["caie_class_or_component"],
+                    "component_label": COMPONENTS[component]["component_label"],
+                    "source_syllabus_reference": SYLLABUS_REFERENCE,
+                    "source_syllabus_url": SYLLABUS_URL,
+                    "mapping_count": len(mappings_by_component[component]),
+                    "mappings": mappings_by_component[component],
+                },
+            )
+            dump_json(CANONICAL_COVERAGE_REPORTS / f"coverage_report_{SYLLABUS_CODE}_{out_component}_v1.json", reports[component])
+
+        dump_json(CANONICAL_INDEXES / "skill_map_index_v1.json", index)
+        dump_json(CANONICAL_COVERAGE_REPORTS / "coverage_report_all_components_v1.json", coverage_summary)
+        dump_json(TAXONOMY_VALIDATION_REPORTS / "skill_map_validation_v1.json", validation)
+        dump_json(
+            TAXONOMY_CHANGELOGS / "changelog_9709_p3_v1.json",
+            p3_changelog(old_p3_baseline, OLD_P3_SKILL_MAP, maps["p3"], mappings_by_component["p3"], reports["p3"]),
+        )
+
     print(json.dumps(summary, indent=2))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

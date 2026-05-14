@@ -1,0 +1,623 @@
+Goals.md -> complete phase 1 - 3 then move to leveraging exam report and grade boundary
+
+Phase 1 goals: safe cleanup prerequisites
+
+
+Goal 1: make generator scripts safe to inspect
+Files Changed
+
+
+generate_topic_filter_maps.py
+
+generate_skill_maps.py
+
+test_generator_cli_safety.py
+
+
+What Changed
+
+
+Added proper argparse CLIs so --help exits before input reads or writes.
+
+Added --dry-run to both generator scripts; it builds/validates and prints would_write without writing files.
+
+Updated stale defaults from output_ocr_candidate/... to:
+
+output/json/question_bank.json
+
+output/asterion/exports/latest/asterion_question_bank_v1.json
+
+output/asterion/exports/latest/asterion_content_lab_candidates_v1.json
+
+
+
+
+Preserved normal generation write targets and exported filenames.
+
+
+Validation
+
+
+Targeted tests: .venv/bin/python -m pytest tests/test_generator_cli_safety.py -> 4 passed
+
+Real help checks:
+
+scripts/generate_topic_filter_maps.py --help -> exited 0
+
+scripts/generate_skill_maps.py --help -> exited 0
+
+
+
+
+Real dry-runs:
+
+generate_topic_filter_maps.py --dry-run -> validation pass, no writes
+
+generate_skill_maps.py --dry-run -> validation pass, no writes
+
+
+
+
+Full suite: .venv/bin/python -m pytest -> 423 passed, 3 skipped
+
+git status was unchanged after help/dry-run/full tests; no taxonomy files were modified.
+
+
+Risks / Concerns
+
+
+The worktree was not clean before this task due unrelated untracked docs/input files, and those remain.
+
+--dry-run still reads the required current inputs to validate the generation plan; only --help is guaranteed not to read large inputs.
+
+
+Suggested Next Steps
+
+
+Consider documenting the new generator CLI usage in the taxonomy maintenance docs.
+
+
+Begin here!
+Goal 2: add no-mutation tests for script help/dry-run behavior
+
+Goal: add regression tests proving generator inspection commands do not mutate files.
+Context:
+The audit found command-safety risk around generator scripts. We need tests before broader cleanup.
+Scope:
+Add tests around generator scripts that previously had unsafe inspection behavior.
+Tasks:
+1. Add tests that run script --help and verify it exits successfully.
+2. Verify --help does not modify tracked files or generated taxonomy fixtures.
+3. Add dry-run behavior tests if --dry-run was added.
+4. Keep tests lightweight and deterministic.
+5. Avoid depending on full output generation.
+Suggested scripts:
+- scripts/generate_topic_filter_maps.py
+- scripts/generate_skill_maps.py
+Do not:
+- Require external APIs.
+- Regenerate full outputs.
+- Depend on local-only absolute paths.
+Validation:
+Run the new targeted tests.
+Run full pytest if practical.
+Final summary required:
+List files changed, commands run, validation results, risks/concerns, and suggested next steps.
+
+Goal 3: add current-output integrity audit/test
+
+Goal: add a current-output integrity audit/test for the canonical question bank.
+Context:
+The audit found strong current image integrity, but this should be protected before cleanup. The current canonical export is output/json/question_bank.json with 1301 records. All question images exist. Nonblank mark-scheme image paths exist. 11 records are missing mark-scheme image paths because the source mark scheme for 9709_2025_November_33 is missing.
+Scope:
+Add a lightweight integrity check that can be run against the current generated bank.
+Tasks:
+1. Check every record has a unique question_id.
+2. Check no duplicate (paper, question_number) pairs.
+3. Check all question image paths are relative and exist.
+4. Check all nonblank mark-scheme image paths are relative and exist.
+5. Explicitly allow/document the known missing mark-scheme companion for 9709_2025_November_33.
+6. Fail clearly if new missing images or unexpected missing mark schemes appear.
+7. Add this as either a test, audit script, or CLI audit mode, depending on the project’s current pattern.
+Do not:
+- Change generated question bank content.
+- Change image paths.
+- Delete or move output files.
+- Treat advisory text as canonical.
+Validation:
+Run the new integrity check.
+Run relevant existing output/export tests.
+Run full pytest if practical.
+Final summary required:
+List files changed, commands run, validation results, current integrity counts, risks/concerns, and suggested next steps.
+
+Goal 4: document Asterion export contract
+
+Goal: create or update the Asterion export contract documentation.
+Context:
+The audit found that Asterion-facing exports are useful but must be consumed through role gates. Asterion must not treat the full question bank projection as globally student-facing safe.
+Scope:
+Document the current contract for:
+- output/asterion/exports/latest/asterion_question_bank_v1.json
+- output/asterion/exports/latest/asterion_content_lab_candidates_v1.json
+Tasks:
+1. Explain the purpose of each Asterion-facing export.
+2. Define which fields are canonical versus advisory.
+3. Explain role gates for canonical practice, field guide source, quick-check source, warmup source, Guardian candidate, and readiness metrics.
+4. Explain that role-specific allow/block/block-until-reviewed decisions must be honored exactly.
+5. Explain that canonical images remain source of truth.
+6. Explain that OCR/native text is advisory unless a specific role gate permits use.
+7. Include current known limitations: limited student-facing readiness, missing subpart marks, and missing mark scheme for 9709_2025_November_33.
+8. Add a short consumer checklist for Asterion.
+Do not:
+- Change export schema fields.
+- Change role-gate logic.
+- Inflate student-facing eligibility.
+- Remove blocked/review states.
+Validation:
+Run docs checks if any exist.
+Run Asterion export tests if available.
+Run full pytest if practical.
+Final summary required:
+List files changed, validation run, key contract decisions, risks/concerns, and suggested next steps.
+
+Goal 5: document topic routing sidecar contract
+
+Goal: create or update the topic routing sidecar contract documentation.
+Context:
+The audit found that the current topic routing sidecar has 153 schema-validation failures and is marked safe_for_strict_filters=false. Downstream consumers must not use it for strict topic filtering unless sidecar-level safety metadata allows that.
+Scope:
+Document the current contract for:
+- output/json/question_bank.topic_routing.v1.json
+- strict topic routing behavior
+- allowed topic structures
+Tasks:
+1. Explain the purpose of the topic routing sidecar.
+2. Explain that it is advisory unless validation passes.
+3. Document safe_for_strict_filters and how consumers must use it.
+4. Explain successful, failed, and review-required record states.
+5. Explain the difference between local deterministic topic classification, DeepSeek/AI enrichment, and strict topic routing.
+6. Explain that AI must not invent the main curriculum/topic structure.
+7. Document current known limitation: current sidecar is not safe for strict filters.
+8. Add a short consumer checklist for strict filtering.
+Do not:
+- Change topic routing logic.
+- Regenerate the sidecar.
+- Change allowed topic IDs.
+- Merge AI topic output into canonical records.
+Validation:
+Run topic routing tests if available.
+Run full pytest if practical.
+Final summary required:
+List files changed, validation run, key contract decisions, risks/concerns, and suggested next steps.
+
+Goal 6: create archive manifest for generated cleanup archive
+
+Goal: create a manifest for the current generated output archive before any deletion.
+Context:
+The audit identified output/archive/generated_cleanup_20260513T233456Z as historical/generated evidence. It should not be deleted or reorganized until its contents are classified.
+Scope:
+Create a manifest for:
+- output/archive/generated_cleanup_20260513T233456Z
+Tasks:
+1. Inventory the archive contents.
+2. Classify files/folders as baseline, historical evidence, disposable run evidence, duplicated generated asset, unknown, or keep-until-reviewed.
+3. Record approximate sizes.
+4. Record whether each item appears reproducible.
+5. Record whether each item may be needed to explain previous OCR/AI/text-confidence runs.
+6. Do not delete anything.
+7. Add the manifest in an appropriate location, such as inside the archive folder or docs/history/archive_manifests/.
+Do not:
+- Delete archived files.
+- Move archived files.
+- Regenerate archived sidecars.
+- Treat archived AI sidecars as current unless explicitly marked current.
+Validation:
+Run output inventory/cleanup-plan commands if available.
+Confirm git status contains only the manifest/doc changes.
+Final summary required:
+List files changed, archive classifications, commands run, risks/concerns, and suggested next steps.
+
+Goal 7: update README current-state references without over-documenting counts
+
+Goal: update README current-state and command references so they match the audit without duplicating fragile measured counts everywhere.
+Context:
+The audit found README drift, especially around OCR state and current generated outputs. The README should point users to commands and the current audit baseline rather than carrying many stale counts.
+Scope:
+Update README only where factually stale or misleading.
+Tasks:
+1. Correct the current OCR/export description.
+2. Reference docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md as the current baseline.
+3. Add or update a compact command atlas for standard run, OCR-enabled run, audit, Asterion export, Content Lab export, topic routing, AI enrichment, and tests.
+4. Replace duplicated measured counts with commands wherever possible.
+5. Clearly state that canonical images are source of truth and text/AI/topic sidecars are advisory unless role-gated.
+6. Keep README concise.
+Do not:
+- Rewrite all docs.
+- Change code.
+- Change generated outputs.
+- Add new measured counts unless they include run ID/date and are clearly labeled.
+Validation:
+Run docs checks if any exist.
+Run pytest if README examples are tested; otherwise no full test required unless code changed.
+Final summary required:
+List files changed, commands run, validation results, stale references fixed, risks/concerns, and suggested next steps.
+
+Phase 2 goals: cleanup and reorganization
+
+Goal 8: move or label historical docs
+
+Goal: clearly separate current documentation from historical documentation.
+Context:
+The audit found that some docs are valuable but stale as current-state references. They should either be moved to docs/history/ or given clear historical banners.
+Scope:
+Review stale docs identified in the audit, especially:
+- docs/PROJECT_REVIEW.md
+- docs/TRUST_MODEL.md measured counts
+- docs/AUTO_TRIAGE.md current evidence references
+- docs/TRIAGE_WORKFLOW.md examples
+- ROADMAP.md measured state sections
+Tasks:
+1. Identify docs that are current policy versus historical evidence.
+2. Move clearly historical docs to docs/history/ or add a clear historical banner at the top.
+3. Preserve useful process knowledge.
+4. Replace stale “current state” claims with references to the audit or audit commands.
+5. Avoid broad rewrites.
+Do not:
+- Delete historical docs.
+- Change code.
+- Change generated outputs.
+- Remove useful rationale.
+Validation:
+Run any docs/link checks if available.
+Run pytest only if imports/paths/tests were affected.
+Final summary required:
+List docs changed/moved, what was marked historical, validation run, risks/concerns, and suggested next steps.
+
+Goal 9: normalize command documentation
+
+Goal: create a clean command atlas for operating the project.
+Context:
+The audit found active commands, stale commands, and inconsistent references across docs. Before optimization, operators need a reliable command map.
+Scope:
+Document current commands for:
+- standard full run
+- OCR-enabled run
+- resume/cache-aware run
+- audit
+- OCR candidate audit
+- difficulty audit
+- Asterion export
+- Content Lab candidates
+- topic routing
+- AI enrichment
+- AI sidecar audit
+- output inventory
+- output cleanup plan
+- full tests
+- targeted tests
+Tasks:
+1. Add a concise command atlas to README or a dedicated docs/COMMAND_ATLAS.md.
+2. Include purpose, input, output, rough runtime category, and whether command is standard, OCR, AI-heavy, or audit-only.
+3. Clearly mark AI-heavy workflows as long-running and sidecar-only.
+4. Remove or update stale `output_ocr_candidate` command references.
+5. Keep commands copy-pasteable.
+Do not:
+- Change command behavior.
+- Add new CLI flags unless needed for previous Phase 1 safety work.
+- Regenerate outputs.
+Validation:
+Run --help for documented CLI commands where practical.
+Run full pytest only if code changed.
+Final summary required:
+List files changed, commands verified, stale commands removed/updated, risks/concerns, and suggested next steps.
+
+Goal 10: classify archived generated artifacts, no deletion
+
+Goal: classify generated archive contents and produce a safe cleanup recommendation without deleting files.
+Context:
+The audit says output/archive should not be deleted until its contents are classified. This pass should convert the archive manifest into actionable cleanup recommendations.
+Scope:
+Use the archive manifest created in Phase 1.
+Tasks:
+1. Review the archive manifest.
+2. Identify which artifacts should be kept, moved, compressed, regenerated on demand, or deleted later.
+3. Identify which artifacts are duplicated generated image trees.
+4. Identify which AI/OCR sidecars are formal evidence versus disposable run artifacts.
+5. Produce a recommended retention policy.
+6. Do not delete anything in this pass.
+Do not:
+- Delete files.
+- Move files.
+- Rewrite sidecars.
+- Change current output files.
+Validation:
+Run output-inventory and output-cleanup-plan commands.
+Confirm no archive content changed except documentation/manifest additions.
+Final summary required:
+List files changed, classifications, retention recommendations, commands run, risks/concerns, and suggested next steps.
+
+Goal 11: perform first safe generated-output cleanup
+
+Goal: perform the first safe cleanup of generated outputs, limited to items already classified as disposable.
+Context:
+Only do this after the archive manifest and retention recommendations exist. Cleanup must be conservative.
+Scope:
+Clean only files/folders that are:
+- generated
+- ignored by git
+- documented as disposable
+- reproducible or superseded
+- not needed as historical evidence
+Tasks:
+1. Review the archive manifest and cleanup recommendations.
+2. Delete only clearly disposable generated artifacts.
+3. Preserve current canonical question bank and current image trees.
+4. Preserve archived evidence marked baseline, historical evidence, unknown, or keep-until-reviewed.
+5. Update the archive manifest or cleanup notes with what was removed.
+6. Run output inventory afterward.
+Do not:
+- Delete current output/json/question_bank.json.
+- Delete current output/p1, output/p3, output/p4, output/p5 image trees.
+- Delete current Asterion exports.
+- Delete unknown archive files.
+- Delete anything tracked by git unless explicitly justified.
+Validation:
+Run output-inventory before and after.
+Run output-cleanup-plan after.
+Run pytest if any tracked files changed.
+Run question-bank integrity audit.
+Final summary required:
+List files removed, files changed, before/after size if available, commands run, validation results, risks/concerns, and suggested next steps.
+
+Goal 12: update roadmap based on audit phases
+
+Goal: update the roadmap so it reflects the audit-backed cleanup and optimization path.
+Context:
+The audit recommended Phase 1 through Phase 5. We currently agree with Phases 1 through 3. Phase 4 should remain future/deeper-refactor territory, and later topic/difficulty enrichment should eventually consider exam reports and grade boundaries, but not yet.
+Scope:
+Update ROADMAP.md or the relevant roadmap doc.
+Tasks:
+1. Add an audit-backed cleanup/optimization section.
+2. Mark Phase 1 as cleanup prerequisites.
+3. Mark Phase 2 as cleanup/reorganization.
+4. Mark Phase 3 as low-risk optimization.
+5. Keep Phase 4 as future deeper refactors, not current work.
+6. Add a future note that after deeper refactors, topic and difficulty leverage may incorporate exam reports and grade boundaries.
+7. Make clear that this future work is deferred and should not be implemented now.
+Do not:
+- Implement exam report or grade boundary logic.
+- Change topic/difficulty algorithms.
+- Change generated outputs.
+- Overwrite existing roadmap value.
+Validation:
+Docs-only validation unless tests are tied to docs.
+Final summary required:
+List files changed, roadmap decisions, deferred items, risks/concerns, and suggested next steps.
+
+Phase 3 goals: low-risk optimization
+
+Goal 13: add atomic JSON writes for exports
+
+Goal: make generated JSON writes atomic for main exports and sidecars.
+Context:
+The audit found that long runs can leave ambiguous partial outputs if interrupted. JSON outputs should be written atomically where practical.
+Scope:
+Review export-writing code, especially:
+- src/exam_bank/exporters.py
+- src/exam_bank/asterion_export.py
+- topic routing sidecar writing
+- AI sidecar writing if centralized and safe to update
+Tasks:
+1. Add a shared atomic JSON write helper if one does not exist.
+2. Write to a temporary file in the same directory.
+3. Flush/close safely.
+4. Replace target file atomically.
+5. Preserve formatting and schema content.
+6. Add tests for atomic write behavior.
+7. Ensure partial temp files are not mistaken for valid outputs.
+Do not:
+- Change export schemas.
+- Change field names.
+- Change readiness/status logic.
+- Change output paths unless necessary for temp files.
+Validation:
+Run targeted export tests.
+Run full pytest.
+Optionally regenerate a small fixture export and compare expected content.
+Final summary required:
+List files changed, commands run, validation results, behavior changes, risks/concerns, and suggested next steps.
+
+Goal 14: improve run-status terminal output for standard runs
+
+Goal: improve progress/status reporting for standard non-AI runs.
+Context:
+Standard runs can take around 20 minutes. The project already has run-status primitives. Improve visibility without changing extraction behavior.
+Scope:
+Review:
+- src/exam_bank/run_status.py
+- CLI process command progress output
+- pipeline stage reporting
+Tasks:
+1. Show elapsed time.
+2. Show current stage.
+3. Show current paper/session/component when available.
+4. Show completed/total records or papers where available.
+5. Show percentage where reliable.
+6. Show output path and run ID.
+7. Preserve existing run-status files and tests.
+8. Add or update tests for progress metadata.
+Do not:
+- Change extraction logic.
+- Change OCR selection logic.
+- Change output schema.
+- Add noisy per-record spam unless behind a verbosity flag.
+Validation:
+Run run-status tests.
+Run a small/sample pipeline test.
+Run full pytest if practical.
+Final summary required:
+List files changed, commands run, validation results, user-visible progress changes, risks/concerns, and suggested next steps.
+
+Goal 15: improve run-status output for AI-heavy runs
+
+Goal: improve progress/status reporting for AI-heavy sidecar runs.
+Context:
+AI-heavy runs may take up to 2 hours. Operators need better visibility into progress, batches, retries, failures, and checkpoint/resume state. This pass should improve reporting only, not redesign AI processing.
+Scope:
+Review:
+- src/exam_bank/deepseek_enrich.py
+- src/exam_bank/topic_routing.py
+- relevant CLI commands for enrich-ai and topic-route-ai
+- run-status utilities
+Tasks:
+1. Report elapsed time.
+2. Report completed/total records or batches.
+3. Report successful, failed, and review-required counts so far.
+4. Report retry counts if available.
+5. Report provider/model/prompt version metadata if already present.
+6. Report output/checkpoint path if available.
+7. Do not change provider prompts or classification behavior.
+8. Add tests around status metadata where practical.
+Do not:
+- Change AI prompts.
+- Change topic/routing decisions.
+- Change sidecar schema unless strictly additive and tested.
+- Merge AI output into canonical question bank.
+Validation:
+Run targeted AI/status tests using mocks.
+Run full pytest if practical.
+Final summary required:
+List files changed, commands run, validation results, progress fields added, risks/concerns, and suggested next steps.
+
+Goal 16: add export summary diffing
+
+Goal: add export summary diffing so operators can see readiness changes between runs.
+Context:
+Cleanup and optimization should not silently change Asterion eligibility, text readiness, topic safety, or record counts. Add a low-risk summary diff tool or CLI option.
+Scope:
+Support comparison between two generated exports or summaries, likely:
+- question_bank.json to question_bank.json
+- Asterion export to Asterion export
+- topic routing sidecar to topic routing sidecar, if straightforward
+Tasks:
+1. Add a small CLI command or script for summary diffs.
+2. Compare record count, schema version, generated timestamp/run ID, readiness counts, role-gate counts, missing image counts, topic safety metadata, and major reason-code counts.
+3. Print a concise before/after diff.
+4. Return nonzero only for clearly invalid comparisons, not normal count changes.
+5. Add tests with small fixtures.
+Do not:
+- Change export generation.
+- Change readiness logic.
+- Require full generated outputs in tests.
+Validation:
+Run targeted tests.
+Run the diff on current exports if there is a previous comparable export available.
+Run full pytest if practical.
+Final summary required:
+List files changed, commands run, validation results, example diff output, risks/concerns, and suggested next steps.
+
+Goal 17: split test suite into fast and integration groups
+
+Goal: add test markers or organization so fast tests and integration/rendering tests can be run separately while preserving current full-test behavior.
+Context:
+The full suite is healthy but takes around 2 minutes. This is acceptable, but optimization work would benefit from a fast local loop.
+Scope:
+Review test structure and pytest configuration.
+Tasks:
+1. Identify slower integration/rendering/sample-pipeline tests.
+2. Add pytest markers or documented command groups.
+3. Preserve `python -m pytest` or `python -m pytest -q` as the full suite.
+4. Add README/command atlas examples for fast and full validation.
+5. Avoid weakening CI coverage.
+Do not:
+- Skip important tests by default in CI.
+- Remove regression coverage.
+- Rewrite large test fixtures unnecessarily.
+Validation:
+Run fast test command.
+Run full pytest.
+Confirm CI command remains full coverage.
+Final summary required:
+List files changed, commands run, fast/full test timings if available, risks/concerns, and suggested next steps.
+
+Goal 18: update stale script default paths
+
+Goal: update stale script default paths so operational scripts point to the current generated layout.
+Context:
+The audit found scripts that still expect old paths such as output_ocr_candidate/json/question_bank.json. These should either use current defaults or require explicit input paths.
+Scope:
+Review scripts under scripts/ for stale default paths.
+Tasks:
+1. Search for references to old generated paths.
+2. For active scripts, update defaults to current paths such as output/json/question_bank.json where appropriate.
+3. For scripts where a default is unsafe, require explicit --input.
+4. Preserve historical docs by marking old paths as historical, not current.
+5. Add or update tests for argument parsing if practical.
+Do not:
+- Change script core behavior beyond path/default safety.
+- Regenerate outputs.
+- Delete old archive files.
+Validation:
+Run --help for affected scripts.
+Run targeted script tests.
+Run full pytest if practical.
+Final summary required:
+List files changed, stale paths fixed, commands run, validation results, risks/concerns, and suggested next steps.
+
+Goal 19: create release validation checklist command or doc
+
+Goal: create a release validation checklist for producing a clean current export.
+Context:
+After cleanup and low-risk optimization, the project needs a repeatable way to validate a release-quality question bank and Asterion export.
+Scope:
+Create either a docs checklist or a lightweight CLI/script if the existing code makes that easy.
+Tasks:
+1. Define the release validation sequence:
+   - run tests
+   - run question-bank audit
+   - run image integrity check
+   - run OCR candidate audit
+   - generate or validate Asterion exports
+   - validate topic sidecar safety metadata
+   - run output inventory/cleanup-plan
+2. Include expected output paths.
+3. Include what counts as blocking versus warning.
+4. Include current known exception: missing mark scheme for 9709_2025_November_33 unless resolved.
+5. Keep this as a checklist first if a CLI wrapper would be too much.
+Do not:
+- Change generated outputs.
+- Add hard gates that break current workflows without discussion.
+- Implement topic/difficulty exam-report logic.
+Validation:
+Run any documented commands that are safe and fast.
+Run pytest if code changed.
+Final summary required:
+List files changed, checklist decisions, commands run, validation results, risks/concerns, and suggested next steps.
+
+Goal 20: README and docs final consistency pass for Phases 1–3
+
+Goal: perform a final documentation consistency pass after Phase 1 through Phase 3 work.
+Context:
+After script safety, output integrity, archive classification, command atlas, atomic writes, status reporting, and validation checklist updates, the docs should agree with the current operating model.
+Scope:
+Review README, ROADMAP, command atlas, audit doc, Asterion contract doc, topic sidecar contract doc, and cleanup docs.
+Tasks:
+1. Remove contradictions about OCR state.
+2. Remove stale current-state counts or label them with run IDs and dates.
+3. Ensure all commands use current paths.
+4. Ensure Asterion role gates are described consistently.
+5. Ensure strict topic routing safety is described consistently.
+6. Ensure cleanup/optimization phases are clear.
+7. Add a note that future topic/difficulty leverage may later use exam reports and grade boundaries, but that this is deferred until after deeper refactors.
+Do not:
+- Rewrite docs unnecessarily.
+- Add new implementation scope.
+- Change code unless fixing broken command references in tests/docs.
+Validation:
+Run docs checks if available.
+Run pytest if any code/test files changed.
+Final summary required:
+List files changed, contradictions fixed, validation run, remaining docs risks, and suggested next steps.
+
+I’d run them in this order: Goals 1–7 for Phase 1, then 8–12 for Phase 2, then 13–20 for Phase 3. The future exam reports and grade boundaries idea is a good one, but I’d keep it parked as a roadmap note until the project is cleaner, safer, and easier to operate.

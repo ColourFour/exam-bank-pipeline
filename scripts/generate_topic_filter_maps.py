@@ -9,6 +9,7 @@ high-confidence component-local mappings.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 from collections import Counter, defaultdict
@@ -26,7 +27,7 @@ CANONICAL_TOPIC_ASSIGNMENTS = CANONICAL_ROOT / "question_topic_assignments"
 CANONICAL_STRICT_REPORTS = CANONICAL_ROOT / "strict_filtering_reports"
 CANONICAL_INDEXES = CANONICAL_ROOT / "indexes"
 SKILL_MAP_INDEX = CANONICAL_INDEXES / "skill_map_index_v1.json"
-ASTERION_QB = ROOT / "output_ocr_candidate/json/asterion_question_bank_v1.json"
+ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_question_bank_v1.json"
 LEGACY_QB = ROOT / "output/json/question_bank.json"
 
 SCHEMA_VERSION = 1
@@ -51,6 +52,17 @@ def write_json(path: Path, data: Any) -> None:
     with path.open("w", encoding="utf-8") as handle:
         json.dump(data, handle, indent=2, ensure_ascii=True)
         handle.write("\n")
+
+
+def resolve_project_path(path: Path) -> Path:
+    return path if path.is_absolute() else ROOT / path
+
+
+def display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
 def now_iso() -> str:
@@ -251,11 +263,11 @@ def question_has_subparts(question_subpart_index: dict[str, set[str]], question_
     return bool(question_subpart_index.get(question_id))
 
 
-def build_question_subpart_index() -> dict[str, set[str]]:
+def build_question_subpart_index(asterion_question_bank: Path = ASTERION_QB) -> dict[str, set[str]]:
     question_subparts: dict[str, set[str]] = defaultdict(set)
-    if not ASTERION_QB.exists():
+    if not asterion_question_bank.exists():
         return question_subparts
-    bank = load_json(ASTERION_QB)
+    bank = load_json(asterion_question_bank)
     for question in bank.get("questions", []):
         question_id = question.get("question_id")
         if not question_id:
@@ -267,11 +279,14 @@ def build_question_subpart_index() -> dict[str, set[str]]:
     return question_subparts
 
 
-def build_legacy_topic_summary(component_key: str) -> list[dict[str, Any]]:
-    if not LEGACY_QB.exists():
+def build_legacy_topic_summary(
+    component_key: str,
+    legacy_question_bank: Path = LEGACY_QB,
+) -> list[dict[str, Any]]:
+    if not legacy_question_bank.exists():
         return []
     paper_family = PAPER_FAMILY_BY_COMPONENT.get(component_key, component_key)
-    bank = load_json(LEGACY_QB)
+    bank = load_json(legacy_question_bank)
     counter: dict[tuple[str, str], Counter[str]] = defaultdict(Counter)
     uncertain = Counter()
     for question in bank.get("questions", []):
@@ -503,6 +518,7 @@ def make_report(
     by_topic: dict[str, list[dict[str, Any]]],
     by_subtopic: dict[str, list[dict[str, Any]]],
     validation: dict[str, Any],
+    legacy_question_bank: Path = LEGACY_QB,
 ) -> dict[str, Any]:
     total_questions = len({record["question_id"] for record in assignments})
     total_subparts = len({record["subpart_id"] for record in assignments})
@@ -608,7 +624,7 @@ def make_report(
         "subtopics_with_only_low_confidence_assignments": subtopics_only_low,
         "prerequisite_only_topics": prerequisite_only_topics,
         "duplicate_or_overlapping_topics": duplicate_names,
-        "legacy_topics_needing_cleanup": build_legacy_topic_summary(component_key),
+        "legacy_topics_needing_cleanup": build_legacy_topic_summary(component_key, legacy_question_bank),
         "strict_filter_coverage_percent": strict_coverage,
         "review_queue_summary": {
             "total_topic_assignment_count": len(all_assignment_rows),
@@ -774,6 +790,7 @@ def validate_component(
 def build_component(
     component_index_entry: dict[str, Any],
     question_subpart_index: dict[str, set[str]],
+    legacy_question_bank: Path = LEGACY_QB,
 ) -> dict[str, Any]:
     skill_map_file = component_index_entry["skill_map_file"]
     mapping_file = component_index_entry["mapping_file"]
@@ -953,6 +970,7 @@ def build_component(
         by_topic,
         by_subtopic,
         validation,
+        legacy_question_bank,
     )
     return {
         "component_key": component_key,
@@ -1128,19 +1146,71 @@ def make_all_components_report(component_results: list[dict[str, Any]]) -> dict[
     }
 
 
-def main() -> None:
-    index = load_json(SKILL_MAP_INDEX)
-    question_subpart_index = build_question_subpart_index()
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Generate canonical topic filter maps from skill maps and question-skill mappings.",
+    )
+    parser.add_argument(
+        "--skill-map-index",
+        type=Path,
+        default=SKILL_MAP_INDEX,
+        help="Path to the canonical skill_map_index_v1.json input.",
+    )
+    parser.add_argument(
+        "--asterion-question-bank",
+        type=Path,
+        default=ASTERION_QB,
+        help="Optional Asterion export used only to identify questions with subparts.",
+    )
+    parser.add_argument(
+        "--legacy-question-bank",
+        type=Path,
+        default=LEGACY_QB,
+        help="Optional current question_bank.json used for legacy topic cleanup summaries.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Build and validate outputs, then print the write plan without writing files.",
+    )
+    return parser
+
+
+def planned_output_paths(component_results: list[dict[str, Any]]) -> list[Path]:
+    paths = [CANONICAL_INDEXES / "topic_filter_map_index_v1.json"]
+    for result in component_results:
+        component_key = result["component_key"]
+        syllabus_code = result["topic_map"]["syllabus_code"]
+        paths.extend(
+            [
+                CANONICAL_TOPIC_FILTER_MAPS / f"topic_filter_map_{syllabus_code}_{component_key}_v1.json",
+                CANONICAL_TOPIC_ASSIGNMENTS / f"question_topic_assignments_{syllabus_code}_{component_key}_v1.json",
+                CANONICAL_STRICT_REPORTS / f"strict_topic_filtering_report_{syllabus_code}_{component_key}_v1.json",
+            ]
+        )
+    paths.append(CANONICAL_STRICT_REPORTS / "strict_topic_filtering_report_all_components_v1.json")
+    return paths
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    skill_map_index = resolve_project_path(args.skill_map_index)
+    asterion_question_bank = resolve_project_path(args.asterion_question_bank)
+    legacy_question_bank = resolve_project_path(args.legacy_question_bank)
+
+    index = load_json(skill_map_index)
+    question_subpart_index = build_question_subpart_index(asterion_question_bank)
     component_results = [
-        build_component(component, question_subpart_index)
+        build_component(component, question_subpart_index, legacy_question_bank)
         for component in index.get("components", [])
     ]
+    all_components_report = make_all_components_report(component_results)
 
     topic_index = {
         "schema_name": "exam_bank.topic_filter_map_index",
         "schema_version": SCHEMA_VERSION,
         "generated_at": now_iso(),
-        "source_skill_map_index_file": SKILL_MAP_INDEX.relative_to(ROOT).as_posix(),
+        "source_skill_map_index_file": display_path(skill_map_index),
         "source_syllabus_reference": index.get("source_syllabus_reference"),
         "source_syllabus_url": index.get("source_syllabus_url"),
         "components": [result["component_index_entry"] for result in component_results],
@@ -1150,6 +1220,26 @@ def main() -> None:
             "sections as parent topics and component-local skill groups as subtopics."
         ),
     }
+
+    if args.dry_run:
+        summary = {
+            "dry_run": True,
+            "source_skill_map_index_file": display_path(skill_map_index),
+            "component_count": len(component_results),
+            "components": {
+                result["component_key"]: {
+                    "topics": len(result["topic_map"]["topics"]),
+                    "assignments": len(result["assignments"]["assignments"]),
+                    "validation": result["report"]["validation"]["status"],
+                    "strict_filter_eligible_subparts": result["report"]["subparts_strict_filter_eligible"],
+                }
+                for result in component_results
+            },
+            "validation": all_components_report["validation"]["status"],
+            "would_write": [display_path(path) for path in planned_output_paths(component_results)],
+        }
+        print(json.dumps(summary, indent=2, ensure_ascii=True))
+        return 0
 
     write_json(CANONICAL_INDEXES / "topic_filter_map_index_v1.json", topic_index)
     for result in component_results:
@@ -1169,9 +1259,10 @@ def main() -> None:
         )
     write_json(
         CANONICAL_STRICT_REPORTS / "strict_topic_filtering_report_all_components_v1.json",
-        make_all_components_report(component_results),
+        all_components_report,
     )
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
