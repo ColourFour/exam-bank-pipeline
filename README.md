@@ -414,6 +414,8 @@ Asterion handoff should be tiered, not all-or-nothing. The conservative projecti
   --input output/json/question_bank.json
 ```
 
+The current consumer contract for the question-bank projection and Content Lab candidate projection is documented in [`docs/ASTERION_EXPORT_CONTRACT.md`](docs/ASTERION_EXPORT_CONTRACT.md). Asterion consumers must honor the role gates in those exports and must not treat the full projection as globally student-facing safe.
+
 Future Asterion-facing exports should be separated into slices such as:
 
 ```text

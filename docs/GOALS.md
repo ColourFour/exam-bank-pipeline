@@ -222,38 +222,62 @@ Add the missing 9709_2025_November_33 source mark scheme when available, rerun t
 Use output-integrity-audit as a required pre-cleanup gate before deleting or reorganizing generated artifacts.
 
 Goal 4: document Asterion export contract
+Files Changed
 
-Begin here!
+
+Added docs/ASTERION_EXPORT_CONTRACT.md (line 1)
+
+Linked it from README.md (line 417)
+
+
+Validation
+
+
+No docs-specific check found in pyproject.toml or CI config.
+
+git diff --check passed.
+
+.venv/bin/python -m pytest tests/test_asterion_export.py tests/test_output_contract.py -q -> 14 passed
+
+.venv/bin/python -m pytest -q -> 427 passed, 3 skipped
+
+
+Key Contract Decisions
+
+
+Documented both Asterion exports as role-gated projections, not globally student-facing-safe datasets.
+
+Defined canonical fields around schema/provenance, image artifacts, integrity, quality_gate, and role permissions.
+
+Defined text, detected values, subpart marks, mark events, and candidate planning fields as advisory unless role gates permit use.
+
+Explicitly required exact handling of allow, block, block_until_reviewed, include, and exclude.
+
+Reaffirmed canonical question and mark-scheme images as the source of truth.
+
+
+Risks / Concerns
+
+
+Student-facing eligibility remains limited.
+
+Subpart marks remain incomplete.
+
+9709_2025_November_33 still lacks a source mark scheme, leaving 11 records blocked/review-only.
+
+
+Suggested Next Steps
+
+
+Add JSON Schema or snapshot contract tests for the two Asterion export files.
+
+Add the missing 9709_2025_November_33 mark scheme when available, then regenerate and validate exports.
+
+Document the topic-routing sidecar contract next, since strict filters depend on sidecar safety metadata.
+
 Goal 5: document topic routing sidecar contract
 
-Goal: create or update the topic routing sidecar contract documentation.
-Context:
-The audit found that the current topic routing sidecar has 153 schema-validation failures and is marked safe_for_strict_filters=false. Downstream consumers must not use it for strict topic filtering unless sidecar-level safety metadata allows that.
-Scope:
-Document the current contract for:
-- output/json/question_bank.topic_routing.v1.json
-- strict topic routing behavior
-- allowed topic structures
-Tasks:
-1. Explain the purpose of the topic routing sidecar.
-2. Explain that it is advisory unless validation passes.
-3. Document safe_for_strict_filters and how consumers must use it.
-4. Explain successful, failed, and review-required record states.
-5. Explain the difference between local deterministic topic classification, DeepSeek/AI enrichment, and strict topic routing.
-6. Explain that AI must not invent the main curriculum/topic structure.
-7. Document current known limitation: current sidecar is not safe for strict filters.
-8. Add a short consumer checklist for strict filtering.
-Do not:
-- Change topic routing logic.
-- Regenerate the sidecar.
-- Change allowed topic IDs.
-- Merge AI topic output into canonical records.
-Validation:
-Run topic routing tests if available.
-Run full pytest if practical.
-Final summary required:
-List files changed, validation run, key contract decisions, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 6: create archive manifest for generated cleanup archive
 
 Goal: create a manifest for the current generated output archive before any deletion.
