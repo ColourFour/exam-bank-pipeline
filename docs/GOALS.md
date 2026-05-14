@@ -723,65 +723,87 @@ Summarize failure JSONL and batch-cache evidence before deleting those disposabl
 
 Use the updated manifest as the input for Goal 11's first safe generated-output cleanup.
 
-Start here!
 Goal 11: perform first safe generated-output cleanup
+Implemented the first conservative cleanup pass.
 
-Goal: perform the first safe cleanup of generated outputs, limited to items already classified as disposable.
-Context:
-Only do this after the archive manifest and retention recommendations exist. Cleanup must be conservative.
-Scope:
-Clean only files/folders that are:
-- generated
-- ignored by git
-- documented as disposable
-- reproducible or superseded
-- not needed as historical evidence
-Tasks:
-1. Review the archive manifest and cleanup recommendations.
-2. Delete only clearly disposable generated artifacts.
-3. Preserve current canonical question bank and current image trees.
-4. Preserve archived evidence marked baseline, historical evidence, unknown, or keep-until-reviewed.
-5. Update the archive manifest or cleanup notes with what was removed.
-6. Run output inventory afterward.
-Do not:
-- Delete current output/json/question_bank.json.
-- Delete current output/p1, output/p3, output/p4, output/p5 image trees.
-- Delete current Asterion exports.
-- Delete unknown archive files.
-- Delete anything tracked by git unless explicitly justified.
-Validation:
-Run output-inventory before and after.
-Run output-cleanup-plan after.
-Run pytest if any tracked files changed.
-Run question-bank integrity audit.
-Final summary required:
-List files removed, files changed, before/after size if available, commands run, validation results, risks/concerns, and suggested next steps.
+Removed
+
+
+7 archived *.batches/ directories under output/archive/generated_cleanup_20260513T233456Z/output/json/
+
+5 archived *.failures.jsonl files under the same archive path
+
+No current question bank, current image tree, current Asterion export, unknown archive file, tracked generated file, or archived image tree was removed.
+
+
+Changed
+
+
+docs/history/archive_manifests/generated_cleanup_20260513T233456Z.md: recorded failure summaries, cache summaries, removed paths, before/after archive size, hashes, and validation notes.
+
+README.md: restored the supported process --input input --output output snippet required by repo hygiene tests.
+
+docs/GOALS.md was already modified before I started and I left that existing change untouched.
+
+
+Size
+
+
+Archive: 481,988 KiB before -> 473,764 KiB after.
+
+Archive file count: 2,662 -> 2,626.
+
+Output root: 945,536 KiB before cleanup pass -> 937,328 KiB after validation artifacts were written.
+
+
+Validation
+
+
+output-inventory before and after: passed.
+
+output-cleanup-plan after: passed; current canonical outputs remain keep: canonical/current, archive remains unknown/manual review.
+
+output-integrity-audit: passed with ok: true, 1,301 records, only the known 11 missing mark-scheme companions for 9709_2025_November_33.
+
+pytest -q: initially found a README hygiene drift; after the README fix, full suite passed: 427 passed, 3 skipped.
+
+
+Commands Run
+
+
+.venv/bin/python -m exam_bank.cli output-inventory ...
+
+.venv/bin/python -m exam_bank.cli output-cleanup-plan ...
+
+.venv/bin/python -m exam_bank.cli output-integrity-audit ...
+
+.venv/bin/python -m pytest -q
+
+Supporting du, find, jq, wc, git check-ignore, git ls-files, and archive hash commands.
+
+
+Risks / Concerns
+
+
+output/archive still has manual-review material and should remain protected.
+
+The 21 archive-only p3 PNG exceptions remain unresolved and were preserved.
+
+AI sidecar JSON snapshots remain evidence; only raw cache/failure files were removed after summaries were retained.
+
+
+Next Steps
+
+
+Review the 21 archive-only p3 PNGs against source/current-output expectations.
+
+Decide whether status.current.json has unique diagnostic value.
+
+Only after that, consider duplicate archived PNG cleanup with a fresh checksum comparison.
 
 Goal 12: update roadmap based on audit phases
 
-Goal: update the roadmap so it reflects the audit-backed cleanup and optimization path.
-Context:
-The audit recommended Phase 1 through Phase 5. We currently agree with Phases 1 through 3. Phase 4 should remain future/deeper-refactor territory, and later topic/difficulty enrichment should eventually consider exam reports and grade boundaries, but not yet.
-Scope:
-Update ROADMAP.md or the relevant roadmap doc.
-Tasks:
-1. Add an audit-backed cleanup/optimization section.
-2. Mark Phase 1 as cleanup prerequisites.
-3. Mark Phase 2 as cleanup/reorganization.
-4. Mark Phase 3 as low-risk optimization.
-5. Keep Phase 4 as future deeper refactors, not current work.
-6. Add a future note that after deeper refactors, topic and difficulty leverage may incorporate exam reports and grade boundaries.
-7. Make clear that this future work is deferred and should not be implemented now.
-Do not:
-- Implement exam report or grade boundary logic.
-- Change topic/difficulty algorithms.
-- Change generated outputs.
-- Overwrite existing roadmap value.
-Validation:
-Docs-only validation unless tests are tied to docs.
-Final summary required:
-List files changed, roadmap decisions, deferred items, risks/concerns, and suggested next steps.
-
+**Start here!**
 Phase 3 goals: low-risk optimization
 
 Goal 13: add atomic JSON writes for exports

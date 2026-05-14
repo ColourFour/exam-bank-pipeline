@@ -173,3 +173,79 @@ Before deletion, complete a review pass that:
 2. Decides which AI/API sidecars are formal historical evidence and which are disposable run evidence after their failures are summarized elsewhere.
 3. Confirms whether `status.current.json` has any unique diagnostic value.
 4. Records any approved deletion in a follow-up cleanup recommendation before touching archived content.
+
+## First Safe Cleanup Pass
+
+Cleanup date: 2026-05-14
+
+Status: completed. Raw disposable run caches and failure JSONL files listed below were removed after their summaries were recorded in this manifest.
+
+Scope approved for this pass:
+
+- Remove only archived run caches and archived failure JSONL files already classified as disposable run evidence.
+- Preserve all current outputs, current Asterion exports, archived sidecar JSON snapshots, archived OCR candidate JSON, archived OCR candidate image trees, `status.current.json`, and the 21 archive-only `p3` PNG exceptions.
+- Preserve every tracked file except this manifest update.
+
+Pre-cleanup archive state:
+
+| Metric | Value |
+| --- | ---: |
+| Archive size | 481,988 KiB |
+| Archive file count | 2,662 |
+| Archive content hash | `ff6624ec46b3384e73730a4e5635ac3cad40bfce90dc5c397da4d2e0aab25ced` |
+| Disposable raw evidence selected | 8,224 KiB |
+
+Failure summaries retained before deleting raw JSONL:
+
+| Raw failure file | Lines | Provider/model/run | Error summary |
+| --- | ---: | --- | --- |
+| `output/json/question_bank.deepseek.failures.jsonl` | 11 | DeepSeek `deepseek-v4-flash`, prompt `v4`, 2026-05-07T11:34:54.525304+00:00 | 8 `parse_error` entries where the provider response did not contain text content; 3 `provider_error` API connection errors. |
+| `output/json/question_bank.ai_assisted.v2.failures.jsonl` | 25 | DeepSeek `deepseek-v4-flash`, prompt `v4`, 2026-05-13T07:02:28.920750+00:00 | 25 `parse_error` entries: 11 invalid JSON responses, 10 unexpected `subpart_id: a`, and 4 invalid empty/null `subpart_id` values. |
+| `output/json/question_bank.ai_assisted.v2.smoke.failures.jsonl` | 10 | DeepSeek `deepseek-v4-flash`, prompt `v4`, 2026-05-13T08:16:12.731404+00:00 | 10 `schema_validation_error` entries where `strict_filter_reason` was empty. |
+| `output/json/question_bank.ai_assisted.v2.clean_full_after_fix.failures.jsonl` | 5 | DeepSeek `deepseek-v4-flash`, prompt `v4`, 2026-05-13T11:16:59.150205+00:00 | 4 `schema_validation_error` entries and 1 `taxonomy_validation_error`; schema issues were missing or mismatched required AI-assisted fields, plus one top-level shape error. |
+| `output/json/question_bank.topic_routing.v1.failures.jsonl` | 153 | `deepseek-v4-flash`, 2026-05-13T12:29:09.664228+00:00 | 153 `schema_validation_error` entries, mainly `evidence_used` references to unavailable `ocr_text` or `question_text`. |
+
+Batch-cache summaries retained before deleting raw cache directories:
+
+| Raw cache directory | Files |
+| --- | ---: |
+| `output/json/question_bank.ai_assisted.v2.batches/` | 3 |
+| `output/json/question_bank.ai_assisted.v2.full.batches/` | 3 |
+| `output/json/question_bank.ai_assisted.v2.smoke.batches/` | 1 |
+| `output/json/question_bank.ai_assisted.v2.smoke2.batches/` | 1 |
+| `output/json/question_bank.ai_assisted.v2.clean_smoke.batches/` | 1 |
+| `output/json/question_bank.ai_assisted.v2.clean_smoke_after_fix.batches/` | 1 |
+| `output/json/question_bank.ai_assisted.v2.clean_full_after_fix.batches/` | 21 |
+
+Removed archived disposable artifacts:
+
+| Path | Removed item type |
+| --- | --- |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.full.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.smoke.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.smoke2.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.clean_smoke.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.clean_smoke_after_fix.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.clean_full_after_fix.batches/` | Batch cache directory |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.deepseek.failures.jsonl` | Failure JSONL |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.failures.jsonl` | Failure JSONL |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.smoke.failures.jsonl` | Failure JSONL |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.ai_assisted.v2.clean_full_after_fix.failures.jsonl` | Failure JSONL |
+| `output/archive/generated_cleanup_20260513T233456Z/output/json/question_bank.topic_routing.v1.failures.jsonl` | Failure JSONL |
+
+Post-cleanup archive state:
+
+| Metric | Value |
+| --- | ---: |
+| Archive size | 473,764 KiB |
+| Archive file count | 2,626 |
+| Archive content hash | `7de4553f5a25b7b5ebda93c3e2352a56fc12b354e6ab94141816847eea918a57` |
+| Current output size | 937,312 KiB |
+
+Post-cleanup validation:
+
+- `output-inventory --root output --include-size --max-depth 4` passed and still found 1 current question bank, 8 artifact trees, 2 current Asterion exports, 0 frozen baselines, and no generated reports classified as safe-to-delete.
+- `output-cleanup-plan --root output --include-size --max-depth 4` passed and still classified current `output/json/question_bank.json`, `output/p1`, `output/p3`, `output/p4`, and `output/p5` as `keep: canonical/current`; `output/archive` remains `unknown/manual review`.
+- `output-integrity-audit --input output/json/question_bank.json --artifact-root output` passed with `ok: true`, 1,301 records, and only the known 11 missing mark-scheme companions for `9709_2025_November_33`.
+- Protected current outputs and current Asterion exports were present after cleanup.

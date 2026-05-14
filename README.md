@@ -48,6 +48,14 @@ Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map.
 
 AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
+Standard full extraction:
+
+```bash
+.venv/bin/python -m exam_bank.cli process \
+  --input input \
+  --output output
+```
+
 ## Output Layout
 
 `process --output <root>` writes the compatibility layout:
