@@ -952,35 +952,87 @@ Suggested Next Steps
 Run one real process command with --progress on a small input folder to visually confirm the terminal line is comfortable during an actual operator run.
 
 Goal 15: improve run-status output for AI-heavy runs
+Implemented additive progress/status reporting improvements without changing prompts, routing decisions, or canonical merge behavior.
 
-**Start here!**
+Files Changed
+
+
+run_status.py (line 215): added provider/model/prompt metadata to live progress, status JSON, manifest, and final summary.
+
+run_status.py (line 321): added status/checkpoint paths to run_status.json.
+
+run_status.py (line 426): added cumulative increment_retry_count.
+
+deepseek_enrich.py (line 2782): reports individual-retry recovery attempts cumulatively.
+
+deepseek_enrich.py (line 2933): updates AI enrichment review-required and provider failure counts after each batch.
+
+topic_routing.py (line 126): passes provider metadata into topic-routing run status.
+
+Updated tests in tests/test_run_status.py, tests/test_deepseek_enrich.py, and tests/test_topic_routing.py.
+
+
+Progress Fields Added
+
+
+provider
+
+model
+
+prompt_version
+
+input_paths
+
+output_paths
+
+config_paths
+
+status_dir
+
+status_file_path
+
+batch_status_path
+
+manifest_path
+
+checkpoint_path
+
+
+Existing elapsed time, completed/total records, batches, success/failure/skipped counts, output path, and ETA reporting remain intact. AI enrichment now also keeps review_required_records, provider_failure_records, and cumulative retry_count current during batch execution.
+
+Commands Run
+
+
+pytest tests/test_run_status.py tests/test_deepseek_enrich.py tests/test_topic_routing.py failed: pytest not on PATH.
+
+python -m pytest ... failed: python not on PATH.
+
+python3 -m pytest ... failed: global Python lacks pytest.
+
+.venv/bin/python -m pytest tests/test_run_status.py tests/test_deepseek_enrich.py tests/test_topic_routing.py: 82 passed.
+
+.venv/bin/python -m pytest: 432 passed, 3 skipped.
+
+
+Risks / Concerns
+
+
+retry_count currently tracks batch-level recovery attempts, not every individual record retried.
+
+checkpoint_path points to the run status directory, which is where resume/status artifacts live; provider batch cache paths remain in the sidecar manifest.
+
+
+Suggested Next Steps
+
+
+Add an operator-facing run-status CLI view if you want a compact readout from run_status.json during long-running jobs.
+
+Consider adding per-batch retry metadata to batch_status.jsonl later if operators need retry provenance at batch granularity.
+
 Goal 16: add export summary diffing
 
-Goal: add export summary diffing so operators can see readiness changes between runs.
-Context:
-Cleanup and optimization should not silently change Asterion eligibility, text readiness, topic safety, or record counts. Add a low-risk summary diff tool or CLI option.
-Scope:
-Support comparison between two generated exports or summaries, likely:
-- question_bank.json to question_bank.json
-- Asterion export to Asterion export
-- topic routing sidecar to topic routing sidecar, if straightforward
-Tasks:
-1. Add a small CLI command or script for summary diffs.
-2. Compare record count, schema version, generated timestamp/run ID, readiness counts, role-gate counts, missing image counts, topic safety metadata, and major reason-code counts.
-3. Print a concise before/after diff.
-4. Return nonzero only for clearly invalid comparisons, not normal count changes.
-5. Add tests with small fixtures.
-Do not:
-- Change export generation.
-- Change readiness logic.
-- Require full generated outputs in tests.
-Validation:
-Run targeted tests.
-Run the diff on current exports if there is a previous comparable export available.
-Run full pytest if practical.
-Final summary required:
-List files changed, commands run, validation results, example diff output, risks/concerns, and suggested next steps.
 
+**Start here!**
 Goal 17: split test suite into fast and integration groups
 
 Goal: add test markers or organization so fast tests and integration/rendering tests can be run separately while preserving current full-test behavior.

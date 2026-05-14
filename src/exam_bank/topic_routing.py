@@ -123,6 +123,7 @@ def run_topic_routing_from_args(args: argparse.Namespace) -> int:
         input_paths=[args.input],
         output_paths=[args.output],
         config_paths=[args.taxonomy],
+        provider="deepseek",
         model=args.model,
         prompt_version=args.prompt_version,
         progress=bool(args.progress),

@@ -371,6 +371,13 @@ def test_topic_route_writes_status_files_and_final_summary_paths(
     assert "provider_fail 0" in captured.err
     assert status["run_type"] == "topic_routing"
     assert status["status"] == "completed"
+    assert status["provider"] == "deepseek"
+    assert status["model"] == "deepseek-v4-flash"
+    assert status["prompt_version"] == "topic_routing_v1"
+    assert status["status_file_path"] == str(status_path)
+    assert status["batch_status_path"] == str(batch_path)
+    assert status["manifest_path"] == str(manifest_path)
+    assert status["checkpoint_path"] == str(status_dir)
     assert status["completed_records"] == 1
     assert status["review_required_records"] == 0
     assert status["provider_failure_records"] == 0

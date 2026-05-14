@@ -212,6 +212,15 @@ class TerminalProgressRenderer:
             parts.append(f"session {session}")
         if component:
             parts.append(f"component {component}")
+        provider = status.get("provider")
+        model = status.get("model")
+        prompt_version = status.get("prompt_version")
+        if provider:
+            parts.append(f"provider {provider}")
+        if model:
+            parts.append(f"model {model}")
+        if prompt_version:
+            parts.append(f"prompt {prompt_version}")
         current_record = status.get("current_record_id")
         current_record_index = int(status.get("current_record_index") or 0)
         total_current_records = int(status.get("total_current_records") or 0)
@@ -267,6 +276,7 @@ class RunStatusTracker:
         input_paths: list[str | Path] | None = None,
         output_paths: list[str | Path] | None = None,
         config_paths: list[str | Path] | None = None,
+        provider: str | None = None,
         model: str | None = None,
         prompt_version: str | None = None,
         progress: bool = True,
@@ -281,6 +291,7 @@ class RunStatusTracker:
         self.input_paths = [str(path) for path in input_paths or [] if path]
         self.output_paths = [str(path) for path in output_paths or [] if path]
         self.config_paths = [str(path) for path in config_paths or [] if path]
+        self.provider = provider
         self.model = model
         self.prompt_version = prompt_version
         self.clock = clock
@@ -307,6 +318,17 @@ class RunStatusTracker:
             "current_record_id": None,
             "current_record_index": None,
             "total_current_records": None,
+            "provider": provider,
+            "model": model,
+            "prompt_version": prompt_version,
+            "input_paths": self.input_paths,
+            "output_paths": self.output_paths,
+            "config_paths": self.config_paths,
+            "status_dir": str(self.status_dir),
+            "status_file_path": str(self.status_dir / RUN_STATUS_FILENAME),
+            "batch_status_path": str(self.status_dir / BATCH_STATUS_FILENAME),
+            "manifest_path": str(self.status_dir / RUN_MANIFEST_FILENAME),
+            "checkpoint_path": str(self.status_dir),
             "completed_batches": 0,
             "completed_papers": 0,
             "successful_batches": 0,
@@ -399,6 +421,10 @@ class RunStatusTracker:
             self._status["output_path"] = str(output_path)
         if retry_count is not None:
             self._status["retry_count"] = max(0, int(retry_count))
+        self._write_status(force_render=force_render)
+
+    def increment_retry_count(self, amount: int = 1, *, force_render: bool = False) -> None:
+        self._status["retry_count"] = int(self._status["retry_count"] or 0) + max(0, int(amount))
         self._write_status(force_render=force_render)
 
     def update_extra_counts(
@@ -603,6 +629,9 @@ class RunStatusTracker:
             f"  completed batches/papers: {status['completed_batches']}/{status['total_batches']}",
             f"  failed batches/papers: {status.get('failed_batches', 0)}",
             f"  skipped batches/papers: {status.get('skipped_batches', 0)}",
+            f"  provider: {status.get('provider') or 'n/a'}",
+            f"  model: {status.get('model') or 'n/a'}",
+            f"  prompt version: {status.get('prompt_version') or 'n/a'}",
             f"  successful records: {status['successful_records']}",
             f"  failed records: {status['failed_records']}",
             f"  skipped records: {status['skipped_records']}",
@@ -613,6 +642,7 @@ class RunStatusTracker:
             f"  status file path: {self.run_status_path}",
             f"  batch status path: {self.batch_status_path}",
             f"  manifest path: {self.run_manifest_path}",
+            f"  checkpoint path: {status.get('checkpoint_path') or self.status_dir}",
             f"  retry/recovery count: {status['retry_count']}",
         ]
         if status["status"] in {"failed", "interrupted"}:
@@ -718,6 +748,7 @@ class RunStatusTracker:
             "input_paths": self.input_paths,
             "output_paths": self.output_paths,
             "config_paths": self.config_paths,
+            "provider": self.provider,
             "model": self.model,
             "prompt_version": self.prompt_version,
             "git_commit": _git_commit(),

@@ -30,6 +30,17 @@ REQUIRED_RUN_STATUS_KEYS = {
     "current_record_id",
     "current_record_index",
     "total_current_records",
+    "provider",
+    "model",
+    "prompt_version",
+    "input_paths",
+    "output_paths",
+    "config_paths",
+    "status_dir",
+    "status_file_path",
+    "batch_status_path",
+    "manifest_path",
+    "checkpoint_path",
     "completed_batches",
     "completed_papers",
     "total_batches",
@@ -119,6 +130,9 @@ def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path
         command="fake command",
         input_paths=["input.json"],
         output_paths=["output.json"],
+        provider="deepseek",
+        model="deepseek-v4-flash",
+        prompt_version="prompt-v1",
         progress=False,
         clock=clock,
     )
@@ -128,6 +142,19 @@ def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path
     assert REQUIRED_RUN_STATUS_KEYS <= set(pending)
     assert pending["percent_complete"] == 0
     assert pending["estimated_remaining_seconds"] is None
+    assert pending["provider"] == "deepseek"
+    assert pending["model"] == "deepseek-v4-flash"
+    assert pending["prompt_version"] == "prompt-v1"
+    assert pending["input_paths"] == ["input.json"]
+    assert pending["output_paths"] == ["output.json"]
+    assert pending["status_dir"] == str(tracker.status_dir)
+    assert pending["status_file_path"] == str(tracker.run_status_path)
+    assert pending["batch_status_path"] == str(tracker.batch_status_path)
+    assert pending["manifest_path"] == str(tracker.run_manifest_path)
+    assert pending["checkpoint_path"] == str(tracker.status_dir)
+    tracker.increment_retry_count()
+    retried = _read_json(tracker.run_status_path)
+    assert retried["retry_count"] == 1
 
     tracker.start_batch(
         batch_id="batch-a",
@@ -185,6 +212,9 @@ def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path
     assert final["failed_records"] == 2
     assert final["percent_complete"] == 100
     assert manifest["final_status"] == "failed"
+    assert manifest["provider"] == "deepseek"
+    assert manifest["model"] == "deepseek-v4-flash"
+    assert manifest["prompt_version"] == "prompt-v1"
     assert [batch["status"] for batch in batches] == ["completed", "failed"]
     assert completed_batch_ids(tracker.status_dir) == {"batch-a"}
 

@@ -2779,12 +2779,12 @@ def enrich_ai_assisted_records(
                     AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
                 }:
                     if progress:
+                        progress.increment_retry_count(force_render=True)
                         progress.update_phase(
                             "retrying_batch_individually",
                             current_batch_id=batch_id,
                             current_paper=batch_paper,
                             current_paper_family=batch_paper_family,
-                            retry_count=1,
                         )
                     recovered, status, items, parse_metadata, raw_provider_output = _recover_ai_assisted_batch_individually(
                         batch,
@@ -2929,6 +2929,11 @@ def enrich_ai_assisted_records(
                 for question_id in question_ids
                 if isinstance(enrichments.get(question_id), dict)
                 and isinstance(enrichments[question_id].get("error"), dict)
+            )
+            progress_counts = ai_assisted_progress_counts(enrichments.values())
+            progress.update_extra_counts(
+                review_required_records=progress_counts["review_required_records"],
+                provider_failure_records=progress_counts["provider_failure_records"],
             )
             if status == "success_cached":
                 progress.skip_batch(
@@ -3078,6 +3083,7 @@ def run_ai_assisted_from_args(args: argparse.Namespace) -> int:
         input_paths=[args.input],
         output_paths=[args.output],
         config_paths=[args.taxonomy, args.existing_sidecar],
+        provider=LLM_PROVIDER,
         model=args.model,
         prompt_version=args.prompt_version,
         progress=bool(getattr(args, "progress", True)),
@@ -3307,6 +3313,24 @@ def enrichment_failure_counts(sidecar: dict[str, dict[str, Any]]) -> dict[str, i
     return counts
 
 
+def ai_assisted_progress_counts(records: Sequence[dict[str, Any]] | Any) -> Counter:
+    counts: Counter = Counter()
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        counts["total_records"] += 1
+        error = record.get("error")
+        if isinstance(error, dict):
+            counts["failed_records"] += 1
+            if error.get("type") in {DeepSeekErrorType.PROVIDER_ERROR, AI_FAILURE_PROVIDER_API_ERROR}:
+                counts["provider_failure_records"] += 1
+        else:
+            counts["successful_records"] += 1
+        if record.get("ai_final_review_required") is True or record.get("final_review_required") is True:
+            counts["review_required_records"] += 1
+    return counts
+
+
 def should_fail_for_provider_errors(sidecar: dict[str, dict[str, Any]], *, allow_provider_failure: bool) -> bool:
     if allow_provider_failure:
         return False
@@ -3390,6 +3414,7 @@ def run(argv: Sequence[str] | None = None) -> int:
         command=_command_text(args, "deepseek-enrich"),
         input_paths=[args.input],
         output_paths=[args.output],
+        provider=LLM_PROVIDER,
         model=args.model,
         prompt_version=PROMPT_VERSION,
         progress=bool(getattr(args, "progress", True)),

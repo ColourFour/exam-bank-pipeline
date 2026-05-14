@@ -22,6 +22,14 @@ REQUIRED_RUN_STATUS_KEYS = {
     "current_batch_id",
     "current_paper",
     "current_paper_family",
+    "provider",
+    "model",
+    "prompt_version",
+    "status_dir",
+    "status_file_path",
+    "batch_status_path",
+    "manifest_path",
+    "checkpoint_path",
     "completed_batches",
     "total_batches",
     "completed_records",
@@ -1452,6 +1460,57 @@ def test_invalid_multi_record_ai_batch_retries_individual_records(tmp_path: Path
     status = json.loads(tracker.run_status_path.read_text(encoding="utf-8"))
     assert status["successful_records"] == 2
     assert status["failed_records"] == 0
+    assert status["retry_count"] == 1
+    assert status["review_required_records"] == 0
+
+
+def test_ai_assisted_status_tracks_review_required_records(tmp_path: Path) -> None:
+    class FakeClient:
+        class _Chat:
+            class _Completions:
+                @staticmethod
+                def create(**_: object) -> SimpleNamespace:
+                    return _chat_response(
+                        _ai_payload(
+                            _ai_item(
+                                question_id="12spring24_q01",
+                                review_required=True,
+                                review_reasons=["needs_human_audit"],
+                                strict_filter_candidate=False,
+                                strict_filter_reason=None,
+                            )
+                        )
+                    )
+
+            completions = _Completions()
+
+        chat = _Chat()
+
+    tracker = RunStatusTracker(
+        run_id="ai-review-count",
+        run_type="ai_enrichment",
+        status_root=tmp_path / "run_status",
+        command="enrich-ai",
+        progress=False,
+    )
+    tracker.start(phase="preparing_batches")
+
+    enrichments, _manifest = deepseek_enrich.enrich_ai_assisted_records(
+        [_record("12spring24_q01")],
+        client=FakeClient(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "question_bank.ai_assisted.v2.json",
+        model="deepseek-v4-flash",
+        batch_by_paper=True,
+        progress=tracker,
+    )
+    tracker.finish("completed")
+
+    status = json.loads(tracker.run_status_path.read_text(encoding="utf-8"))
+    assert enrichments["12spring24_q01"]["ai_final_review_required"] is True
+    assert status["successful_records"] == 1
+    assert status["failed_records"] == 0
+    assert status["review_required_records"] == 1
 
 
 def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibrated_difficulty(
@@ -1523,6 +1582,11 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
     assert REQUIRED_RUN_STATUS_KEYS <= set(status)
     assert status["run_type"] == "ai_enrichment"
     assert status["status"] == "completed"
+    assert status["provider"] == "deepseek"
+    assert status["model"] == "deepseek-v4-flash"
+    assert status["prompt_version"] == "ai_assisted_v2"
+    assert status["status_file_path"] == str(tmp_path / "run_status" / "ai-status" / "run_status.json")
+    assert status["checkpoint_path"] == str(tmp_path / "run_status" / "ai-status")
     assert status["successful_records"] == 2
     assert batches[0]["status"] == "completed"
     assert payload["schema_name"] == "exam_bank.ai_assisted_sidecar"
