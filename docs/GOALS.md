@@ -658,7 +658,72 @@ Add a lightweight docs smoke test later if you want command snippets checked aut
 
 Goal 10: classify archived generated artifacts, no deletion
 
-Begin here!
+Converted the Phase 1 archive manifest into actionable cleanup recommendations without deleting, moving, compressing, regenerating, or rewriting archive contents.
+
+Files Changed
+
+
+Updated docs/history/archive_manifests/generated_cleanup_20260513T233456Z.md
+
+Updated docs/GOALS.md
+
+
+Classifications
+
+
+Keep formal evidence: archived OCR candidate question bank, archived Asterion exports, audit snapshot, legacy DeepSeek sidecar, post-fix clean AI smoke sidecar, and topic-routing smoke sidecars.
+
+Keep until reviewed: status.current.json and the 21 archive-only p3 PNGs under 33autumn25 and 34autumn25.
+
+Compress or keep until reviewed: mixed/stale AI full sidecar, because it explains the prior run but is not a formal export baseline.
+
+Regenerate on demand: Asterion projections and duplicated PNG image trees, but only from retained source/candidate evidence and only after checksum gates pass.
+
+Delete later: duplicated p1, p4, p5 image trees; 781 duplicated p3 images; superseded AI smoke/full attempts once summarized; batch caches and failure JSONL files once parent sidecars/failure summaries are retained.
+
+
+Retention Recommendation
+
+
+Preserve the full archive until the 21 p3 exceptions are resolved.
+
+Prefer a compressed formal-evidence bundle over keeping expanded duplicate image trees indefinitely.
+
+Treat AI/API sidecars as evidence snapshots, not byte-for-byte reproducible build outputs.
+
+Before any deletion pass, rerun inventory, cleanup plan, duplicate checksum checks, and archive hashes.
+
+
+Commands Run
+
+
+.venv/bin/python -m exam_bank.cli output-inventory --root output/archive/generated_cleanup_20260513T233456Z --include-size --max-depth 4
+
+.venv/bin/python -m exam_bank.cli output-cleanup-plan --root output/archive/generated_cleanup_20260513T233456Z --include-size --max-depth 4
+
+Supporting find, du, jq, wc, and checksum/hash checks.
+
+
+Risks / Concerns
+
+
+The 21 archive-only p3 PNGs may be current-output gaps, old naming artifacts, or disposable candidates; they remain non-deletion items.
+
+status.current.json still needs review before it can be called disposable.
+
+AI/API sidecars are not exactly reproducible, so deletion should preserve enough summary evidence to explain prior failures and safety gates.
+
+
+Suggested Next Steps
+
+
+Review the 21 archive-only p3 artifacts against source documents and current-output expectations.
+
+Summarize failure JSONL and batch-cache evidence before deleting those disposable run artifacts.
+
+Use the updated manifest as the input for Goal 11's first safe generated-output cleanup.
+
+Start here!
 Goal 11: perform first safe generated-output cleanup
 
 Goal: perform the first safe cleanup of generated outputs, limited to items already classified as disposable.

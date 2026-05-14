@@ -106,6 +106,49 @@ p3/34autumn25/questions/q07.png
 
 Classification: `keep-until-reviewed`. These 21 files may represent an older naming/layout state, a previously generated candidate, or a current-output gap. Do not delete them until their source documents and current output expectations are checked.
 
+## Actionable Cleanup Recommendation
+
+Recommendation date: 2026-05-14
+
+This section converts the manifest into cleanup guidance only. No archive files were deleted, moved, compressed, regenerated, or rewritten during this recommendation pass.
+
+| Artifact or group | Evidence class | Recommended action | Cleanup gate |
+| --- | --- | --- | --- |
+| `output_ocr_candidate/json/question_bank.json` | Formal OCR candidate evidence | Keep. Compress only as part of a full archive-preservation bundle after checksums are recorded. | Do not delete unless a later manifest proves an equal or better OCR candidate bank is preserved elsewhere. |
+| `output_ocr_candidate/json/asterion_question_bank_v1.json` | Formal Asterion projection evidence | Keep. Regenerable from the matching candidate bank, but cheap to retain and useful for export provenance. | May be regenerated on demand only if the matching candidate bank and role gates remain available. |
+| `output_ocr_candidate/json/asterion_content_lab_candidates_v1.json` | Formal Content Lab projection evidence | Keep. Regenerable from the matching candidate bank, but preserve this snapshot for historical export counts. | May be regenerated on demand only if the matching candidate bank and role gates remain available. |
+| `output/json/audit.current.json` | Formal audit snapshot evidence | Keep. Small, useful for explaining the archived run state. | Delete only after its counts are represented in a retained manifest or audit report. |
+| `output/json/status.current.json` | Unclassified status snapshot | Keep until reviewed. | Delete later only if it has no fields beyond retained audit/run evidence. |
+| `output/json/question_bank.deepseek.json` | Formal legacy AI sidecar evidence | Keep, preferably compressed with other formal sidecars. | Not exactly reproducible because model/API output is involved. |
+| `output/json/question_bank.ai_assisted.v2.clean_smoke_after_fix.json` | Formal post-fix AI smoke evidence | Keep. This fresh 10-record run reports `safe_to_use_for_asterion_export: true`. | Retain until a newer clean smoke/full sidecar supersedes it and the supersession is documented. |
+| `output/json/question_bank.topic_routing.v1.smoke.json` and `progress_smoke.json` | Formal topic-routing smoke evidence | Keep for now. Both 10-record smoke sidecars report `safe_for_strict_filters: true`. | Delete later only after a current topic-routing sidecar or report captures the safe smoke evidence. |
+| `output/json/question_bank.ai_assisted.v2.full.json` | Historical AI run evidence, not a formal export baseline | Compress or keep until reviewed. It records a successful latest 25-record attempt but remains mixed with stale records and `safe_to_use_for_asterion_export: false`. | Delete later only after the mixed/stale status and failure summary are documented elsewhere. |
+| `output/json/question_bank.ai_assisted.v2.json`, `smoke.json`, `smoke2.json`, and `clean_smoke.json` | Disposable or superseded AI run artifacts | Delete later after summary. Keep until the next cleanup pass records which run each file represents. | Do not delete before retaining the post-fix clean smoke sidecar and a summary of failed/superseded runs. |
+| `output/json/*.batches/` | Disposable run caches | Delete later, or compress temporarily if raw prompts/responses are still needed for debugging. | Safe only after the matching parent sidecar is either kept or summarized. |
+| `output/json/*.failures.jsonl` | Disposable failure evidence | Summarize, then delete later. Compress instead if raw provider/parser failure payloads still matter. | Safe only after failure counts/reasons are captured in documentation or a retained report. |
+| `output_ocr_candidate/p1/`, `p4/`, `p5/` | Duplicated generated image trees | Delete later. These trees fully duplicate current `output/` paths by checksum. | Run inventory and checksum comparison immediately before deletion. |
+| Matching files under `output_ocr_candidate/p3/` | Duplicated generated image assets | Delete later. 781 of 802 archived `p3` PNGs duplicate current `output/` paths by checksum. | Keep the 21 archive-only exceptions until reviewed. |
+| 21 archive-only `p3` PNGs under `33autumn25` and `34autumn25` | Keep-until-reviewed image exceptions | Keep. Move later to a small exception folder or restore/regenerate into current output only if review proves they are expected current artifacts. | Do not delete until source documents and current-output expectations are checked. |
+
+Recommended move/compression sequence for a later cleanup pass:
+
+1. Keep the full archive in place until the 21 `p3` exceptions are resolved.
+2. If local disk pressure matters, compress the whole archive or a formal-evidence subset before deleting duplicate PNG trees. Record the archive hash and compression command in this manifest.
+3. Move only formal evidence, if needed, into a durable evidence bundle that contains this manifest, OCR candidate JSON, Asterion exports, audit/status snapshots, retained AI/topic sidecars, and checksums.
+4. Treat AI/API sidecars as evidence snapshots, not reproducible build products. Regeneration can create a new result, but it cannot prove byte-for-byte equivalence.
+5. Treat duplicated PNG trees as reproducible/generated assets after current-output checksum equivalence is rechecked.
+
+## Recommended Retention Policy
+
+Archive retention should be conservative and evidence-first:
+
+- Preserve current outputs separately from archive cleanup. Archive cleanup must not touch current `output/json/question_bank.json`, current `output/p1`, `output/p3`, `output/p4`, `output/p5`, current Asterion exports, or current sidecars.
+- Retain formal evidence until either it is copied into a durable evidence bundle with checksums or a newer manifest explicitly supersedes it.
+- Retain the 21 archive-only `p3` PNGs until a reviewer decides whether they are expected current artifacts, stale naming artifacts, or disposable candidates.
+- Retain raw AI/OCR batch caches and failure JSONL files only while they are needed for debugging. After their parent sidecars and failure summaries are preserved, they become deletion candidates.
+- Compress before deleting when exact model/OCR history may still matter. Prefer one compressed archive or a small evidence bundle over keeping duplicate image trees expanded indefinitely.
+- Before any deletion pass, rerun `output-inventory`, rerun `output-cleanup-plan`, recheck duplicate PNG checksums, and record before/after archive hashes.
+
 ## Validation Commands Run
 
 ```bash
