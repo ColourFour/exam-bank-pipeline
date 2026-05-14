@@ -128,7 +128,7 @@ Risk: cleanup may delete evidence too early, or future runs may accidentally com
 
 ### Script Command Safety
 
-During audit, a help-inspection loop invoked `scripts/generate_topic_filter_maps.py --help`. That script does not expose argparse help and executed its generation behavior, rewriting 14 taxonomy files before the changes were reverted. `scripts/generate_skill_maps.py --help` also failed because it expects `output_ocr_candidate/json/question_bank.json`.
+During the original audit, a help-inspection loop invoked `scripts/generate_topic_filter_maps.py --help`. At that time the script did not expose argparse help and executed its generation behavior, rewriting 14 taxonomy files before the changes were reverted. `scripts/generate_skill_maps.py --help` also failed because it expected `output_ocr_candidate/json/question_bank.json`. Phase 1 safety work later added argparse help/dry-run behavior and moved the generator defaults to current `output/...` paths.
 
 Risk: simple inspection commands can mutate generated assets or fail against old paths.
 
@@ -217,13 +217,13 @@ Risk: long full-bank or AI-heavy runs can leave ambiguous outputs after interrup
 
 | Path / area | Reason |
 | --- | --- |
-| README measured state section | Says current export is no-OCR; current export is OCR-enabled |
+| README measured state section | Resolved: current README now says the canonical export is OCR-enabled |
 | `ROADMAP.md` measured state | Uses older hard-blocker and OCR activation status |
 | `docs/TRUST_MODEL.md` tier counts | Counts are stale, though policy is useful |
-| `docs/AUTO_TRIAGE.md` current evidence references | Refers to `output_ocr_candidate` and no-OCR current state |
+| `docs/AUTO_TRIAGE.md` current evidence references | Resolved in active examples; legacy `output_ocr_candidate` is now marked historical/compatibility evidence |
 | `docs/TRIAGE_WORKFLOW.md` examples | Refers to triage folders not present in current output |
 | `docs/PROJECT_REVIEW.md` | Historical, not current |
-| `scripts/generate_skill_maps.py` default input | Expects old `output_ocr_candidate/json/question_bank.json` |
+| `scripts/generate_skill_maps.py` default input | Resolved: default input is `output/json/question_bank.json` |
 
 ### Duplicated
 
@@ -336,11 +336,11 @@ Boundary clarity:
 - Risk: generated taxonomy files need clearer ownership and regeneration contract.
 - Risk: `question_bank.json` is both the current operator artifact and a source for downstream generation; partial writes should be prevented.
 
-Potential dead or stale script paths:
+Resolved or historical script-path concerns:
 
-- `scripts/generate_skill_maps.py` expects `output_ocr_candidate/json/question_bank.json`, which is not the current layout.
-- Help behavior for generator scripts is inconsistent.
-- Some audit/report scripts may be current but lack README command coverage.
+- `scripts/generate_skill_maps.py` now defaults to `output/json/question_bank.json`.
+- Generator scripts now expose help and `--dry-run`.
+- Active audit/report commands are covered in [`COMMAND_ATLAS.md`](COMMAND_ATLAS.md).
 
 ## 8. Image Integrity Review
 
@@ -849,39 +849,18 @@ Tests that should be added before cleanup:
 
 ### Main Commands
 
-| Command | Purpose | Inputs | Outputs | Runtime | Status |
-| --- | --- | --- | --- | --- | --- |
-| `.venv/bin/python -m exam_bank.cli process --config config.yaml` | Standard full run using config defaults | `input/`, `config.yaml` | `output/json/question_bank.json`, images | Around 20 minutes expected | Active |
-| `.venv/bin/python -m exam_bank.cli process --config config.yaml --enable-ocr` | OCR-enabled full run | same | same with OCR metadata | Around 20+ minutes | Active |
-| `.venv/bin/python -m exam_bank.cli process --config config.yaml --resume` | Resume/cache-aware run | existing output/cache | updated output | Depends on cache | Active |
-| `.venv/bin/python -m exam_bank.cli audit --input output/json/question_bank.json` | Summarize question-bank readiness | question bank JSON | terminal report | Fast | Active |
-| `.venv/bin/python -m exam_bank.cli asterion-export --input output/json/question_bank.json --output-dir output/asterion/exports/latest` | Generate Asterion projection | question bank, optional sidecars | Asterion export JSON | Fast/medium | Active |
-| `.venv/bin/python -m exam_bank.cli asterion-content-lab-candidates --input output/json/question_bank.json --output-dir output/asterion/exports/latest` | Generate Content Lab candidates | question bank | candidate JSON | Fast/medium | Active |
-| `.venv/bin/python -m exam_bank.cli topic-route-ai --input output/json/question_bank.json --output output/json/question_bank.topic_routing.v1.json` | Generate strict AI topic routing sidecar | question bank, provider config | topic sidecar | AI-heavy, can be long | Active |
-| `.venv/bin/python -m exam_bank.cli enrich-ai --input output/json/question_bank.json --output ...` | Generate DeepSeek/AI enrichment sidecar | question bank, provider config | AI sidecar | AI-heavy, up to 2 hours possible | Active |
-| `.venv/bin/python -m exam_bank.cli ai-sidecar-audit --question-bank output/json/question_bank.json --sidecar ...` | Audit AI sidecar safety | question bank, sidecar | terminal/JSON audit | Fast | Active |
-| `.venv/bin/python -m exam_bank.cli output-inventory --root output --include-size --max-depth 4` | Inventory generated outputs | output tree | terminal JSON/text | Fast | Active |
-| `.venv/bin/python -m exam_bank.cli output-cleanup-plan --root output --include-size --max-depth 4` | Dry-run cleanup classification | output tree | terminal cleanup plan | Fast | Active |
-| `.venv/bin/python -m pytest -q` | Full regression suite | source/tests | test result | 1:50 observed | Active |
+The current operator-facing command map is [`COMMAND_ATLAS.md`](COMMAND_ATLAS.md). It supersedes the older inline command table in this audit snapshot and includes purpose, input, output, runtime category, and workflow category for each active command.
 
 ### Audit Scripts
 
-| Command | Purpose | Status |
-| --- | --- | --- |
-| `.venv/bin/python scripts/audit_ocr_candidates.py --input output/json/question_bank.json` | OCR candidate selection audit | Active |
-| `.venv/bin/python scripts/audit_difficulty.py --input output/json/question_bank.json` | Difficulty label audit | Active |
-| `.venv/bin/python scripts/audit_question_text.py --input output/json/question_bank.json` | Question text audit | Likely active; document in README |
-| `.venv/bin/python scripts/audit_question_bank.py --input output/json/question_bank.json` | Bank-level audit | Likely active; document in README |
-| `.venv/bin/python scripts/quality_gate.py ...` | Quality gate checks | Active with help |
+The active audit commands are documented in [`COMMAND_ATLAS.md`](COMMAND_ATLAS.md). Commands not listed there should be treated as historical until their CLI surface is re-verified.
 
 ### Commands Needing Cleanup
 
 | Command / script | Issue | Recommendation |
 | --- | --- | --- |
-| `scripts/generate_topic_filter_maps.py --help` | Executes generation instead of help | Add argparse, `--dry-run`, explicit output path |
-| `scripts/generate_skill_maps.py --help` | Fails on old default `output_ocr_candidate/...` | Update defaults or require explicit input |
-| README command set | Missing some active commands and stale on current state | Replace measured state with generated audit references |
-| archived output commands | Old `output_ocr_candidate` references | Move to history docs or update |
+| historical audit table in this file | Preserved stale command examples from the original audit snapshot | Replaced with pointer to [`COMMAND_ATLAS.md`](COMMAND_ATLAS.md) |
+| archived output commands | Old `output_ocr_candidate` references in history/archive evidence | Keep as historical evidence only; use `output/candidates/ocr/latest/` for new OCR candidate commands |
 
 ### Progress/Status Recommendations
 
@@ -982,10 +961,10 @@ Accurate/useful docs:
 
 Stale docs:
 
-- README current audited state says canonical export is not OCR-enabled; current export is OCR-enabled.
+- README current audited state now says the canonical export is OCR-enabled.
 - ROADMAP measured current state uses older hard-blocker and OCR status.
 - TRUST_MODEL measured tier counts are stale.
-- AUTO_TRIAGE current evidence references old no-OCR and `output_ocr_candidate` state.
+- AUTO_TRIAGE active examples now use `output/candidates/ocr/latest/`; legacy `output_ocr_candidate` is marked historical/compatibility evidence.
 - TRIAGE_WORKFLOW examples reference output folders that are not present in current output.
 - PROJECT_REVIEW is a historical review, not current.
 

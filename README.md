@@ -44,110 +44,9 @@ set -a; source .env; set +a
 
 ## Command Atlas
 
-Standard extraction run:
+Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, Asterion and Content Lab projections, topic routing, AI enrichment, AI sidecar audit, output inventory, cleanup planning, and test commands.
 
-```bash
-.venv/bin/python -m exam_bank.cli process \
-  --input input \
-  --output output
-```
-
-OCR-enabled production-style run:
-
-```bash
-.venv/bin/python -m exam_bank.cli process \
-  --input input \
-  --output output \
-  --enable-ocr
-```
-
-OCR candidate run without replacing the canonical output:
-
-```bash
-.venv/bin/python -m exam_bank.cli process \
-  --input input \
-  --output output/candidates/ocr/latest \
-  --enable-ocr
-```
-
-Audit the current export and artifact paths:
-
-```bash
-.venv/bin/python -m exam_bank.cli audit \
-  --input output/json/question_bank.json
-
-.venv/bin/python -m exam_bank.cli output-integrity-audit \
-  --input output/json/question_bank.json \
-  --artifact-root output
-```
-
-Run the full readiness/extraction audit:
-
-```bash
-.venv/bin/python scripts/audit_question_bank_readiness.py \
-  --input output/json/question_bank.json \
-  --baseline output/triage/iteration_004/baseline_question_bank.json \
-  --artifact-root output \
-  --out-dir output/audits/manual
-```
-
-Export Asterion and Content Lab projections:
-
-```bash
-.venv/bin/python -m exam_bank.cli asterion-export \
-  --input output/json/question_bank.json \
-  --artifact-root output
-
-.venv/bin/python -m exam_bank.cli asterion-content-lab-candidates \
-  --input output/json/question_bank.json \
-  --artifact-root output
-```
-
-Run or resume strict topic routing:
-
-```bash
-.venv/bin/python -m exam_bank.cli topic-route-ai \
-  --input output/json/question_bank.json \
-  --taxonomy exam_bank_taxonomy/canonical \
-  --output output/json/question_bank.topic_routing.v1.json \
-  --model deepseek-v4-flash \
-  --status-dir output/run_status
-
-.venv/bin/python -m exam_bank.cli topic-route-ai \
-  --input output/json/question_bank.json \
-  --taxonomy exam_bank_taxonomy/canonical \
-  --output output/json/question_bank.topic_routing.v1.json \
-  --model deepseek-v4-flash \
-  --status-dir output/run_status \
-  --resume
-```
-
-Run broad AI enrichment for review/debug sidecars:
-
-```bash
-.venv/bin/python -m exam_bank.cli enrich-ai \
-  --input output/json/question_bank.json \
-  --taxonomy exam_bank_taxonomy/canonical \
-  --existing-sidecar output/json/question_bank.deepseek.json \
-  --output output/json/question_bank.ai_assisted.v2.json \
-  --model deepseek-v4-flash \
-  --include-subparts \
-  --recompute-difficulty \
-  --resume \
-  --status-dir output/run_status
-```
-
-Run tests:
-
-```bash
-.venv/bin/python -m pytest
-```
-
-Run focused command-surface tests:
-
-```bash
-.venv/bin/python -m pytest tests/test_runtime_paths.py tests/test_generator_cli_safety.py -q
-```
+AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
 ## Output Layout
 
@@ -189,7 +88,6 @@ Inventory generated roots:
 ```bash
 .venv/bin/python -m exam_bank.cli output-inventory \
   --root output \
-  --root output_ocr_candidate \
   --write output/output_inventory.md \
   --json output/output_inventory.json
 ```
@@ -199,7 +97,6 @@ Create a dry-run cleanup plan:
 ```bash
 .venv/bin/python -m exam_bank.cli output-cleanup-plan \
   --root output \
-  --root output_ocr_candidate \
   --write output/output_cleanup_plan.md
 ```
 
@@ -265,6 +162,7 @@ Records with failed mapping, failed validation, failed scope, missing image path
 
 ## More Docs
 
+- [Command atlas](docs/COMMAND_ATLAS.md)
 - [Current audit baseline](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md)
 - [Asterion export contract](docs/ASTERION_EXPORT_CONTRACT.md)
 - [Topic routing sidecar contract](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md)

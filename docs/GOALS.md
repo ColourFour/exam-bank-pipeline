@@ -590,34 +590,75 @@ Continue the planned final docs consistency pass after command atlas and validat
 
 
 Goal 9: normalize command documentation
+Implemented the command atlas as documentation-only work. No command behavior changed and no outputs were regenerated.
+
+Files Changed
 
 
-Begin here!
+docs/COMMAND_ATLAS.md: new operator command map with purpose, input, output, runtime, and category.
+
+README.md: replaced duplicate inline commands with a pointer to the atlas; removed active output_ocr_candidate examples.
+
+docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md: marked stale findings as resolved/historical and pointed command tables to the atlas.
+
+
+Commands Verified
+
+
+.venv/bin/python -m exam_bank.cli --help
+
+process, audit, output-integrity-audit
+
+asterion-export, asterion-content-lab-candidates
+
+topic-route-ai, enrich-ai, ai-sidecar-audit
+
+output-inventory, output-cleanup-plan
+
+scripts/audit_ocr_candidates.py --help
+
+scripts/audit_difficulty.py --help
+
+scripts/audit_question_bank_readiness.py --help
+
+scripts/generate_skill_maps.py --help
+
+scripts/generate_topic_filter_maps.py --help
+
+.venv/bin/python -m pytest --help
+
+git diff --check
+
+
+Stale References Updated
+
+
+Removed active README output_ocr_candidate inventory/cleanup examples.
+
+Replaced stale audit-table commands using invalid flags like --output-dir.
+
+Removed references to nonexistent audit scripts from the active command table.
+
+Kept output_ocr_candidate only where it is explicitly historical/archive evidence.
+
+
+Risks / Concerns
+
+
+Full pytest was not run because only docs changed.
+
+Several atlas commands are intentionally mutating if executed, so I verified help surfaces rather than running output-generating workflows.
+
+
+Suggested Next Steps
+
+
+Add a lightweight docs smoke test later if you want command snippets checked automatically against CLI help.
+
+
 Goal 10: classify archived generated artifacts, no deletion
 
-Goal: classify generated archive contents and produce a safe cleanup recommendation without deleting files.
-Context:
-The audit says output/archive should not be deleted until its contents are classified. This pass should convert the archive manifest into actionable cleanup recommendations.
-Scope:
-Use the archive manifest created in Phase 1.
-Tasks:
-1. Review the archive manifest.
-2. Identify which artifacts should be kept, moved, compressed, regenerated on demand, or deleted later.
-3. Identify which artifacts are duplicated generated image trees.
-4. Identify which AI/OCR sidecars are formal evidence versus disposable run artifacts.
-5. Produce a recommended retention policy.
-6. Do not delete anything in this pass.
-Do not:
-- Delete files.
-- Move files.
-- Rewrite sidecars.
-- Change current output files.
-Validation:
-Run output-inventory and output-cleanup-plan commands.
-Confirm no archive content changed except documentation/manifest additions.
-Final summary required:
-List files changed, classifications, retention recommendations, commands run, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 11: perform first safe generated-output cleanup
 
 Goal: perform the first safe cleanup of generated outputs, limited to items already classified as disposable.
