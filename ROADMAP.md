@@ -21,6 +21,68 @@ Refresh current evidence with:
 
 The iteration sections below preserve useful planning rationale and prior audit evidence. Do not copy their measured counts into current-state docs without rerunning the audit commands above.
 
+## Audit-Backed Cleanup and Optimization Path
+
+The audit in [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md) proposed Phase 1 through Phase 5. The current accepted work path is narrower: use Phases 1 through 3 as the active cleanup and optimization plan, keep Phase 4 in future deeper-refactor territory, and treat later enrichment ideas as deferred roadmap notes rather than implementation scope.
+
+### Phase 1 - Cleanup Prerequisites
+
+Status: accepted as current cleanup prerequisite work.
+
+Purpose:
+
+- Make cleanup safe before generated artifacts, docs, or command defaults are reorganized.
+- Add or preserve guards around generator help/dry-run behavior.
+- Keep output integrity checks, archive manifests, Asterion contract docs, topic sidecar contract docs, and current-state README references as prerequisites for later cleanup.
+
+Do not use Phase 1 to change extraction behavior, topic/difficulty algorithms, canonical question-bank records, generated outputs, or student-facing semantics.
+
+### Phase 2 - Cleanup and Reorganization
+
+Status: accepted as current cleanup/reorganization work.
+
+Purpose:
+
+- Move or mark historical docs without losing their audit value.
+- Normalize current command documentation.
+- Classify archived generated artifacts using manifests before any deletion.
+- Remove only documented disposable files under ignored generated paths.
+- Keep current canonical outputs, current exports, taxonomy files, topic sidecars, and image trees fixed until a separate audited regeneration/change plan exists.
+
+Phase 2 is documentation and generated-artifact hygiene first. It should not silently change Asterion eligibility, record counts, topic safety, text readiness, or current generated output meaning.
+
+### Phase 3 - Low-Risk Optimization
+
+Status: accepted as current low-risk optimization work.
+
+Purpose:
+
+- Improve operational safety and developer workflow without changing data semantics.
+- Add atomic JSON writes where practical.
+- Improve run-status terminal output.
+- Add export summary diffs.
+- Split or mark tests for faster local feedback while preserving current CI expectations.
+- Update stale script defaults so they point at current paths or require explicit input paths.
+
+Phase 3 optimizations must keep standard outputs unchanged, or explicitly explain any intentional metadata-only differences.
+
+### Phase 4 - Future Deeper Refactors
+
+Status: deferred future work, not current implementation scope.
+
+Potential Phase 4 work includes cache keys for OCR/rendering, AI batch checkpoint/resume, audit-script consolidation, mark-scheme subpart parsing improvements, and crop-confidence revisits with regression samples. These changes have larger behavioral and migration risk, so they should wait until Phases 1 through 3 are complete and the project has clear acceptance gates.
+
+### Deferred Topic and Difficulty Enrichment
+
+After deeper refactors, topic and difficulty leverage may eventually incorporate exam reports and grade boundaries as additional evidence. That future work is explicitly deferred and should not be implemented now.
+
+Until then:
+
+- Do not implement exam-report or grade-boundary ingestion.
+- Do not change topic or difficulty algorithms.
+- Do not promote advisory topic/difficulty metadata into student-facing truth.
+- Do not change generated outputs for enrichment experiments without a separate audited plan.
+
 ## iteration_001 - Audit/reporting layer
 
 Status: completed by Agent 2; pending/paired with Agent 3 focused tests as the next formal gate.

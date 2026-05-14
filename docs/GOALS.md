@@ -802,6 +802,57 @@ Decide whether status.current.json has unique diagnostic value.
 Only after that, consider duplicate archived PNG cleanup with a fresh checksum comparison.
 
 Goal 12: update roadmap based on audit phases
+Updated ROADMAP.md (line 24) only.
+
+Files Changed
+
+
+ROADMAP.md
+
+
+Roadmap Decisions
+
+
+Added an audit-backed cleanup/optimization section.
+
+Marked Phase 1 as cleanup prerequisites.
+
+Marked Phase 2 as cleanup/reorganization.
+
+Marked Phase 3 as low-risk optimization.
+
+Marked Phase 4 as deferred future deeper refactors, not current work.
+
+
+Deferred Items
+
+
+Exam-report and grade-boundary leverage for topic/difficulty is noted as future work only.
+
+No topic/difficulty algorithms, generated outputs, or enrichment logic were changed.
+
+
+Risks/Concerns
+
+
+Phase 4 work has larger behavioral and migration risk, so it now explicitly waits until Phases 1-3 and acceptance gates are complete.
+
+Future enrichment must stay advisory until separately audited.
+
+
+Validation
+
+
+Docs-only change; no tests run.
+
+
+Suggested Next Steps
+
+
+Continue Phase 2/3 documentation and low-risk operational cleanup.
+
+Keep any future exam-report or grade-boundary work behind a separate audited proposal.
+
 
 **Start here!**
 Phase 3 goals: low-risk optimization
