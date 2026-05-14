@@ -1123,35 +1123,55 @@ Add a documented release workflow command using export-summary-diff before clean
 If operators need fail thresholds later, add a separate gate mode rather than changing this diff command’s normal-count-change exit behavior.
 
 
-**Start here!**
 Goal 17: split test suite into fast and integration groups
+Implemented marker-based test organization while preserving full-test defaults.
+
+Changed files:
 
 
+pyproject.toml (line 30): registered integration, rendering, and sample_pipeline pytest markers.
+
+tests/test_sample_pipeline.py (line 12): marked the sample-pipeline regression file as integration and sample_pipeline.
+
+tests/test_image_rendering.py (line 16): marked rendering tests as rendering.
+
+README.md (line 51): added fast/full test examples and noted CI remains full.
+
+docs/COMMAND_ATLAS.md (line 421): added fast, rendering, integration, and full test command groups.
+
+
+Commands run:
+
+
+.venv/bin/python -m pytest --durations=30 -q -> 438 passed, 3 skipped in 121.19s
+
+.venv/bin/python -m pytest -q -m "not integration and not rendering" -> 402 passed, 39 deselected in 2.43s
+
+.venv/bin/python -m pytest -q -> 438 passed, 3 skipped in 121.44s
+
+
+CI coverage:
+
+
+Confirmed .github/workflows/tests.yml still runs unfiltered python -m pytest, so CI remains full coverage.
+
+
+Risks/concerns:
+
+
+The fast lane intentionally excludes 39 marked tests, including the slow sample-pipeline regressions and rendering group. It is for local iteration only, not merge confidence.
+
+docs/GOALS.md is modified in the worktree but was pre-existing and I did not touch it.
+
+
+Suggested next steps:
+
+
+If more slow tests appear later, add markers at file or test level and keep python -m pytest as the unfiltered CI/default command.
 
 Goal 18: update stale script default paths
 
-Goal: update stale script default paths so operational scripts point to the current generated layout.
-Context:
-The audit found scripts that still expect old paths such as output_ocr_candidate/json/question_bank.json. These should either use current defaults or require explicit input paths.
-Scope:
-Review scripts under scripts/ for stale default paths.
-Tasks:
-1. Search for references to old generated paths.
-2. For active scripts, update defaults to current paths such as output/json/question_bank.json where appropriate.
-3. For scripts where a default is unsafe, require explicit --input.
-4. Preserve historical docs by marking old paths as historical, not current.
-5. Add or update tests for argument parsing if practical.
-Do not:
-- Change script core behavior beyond path/default safety.
-- Regenerate outputs.
-- Delete old archive files.
-Validation:
-Run --help for affected scripts.
-Run targeted script tests.
-Run full pytest if practical.
-Final summary required:
-List files changed, stale paths fixed, commands run, validation results, risks/concerns, and suggested next steps.
-
+**Start here!**
 Goal 19: create release validation checklist command or doc
 
 Goal: create a release validation checklist for producing a clean current export.

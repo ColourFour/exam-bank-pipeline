@@ -30,3 +30,8 @@ exam_bank = ["runtime_profile.json"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = [
+  "integration: slower tests that exercise PDF/sample-pipeline flows against repository fixtures.",
+  "rendering: image and crop rendering behavior tests.",
+  "sample_pipeline: repository sample-pipeline regression tests, usually also integration.",
+]

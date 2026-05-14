@@ -9,6 +9,9 @@ from exam_bank.pipeline import process_sample
 from exam_bank.question_detection import detect_question_starts
 
 
+pytestmark = [pytest.mark.integration, pytest.mark.sample_pipeline]
+
+
 SAMPLE_QP = Path(
     "/Users/sbrooker/Favorite/Former Classes/RCF 2024-2025/AS Maths/00 General/Math A Level Exams All/March 2019_qp_32.pdf"
 )

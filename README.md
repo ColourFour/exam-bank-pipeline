@@ -48,6 +48,20 @@ Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map.
 
 AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
+Fast local test loop:
+
+```bash
+.venv/bin/python -m pytest -q -m "not integration and not rendering"
+```
+
+Full validation, including integration and rendering regressions:
+
+```bash
+.venv/bin/python -m pytest -q
+```
+
+CI intentionally runs the full suite with `python -m pytest`.
+
 Standard full extraction:
 
 ```bash

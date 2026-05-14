@@ -26,6 +26,9 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | Output inventory | `output-inventory` | Audit-only | Fast to medium | Optional report writes |
 | Output cleanup plan | `output-cleanup-plan` | Audit-only | Fast to medium | Optional report writes |
 | Full tests | `pytest` | Test | About 2 minutes observed | No |
+| Fast local tests | `pytest -m "not integration and not rendering"` | Test | Fast | No |
+| Rendering tests | `pytest -m rendering` | Test | Fast | No |
+| Integration/sample-pipeline tests | `pytest -m "integration"` | Test | About 2 minutes observed | No |
 | Targeted tests | `pytest <files>` | Test | Fast | No |
 
 ## Extraction
@@ -417,6 +420,8 @@ Category/runtime: standard generator, medium; mutating unless `--dry-run`
 
 ## Tests
 
+Pytest markers are opt-in filters only. Plain `pytest`, `python -m pytest`, and `python -m pytest -q` still run the full suite. CI uses the full unfiltered command.
+
 ### Full Tests
 
 Purpose: run the full regression suite.
@@ -429,6 +434,48 @@ Category/runtime: test, about 2 minutes observed
 
 ```bash
 .venv/bin/python -m pytest -q
+```
+
+### Fast Local Tests
+
+Purpose: run the fast local loop while excluding slower integration/sample-pipeline and rendering groups.
+
+Input: source and tests, excluding `integration` and `rendering` markers
+
+Output: pytest result
+
+Category/runtime: test, fast
+
+```bash
+.venv/bin/python -m pytest -q -m "not integration and not rendering"
+```
+
+### Rendering Tests
+
+Purpose: run image and crop rendering behavior tests separately.
+
+Input: source and rendering tests
+
+Output: pytest result
+
+Category/runtime: test, fast
+
+```bash
+.venv/bin/python -m pytest -q -m rendering
+```
+
+### Integration and Sample-Pipeline Tests
+
+Purpose: run slower repository sample-pipeline PDF regressions separately.
+
+Input: source, repository PDF fixtures, and sample-pipeline tests
+
+Output: pytest result
+
+Category/runtime: test, about 2 minutes observed
+
+```bash
+.venv/bin/python -m pytest -q -m "integration"
 ```
 
 ### Targeted Command-Surface Tests

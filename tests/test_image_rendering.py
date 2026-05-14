@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from exam_bank.config import AppConfig
 from exam_bank.image_rendering import (
     CropRegion,
@@ -9,6 +11,9 @@ from exam_bank.image_rendering import (
     _single_page_union_regions,
 )
 from exam_bank.models import BoundingBox, PageLayout, QuestionSpan, TextBlock
+
+
+pytestmark = pytest.mark.rendering
 
 
 def text_block(text: str, y: float, x: float = 50, width: float = 450) -> TextBlock:
