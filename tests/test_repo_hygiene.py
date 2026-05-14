@@ -9,7 +9,11 @@ PYPROJECT_PATH = Path("pyproject.toml")
 def test_readme_centers_supported_process_command() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
 
-    assert "python -m exam_bank.cli process --input input --output output" in readme
+    assert (
+        ".venv/bin/python -m exam_bank.cli process \\\n"
+        "  --input input \\\n"
+        "  --output output"
+    ) in readme
     assert "process-folder" not in readme
     assert "topic-pdfs" not in readme
     assert "practice-page" not in readme

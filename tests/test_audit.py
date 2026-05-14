@@ -443,6 +443,7 @@ def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_
     _write_file(artifact_root / good_mark_scheme_path)
 
     absolute_question_path = str((tmp_path / "outside.png").resolve())
+    absolute_mark_scheme_path = str((tmp_path / "outside_mark_scheme.png").resolve())
     records = [
         _integrity_record(
             "12spring24_q01",
@@ -456,7 +457,7 @@ def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_
             paper="12spring24",
             question_number="1",
             question_image_path=absolute_question_path,
-            mark_scheme_image_path="p1/12spring24/mark_scheme/missing.png",
+            mark_scheme_image_path=absolute_mark_scheme_path,
         ),
         _integrity_record(
             "12spring24_q03",
@@ -468,19 +469,25 @@ def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_
     ]
     input_path = artifact_root / "json" / "question_bank.json"
     _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    payload["record_count"] = 999
+    input_path.write_text(json.dumps(payload), encoding="utf-8")
 
     report = audit_current_output_integrity(input_path)
 
     assert report["ok"] is False
     assert {failure["code"] for failure in report["failures"]} >= {
+        "record_count_mismatch",
         "duplicate_question_id",
         "duplicate_paper_question",
         "missing_question_image_path",
         "absolute_question_image_path",
         "missing_question_image_file",
         "missing_mark_scheme_image_path",
+        "absolute_mark_scheme_image_path",
         "missing_mark_scheme_image_file",
     }
+    assert report["checks"]["declared_record_count_matches"] is False
     assert report["counts"]["duplicate_question_id_value_count"] == 1
     assert report["counts"]["duplicate_paper_question_pair_count"] == 1
     assert report["counts"]["unexpected_missing_mark_scheme_image_path_count"] == 1

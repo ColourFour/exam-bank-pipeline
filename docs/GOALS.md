@@ -30,8 +30,6 @@ output/asterion/exports/latest/asterion_question_bank_v1.json
 output/asterion/exports/latest/asterion_content_lab_candidates_v1.json
 
 
-
-
 Preserved normal generation write targets and exported filenames.
 
 
@@ -457,39 +455,90 @@ Update the other stale docs called out by the audit.
 
 Add a lightweight docs lint or README command-snippet test if command drift keeps recurring.
 
+Phase 1 closeout audit is done.
+
+Files changed/created:
+
+
+Created docs/PHASE_1_CLEANUP_PREREQ_CLOSEOUT.md
+
+Updated tests/test_audit.py to explicitly test record-count mismatch and absolute mark-scheme paths.
+
+Updated tests/test_repo_hygiene.py to match README’s current multi-line .venv/bin/python command format.
+
+
+Validation run:
+
+
+All required git status/diff/diff-check commands.
+
+Full suite: .venv/bin/python -m pytest -q -> 427 passed, 3 skipped.
+
+Focused tests:
+
+tests/test_generator_cli_safety.py -> 6 passed
+
+tests/test_audit.py tests/test_runtime_paths.py -> 13 passed
+
+
+
+
+Both generator --help commands passed.
+
+Both generator --dry-run commands passed with validation pass.
+
+Output integrity audit passed with ok: true.
+
+Archive inventory and cleanup-plan commands passed; cleanup plan remained dry-run only.
+
+
+Generated files:
+
+
+No unexpected generated-output mutation occurred.
+
+Hashes stayed unchanged for current question bank, topic sidecar, Asterion exports, canonical taxonomy, top-level output JSON/JSONL, archive, and canonical image tree.
+
+output-integrity-audit intentionally wrote output/json/audit.current.integrity.json, but content hash stayed unchanged.
+
+
+Final readiness verdict:
+
+
+READY_FOR_PHASE_2_WITH_NOTES
+
+
+Main risks/concerns:
+
+
+9709_2025_November_33 still has 11 allowed missing mark-scheme paths.
+
+Current topic sidecar is not strict-filter safe: safe_for_strict_filters=false, 153 failed records.
+
+Asterion/topic contracts are conservative but mostly documentation-only for downstream consumers.
+
+21 archive-only p3 PNGs must be reviewed before any deletion.
+
+Integrity audit checks minimum identity/path invariants only, not visual/OCR/topic correctness.
+
+
+Suggested next steps:
+
+
+Start Phase 2 with documentation/archive planning, not deletion.
+
+Review the 21 archive-only p3 files.
+
+Add historical banners or move stale docs before layout cleanup.
+
+Keep current outputs, exports, taxonomy, topic sidecar, and canonical images fixed until an intentional audited regeneration/change plan exists.
+
 
 Phase 2 goals: cleanup and reorganization
 
-Begin here!
 Goal 8: move or label historical docs
 
-Goal: clearly separate current documentation from historical documentation.
-Context:
-The audit found that some docs are valuable but stale as current-state references. They should either be moved to docs/history/ or given clear historical banners.
-Scope:
-Review stale docs identified in the audit, especially:
-- docs/PROJECT_REVIEW.md
-- docs/TRUST_MODEL.md measured counts
-- docs/AUTO_TRIAGE.md current evidence references
-- docs/TRIAGE_WORKFLOW.md examples
-- ROADMAP.md measured state sections
-Tasks:
-1. Identify docs that are current policy versus historical evidence.
-2. Move clearly historical docs to docs/history/ or add a clear historical banner at the top.
-3. Preserve useful process knowledge.
-4. Replace stale “current state” claims with references to the audit or audit commands.
-5. Avoid broad rewrites.
-Do not:
-- Delete historical docs.
-- Change code.
-- Change generated outputs.
-- Remove useful rationale.
-Validation:
-Run any docs/link checks if available.
-Run pytest only if imports/paths/tests were affected.
-Final summary required:
-List docs changed/moved, what was marked historical, validation run, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 9: normalize command documentation
 
 Goal: create a clean command atlas for operating the project.
