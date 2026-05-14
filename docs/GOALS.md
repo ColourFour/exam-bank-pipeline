@@ -898,39 +898,62 @@ Suggested Next Steps
 Optionally extend the same helper to non-requested JSON report/debug writers later, such as audit or triage outputs, if you want all generated JSON artifacts covered uniformly.
 
 Goal 14: improve run-status terminal output for standard runs
+Implemented progress/status reporting improvements for standard non-AI runs.
 
-**Start here!**
+Files Changed
+
+
+src/exam_bank/run_status.py: added richer status metadata and terminal progress output.
+
+src/exam_bank/pipeline.py: passes paper/session/component/question context into run-status updates.
+
+tests/test_run_status.py: added coverage for new metadata and terminal progress text.
+
+
+Validation
+
+
+pytest failed: command not found.
+
+python -m pytest failed: command not found.
+
+python3 -m pytest tests/test_run_status.py failed: pytest not installed for system Python.
+
+.venv/bin/python -m pytest tests/test_run_status.py: 4 passed.
+
+.venv/bin/python -m pytest tests/test_sample_pipeline.py: 32 passed, 3 skipped.
+
+.venv/bin/python -m pytest: 431 passed, 3 skipped.
+
+
+User-Visible Progress Changes
+
+
+Progress line now includes elapsed time, run ID, output path, current stage, current paper, session, component, papers completed/total, records completed/total when known, and current question index/id when available.
+
+run_status.json now includes current_stage, current_session, current_component, current_record_id, current_record_index, total_current_records, completed_papers, total_papers, and percent_complete_basis.
+
+Percentage basis is explicit: records when a reliable total exists, otherwise papers.
+
+
+Risks / Concerns
+
+
+No extraction, OCR selection, or output schema changes were made.
+
+run_status.json schema is expanded, not replaced; existing status files/tests are preserved.
+
+Per-question updates overwrite the status file but terminal rendering remains rate-limited unless forced.
+
+
+Suggested Next Steps
+
+
+Run one real process command with --progress on a small input folder to visually confirm the terminal line is comfortable during an actual operator run.
+
 Goal 15: improve run-status output for AI-heavy runs
 
-Goal: improve progress/status reporting for AI-heavy sidecar runs.
-Context:
-AI-heavy runs may take up to 2 hours. Operators need better visibility into progress, batches, retries, failures, and checkpoint/resume state. This pass should improve reporting only, not redesign AI processing.
-Scope:
-Review:
-- src/exam_bank/deepseek_enrich.py
-- src/exam_bank/topic_routing.py
-- relevant CLI commands for enrich-ai and topic-route-ai
-- run-status utilities
-Tasks:
-1. Report elapsed time.
-2. Report completed/total records or batches.
-3. Report successful, failed, and review-required counts so far.
-4. Report retry counts if available.
-5. Report provider/model/prompt version metadata if already present.
-6. Report output/checkpoint path if available.
-7. Do not change provider prompts or classification behavior.
-8. Add tests around status metadata where practical.
-Do not:
-- Change AI prompts.
-- Change topic/routing decisions.
-- Change sidecar schema unless strictly additive and tested.
-- Merge AI output into canonical question bank.
-Validation:
-Run targeted AI/status tests using mocks.
-Run full pytest if practical.
-Final summary required:
-List files changed, commands run, validation results, progress fields added, risks/concerns, and suggested next steps.
-
+**Start here!**
 Goal 16: add export summary diffing
 
 Goal: add export summary diffing so operators can see readiness changes between runs.

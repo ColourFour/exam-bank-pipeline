@@ -108,7 +108,10 @@ def _process_registry_entries(
     existing_output_questions = _load_existing_output_questions(config.output.json_dir / config.naming.json_name)
     for entry in entries:
         assert entry.question_paper is not None
-        batch_id, paper, paper_family = _entry_progress_identity(entry)
+        progress_context = _entry_progress_context(entry)
+        batch_id = progress_context["batch_id"]
+        paper = progress_context["paper"]
+        paper_family = progress_context["paper_family"]
         if progress and not force_rerun and batch_id in resume_completed_batch_ids:
             cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
             if not isinstance(cached_questions, list):
@@ -130,6 +133,8 @@ def _process_registry_entries(
                 paper=paper,
                 paper_family=paper_family,
                 phase="parsing_pdfs",
+                session=progress_context["session"],
+                component=progress_context["component"],
             )
         try:
             paper_records = build_records_for_pdf(
@@ -142,6 +147,8 @@ def _process_registry_entries(
                 progress=progress,
                 progress_paper=paper,
                 progress_paper_family=paper_family,
+                progress_session=progress_context["session"],
+                progress_component=progress_context["component"],
             )
         except Exception as exc:
             if progress:
@@ -195,6 +202,11 @@ def process_sample(question_pdf: str | Path, config: AppConfig, mark_scheme_pdf:
 
 
 def _entry_progress_identity(entry) -> tuple[str, str, str]:
+    context = _entry_progress_context(entry)
+    return context["batch_id"], context["paper"], context["paper_family"]
+
+
+def _entry_progress_context(entry) -> dict[str, str]:
     metadata = None
     if entry.question_paper is not None:
         metadata = entry.metadata_by_path.get(str(entry.question_paper))
@@ -204,7 +216,13 @@ def _entry_progress_identity(entry) -> tuple[str, str, str]:
     paper = paper_instance_id(component, session, year)
     paper_family = paper_family_dir_name(metadata.paper_family if metadata else f"P{component[:1]}")
     batch_id = f"{paper_family}_{paper}"
-    return batch_id, paper, paper_family
+    return {
+        "batch_id": batch_id,
+        "paper": paper,
+        "paper_family": paper_family,
+        "session": session,
+        "component": component,
+    }
 
 
 def _load_existing_output_questions(path: Path) -> list[dict[str, Any]]:
@@ -239,16 +257,30 @@ def build_records_for_pdf(
     progress: Any | None = None,
     progress_paper: str | None = None,
     progress_paper_family: str | None = None,
+    progress_session: str | None = None,
+    progress_component: str | None = None,
 ) -> list[QuestionRecord]:
     question_pdf = Path(question_pdf)
     if progress:
-        progress.update_phase("parsing_pdfs", current_paper=progress_paper, current_paper_family=progress_paper_family)
+        progress.update_phase(
+            "parsing_pdfs",
+            current_paper=progress_paper,
+            current_paper_family=progress_paper_family,
+            current_session=progress_session,
+            current_component=progress_component,
+        )
     layouts = extract_pdf_layout(question_pdf, config)
     parsed_filename_metadata = filename_metadata or parse_filename_metadata(question_pdf)
     internal_metadata = parse_internal_document_metadata(layouts)
     document_metadata = reconcile_document_metadata(parsed_filename_metadata, internal_metadata)
     if progress:
-        progress.update_phase("detecting_question_spans", current_paper=progress_paper, current_paper_family=progress_paper_family)
+        progress.update_phase(
+            "detecting_question_spans",
+            current_paper=progress_paper,
+            current_paper_family=progress_paper_family,
+            current_session=progress_session,
+            current_component=progress_component,
+        )
     initial_spans = detect_question_spans(layouts, question_pdf, config)
     source_paper_code, _source_paper_code_confidence = infer_source_paper_code(question_pdf.name)
     source_paper_code = document_metadata.component or source_paper_code
@@ -266,6 +298,8 @@ def build_records_for_pdf(
         progress=progress,
         progress_paper=progress_paper,
         progress_paper_family=progress_paper_family,
+        progress_session=progress_session,
+        progress_component=progress_component,
     )
     initial_total_check = _paper_total_check(
         initial_records,
@@ -285,7 +319,13 @@ def build_records_for_pdf(
         rescan_triggered = True
         broader_config = _broadened_detection_config(config)
         if progress:
-            progress.update_phase("detecting_question_spans", current_paper=progress_paper, current_paper_family=progress_paper_family)
+            progress.update_phase(
+                "detecting_question_spans",
+                current_paper=progress_paper,
+                current_paper_family=progress_paper_family,
+                current_session=progress_session,
+                current_component=progress_component,
+            )
         rescanned_layouts = extract_pdf_layout(question_pdf, broader_config)
         rescanned_spans = detect_question_spans(rescanned_layouts, question_pdf, broader_config)
         rescanned_records = _build_records_from_spans(
@@ -301,6 +341,8 @@ def build_records_for_pdf(
             progress=progress,
             progress_paper=progress_paper,
             progress_paper_family=progress_paper_family,
+            progress_session=progress_session,
+            progress_component=progress_component,
         )
         rescanned_total_check = _paper_total_check(
             rescanned_records,
@@ -326,7 +368,13 @@ def build_records_for_pdf(
 
     _reconcile_paper_topics(final_records, config)
     if progress:
-        progress.update_phase("validating_records", current_paper=progress_paper, current_paper_family=progress_paper_family)
+        progress.update_phase(
+            "validating_records",
+            current_paper=progress_paper,
+            current_paper_family=progress_paper_family,
+            current_session=progress_session,
+            current_component=progress_component,
+        )
     _apply_paper_total_metadata(
         final_records,
         initial_total_check=initial_total_check,
@@ -355,6 +403,8 @@ def _build_records_from_spans(
     progress: Any | None = None,
     progress_paper: str | None = None,
     progress_paper_family: str | None = None,
+    progress_session: str | None = None,
+    progress_component: str | None = None,
 ) -> list[QuestionRecord]:
     expected_numbers = [span.question_number for span in spans if span.question_number.isdigit()]
     expected_marks = {
@@ -376,13 +426,27 @@ def _build_records_from_spans(
     if matched_mark_scheme and matched_mark_scheme.exists():
         try:
             if progress:
-                progress.update_phase("pairing_mark_schemes", current_paper=progress_paper, current_paper_family=progress_paper_family)
+                progress.update_phase(
+                    "pairing_mark_schemes",
+                    current_paper=progress_paper,
+                    current_paper_family=progress_paper_family,
+                    current_session=progress_session,
+                    current_component=progress_component,
+                    total_current_records=len(spans),
+                )
             answers = extract_mark_scheme_answers(matched_mark_scheme, config, expected_numbers)
         except Exception as exc:
             mark_scheme_flags.append(f"mark_scheme_extract_failed:{exc.__class__.__name__}")
         try:
             if progress:
-                progress.update_phase("rendering_mark_scheme_images", current_paper=progress_paper, current_paper_family=progress_paper_family)
+                progress.update_phase(
+                    "rendering_mark_scheme_images",
+                    current_paper=progress_paper,
+                    current_paper_family=progress_paper_family,
+                    current_session=progress_session,
+                    current_component=progress_component,
+                    total_current_records=len(spans),
+                )
             mark_scheme_images = render_mark_scheme_images(
                 matched_mark_scheme,
                 config,
@@ -397,17 +461,31 @@ def _build_records_from_spans(
         mark_scheme_flags.append("unmatched_mark_scheme")
 
     records: list[QuestionRecord] = []
-    for span in spans:
+    for record_index, span in enumerate(spans, start=1):
         question_subparts = _question_subparts_from_span(span)
         if progress:
             progress.update_phase(
                 "running_ocr" if config.ocr.enabled else "rendering_question_images",
                 current_paper=progress_paper,
                 current_paper_family=progress_paper_family,
+                current_session=progress_session,
+                current_component=progress_component,
+                current_record_id=span.question_number,
+                current_record_index=record_index,
+                total_current_records=len(spans),
             )
         render_result = render_question_image(question_pdf, span, layouts, config)
         if progress:
-            progress.update_phase("extracting_text", current_paper=progress_paper, current_paper_family=progress_paper_family)
+            progress.update_phase(
+                "extracting_text",
+                current_paper=progress_paper,
+                current_paper_family=progress_paper_family,
+                current_session=progress_session,
+                current_component=progress_component,
+                current_record_id=span.question_number,
+                current_record_index=record_index,
+                total_current_records=len(spans),
+            )
         structured_text = build_structured_question_text(span, layouts, config)
         question_text = structured_text.combined_question_text or render_result.extracted_text or span.combined_text
         marks = span.question_total_detected if span.question_total_detected is not None else extract_question_total_from_text(question_text)

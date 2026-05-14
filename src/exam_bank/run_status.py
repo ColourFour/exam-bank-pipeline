@@ -198,15 +198,32 @@ class TerminalProgressRenderer:
         bar = "#" * filled + "-" * (self.width - filled)
         run_type = str(status.get("run_type") or "run").replace("_", " ")
         phase = str(status.get("current_phase") or "pending")
-        parts = [f"[{bar}] {percent:.0f}%", run_type, phase]
+        percent_basis = str(status.get("percent_complete_basis") or "")
+        percent_label = f"{percent:.0f}%"
+        if percent_basis:
+            percent_label += f" {percent_basis}"
+        parts = [f"[{bar}] {percent_label}", run_type, phase, f"run {status.get('run_id')}"]
         paper = status.get("current_paper")
         if paper:
             parts.append(f"paper {paper}")
+        session = status.get("current_session")
+        component = status.get("current_component")
+        if session:
+            parts.append(f"session {session}")
+        if component:
+            parts.append(f"component {component}")
+        current_record = status.get("current_record_id")
+        current_record_index = int(status.get("current_record_index") or 0)
+        total_current_records = int(status.get("total_current_records") or 0)
+        if current_record and current_record_index and total_current_records:
+            parts.append(f"question {current_record_index}/{total_current_records} ({current_record})")
+        elif current_record:
+            parts.append(f"question {current_record}")
         batch_id = status.get("current_batch_id")
         total_batches = int(status.get("total_batches") or 0)
         completed_batches = int(status.get("completed_batches") or 0)
         if total_batches:
-            batch_label = f"batch {completed_batches}/{total_batches}"
+            batch_label = f"papers {completed_batches}/{total_batches}"
             if batch_id:
                 batch_label += f" ({batch_id})"
             parts.append(batch_label)
@@ -280,18 +297,27 @@ class RunStatusTracker:
             "updated_at": _iso(self.started_at),
             "finished_at": None,
             "status": "pending",
+            "current_stage": "pending",
             "current_phase": "pending",
             "current_batch_id": None,
             "current_paper": None,
             "current_paper_family": None,
+            "current_session": None,
+            "current_component": None,
+            "current_record_id": None,
+            "current_record_index": None,
+            "total_current_records": None,
             "completed_batches": 0,
+            "completed_papers": 0,
             "successful_batches": 0,
             "failed_batches": 0,
             "skipped_batches": 0,
             "total_batches": 0,
+            "total_papers": 0,
             "completed_records": 0,
             "total_records": 0,
             "percent_complete": 0.0,
+            "percent_complete_basis": "",
             "elapsed_seconds": 0.0,
             "estimated_remaining_seconds": None,
             "successful_records": 0,
@@ -320,7 +346,9 @@ class RunStatusTracker:
         self.status_dir.mkdir(parents=True, exist_ok=True)
         self._status["status"] = "running"
         self._status["current_phase"] = phase
+        self._status["current_stage"] = phase
         self._status["total_batches"] = max(0, int(total_batches))
+        self._status["total_papers"] = max(0, int(total_batches))
         self._status["total_records"] = max(0, int(total_records))
         self._write_manifest()
         self._write_status(force_render=True)
@@ -328,6 +356,7 @@ class RunStatusTracker:
     def set_totals(self, *, total_batches: int | None = None, total_records: int | None = None) -> None:
         if total_batches is not None:
             self._status["total_batches"] = max(0, int(total_batches))
+            self._status["total_papers"] = max(0, int(total_batches))
         if total_records is not None:
             self._status["total_records"] = max(0, int(total_records))
         self._write_status()
@@ -339,17 +368,33 @@ class RunStatusTracker:
         current_batch_id: str | None = None,
         current_paper: str | None = None,
         current_paper_family: str | None = None,
+        current_session: str | None = None,
+        current_component: str | None = None,
+        current_record_id: str | None = None,
+        current_record_index: int | None = None,
+        total_current_records: int | None = None,
         output_path: str | Path | None = None,
         retry_count: int | None = None,
         force_render: bool = False,
     ) -> None:
         self._status["current_phase"] = phase
+        self._status["current_stage"] = phase
         if current_batch_id is not None:
             self._status["current_batch_id"] = current_batch_id
         if current_paper is not None:
             self._status["current_paper"] = current_paper
         if current_paper_family is not None:
             self._status["current_paper_family"] = current_paper_family
+        if current_session is not None:
+            self._status["current_session"] = current_session
+        if current_component is not None:
+            self._status["current_component"] = current_component
+        if current_record_id is not None:
+            self._status["current_record_id"] = current_record_id
+        if current_record_index is not None:
+            self._status["current_record_index"] = max(0, int(current_record_index))
+        if total_current_records is not None:
+            self._status["total_current_records"] = max(0, int(total_current_records))
         if output_path is not None:
             self._status["output_path"] = str(output_path)
         if retry_count is not None:
@@ -377,6 +422,8 @@ class RunStatusTracker:
         paper_family: str | None = None,
         record_count: int = 0,
         phase: str = "running",
+        session: str | None = None,
+        component: str | None = None,
     ) -> None:
         now = self.clock()
         self._current_batch = BatchHandle(
@@ -392,6 +439,11 @@ class RunStatusTracker:
             current_batch_id=batch_id,
             current_paper=paper,
             current_paper_family=paper_family,
+            current_session=session,
+            current_component=component,
+            current_record_id="",
+            current_record_index=0,
+            total_current_records=record_count,
             force_render=True,
         )
 
@@ -419,6 +471,7 @@ class RunStatusTracker:
             error_message=None,
         )
         self._status["completed_batches"] = int(self._status["completed_batches"]) + 1
+        self._status["completed_papers"] = int(self._status["completed_batches"])
         self._status["successful_batches"] = int(self._status["successful_batches"]) + 1
         self._status["completed_records"] = int(self._status["completed_records"]) + max(
             0,
@@ -452,6 +505,7 @@ class RunStatusTracker:
             error_message=None,
         )
         self._status["completed_batches"] = int(self._status["completed_batches"]) + 1
+        self._status["completed_papers"] = int(self._status["completed_batches"])
         self._status["skipped_batches"] = int(self._status["skipped_batches"]) + 1
         self._status["completed_records"] = int(self._status["completed_records"]) + max(0, int(skipped))
         self._status["skipped_records"] = int(self._status["skipped_records"]) + max(0, int(skipped))
@@ -483,6 +537,7 @@ class RunStatusTracker:
             error_message=error_message,
         )
         self._status["completed_batches"] = int(self._status["completed_batches"]) + 1
+        self._status["completed_papers"] = int(self._status["completed_batches"])
         self._status["failed_batches"] = int(self._status["failed_batches"]) + 1
         self._status["completed_records"] = int(self._status["completed_records"]) + max(
             0,
@@ -503,7 +558,11 @@ class RunStatusTracker:
         self._status["status"] = final_status
         self._status["finished_at"] = _iso(self.finished_at)
         self._status["current_phase"] = "finished" if final_status == "completed" else final_status
+        self._status["current_stage"] = self._status["current_phase"]
         self._status["current_batch_id"] = None
+        self._status["current_record_id"] = None
+        self._status["current_record_index"] = None
+        self._status["total_current_records"] = None
         if error_summary is not None:
             self._status["error_summary"] = error_summary
         if final_status == "completed" and not int(self._status["total_records"] or 0):
@@ -539,6 +598,7 @@ class RunStatusTracker:
         lines = [
             "Run summary:",
             f"  run type: {status['run_type']}",
+            f"  run ID: {status['run_id']}",
             f"  final status: {status['status']}",
             f"  completed batches/papers: {status['completed_batches']}/{status['total_batches']}",
             f"  failed batches/papers: {status.get('failed_batches', 0)}",
@@ -600,6 +660,9 @@ class RunStatusTracker:
         if self._current_batch and self._current_batch.batch_id == batch_id:
             self._current_batch = None
             self._status["current_batch_id"] = None
+            self._status["current_record_id"] = None
+            self._status["current_record_index"] = None
+            self._status["total_current_records"] = None
 
     def _refresh_computed_fields(self) -> None:
         now = self.finished_at or self.clock()
@@ -612,6 +675,7 @@ class RunStatusTracker:
             self._status["percent_complete"] = 100.0
         else:
             self._status["percent_complete"] = 0.0
+        self._status["percent_complete_basis"] = self._progress_basis()
         self._status["estimated_remaining_seconds"] = self._estimated_remaining_seconds(completed_units, total_units)
 
     def _progress_units(self) -> tuple[int, int]:
@@ -620,6 +684,13 @@ class RunStatusTracker:
         if total_records:
             return completed_records, total_records
         return int(self._status["completed_batches"] or 0), int(self._status["total_batches"] or 0)
+
+    def _progress_basis(self) -> str:
+        if int(self._status["total_records"] or 0):
+            return "records"
+        if int(self._status["total_batches"] or 0):
+            return "papers"
+        return ""
 
     def _estimated_remaining_seconds(self, completed_units: int, total_units: int) -> float | None:
         if not total_units or completed_units <= 0 or completed_units >= total_units:

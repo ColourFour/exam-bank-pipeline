@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from argparse import Namespace
 from datetime import datetime, timedelta, timezone
+import io
 import json
 from pathlib import Path
 
@@ -19,15 +20,24 @@ REQUIRED_RUN_STATUS_KEYS = {
     "updated_at",
     "finished_at",
     "status",
+    "current_stage",
     "current_phase",
     "current_batch_id",
     "current_paper",
     "current_paper_family",
+    "current_session",
+    "current_component",
+    "current_record_id",
+    "current_record_index",
+    "total_current_records",
     "completed_batches",
+    "completed_papers",
     "total_batches",
+    "total_papers",
     "completed_records",
     "total_records",
     "percent_complete",
+    "percent_complete_basis",
     "elapsed_seconds",
     "estimated_remaining_seconds",
     "successful_records",
@@ -58,6 +68,48 @@ def _read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def test_terminal_progress_line_includes_standard_run_context(tmp_path: Path) -> None:
+    stream = io.StringIO()
+    tracker = RunStatusTracker(
+        run_id="run-1",
+        run_type="standard",
+        status_root=tmp_path / "run_status",
+        command="fake command",
+        output_paths=["output/json/question_bank.json"],
+        progress=True,
+        stream=stream,
+    )
+
+    tracker.start(phase="scanning_inputs", total_batches=2)
+    tracker.start_batch(
+        batch_id="p1_12spring24",
+        paper="12spring24",
+        paper_family="p1",
+        record_count=2,
+        session="spring",
+        component="12",
+    )
+    tracker.update_phase(
+        "rendering_question_images",
+        current_record_id="1",
+        current_record_index=1,
+        total_current_records=2,
+        force_render=True,
+    )
+
+    output = stream.getvalue()
+    assert "standard" in output
+    assert "rendering_question_images" in output
+    assert "run run-1" in output
+    assert "paper 12spring24" in output
+    assert "session spring" in output
+    assert "component 12" in output
+    assert "question 1/2 (1)" in output
+    assert "papers 0/2" in output
+    assert "elapsed" in output
+    assert "output output/json/question_bank.json" in output
+
+
 def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path) -> None:
     clock = FakeClock()
     tracker = RunStatusTracker(
@@ -77,11 +129,39 @@ def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path
     assert pending["percent_complete"] == 0
     assert pending["estimated_remaining_seconds"] is None
 
-    tracker.start_batch(batch_id="batch-a", paper="12spring24", paper_family="p1", record_count=2)
+    tracker.start_batch(
+        batch_id="batch-a",
+        paper="12spring24",
+        paper_family="p1",
+        record_count=2,
+        session="spring",
+        component="12",
+    )
+    tracker.update_phase(
+        "rendering_question_images",
+        current_paper="12spring24",
+        current_paper_family="p1",
+        current_session="spring",
+        current_component="12",
+        current_record_id="1",
+        current_record_index=1,
+        total_current_records=2,
+    )
+    in_progress = _read_json(tracker.run_status_path)
+    assert in_progress["current_stage"] == "rendering_question_images"
+    assert in_progress["current_phase"] == "rendering_question_images"
+    assert in_progress["current_session"] == "spring"
+    assert in_progress["current_component"] == "12"
+    assert in_progress["current_record_id"] == "1"
+    assert in_progress["current_record_index"] == 1
+    assert in_progress["total_current_records"] == 2
+    assert in_progress["total_papers"] == 2
+    assert in_progress["percent_complete_basis"] == "records"
     clock.advance(10)
     tracker.complete_batch(batch_id="batch-a", paper="12spring24", paper_family="p1", record_count=2)
     halfway = _read_json(tracker.run_status_path)
     assert halfway["completed_records"] == 2
+    assert halfway["completed_papers"] == 1
     assert halfway["percent_complete"] == 50
     assert halfway["elapsed_seconds"] == 10
     assert halfway["estimated_remaining_seconds"] == 10
@@ -161,9 +241,13 @@ def test_standard_process_cli_writes_run_status_during_fake_run(monkeypatch, tmp
     assert status["run_type"] == "standard"
     assert status["status"] == "completed"
     assert status["completed_records"] == 4
+    assert status["completed_papers"] == 2
+    assert status["total_papers"] == 2
     assert status["skipped_records"] == 2
     assert status["percent_complete"] == 100
+    assert status["percent_complete_basis"] == "records"
     assert [batch["status"] for batch in batches] == ["completed", "skipped"]
+    assert "run ID: standard-test" in summary
     assert "total elapsed time" in summary
     assert str(status_path) in summary
 
