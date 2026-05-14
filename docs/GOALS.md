@@ -1241,33 +1241,83 @@ When this maintenance script is used against an archived candidate, pass the old
 Consider adding a repo hygiene test later that fails if output_ocr_candidate/json/... appears in active defaults outside historical/explicit contexts.
 
 
-**Start here!**
 Goal 19: create release validation checklist command or doc
+Implemented the release validation checklist as a docs-first workflow.
+
+Files Changed
 
 
+docs/RELEASE_VALIDATION_CHECKLIST.md
+
+README.md (line 185)
+
+
+Note: docs/GOALS.md was already modified before my work and I left it untouched.
+
+Checklist Decisions
+
+
+Kept this as documentation, not a CLI wrapper.
+
+Defined blocking vs warning criteria for tests, audits, image integrity, OCR audit, Asterion exports, topic sidecar safety, and output cleanup planning.
+
+Included expected evidence paths under output/json/, output/audits/current/, output/asterion/exports/latest/, and output inventory/cleanup reports.
+
+Documented 9709_2025_November_33 as a warning only while affected records remain blocked or review-only.
+
+
+Commands Run
+
+
+.venv/bin/python -m exam_bank.cli audit --input output/json/question_bank.json
+
+.venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output
+
+.venv/bin/python scripts/audit_ocr_candidates.py --input output/json/question_bank.json
+
+.venv/bin/python -m exam_bank.cli output-inventory --root output
+
+.venv/bin/python -m exam_bank.cli output-cleanup-plan --root output
+
+Topic sidecar safety Python snippet from the checklist
+
+git diff --check
+
+
+Validation Results
+
+
+Read-only audit commands passed.
+
+Integrity audit passed with ok: true; only the known 11 missing mark-scheme paths for 9709_2025_November_33.
+
+OCR candidate audit passed; OCR metadata present for all 1301 records.
+
+Topic sidecar remains not strict-filter safe: safe_for_strict_filters=false, failed_records=153.
+
+Cleanup plan remained dry-run only and kept canonical/current outputs.
+
+git diff --check passed.
+
+Pytest was not run because only docs/README changed.
+
+
+Risks / Concerns
+
+
+The checklist documents release commands that intentionally write validation reports or regenerate Asterion exports; I validated only read-only forms to avoid changing generated outputs.
+
+Strict topic filtering remains blocked until the topic sidecar is fixed and regenerated safely.
+
+
+Suggested Next Steps
+
+
+Use the checklist for the next clean export run and capture a dated release decision record.
+
+Resolve the missing 9709_2025_November_33 mark scheme, regenerate, and remove the exception when validated.
+
+**Start here!**
 Goal 20: README and docs final consistency pass for Phases 1–3
-
-Goal: perform a final documentation consistency pass after Phase 1 through Phase 3 work.
-Context:
-After script safety, output integrity, archive classification, command atlas, atomic writes, status reporting, and validation checklist updates, the docs should agree with the current operating model.
-Scope:
-Review README, ROADMAP, command atlas, audit doc, Asterion contract doc, topic sidecar contract doc, and cleanup docs.
-Tasks:
-1. Remove contradictions about OCR state.
-2. Remove stale current-state counts or label them with run IDs and dates.
-3. Ensure all commands use current paths.
-4. Ensure Asterion role gates are described consistently.
-5. Ensure strict topic routing safety is described consistently.
-6. Ensure cleanup/optimization phases are clear.
-7. Add a note that future topic/difficulty leverage may later use exam reports and grade boundaries, but that this is deferred until after deeper refactors.
-Do not:
-- Rewrite docs unnecessarily.
-- Add new implementation scope.
-- Change code unless fixing broken command references in tests/docs.
-Validation:
-Run docs checks if available.
-Run pytest if any code/test files changed.
-Final summary required:
-List files changed, contradictions fixed, validation run, remaining docs risks, and suggested next steps.
 
 I’d run them in this order: Goals 1–7 for Phase 1, then 8–12 for Phase 2, then 13–20 for Phase 3. The future exam reports and grade boundaries idea is a good one, but I’d keep it parked as a roadmap note until the project is cleaner, safer, and easier to operate.

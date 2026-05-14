@@ -185,6 +185,7 @@ Records with failed mapping, failed validation, failed scope, missing image path
 ## More Docs
 
 - [Command atlas](docs/COMMAND_ATLAS.md)
+- [Release validation checklist](docs/RELEASE_VALIDATION_CHECKLIST.md)
 - [Current audit baseline](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md)
 - [Asterion export contract](docs/ASTERION_EXPORT_CONTRACT.md)
 - [Topic routing sidecar contract](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md)
