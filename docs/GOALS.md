@@ -77,60 +77,83 @@ Suggested Next Steps
 Consider documenting the new generator CLI usage in the taxonomy maintenance docs.
 
 
-Begin here!
 Goal 2: add no-mutation tests for script help/dry-run behavior
+Implemented the regression coverage in tests/test_generator_cli_safety.py (line 1).
 
-Goal: add regression tests proving generator inspection commands do not mutate files.
-Context:
-The audit found command-safety risk around generator scripts. We need tests before broader cleanup.
-Scope:
-Add tests around generator scripts that previously had unsafe inspection behavior.
-Tasks:
-1. Add tests that run script --help and verify it exits successfully.
-2. Verify --help does not modify tracked files or generated taxonomy fixtures.
-3. Add dry-run behavior tests if --dry-run was added.
-4. Keep tests lightweight and deterministic.
-5. Avoid depending on full output generation.
-Suggested scripts:
-- scripts/generate_topic_filter_maps.py
-- scripts/generate_skill_maps.py
-Do not:
-- Require external APIs.
-- Regenerate full outputs.
-- Depend on local-only absolute paths.
-Validation:
-Run the new targeted tests.
-Run full pytest if practical.
-Final summary required:
-List files changed, commands run, validation results, risks/concerns, and suggested next steps.
+Files Changed
+
+
+tests/test_generator_cli_safety.py (line 1)
+
+Note: docs/GOALS.md was already modified before my changes and I left it untouched.
+
+
+What Changed
+
+
+Added subprocess-level --help tests for:
+
+scripts/generate_topic_filter_maps.py
+
+scripts/generate_skill_maps.py
+
+
+
+
+The tests verify:
+
+--help exits successfully.
+
+tracked file status is unchanged.
+
+generated taxonomy fixture contents/file set are unchanged.
+
+
+
+
+Existing deterministic --dry-run no-write tests remain in place for both generators.
+
+
+Commands Run
+
+
+python3 scripts/generate_topic_filter_maps.py --help
+
+python3 scripts/generate_skill_maps.py --help
+
+python3 -m pytest tests/test_generator_cli_safety.py failed because system Python lacks pytest
+
+.venv/bin/python -m pytest tests/test_generator_cli_safety.py
+
+.venv/bin/python -m pytest
+
+git diff --check
+
+
+Validation
+
+
+Targeted tests: 6 passed
+
+Full suite: 425 passed, 3 skipped
+
+Whitespace check: passed
+
+
+Risks / Concerns
+
+
+The new mutation test uses git status, so it assumes tests run inside a Git checkout. That is intentional for proving tracked-file safety.
+
+
+Suggested Next Steps
+
+
+Apply the same inspection-safety pattern to any other generator scripts before broader cleanup.
 
 Goal 3: add current-output integrity audit/test
 
-Goal: add a current-output integrity audit/test for the canonical question bank.
-Context:
-The audit found strong current image integrity, but this should be protected before cleanup. The current canonical export is output/json/question_bank.json with 1301 records. All question images exist. Nonblank mark-scheme image paths exist. 11 records are missing mark-scheme image paths because the source mark scheme for 9709_2025_November_33 is missing.
-Scope:
-Add a lightweight integrity check that can be run against the current generated bank.
-Tasks:
-1. Check every record has a unique question_id.
-2. Check no duplicate (paper, question_number) pairs.
-3. Check all question image paths are relative and exist.
-4. Check all nonblank mark-scheme image paths are relative and exist.
-5. Explicitly allow/document the known missing mark-scheme companion for 9709_2025_November_33.
-6. Fail clearly if new missing images or unexpected missing mark schemes appear.
-7. Add this as either a test, audit script, or CLI audit mode, depending on the project’s current pattern.
-Do not:
-- Change generated question bank content.
-- Change image paths.
-- Delete or move output files.
-- Treat advisory text as canonical.
-Validation:
-Run the new integrity check.
-Run relevant existing output/export tests.
-Run full pytest if practical.
-Final summary required:
-List files changed, commands run, validation results, current integrity counts, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 4: document Asterion export contract
 
 Goal: create or update the Asterion export contract documentation.

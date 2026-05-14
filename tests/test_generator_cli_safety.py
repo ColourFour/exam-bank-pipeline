@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 from types import ModuleType
 
@@ -9,6 +12,21 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+GENERATOR_SCRIPT_NAMES = (
+    "generate_topic_filter_maps",
+    "generate_skill_maps",
+)
+GENERATED_TAXONOMY_FIXTURE_GLOBS = (
+    "exam_bank_taxonomy/canonical/skill_maps/*.json",
+    "exam_bank_taxonomy/canonical/question_skill_mappings/*.json",
+    "exam_bank_taxonomy/canonical/coverage_reports/*.json",
+    "exam_bank_taxonomy/canonical/topic_filter_maps/*.json",
+    "exam_bank_taxonomy/canonical/question_topic_assignments/*.json",
+    "exam_bank_taxonomy/canonical/strict_filtering_reports/*.json",
+    "exam_bank_taxonomy/canonical/indexes/*.json",
+    "exam_bank_taxonomy/logs/changelogs/*.json",
+    "exam_bank_taxonomy/logs/validation_reports/*.json",
+)
 
 
 def load_script_module(script_name: str) -> ModuleType:
@@ -19,6 +37,55 @@ def load_script_module(script_name: str) -> ModuleType:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def tracked_file_status() -> str:
+    result = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def generated_taxonomy_fixture_snapshot() -> dict[str, str]:
+    paths = sorted(
+        {
+            path
+            for pattern in GENERATED_TAXONOMY_FIXTURE_GLOBS
+            for path in ROOT.glob(pattern)
+            if path.is_file()
+        }
+    )
+    return {path.relative_to(ROOT).as_posix(): sha256_file(path) for path in paths}
+
+
+@pytest.mark.parametrize("script_name", GENERATOR_SCRIPT_NAMES)
+def test_generator_help_command_does_not_mutate_tracked_files_or_taxonomy_fixtures(script_name: str) -> None:
+    tracked_before = tracked_file_status()
+    taxonomy_before = generated_taxonomy_fixture_snapshot()
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / f"{script_name}.py"), "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "usage:" in result.stdout
+    assert tracked_file_status() == tracked_before
+    assert generated_taxonomy_fixture_snapshot() == taxonomy_before
 
 
 @pytest.mark.parametrize(
