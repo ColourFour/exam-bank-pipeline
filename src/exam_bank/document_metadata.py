@@ -233,6 +233,8 @@ def _document_type_from_tokens(tokens: list[str]) -> str:
         ("exam_paper", "question_paper"),
         ("mark_scheme", "mark_scheme"),
         ("examiner_report", "examiner_report"),
+        ("grade_thresholds", "grade_thresholds"),
+        ("grade_threshold", "grade_thresholds"),
     ]
     for phrase, value in phrase_checks:
         if phrase in joined:

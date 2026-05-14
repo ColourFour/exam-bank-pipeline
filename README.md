@@ -189,6 +189,7 @@ Records with failed mapping, failed validation, failed scope, missing image path
 - [Current audit baseline](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md)
 - [Asterion export contract](docs/ASTERION_EXPORT_CONTRACT.md)
 - [Topic routing sidecar contract](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md)
+- [Advisory evidence contract](docs/ADVISORY_EVIDENCE_CONTRACT.md)
 - [AI-assisted enrichment](docs/AI_ASSISTED_ENRICHMENT.md)
 - [Triage workflow](docs/TRIAGE_WORKFLOW.md)
 - [Auto-triage workflow](docs/AUTO_TRIAGE.md)

@@ -7,7 +7,8 @@
       "mark_scheme"
     ],
     "archived_input_document_types": [
-      "examiner_report"
+      "examiner_report",
+      "grade_thresholds"
     ],
     "output_layout": "paper_first",
     "topic_mode": "metadata_only",
@@ -67,15 +68,22 @@
       "er": "examiner_report",
       "examinerreport": "examiner_report",
       "examiner_report": "examiner_report",
-      "report": "examiner_report"
+      "report": "examiner_report",
+      "gt": "grade_thresholds",
+      "grade_threshold": "grade_thresholds",
+      "grade_thresholds": "grade_thresholds",
+      "threshold": "grade_thresholds",
+      "thresholds": "grade_thresholds"
     },
     "compact_codes": {
       "question_paper": "QP",
       "mark_scheme": "MS",
       "examiner_report": "ER",
+      "grade_thresholds": "GT",
       "QP": "QP",
       "MS": "MS",
-      "ER": "ER"
+      "ER": "ER",
+      "GT": "GT"
     }
   },
   "paper_family_taxonomy": {
