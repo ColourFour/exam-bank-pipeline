@@ -7,6 +7,8 @@ This contract covers the current Asterion-facing exports:
 
 These files are role-gated projections from the image-first question bank. Asterion must not treat either export as a globally student-facing-safe corpus. A record is usable only for the specific role whose gate allows that use.
 
+Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Asterion must require `metadata.run_summary.safe_for_strict_filters=true` before using that sidecar for strict topic filtering.
+
 ## Export Purposes
 
 `asterion_question_bank_v1.json` is the main Asterion projection. It carries stable identifiers, provenance, canonical image artifact references, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, and `usage_roles`. Its purpose is to give Asterion one conservative handoff file while preserving blocked and review states.
@@ -90,4 +92,5 @@ Mark events and generated warmup pattern metadata are not reviewed content. They
 6. Preserve blocked and review states in user interfaces, logs, and downstream queues.
 7. For Content Lab, require both candidate `role_statuses` and `generation_gate.status=allow` before any generated content is considered. Do not emit student-facing generated content from `blocked_until_reviewed` candidates.
 8. Keep `p3_readiness_metric` separate from product eligibility; it is a reporting inclusion flag, not a practice gate.
-9. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.
+9. For strict topic filters, require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the sidecar is missing, unsafe, or failed.
+10. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.

@@ -276,35 +276,58 @@ Add the missing 9709_2025_November_33 mark scheme when available, then regenerat
 Document the topic-routing sidecar contract next, since strict filters depend on sidecar safety metadata.
 
 Goal 5: document topic routing sidecar contract
+Files Changed
 
-Begin here!
+
+Added docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md (line 1)
+
+Updated README.md (line 131), AI_ASSISTED_ENRICHMENT.md (line 18), and ASTERION_EXPORT_CONTRACT.md (line 10)
+
+
+No topic routing logic, sidecar data, allowed topic IDs, or canonical records were changed.
+
+Validation Run
+
+
+.venv/bin/python -m pytest tests/test_topic_routing.py -q -> 19 passed
+
+.venv/bin/python -m pytest -q -> 427 passed, 3 skipped
+
+git diff --check -> passed
+
+
+Key Contract Decisions
+
+
+question_bank.topic_routing.v1.json is advisory unless metadata.run_summary.safe_for_strict_filters=true.
+
+Missing or false safe_for_strict_filters means default deny for strict topic filtering.
+
+Current sidecar is documented as unsafe: 153 schema-validation failures, safe_for_strict_filters=false.
+
+Strict filtering requires both the sidecar-level gate and record-level eligibility: no error, review_required=false, high/medium confidence, string primary_topic_id, and non-empty valid distribution.
+
+AI routing may choose only canonical parent topic IDs from exam_bank_taxonomy/canonical/; it must not invent curriculum/topic structure.
+
+
+Risks / Concerns
+
+
+This is documentation-only. Downstream consumers still need code-level enforcement of the hard gate.
+
+Current strict topic filters should remain blocked until the sidecar is fixed and regenerated with safe_for_strict_filters=true.
+
+
+Suggested Next Steps
+
+
+Add downstream/Asterion consumer tests that fail closed when safe_for_strict_filters is missing or false.
+
+Investigate and fix the schema-validation failures, then regenerate and audit the sidecar when ready.
+
 Goal 6: create archive manifest for generated cleanup archive
 
-Goal: create a manifest for the current generated output archive before any deletion.
-Context:
-The audit identified output/archive/generated_cleanup_20260513T233456Z as historical/generated evidence. It should not be deleted or reorganized until its contents are classified.
-Scope:
-Create a manifest for:
-- output/archive/generated_cleanup_20260513T233456Z
-Tasks:
-1. Inventory the archive contents.
-2. Classify files/folders as baseline, historical evidence, disposable run evidence, duplicated generated asset, unknown, or keep-until-reviewed.
-3. Record approximate sizes.
-4. Record whether each item appears reproducible.
-5. Record whether each item may be needed to explain previous OCR/AI/text-confidence runs.
-6. Do not delete anything.
-7. Add the manifest in an appropriate location, such as inside the archive folder or docs/history/archive_manifests/.
-Do not:
-- Delete archived files.
-- Move archived files.
-- Regenerate archived sidecars.
-- Treat archived AI sidecars as current unless explicitly marked current.
-Validation:
-Run output inventory/cleanup-plan commands if available.
-Confirm git status contains only the manifest/doc changes.
-Final summary required:
-List files changed, archive classifications, commands run, risks/concerns, and suggested next steps.
-
+Begin here!
 Goal 7: update README current-state references without over-documenting counts
 
 Goal: update README current-state and command references so they match the audit without duplicating fragile measured counts everywhere.

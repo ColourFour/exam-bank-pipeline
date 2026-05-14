@@ -128,6 +128,8 @@ Resume the same sidecar with:
 
 Add `--no-progress` only for quiet mode; status files are still written.
 
+The topic-routing sidecar is advisory unless its audit metadata allows strict filters. Consumers must require `metadata.run_summary.safe_for_strict_filters=true` before using `output/json/question_bank.topic_routing.v1.json` for strict topic filtering. The current sidecar contract and strict-filter checklist are documented in `docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`.
+
 `--input` is scanned recursively. The usual layout is:
 
 ```text
@@ -432,7 +434,7 @@ Topic routing for Asterion should use the strict DeepSeek topic-routing sidecar,
 output/json/question_bank.topic_routing.v1.json
 ```
 
-This sidecar is intentionally narrow: it records only canonical parent-topic routing from `exam_bank_taxonomy/canonical/`, with `primary_topic_id`, `topic_distribution`, confidence, review flags, and the limited text evidence actually sent to the model. It does not contain difficulty, skills, subtopics, rationales, Content Lab metadata, or Asterion readiness decisions. Records marked `review_required=true` must not enter strict Asterion topic filters.
+This sidecar is intentionally narrow: it records only canonical parent-topic routing from `exam_bank_taxonomy/canonical/`, with `primary_topic_id`, `topic_distribution`, confidence, review flags, and the limited text evidence actually sent to the model. It does not contain difficulty, skills, subtopics, rationales, Content Lab metadata, or Asterion readiness decisions. Records marked `review_required=true` must not enter strict Asterion topic filters. The full sidecar must also report `metadata.run_summary.safe_for_strict_filters=true` before any strict topic filtering use; the current sidecar is known to be unsafe because it has schema-validation failures.
 
 Normal full run:
 
@@ -524,7 +526,7 @@ export DEEPSEEK_API_KEY=...
   --recompute-difficulty
 ```
 
-Strict product filters should use only audited canonical IDs from approved sidecars. For topic filters, use non-review-required records from `question_bank.topic_routing.v1.json`. For broad v2, suggestions for new subtopics or skills are review-only, and `strict_filter_candidates` must be audited before any Asterion use. See `docs/AI_ASSISTED_ENRICHMENT.md` for the current sidecar policy.
+Strict product filters should use only audited canonical IDs from approved sidecars. For topic filters, require `metadata.run_summary.safe_for_strict_filters=true` on `question_bank.topic_routing.v1.json`, then use only non-review-required strict-candidate records. For broad v2, suggestions for new subtopics or skills are review-only, and `strict_filter_candidates` must be audited before any Asterion use. See `docs/AI_ASSISTED_ENRICHMENT.md` and `docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md` for the current sidecar policy.
 
 ## Tests
 

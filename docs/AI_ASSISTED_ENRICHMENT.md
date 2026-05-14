@@ -15,7 +15,7 @@ The extraction pipeline remains image-first. `question_bank.json` and the canoni
 - `review_reasons`
 - `evidence_used`
 
-It does not ask for or store difficulty, subtopics, skills, rationales, Content Lab metadata, Asterion readiness, or student-facing explanations. It also does not claim image evidence; `evidence_used` may list only supplied text evidence such as `question_text`, `ocr_text`, and `mark_scheme_text`. Records with `review_required=true` are review-only and must not enter strict Asterion topic filters.
+It does not ask for or store difficulty, subtopics, skills, rationales, Content Lab metadata, Asterion readiness, or student-facing explanations. It also does not claim image evidence; `evidence_used` may list only supplied text evidence such as `question_text`, `ocr_text`, and `mark_scheme_text`. Records with `review_required=true` are review-only and must not enter strict Asterion topic filters. The full sidecar contract is in [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md).
 
 `question_bank.ai_assisted.v2.json` is the broader canonical-ID AI-assisted sidecar. It preserves useful v1 fields when present, then adds `ai_assisted_items` for whole-question and optional subpart mappings. Each item must use existing canonical IDs for:
 
@@ -31,7 +31,7 @@ DeepSeek may suggest taxonomy gaps only in `suggested_new_subtopic` and `suggest
 
 Product strict filters should consume only audited canonical IDs from an approved sidecar.
 
-Asterion topic routing should consume audited, non-review-required records from `question_bank.topic_routing.v1.json`. The topic sidecar is parent-topic only and should be used for topic distribution/filtering after audit.
+Asterion topic routing should consume audited, non-review-required records from `question_bank.topic_routing.v1.json`. The topic sidecar is parent-topic only and should be used for topic distribution/filtering after audit. Consumers must require `metadata.run_summary.safe_for_strict_filters=true` before using it for strict filters; if this field is missing or false, the sidecar is advisory/review-only.
 
 Asterion region or skill routing from the broad v2 sidecar should consume only `strict_filter_candidates`, and only the canonical IDs inside those candidates, after the sidecar has passed an explicit audit. These candidates are produced after deterministic validation has confirmed that all IDs exist in the active canonical taxonomy and that strict filtering did not fail closed. Region routing should use `strict_filter_candidates[].asterion_region_ids`, derived from canonical skill-map `asterion_region_id` values. If a record has no strict candidates, route it to review or broad fallback behavior, not a strict student-facing filter.
 
