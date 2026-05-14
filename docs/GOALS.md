@@ -326,35 +326,83 @@ Add downstream/Asterion consumer tests that fail closed when safe_for_strict_fil
 Investigate and fix the schema-validation failures, then regenerate and audit the sidecar when ready.
 
 Goal 6: create archive manifest for generated cleanup archive
+Created the archive manifest at generated_cleanup_20260513T233456Z.md.
 
-Begin here!
+Files Changed
+
+
+Added docs/history/archive_manifests/generated_cleanup_20260513T233456Z.md
+
+
+Archive Classifications
+
+
+baseline: none found; inventory found 0 frozen baselines.
+
+historical evidence: archived OCR candidate JSONs, Asterion exports, audit snapshot, DeepSeek/AI sidecars.
+
+disposable run evidence: AI/topic-routing smoke outputs, batch caches, and failure JSONL files, but retained until reviewed because they explain prior failures.
+
+duplicated generated asset: most archived OCR candidate PNGs.
+
+unknown: output/json/status.current.json.
+
+keep-until-reviewed: full output_ocr_candidate/ tree and 21 archive-only p3 PNGs.
+
+
+Commands Run
+
+
+.venv/bin/python -m exam_bank.cli output-inventory --root output/archive/generated_cleanup_20260513T233456Z --include-size --max-depth 4
+
+.venv/bin/python -m exam_bank.cli output-cleanup-plan --root output/archive/generated_cleanup_20260513T233456Z --include-size --max-depth 4
+
+Supporting find, du, jq, wc, comm, and shasum inventory/checksum checks.
+
+git status --short --untracked-files=all
+
+
+Validation
+
+
+Archive still contains 2,662 files.
+
+Built-in cleanup plan was dry-run only.
+
+Cleanup plan classified output_ocr_candidate as keep: latest candidate.
+
+Cleanup plan classified archived output as unknown/manual review.
+
+Git status shows only the new manifest doc:
+
+?? docs/history/archive_manifests/generated_cleanup_20260513T233456Z.md
+
+
+Risks / Concerns
+
+
+21 archived p3 PNGs are not present in current output/; these need review before any deletion.
+
+AI/API sidecars and failure files are not exactly reproducible.
+
+status.current.json has unclear unique value and should stay until reviewed.
+
+
+Suggested Next Steps
+
+
+Review the 21 archive-only p3 artifacts.
+
+Decide which AI/API failure and batch artifacts can be summarized elsewhere before cleanup.
+
+Use this manifest as input for the next cleanup recommendation pass.
+
 Goal 7: update README current-state references without over-documenting counts
 
-Goal: update README current-state and command references so they match the audit without duplicating fragile measured counts everywhere.
-Context:
-The audit found README drift, especially around OCR state and current generated outputs. The README should point users to commands and the current audit baseline rather than carrying many stale counts.
-Scope:
-Update README only where factually stale or misleading.
-Tasks:
-1. Correct the current OCR/export description.
-2. Reference docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md as the current baseline.
-3. Add or update a compact command atlas for standard run, OCR-enabled run, audit, Asterion export, Content Lab export, topic routing, AI enrichment, and tests.
-4. Replace duplicated measured counts with commands wherever possible.
-5. Clearly state that canonical images are source of truth and text/AI/topic sidecars are advisory unless role-gated.
-6. Keep README concise.
-Do not:
-- Rewrite all docs.
-- Change code.
-- Change generated outputs.
-- Add new measured counts unless they include run ID/date and are clearly labeled.
-Validation:
-Run docs checks if any exist.
-Run pytest if README examples are tested; otherwise no full test required unless code changed.
-Final summary required:
-List files changed, commands run, validation results, stale references fixed, risks/concerns, and suggested next steps.
 
 Phase 2 goals: cleanup and reorganization
 
+Begin here!
 Goal 8: move or label historical docs
 
 Goal: clearly separate current documentation from historical documentation.
