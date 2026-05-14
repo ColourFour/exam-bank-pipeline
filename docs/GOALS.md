@@ -1170,37 +1170,80 @@ Suggested next steps:
 If more slow tests appear later, add markers at file or test level and keep python -m pytest as the unfiltered CI/default command.
 
 Goal 18: update stale script default paths
+Files Changed
+
+
+scripts/audit_and_organize_taxonomy_files.py (line 81)
+
+tests/test_script_path_defaults.py (line 27)
+
+
+Stale Paths Fixed
+
+
+Removed output_ocr_candidate/json/... from active default reference discovery.
+
+Added current defaults:
+
+output/json/question_bank.json
+
+output/asterion/exports/latest/asterion_question_bank_v1.json
+
+output/asterion/exports/latest/asterion_content_lab_candidates_v1.json
+
+
+
+
+Kept old output_ocr_candidate/json/... paths only under HISTORICAL_REFERENCE_JSON_FILES; they are not used unless passed explicitly via --historical-reference-json.
+
+Updated taxonomy audit file typing so output/json/question_bank.json is treated as current_question_bank, while old candidate banks are historical_ocr_candidate_question_bank.
+
+
+Commands Run
+
+
+.venv/bin/python scripts/audit_and_organize_taxonomy_files.py --help
+
+for script in scripts/*.py; do .venv/bin/python "$script" --help >/dev/null || exit 1; done
+
+.venv/bin/python -m pytest tests/test_script_path_defaults.py tests/test_generator_cli_safety.py -q
+
+.venv/bin/python -m pytest -q
+
+rg stale-path checks across scripts, docs, README.md, and tests
+
+
+Validation Results
+
+
+Affected script help: passed.
+
+All scripts/*.py --help: passed.
+
+Targeted tests: 8 passed.
+
+Full pytest: 440 passed, 3 skipped.
+
+
+Risks/Concerns
+
+
+output_ocr_candidate/json/... still appears in historical docs and in the new explicit historical-path test. That is intentional.
+
+I did not run audit or optimize phases because those write generated taxonomy/report outputs.
+
+
+Suggested Next Steps
+
+
+When this maintenance script is used against an archived candidate, pass the old path explicitly with --historical-reference-json.
+
+Consider adding a repo hygiene test later that fails if output_ocr_candidate/json/... appears in active defaults outside historical/explicit contexts.
+
 
 **Start here!**
 Goal 19: create release validation checklist command or doc
 
-Goal: create a release validation checklist for producing a clean current export.
-Context:
-After cleanup and low-risk optimization, the project needs a repeatable way to validate a release-quality question bank and Asterion export.
-Scope:
-Create either a docs checklist or a lightweight CLI/script if the existing code makes that easy.
-Tasks:
-1. Define the release validation sequence:
-   - run tests
-   - run question-bank audit
-   - run image integrity check
-   - run OCR candidate audit
-   - generate or validate Asterion exports
-   - validate topic sidecar safety metadata
-   - run output inventory/cleanup-plan
-2. Include expected output paths.
-3. Include what counts as blocking versus warning.
-4. Include current known exception: missing mark scheme for 9709_2025_November_33 unless resolved.
-5. Keep this as a checklist first if a CLI wrapper would be too much.
-Do not:
-- Change generated outputs.
-- Add hard gates that break current workflows without discussion.
-- Implement topic/difficulty exam-report logic.
-Validation:
-Run any documented commands that are safe and fast.
-Run pytest if code changed.
-Final summary required:
-List files changed, checklist decisions, commands run, validation results, risks/concerns, and suggested next steps.
 
 Goal 20: README and docs final consistency pass for Phases 1–3
 

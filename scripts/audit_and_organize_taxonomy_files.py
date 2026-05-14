@@ -78,11 +78,16 @@ ROOT_JSON_PATTERNS = [
     "*validation*.json",
 ]
 
-REFERENCE_JSON_FILES = [
+CURRENT_REFERENCE_JSON_FILES = [
     "output/json/question_bank.json",
     "output/json/question_bank.deepseek.json",
     "output/json/audit.current.json",
     "output/json/status.current.json",
+    "output/asterion/exports/latest/asterion_question_bank_v1.json",
+    "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
+]
+
+HISTORICAL_REFERENCE_JSON_FILES = [
     "output_ocr_candidate/json/question_bank.json",
     "output_ocr_candidate/json/asterion_question_bank_v1.json",
     "output_ocr_candidate/json/asterion_content_lab_candidates_v1.json",
@@ -184,12 +189,17 @@ def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def discover_relevant_paths() -> list[Path]:
+def resolve_reference_path(path: str | Path) -> Path:
+    candidate = Path(path)
+    return candidate if candidate.is_absolute() else ROOT / candidate
+
+
+def discover_relevant_paths(reference_json_files: list[str | Path] | None = None) -> list[Path]:
     paths: set[Path] = set()
     for pattern in ROOT_JSON_PATTERNS:
         paths.update(ROOT.glob(pattern))
-    for name in REFERENCE_JSON_FILES + GENERATOR_FILES:
-        path = ROOT / name
+    for name in (reference_json_files or CURRENT_REFERENCE_JSON_FILES) + GENERATOR_FILES:
+        path = resolve_reference_path(name)
         if path.exists():
             paths.add(path)
     return sorted(paths, key=lambda p: rel(p))
@@ -247,7 +257,7 @@ def detect_file_type(item: JsonFile) -> str:
     if name == "status.current.json":
         return "extraction_status"
     if name == "question_bank.json":
-        return "legacy_question_bank" if item.rel_path.startswith("output/json/") else "ocr_candidate_question_bank"
+        return "current_question_bank" if item.rel_path.startswith("output/json/") else "historical_ocr_candidate_question_bank"
     if name == "asterion_question_bank_v1.json":
         return "asterion_question_bank"
     if name == "asterion_content_lab_candidates_v1.json":
@@ -270,8 +280,8 @@ def detected_purpose(file_type: str) -> str:
         "index": "Index of generated taxonomy or topic-filter files.",
         "changelog": "Generation/change history for taxonomy expansion.",
         "validation_report": "Validation summary for generated files.",
-        "legacy_question_bank": "Legacy extraction question bank with broad topic labels and OCR quality metadata.",
-        "ocr_candidate_question_bank": "OCR candidate question bank used as source material for generated mappings.",
+        "current_question_bank": "Current extraction question bank with broad topic labels and OCR quality metadata.",
+        "historical_ocr_candidate_question_bank": "Historical OCR candidate question bank used as source material for generated mappings.",
         "asterion_question_bank": "Asterion-ready question bank with subpart-level records.",
         "content_lab_candidates": "Generated content-lab candidates used as weak evidence for taxonomy mapping.",
         "deepseek_enrichment": "LLM enrichment output, not a canonical taxonomy source.",
@@ -293,7 +303,7 @@ def get_record_count(item: JsonFile, file_type: str) -> int | None:
         return len(data.get("topics", []))
     if file_type == "question_topic_assignments":
         return len(data.get("assignments", []))
-    if file_type in {"legacy_question_bank", "ocr_candidate_question_bank", "asterion_question_bank"}:
+    if file_type in {"current_question_bank", "historical_ocr_candidate_question_bank", "asterion_question_bank"}:
         return len(data.get("questions", []))
     if file_type == "content_lab_candidates":
         return len(data.get("candidates", []))
@@ -345,9 +355,9 @@ def count_reviewed_and_candidates(item: JsonFile) -> tuple[int, int, int]:
     return reviewed, machine, low
 
 
-def init_context() -> Context:
+def init_context(reference_json_files: list[str | Path] | None = None) -> Context:
     ctx = Context()
-    for path in discover_relevant_paths():
+    for path in discover_relevant_paths(reference_json_files):
         item = load_json_file(path) if path.suffix == ".json" else JsonFile(path=path, rel_path=rel(path), valid_json=False, size_bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         ctx.files[item.rel_path] = item
     return ctx
@@ -378,7 +388,7 @@ def build_reference_indexes(ctx: Context) -> None:
                         ctx.subtopic_ids_by_component[component or "unknown"].add(subtopic_id)
                         if isinstance(parent_topic_id, str):
                             ctx.subtopic_parent_by_component[component or "unknown"][subtopic_id] = parent_topic_id
-        elif file_type in {"legacy_question_bank", "ocr_candidate_question_bank", "asterion_question_bank"}:
+        elif file_type in {"current_question_bank", "historical_ocr_candidate_question_bank", "asterion_question_bank"}:
             for question in data.get("questions", []):
                 question_id = question.get("question_id")
                 q_component = normalize_component(question.get("paper_family"), item.path.name)
@@ -404,9 +414,9 @@ def file_status_and_rating(item: JsonFile, file_type: str, issues: list[str]) ->
         return "malformed", "broken", "archive_or_repair"
     if file_type == "generator_script":
         return "canonical_supporting_code", "good", "keep"
-    if file_type in {"legacy_question_bank", "deepseek_enrichment", "extraction_audit", "extraction_status"}:
+    if file_type in {"current_question_bank", "deepseek_enrichment", "extraction_audit", "extraction_status"}:
         return "legacy_or_reference", "usable_needs_cleanup", "keep_as_reference"
-    if file_type in {"ocr_candidate_question_bank", "asterion_question_bank", "content_lab_candidates"}:
+    if file_type in {"historical_ocr_candidate_question_bank", "asterion_question_bank", "content_lab_candidates"}:
         return "machine_candidate_reference", "usable_needs_cleanup", "keep_as_source_reference"
     if file_type == "validation_report":
         return "stale_validation", "deprecated", "archive"
@@ -656,7 +666,7 @@ def build_inventory(ctx: Context) -> None:
         contains_machine = machine_count > 0 or file_type in {
             "question_skill_mappings",
             "question_topic_assignments",
-            "ocr_candidate_question_bank",
+            "historical_ocr_candidate_question_bank",
             "asterion_question_bank",
             "content_lab_candidates",
         }
@@ -747,7 +757,7 @@ def build_quality_audit(ctx: Context) -> None:
             "Canonical source-of-truth files live at repository root alongside logs and generated reports, making ownership ambiguous.",
             "Most product-facing mapping files contain machine-candidate data only; reviewed_record_count is zero across current mapping artifacts.",
             "Strict filters include high-confidence machine candidates, not human-reviewed mappings.",
-            "Legacy output/json/question_bank.json contains broad topic labels and low-confidence topic metadata that should remain reference-only.",
+            "Current output/json/question_bank.json contains broad topic labels and low-confidence topic metadata that should remain reference-only for strict filtering.",
             "Root index and validation files reference root paths and become stale after organization unless regenerated.",
         ],
         "specific_risks": [
@@ -803,8 +813,8 @@ def build_recommendations(ctx: Context) -> None:
                 }
             )
         elif row["file_type"] in {
-            "legacy_question_bank",
-            "ocr_candidate_question_bank",
+            "current_question_bank",
+            "historical_ocr_candidate_question_bank",
             "asterion_question_bank",
             "content_lab_candidates",
             "deepseek_enrichment",
@@ -1596,8 +1606,8 @@ The main unresolved risk is lack of human-reviewed mapping data. High-confidence
 """
 
 
-def run_audit() -> Context:
-    ctx = init_context()
+def run_audit(reference_json_files: list[str | Path] | None = None) -> Context:
+    ctx = init_context(reference_json_files)
     build_inventory(ctx)
     build_quality_audit(ctx)
     build_recommendations(ctx)
@@ -1606,9 +1616,9 @@ def run_audit() -> Context:
     return ctx
 
 
-def run_optimize() -> None:
+def run_optimize(reference_json_files: list[str | Path] | None = None) -> None:
     setup_dirs()
-    ctx = run_audit()
+    ctx = run_audit(reference_json_files)
     canonical_entries, changelog = copy_canonical_files(ctx)
     changelog.extend(rewrite_clean_component_indexes(canonical_entries))
     review_index, review_changelog = write_review_queues(ctx)
@@ -1691,14 +1701,47 @@ def run_optimize() -> None:
     write_text(FINAL_OUTPUTS["optimization_summary"], optimization_summary(canonical_entries, review_index, archive_entries, validation))
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Audit and organize CAIE taxonomy/topic-filtering artifacts.",
+    )
     parser.add_argument("--phase", choices=["audit", "optimize"], required=True)
-    args = parser.parse_args()
+    parser.add_argument(
+        "--reference-json",
+        action="append",
+        type=Path,
+        default=[],
+        help="Additional current/reference JSON path to include in the audit. Repeat for multiple files.",
+    )
+    parser.add_argument(
+        "--historical-reference-json",
+        action="append",
+        type=Path,
+        default=[],
+        help=(
+            "Explicit historical candidate/reference JSON path to include, such as an archived "
+            "output_ocr_candidate snapshot. Historical paths are never included by default."
+        ),
+    )
+    return parser
+
+
+def selected_reference_json_files(args: argparse.Namespace) -> list[str | Path]:
+    return [
+        *CURRENT_REFERENCE_JSON_FILES,
+        *args.reference_json,
+        *args.historical_reference_json,
+    ]
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    reference_json_files = selected_reference_json_files(args)
     if args.phase == "audit":
-        run_audit()
+        run_audit(reference_json_files)
     else:
-        run_optimize()
+        run_optimize(reference_json_files)
 
 
 if __name__ == "__main__":
