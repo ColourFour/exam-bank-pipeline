@@ -537,46 +537,62 @@ Keep current outputs, exports, taxonomy, topic sidecar, and canonical images fix
 Phase 2 goals: cleanup and reorganization
 
 Goal 8: move or label historical docs
+Implemented the docs-only separation.
 
-Begin here!
+Docs changed/moved
+
+
+Moved docs/PROJECT_REVIEW.md to docs/history/PROJECT_REVIEW.md (line 1) and added a historical banner.
+
+Updated ROADMAP.md (line 5) to point current measured state to the audit baseline and mark old iteration counts as historical.
+
+Updated docs/TRUST_MODEL.md (line 184) to replace stale tier counts with audit/refresh commands.
+
+Updated docs/AUTO_TRIAGE.md (line 27) to remove stale current evidence counts and treat output_ocr_candidate/ as legacy evidence.
+
+Updated docs/TRIAGE_WORKFLOW.md (line 17) to make examples generic/current-path based.
+
+Added a post-audit note in docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md (line 9) explaining the project review move.
+
+
+Marked historical
+
+
+PROJECT_REVIEW.md is now explicitly historical. Its old measured “current” wording is preserved as evidence, but no longer lives among active docs.
+
+
+Validation
+
+
+No dedicated docs/link checker was found.
+
+Ran git diff --check / git show --check: no whitespace errors.
+
+Ran targeted rg checks for stale active-doc phrases and markdown links to the old PROJECT_REVIEW.md path: no active matches.
+
+Did not run pytest because this was docs-only and no imports, code paths, or tests changed.
+
+
+Risks / Concerns
+
+
+The moved historical review still contains old “current” wording by design; the banner is the guardrail.
+
+The audit report preserves original path references as audit-time findings, with a top note clarifying the move.
+
+
+Suggested Next Steps
+
+
+Add a lightweight markdown/link check if docs drift keeps recurring.
+
+Continue the planned final docs consistency pass after command atlas and validation checklist work.
+
+
 Goal 9: normalize command documentation
 
-Goal: create a clean command atlas for operating the project.
-Context:
-The audit found active commands, stale commands, and inconsistent references across docs. Before optimization, operators need a reliable command map.
-Scope:
-Document current commands for:
-- standard full run
-- OCR-enabled run
-- resume/cache-aware run
-- audit
-- OCR candidate audit
-- difficulty audit
-- Asterion export
-- Content Lab candidates
-- topic routing
-- AI enrichment
-- AI sidecar audit
-- output inventory
-- output cleanup plan
-- full tests
-- targeted tests
-Tasks:
-1. Add a concise command atlas to README or a dedicated docs/COMMAND_ATLAS.md.
-2. Include purpose, input, output, rough runtime category, and whether command is standard, OCR, AI-heavy, or audit-only.
-3. Clearly mark AI-heavy workflows as long-running and sidecar-only.
-4. Remove or update stale `output_ocr_candidate` command references.
-5. Keep commands copy-pasteable.
-Do not:
-- Change command behavior.
-- Add new CLI flags unless needed for previous Phase 1 safety work.
-- Regenerate outputs.
-Validation:
-Run --help for documented CLI commands where practical.
-Run full pytest only if code changed.
-Final summary required:
-List files changed, commands verified, stale commands removed/updated, risks/concerns, and suggested next steps.
 
+Begin here!
 Goal 10: classify archived generated artifacts, no deletion
 
 Goal: classify generated archive contents and produce a safe cleanup recommendation without deleting files.
