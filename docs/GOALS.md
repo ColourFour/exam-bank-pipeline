@@ -398,6 +398,64 @@ Decide which AI/API failure and batch artifacts can be summarized elsewhere befo
 Use this manifest as input for the next cleanup recommendation pass.
 
 Goal 7: update README current-state references without over-documenting counts
+Updated README.md.
+
+Files Changed
+
+
+README.md only
+
+
+Commands Run
+
+
+.venv/bin/python -m exam_bank.cli --help
+
+.venv/bin/python -m pytest tests/test_runtime_paths.py tests/test_generator_cli_safety.py -q
+
+rg checks for stale README OCR/count references
+
+rg --files discovery for docs/markdown check tooling
+
+
+Validation Results
+
+
+Focused CLI-surface tests passed: 10 passed in 0.65s
+
+No dedicated docs/markdown check tool was found in the repo.
+
+Full pytest was not run because this was README-only and examples are not directly README-tested.
+
+
+Stale References Fixed
+
+
+Replaced old native-only/no-OCR current-state wording with the audited OCR-enabled state.
+
+Removed duplicated measured count blocks and pointed to docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md as the current baseline.
+
+Added a compact command atlas for standard/OCR runs, audits, Asterion export, Content Lab export, topic routing, AI enrichment, and tests.
+
+Re-centered canonical images as source of truth; text/OCR/topic/AI/Asterion sidecars are advisory unless role-gated.
+
+Removed stale full-suite result/count snapshots from README.
+
+
+Risks / Concerns
+
+
+Other docs remain stale per the audit; I did not touch them per scope.
+
+README now intentionally depends on the audit report for measured current-state counts, so that report needs to stay the baseline source.
+
+
+Suggested Next Steps
+
+
+Update the other stale docs called out by the audit.
+
+Add a lightweight docs lint or README command-snippet test if command drift keeps recurring.
 
 
 Phase 2 goals: cleanup and reorganization
