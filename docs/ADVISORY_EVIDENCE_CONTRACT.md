@@ -63,6 +63,8 @@ Internal identity follows existing repo metadata:
 
 Duplicate document identities are allowed only when they are explicit warnings in inventory output. Distinct source files use stable path-hashed output filenames.
 
+Duplicate advisory evidence records are allowed only with an explicit validation warning. The final sidecar remains one record per `question_id`, so duplicate linked candidates, topic evidence, or difficulty evidence must be visible in validation and review reports before any downstream review-only use.
+
 ## Evidence Boundaries
 
 Examiner reports may support topic hints, misconception/method evidence, common-error patterns, omission/no-response signals, item-level difficulty hints, and review prioritization.
@@ -83,6 +85,7 @@ No advisory evidence should be used for strict topic filtering, mastery decision
 - predicted topic IDs are allowed existing topic IDs
 - confidence, evidence, difficulty, and context labels use allowed enums
 - grade-threshold context does not contain item-level difficulty
+- duplicate linked candidates and duplicate advisory evidence records emit explicit warnings
 - final sidecar records link to real question-bank records
 - final sidecar records do not contain canonical replacement fields
 
@@ -91,4 +94,3 @@ Implementation passes must also run `git diff --check` and a protected-path no-m
 ## AI Policy
 
 AI enrichment is intentionally outside this phase. Add a separate audited plan before using AI on unresolved advisory cases.
-

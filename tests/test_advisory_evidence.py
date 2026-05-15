@@ -146,6 +146,86 @@ CX
     assert thresholds["options"][0]["thresholds"]["A*"] == 201
 
 
+def test_examiner_parser_accepts_safe_plural_question_heading() -> None:
+    examiner = parse_examiner_report_text(
+        {
+            "source_path": "input/examiner_reports/9709 Mathematics November 2024 Examiner Report.pdf",
+            "syllabus": "9709",
+            "year": "2024",
+            "session": "OctoberNovember",
+            "session_key": "9709_2024_OctoberNovember",
+            "raw_text": """
+Paper 9709/33
+Pure Mathematics 3
+
+Comments on specific questions
+
+Questions 1
+Complex numbers in polar form were attempted well.
+
+Question 2
+Integration by parts caused errors.
+""",
+        }
+    )
+
+    questions = examiner["components"][0]["questions"]
+    assert [question["question_number"] for question in questions] == [1, 2]
+    assert questions[0]["comment_text"].startswith("Complex numbers")
+
+
+def test_examiner_parser_does_not_split_grouped_plural_question_heading() -> None:
+    examiner = parse_examiner_report_text(
+        {
+            "source_path": "report.pdf",
+            "syllabus": "9709",
+            "year": "2024",
+            "session": "OctoberNovember",
+            "raw_text": """
+Paper 9709/33
+Comments on specific questions
+
+Questions 1 and 2
+Candidates answered these questions together in the report.
+""",
+        }
+    )
+
+    assert examiner["components"][0]["questions"] == []
+    assert "no_question_comments_detected" in examiner["warnings"]
+
+
+def test_low_or_no_evidence_phrases_are_preserved_and_flagged() -> None:
+    examiner = parse_examiner_report_text(
+        {
+            "source_path": "report.pdf",
+            "syllabus": "9709",
+            "year": "2025",
+            "session": "MayJune",
+            "raw_text": """
+Paper 9709/31
+Comments on specific questions
+
+Question 1
+There were too few candidates for a meaningful report.
+
+Question 2
+Only a small number of candidates attempted this question.
+
+Question 3
+Many candidates answered correctly and showed clear method.
+""",
+        }
+    )
+
+    questions = examiner["components"][0]["questions"]
+    assert questions[0]["evidence_level"] == "none"
+    assert questions[0]["comment_text"] == "There were too few candidates for a meaningful report."
+    assert "low_or_no_evidence_text" in questions[0]["warnings"]
+    assert questions[1]["evidence_level"] == "low"
+    assert questions[2]["evidence_level"] == "normal"
+
+
 def test_linking_topic_difficulty_context_validation_reports_and_sidecar(tmp_path: Path) -> None:
     question_bank = _write_json(
         tmp_path / "question_bank.json",
@@ -229,6 +309,189 @@ def test_linking_topic_difficulty_context_validation_reports_and_sidecar(tmp_pat
     assert len(reports["outputs"]) == 6
 
 
+def _topic_records_for_comments(tmp_path: Path, component: str, comments: list[str]) -> list[dict]:
+    questions = [
+        {
+            "question_id": f"q{index}",
+            "question_number": str(index),
+            "notes": {
+                "source_pdf": f"input/question_papers/9709 Mathematics June 2025 Question Paper  {component}.pdf",
+                "source_paper_code": component,
+            },
+        }
+        for index in range(1, len(comments) + 1)
+    ]
+    question_bank = _write_json(tmp_path / "question_bank.json", {"questions": questions})
+    parsed_root = tmp_path / "advisory" / "parsed"
+    _write_json(
+        parsed_root / "examiner_reports" / "report.json",
+        {
+            "schema": "exam_bank.advisory_evidence.examiner_report_parsed.v1",
+            "source_path": "input/examiner_reports/9709 Mathematics June 2025 Examiner Report.pdf",
+            "syllabus": "9709",
+            "year": "2025",
+            "session": "MayJune",
+            "session_key": "9709_2025_MayJune",
+            "components": [
+                {
+                    "component": component,
+                    "questions": [
+                        {"question_number": index, "comment_text": comment, "evidence_level": "normal", "warnings": []}
+                        for index, comment in enumerate(comments, start=1)
+                    ],
+                }
+            ],
+        },
+    )
+    build_all_links(question_bank_path=question_bank, parsed_root=parsed_root, output_root=tmp_path / "advisory")
+    topic = build_topic_evidence(
+        parsed_dir=parsed_root / "examiner_reports",
+        links_path=tmp_path / "advisory/linking/examiner_report_question_links.json",
+        output_path=tmp_path / "advisory/predictions/advisory_topic_evidence.v1.json",
+    )
+    return topic["records"]
+
+
+def test_topic_rules_ignore_broad_vague_terms(tmp_path: Path) -> None:
+    p1_records = _topic_records_for_comments(tmp_path / "p1", "12", ["The gradient was often misread."])
+    p3_records = _topic_records_for_comments(tmp_path / "p3", "33", ["Candidates found the coefficient of x.", "The parameter was unclear."])
+
+    assert p1_records == []
+    assert p3_records == []
+
+
+def test_topic_rules_keep_strong_phrases(tmp_path: Path) -> None:
+    records = _topic_records_for_comments(
+        tmp_path,
+        "33",
+        [
+            "Complex numbers in polar form were well answered.",
+            "Integration by parts caused errors.",
+            "The volume of revolution was found correctly.",
+            "The binomial expansion coefficient of x was often missed.",
+            "Parametric equations were handled well.",
+        ],
+    )
+    by_question = {record["question_id"]: record["topic_evidence"]["predicted_topic_ids"] for record in records}
+    assert by_question["q1"] == ["complex_numbers"]
+    assert by_question["q2"] == ["integration"]
+    assert by_question["q3"] == ["integration"]
+    assert by_question["q4"] == ["binomial_expansion"]
+    assert by_question["q5"] == ["parametric_equations"]
+
+    p1_records = _topic_records_for_comments(tmp_path / "p1", "12", ["The gradient of the tangent was calculated correctly."])
+    assert p1_records[0]["topic_evidence"]["predicted_topic_ids"] == ["coordinate_geometry"]
+
+
+def test_difficulty_generic_candidate_phrases_are_unknown(tmp_path: Path) -> None:
+    question_bank = _write_json(
+        tmp_path / "question_bank.json",
+        {
+            "questions": [
+                {
+                    "question_id": "q1",
+                    "question_number": "1",
+                    "notes": {
+                        "source_pdf": "input/question_papers/9709 Mathematics June 2025 Question Paper  31.pdf",
+                        "source_paper_code": "31",
+                    },
+                },
+                {
+                    "question_id": "q2",
+                    "question_number": "2",
+                    "notes": {
+                        "source_pdf": "input/question_papers/9709 Mathematics June 2025 Question Paper  31.pdf",
+                        "source_paper_code": "31",
+                    },
+                },
+            ]
+        },
+    )
+    parsed_root = tmp_path / "advisory" / "parsed"
+    _write_json(
+        parsed_root / "examiner_reports" / "report.json",
+        {
+            "schema": "exam_bank.advisory_evidence.examiner_report_parsed.v1",
+            "source_path": "input/examiner_reports/9709 Mathematics June 2025 Examiner Report.pdf",
+            "syllabus": "9709",
+            "year": "2025",
+            "session": "MayJune",
+            "session_key": "9709_2025_MayJune",
+            "components": [
+                {
+                    "component": "31",
+                    "questions": [
+                        {"question_number": 1, "comment_text": "Some candidates attempted this question.", "evidence_level": "normal", "warnings": []},
+                        {"question_number": 2, "comment_text": "Many candidates used this approach.", "evidence_level": "normal", "warnings": []},
+                    ],
+                }
+            ],
+        },
+    )
+    build_all_links(question_bank_path=question_bank, parsed_root=parsed_root, output_root=tmp_path / "advisory")
+    difficulty = build_examiner_difficulty(
+        parsed_dir=parsed_root / "examiner_reports",
+        links_path=tmp_path / "advisory/linking/examiner_report_question_links.json",
+        output_path=tmp_path / "advisory/predictions/advisory_examiner_report_difficulty.v1.json",
+    )
+
+    assert [record["examiner_report_difficulty"]["item_signal"] for record in difficulty["records"]] == ["unknown", "unknown"]
+
+
+def test_difficulty_clear_performance_phrases_still_signal(tmp_path: Path) -> None:
+    question_bank = _write_json(
+        tmp_path / "question_bank.json",
+        {
+            "questions": [
+                {
+                    "question_id": f"q{index}",
+                    "question_number": str(index),
+                    "notes": {
+                        "source_pdf": "input/question_papers/9709 Mathematics June 2025 Question Paper  31.pdf",
+                        "source_paper_code": "31",
+                    },
+                }
+                for index in range(1, 5)
+            ]
+        },
+    )
+    parsed_root = tmp_path / "advisory" / "parsed"
+    comments = [
+        "Many candidates answered correctly.",
+        "This question proved difficult.",
+        "It was well answered but few fully correct solutions were seen.",
+        "Some candidates made errors with the method.",
+    ]
+    _write_json(
+        parsed_root / "examiner_reports" / "report.json",
+        {
+            "schema": "exam_bank.advisory_evidence.examiner_report_parsed.v1",
+            "source_path": "input/examiner_reports/9709 Mathematics June 2025 Examiner Report.pdf",
+            "syllabus": "9709",
+            "year": "2025",
+            "session": "MayJune",
+            "session_key": "9709_2025_MayJune",
+            "components": [
+                {
+                    "component": "31",
+                    "questions": [
+                        {"question_number": index, "comment_text": comment, "evidence_level": "normal", "warnings": []}
+                        for index, comment in enumerate(comments, start=1)
+                    ],
+                }
+            ],
+        },
+    )
+    build_all_links(question_bank_path=question_bank, parsed_root=parsed_root, output_root=tmp_path / "advisory")
+    difficulty = build_examiner_difficulty(
+        parsed_dir=parsed_root / "examiner_reports",
+        links_path=tmp_path / "advisory/linking/examiner_report_question_links.json",
+        output_path=tmp_path / "advisory/predictions/advisory_examiner_report_difficulty.v1.json",
+    )
+
+    assert [record["examiner_report_difficulty"]["item_signal"] for record in difficulty["records"]] == ["easy", "hard", "mixed", "moderate"]
+
+
 def test_validation_fails_invalid_topic_and_threshold_only_item_difficulty(tmp_path: Path) -> None:
     question_bank = _write_json(tmp_path / "question_bank.json", {"questions": [{"question_id": "q1"}]})
     root = tmp_path / "advisory"
@@ -263,3 +526,57 @@ def test_validation_fails_invalid_topic_and_threshold_only_item_difficulty(tmp_p
     assert any("invalid_topic_id" in error for error in report["errors"])
     assert any("threshold_only_item_difficulty" in error for error in report["errors"])
 
+
+def test_validation_warns_duplicate_linked_candidate_ids(tmp_path: Path) -> None:
+    question_bank = _write_json(tmp_path / "question_bank.json", {"questions": [{"question_id": "q1"}]})
+    root = tmp_path / "advisory"
+    _write_json(
+        root / "linking" / "examiner_report_question_links.json",
+        {
+            "schema": "exam_bank.advisory_evidence.examiner_report_links.v1",
+            "links": [
+                {"normalized_key": "9709_2023_March_31_q01", "candidate_question_ids": ["q1"], "match_status": "linked"},
+                {"normalized_key": "9709_2023_March_31_q01", "candidate_question_ids": ["q1"], "match_status": "linked"},
+            ],
+        },
+    )
+
+    report = validate_advisory_evidence(advisory_root=root, question_bank_path=question_bank)
+
+    assert any("duplicate_linked_candidate_id" in warning for warning in report["warnings"])
+
+
+def test_validation_warns_duplicate_topic_evidence_question_ids(tmp_path: Path) -> None:
+    question_bank = _write_json(tmp_path / "question_bank.json", {"questions": [{"question_id": "q1"}]})
+    root = tmp_path / "advisory"
+    _write_json(
+        root / "predictions" / "advisory_topic_evidence.v1.json",
+        {
+            "schema": "exam_bank.advisory_evidence.topic_evidence.v1",
+            "records": [
+                {"question_id": "q1", "normalized_key": "9709_2023_March_31_q01", "topic_evidence": {"predicted_topic_ids": ["complex_numbers"], "confidence": "high"}},
+                {"question_id": "q1", "normalized_key": "9709_2023_March_31_q01", "topic_evidence": {"predicted_topic_ids": ["complex_numbers"], "confidence": "high"}},
+            ],
+        },
+    )
+
+    report = validate_advisory_evidence(advisory_root=root, question_bank_path=question_bank)
+
+    assert any("duplicate_topic_evidence_question_id" in warning for warning in report["warnings"])
+    assert any("duplicate_topic_evidence_source_identity" in warning for warning in report["warnings"])
+
+
+def test_reports_include_review_queues_when_empty(tmp_path: Path) -> None:
+    output_dir = tmp_path / "advisory" / "reports"
+    build_review_reports(advisory_root=tmp_path / "advisory", output_dir=output_dir)
+
+    threshold_report = (output_dir / "grade_threshold_extraction_status.md").read_text(encoding="utf-8")
+    topic_report = (output_dir / "advisory_topic_prediction_review.md").read_text(encoding="utf-8")
+    unlinked_report = (output_dir / "unlinked_examiner_report_entries.md").read_text(encoding="utf-8")
+
+    assert "## Grade-Threshold Unlinked Queue" in threshold_report
+    assert "## Duplicate Advisory Evidence Summary" in topic_report
+    assert "## Summary By Reason" in unlinked_report
+    assert "## Summary By Component" in unlinked_report
+    assert "## Summary By Session" in unlinked_report
+    assert "## Low/No-Evidence Section Queue" in unlinked_report

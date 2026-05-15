@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -100,6 +101,7 @@ def _validate_links(path: Path, expected_schema: str, question_ids: set[str], er
         for question_id in link.get("candidate_question_ids", []):
             if question_id not in question_ids:
                 errors.append(f"orphan_link_candidate:{rel_path(path)}:{index}:{question_id}")
+    _warn_duplicate_linked_candidates(path, payload.get("links", []), warnings)
 
 
 def _validate_topic_evidence(path: Path, question_ids: set[str], allowed_topics: set[str], errors: list[str], warnings: list[str]) -> None:
@@ -117,6 +119,7 @@ def _validate_topic_evidence(path: Path, question_ids: set[str], allowed_topics:
         for topic_id in evidence.get("predicted_topic_ids", []):
             if topic_id not in allowed_topics:
                 errors.append(f"invalid_topic_id:{index}:{topic_id}")
+    _warn_duplicate_records("topic_evidence", payload.get("records", []), warnings)
 
 
 def _validate_examiner_difficulty(path: Path, question_ids: set[str], errors: list[str], warnings: list[str]) -> None:
@@ -137,6 +140,7 @@ def _validate_examiner_difficulty(path: Path, question_ids: set[str], errors: li
         sources = set(evidence.get("evidence_sources", []))
         if evidence.get("item_signal") in {"easy", "moderate", "hard", "mixed"} and sources == {"grade_threshold_context"}:
             errors.append(f"threshold_only_item_difficulty:{index}:{question_id}")
+    _warn_duplicate_records("examiner_difficulty", payload.get("records", []), warnings)
 
 
 def _validate_threshold_context(path: Path, errors: list[str], warnings: list[str]) -> None:
@@ -167,3 +171,35 @@ def _validate_final_sidecar(path: Path, question_ids: set[str], allowed_topics: 
             if topic_id not in allowed_topics:
                 errors.append(f"invalid_final_topic_id:{index}:{topic_id}")
 
+
+def _warn_duplicate_linked_candidates(path: Path, links: list[dict[str, Any]], warnings: list[str]) -> None:
+    occurrences: dict[str, list[str]] = defaultdict(list)
+    for link in links:
+        if link.get("match_status") != "linked":
+            continue
+        identity = str(link.get("normalized_key") or link.get("source_path") or "unknown_source")
+        for question_id in link.get("candidate_question_ids", []):
+            occurrences[str(question_id)].append(identity)
+    for question_id, identities in sorted(occurrences.items()):
+        if len(identities) > 1:
+            warnings.append(
+                f"duplicate_linked_candidate_id:{rel_path(path)}:{question_id}:count={len(identities)}:sources={','.join(sorted(set(identities)))}"
+            )
+
+
+def _warn_duplicate_records(kind: str, records: list[dict[str, Any]], warnings: list[str]) -> None:
+    by_question = Counter(str(record.get("question_id") or "") for record in records if record.get("question_id"))
+    by_identity = Counter(
+        (
+            str(record.get("question_id") or ""),
+            str(record.get("normalized_key") or record.get("source_path") or ""),
+        )
+        for record in records
+        if record.get("question_id")
+    )
+    for question_id, count in sorted(by_question.items()):
+        if count > 1:
+            warnings.append(f"duplicate_{kind}_question_id:{question_id}:count={count}")
+    for (question_id, identity), count in sorted(by_identity.items()):
+        if identity and count > 1:
+            warnings.append(f"duplicate_{kind}_source_identity:{question_id}:{identity}:count={count}")

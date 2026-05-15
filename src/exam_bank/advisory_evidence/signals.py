@@ -30,12 +30,12 @@ TOPIC_RULES: list[tuple[str, str, str]] = [
     ("numerical_methods", r"numerical methods?|iteration|newton[- ]raphson"),
     ("implicit_differentiation", r"implicit differentiation|differentiat(?:e|ing).{0,40}implicitly"),
     ("differential_equations", r"differential equations?|separat(?:e|ing) variables"),
-    ("binomial_expansion", r"binomial expansion|ascending powers|coefficient of"),
+    ("binomial_expansion", r"binomial expansion|ascending powers|(?:binomial|expansion|power|term).{0,80}coefficient of|coefficient of.{0,80}(?:binomial|expansion|power|term)"),
     ("trigonometry", r"trig(?:onometric)? equations?|sine|cosine|\bsin\b|\bcos\b|\btan\b"),
     ("partial_fractions", r"partial fractions?"),
-    ("parametric_equations", r"parametric equations?|parameter"),
+    ("parametric_equations", r"parametric equations?|parametric curve|x\s+and\s+y\s+in terms of\s+t|in terms of\s+t"),
     ("quadratics", r"quadratic|discriminant|completing the square"),
-    ("coordinate_geometry", r"circle|tangent|normal|gradient"),
+    ("coordinate_geometry", r"circle|tangent|normal|gradient.{0,40}(?:coordinate|line|curve|tangent|normal)|(?:coordinate|line|curve|tangent|normal).{0,40}gradient"),
     ("series_and_sequences", r"arithmetic progression|geometric progression|\bAP\b|\bGP\b"),
     ("differentiation", r"differentiat(?:e|ing|ion)|dy\s*/\s*dx"),
     ("probability", r"\bprobability\b"),
@@ -60,6 +60,7 @@ HARD_PATTERNS = [
     r"only (?:the )?strongest candidates",
     r"commonly gained no response",
     r"generally unsuccessful",
+    r"many candidates struggled",
 ]
 EASY_PATTERNS = [
     r"well answered",
@@ -68,6 +69,14 @@ EASY_PATTERNS = [
     r"most candidates (?:were )?able",
     r"many candidates scored full marks",
     r"generally able",
+    r"many candidates answered correctly",
+]
+MODERATE_PATTERNS = [
+    r"some candidates made errors? with",
+    r"some candidates made mistakes? with",
+    r"some candidates struggled",
+    r"successful candidates",
+    r"candidates who (?:were )?(?:successful|able)",
 ]
 
 
@@ -262,8 +271,9 @@ def _difficulty_signal(text: str, evidence_level: str) -> tuple[str, list[str], 
         return "hard", hard, ["examiner report describes difficulty or low success"], "medium"
     if easy:
         return "easy", easy, ["examiner report describes broad candidate success"], "medium"
-    if re.search(r"some candidates|many candidates|successful candidates|candidates who", text, re.IGNORECASE):
-        return "moderate", [], ["examiner report includes usable but non-extreme performance evidence"], "low"
+    moderate = _matched_patterns(text, MODERATE_PATTERNS)
+    if moderate:
+        return "moderate", moderate, ["examiner report includes usable but non-extreme performance evidence"], "low"
     return "unknown", [], ["no explicit examiner-report difficulty phrase matched"], "low"
 
 
@@ -325,4 +335,3 @@ def _family_for_component(component: str) -> str:
     if not component:
         return "unknown"
     return f"P{component[0]}"
-

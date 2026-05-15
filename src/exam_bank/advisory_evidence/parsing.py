@@ -16,7 +16,19 @@ from exam_bank.advisory_evidence.constants import (
 from exam_bank.atomic_json import write_atomic_json
 
 
-LOW_EVIDENCE_RE = re.compile(r"too few candidates|not enough candidates|meaningful report|small number of candidates", re.IGNORECASE)
+NO_EVIDENCE_RE = re.compile(
+    r"\b(?:too few|not enough|insufficient)\s+candidates\b|"
+    r"\b(?:too few|not enough|insufficient)\s+responses?\s+(?:to|for).{0,40}\bmeaningful report\b|"
+    r"\btoo few candidates for a meaningful report\b|"
+    r"\bnot enough candidates for a meaningful report\b",
+    re.IGNORECASE,
+)
+LOW_EVIDENCE_RE = re.compile(
+    r"\bsmall number of candidates\b|"
+    r"\bonly a small number of candidates\b|"
+    r"\blimited candidate evidence\b",
+    re.IGNORECASE,
+)
 
 
 def parse_all_examiner_reports(
@@ -165,7 +177,7 @@ def _parse_component_section(section: dict[str, str]) -> dict[str, Any]:
 
 
 def _parse_question_comments(text: str) -> list[dict[str, Any]]:
-    marker = re.compile(r"(?im)^\s*Question\s+(\d{1,2})\s*[:.\-–]?\s*$")
+    marker = re.compile(r"(?im)^\s*Questions?\s+(\d{1,2})\s*[:.\-–]?\s*$")
     matches = list(marker.finditer(text))
     questions: list[dict[str, Any]] = []
     for index, match in enumerate(matches):
@@ -231,8 +243,10 @@ def _part_labels(text: str) -> list[str]:
 
 
 def _evidence_level(text: str) -> str:
+    if NO_EVIDENCE_RE.search(text):
+        return "none"
     if LOW_EVIDENCE_RE.search(text):
-        return "none" if re.search(r"too few candidates|not enough candidates", text, re.IGNORECASE) else "low"
+        return "low"
     return "normal"
 
 
