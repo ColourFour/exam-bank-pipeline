@@ -59,6 +59,7 @@ _MATH_STRUCTURE_RE = re.compile(
     re.IGNORECASE,
 )
 _LARGE_SAFE_OCR_MARGIN = 20
+_SMALL_SAFE_OCR_MARGIN = 0
 _PAGE_FURNITURE_RE = re.compile(
     r"\b(?:UCLES|Cambridge|BLANK PAGE|Additional Materials|READ THESE INSTRUCTIONS|INSTRUCTIONS|Question Paper|Mark Scheme)\b",
     re.IGNORECASE,
@@ -235,6 +236,24 @@ def select_text_candidate(
         expected_subparts=expected_subparts,
         expected_mark_count=expected_mark_count,
     )
+    native_visual_flags = set(
+        visual_reason_flags(
+            question_text=native,
+            extraction_quality_flags=[],
+            review_flags=[],
+            question_structure_detected={},
+            text_source_profile="native_pdf",
+        )
+    )
+    ocr_visual_flags = set(
+        visual_reason_flags(
+            question_text=ocr,
+            extraction_quality_flags=[],
+            review_flags=["ocr_question_text"],
+            question_structure_detected={},
+            text_source_profile="ocr",
+        )
+    )
 
     reasons = [
         f"native_score={native_score.score}",
@@ -253,6 +272,36 @@ def select_text_candidate(
     if expected_question_number and _contains_question_number(native, expected_question_number) and not _contains_question_number(ocr, expected_question_number):
         if scope_status == "fail" and _ocr_missing_question_number_is_tolerable(ocr, expected_mark_count, expected_subparts):
             reasons.append("ocr_missing_question_number_tolerated")
+        elif _can_recover_missing_ocr_question_number(
+            ocr,
+            expected_question_number=expected_question_number,
+            expected_mark_count=expected_mark_count,
+            expected_subparts=expected_subparts or [],
+            scope_status=scope_status,
+            mapping_status=mapping_status_normalized,
+            validation_status=validation_status_normalized,
+            native_visual_flags=native_visual_flags,
+            ocr_visual_flags=ocr_visual_flags,
+        ):
+            ocr = f"{expected_question_number} {ocr}".strip()
+            ocr_score = score_text_candidate(
+                ocr,
+                source="ocr",
+                expected_question_number=expected_question_number,
+                expected_subparts=expected_subparts,
+                expected_mark_count=expected_mark_count,
+            )
+            ocr_visual_flags = set(
+                visual_reason_flags(
+                    question_text=ocr,
+                    extraction_quality_flags=[],
+                    review_flags=["ocr_question_text"],
+                    question_structure_detected={},
+                    text_source_profile="ocr",
+                )
+            )
+            reasons[1] = f"ocr_score={ocr_score.score}"
+            reasons.append("ocr_question_number_recovered_from_detector_anchor")
         else:
             rejected.append("ocr_missing_question_number")
     if expected_subparts:
@@ -278,30 +327,13 @@ def select_text_candidate(
     if _ocr_lost_unit_structure(native, ocr):
         rejected.append("ocr_lost_unit_structure")
 
-    ocr_visual_flags = set(
-        visual_reason_flags(
-            question_text=ocr,
-            extraction_quality_flags=[],
-            review_flags=["ocr_question_text"],
-            question_structure_detected={},
-            text_source_profile="ocr",
-        )
-    )
     if "contains_unit_corruption" in ocr_visual_flags:
         rejected.append("ocr_introduced_unit_corruption")
     if "contains_symbol_loss" in ocr_visual_flags:
         rejected.append("ocr_introduced_symbol_loss")
     if "contains_native_compacted_math_corruption" in ocr_visual_flags:
         rejected.append("ocr_introduced_compacted_math_corruption")
-    if "contains_flattened_math_structure" in ocr_visual_flags and "contains_flattened_math_structure" not in set(
-        visual_reason_flags(
-            question_text=native,
-            extraction_quality_flags=[],
-            review_flags=[],
-            question_structure_detected={},
-            text_source_profile="native_pdf",
-        )
-    ):
+    if "contains_flattened_math_structure" in ocr_visual_flags and "contains_flattened_math_structure" not in native_visual_flags:
         rejected.append("ocr_introduced_flattened_math_structure")
 
     margin = ocr_score.score - native_score.score
@@ -312,6 +344,24 @@ def select_text_candidate(
         reasons.append("ocr_rejected")
     elif margin >= _LARGE_SAFE_OCR_MARGIN:
         reasons.append("ocr_score_clear_margin")
+        return TextCandidateDecision(
+            selected_text=ocr,
+            text_candidate_source="ocr",
+            native_text_score=native_score.score,
+            ocr_text_score=ocr_score.score,
+            selected_text_score=ocr_score.score,
+            text_candidate_decision="ocr_selected",
+            text_candidate_decision_reasons=sorted(set(reasons + ocr_score.reasons)),
+            ocr_selected=True,
+            ocr_rejected_reasons=[],
+        )
+    elif margin >= _SMALL_SAFE_OCR_MARGIN and _native_text_has_known_corruption(native, native_score, native_visual_flags) and _ocr_text_is_structurally_clean(
+        ocr, ocr_score, ocr_visual_flags
+    ) and _small_margin_ocr_repair_is_safe(
+        native_visual_flags,
+        ocr_visual_flags,
+    ):
+        reasons.append("ocr_selected_to_repair_native_text")
         return TextCandidateDecision(
             selected_text=ocr,
             text_candidate_source="ocr",
@@ -358,6 +408,140 @@ def _ocr_missing_question_number_is_tolerable(
         if required and not required.issubset(ocr_subparts):
             return False
     return True
+
+
+def _can_recover_missing_ocr_question_number(
+    ocr_text: str,
+    *,
+    expected_question_number: str,
+    expected_mark_count: int | None,
+    expected_subparts: list[str],
+    scope_status: str,
+    mapping_status: str,
+    validation_status: str,
+    native_visual_flags: set[str],
+    ocr_visual_flags: set[str],
+) -> bool:
+    if not expected_question_number or scope_status not in {"clean", "review"}:
+        return False
+    if mapping_status != "pass" or validation_status != "pass":
+        return False
+    if _PAGE_FURNITURE_RE.search(ocr_text) or _BARCODE_OR_HEADER_RE.search(ocr_text):
+        return False
+    if _has_next_question_contamination(ocr_text, expected_question_number):
+        return False
+    if not _ocr_missing_question_number_is_tolerable(ocr_text, expected_mark_count, expected_subparts):
+        return False
+    if not _ocr_subpart_order_is_clean(ocr_text, expected_subparts):
+        return False
+    if not _small_margin_ocr_repair_is_safe(native_visual_flags, ocr_visual_flags):
+        return False
+    return True
+
+
+def _ocr_subpart_order_is_clean(ocr_text: str, expected_subparts: list[str]) -> bool:
+    if not expected_subparts:
+        return True
+    normalized = " ".join(str(ocr_text or "").replace("\u00a0", " ").split())
+    labels = [label.lower() for label in _SUBPART_RE.findall(normalized)]
+    expected = [label.lower() for label in expected_subparts]
+    if not labels:
+        return False
+    first_content = re.match(r"^(?:\s*\(([a-h]|i{1,3}|iv|v|vi{0,3}|ix|x)\)\s*)+", normalized, re.IGNORECASE)
+    if first_content and labels[0] != expected[0]:
+        return False
+    expected_positions = [labels.index(label) for label in expected if label in labels]
+    return expected_positions == sorted(expected_positions)
+
+
+def _native_text_has_known_corruption(
+    native_text: str,
+    native_score: TextCandidateScore,
+    native_visual_flags: set[str],
+) -> bool:
+    if native_visual_flags & {
+        "contains_pdf_control_garbage",
+        "contains_native_compacted_math_corruption",
+        "contains_math_text_corruption",
+        "contains_symbol_loss",
+        "contains_unit_corruption",
+    }:
+        return True
+    if set(native_score.reasons) & {"pdf_control_or_replacement_garbage", "merged_word_artifacts"}:
+        return True
+    return _has_long_joined_prose_artifact(native_text)
+
+
+def _ocr_text_is_structurally_clean(
+    ocr_text: str,
+    ocr_score: TextCandidateScore,
+    ocr_visual_flags: set[str],
+) -> bool:
+    if ocr_score.has_hard_rejection:
+        return False
+    if not ocr_text or ocr_score.score < 40:
+        return False
+    if ocr_visual_flags & {
+        "contains_pdf_control_garbage",
+        "contains_unit_corruption",
+        "contains_symbol_loss",
+        "contains_native_compacted_math_corruption",
+        "contains_math_text_corruption",
+        "text_order_unreliable",
+        "contains_page_furniture",
+    }:
+        return False
+    return True
+
+
+def _small_margin_ocr_repair_is_safe(
+    native_visual_flags: set[str],
+    ocr_visual_flags: set[str],
+) -> bool:
+    native_risk_flags = {
+        "contains_complex_number_notation",
+        "contains_equation_layout",
+        "contains_flattened_math_structure",
+        "contains_fraction_or_integral_layout",
+        "contains_graph_or_diagram_prompt",
+        "contains_inequality_or_region_prompt",
+        "contains_table_or_data_prompt",
+        "contains_vector_notation",
+    }
+    ocr_risk_flags = native_risk_flags | {
+        "contains_log_exponential_expression",
+        "contains_trig_expression",
+    }
+    return not bool(native_visual_flags & native_risk_flags) and not bool(ocr_visual_flags & ocr_risk_flags)
+
+
+def _has_long_joined_prose_artifact(text: str) -> bool:
+    normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
+    joined_hints = {
+        "arrangement",
+        "calculate",
+        "coefficient",
+        "diagram",
+        "different",
+        "division",
+        "equation",
+        "expression",
+        "friction",
+        "members",
+        "number",
+        "probability",
+        "random",
+        "resistance",
+        "transform",
+    }
+    for token in re.findall(r"[A-Za-z]{14,}", normalized):
+        lowered = token.lower()
+        if sum(1 for hint in joined_hints if hint in lowered) >= 1 and re.search(
+            r"(?:the|that|and|of|in|to|for|with|which|find|given|are|is|has)",
+            lowered,
+        ):
+            return True
+    return False
 
 
 def _ocr_lost_math_structure(native_text: str, ocr_text: str) -> bool:
@@ -410,7 +594,7 @@ def _function_structure_count(text: str) -> int:
     normalized = " ".join(str(text or "").replace("\u00a0", " ").split())
     return len(
         re.findall(
-            r"\b(?:[fgh]\s*\(\s*x\s*\)|[fgh]\s*:\s*x|(?:sin|cos|tan|sec|cosec|cot|ln|log)\s*(?:\^\{?-?1\}?|\(|[A-Za-z0-9θ]))",
+            r"\b(?:[fgh]\s*\(\s*x\s*\)|[fgh]\s*:\s*x|(?:sin|cos|tan|sec|cosec|cot|ln|log)\s*(?:\^\{?-?1\}?|\(|θ|[xyi1](?![A-Za-z])|[0-9]+(?:[A-Za-zθ])?))",
             normalized,
             re.IGNORECASE,
         )

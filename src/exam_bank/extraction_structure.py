@@ -273,11 +273,15 @@ def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)([.?!])", r"\1(\2)\4 [\3]", value)
     value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)", r"\1(\2) [\3]", value)
     value = re.sub(r"(\[\d{1,2}\])\s*(?:[._\-–—]\s*){12,}.*$", r"\1", value)
+    value = _repair_caie_math_delimiters(value)
+    value = re.sub(r"(?<![A-Za-z])-\s*r\s*G\s*[i1θ]\s*G\s*r\b", "-π ≤ θ ≤ π", value)
+    value = re.sub(r"\br\s*G\s*[i1θ]\s*G\s*r\b", "π ≤ θ ≤ π", value)
     value = re.sub(r"\b([0-9])\s*G\s*([xXiIθ])", r"\1 ≤ \2", value)
     value = re.sub(r"\b([xXiIθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
     value = re.sub(r"\b([0-9])G([A-Za-zθ])G([0-9])\b", r"\1 ≤ \2 ≤ \3", value)
     value = re.sub(r"\br20\b", "r > 0", value)
     value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
+    value = re.sub(r"°\s*(0|90|180|360)\b", r"\1°", value)
     value = re.sub(r"\b(0|90|180|360)(°?)\s*<\s*1\s*<", r"\1\2 < θ <", value)
     value = re.sub(r"\b(0|90|180|360)(°?)\s*≤\s*1\s*≤", r"\1\2 ≤ θ ≤", value)
     value = re.sub(r"\b0\s*<\s*1\s*<", "0 < θ <", value)
@@ -293,6 +297,61 @@ def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = re.sub(r"\b(tan|sin|cos|sec|cosec|cot)\^\{-\}\s*θ", r"\1^{-}1", value)
     value = _repair_trig_theta_placeholders(value)
     return value
+
+
+def _repair_caie_math_delimiters(text: str) -> str:
+    value = text
+    value = re.sub(r"@([^@\n]{1,80})A_\{(\d{1,2})\}", _replace_at_power_delimiter, value)
+    value = re.sub(r"@([^@\n]{1,80})A", _replace_at_delimiter, value)
+    value = re.sub(r"\bb([^()\n]{1,80})l(\^\{\d{1,2}\})", _replace_bl_power_delimiter, value)
+    value = re.sub(r"`([^`\n]{1,80})j(\^\{\d{1,2}\})", _replace_backtick_power_delimiter, value)
+    value = re.sub(r"`([^`\n]{1,80})j", _replace_backtick_delimiter, value)
+    return value
+
+
+def _replace_at_power_delimiter(match: re.Match[str]) -> str:
+    inner = match.group(1).strip()
+    if not _looks_like_compacted_math_inner(inner):
+        return match.group(0)
+    return f"({inner})^{{{match.group(2)}}}"
+
+
+def _replace_at_delimiter(match: re.Match[str]) -> str:
+    inner = match.group(1).strip()
+    if not _looks_like_compacted_math_inner(inner):
+        return match.group(0)
+    return f"({inner})"
+
+
+def _replace_bl_power_delimiter(match: re.Match[str]) -> str:
+    inner = match.group(1).strip()
+    if not _looks_like_compacted_math_inner(inner):
+        return match.group(0)
+    return f"({inner}){match.group(2)}"
+
+
+def _replace_backtick_power_delimiter(match: re.Match[str]) -> str:
+    inner = match.group(1).strip()
+    if not _looks_like_compacted_math_inner(inner):
+        return match.group(0)
+    return f"({inner}){match.group(2)}"
+
+
+def _replace_backtick_delimiter(match: re.Match[str]) -> str:
+    inner = match.group(1).strip()
+    if not _looks_like_compacted_math_inner(inner):
+        return match.group(0)
+    return f"({inner})"
+
+
+def _looks_like_compacted_math_inner(value: str) -> bool:
+    inner = value.strip()
+    if not inner or len(inner.split()) > 10:
+        return False
+    return bool(
+        re.search(r"[0-9][A-Za-z]|[A-Za-z][0-9]|[=+\-*/^_{}]|(?:sin|cos|tan|ln|log)\b", inner, re.IGNORECASE)
+        and re.search(r"[0-9A-Za-z]", inner)
+    )
 
 
 def _repair_trig_theta_placeholders(text: str) -> str:
@@ -377,6 +436,20 @@ def _repair_common_joined_words(text: str) -> str:
         (r"\bthethe\b", "the"),
         (r"\btheformgraph", "the form graph"),
         (r"\btwostraight", "two straight"),
+        (r"\bAfairspinner", "A fair spinner"),
+        (r"\bfairspinner\b", "fair spinner"),
+        (r"\bsidesnumbered\b", "sides numbered"),
+        (r"\bisspun\b", "is spun"),
+        (r"\bandisspun\b", "and is spun"),
+        (r"\bscoreon\b", "score on"),
+        (r"\bsideonwhich\b", "side on which"),
+        (r"\bcomestorest\b", "comes to rest"),
+        (r"\bAtacompany\b", "At a company"),
+        (r"\bThereisaresistancetothemotionoftheblock\b", "There is a resistance to the motion of the block"),
+        (r"\bwhichthecranedoes\b", "which the crane does"),
+        (r"ofworkto\b", "of work to"),
+        (r"\bGiventhattheaveragepowerexertedbythecraneis\b", "Given that the average power exerted by the crane is"),
+        (r"\bthetotaltimeforwhichthe\b", "the total time for which the"),
         (r"\bForanothercompetition\b", "For another competition"),
         (r"\bForanother\b", "For another"),
         (r"\bateamof\b", "a team of"),
@@ -395,9 +468,12 @@ def _repair_common_joined_words(text: str) -> str:
     value = re.sub(r"(?<=[a-z])(?=Solve\b)", " ", value)
     value = re.sub(r"\bquadratic equationin\b", "quadratic equation in ", value)
     value = _repair_joined_prose_tokens(value)
+    value = re.sub(r"\bnumbered\s*(\d+)to(\d+)andisspun\b", r"numbered \1 to \2 and is spun", value)
+    value = re.sub(r",(?=which\b)", ", ", value)
+    value = re.sub(r"(?<=J)of work", " of work", value)
     value = re.sub(r"\b(for which|magnitude)(?=\d)", r"\1 ", value)
     value = re.sub(
-        r"\b(mass|radius|length|height|speed|period|magnitude|force|value|rate|distance|of|at|to|for)(?=\d)",
+        r"\b(mass|radius|length|height|speed|period|magnitude|force|value|rate|distance|of|at|to|for|is|does)(?=\d)",
         r"\1 ",
         value,
     )
@@ -438,6 +514,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "at",
         "attempt",
         "attempts",
+        "average",
         "bag",
         "based",
         "be",
@@ -445,6 +522,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "between",
         "bicycle",
         "blue",
+        "block",
         "both",
         "bottom",
         "bounded",
@@ -472,7 +550,9 @@ _JOINED_PROSE_WORDS = frozenset(
         "coordinate",
         "coordinates",
         "coming",
+        "comes",
         "correct",
+        "crane",
         "curve",
         "curved",
         "daily",
@@ -509,6 +589,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "being",
         "chooses",
         "eats",
+        "exerted",
         "expanding",
         "expression",
         "express",
@@ -594,6 +675,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "moving",
         "normal",
         "number",
+        "numbered",
         "numbers",
         "obtain",
         "of",
@@ -606,6 +688,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "other",
         "onto",
         "over",
+        "overcome",
         "particle",
         "particles",
         "part",
@@ -655,6 +738,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "same",
         "scarf",
         "second",
+        "score",
         "section",
         "sector",
         "segment",
@@ -674,6 +758,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "spins",
         "spinner",
         "springs",
+        "spun",
         "square",
         "scale",
         "straight",
@@ -705,6 +790,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "time",
         "times",
         "to",
+        "total",
         "towards",
         "track",
         "transformation",
@@ -747,6 +833,7 @@ _JOINED_PROSE_WORDS = frozenset(
         "differentiate",
         "directly",
         "do",
+        "does",
         "drawing",
         "fail",
         "fully",
@@ -912,13 +999,13 @@ def _extraction_quality_flags(
         flags.append("flattened_display_math")
     if diagram_lines and re.search(r"\n(?:[A-Z](?:\s+[A-Z]){1,}|x\s+y|\d+\s+cm)\n", f"\n{body_text_raw}\n"):
         flags.append("diagram_text_mixed_with_body")
-    if _unmatched_parentheses(body_text_raw):
+    if _unmatched_parentheses(body_text_normalized):
         flags.append("broken_fraction_structure")
-    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\s+[A-Za-zθ]\s+\d\b", body_text_raw) or re.search(
-        r"\b(?:ln|log)\s+(?:ln|log)\b", body_text_raw
+    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)\s+[A-Za-zθ]\s+\d\b", body_text_normalized) or re.search(
+        r"\b(?:ln|log)\s+(?:ln|log)\b", body_text_normalized
     ):
         flags.append("broken_superscript_or_power")
-    if _SUSPICIOUS_SYMBOL_RUN_RE.search(body_text_raw):
+    if _SUSPICIOUS_SYMBOL_RUN_RE.search(body_text_normalized):
         flags.append("suspicious_symbol_run")
     if len(math_lines) >= max(2, len(body_text_normalized.splitlines()) // 2):
         flags.append("heavy_math_density")

@@ -355,11 +355,11 @@ def test_candidate_selection_rejects_ocr_when_mapping_or_validation_not_pass_wit
     assert "ocr_validation_status_not_pass" in decision.ocr_rejected_reasons
 
 
-def test_candidate_selection_rejects_missing_question_number_when_native_scope_is_clean() -> None:
-    native = "1 The diagram text is merged and sparse but still starts with the expected question number. [4]"
+def test_candidate_selection_recovers_missing_question_number_when_scope_and_structure_are_clean() -> None:
+    native = "1 RamanandSanjayaremembersofaquizteam. FindtheprobabilitythatRamanandSanjayareinthesamegroup. [4]"
     ocr = (
-        "The diagram shows the graph of y = f(x), which consists of two straight lines. "
-        "State fully the two transformations. [4]"
+        "Raman and Sanjay are members of a quiz team. "
+        "Find the probability that Raman and Sanjay are in the same group. [4]"
     )
 
     decision = select_text_candidate(
@@ -368,11 +368,94 @@ def test_candidate_selection_rejects_missing_question_number_when_native_scope_i
         expected_question_number="1",
         expected_subparts=[],
         scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is True
+    assert decision.text_candidate_source == "ocr"
+    assert decision.selected_text == f"1 {ocr}"
+    assert "ocr_question_number_recovered_from_detector_anchor" in decision.text_candidate_decision_reasons
+    assert "ocr_missing_question_number" not in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_small_margin_question_number_recovery_for_diagram_context() -> None:
+    native = "1 Thediagramshowsthegraphofy=f(x). Statefullythetwotransformations. [4]"
+    ocr = "The diagram shows the graph of y = f(x). State fully the two transformations. [4]"
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="1",
+        expected_subparts=[],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
     )
 
     assert decision.ocr_selected is False
     assert decision.text_candidate_source == "native"
     assert "ocr_missing_question_number" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_rejects_missing_question_number_when_subpart_order_is_dirty() -> None:
+    native = (
+        "6 (a) Find the number of different arrangements. [1] "
+        "(b) Find the number of arrangements with constraints. [3]"
+    )
+    ocr = (
+        "(b) (a) Find the number of different arrangements. [1] "
+        "Find the number of arrangements with constraints. [3]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="6",
+        expected_subparts=["a", "b"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is False
+    assert decision.text_candidate_source == "native"
+    assert "ocr_missing_question_number" in decision.ocr_rejected_reasons
+
+
+def test_candidate_selection_selects_small_margin_ocr_for_joined_prose_corruption() -> None:
+    native = (
+        "5 Raman and Sanjayaremembersof aquizteamwhich has 9member sin total. "
+        "Twophotographsof the quiz team are to be taken. For the first photograph, the 9 members will stand in a line. "
+        "(a) How many diﬀerent arrangements of the 9 members are possible in which Raman will be at the centre of the line? [1] "
+        "(b) How many diﬀerent arrangements of the 9 members are possible in which Raman and Sanjay are not next to each other? [3] "
+        "For the second photograph, the members will stand in two rows, with 5 in the back row and 4 in the front row. "
+        "(c) In how many diﬀerent ways can the 9 members be divided into a group of 5 and a group of 4? [2] "
+        "(d) Forarandomdivisionintoagroupof5andagroupof4,find theprobabilitythatRamanand Sanjay are in the same group as each other. [4]"
+    )
+    ocr = (
+        "5 Raman and Sanjay are members of a quiz team which has 9 members in total. "
+        "Two photographs of the quiz team are to be taken. For the first photograph, the 9 members will stand in a line. "
+        "(a) How many different arrangements of the 9 members are possible in which Raman will be at the centre of the line? [1] "
+        "(b) How many different arrangements of the 9 members are possible in which Raman and Sanjay are not next to each other? [3] "
+        "For the second photograph, the members will stand in two rows, with 5 in the back row and 4 in the front row. "
+        "(c) In how many different ways can the 9 members be divided into a group of 5 and a group of 4? [2] "
+        "(d) For a random division into a group of 5 and a group of 4, find the probability that Raman and Sanjay are in the same group as each other. [4]"
+    )
+
+    decision = select_text_candidate(
+        native_text=native,
+        ocr_text=ocr,
+        expected_question_number="5",
+        expected_subparts=["a", "b", "c", "d"],
+        scope_quality_status="clean",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    assert decision.ocr_selected is True
+    assert 0 <= decision.ocr_text_score - decision.native_text_score < 20
+    assert "ocr_selected_to_repair_native_text" in decision.text_candidate_decision_reasons
 
 
 def test_candidate_selection_rejects_ocr_that_loses_expected_mark_brackets() -> None:

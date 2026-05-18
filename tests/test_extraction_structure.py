@@ -221,6 +221,66 @@ def test_normalizes_common_ocr_math_substitutions_without_marking_clean_math_cor
     assert "likely_needs_visual_review" not in structured.extraction_quality_flags
 
 
+def test_repairs_high_signal_caie_math_delimiters_and_pi_theta_artifacts() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="1",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("1 (a) Expand@1 -21xA_{2}. [1]", 80),
+            _block("(b) Find the first four terms in the expansion of b2x - 3xl^{4}. [2]", 110),
+            _block("(c) Solve the equation for - rGiGr. [3]", 140),
+        ],
+        full_question_label="1",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "Expand(1 -21x)^{2}" in structured.combined_question_text
+    assert "(2x - 3x)^{4}" in structured.combined_question_text
+    assert "-π ≤ θ ≤ π" in structured.combined_question_text
+    assert "@" not in structured.combined_question_text
+    assert "rGiGr" not in structured.combined_question_text
+
+
+def test_repairs_targeted_probability_and_mechanics_joined_prose() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="1",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("1 Afairspinnerhassidesnumbered1to5andisspun. Findthescoreon thesideonwhich it comestorest. [2]", 80),
+            _block(
+                "Thereisaresistancetothemotionoftheblock,whichthecranedoes10000Jofworkto overcome. "
+                "Giventhattheaveragepowerexertedbythecraneis12.5kW, find thetotaltimeforwhichthe block is in motion. [2]",
+                110,
+            ),
+        ],
+        full_question_label="1",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "A fair spinner has sides numbered 1 to 5 and is spun" in structured.combined_question_text
+    assert "Find the score on the side on which it comes to rest" in structured.combined_question_text
+    assert "There is a resistance to the motion of the block" in structured.combined_question_text
+    assert "which the crane does 10000J of work to overcome" in structured.combined_question_text
+    assert "Given that the average power exerted by the crane is 12.5kW" in structured.combined_question_text
+    assert "the total time for which the block is in motion" in structured.combined_question_text
+
+
 def test_repairs_selected_joined_prompt_words() -> None:
     layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
     span = QuestionSpan(
