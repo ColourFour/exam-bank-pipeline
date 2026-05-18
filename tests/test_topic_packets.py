@@ -297,15 +297,26 @@ def test_question_and_answer_order_match(tmp_path: Path) -> None:
     manifest = json.loads((packet_dir / "manifest.json").read_text(encoding="utf-8"))
     packet = fitz.open(packet_dir / "topic_packet.pdf")
     assert manifest["included_question_ids"] == ["q1", "q2"]
-    assert packet.page_count == 4
+    assert packet.page_count == 2
+    assert manifest["page_size"] == "a4"
+    assert manifest["orientation"] == "portrait"
+    assert manifest["layout"] == "compact"
+    assert manifest["answer_placement"] == "end"
+    assert manifest["questions_section_page_range"] == [1, 1]
+    assert manifest["answers_section_page_range"] == [2, 2]
+    assert manifest["problems_per_page_summary"]["questions"]["1"] == 2
+    assert manifest["problems_per_page_summary"]["answers"]["2"] == 2
     assert "Problem 1" in packet[0].get_text()
     assert "2024 June P31 Question 1" in packet[0].get_text()
+    assert "Problem 2" in packet[0].get_text()
+    assert "Answer to Problem 1" not in packet[0].get_text()
     assert "Answer to Problem 1" in packet[1].get_text()
     assert "2024 June P31 Question 1" in packet[1].get_text()
-    assert "Problem 2" in packet[2].get_text()
-    assert "Answer to Problem 2" in packet[3].get_text()
-    assert "Page 1 of 4" in packet[0].get_text()
-    assert "Page 4 of 4" in packet[3].get_text()
+    assert "Answer to Problem 2" in packet[1].get_text()
+    assert "Page 1 of 2" in packet[0].get_text()
+    assert "Page 2 of 2" in packet[1].get_text()
+    assert manifest["included_records"][0]["question_start_page"] == 1
+    assert manifest["included_records"][0]["answer_start_page"] == 2
     packet.close()
 
 
@@ -329,8 +340,8 @@ def test_missing_mark_scheme_reported_without_breaking_question_pdf(tmp_path: Pa
     assert manifest["missing_answer_count"] == 1
     assert manifest["included_records"][1]["answer_available"] is False
     assert "missing_mark_scheme_image" in manifest["included_records"][1]["warnings"]
-    assert packet.page_count == 4
-    assert "Answer unavailable: missing mark-scheme image" in packet[3].get_text()
+    assert packet.page_count == 2
+    assert "Answer unavailable: missing mark-scheme image" in packet[1].get_text()
     packet.close()
 
 
@@ -389,13 +400,74 @@ def test_multiple_question_and_mark_scheme_images_do_not_increment_problem_numbe
     packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
     assert [item["problem_number"] for item in manifest["included_records"]] == [1, 2]
-    assert packet.page_count == 6
+    assert packet.page_count == 2
     assert "Problem 1" in packet[0].get_text()
-    assert "Problem 1" in packet[1].get_text()
-    assert "Answer to Problem 1" in packet[2].get_text()
-    assert "Answer to Problem 1" in packet[3].get_text()
-    assert "Problem 2" in packet[4].get_text()
+    assert "Problem 2" in packet[0].get_text()
+    assert "Problem 3" not in packet[0].get_text()
+    assert "Answer to Problem 1" in packet[1].get_text()
+    assert "Answer to Problem 2" in packet[1].get_text()
     packet.close()
+
+
+def test_compact_layout_starts_new_page_when_block_does_not_fit(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    _png(paths["artifact_root"] / "p3" / "paper" / "questions" / "q2.png", size=(800, 1200))
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["included_records"][0]["question_start_page"] == 1
+    assert manifest["included_records"][1]["question_start_page"] == 2
+    assert manifest["answers_section_page_range"][0] > manifest["questions_section_page_range"][1]
+
+
+def test_answer_placement_inline_preserves_paired_order(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        layout="one-per-page",
+        answer_placement="inline",
+    )
+
+    packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert packet.page_count == 4
+    assert manifest["layout"] == "one-per-page"
+    assert manifest["answer_placement"] == "inline"
+    assert "Problem 1" in packet[0].get_text()
+    assert "Answer to Problem 1" in packet[1].get_text()
+    assert "Problem 2" in packet[2].get_text()
+    assert "Answer to Problem 2" in packet[3].get_text()
+    packet.close()
+
+
+def test_oversized_image_warning_is_recorded(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    _png(paths["artifact_root"] / "p3" / "paper" / "questions" / "q1.png", size=(800, 3000))
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["blocks_scaled_to_fit_count"] >= 1
+    assert manifest["oversized_block_warnings"]
+    assert summary["oversized_block_warning_count"] >= 1
 
 
 def test_cli_help_exits_cleanly() -> None:
@@ -550,9 +622,9 @@ def _assignment(question_id: str, *, subtopic: str = "9709_p3_subtopic_integrati
     }
 
 
-def _png(path: Path) -> None:
+def _png(path: Path, *, size: tuple[int, int] = (80, 60)) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    Image.new("RGB", (80, 60), color=(255, 255, 255)).save(path)
+    Image.new("RGB", size, color=(255, 255, 255)).save(path)
 
 
 def _sha256(path: Path) -> str:

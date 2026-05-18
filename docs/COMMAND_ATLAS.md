@@ -253,9 +253,11 @@ Output: `output/topic_packets/<paper_family>/<major_topic>/topic_packet.pdf`, `m
 
 Category/runtime: standard projection, fast to medium
 
-Default behavior: generate broad major-topic packets for P1, P3, P4, and P5. The packet taxonomy validates the paper family and major topic only. Subtopic IDs may remain in the taxonomy for future use, but they are not used by the normal packet generation pass.
+Default behavior: generate broad major-topic packets for P1, P3, P4, and P5 using A4 portrait compact printable layout. Questions flow first, answers/mark schemes start in a separate section at the end, and multiple small problems are placed on a page when they fit. The packet taxonomy validates the paper family and major topic only. Subtopic IDs may remain in the taxonomy for future use, but they are not used by the normal packet generation pass.
 
 Compatibility: add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed.
+
+Layout options: `--page-size a4|letter`, `--orientation portrait|landscape`, `--layout compact|one-per-page`, and `--answer-placement end|inline`. Use `--layout one-per-page --answer-placement inline` for the previous paired page-heavy packet ordering.
 
 Hard exclusions: missing or invalid major topic, missing question image, `mapping_status=fail`, and `validation_status=fail`. Weak text/OCR/topic/crop signals are warnings in the manifest and summary, not blockers.
 
@@ -277,7 +279,11 @@ Full generation:
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
   --artifact-root output \
-  --strict-syllabus
+  --strict-syllabus \
+  --pdf-profile print \
+  --page-size a4 \
+  --layout compact \
+  --answer-placement end
 ```
 
 Targeted major-topic generation:

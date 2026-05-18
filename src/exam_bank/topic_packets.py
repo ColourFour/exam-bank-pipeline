@@ -83,6 +83,14 @@ class PdfImageOptimizationOptions:
     max_image_height: int | None
 
 
+@dataclass(frozen=True)
+class PdfLayoutOptions:
+    page_size: str = "a4"
+    orientation: str = "portrait"
+    layout: str = "compact"
+    answer_placement: str = "end"
+
+
 @dataclass
 class PdfWriteStats:
     path: str
@@ -93,6 +101,7 @@ class PdfWriteStats:
     downsampled_image_count: int = 0
     largest_source_images: list[dict[str, Any]] | None = None
     warnings: list[str] | None = None
+    layout_metadata: dict[str, Any] | None = None
 
     def to_manifest(self) -> dict[str, Any]:
         ratio = None
@@ -159,6 +168,20 @@ def add_topic_packet_cli_arguments(parser: argparse.ArgumentParser) -> None:
         default="print",
         help="Image optimization profile for generated packet PDFs.",
     )
+    parser.add_argument("--page-size", choices=["a4", "letter"], default="a4", help="Page size for topic packet PDFs.")
+    parser.add_argument("--orientation", choices=["portrait", "landscape"], default="portrait", help="Page orientation.")
+    parser.add_argument(
+        "--layout",
+        choices=["compact", "one-per-page"],
+        default="compact",
+        help="Topic packet layout. compact flows multiple blocks per page; one-per-page preserves the previous page-heavy behavior.",
+    )
+    parser.add_argument(
+        "--answer-placement",
+        choices=["end", "inline"],
+        default="end",
+        help="Place answers after all questions or inline after each problem.",
+    )
     parser.add_argument("--image-dpi", type=int, default=None, help="Target image DPI metadata for optimized PDF copies.")
     parser.add_argument("--jpeg-quality", type=int, default=None, help="JPEG quality for optimized PDF image copies.")
     parser.add_argument("--max-image-width", type=int, default=None, help="Maximum optimized PDF image width in pixels.")
@@ -196,6 +219,10 @@ def run_topic_packets_from_args(args: argparse.Namespace) -> dict[str, Any]:
         include_mapping_failures=bool(args.include_mapping_failures),
         include_validation_failures=bool(args.include_validation_failures),
         pdf_profile=args.pdf_profile,
+        page_size=args.page_size,
+        orientation=args.orientation,
+        layout=args.layout,
+        answer_placement=args.answer_placement,
         image_dpi=args.image_dpi,
         jpeg_quality=args.jpeg_quality,
         max_image_width=args.max_image_width,
@@ -224,6 +251,10 @@ def generate_topic_packets(
     include_mapping_failures: bool = False,
     include_validation_failures: bool = False,
     pdf_profile: str = "print",
+    page_size: str = "a4",
+    orientation: str = "portrait",
+    layout: str = "compact",
+    answer_placement: str = "end",
     image_dpi: int | None = None,
     jpeg_quality: int | None = None,
     max_image_width: int | None = None,
@@ -246,6 +277,12 @@ def generate_topic_packets(
         max_image_width=max_image_width,
         max_image_height=max_image_height,
         enabled=image_optimization,
+    )
+    layout_options = _pdf_layout_options(
+        page_size=page_size,
+        orientation=orientation,
+        layout=layout,
+        answer_placement=answer_placement,
     )
 
     taxonomy = load_packet_taxonomy(taxonomy_path)
@@ -378,6 +415,7 @@ def generate_topic_packets(
             question_bank_path=question_bank_path,
             dry_run=dry_run,
             pdf_options=pdf_options,
+            layout_options=layout_options,
         )
         if not dry_run:
             packet_dir.mkdir(parents=True, exist_ok=True)
@@ -389,12 +427,14 @@ def generate_topic_packets(
                 question_bank_path.parent,
                 review=key.mode == "review",
                 pdf_options=pdf_options,
+                layout_options=layout_options,
             )
             page_count = _pdf_page_count(topic_pdf)
             manifest["pdf_path"] = str(topic_pdf)
             manifest["pdf_file_size_bytes"] = packet_stats.file_size_bytes
             manifest["pdf_profile"] = pdf_options.profile
             manifest["page_count"] = page_count
+            _apply_layout_metadata_to_manifest(manifest, packet_stats.layout_metadata or {})
             manifest["pdf_outputs"] = {
                 "topic_packet": packet_stats.to_manifest() | {"page_count": page_count},
             }
@@ -442,6 +482,16 @@ def generate_topic_packets(
             "pdf_path": manifest.get("pdf_path", str(packet_dir / "topic_packet.pdf")),
             "page_count": page_count,
             "pdf_image_optimization": manifest["pdf_image_optimization"],
+            "page_size": manifest["page_size"],
+            "orientation": manifest["orientation"],
+            "layout": manifest["layout"],
+            "answer_placement": manifest["answer_placement"],
+            "questions_section_page_range": manifest.get("questions_section_page_range"),
+            "answers_section_page_range": manifest.get("answers_section_page_range"),
+            "problems_per_page_summary": manifest.get("problems_per_page_summary"),
+            "average_problems_per_question_page": manifest.get("average_problems_per_question_page"),
+            "average_answers_per_answer_page": manifest.get("average_answers_per_answer_page"),
+            "oversized_block_warning_count": len(manifest.get("oversized_block_warnings") or []),
         }
         if packet_stats is not None:
             packet_summary.update(
@@ -694,6 +744,7 @@ def build_packet_manifest(
     question_bank_path: Path,
     dry_run: bool,
     pdf_options: PdfImageOptimizationOptions,
+    layout_options: PdfLayoutOptions,
 ) -> dict[str, Any]:
     first_assignment = packet_records[0][1]
     included_ids = [str(record.get("question_id", "")) for record, _ in packet_records]
@@ -730,7 +781,18 @@ def build_packet_manifest(
         "pdf_path": "",
         "pdf_file_size_bytes": 0,
         "pdf_profile": pdf_options.profile,
+        "page_size": layout_options.page_size,
+        "orientation": layout_options.orientation,
+        "layout": layout_options.layout,
+        "answer_placement": layout_options.answer_placement,
         "page_count": 0,
+        "questions_section_page_range": None,
+        "answers_section_page_range": None,
+        "problems_per_page_summary": {},
+        "blocks_scaled_to_fit_count": 0,
+        "oversized_block_warnings": [],
+        "average_problems_per_question_page": 0,
+        "average_answers_per_answer_page": 0,
         "included_records": included_records,
         "included_question_ids": included_ids,
         "skipped_question_ids": [],
@@ -864,62 +926,27 @@ def write_topic_packet_pdf(
     *,
     review: bool,
     pdf_options: PdfImageOptimizationOptions | None = None,
+    layout_options: PdfLayoutOptions | None = None,
 ) -> PdfWriteStats:
     pdf_options = pdf_options or _pdf_image_optimization_options(enabled=False)
+    layout_options = layout_options or PdfLayoutOptions()
     doc = fitz.open()
     image_stats: list[dict[str, Any]] = []
     warnings: list[str] = []
 
-    for problem_number, (record, assignment) in enumerate(packet_records, start=1):
-        source_label = _source_label(record)
-        marks = _marks(record)
-        mark_text = f" - {marks} marks" if marks not in ("", None) else ""
-        problem_header = f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}"
-        for image_index, image_value in enumerate(_question_image_paths(record), start=1):
-            image_path = _resolve_artifact_path(image_value, artifact_root, fallback_root)
-            if not image_path.is_file():
-                continue
-            header = problem_header if image_index == 1 else f"{problem_header} (continued)"
-            _append_image_page(
-                doc,
-                image_path=image_path,
-                image_value=image_value,
-                header=header,
-                review=review,
-                pdf_options=pdf_options,
-                image_stats=image_stats,
-                warnings=warnings,
-            )
+    layout_state = _write_flow_topic_packet_pdf(
+        doc,
+        packet_records,
+        artifact_root,
+        fallback_root,
+        review=review,
+        pdf_options=pdf_options,
+        layout_options=layout_options,
+        image_stats=image_stats,
+        warnings=warnings,
+    )
 
-        answer_header = f"Answer to Problem {problem_number} - {source_label}"
-        answer_paths = _answer_image_paths(record)
-        answer_available = bool(answer_paths)
-        for image_index, image_value in enumerate(answer_paths, start=1):
-            image_path = _resolve_artifact_path(image_value, artifact_root, fallback_root)
-            if not image_path.is_file():
-                answer_available = False
-                continue
-            header = answer_header if image_index == 1 else f"{answer_header} (continued)"
-            _append_image_page(
-                doc,
-                image_path=image_path,
-                image_value=image_value,
-                header=header,
-                review=review,
-                pdf_options=pdf_options,
-                image_stats=image_stats,
-                warnings=warnings,
-            )
-        if not answer_available:
-            warnings.append("missing_mark_scheme_image")
-            _append_note_page(
-                doc,
-                header=answer_header,
-                note="Answer unavailable: missing mark-scheme image",
-                review=review,
-            )
-
-    _add_page_numbers(doc)
+    _add_page_headers_and_numbers(doc, layout_state["page_sections"], layout_state["title"])
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
     doc.close()
@@ -934,7 +961,172 @@ def write_topic_packet_pdf(
         downsampled_image_count=sum(1 for item in image_stats if item["downsampled"]),
         largest_source_images=_largest_source_images(image_stats),
         warnings=sorted(set(warnings)),
+        layout_metadata=layout_state,
     )
+
+
+def _write_flow_topic_packet_pdf(
+    doc: fitz.Document,
+    packet_records: Sequence[tuple[dict[str, Any], Assignment]],
+    artifact_root: Path,
+    fallback_root: Path,
+    *,
+    review: bool,
+    pdf_options: PdfImageOptimizationOptions,
+    layout_options: PdfLayoutOptions,
+    image_stats: list[dict[str, Any]],
+    warnings: list[str],
+) -> dict[str, Any]:
+    width, height = _page_dimensions(layout_options)
+    metrics = _layout_metrics(width, height)
+    title = _packet_title(packet_records)
+    page_sections: list[str] = []
+    records_metadata: dict[int, dict[str, Any]] = defaultdict(dict)
+    question_counts_by_page: Counter[int] = Counter()
+    answer_counts_by_page: Counter[int] = Counter()
+    oversized_warnings: list[str] = []
+    blocks_scaled_to_fit_count = 0
+    current_y = 0.0
+
+    def new_page(section: str, *, heading: str | None = None) -> fitz.Page:
+        nonlocal current_y
+        page = doc.new_page(width=width, height=height)
+        page_sections.append(section)
+        current_y = metrics["content_top"]
+        if heading:
+            page.insert_text((metrics["left"], current_y + 2), heading, fontsize=15, color=(0.1, 0.1, 0.1))
+            current_y += 30
+        if review:
+            page.insert_text(
+                (width * 0.32, height * 0.52),
+                "REVIEW ONLY",
+                fontsize=46,
+                color=(0.85, 0.1, 0.1),
+                fill_opacity=0.22,
+            )
+        return page
+
+    page = new_page("Questions", heading="Questions")
+
+    question_blocks: list[dict[str, Any]] = []
+    answer_blocks: list[dict[str, Any]] = []
+    for problem_number, (record, assignment) in enumerate(packet_records, start=1):
+        source_label = _source_label(record)
+        marks = _marks(record)
+        mark_text = f" - {marks} marks" if marks not in ("", None) else ""
+        question_blocks.append(
+            {
+                "kind": "question",
+                "problem_number": problem_number,
+                "record": record,
+                "assignment": assignment,
+                "header": f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}",
+                "image_values": _question_image_paths(record),
+                "note": "",
+            }
+        )
+        answer_blocks.append(
+            {
+                "kind": "answer",
+                "problem_number": problem_number,
+                "record": record,
+                "assignment": assignment,
+                "header": f"Answer to Problem {problem_number} - {source_label}",
+                "image_values": _answer_image_paths(record),
+                "note": "Answer unavailable: missing mark-scheme image",
+            }
+        )
+
+    ordered_blocks = question_blocks
+    if layout_options.answer_placement == "inline":
+        ordered_blocks = [block for pair in zip(question_blocks, answer_blocks) for block in pair]
+
+    for block in ordered_blocks:
+        if block["kind"] == "answer" and layout_options.answer_placement == "end":
+            continue
+        page, current_y, scaled = _place_flow_block(
+            doc,
+            page,
+            current_y,
+            block,
+            artifact_root,
+            fallback_root,
+            page_sections,
+            metrics,
+            layout_options,
+            pdf_options,
+            image_stats,
+            warnings,
+            oversized_warnings,
+        )
+        blocks_scaled_to_fit_count += int(scaled)
+        start_page = page.number + 1
+        problem_number = int(block["problem_number"])
+        if block["kind"] == "question":
+            records_metadata[problem_number]["question_start_page"] = start_page
+            records_metadata[problem_number]["question_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
+            question_counts_by_page[start_page] += 1
+        else:
+            records_metadata[problem_number]["answer_start_page"] = start_page
+            records_metadata[problem_number]["answer_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
+            answer_counts_by_page[start_page] += 1
+
+    answers_start_page: int | None = None
+    if layout_options.answer_placement == "end":
+        page = new_page("Answers / Mark Schemes", heading="Answers / Mark Schemes")
+        answers_start_page = page.number + 1
+        for block in answer_blocks:
+            page, current_y, scaled = _place_flow_block(
+                doc,
+                page,
+                current_y,
+                block,
+                artifact_root,
+                fallback_root,
+                page_sections,
+                metrics,
+                layout_options,
+                pdf_options,
+                image_stats,
+                warnings,
+                oversized_warnings,
+            )
+            blocks_scaled_to_fit_count += int(scaled)
+            start_page = page.number + 1
+            problem_number = int(block["problem_number"])
+            records_metadata[problem_number]["answer_start_page"] = start_page
+            records_metadata[problem_number]["answer_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
+            answer_counts_by_page[start_page] += 1
+
+    question_pages = sorted(question_counts_by_page)
+    answer_pages = sorted(answer_counts_by_page)
+    questions_range = [min(question_pages), max(question_pages)] if question_pages else None
+    if layout_options.answer_placement == "end" and answers_start_page is not None and answer_pages:
+        answers_range = [answers_start_page, max(answer_pages)]
+    elif answer_pages:
+        answers_range = [min(answer_pages), max(answer_pages)]
+    else:
+        answers_range = None
+    return {
+        "title": title,
+        "page_size": layout_options.page_size,
+        "orientation": layout_options.orientation,
+        "layout": layout_options.layout,
+        "answer_placement": layout_options.answer_placement,
+        "page_count": doc.page_count,
+        "questions_section_page_range": questions_range,
+        "answers_section_page_range": answers_range,
+        "problems_per_page_summary": {
+            "questions": {str(page): question_counts_by_page[page] for page in sorted(question_counts_by_page)},
+            "answers": {str(page): answer_counts_by_page[page] for page in sorted(answer_counts_by_page)},
+        },
+        "average_problems_per_question_page": _rounded_average(question_counts_by_page.values()),
+        "average_answers_per_answer_page": _rounded_average(answer_counts_by_page.values()),
+        "blocks_scaled_to_fit_count": blocks_scaled_to_fit_count,
+        "oversized_block_warnings": oversized_warnings,
+        "records": dict(records_metadata),
+        "page_sections": page_sections,
+    }
 
 
 def _append_image_page(
@@ -976,6 +1168,125 @@ def _append_image_page(
         )
 
 
+def _place_flow_block(
+    doc: fitz.Document,
+    page: fitz.Page,
+    current_y: float,
+    block: dict[str, Any],
+    artifact_root: Path,
+    fallback_root: Path,
+    page_sections: list[str],
+    metrics: dict[str, float],
+    layout_options: PdfLayoutOptions,
+    pdf_options: PdfImageOptimizationOptions,
+    image_stats: list[dict[str, Any]],
+    warnings: list[str],
+    oversized_warnings: list[str],
+) -> tuple[fitz.Page, float, bool]:
+    section = "Questions" if block["kind"] == "question" else "Answers / Mark Schemes"
+    prepared_images: list[dict[str, Any]] = []
+    answer_available = True
+    for image_value in block["image_values"]:
+        image_path = _resolve_artifact_path(image_value, artifact_root, fallback_root)
+        if not image_path.is_file():
+            answer_available = False
+            continue
+        image_info = _prepare_pdf_image(image_path, pdf_options)
+        image_info["image_value"] = image_value
+        image_stats.append(image_info)
+        warnings.extend(image_info["warnings"])
+        prepared_images.append(image_info)
+
+    if block["kind"] == "answer" and (not block["image_values"] or not answer_available or not prepared_images):
+        warnings.append("missing_mark_scheme_image")
+        prepared_images = []
+
+    content_width = metrics["right"] - metrics["left"]
+    natural_height = _flow_block_height(block, prepared_images, content_width, metrics)
+    block["height_estimate"] = natural_height
+    available_full = metrics["content_bottom"] - metrics["content_top"]
+    starts_new_page = layout_options.layout == "one-per-page" and current_y > metrics["content_top"] + 35
+    if not starts_new_page and current_y > metrics["content_top"] and natural_height > metrics["content_bottom"] - current_y:
+        starts_new_page = True
+    if starts_new_page:
+        page = doc.new_page(width=page.rect.width, height=page.rect.height)
+        page_sections.append(section)
+        current_y = metrics["content_top"]
+
+    render_scale = 1.0
+    scaled = False
+    if natural_height > available_full:
+        fixed = metrics["block_header_height"] + metrics["block_bottom_gap"]
+        image_gap_total = max(0, len(prepared_images) - 1) * metrics["image_gap"]
+        image_height = sum(_rendered_image_height(item, content_width) for item in prepared_images)
+        note_height = metrics["note_height"] if not prepared_images else 0
+        scalable = max(0.0, image_height)
+        target_scalable = max(1.0, available_full - fixed - image_gap_total - note_height)
+        render_scale = min(1.0, target_scalable / scalable) if scalable else 1.0
+        if render_scale < 1.0:
+            scaled = True
+        if render_scale < 0.55:
+            warning = (
+                f"oversized_block_scaled_below_legibility:"
+                f"{block['kind']}:{block['problem_number']}:scale={render_scale:.2f}"
+            )
+            oversized_warnings.append(warning)
+            warnings.append(warning)
+
+    page.insert_textbox(
+        fitz.Rect(metrics["left"], current_y, metrics["right"], current_y + metrics["block_header_height"]),
+        str(block["header"]),
+        fontsize=8.5,
+        color=(0.1, 0.1, 0.1),
+    )
+    y = current_y + metrics["block_header_height"]
+    if prepared_images:
+        for image_info in prepared_images:
+            render_width = _rendered_image_width(image_info, content_width) * render_scale
+            natural_image_height = _rendered_image_height(image_info, content_width)
+            render_height = natural_image_height * render_scale
+            rect = fitz.Rect(metrics["left"], y, metrics["left"] + render_width, y + render_height)
+            if image_info["stream"] is None:
+                page.insert_image(rect, filename=str(image_info["path"]), keep_proportion=True)
+            else:
+                page.insert_image(rect, stream=image_info["stream"], keep_proportion=True)
+            y += render_height + metrics["image_gap"]
+    else:
+        page.insert_textbox(
+            fitz.Rect(metrics["left"], y + 4, metrics["right"], y + metrics["note_height"]),
+            str(block["note"]),
+            fontsize=9,
+            color=(0.35, 0.15, 0.15),
+        )
+        y += metrics["note_height"]
+    y += metrics["block_bottom_gap"]
+    if layout_options.layout == "one-per-page":
+        y = metrics["content_bottom"]
+    return page, y, scaled
+
+
+def _flow_block_height(
+    block: dict[str, Any],
+    prepared_images: Sequence[dict[str, Any]],
+    content_width: float,
+    metrics: dict[str, float],
+) -> float:
+    image_height = sum(_rendered_image_height(item, content_width) for item in prepared_images)
+    image_gaps = max(0, len(prepared_images) - 1) * metrics["image_gap"]
+    note_height = metrics["note_height"] if block["kind"] == "answer" and not prepared_images else 0
+    return metrics["block_header_height"] + image_height + image_gaps + note_height + metrics["block_bottom_gap"]
+
+
+def _rendered_image_height(image_info: dict[str, Any], content_width: float) -> float:
+    width = max(1.0, float(image_info["original_width"]))
+    height = max(1.0, float(image_info["original_height"]))
+    return _rendered_image_width(image_info, content_width) * height / width
+
+
+def _rendered_image_width(image_info: dict[str, Any], content_width: float) -> float:
+    return min(content_width, max(1.0, float(image_info["original_width"])) * 0.75)
+
+
 def _append_note_page(doc: fitz.Document, *, header: str, note: str, review: bool) -> None:
     width = 612.0
     height = 792.0
@@ -1005,6 +1316,27 @@ def _add_page_numbers(doc: fitz.Document) -> None:
         page.insert_textbox(
             fitz.Rect(36, rect.height - 26, rect.width - 36, rect.height - 10),
             footer,
+            fontsize=8,
+            align=fitz.TEXT_ALIGN_CENTER,
+            color=(0.35, 0.35, 0.35),
+        )
+
+
+def _add_page_headers_and_numbers(doc: fitz.Document, page_sections: Sequence[str], title: str) -> None:
+    total = doc.page_count
+    for index, page in enumerate(doc, start=1):
+        rect = page.rect
+        section = page_sections[index - 1] if index - 1 < len(page_sections) else title
+        page.insert_textbox(
+            fitz.Rect(36, 16, rect.width - 36, 30),
+            f"{title} - {section}",
+            fontsize=7.5,
+            align=fitz.TEXT_ALIGN_CENTER,
+            color=(0.35, 0.35, 0.35),
+        )
+        page.insert_textbox(
+            fitz.Rect(36, rect.height - 28, rect.width - 36, rect.height - 12),
+            f"Page {index} of {total}",
             fontsize=8,
             align=fitz.TEXT_ALIGN_CENTER,
             color=(0.35, 0.35, 0.35),
@@ -1051,6 +1383,94 @@ def _pdf_image_optimization_options(
         max_image_width=width,
         max_image_height=height,
     )
+
+
+def _pdf_layout_options(
+    *,
+    page_size: str = "a4",
+    orientation: str = "portrait",
+    layout: str = "compact",
+    answer_placement: str = "end",
+) -> PdfLayoutOptions:
+    if page_size not in {"a4", "letter"}:
+        raise TopicPacketError(f"Unsupported --page-size: {page_size}")
+    if orientation not in {"portrait", "landscape"}:
+        raise TopicPacketError(f"Unsupported --orientation: {orientation}")
+    if layout not in {"compact", "one-per-page"}:
+        raise TopicPacketError(f"Unsupported --layout: {layout}")
+    if answer_placement not in {"end", "inline"}:
+        raise TopicPacketError(f"Unsupported --answer-placement: {answer_placement}")
+    return PdfLayoutOptions(
+        page_size=page_size,
+        orientation=orientation,
+        layout=layout,
+        answer_placement=answer_placement,
+    )
+
+
+def _page_dimensions(options: PdfLayoutOptions) -> tuple[float, float]:
+    sizes = {
+        "a4": (595.2756, 841.8898),
+        "letter": (612.0, 792.0),
+    }
+    width, height = sizes[options.page_size]
+    if options.orientation == "landscape":
+        return height, width
+    return width, height
+
+
+def _layout_metrics(width: float, height: float) -> dict[str, float]:
+    left = 40.0
+    right = width - 40.0
+    return {
+        "left": left,
+        "right": right,
+        "content_top": 46.0,
+        "content_bottom": height - 46.0,
+        "block_header_height": 18.0,
+        "image_gap": 5.0,
+        "block_bottom_gap": 11.0,
+        "note_height": 32.0,
+    }
+
+
+def _packet_title(packet_records: Sequence[tuple[dict[str, Any], Assignment]]) -> str:
+    if not packet_records:
+        return "Topic Packet"
+    assignment = packet_records[0][1]
+    return f"{assignment.paper_family.upper()} {assignment.topic_label}"
+
+
+def _rounded_average(values: Iterable[int]) -> float:
+    values_list = list(values)
+    if not values_list:
+        return 0.0
+    return round(sum(values_list) / len(values_list), 2)
+
+
+def _apply_layout_metadata_to_manifest(manifest: dict[str, Any], metadata: dict[str, Any]) -> None:
+    for key in [
+        "page_size",
+        "orientation",
+        "layout",
+        "answer_placement",
+        "page_count",
+        "questions_section_page_range",
+        "answers_section_page_range",
+        "problems_per_page_summary",
+        "blocks_scaled_to_fit_count",
+        "oversized_block_warnings",
+        "average_problems_per_question_page",
+        "average_answers_per_answer_page",
+    ]:
+        if key in metadata:
+            manifest[key] = metadata[key]
+    record_metadata = metadata.get("records") if isinstance(metadata.get("records"), dict) else {}
+    for item in manifest.get("included_records", []):
+        problem_number = item.get("problem_number")
+        extra = record_metadata.get(problem_number) or record_metadata.get(str(problem_number))
+        if isinstance(extra, dict):
+            item.update(extra)
 
 
 def _pdf_options_manifest(options: PdfImageOptimizationOptions) -> dict[str, Any]:
@@ -1217,6 +1637,10 @@ def build_summary(
         key=lambda item: item["file_size_bytes"],
         reverse=True,
     )[:10]
+    largest_by_pages = max(packets, key=lambda p: int(p.get("page_count") or 0), default=None)
+    largest_by_bytes = max(packets, key=lambda p: int(p.get("pdf_file_size_bytes") or 0), default=None)
+    total_question_pages = sum(len((p.get("problems_per_page_summary") or {}).get("questions") or {}) for p in packets)
+    total_answer_pages = sum(len((p.get("problems_per_page_summary") or {}).get("answers") or {}) for p in packets)
     return {
         "schema_name": TOPIC_PACKET_SUMMARY_SCHEMA_NAME,
         "schema_version": TOPIC_PACKET_SCHEMA_VERSION,
@@ -1234,6 +1658,16 @@ def build_summary(
         "total_problems_included": total_included,
         "total_pages_generated": sum(int(p.get("page_count") or 0) for p in packets),
         "total_pdf_bytes": sum(int(p.get("pdf_file_size_bytes") or 0) for p in packets),
+        "average_problems_per_question_page": round(total_included / total_question_pages, 2) if total_question_pages else 0.0,
+        "average_answers_per_answer_page": round(
+            sum(int(p.get("answer_count") or 0) for p in packets) / total_answer_pages,
+            2,
+        )
+        if total_answer_pages
+        else 0.0,
+        "largest_packet_by_pages": _summary_packet_ref(largest_by_pages),
+        "largest_packet_by_bytes": _summary_packet_ref(largest_by_bytes),
+        "oversized_block_warning_count": sum(int(p.get("oversized_block_warning_count") or 0) for p in packets),
         "largest_pdfs": largest_pdfs,
         "missing_answer_count": len(missing_answer_images),
         "packets_generated": list(packets),
@@ -1269,6 +1703,18 @@ def packet_output_dir(output_root: Path, key: PacketKey) -> Path:
     else:
         base = output_root / key.paper_family / key.topic_id
     return base / key.subtopic_id if key.subtopic_id else base
+
+
+def _summary_packet_ref(packet: dict[str, Any] | None) -> dict[str, Any] | None:
+    if packet is None:
+        return None
+    return {
+        "pdf_path": packet.get("pdf_path"),
+        "paper_family": packet.get("paper_family"),
+        "topic_id": packet.get("topic_id"),
+        "page_count": packet.get("page_count"),
+        "file_size_bytes": packet.get("pdf_file_size_bytes"),
+    }
 
 
 def assignment_mode(assignment: Assignment) -> str:
