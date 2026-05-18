@@ -282,7 +282,10 @@
           "canonical_topic_id": "9709_p1_topic_series",
           "official_section_code": "1.6",
           "paper_code_group": "Paper 1",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "series_and_sequences",
+            "binomial_expansion"
+          ],
           "subtopics": [
             {
               "subtopic_id": "series_arithmetic_progressions",
@@ -447,7 +450,12 @@
           "canonical_topic_id": "9709_p3_topic_algebra",
           "official_section_code": "3.1",
           "paper_code_group": "Paper 3",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "partial_fractions",
+            "polynomials",
+            "binomial_expansion",
+            "modulus"
+          ],
           "subtopics": [
             {
               "subtopic_id": "modulus_equations_inequalities",
@@ -521,7 +529,10 @@
           "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
           "official_section_code": "3.2",
           "paper_code_group": "Paper 3",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "logarithms_and_exponentials",
+            "functions"
+          ],
           "subtopics": [
             {
               "subtopic_id": "log_exponential_equations",
@@ -629,7 +640,9 @@
           "canonical_topic_id": "9709_p3_topic_differentiation",
           "official_section_code": "3.4",
           "paper_code_group": "Paper 3",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "parametric_equations"
+          ],
           "subtopics": [
             {
               "subtopic_id": "derivative_rules",
@@ -769,7 +782,9 @@
           "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
           "official_section_code": "3.6",
           "paper_code_group": "Paper 3",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "numerical_methods"
+          ],
           "subtopics": [
             {
               "subtopic_id": "root_location",
@@ -991,7 +1006,11 @@
           "canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
           "official_section_code": "4.1",
           "paper_code_group": "Paper 4",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "equilibrium_coplanar_forces",
+            "equilibrium_particle",
+            "friction_rough_plane"
+          ],
           "subtopics": [
             {
               "subtopic_id": "forces_components_resultants",
@@ -1050,7 +1069,11 @@
           "canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
           "official_section_code": "4.2",
           "paper_code_group": "Paper 4",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "kinematics_constant_acceleration",
+            "kinematics_graphs",
+            "kinematics_variable_functions"
+          ],
           "subtopics": [
             {
               "subtopic_id": "kinematics_constant_acceleration",
@@ -1110,7 +1133,9 @@
           "canonical_topic_id": "9709_m1_topic_momentum",
           "official_section_code": "4.3",
           "paper_code_group": "Paper 4",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "momentum_impulse"
+          ],
           "subtopics": [
             {
               "subtopic_id": "momentum_impulse_conservation",
@@ -1137,7 +1162,10 @@
           "canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
           "official_section_code": "4.4",
           "paper_code_group": "Paper 4",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "connected_particles",
+            "forces_newtons_second_law"
+          ],
           "subtopics": [
             {
               "subtopic_id": "newtons_second_law_single_particle",
@@ -1198,7 +1226,10 @@
           "canonical_topic_id": "9709_m1_topic_energy_work_and_power",
           "official_section_code": "4.5",
           "paper_code_group": "Paper 4",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "work_energy_power",
+            "power_and_resistance"
+          ],
           "subtopics": [
             {
               "subtopic_id": "work_energy_kinetic_potential",
@@ -1267,7 +1298,10 @@
           "canonical_topic_id": "9709_s1_topic_representation_of_data",
           "official_section_code": "5.1",
           "paper_code_group": "Paper 5",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "data_representation",
+            "measures_of_central_tendency_and_dispersion"
+          ],
           "subtopics": [
             {
               "subtopic_id": "data_representation_stem_box",
@@ -1447,7 +1481,11 @@
           "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
           "official_section_code": "5.4",
           "paper_code_group": "Paper 5",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "probability_distributions",
+            "binomial_distribution",
+            "geometric_distribution"
+          ],
           "subtopics": [
             {
               "subtopic_id": "discrete_random_variables_distribution",

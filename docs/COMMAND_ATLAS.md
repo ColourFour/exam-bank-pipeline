@@ -245,13 +245,19 @@ Category/runtime: standard projection, fast to medium
 
 ### Topic Packets
 
-Purpose: generate image-first printable CAIE 9709 topic packets from canonical question and mark-scheme crops. OCR/native/AI text is not used as student-facing question or answer content.
+Purpose: generate image-first printable CAIE 9709 major-topic packets from canonical question and mark-scheme crops. OCR/native/AI text is not used as student-facing question or answer content.
 
-Input: `output/json/question_bank.json`, `exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`, reviewed/strict canonical topic assignment sidecars under `exam_bank_taxonomy/canonical/`, artifacts under `output/`
+Input: `output/json/question_bank.json`, `exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`, artifacts under `output/`
 
-Output: `output/topic_packets/<paper_family>/<topic>/<subtopic>/questions.pdf`, `answers.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
+Output: `output/topic_packets/<paper_family>/<major_topic>/topic_packet.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
 
 Category/runtime: standard projection, fast to medium
+
+Default behavior: generate broad major-topic packets for P1, P3, P4, and P5. The packet taxonomy validates the paper family and major topic only. Subtopic IDs may remain in the taxonomy for future use, but they are not used by the normal packet generation pass.
+
+Compatibility: add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed.
+
+Hard exclusions: missing or invalid major topic, missing question image, `mapping_status=fail`, and `validation_status=fail`. Weak text/OCR/topic/crop signals are warnings in the manifest and summary, not blockers.
 
 Dry run:
 
@@ -264,7 +270,17 @@ Dry run:
   --strict-syllabus
 ```
 
-Filtered generation:
+Full generation:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --strict-syllabus
+```
+
+Targeted major-topic generation:
 
 ```bash
 .venv/bin/python -m exam_bank.cli topic-packets \
@@ -273,8 +289,19 @@ Filtered generation:
   --artifact-root output \
   --paper-family p3 \
   --topic integration \
-  --subtopic standard_integration \
   --strict-syllabus
+```
+
+Permissive review runs can include hard-failure categories explicitly:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --strict-syllabus \
+  --include-mapping-failures \
+  --include-validation-failures
 ```
 
 ## AI Sidecars

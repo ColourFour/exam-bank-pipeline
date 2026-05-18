@@ -44,7 +44,7 @@ set -a; source .env; set +a
 
 ## Command Atlas
 
-Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, Asterion and Content Lab projections, topic routing, AI enrichment, AI sidecar audit, output inventory, cleanup planning, and test commands.
+Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, Asterion and Content Lab projections, topic packets, topic routing, AI enrichment, AI sidecar audit, output inventory, cleanup planning, and test commands.
 
 AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
@@ -175,6 +175,33 @@ Asterion export files are downstream projections, not a replacement for canonica
 Strict Asterion topic filters should use `output/json/question_bank.topic_routing.v1.json` only when `metadata.run_summary.safe_for_strict_filters=true` and only for records that are not review-required. See [`docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md).
 
 Broad AI enrichment sidecars such as `question_bank.deepseek.json` and `question_bank.ai_assisted.v2*.json` are review/debug evidence until a separate audit approves a narrower use.
+
+## Topic Packets
+
+Topic packets are image-first downstream projections. They build printable PDFs from canonical question and mark-scheme crops, not reconstructed OCR/native/AI text.
+
+The normal packet workflow generates broad CAIE 9709 major-topic packets by paper family and topic:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --strict-syllabus
+```
+
+Preview the full pass without writing PDFs or manifests:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --strict-syllabus \
+  --dry-run
+```
+
+Outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `questions.pdf`, `answers.pdf`, and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Weak text/OCR/topic/crop signals are warnings, not blockers; invalid topics, missing question images, mapping failures, and validation failures remain hard exclusions unless explicitly included for review.
 
 ## Downstream Use
 
