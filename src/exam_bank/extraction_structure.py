@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import re
 
 from .config import AppConfig
@@ -194,7 +195,21 @@ def _looks_like_answer_filler_line(text: str) -> bool:
 
 def _normalize_preserving_structure(text: str) -> str:
     normalized_lines = [_normalize_light(line) for line in text.splitlines()]
-    return "\n".join(line for line in normalized_lines if line).strip()
+    normalized = "\n".join(line for line in normalized_lines if line).strip()
+    return _repair_cross_line_theta_context(normalized)
+
+
+def _repair_cross_line_theta_context(text: str) -> str:
+    has_theta_context = re.search(
+        r"\bangle\s+[A-Z]{2,4}\s*=\s*θ\s*radians\b"
+        r"|\b(?:sin|cos|tan|sec|cosec|cot)(?:\s*(?:\^\{(?!-\})[^}]+\})?)\s*θ\b"
+        r"|\b0\s*(?:<|≤)\s*θ\s*(?:<|≤)",
+        text,
+        re.IGNORECASE,
+    )
+    if not has_theta_context:
+        return text
+    return re.sub(r"\b(value of )i\b", r"\1θ", text, flags=re.IGNORECASE)
 
 
 def _normalize_light(text: str) -> str:
@@ -219,6 +234,8 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
     replacements = {
         "\ufb01": "fi",
         "\ufb02": "fl",
+        "\ufb03": "ffi",
+        "\ufb04": "ffl",
         "−": "-",
         "–": "-",
         "—": "-",
@@ -244,6 +261,7 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
     # from substitution prompts and otherwise remove the noise character.
     value = re.sub(r"(\bu\s*=\s*)\x0f(?=\s*x\b)", r"\1√", value)
     value = value.replace("\x0f", "")
+    value = re.sub(r"[\x03-\x08\x0b\x0c\x12-\x1f\x7f]", "", value)
 
     value = _normalize_common_math_ocr_substitutions(value)
     value = _repair_common_joined_words(value)
@@ -260,25 +278,60 @@ def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = re.sub(r"\b([0-9])G([A-Za-zθ])G([0-9])\b", r"\1 ≤ \2 ≤ \3", value)
     value = re.sub(r"\br20\b", "r > 0", value)
     value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
-    value = re.sub(r"\b(0|90|180|360)°?\s*<\s*1\s*<", r"\1° < θ <", value)
-    value = re.sub(r"\b(0|90|180|360)°?\s*≤\s*1\s*≤", r"\1° ≤ θ ≤", value)
+    value = re.sub(r"\b(0|90|180|360)(°?)\s*<\s*1\s*<", r"\1\2 < θ <", value)
+    value = re.sub(r"\b(0|90|180|360)(°?)\s*≤\s*1\s*≤", r"\1\2 ≤ θ ≤", value)
     value = re.sub(r"\b0\s*<\s*1\s*<", "0 < θ <", value)
     value = re.sub(r"\b0\s*≤\s*1\s*≤", "0 ≤ θ ≤", value)
     value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)\(\s*1(?=\s*[-+])", r"\1(θ", value)
     value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(\s*(?:\^\{(?!-\})[^}]+\})?)\s*1\b", r"\1\2 θ", value)
-    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyzi])", r"\1 ", value)
     value = re.sub(r"\b(ln|log)(?=[A-Za-z0-9(])", r"\1 ", value)
     value = re.sub(r"\b(ln|log)\s+\(", r"\1(", value)
-    value = re.sub(r"(?<=[A-Za-z0-9}])(?=(?:cosec|sin|cos|tan|sec|cot)(?:[0-9θxyz]|\b))", " ", value)
-    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyz])", r"\1 ", value)
+    value = re.sub(r"(?<=[A-Za-z0-9}])(?=(?:cosec|sin|cos|tan|sec|cot)(?:[0-9θxyzi]|\b))", " ", value)
+    value = re.sub(r"\b(sin|cos|tan|sec|cosec|cot)(?=[0-9θxyzi])", r"\1 ", value)
     value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot|ln|log)\s+([0-9]+)([A-Za-zθ])\b", r"\1 \2\3", value)
     value = re.sub(r"\b(tan|sin|cos|sec|cosec|cot)\^\{-\}\s*θ", r"\1^{-}1", value)
+    value = _repair_trig_theta_placeholders(value)
+    return value
+
+
+def _repair_trig_theta_placeholders(text: str) -> str:
+    value = text
+    trig = r"cosec|sin|cos|tan|sec|cot"
+    value = re.sub(rf"\b({trig})i(?=(?:{trig}))", r"\1 θ ", value, flags=re.IGNORECASE)
+    value = re.sub(rf"\b({trig})(\s*(?:\^\{{(?!-\}})[^}}]+\}})?)\s*i\b", r"\1\2 θ", value, flags=re.IGNORECASE)
+    value = re.sub(rf"\b({trig})\s*i\b", r"\1 θ", value, flags=re.IGNORECASE)
+    value = re.sub(rf"\b({trig})\s*!", r"\1 θ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\bangle\s+of\s+!", "angle of θ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\b(angle\s+[A-Z]{2,4}\s*=\s*)i(?=\s*radians\b)", r"\1θ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\b(angle\s+[A-Z]{2,4}\s+(?:is|=)\s*)i(?=\s*(?:radians|°)\b)", r"\1θ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\b([A-Z]{2,4}\s*=\s*)i(?=°)", r"\1θ", value)
+    value = re.sub(r"\b(angle\s*)°i\b", r"\1θ°", value, flags=re.IGNORECASE)
+    value = re.sub(r"(?<=\bangle\s)°i(?=\s+to\b)", "θ°", value, flags=re.IGNORECASE)
+    value = re.sub(r"(-?\s*\d{1,3}°)\s*1\s*i\s*1\s*(\d{1,3}°)", r"\1 < θ < \2", value)
+    value = re.sub(r"\b0\s*1\s*i\s*1\s*(\^\{1\}_\{2\}π)", r"0 < θ < \1", value)
+    value = re.sub(r"\b0\s*1\s*i\s*1\s*(π)", r"0 < θ < \1", value)
+    if re.search(r"\bangle\s+[A-Z]{2,4}\s*=\s*θ\s*radians\b", value, re.IGNORECASE):
+        value = re.sub(r"\b(value of )i\b", r"\1θ", value, flags=re.IGNORECASE)
+    if re.search(r"\b(?:sin|cos|tan|sec|cosec|cot)(?:\s*(?:\^\{(?!-\})[^}]+\})?)\s*θ\b", value, re.IGNORECASE):
+        value = re.sub(r"\b(value of )i\b", r"\1θ", value, flags=re.IGNORECASE)
+    if re.search(r"\b(?:angle\s+[A-Z]{2,4}\s+(?:is|=)\s*θ\s*(?:radians|°)|[A-Z]{2,4}\s*=\s*θ°|angle\s+θ°)", value, re.IGNORECASE):
+        value = re.sub(r"\b(value of )i\b", r"\1θ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\b(0|90|180|360)(°?)\s*<\s*i\s*<", r"\1\2 < θ <", value)
+    value = re.sub(r"\b(0|90|180|360)(°?)\s*≤\s*i\s*≤", r"\1\2 ≤ θ ≤", value)
+    value = re.sub(r"\b0\s*<\s*i\s*<", "0 < θ <", value)
+    value = re.sub(r"\b0\s*≤\s*i\s*≤", "0 ≤ θ ≤", value)
+    value = re.sub(r"(?<=\d)c\b", "°", value)
     return value
 
 
 def _repair_common_joined_words(text: str) -> str:
     value = text
     replacements = [
+        (r"\bThediagramshows", "The diagram shows"),
+        (r"\bThediagram", "The diagram"),
+        (r"\bthediagramshows", "the diagram shows"),
+        (r"\bthediagram", "the diagram"),
         (r"\bFindthe(?=\b|[a-z])", "Find the"),
         (r"\bfindthe(?=\b|[a-z])", "find the"),
         (r"\bGivethe(?=\b|[a-z])", "Give the"),
@@ -287,21 +340,43 @@ def _repair_common_joined_words(text: str) -> str:
         (r"\bgiveyour(?=\b|[a-z])", "give your"),
         (r"\bByfirst\b", "By first"),
         (r"\bbyfirst\b", "by first"),
+        (r"Bysketchingasuitable", "By sketching a suitable"),
+        (r"bysketchingasuitable", "by sketching a suitable"),
         (r"\bfirstexpressing\b", "first expressing"),
         (r"\bfirstexpanding\b", "first expanding"),
+        (r"ofgraphs,showthattheequation", "of graphs, show that the equation"),
+        (r"showthattheequation", "show that the equation"),
+        (r"\bmaybeexpressedintheforma\b", "may be expressed in the form a"),
         (r"\btheequation\b", "the equation"),
         (r"\bsolvethe\b", "solve the"),
         (r"\bintheform\b", "in the form"),
         (r"\banswerintheform(?=\b|[a-z])", "answer in the form"),
         (r"\bthevalue(?=\b|[a-z])", "the value"),
+        (r"\bvalueof([A-Za-z])\b", r"value of \1"),
+        (r"\bthevalueof(?=\b|[a-z])", "the value of"),
         (r"\byouranswer(?=\b|[a-z])", "your answer"),
         (r"\bwhereaandbare\b", "where a and b are"),
         (r"\bwhereaandb\b", "where a and b"),
         (r"\bandbare\b", "and b are"),
+        (r"\bthewater\b", "the water"),
+        (r"\binthetank\b", "in the tank"),
         (r"\bshowthat\b", "show that"),
         (r"\bmaybe\b", "may be"),
         (r"\bStatethe\b", "State the"),
         (r"\bstatethe\b", "state the"),
+        (r"\bandshows", "and shows"),
+        (r"\band shows(?=[A-Z])", "and shows "),
+        (r"\bgraphthe\b", "graph the"),
+        (r"\bgraphof\b", "graph of"),
+        (r"\bisof\b", "is of"),
+        (r"\bfactor is in g\b", "factorising"),
+        (r"\bm or e\b", "more"),
+        (r"\bbe in g\b", "being"),
+        (r"\bkeep in g\b", "keeping"),
+        (r"\bexpress i on\b", "expression"),
+        (r"\bthethe\b", "the"),
+        (r"\btheformgraph", "the form graph"),
+        (r"\btwostraight", "two straight"),
         (r"\bForanothercompetition\b", "For another competition"),
         (r"\bForanother\b", "For another"),
         (r"\bateamof\b", "a team of"),
@@ -319,7 +394,490 @@ def _repair_common_joined_words(text: str) -> str:
     value = re.sub(r"(?<=[a-z])(?=Expand\b)", " ", value)
     value = re.sub(r"(?<=[a-z])(?=Solve\b)", " ", value)
     value = re.sub(r"\bquadratic equationin\b", "quadratic equation in ", value)
+    value = _repair_joined_prose_tokens(value)
+    value = re.sub(r"\b(for which|magnitude)(?=\d)", r"\1 ", value)
+    value = re.sub(
+        r"\b(mass|radius|length|height|speed|period|magnitude|force|value|rate|distance|of|at|to|for)(?=\d)",
+        r"\1 ",
+        value,
+    )
+    value = re.sub(r"\bpart(?=\([a-z]\))", "part ", value)
+    value = re.sub(r"\)(?=to\b)", ") ", value)
+    value = re.sub(r"\)\s*on\s+to\b", ") onto", value)
+    value = re.sub(r"\)(?=onto\b)", ") ", value)
+    value = re.sub(r"(?<=[A-Za-z0-9]\.)(?=[A-Z][a-z])", " ", value)
     return value
+
+
+_JOINED_PROSE_TOKEN_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{10,})(?=[0-9(]|\b)")
+_JOINED_PROSE_WORDS = frozenset(
+    {
+        "a",
+        "about",
+        "above",
+        "acceleration",
+        "accelerates",
+        "according",
+        "against",
+        "again",
+        "along",
+        "all",
+        "also",
+        "an",
+        "and",
+        "angle",
+        "another",
+        "answer",
+        "applied",
+        "applying",
+        "arc",
+        "are",
+        "area",
+        "arithmetic",
+        "as",
+        "at",
+        "attempt",
+        "attempts",
+        "bag",
+        "based",
+        "be",
+        "before",
+        "between",
+        "bicycle",
+        "blue",
+        "both",
+        "bottom",
+        "bounded",
+        "boundary",
+        "broadband",
+        "by",
+        "calculate",
+        "can",
+        "car",
+        "caravan",
+        "care",
+        "centre",
+        "circle",
+        "circular",
+        "coefficient",
+        "collide",
+        "collision",
+        "combined",
+        "common",
+        "competition",
+        "complex",
+        "connected",
+        "constant",
+        "consists",
+        "coordinate",
+        "coordinates",
+        "coming",
+        "correct",
+        "curve",
+        "curved",
+        "daily",
+        "day",
+        "decelerating",
+        "defined",
+        "denoted",
+        "depth",
+        "decreasing",
+        "describe",
+        "determine",
+        "diagram",
+        "dice",
+        "differential",
+        "direction",
+        "distance",
+        "distances",
+        "divides",
+        "down",
+        "driving",
+        "each",
+        "axis",
+        "chosen",
+        "cm",
+        "end",
+        "ends",
+        "energy",
+        "engine",
+        "equation",
+        "equal",
+        "event",
+        "exact",
+        "exactly",
+        "being",
+        "chooses",
+        "eats",
+        "expanding",
+        "expression",
+        "express",
+        "expressing",
+        "fair",
+        "families",
+        "find",
+        "first",
+        "fixed",
+        "force",
+        "for",
+        "factor",
+        "factorising",
+        "formula",
+        "form",
+        "from",
+        "friction",
+        "function",
+        "geometric",
+        "given",
+        "giving",
+        "good",
+        "graph",
+        "greatest",
+        "has",
+        "have",
+        "height",
+        "hence",
+        "hill",
+        "horizontal",
+        "household",
+        "identity",
+        "if",
+        "in",
+        "inclined",
+        "including",
+        "independent",
+        "initial",
+        "initially",
+        "instant",
+        "instantaneous",
+        "integer",
+        "integers",
+        "interval",
+        "into",
+        "increased",
+        "increase",
+        "infected",
+        "inextensible",
+        "is",
+        "it",
+        "iterative",
+        "its",
+        "keep",
+        "keeping",
+        "kg",
+        "large",
+        "later",
+        "length",
+        "level",
+        "line",
+        "lines",
+        "lies",
+        "light",
+        "load",
+        "long",
+        "made",
+        "magnitude",
+        "marbles",
+        "male",
+        "mass",
+        "maximum",
+        "means",
+        "member",
+        "method",
+        "metres",
+        "minimum",
+        "modelled",
+        "models",
+        "more",
+        "motion",
+        "moves",
+        "moving",
+        "normal",
+        "number",
+        "numbers",
+        "obtain",
+        "of",
+        "on",
+        "once",
+        "one",
+        "only",
+        "or",
+        "original",
+        "other",
+        "onto",
+        "over",
+        "particle",
+        "particles",
+        "part",
+        "pass",
+        "passes",
+        "period",
+        "perimeter",
+        "perpendicular",
+        "piece",
+        "pieces",
+        "plane",
+        "plate",
+        "plays",
+        "leopard",
+        "point",
+        "points",
+        "possible",
+        "positive",
+        "power",
+        "probability",
+        "progression",
+        "projected",
+        "proportional",
+        "prove",
+        "pull",
+        "pumped",
+        "random",
+        "randomly",
+        "rate",
+        "ratio",
+        "reaches",
+        "real",
+        "red",
+        "reflected",
+        "released",
+        "removing",
+        "representing",
+        "required",
+        "resistance",
+        "respectively",
+        "rest",
+        "result",
+        "resulting",
+        "riding",
+        "road",
+        "roots",
+        "same",
+        "scarf",
+        "second",
+        "section",
+        "sector",
+        "segment",
+        "segments",
+        "sequence",
+        "service",
+        "shaded",
+        "show",
+        "shows",
+        "side",
+        "sides",
+        "single",
+        "smooth",
+        "solve",
+        "speed",
+        "sphere",
+        "spins",
+        "spinner",
+        "springs",
+        "square",
+        "scale",
+        "straight",
+        "stretched",
+        "string",
+        "student",
+        "students",
+        "subsequent",
+        "such",
+        "sum",
+        "table",
+        "takes",
+        "tangent",
+        "term",
+        "terms",
+        "test",
+        "than",
+        "that",
+        "the",
+        "their",
+        "then",
+        "there",
+        "these",
+        "they",
+        "this",
+        "three",
+        "threaded",
+        "through",
+        "time",
+        "times",
+        "to",
+        "towards",
+        "track",
+        "transformation",
+        "transformations",
+        "travel",
+        "travels",
+        "travelling",
+        "triangle",
+        "two",
+        "until",
+        "up",
+        "use",
+        "used",
+        "value",
+        "variable",
+        "variables",
+        "vertical",
+        "vertically",
+        "velocity",
+        "volume",
+        "when",
+        "where",
+        "which",
+        "while",
+        "wire",
+        "with",
+        "work",
+        "written",
+        "your",
+        "yellow",
+        "answers",
+        "allowed",
+        "after",
+        "argand",
+        "been",
+        "change",
+        "colours",
+        "crosses",
+        "different",
+        "differentiate",
+        "directly",
+        "do",
+        "drawing",
+        "fail",
+        "fully",
+        "give",
+        "gradient",
+        "heights",
+        "identical",
+        "industrial",
+        "locus",
+        "metal",
+        "no",
+        "not",
+        "operates",
+        "players",
+        "pulled",
+        "pulley",
+        "pulling",
+        "rod",
+        "rope",
+        "rough",
+        "region",
+        "resultant",
+        "rigid",
+        "satisfying",
+        "she",
+        "shown",
+        "sketch",
+        "sloping",
+        "symmetrical",
+        "transformed",
+        "turn",
+        "twice",
+        "wears",
+        "weighs",
+        "winch",
+        "working",
+        "map",
+        "maps",
+        "tank",
+        "twenty",
+        "water",
+        "jacob",
+        "georgie",
+        "george",
+        "isabella",
+        "maria",
+        "alisa",
+        "sharma",
+    }
+)
+_JOINED_SINGLE_LETTERS = frozenset("abcdefghijklmnopqrstuvwxyz")
+_JOINED_MAX_WORD_LEN = max(len(word) for word in _JOINED_PROSE_WORDS)
+
+
+def _repair_joined_prose_tokens(text: str) -> str:
+    return _JOINED_PROSE_TOKEN_RE.sub(lambda match: _repair_joined_prose_token(match.group(0)), text)
+
+
+def _repair_joined_prose_token(token: str) -> str:
+    if token.isupper():
+        return token
+    lowered = token.lower()
+    if lowered in _JOINED_PROSE_WORDS:
+        return token
+
+    spans = _joined_prose_token_spans(lowered)
+    if not spans or len(spans) < 2:
+        return token
+    pieces = [token[start:end] for start, end in spans]
+    if sum(1 for piece in pieces if len(piece) > 1) < 2:
+        return token
+    if _has_consecutive_single_letter_segments(pieces):
+        return token
+    return " ".join(pieces)
+
+
+def _has_consecutive_single_letter_segments(pieces: list[str]) -> bool:
+    run = 0
+    for piece in pieces:
+        if len(piece) == 1:
+            run += 1
+            if run >= 2:
+                return True
+        else:
+            run = 0
+    return False
+
+
+def _joined_prose_token_spans(lowered: str) -> list[tuple[int, int]] | None:
+    @lru_cache(maxsize=None)
+    def best(index: int) -> tuple[float, tuple[tuple[int, int], ...]] | None:
+        if index == len(lowered):
+            return 0.0, ()
+
+        best_result: tuple[float, tuple[tuple[int, int], ...]] | None = None
+        max_end = min(len(lowered), index + _JOINED_MAX_WORD_LEN)
+        for end in range(max_end, index, -1):
+            word = lowered[index:end]
+            if word not in _JOINED_PROSE_WORDS and not _is_joined_single_letter(word):
+                continue
+            suffix = best(end)
+            if suffix is None:
+                continue
+            suffix_score, suffix_spans = suffix
+            score = _joined_word_score(word) + suffix_score
+            candidate = (score, ((index, end),) + suffix_spans)
+            if best_result is None or candidate[0] > best_result[0]:
+                best_result = candidate
+        return best_result
+
+    result = best(0)
+    if result is None:
+        return None
+    score, spans = result
+    if score < len(lowered) * 0.55:
+        return None
+    return list(spans)
+
+
+def _is_joined_single_letter(word: str) -> bool:
+    return len(word) == 1 and word in _JOINED_SINGLE_LETTERS
+
+
+def _joined_word_score(word: str) -> float:
+    if word == "a":
+        return 1.5
+    if len(word) == 1:
+        return -5.0
+    if len(word) == 2:
+        return 1.0
+    return float(len(word) * 2 - 1)
 
 
 def _extract_math_lines(text: str) -> list[str]:

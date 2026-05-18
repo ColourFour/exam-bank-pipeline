@@ -240,9 +240,138 @@ def test_repairs_selected_joined_prompt_words() -> None:
 
     structured = build_structured_question_text(span, [layout], AppConfig())
 
-    assert "Find the valueofxforwhich3(2^{1}-x)" in structured.combined_question_text
+    assert "Find the value of x for which 3(2^{1}-x)" in structured.combined_question_text
     assert "Give your answer in the form" in structured.combined_question_text
     assert "where a and b are integers" in structured.combined_question_text
+
+
+def test_repairs_long_joined_prose_tokens_from_pdf_spacing_failures() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="6",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block(
+                "6 Thediagramshowsthecurvewithequationy = 9(x^{-}1_{2} -4x^{-}3_{2}). "
+                "Thereisaconstantresistanceforceofmagnitude600 N. "
+                "Useaniterativeformulabasedontheequationinpart(a)todetermine x. [6]",
+                80,
+            ),
+            _block("Describefullythetwosingletransformations. Thewinchisusedtopullaloadofmass 50kg. [4]", 110),
+            _block(
+                "The particles are attached to theendsofalightinextensiblestring. "
+                "Find theprobabilitythatarandomlychosenstudentpassesthewrittentestatthefirstattempt. "
+                "Find theprobabilitythatarandomlychosenhouseholdhasgoodbroadbandservicegiven that the household is in Shan. [3]",
+                140,
+            ),
+            _block(
+                "Given that this power is suddenly increased by 12 kW, find theinstantaneousacceleration. "
+                "The curve is reflected in the y-axisandthenstretchedbyscalefactor 1_{3}. [5]",
+                170,
+            ),
+            _block(
+                "Solve by factor is in g. No student is allowed m or e than one attempt. "
+                "Each child keeps an egg, keep in g the sweet it contained. Water is be in g pumpedintothe tank. [4]",
+                200,
+            ),
+        ],
+        full_question_label="6",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "The diagram shows the curve with equation y" in structured.combined_question_text
+    assert "There is a constant resistance force of magnitude 600 N" in structured.combined_question_text
+    assert "Use an iterative formula based on the equation in part (a) to determine x" in structured.combined_question_text
+    assert "Describe fully the two single transformations" in structured.combined_question_text
+    assert "The winch is used to pull a load of mass 50kg" in structured.combined_question_text
+    assert "the ends of a light inextensible string" in structured.combined_question_text
+    assert "the probability that a randomly chosen student passes the written test at the first attempt" in structured.combined_question_text
+    assert "the probability that a randomly chosen household has good broadband service given" in structured.combined_question_text
+    assert "the instantaneous acceleration" in structured.combined_question_text
+    assert "axis and then stretched by scale factor" in structured.combined_question_text
+    assert "factorising" in structured.combined_question_text
+    assert "more than one attempt" in structured.combined_question_text
+    assert "m or e" not in structured.combined_question_text
+    assert "keeping" in structured.combined_question_text
+    assert "be in g" not in structured.combined_question_text
+    assert "f u l l y" not in structured.combined_question_text
+
+
+def test_repairs_trig_theta_placeholder_i_and_exclamation() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="5",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block("5 Solve the equation 4sinitani = 1 + 5cosi for 0 < i < 180°. [6]", 80),
+            _block("A plane is inclined at angle of ! to the horizontal, where sin ! = 0.1. [3]", 110),
+            _block("Angle POQ = i radians. Find the exact value of i and -180°1i1180°. [2]", 140),
+            _block("Angle ACB is i radians and BQP = i°. A van ascends a hill inclined at an angle °i to the horizontal. Find the value of i. [4]", 170),
+        ],
+        full_question_label="5",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "4 sin θ tan θ = 1 + 5 cos θ" in structured.combined_question_text
+    assert "0 < θ < 180°" in structured.combined_question_text
+    assert "angle of θ" in structured.combined_question_text
+    assert "sin θ = 0.1" in structured.combined_question_text
+    assert "Angle POQ = θ radians" in structured.combined_question_text
+    assert "Angle ACB is θ radians" in structured.combined_question_text
+    assert "BQP = θ°" in structured.combined_question_text
+    assert "angle θ° to the horizontal" in structured.combined_question_text
+    assert "value of θ" in structured.combined_question_text
+    assert "-180° < θ < 180°" in structured.combined_question_text
+
+
+def test_repairs_audit_regressions_without_splitting_expression() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="5",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=700,
+        page_numbers=[1],
+        blocks=[
+            _block(
+                "5 (a) Express 2x^{2}-8x + 14 in the form 2(x -a)^{2} + b\x03. [2] "
+                "Describe fully a sequence of transformationsthatmapsthegraphof y = f(x)on to "
+                "the graph of y = g(x). [4]",
+                80,
+            ),
+            _block("Find an expression for f^{-}1(x). [2]", 110),
+            _block("A geometric progression has common ratio cosi, where 01i1 ^{1}_{2}π.", 140),
+            _block("Find the value of i. [3]", 170),
+        ],
+        full_question_label="5",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "\x03" not in structured.combined_question_text
+    assert "transformations that maps the graph of y = f(x) onto the graph of y = g(x)" in structured.combined_question_text
+    assert "expression for f^{-}1(x)" in structured.combined_question_text
+    assert "express i on" not in structured.combined_question_text
+    assert "cos θ" in structured.combined_question_text
+    assert "0 < θ < ^{1}_{2}π" in structured.combined_question_text
+    assert "value of θ" in structured.combined_question_text
 
 
 def test_normal_function_spacing_does_not_create_broken_power_flag() -> None:
