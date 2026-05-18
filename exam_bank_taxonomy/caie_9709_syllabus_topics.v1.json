@@ -1,0 +1,1549 @@
+{
+  "schema_name": "exam_bank.caie_9709_syllabus_topics",
+  "schema_version": 1,
+  "syllabus_code": "9709",
+  "subject_name": "Cambridge International AS & A Level Mathematics",
+  "source_syllabus_reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2023, 2024 and 2025, Subject content",
+  "source_syllabus_url": "https://www.cambridgeinternational.org/Images/597421-2023-2025-syllabus.pdf",
+  "generated_from": [
+    "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p1_v1.json",
+    "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_p3_v1.json",
+    "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_m1_v1.json",
+    "exam_bank_taxonomy/canonical/topic_filter_maps/topic_filter_map_9709_s1_v1.json"
+  ],
+  "notes": "Packet taxonomy contract for image-first packet generation. Topic/subtopic IDs are syllabus-aligned packet IDs; canonical_* fields retain links to existing canonical taxonomy IDs. Advisory aliases are for filtering/review notes only, not for release classification.",
+  "components": [
+    {
+      "paper_family": "p1",
+      "component_key": "p1",
+      "paper_code_group": "Paper 1",
+      "component_label": "Pure Mathematics 1",
+      "topics": [
+        {
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics",
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "official_section_code": "1.1",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "quadratics_completed_square",
+              "subtopic_label": "Completing the square and quadratic form",
+              "canonical_subtopic_id": "9709_p1_subtopic_quadratics_completed_square",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "complete the square",
+                "completed square",
+                "(x + a)^2",
+                "(x-a)^2",
+                "turning point",
+                "maximum possible value"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            },
+            {
+              "subtopic_id": "quadratics_discriminant_intersections",
+              "subtopic_label": "Discriminants, roots and intersections",
+              "canonical_subtopic_id": "9709_p1_subtopic_quadratics_discriminant_intersections",
+              "packet_eligible": true,
+              "aliases": [
+                "discriminants_and_intersections"
+              ],
+              "keywords": [
+                "discriminant",
+                "two distinct",
+                "exactly one root",
+                "does not intersect",
+                "tangent to the curve",
+                "line and curve"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "functions",
+          "topic_label": "Functions",
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "official_section_code": "1.2",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "functions_domain_range_one_one",
+              "subtopic_label": "Domain, range and one-one restrictions",
+              "canonical_subtopic_id": "9709_p1_subtopic_functions_domain_range_one_one",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "domain",
+                "range",
+                "one-one",
+                "largest possible value",
+                "for x <",
+                "for x ≥",
+                "decreasing function"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            },
+            {
+              "subtopic_id": "functions_composition_inverse",
+              "subtopic_label": "Composite and inverse functions",
+              "canonical_subtopic_id": "9709_p1_subtopic_functions_composition_inverse",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "fg(x)",
+                "gf(x)",
+                "ff(x)",
+                "composite",
+                "inverse",
+                "f^{-",
+                "f−1",
+                "find an expression for"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "functions_transformations",
+              "subtopic_label": "Graph transformations",
+              "canonical_subtopic_id": "9709_p1_subtopic_functions_transformations",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "transformation",
+                "transformed to",
+                "describe fully",
+                "y = f(x",
+                "2f",
+                "f(2x",
+                "broken lines"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry",
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "official_section_code": "1.3",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "coordinate_line_geometry",
+              "subtopic_label": "Straight lines, gradients and perpendicularity",
+              "canonical_subtopic_id": "9709_p1_subtopic_coordinate_line_geometry",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "gradient",
+                "line has equation",
+                "perpendicular bisector",
+                "parallel",
+                "midpoint",
+                "straight line"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "coordinate_circle_geometry",
+              "subtopic_label": "Circle equations, chords and tangents",
+              "canonical_subtopic_id": "9709_p1_subtopic_coordinate_circle_geometry",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "circle",
+                "circumference",
+                "radius",
+                "centre",
+                "chord",
+                "tangent to the circle",
+                "x^2 + y^2"
+              ],
+              "filter_visibility": "default_strict"
+            }
+          ]
+        },
+        {
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure",
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "official_section_code": "1.4",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "circular_measure_arc_sector",
+              "subtopic_label": "Radians, arcs and sectors",
+              "canonical_subtopic_id": "9709_p1_subtopic_circular_measure_arc_sector",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "radians",
+                "sector",
+                "arc",
+                "radius",
+                "angle",
+                "area of the sector",
+                "arc length"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "circular_measure_segments_perimeters",
+              "subtopic_label": "Segments, composite regions and perimeters",
+              "canonical_subtopic_id": "9709_p1_subtopic_circular_measure_segments_perimeters",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "segment",
+                "perimeter",
+                "metal plate",
+                "rope",
+                "semicircle",
+                "composite",
+                "equal areas"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry",
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "official_section_code": "1.5",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "trigonometry_identities_exact_values",
+              "subtopic_label": "Basic identities and exact trigonometric values",
+              "canonical_subtopic_id": "9709_p1_subtopic_trigonometry_identities_exact_values",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "identity",
+                "prove",
+                "sin^2",
+                "cos^2",
+                "tan",
+                "exact value",
+                "sec",
+                "cosec"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "trigonometry_equations_intervals",
+              "subtopic_label": "Trigonometric equations and intervals",
+              "canonical_subtopic_id": "9709_p1_subtopic_trigonometry_equations_intervals",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "solve the equation",
+                "for 0",
+                "θ",
+                "theta",
+                "degrees",
+                "π",
+                "tan x",
+                "cos x",
+                "sin x"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "trigonometry_graphs",
+              "subtopic_label": "Graphs of sine, cosine and tangent",
+              "canonical_subtopic_id": "9709_p1_subtopic_trigonometry_graphs",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "graph of y = a",
+                "tan(x",
+                "cos(bx",
+                "sin",
+                "period",
+                "amplitude",
+                "number of solutions"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            }
+          ]
+        },
+        {
+          "topic_id": "series",
+          "topic_label": "Series",
+          "canonical_topic_id": "9709_p1_topic_series",
+          "official_section_code": "1.6",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "series_arithmetic_progressions",
+              "subtopic_label": "Arithmetic progressions",
+              "canonical_subtopic_id": "9709_p1_subtopic_series_arithmetic_progressions",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "arithmetic progression",
+                "common difference",
+                "sum of the first",
+                "nth term",
+                "60th term"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "series_geometric_progressions",
+              "subtopic_label": "Geometric progressions and sum to infinity",
+              "canonical_subtopic_id": "9709_p1_subtopic_series_geometric_progressions",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "geometric progression",
+                "common ratio",
+                "sum to infinity",
+                "|r|",
+                "second term"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "series_binomial_positive_integer",
+              "subtopic_label": "Binomial expansion for positive integer powers",
+              "canonical_subtopic_id": "9709_p1_subtopic_series_binomial_positive_integer",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "binomial",
+                "expansion",
+                "ascending powers",
+                "coefficient of",
+                "(1 + x)^",
+                "(a + bx)^"
+              ],
+              "filter_visibility": "default_strict"
+            }
+          ]
+        },
+        {
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation",
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "official_section_code": "1.7",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "differentiation_power_chain",
+              "subtopic_label": "Differentiation of powers and simple composites",
+              "canonical_subtopic_id": "9709_p1_subtopic_differentiation_power_chain",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "differentiate",
+                "f′",
+                "dy/dx",
+                "gradient",
+                "d/dx",
+                "x^",
+                "chain"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            },
+            {
+              "subtopic_id": "differentiation_tangents_normals",
+              "subtopic_label": "Tangents and normals",
+              "canonical_subtopic_id": "9709_p1_subtopic_differentiation_tangents_normals",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "tangent",
+                "normal",
+                "gradient at",
+                "equation of the tangent",
+                "equation of the normal"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "differentiation_stationary_rates",
+              "subtopic_label": "Stationary points, classification and rates of change",
+              "canonical_subtopic_id": "9709_p1_subtopic_differentiation_stationary_rates",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "stationary point",
+                "maximum",
+                "minimum",
+                "d^2y",
+                "rate of increase",
+                "units per second",
+                "increasing"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "integration",
+          "topic_label": "Integration",
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "official_section_code": "1.8",
+          "paper_code_group": "Paper 1",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "integration_reverse_differentiation",
+              "subtopic_label": "Reverse differentiation and constants",
+              "canonical_subtopic_id": "9709_p1_subtopic_integration_reverse_differentiation",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "integrate",
+                "find f(x)",
+                "passes through",
+                "constant of integration",
+                "gradient is given",
+                "dy/dx"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "integration_area_volume",
+              "subtopic_label": "Definite integration, areas and volumes",
+              "canonical_subtopic_id": "9709_p1_subtopic_integration_area_volume",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "area",
+                "shaded region",
+                "rotated through 360",
+                "volume",
+                "definite integral",
+                "limits"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "paper_family": "p3",
+      "component_key": "p3",
+      "paper_code_group": "Paper 3",
+      "component_label": "Pure Mathematics 3",
+      "topics": [
+        {
+          "topic_id": "algebra",
+          "topic_label": "Algebra",
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "official_section_code": "3.1",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "modulus_equations_inequalities",
+              "subtopic_label": "Modulus equations and inequalities",
+              "canonical_subtopic_id": "9709_p3_subtopic_modulus_equations_inequalities",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "modulus",
+                "absolute value",
+                "|",
+                "solve the inequality",
+                "|x",
+                "|3x",
+                "|z"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "polynomial_division_factor_remainder",
+              "subtopic_label": "Polynomial division, factors and remainders",
+              "canonical_subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "polynomial",
+                "factor",
+                "remainder",
+                "divided by",
+                "p(x)",
+                "root of the equation"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "partial_fractions",
+              "subtopic_label": "Partial fractions",
+              "canonical_subtopic_id": "9709_p3_subtopic_partial_fractions",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "partial fractions",
+                "rational expression",
+                "denominator",
+                "express f(x)",
+                "hence obtain the expansion"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "binomial_rational_expansion",
+              "subtopic_label": "Binomial expansion for rational powers",
+              "canonical_subtopic_id": "9709_p3_subtopic_binomial_rational_expansion",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "binomial",
+                "expansion",
+                "ascending powers",
+                "valid for",
+                "coefficient",
+                "rational powers"
+              ],
+              "filter_visibility": "default_strict"
+            }
+          ]
+        },
+        {
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions",
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "official_section_code": "3.2",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "log_exponential_equations",
+              "subtopic_label": "Logarithmic and exponential equations",
+              "canonical_subtopic_id": "9709_p3_subtopic_log_exponential_equations",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "ln",
+                "log",
+                "e^",
+                "exp",
+                "exponential",
+                "laws of logarithms",
+                "give your answer in the form"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "linearising_log_relationships",
+              "subtopic_label": "Linearising logarithmic relationships",
+              "canonical_subtopic_id": "9709_p3_subtopic_linearising_log_relationships",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "linear form",
+                "ln y",
+                "ln x",
+                "straight line",
+                "gradient",
+                "intercept",
+                "constant A"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry",
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "official_section_code": "3.3",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "reciprocal_trig_functions",
+              "subtopic_label": "Reciprocal trigonometric functions",
+              "canonical_subtopic_id": "9709_p3_subtopic_reciprocal_trig_functions",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "sec",
+                "cosec",
+                "co sec",
+                "cot",
+                "1/cos",
+                "1/sin",
+                "1/tan"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            },
+            {
+              "subtopic_id": "identities_compound_double_angle_equations",
+              "subtopic_label": "Identities, compound angles and trigonometric equations",
+              "canonical_subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "prove",
+                "identity",
+                "compound",
+                "double angle",
+                "cos 2",
+                "sin 2",
+                "tan 2",
+                "tan(",
+                "solve the equation"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "rsin_rcos_form",
+              "subtopic_label": "R sin(x plus alpha) and R cos(x plus alpha) form",
+              "canonical_subtopic_id": "9709_p3_subtopic_rsin_rcos_form",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "R sin",
+                "R cos",
+                "form R",
+                "alpha",
+                "greatest",
+                "least",
+                "maximum value",
+                "minimum value"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation",
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "official_section_code": "3.4",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "derivative_rules",
+              "subtopic_label": "Derivative rules for P3 functions",
+              "canonical_subtopic_id": "9709_p3_subtopic_derivative_rules",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "differentiate",
+                "f′",
+                "dy/dx",
+                "derivative",
+                "product rule",
+                "quotient",
+                "chain",
+                "gradient"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "parametric_implicit_differentiation",
+              "subtopic_label": "Parametric and implicit differentiation",
+              "canonical_subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "parametric",
+                "parameter",
+                "dx/dt",
+                "dy/dt",
+                "implicit",
+                "x =",
+                "y =",
+                "in terms of t"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "tangents_normals_stationary_points",
+              "subtopic_label": "Tangents, normals and stationary points",
+              "canonical_subtopic_id": "9709_p3_subtopic_tangents_normals_stationary_points",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "tangent",
+                "normal",
+                "stationary point",
+                "maximum",
+                "minimum",
+                "always positive",
+                "increasing"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "integration",
+          "topic_label": "Integration",
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "official_section_code": "3.5",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "standard_integration",
+              "subtopic_label": "Standard integration",
+              "canonical_subtopic_id": "9709_p3_subtopic_standard_integration",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "integrate",
+                "integral",
+                "limits",
+                "constant of integration",
+                "exact value"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "substitution_and_parts",
+              "subtopic_label": "Integration by substitution and by parts",
+              "canonical_subtopic_id": "9709_p3_subtopic_substitution_and_parts",
+              "packet_eligible": true,
+              "aliases": [
+                "integration_by_substitution",
+                "integration_by_parts"
+              ],
+              "keywords": [
+                "substitution",
+                "let u",
+                "by parts",
+                "integration by parts",
+                "change of variable"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "trig_and_partial_fraction_integration",
+              "subtopic_label": "Trigonometric and partial-fraction integration",
+              "canonical_subtopic_id": "9709_p3_subtopic_trig_and_partial_fraction_integration",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "partial fractions",
+                "hence find ∫",
+                "sin",
+                "cos",
+                "tan",
+                "ln from rational",
+                "integral"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "area_volume_applications",
+              "subtopic_label": "Area and volume applications of integration",
+              "canonical_subtopic_id": "9709_p3_subtopic_area_volume_applications",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "area",
+                "region",
+                "bounded by",
+                "x-axis",
+                "volume",
+                "revolution",
+                "shaded"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations",
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "official_section_code": "3.6",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "root_location",
+              "subtopic_label": "Root location and uniqueness evidence",
+              "canonical_subtopic_id": "9709_p3_subtopic_root_location",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "root lies between",
+                "verify by calculation",
+                "change of sign",
+                "one root",
+                "sketching",
+                "exactly one root"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "fixed_point_iteration",
+              "subtopic_label": "Fixed-point iteration",
+              "canonical_subtopic_id": "9709_p3_subtopic_fixed_point_iteration",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "iteration",
+                "iterative",
+                "x_{n+1}",
+                "use the formula",
+                "decimal places",
+                "approximation"
+              ],
+              "filter_visibility": "default_strict"
+            }
+          ]
+        },
+        {
+          "topic_id": "vectors",
+          "topic_label": "Vectors",
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "official_section_code": "3.7",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "vector_lines",
+              "subtopic_label": "Vector equations of lines and intersections",
+              "canonical_subtopic_id": "9709_p3_subtopic_vector_lines",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "r =",
+                "line l",
+                "intersect",
+                "skew",
+                "parallel",
+                "position vector",
+                "lambda",
+                "parameter"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "scalar_product_angles",
+              "subtopic_label": "Scalar product, angles and perpendicularity",
+              "canonical_subtopic_id": "9709_p3_subtopic_scalar_product_angles",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "scalar product",
+                "dot product",
+                "angle between",
+                "acute angle",
+                "perpendicular",
+                "projection"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "position_vectors_geometry",
+              "subtopic_label": "Position vectors and vector geometry",
+              "canonical_subtopic_id": "9709_p3_subtopic_position_vectors_geometry",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "position vectors",
+                "OA",
+                "OB",
+                "OC",
+                "midpoint",
+                "trapezium",
+                "quadrilateral",
+                "ratio"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations",
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "official_section_code": "3.8",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "separable_differential_equations",
+              "subtopic_label": "Separable differential equations",
+              "canonical_subtopic_id": "9709_p3_subtopic_separable_differential_equations",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "differential equation",
+                "dy/dx",
+                "dx/dt",
+                "separable",
+                "solve the differential equation",
+                "variables"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "initial_conditions_models",
+              "subtopic_label": "Initial conditions and model interpretation",
+              "canonical_subtopic_id": "9709_p3_subtopic_initial_conditions_models",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "it is given that",
+                "when x =",
+                "when t =",
+                "proportional to",
+                "model",
+                "initial condition"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers",
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "official_section_code": "3.9",
+          "paper_code_group": "Paper 3",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "complex_arithmetic_polar_form",
+              "subtopic_label": "Complex arithmetic, modulus, argument and polar form",
+              "canonical_subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "complex number",
+                "complex numbers",
+                " i",
+                "z*",
+                "z^{*",
+                "zz",
+                "x + yi",
+                "modulus",
+                "argument",
+                "arg",
+                "re^{i",
+                "x + iy",
+                "conjugate"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "argand_loci_geometry",
+              "subtopic_label": "Argand diagrams and loci",
+              "canonical_subtopic_id": "9709_p3_subtopic_argand_loci_geometry",
+              "packet_eligible": true,
+              "aliases": [
+                "argand_diagrams_and_loci"
+              ],
+              "keywords": [
+                "Argand",
+                "shade the region",
+                "locus",
+                "|z",
+                "arg(z",
+                "Im z",
+                "Re z"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "complex_roots_polynomials",
+              "subtopic_label": "Complex roots and polynomial equations",
+              "canonical_subtopic_id": "9709_p3_subtopic_complex_roots_polynomials",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "root of the equation",
+                "complex roots",
+                "other roots",
+                "polynomial",
+                "z^",
+                "conjugate root"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "paper_family": "p4",
+      "component_key": "m1",
+      "paper_code_group": "Paper 4",
+      "component_label": "Mechanics",
+      "topics": [
+        {
+          "topic_id": "forces_and_equilibrium",
+          "topic_label": "Forces and equilibrium",
+          "canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+          "official_section_code": "4.1",
+          "paper_code_group": "Paper 4",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "forces_components_resultants",
+              "subtopic_label": "Force components and resultants",
+              "canonical_subtopic_id": "9709_m1_subtopic_forces_components_resultants",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "component",
+                "resultant",
+                "forces",
+                "direction",
+                "magnitude",
+                "sin",
+                "cos"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "equilibrium_coplanar_forces",
+              "subtopic_label": "Equilibrium of particles under coplanar forces",
+              "canonical_subtopic_id": "9709_m1_subtopic_equilibrium_coplanar_forces",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "equilibrium",
+                "held",
+                "light string",
+                "tension",
+                "forces act at a point",
+                "suspended"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "friction_limiting_equilibrium",
+              "subtopic_label": "Friction and limiting equilibrium",
+              "canonical_subtopic_id": "9709_m1_subtopic_friction_limiting_equilibrium",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "friction",
+                "rough",
+                "coefficient",
+                "limiting",
+                "about to slide",
+                "stationary on a rough plane"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "kinematics_of_motion_in_a_straight_line",
+          "topic_label": "Kinematics of motion in a straight line",
+          "canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+          "official_section_code": "4.2",
+          "paper_code_group": "Paper 4",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "kinematics_constant_acceleration",
+              "subtopic_label": "Constant acceleration kinematics",
+              "canonical_subtopic_id": "9709_m1_subtopic_kinematics_constant_acceleration",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "constant acceleration",
+                "starts from rest",
+                "uniformly",
+                "projected",
+                "maximum height",
+                "s = ut",
+                "v^2"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "kinematics_graphs",
+              "subtopic_label": "Motion graphs",
+              "canonical_subtopic_id": "9709_m1_subtopic_kinematics_graphs",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "velocity-time graph",
+                "graph",
+                "segments",
+                "area under",
+                "accelerates",
+                "decelerates"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "kinematics_variable_acceleration_calculus",
+              "subtopic_label": "Variable acceleration by calculus",
+              "canonical_subtopic_id": "9709_m1_subtopic_kinematics_variable_acceleration_calculus",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "velocity at time",
+                "acceleration at time",
+                "v =",
+                "a =",
+                "t s after",
+                "integrate",
+                "differentiate"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "momentum",
+          "topic_label": "Momentum",
+          "canonical_topic_id": "9709_m1_topic_momentum",
+          "official_section_code": "4.3",
+          "paper_code_group": "Paper 4",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "momentum_impulse_conservation",
+              "subtopic_label": "Momentum, impulse and direct collisions",
+              "canonical_subtopic_id": "9709_m1_subtopic_momentum_impulse_conservation",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "momentum",
+                "impulse",
+                "collide",
+                "collision",
+                "after",
+                "before",
+                "smooth horizontal plane"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "newtons_laws_of_motion",
+          "topic_label": "Newton's laws of motion",
+          "canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+          "official_section_code": "4.4",
+          "paper_code_group": "Paper 4",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "newtons_second_law_single_particle",
+              "subtopic_label": "Newton's second law for a single particle",
+              "canonical_subtopic_id": "9709_m1_subtopic_newtons_second_law_single_particle",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "resultant force",
+                "F = ma",
+                "acceleration",
+                "resistance",
+                "driving force",
+                "mass"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "connected_particles_tension",
+              "subtopic_label": "Connected particles, strings and pulleys",
+              "canonical_subtopic_id": "9709_m1_subtopic_connected_particles_tension",
+              "packet_eligible": true,
+              "aliases": [
+                "connected_particles"
+              ],
+              "keywords": [
+                "connected",
+                "light inextensible string",
+                "smooth pulley",
+                "tow-bar",
+                "rope",
+                "tension",
+                "particles"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "inclined_planes_dynamics",
+              "subtopic_label": "Dynamics on inclined and rough planes",
+              "canonical_subtopic_id": "9709_m1_subtopic_inclined_planes_dynamics",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "inclined plane",
+                "line of greatest slope",
+                "rough plane",
+                "smooth plane",
+                "sin",
+                "normal reaction"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "energy_work_and_power",
+          "topic_label": "Energy, work and power",
+          "canonical_topic_id": "9709_m1_topic_energy_work_and_power",
+          "official_section_code": "4.5",
+          "paper_code_group": "Paper 4",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "work_energy_kinetic_potential",
+              "subtopic_label": "Work-energy and kinetic/potential energy",
+              "canonical_subtopic_id": "9709_m1_subtopic_work_energy_kinetic_potential",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "energy method",
+                "kinetic energy",
+                "potential energy",
+                "work done",
+                "speed",
+                "height",
+                "released from rest"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "power_resistance_driving_force",
+              "subtopic_label": "Power, resistance and driving force",
+              "canonical_subtopic_id": "9709_m1_subtopic_power_resistance_driving_force",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "power",
+                "working at",
+                "constant speed",
+                "engine",
+                "rate",
+                "resistance",
+                "kW",
+                "W"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "work_energy_with_resistance_friction",
+              "subtopic_label": "Work-energy with resistance and friction",
+              "canonical_subtopic_id": "9709_m1_subtopic_work_energy_with_resistance_friction",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "resistance",
+                "friction",
+                "rough",
+                "work done against",
+                "energy lost",
+                "constant force"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "paper_family": "p5",
+      "component_key": "s1",
+      "paper_code_group": "Paper 5",
+      "component_label": "Probability & Statistics 1",
+      "topics": [
+        {
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data",
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "official_section_code": "5.1",
+          "paper_code_group": "Paper 5",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "data_representation_stem_box",
+              "subtopic_label": "Stem-and-leaf, box-and-whisker and comparative displays",
+              "canonical_subtopic_id": "9709_s1_subtopic_data_representation_stem_box",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "stem",
+                "box",
+                "whisker",
+                "quartile",
+                "median",
+                "interquartile",
+                "represent"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "data_histograms",
+              "subtopic_label": "Histograms and frequency density",
+              "canonical_subtopic_id": "9709_s1_subtopic_data_histograms",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "histogram",
+                "frequency density",
+                "class width",
+                "frequency",
+                "grouped"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "data_cumulative_frequency",
+              "subtopic_label": "Cumulative frequency and percentiles",
+              "canonical_subtopic_id": "9709_s1_subtopic_data_cumulative_frequency",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "cumulative frequency",
+                "estimate",
+                "median",
+                "quartile",
+                "percentile",
+                "curve"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "data_mean_variance_coding",
+              "subtopic_label": "Mean, variance, standard deviation and coding",
+              "canonical_subtopic_id": "9709_s1_subtopic_data_mean_variance_coding",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "mean",
+                "variance",
+                "standard deviation",
+                "Σx",
+                "Σx^2",
+                "coded",
+                "summary"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations",
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "official_section_code": "5.2",
+          "paper_code_group": "Paper 5",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "permutations_repeated_arrangements",
+              "subtopic_label": "Permutations and arrangements with restrictions",
+              "canonical_subtopic_id": "9709_s1_subtopic_permutations_repeated_arrangements",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "arrangements",
+                "letters",
+                "word",
+                "together",
+                "at the beginning",
+                "no letter",
+                "different arrangements"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "combinations_selections",
+              "subtopic_label": "Combinations and selections with restrictions",
+              "canonical_subtopic_id": "9709_s1_subtopic_combinations_selections",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "selections",
+                "chosen",
+                "committee",
+                "group",
+                "at least",
+                "exactly",
+                "in how many ways"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "probability",
+          "topic_label": "Probability",
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "official_section_code": "5.3",
+          "paper_code_group": "Paper 5",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "probability_basic_rules",
+              "subtopic_label": "Probability rules, mutually exclusive and independent events",
+              "canonical_subtopic_id": "9709_s1_subtopic_probability_basic_rules",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "probability",
+                "independently",
+                "fair",
+                "spinner",
+                "dice",
+                "coin",
+                "at least",
+                "fewer than"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "probability_conditional_tree_diagrams",
+              "subtopic_label": "Conditional probability and tree diagrams",
+              "canonical_subtopic_id": "9709_s1_subtopic_probability_conditional_tree_diagrams",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "conditional",
+                "given that",
+                "tree diagram",
+                "without replacement",
+                "placed in",
+                "wears",
+                "if"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "probability_repeated_trials_first_success",
+              "subtopic_label": "Repeated trials and first-success probabilities",
+              "canonical_subtopic_id": "9709_s1_subtopic_probability_repeated_trials_first_success",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "first time",
+                "first obtained",
+                "repeatedly",
+                "until",
+                "maximum of two attempts",
+                "7-day period"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables",
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "official_section_code": "5.4",
+          "paper_code_group": "Paper 5",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "discrete_random_variables_distribution",
+              "subtopic_label": "Discrete random variable distributions",
+              "canonical_subtopic_id": "9709_s1_subtopic_discrete_random_variables_distribution",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "random variable",
+                "probability distribution",
+                "takes the values",
+                "P(X",
+                "table",
+                "where k is a constant"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "discrete_random_variables_expectation_variance",
+              "subtopic_label": "Expectation and variance of discrete random variables",
+              "canonical_subtopic_id": "9709_s1_subtopic_discrete_random_variables_expectation_variance",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "E(X",
+                "Var(X",
+                "expectation",
+                "mean of X",
+                "variance of X",
+                "E(X^2"
+              ],
+              "filter_visibility": "review_only"
+            },
+            {
+              "subtopic_id": "binomial_distribution",
+              "subtopic_label": "Binomial distribution",
+              "canonical_subtopic_id": "9709_s1_subtopic_binomial_distribution",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "binomial",
+                "X ~ B",
+                "sample of",
+                "number who",
+                "less than",
+                "more than",
+                "successes"
+              ],
+              "filter_visibility": "review_only"
+            }
+          ]
+        },
+        {
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution",
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "official_section_code": "5.5",
+          "paper_code_group": "Paper 5",
+          "deprecated_aliases": [],
+          "subtopics": [
+            {
+              "subtopic_id": "normal_distribution_probabilities",
+              "subtopic_label": "Normal distribution probabilities and standardisation",
+              "canonical_subtopic_id": "9709_s1_subtopic_normal_distribution_probabilities",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "normal distribution",
+                "normally distributed",
+                "mean",
+                "standard deviation",
+                "N(",
+                "probability that"
+              ],
+              "filter_visibility": "default_strict"
+            },
+            {
+              "subtopic_id": "normal_distribution_inverse_parameters",
+              "subtopic_label": "Inverse normal and unknown parameters",
+              "canonical_subtopic_id": "9709_s1_subtopic_normal_distribution_inverse_parameters",
+              "packet_eligible": true,
+              "aliases": [],
+              "keywords": [
+                "find the value",
+                "unknown",
+                "standard deviation",
+                "mean",
+                "percentage",
+                "expected number",
+                "inverse"
+              ],
+              "filter_visibility": "hidden_until_populated"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

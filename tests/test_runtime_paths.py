@@ -73,6 +73,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "asterion-content-lab-candidates",
         "enrich-ai",
         "topic-route-ai",
+        "topic-packets",
         "ai-sidecar-audit",
         "triage-sample",
         "triage-serve",

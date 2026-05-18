@@ -20,6 +20,7 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | Difficulty audit | `scripts/audit_difficulty.py` | Audit-only | Fast | Optional report write |
 | Asterion export | `asterion-export` | Standard projection | Fast to medium | Yes |
 | Content Lab candidates | `asterion-content-lab-candidates` | Standard projection | Fast to medium | Yes |
+| Topic packets | `topic-packets` | Standard projection | Fast to medium | Yes |
 | Topic routing | `topic-route-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
 | AI enrichment | `enrich-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
 | AI sidecar audit | `ai-sidecar-audit` | Audit-only | Fast | No |
@@ -240,6 +241,40 @@ Category/runtime: standard projection, fast to medium
 .venv/bin/python -m exam_bank.cli asterion-content-lab-candidates \
   --input output/json/question_bank.json \
   --artifact-root output
+```
+
+### Topic Packets
+
+Purpose: generate image-first printable CAIE 9709 topic packets from canonical question and mark-scheme crops. OCR/native/AI text is not used as student-facing question or answer content.
+
+Input: `output/json/question_bank.json`, `exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`, reviewed/strict canonical topic assignment sidecars under `exam_bank_taxonomy/canonical/`, artifacts under `output/`
+
+Output: `output/topic_packets/<paper_family>/<topic>/<subtopic>/questions.pdf`, `answers.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
+
+Category/runtime: standard projection, fast to medium
+
+Dry run:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --dry-run \
+  --strict-syllabus
+```
+
+Filtered generation:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --artifact-root output \
+  --paper-family p3 \
+  --topic integration \
+  --subtopic standard_integration \
+  --strict-syllabus
 ```
 
 ## AI Sidecars

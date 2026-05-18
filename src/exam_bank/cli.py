@@ -19,7 +19,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich, topic_routing
+from . import deepseek_enrich, topic_packets, topic_routing
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .output_management import (
     build_cleanup_plan,
@@ -161,6 +161,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     topic_routing.add_topic_routing_cli_arguments(topic_route_ai)
     topic_route_ai.set_defaults(func=cmd_topic_route_ai)
+
+    topic_packet = subparsers.add_parser(
+        "topic-packets",
+        help="Generate image-first CAIE 9709 syllabus topic packets from canonical crops.",
+    )
+    topic_packets.add_topic_packet_cli_arguments(topic_packet)
+    topic_packet.set_defaults(func=cmd_topic_packets)
 
     ai_sidecar_audit = subparsers.add_parser(
         "ai-sidecar-audit",
@@ -474,6 +481,12 @@ def cmd_enrich_ai(args: argparse.Namespace) -> int:
 def cmd_topic_route_ai(args: argparse.Namespace) -> int:
     topic_routing.finalize_topic_routing_args(args)
     return topic_routing.run_topic_routing_from_args(args)
+
+
+def cmd_topic_packets(args: argparse.Namespace) -> int:
+    report = topic_packets.run_topic_packets_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
 
 
 def cmd_ai_sidecar_audit(args: argparse.Namespace) -> int:
