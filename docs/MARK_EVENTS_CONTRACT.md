@@ -61,7 +61,7 @@ Every generated record must set:
 
 The sidecar may repair a stale question total from existing `question_text` or `ocr_text` when the stored question-structure evidence captured only one terminal part mark for a multi-part question and the recovered text total agrees with the expected or mark-scheme total.
 
-Human-verified total corrections are allowed only through `src/exam_bank/mark_events/human_verified_total_corrections.v1.json`. These corrections are narrow, reviewable, advisory-sidecar-only records keyed by `question_id`. Applying one adds the serious `human_verified_total_correction` review flag, so the record remains unsafe for advisory and marking use until a later reviewed workflow explicitly clears the evidence.
+If the existing canonical `question_solution_marks` and stored mark-scheme total agree, the sidecar may also use that agreement to repair a stale question-side total. This does not mutate `question_bank.json` and does not weaken parser validation.
 
 ## Evidence Rules
 

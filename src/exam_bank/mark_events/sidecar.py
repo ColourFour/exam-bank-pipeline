@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
-from functools import lru_cache
 import hashlib
 import json
 from pathlib import Path
@@ -26,7 +25,6 @@ SERIOUS_REVIEW_FLAGS = {
     "unknown_mark_code",
     "unknown_dependent_mark_code",
     "dependent_mark_without_deterministic_prior_event",
-    "human_verified_total_correction",
 }
 
 
@@ -76,11 +74,6 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
     question_total = question_total_evidence["value"]
     if detected_total is None:
         detected_total = sum(event["mark_value"] for event in events) if events else None
-    correction = _human_verified_total_correction(question_id)
-    if correction:
-        expected_total = _first_int(correction.get("total_marks_expected"), expected_total)
-        detected_total = _first_int(correction.get("total_marks_detected"), detected_total)
-        question_total = _first_int(correction.get("question_total_detected"), question_total)
     total_match = _total_match(detected_total, expected_total)
     review_flags = _record_review_flags(
         record=record,
@@ -95,7 +88,6 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
         expected_total=expected_total,
         question_total=question_total,
         parser_flags=parse_result.review_flags,
-        correction=correction,
     )
     extraction_status = _extraction_status(text=text, events=events, review_flags=review_flags)
     safe_for_advisory = _safe_for_advisory_use(
@@ -124,7 +116,6 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
         "total_marks_expected": expected_total,
         "question_total_detected": question_total,
         "question_total_evidence": question_total_evidence,
-        "human_verified_total_correction": correction,
         "total_marks_match": total_match,
         "review_flags": review_flags,
         "part_summaries": _part_summaries(events),
@@ -163,6 +154,11 @@ def sidecar_summary(sidecar: dict[str, Any]) -> dict[str, Any]:
             != (record.get("question_total_evidence") or {}).get("value")
         ),
         "human_verified_total_correction_count": sum(1 for record in records if record.get("human_verified_total_correction")),
+        "agreed_total_repair_count": sum(
+            1
+            for record in records
+            if (record.get("question_total_evidence") or {}).get("source") == "question_solution_marks_and_mark_scheme_total"
+        ),
         "question_total_disagreement_resolved_count": sum(
             1
             for record in records
@@ -171,7 +167,7 @@ def sidecar_summary(sidecar: dict[str, Any]) -> dict[str, Any]:
                 and (record.get("question_total_evidence") or {}).get("original_detected")
                 != (record.get("question_total_evidence") or {}).get("value")
             )
-            or bool(record.get("human_verified_total_correction"))
+            or (record.get("question_total_evidence") or {}).get("source") == "question_solution_marks_and_mark_scheme_total"
         ),
         "missing_mark_scheme_image_count": sum(1 for record in records if not record.get("source_mark_scheme_image_exists")),
         "no_detected_mark_events_count": sum(1 for record in records if not record.get("mark_events")),
@@ -199,7 +195,6 @@ def _record_review_flags(
     expected_total: int | None,
     question_total: int | None,
     parser_flags: list[str],
-    correction: dict[str, Any] | None,
 ) -> list[str]:
     flags: list[str] = list(parser_flags)
     if not question_id:
@@ -216,8 +211,6 @@ def _record_review_flags(
         flags.append("no_detected_mark_events")
     if total_match is False:
         flags.append("total_marks_mismatch")
-    if correction:
-        flags.append("human_verified_total_correction")
     if (
         detected_total is not None
         and question_total is not None
@@ -271,29 +264,20 @@ def _resolve_question_total(
             "source": field,
             "repair_reason": "single_terminal_part_mark_repaired_from_existing_text",
         }
+    if (
+        original is not None
+        and expected_total is not None
+        and detected_total is not None
+        and expected_total == detected_total
+        and original != expected_total
+    ):
+        return {
+            **evidence,
+            "value": expected_total,
+            "source": "question_solution_marks_and_mark_scheme_total",
+            "repair_reason": "question_total_repaired_from_agreed_expected_and_mark_scheme_totals",
+        }
     return evidence
-
-
-def _human_verified_total_correction(question_id: str) -> dict[str, Any] | None:
-    corrections = _load_human_verified_total_corrections()
-    correction = corrections.get(question_id)
-    if not isinstance(correction, dict):
-        return None
-    return {key: value for key, value in correction.items() if key != "question_id"}
-
-
-@lru_cache(maxsize=1)
-def _load_human_verified_total_corrections() -> dict[str, dict[str, Any]]:
-    path = Path(__file__).with_name("human_verified_total_corrections.v1.json")
-    if not path.is_file():
-        return {}
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    records = payload.get("records") if isinstance(payload, dict) else []
-    output: dict[str, dict[str, Any]] = {}
-    for record in records:
-        if isinstance(record, dict) and record.get("question_id"):
-            output[str(record["question_id"])] = record
-    return output
 
 
 def _extraction_status(*, text: str, events: list[dict[str, Any]], review_flags: list[str]) -> str:

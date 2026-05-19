@@ -132,7 +132,7 @@ def test_validation_accepts_review_records_but_rejects_marking_claims_and_excess
     assert any(error.startswith("parsed_total_exceeds_expected") for error in report["errors"])
 
 
-def test_targeted_total_mismatch_repairs_and_correction_are_review_safe(tmp_path: Path) -> None:
+def test_targeted_total_mismatch_repairs_from_text_and_agreed_totals(tmp_path: Path) -> None:
     question_bank_path, artifact_root = _write_targeted_total_fixture(tmp_path)
     original = question_bank_path.read_text(encoding="utf-8")
 
@@ -155,17 +155,16 @@ def test_targeted_total_mismatch_repairs_and_correction_are_review_safe(tmp_path
     assert records["51summer24_q02"]["question_total_evidence"]["source"] == "ocr_text"
 
     q10 = records["32autumn25_q10"]
-    assert q10["question_total_detected"] == 4
-    assert q10["total_marks_detected"] == 4
-    assert q10["total_marks_expected"] == 4
-    assert q10["human_verified_total_correction"]["status"] == "human_verified"
-    assert "human_verified_total_correction" in q10["review_flags"]
-    assert q10["safe_for_advisory_use"] is False
+    assert q10["question_total_detected"] == 9
+    assert q10["total_marks_detected"] == 9
+    assert q10["total_marks_expected"] == 9
+    assert q10["question_total_evidence"]["source"] == "question_solution_marks_and_mark_scheme_total"
+    assert q10["safe_for_advisory_use"] is True
 
     summary = sidecar_summary(sidecar)
     assert summary["question_total_disagreement_count"] == 0
     assert summary["question_total_repair_count"] == 2
-    assert summary["human_verified_total_correction_count"] == 1
+    assert summary["human_verified_total_correction_count"] == 0
     assert summary["question_total_disagreement_resolved_count"] == 3
     assert all(record["safe_for_marking_use"] is False for record in sidecar["records"])
     assert all(
@@ -174,7 +173,7 @@ def test_targeted_total_mismatch_repairs_and_correction_are_review_safe(tmp_path
     assert question_bank_path.read_text(encoding="utf-8") == original
 
 
-def test_safe_for_advisory_is_not_granted_by_human_total_correction(tmp_path: Path) -> None:
+def test_agreed_expected_and_mark_scheme_total_can_repair_stale_question_total(tmp_path: Path) -> None:
     artifact_root = tmp_path / "output"
     image = artifact_root / "p3" / "32autumn25" / "mark_scheme" / "q10.png"
     image.parent.mkdir(parents=True)
@@ -192,7 +191,11 @@ def test_safe_for_advisory_is_not_granted_by_human_total_correction(tmp_path: Pa
                 "mark_scheme_image_path": "p3/32autumn25/mark_scheme/q10.png",
                 "mark_scheme_image_paths": ["p3/32autumn25/mark_scheme/q10.png"],
                 "question_text": "10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
-                "mark_scheme_text": "10(a) State equation B1\nUse chain rule M1\nObtain k DM1\nObtain result A1 AG",
+                "mark_scheme_text": (
+                    "10(a) State equation B1\nUse chain rule M1\nObtain k DM1\nObtain result A1 AG\n"
+                    "10(b) Separate variables B1\nObtain t term B1\nObtain log term B1\nUse constant M1\n"
+                    "Obtain t = 16.1 A1"
+                ),
                 "question_solution_marks": 9,
                 "notes": {
                     "source_paper_code": "32",
@@ -216,9 +219,10 @@ def test_safe_for_advisory_is_not_granted_by_human_total_correction(tmp_path: Pa
     )
 
     record = sidecar["records"][0]
+    assert record["question_total_detected"] == 9
+    assert record["question_total_evidence"]["source"] == "question_solution_marks_and_mark_scheme_total"
     assert record["total_marks_match"] is True
-    assert record["safe_for_advisory_use"] is False
-    assert record["extraction_status"] == "review"
+    assert "question_total_mark_scheme_total_disagree" not in set(record["review_flags"])
 
 
 def _write_question_bank_fixture(tmp_path: Path, *, include_missing_image: bool = True) -> tuple[Path, Path]:
