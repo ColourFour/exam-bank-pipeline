@@ -1,5 +1,7 @@
 # Difficulty Index v1 Review Queue
 
+Generated at `2026-05-19T23:37:54Z`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.
+
 Records listed here need human calibration or safety review before relying on their advisory placement.
 
 Records needing review: 285

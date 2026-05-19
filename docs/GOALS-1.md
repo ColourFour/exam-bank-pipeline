@@ -1,4 +1,8 @@
-Goals.md -> complete phase 1 - 3 then move to leveraging exam report and grade boundary
+# Phase 1-3 Goals - Historical Progress Log
+
+This file is a historical progress log, not the current operating contract. Use `README.md`, `ROADMAP.md`, `docs/COMMAND_ATLAS.md`, `docs/RELEASE_VALIDATION_CHECKLIST.md`, and the sidecar contracts for current workflows. The later deterministic advisory-evidence and difficulty-index work is documented in `docs/ADVISORY_EVIDENCE_CONTRACT.md` and `docs/DIFFICULTY_INDEX_CONTRACT.md`.
+
+Original note: Goals.md -> complete phase 1 - 3 then move to leveraging exam report and grade boundary
 
 Phase 1 goals: safe cleanup prerequisites
 

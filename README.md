@@ -6,7 +6,7 @@ The pipeline scans PDFs, detects top-level questions, renders question crops, re
 
 ## Current Baseline
 
-The current project-state baseline is [`docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md`](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Use that report for measured counts, current generated-output names, known risks, and test status instead of copying count snapshots into this README.
+The canonical-extraction baseline is [`docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md`](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Use that report for measured extraction counts, canonical output names, known risks, and dated test status instead of copying count snapshots into this README. Later sidecar workflows are documented in their own contracts and in the command atlas.
 
 As of that audit, dated `2026-05-14`, the current canonical export is `output/json/question_bank.json` from run `20260513T070200Z-56d469c1dd52`. It is OCR-enabled: OCR ran for the canonical export and OCR was selected over native text for a small subset of records. This supersedes older README text that described the current export as native-only.
 
@@ -15,6 +15,9 @@ Current important generated artifacts:
 - Canonical question bank: `output/json/question_bank.json`
 - Canonical image trees: `output/p*/<paper>/questions/*.png` and `output/p*/<paper>/mark_scheme/*.png`
 - Strict topic-routing sidecar: `output/json/question_bank.topic_routing.v1.json`
+- Mark-event evidence sidecar: `output/json/question_bank.mark_events.v1.json`
+- Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
+- Difficulty index sidecar: `output/json/question_bank.difficulty_index.v1.json`
 - Asterion projection: `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - Content Lab candidates: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 
@@ -42,9 +45,11 @@ AI sidecar commands require a DeepSeek API key:
 set -a; source .env; set +a
 ```
 
+Deterministic advisory-evidence commands use local examiner-report and grade-threshold PDFs under `input/` and do not require provider credentials.
+
 ## Command Atlas
 
-Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, Asterion and Content Lab projections, topic packets, topic routing, AI enrichment, AI sidecar audit, output inventory, cleanup planning, and test commands.
+Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, mark-event evidence, advisory evidence, difficulty index generation, Asterion and Content Lab projections, topic packets, topic routing, AI enrichment, AI sidecar audit, output inventory, cleanup planning, export summary diffs, and test commands.
 
 AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
@@ -174,6 +179,10 @@ Asterion export files are downstream projections, not a replacement for canonica
 
 Strict Asterion topic filters should use `output/json/question_bank.topic_routing.v1.json` only when `metadata.run_summary.safe_for_strict_filters=true` and only for records that are not review-required. See [`docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md).
 
+Mark-event evidence (`question_bank.mark_events.v1.json`) and advisory evidence (`output/advisory_evidence/question_bank.advisory_evidence.v1.json`) are deterministic support sidecars. They can support review, filtering, and difficulty evidence, but they must not replace canonical images, official mark-scheme crops, strict topic routing, or Asterion role gates. See [`docs/MARK_EVENTS_CONTRACT.md`](docs/MARK_EVENTS_CONTRACT.md) and [`docs/ADVISORY_EVIDENCE_CONTRACT.md`](docs/ADVISORY_EVIDENCE_CONTRACT.md).
+
+The difficulty index sidecar (`question_bank.difficulty_index.v1.json`) is an advisory sort/filter aid. Its `difficulty_index_0_100` field is not a psychometric score, and its current version does not enable student-facing sequencing. See [`docs/DIFFICULTY_INDEX_CONTRACT.md`](docs/DIFFICULTY_INDEX_CONTRACT.md).
+
 Broad AI enrichment sidecars such as `question_bank.deepseek.json` and `question_bank.ai_assisted.v2*.json` are review/debug evidence until a separate audit approves a narrower use.
 
 ## Topic Packets
@@ -201,7 +210,7 @@ Preview the full pass without writing PDFs or manifests:
   --dry-run
 ```
 
-Outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `questions.pdf`, `answers.pdf`, and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Weak text/OCR/topic/crop signals are warnings, not blockers; invalid topics, missing question images, mapping failures, and validation failures remain hard exclusions unless explicitly included for review.
+Default outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `topic_packet.pdf` and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed. Weak text/OCR/topic/crop signals are warnings, not blockers; invalid topics, missing question images, mapping failures, and validation failures remain hard exclusions unless explicitly included for review.
 
 ## Downstream Use
 
@@ -216,7 +225,9 @@ Records with failed mapping, failed validation, failed scope, missing image path
 - [Current audit baseline](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md)
 - [Asterion export contract](docs/ASTERION_EXPORT_CONTRACT.md)
 - [Topic routing sidecar contract](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md)
+- [Mark-event evidence contract](docs/MARK_EVENTS_CONTRACT.md)
 - [Advisory evidence contract](docs/ADVISORY_EVIDENCE_CONTRACT.md)
+- [Difficulty index contract](docs/DIFFICULTY_INDEX_CONTRACT.md)
 - [AI-assisted enrichment](docs/AI_ASSISTED_ENRICHMENT.md)
 - [Triage workflow](docs/TRIAGE_WORKFLOW.md)
 - [Auto-triage workflow](docs/AUTO_TRIAGE.md)

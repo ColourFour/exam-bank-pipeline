@@ -13,6 +13,9 @@ source .venv/bin/activate
 - Canonical question bank: `output/json/question_bank.json`
 - Canonical image artifacts: `output/p*/<paper>/questions/*.png` and `output/p*/<paper>/mark_scheme/*.png`
 - Topic routing sidecar: `output/json/question_bank.topic_routing.v1.json`
+- Mark-event sidecar: `output/json/question_bank.mark_events.v1.json`
+- Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
+- Difficulty index sidecar: `output/json/question_bank.difficulty_index.v1.json`
 - Asterion export: `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - Content Lab candidates: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 - Validation report directory: `output/audits/current/`
@@ -140,6 +143,45 @@ Warning:
 
 ### 5. Generate Or Validate Asterion Exports
 
+Before regenerating Asterion projections, validate advisory sidecars that the export or downstream release notes may reference:
+
+```bash
+.venv/bin/python scripts/validate_mark_events.py \
+  --question-bank output/json/question_bank.json \
+  --mark-events output/json/question_bank.mark_events.v1.json \
+  --artifact-root output \
+  --output output/json/question_bank.mark_events.validation.v1.json
+```
+
+```bash
+.venv/bin/python scripts/validate_advisory_evidence.py \
+  --advisory-root output/advisory_evidence \
+  --question-bank output/json/question_bank.json \
+  --output output/advisory_evidence/validation.v1.json
+```
+
+```bash
+.venv/bin/python scripts/generate_difficulty_index.py --dry-run
+```
+
+Expected evidence:
+
+- `output/json/question_bank.mark_events.validation.v1.json`
+- `output/advisory_evidence/validation.v1.json`
+- Difficulty-index dry-run summary
+
+Blocking:
+
+- Mark-event validation exits nonzero.
+- Advisory-evidence validation exits nonzero or reports validation errors.
+- Difficulty-index dry run exits nonzero.
+- Any sidecar claims student-facing marking, strict topic filtering, or student sequencing without a separate approved release gate.
+
+Warning:
+
+- Advisory-evidence duplicate-source warnings are acceptable only when visible in validation/review reports and retained as review evidence.
+- Difficulty-index low-confidence, unsafe, and review-queue records are expected; they must stay out of student-facing sequencing in v1.
+
 When producing the release export, regenerate both projections from the canonical question bank:
 
 ```bash
@@ -212,7 +254,7 @@ Blocking:
 Warning:
 
 - The current known state has `safe_for_strict_filters=false` and failed records, so strict topic filters must remain disabled. The sidecar can still be used as review evidence if the failed and review-required states are preserved.
-- Local `topic`, `difficulty`, and any future exam-report or grade-boundary-derived metadata are advisory unless a separate release review approves their consumer role. Exam report and grade-boundary leverage is deferred until after deeper refactors.
+- Local `topic`, legacy `difficulty`, deterministic advisory evidence, and the difficulty index are advisory unless a separate release review approves their consumer role. Grade-threshold context must not be used as direct individual-question difficulty proof.
 
 ### 7. Run Output Inventory And Cleanup Plan
 

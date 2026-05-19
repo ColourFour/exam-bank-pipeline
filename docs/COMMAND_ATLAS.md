@@ -19,6 +19,8 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | OCR candidate audit | `scripts/audit_ocr_candidates.py` | Audit-only/OCR | Fast | Optional report write |
 | Difficulty audit | `scripts/audit_difficulty.py` | Audit-only | Fast | Optional report write |
 | Mark-event sidecar | `scripts/build_mark_events.py`, `scripts/validate_mark_events.py` | Advisory sidecar | Fast | Sidecar/report writes |
+| Advisory evidence sidecar | `scripts/build_advisory_*.py`, parser/link/validation scripts | Advisory sidecar | Fast to medium | Sidecar/report writes |
+| Difficulty index sidecar | `scripts/generate_difficulty_index.py` | Advisory sidecar | Fast | Sidecar/report writes |
 | Asterion export | `asterion-export` | Standard projection | Fast to medium | Yes |
 | Content Lab candidates | `asterion-content-lab-candidates` | Standard projection | Fast to medium | Yes |
 | Topic packets | `topic-packets` | Standard projection | Fast to medium | Yes |
@@ -27,6 +29,7 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | AI sidecar audit | `ai-sidecar-audit` | Audit-only | Fast | No |
 | Output inventory | `output-inventory` | Audit-only | Fast to medium | Optional report writes |
 | Output cleanup plan | `output-cleanup-plan` | Audit-only | Fast to medium | Optional report writes |
+| Export summary diff | `export-summary-diff` | Audit-only | Fast | No |
 | Full tests | `pytest` | Test | About 2 minutes observed | No |
 | Fast local tests | `pytest -m "not integration and not rendering"` | Test | Fast | No |
 | Rendering tests | `pytest -m rendering` | Test | Fast | No |
@@ -239,6 +242,72 @@ Category/runtime: advisory sidecar, fast
 
 Contract: [Mark-Event Evidence Contract](MARK_EVENTS_CONTRACT.md). The sidecar is advisory-only; `safe_for_marking_use` must remain false for generated records.
 Total repairs are limited to deterministic recovery from existing question/OCR text or agreement between canonical `question_solution_marks` and the stored mark-scheme total.
+
+### Advisory Evidence Sidecar
+
+Purpose: build deterministic advisory evidence from examiner-report and grade-threshold PDFs. This evidence can support review, topic hints, and difficulty context, but it must not replace canonical question images, mark-scheme images, strict topic routing, or Asterion role gates.
+
+Input: `input/examiner_reports/`, `input/grade_thresholds/`, `output/json/question_bank.json`
+
+Output: stage files under `output/advisory_evidence/`, reports under `output/advisory_evidence/reports/`, and final sidecar `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
+
+Category/runtime: advisory sidecar, fast to medium
+
+Run the deterministic pipeline in order:
+
+```bash
+.venv/bin/python scripts/build_advisory_inventory.py
+.venv/bin/python scripts/extract_advisory_text.py
+.venv/bin/python scripts/parse_examiner_reports.py
+.venv/bin/python scripts/parse_grade_thresholds.py
+.venv/bin/python scripts/link_advisory_evidence.py
+.venv/bin/python scripts/build_advisory_topic_evidence.py
+.venv/bin/python scripts/build_examiner_report_difficulty.py
+.venv/bin/python scripts/build_grade_threshold_context.py
+.venv/bin/python scripts/validate_advisory_evidence.py
+.venv/bin/python scripts/build_advisory_review_reports.py
+.venv/bin/python scripts/build_advisory_evidence_sidecar.py
+```
+
+Validation report:
+
+```bash
+.venv/bin/python scripts/validate_advisory_evidence.py \
+  --advisory-root output/advisory_evidence \
+  --question-bank output/json/question_bank.json \
+  --output output/advisory_evidence/validation.v1.json
+```
+
+Contract: [Advisory Evidence Contract](ADVISORY_EVIDENCE_CONTRACT.md). Validation can pass with duplicate-source warnings when the duplicates are explicit in reports; validation errors block downstream use.
+
+### Difficulty Index Sidecar
+
+Purpose: build the advisory `difficulty_index_v1` sidecar and human-readable reports from canonical extraction metadata plus mark-event, topic-routing, and advisory-evidence sidecars.
+
+Input: `output/json/question_bank.json`; optional/default sidecars `question_bank.mark_events.v1.json`, `question_bank.topic_routing.v1.json`, and `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
+
+Output: `output/json/question_bank.difficulty_index.v1.json`, `reports/difficulty_index_summary.md`, `reports/difficulty_index_by_paper.md`, `reports/difficulty_index_review_queue.md`
+
+Category/runtime: advisory sidecar, fast
+
+```bash
+.venv/bin/python scripts/generate_difficulty_index.py \
+  --input output/json/question_bank.json \
+  --output output/json/question_bank.difficulty_index.v1.json \
+  --reports-dir reports \
+  --artifact-root output \
+  --mark-events output/json/question_bank.mark_events.v1.json \
+  --topic-routing output/json/question_bank.topic_routing.v1.json \
+  --advisory-evidence output/advisory_evidence/question_bank.advisory_evidence.v1.json
+```
+
+Preview without writing:
+
+```bash
+.venv/bin/python scripts/generate_difficulty_index.py --dry-run
+```
+
+Contract: [Difficulty Index Contract](DIFFICULTY_INDEX_CONTRACT.md). `difficulty_index_0_100` is an advisory ordering score, not a psychometric claim. Current v1 output has `safe_for_student_sequencing=false` for every record.
 
 ## Downstream Projections
 
@@ -477,6 +546,22 @@ Include archived generated-output evidence:
   --json output/output_cleanup_plan.json
 ```
 
+### Export Summary Diff
+
+Purpose: compare two generated exports or sidecars and print a concise before/after summary. This is useful before promoting a regenerated question bank, Asterion projection, topic sidecar, or other comparable JSON artifact.
+
+Input: earlier JSON path and later JSON path
+
+Output: terminal summary only
+
+Category/runtime: audit-only, fast
+
+```bash
+.venv/bin/python -m exam_bank.cli export-summary-diff \
+  output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/json/question_bank.json \
+  output/json/question_bank.json
+```
+
 ## Taxonomy Generation
 
 These scripts rewrite canonical taxonomy files unless `--dry-run` is used. Use `--dry-run` for inspection and pre-cleanup validation.
@@ -630,9 +715,22 @@ These help surfaces were checked while creating this atlas:
 .venv/bin/python -m exam_bank.cli ai-sidecar-audit --help
 .venv/bin/python -m exam_bank.cli output-inventory --help
 .venv/bin/python -m exam_bank.cli output-cleanup-plan --help
+.venv/bin/python -m exam_bank.cli export-summary-diff --help
 .venv/bin/python scripts/audit_ocr_candidates.py --help
 .venv/bin/python scripts/audit_difficulty.py --help
 .venv/bin/python scripts/audit_question_bank_readiness.py --help
+.venv/bin/python scripts/build_advisory_inventory.py --help
+.venv/bin/python scripts/extract_advisory_text.py --help
+.venv/bin/python scripts/parse_examiner_reports.py --help
+.venv/bin/python scripts/parse_grade_thresholds.py --help
+.venv/bin/python scripts/link_advisory_evidence.py --help
+.venv/bin/python scripts/build_advisory_topic_evidence.py --help
+.venv/bin/python scripts/build_examiner_report_difficulty.py --help
+.venv/bin/python scripts/build_grade_threshold_context.py --help
+.venv/bin/python scripts/validate_advisory_evidence.py --help
+.venv/bin/python scripts/build_advisory_review_reports.py --help
+.venv/bin/python scripts/build_advisory_evidence_sidecar.py --help
+.venv/bin/python scripts/generate_difficulty_index.py --help
 .venv/bin/python scripts/generate_skill_maps.py --help
 .venv/bin/python scripts/generate_topic_filter_maps.py --help
 .venv/bin/python -m pytest --help

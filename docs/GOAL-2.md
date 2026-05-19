@@ -1,4 +1,10 @@
-Advisory Evidence Phase — Examiner Reports + Grade Thresholds
+# Advisory Evidence Phase - Planning Trace
+
+This file is a historical implementation prompt/plan, not the current operating contract. The deterministic advisory evidence phase is now represented by `docs/ADVISORY_EVIDENCE_CONTRACT.md`, `docs/DIFFICULTY_INDEX_CONTRACT.md`, `docs/COMMAND_ATLAS.md`, and the generated reports under `output/advisory_evidence/reports/` and `reports/`.
+
+Some requested paths below were superseded during implementation. In the current workspace, the final advisory evidence sidecar lives at `output/advisory_evidence/question_bank.advisory_evidence.v1.json`, not under `output/json/`.
+
+Advisory Evidence Phase - Examiner Reports + Grade Thresholds
 
 We are working in:
 

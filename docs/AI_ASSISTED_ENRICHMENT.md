@@ -82,6 +82,8 @@ Calibration is computed within each `paper_family`, not globally. The default ba
 
 The percentile scale assigns higher values to harder questions, and rank `1` is the most difficult question within that paper family.
 
+Current deterministic difficulty work is represented by `output/json/question_bank.difficulty_index.v1.json`, built by `scripts/generate_difficulty_index.py`. That sidecar may use mark events, topic routing, and advisory examiner-report/grade-threshold evidence, but it remains advisory and does not enable student-facing sequencing in v1. See [Difficulty Index Contract](DIFFICULTY_INDEX_CONTRACT.md).
+
 ## Running Sidecars
 
 Use the canonical taxonomy directory, not archived or root-level taxonomy artifacts:

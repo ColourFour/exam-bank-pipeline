@@ -1,5 +1,7 @@
 # Difficulty Index v1 Summary
 
+Generated from `output/json/question_bank.json` at `2026-05-19T23:37:54Z`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.
+
 The `difficulty_index_0_100` field is an internal advisory sorting score only. It is not a psychometric measurement, and 0/100 must not be read as literal candidate success rates.
 
 `paper_relative_difficulty_band` is the downstream-friendly category: a 1-5 band assigned within each paper after sorting by the advisory index.

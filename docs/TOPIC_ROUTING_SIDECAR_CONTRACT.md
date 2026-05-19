@@ -175,9 +175,9 @@ Strict topic routing is the narrow `topic-route-ai` sidecar path. It sends each 
 
 Strict routing is the only sidecar path documented here for parent-topic distributions. It still remains advisory unless sidecar-level safety metadata allows strict filtering.
 
-### Deferred Evidence Sources
+### Advisory Evidence Sources
 
-Future topic and difficulty leverage may use exam reports and grade boundaries as additional evidence, but that work is deferred until after deeper refactors. Until a separate contract and audited implementation exist, those sources must not change strict topic routing, difficulty algorithms, canonical question-bank records, or Asterion role gates.
+Deterministic examiner-report and grade-threshold evidence now exists under `output/advisory_evidence/`. It remains separate from strict topic routing. Until a separate audited release explicitly changes this contract, advisory evidence must not change strict topic routing, canonical question-bank records, or Asterion role gates. Grade-threshold context must not directly prove individual-question difficulty.
 
 ## AI Topic Structure Rule
 

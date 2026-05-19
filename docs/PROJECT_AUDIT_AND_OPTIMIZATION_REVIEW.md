@@ -10,6 +10,8 @@ Post-audit documentation cleanup note: `docs/PROJECT_REVIEW.md` has been moved t
 
 Post-Phase 1 through Phase 3 consistency note: this audit remains the dated measured baseline for run `20260513T070200Z-56d469c1dd52`, not a live count source. Later docs now carry the current command atlas, Asterion contract, topic sidecar contract, archive manifest, atomic-write/status-reporting notes, and validation checklist. Where this report says a doc or command "needs" one of those items, read that as original audit context unless the same risk is repeated in a current contract or checklist.
 
+Post-advisory iteration note: deterministic mark-event evidence, advisory examiner-report/grade-threshold evidence, and the difficulty-index sidecar were added after this audit snapshot. Use `docs/MARK_EVENTS_CONTRACT.md`, `docs/ADVISORY_EVIDENCE_CONTRACT.md`, `docs/DIFFICULTY_INDEX_CONTRACT.md`, and `docs/COMMAND_ATLAS.md` for those current workflows. This audit remains useful for the canonical extraction run and pre-advisory cleanup baseline, but it is not a complete inventory of later sidecars.
+
 ## 1. Executive Summary
 
 The project has a strong engineering foundation for an image-first CAIE 9709 exam-bank pipeline. The core source-of-truth policy is reflected in code, tests, and export shape: canonical question and mark-scheme images are preserved separately from advisory native text, OCR text, AI sidecars, topic routing, and Asterion eligibility metadata.

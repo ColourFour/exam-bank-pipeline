@@ -1,5 +1,7 @@
 # Difficulty Index v1 By Paper
 
+Generated at `2026-05-19T23:37:54Z`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.
+
 Questions are shown easiest to hardest within each paper. Bands are paper-relative, not global difficulty claims.
 
 ## 11autumn21

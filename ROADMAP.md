@@ -72,16 +72,26 @@ Status: deferred future work, not current implementation scope.
 
 Potential Phase 4 work includes cache keys for OCR/rendering, AI batch checkpoint/resume, audit-script consolidation, mark-scheme subpart parsing improvements, and crop-confidence revisits with regression samples. These changes have larger behavioral and migration risk, so they should wait until Phases 1 through 3 are complete and the project has clear acceptance gates.
 
-### Deferred Topic and Difficulty Enrichment
+### Advisory Evidence and Difficulty Index
 
-After deeper refactors, topic and difficulty leverage may eventually incorporate exam reports and grade boundaries as additional evidence. That future work is explicitly deferred and should not be implemented now.
+Status: deterministic advisory implementation is present; downstream promotion remains deferred.
 
-Until then:
+The repo now has deterministic examiner-report and grade-threshold evidence under `output/advisory_evidence/`, with the final sidecar at `output/advisory_evidence/question_bank.advisory_evidence.v1.json`. It also has an advisory difficulty index at `output/json/question_bank.difficulty_index.v1.json` and reports under `reports/`.
 
-- Do not implement exam-report or grade-boundary ingestion.
-- Do not change topic or difficulty algorithms.
+Use these contracts as current guidance:
+
+- [Advisory Evidence Contract](docs/ADVISORY_EVIDENCE_CONTRACT.md)
+- [Mark-Event Evidence Contract](docs/MARK_EVENTS_CONTRACT.md)
+- [Difficulty Index Contract](docs/DIFFICULTY_INDEX_CONTRACT.md)
+
+Current constraints:
+
+- Do not use advisory evidence to overwrite canonical question-bank records.
+- Do not use advisory evidence to overwrite strict topic routing or Asterion role gates.
+- Do not treat grade-threshold context as direct individual-question difficulty proof.
 - Do not promote advisory topic/difficulty metadata into student-facing truth.
-- Do not change generated outputs for enrichment experiments without a separate audited plan.
+- Do not change canonical generated outputs for enrichment experiments without a separate audited plan.
+- Keep AI-assisted advisory enrichment for unresolved cases behind a separate audited plan.
 
 ## iteration_001 - Audit/reporting layer
 

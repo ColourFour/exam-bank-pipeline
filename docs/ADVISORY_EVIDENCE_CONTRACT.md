@@ -4,6 +4,8 @@ This contract covers examiner-report and grade-threshold evidence generated unde
 
 The sidecar is advisory evidence only. Canonical question images and mark-scheme images remain the source of truth. Advisory evidence must not overwrite `output/json/question_bank.json`, topic routing sidecars, Asterion exports, taxonomy files, canonical images, or existing AI sidecars.
 
+Current generated state: the final sidecar lives at `output/advisory_evidence/question_bank.advisory_evidence.v1.json`, generated `2026-05-15T00:08:33Z` in the current workspace. A validation check run on `2026-05-19T23:33:24Z` passed with `ok=true`, `0` errors, and `158` explicit duplicate-source warnings. Treat those warnings as review evidence, not as permission to promote advisory evidence into canonical truth.
+
 ## Build Order
 
 Run the advisory pipeline in this order:
@@ -91,6 +93,10 @@ No advisory evidence should be used for strict topic filtering, mastery decision
 
 Implementation passes must also run `git diff --check` and a protected-path no-mutation check for canonical outputs, exports, taxonomy files, canonical image folders, and existing AI sidecars.
 
+## Related Difficulty Index
+
+The difficulty index sidecar can consume advisory evidence as one support signal. Its contract is separate: [Difficulty Index Contract](DIFFICULTY_INDEX_CONTRACT.md). Grade-threshold context may support component/session context, but it still must not directly prove individual-question difficulty.
+
 ## AI Policy
 
-AI enrichment is intentionally outside this phase. Add a separate audited plan before using AI on unresolved advisory cases.
+AI enrichment remains outside the deterministic advisory-evidence sidecar. Add a separate audited plan before using AI on unresolved advisory cases.

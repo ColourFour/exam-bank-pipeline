@@ -33,8 +33,12 @@ def write_difficulty_index_reports(
 
 def render_summary_report(sidecar: dict[str, Any]) -> str:
     summary = sidecar_summary(sidecar)
+    generated_at = str(sidecar.get("generated_at") or "unknown")
+    source_path = str(sidecar.get("source_question_bank_path") or "unknown")
     lines = [
         "# Difficulty Index v1 Summary",
+        "",
+        f"Generated from `{source_path}` at `{generated_at}`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.",
         "",
         "The `difficulty_index_0_100` field is an internal advisory sorting score only. It is not a psychometric measurement, and 0/100 must not be read as literal candidate success rates.",
         "",
@@ -70,8 +74,11 @@ def render_by_paper_report(sidecar: dict[str, Any]) -> str:
     for record in sidecar.get("records", []):
         if isinstance(record, dict):
             by_paper[str(record.get("paper") or "unknown")].append(record)
+    generated_at = str(sidecar.get("generated_at") or "unknown")
     lines = [
         "# Difficulty Index v1 By Paper",
+        "",
+        f"Generated at `{generated_at}`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.",
         "",
         "Questions are shown easiest to hardest within each paper. Bands are paper-relative, not global difficulty claims.",
         "",
@@ -108,8 +115,11 @@ def render_review_queue_report(sidecar: dict[str, Any]) -> str:
             str(record.get("question_id") or ""),
         )
     )
+    generated_at = str(sidecar.get("generated_at") or "unknown")
     lines = [
         "# Difficulty Index v1 Review Queue",
+        "",
+        f"Generated at `{generated_at}`. See `docs/DIFFICULTY_INDEX_CONTRACT.md` for interpretation and forbidden uses.",
         "",
         "Records listed here need human calibration or safety review before relying on their advisory placement.",
         "",
@@ -132,4 +142,3 @@ def _counter_lines(values: dict[str, int]) -> list[str]:
     if not values:
         return ["- none"]
     return [f"- `{key}`: {values[key]}" for key in sorted(values, key=str)]
-
