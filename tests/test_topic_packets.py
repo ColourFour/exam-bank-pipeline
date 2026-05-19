@@ -217,7 +217,6 @@ def test_dry_run_writes_no_pdfs(tmp_path: Path) -> None:
         ("topic_confidence", "low", "low_topic_confidence"),
         ("topic_uncertain", True, "topic_uncertain"),
         ("topic_trust_status", "degraded_text", "degraded_text"),
-        ("question_crop_confidence", "low", "low_question_crop_confidence"),
     ],
 )
 def test_quality_signals_are_warnings_not_exclusions(
@@ -242,7 +241,34 @@ def test_quality_signals_are_warnings_not_exclusions(
     assert manifest["warning_counts"][warning] == 1
 
 
-def test_text_and_visual_review_statuses_are_warnings_not_exclusions(tmp_path: Path) -> None:
+def test_low_crop_confidence_downgrades_release_record_to_review_packet(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path, record_overrides={"q2": {"notes": {"question_crop_confidence": "low"}}})
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    release_manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    review_manifest = json.loads(
+        (paths["output"] / "review_required" / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert summary["total_included"] == 2
+    assert summary["total_included_in_release_packets"] == 1
+    assert summary["total_included_in_review_packets"] == 1
+    assert summary["release_quality_downgrade_count"] == 1
+    assert summary["release_quality_downgrade_reason_counts"]["question_crop_confidence_not_high"] == 1
+    assert release_manifest["included_question_ids"] == ["q1"]
+    assert release_manifest["warning_counts"].get("low_question_crop_confidence", 0) == 0
+    assert review_manifest["packet_mode"] == "review"
+    assert review_manifest["included_question_ids"] == ["q2"]
+    assert "question_crop_confidence_not_high" in review_manifest["included_records"][0]["review_reasons"]
+
+
+def test_visual_review_and_text_fail_downgrade_to_review_packets(tmp_path: Path) -> None:
     paths = _fixture(
         tmp_path,
         record_overrides={
@@ -260,9 +286,50 @@ def test_text_and_visual_review_statuses_are_warnings_not_exclusions(tmp_path: P
     )
 
     assert summary["total_included"] == 2
+    assert summary["total_included_in_release_packets"] == 0
+    assert summary["total_included_in_review_packets"] == 2
+    assert summary["release_quality_downgrade_count"] == 2
     assert summary["warnings_by_type"]["visual_review"] == 1
     assert summary["warnings_by_type"]["text_only_review"] == 1
     assert summary["warnings_by_type"]["text_only_fail"] == 1
+    review_manifest = json.loads(
+        (paths["output"] / "review_required" / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert review_manifest["included_question_ids"] == ["q1", "q2"]
+    assert "visual_curation_status_not_ready" in review_manifest["included_records"][0]["review_reasons"]
+    assert "text_only_status_fail" in review_manifest["included_records"][1]["review_reasons"]
+
+
+def test_full_generation_removes_stale_release_packet_when_all_records_downgrade(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q1": {"notes": {"visual_curation_status": "review"}},
+            "q2": {"notes": {"visual_curation_status": "review"}},
+        },
+    )
+    stale_dir = paths["output"] / "p3" / "integration"
+    stale_dir.mkdir(parents=True)
+    (stale_dir / "manifest.json").write_text(
+        json.dumps({"packet_mode": "release", "included_records": [{"question_id": "stale"}]}),
+        encoding="utf-8",
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    assert summary["total_included_in_release_packets"] == 0
+    assert summary["total_included_in_review_packets"] == 2
+    assert not (stale_dir / "manifest.json").exists()
+    review_manifest = json.loads(
+        (paths["output"] / "review_required" / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert review_manifest["included_question_ids"] == ["q1", "q2"]
 
 
 def test_invalid_major_topic_excluded_in_strict_syllabus_mode(tmp_path: Path) -> None:
@@ -590,7 +657,16 @@ def _record(question_id: str, *, topic: str = "integration", answer: bool = True
         "topic": topic,
         "question_image_path": f"p3/paper/questions/{question_id}.png",
         "mark_scheme_image_path": f"p3/paper/mark_scheme/{question_id}.png" if answer else "",
-        "notes": {"source_pdf": "qp.pdf", "subtopic": "general"},
+        "notes": {
+            "source_pdf": "qp.pdf",
+            "subtopic": "general",
+            "mapping_status": "pass",
+            "validation_status": "pass",
+            "scope_quality_status": "clean",
+            "question_crop_confidence": "high",
+            "visual_curation_status": "ready",
+            "text_only_status": "ready",
+        },
     }
 
 

@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import io
 import json
 import re
+import shutil
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -292,6 +293,14 @@ def generate_topic_packets(
         subtopic = None
     assignments = load_assignment_index(canonical_taxonomy_root, taxonomy)
     artifact_root_path = Path(artifact_root) if artifact_root is not None else _default_artifact_root(question_bank_path)
+    if _should_clean_output_root(
+        dry_run=dry_run,
+        paper_family=paper_family,
+        topic=topic,
+        subtopic=subtopic,
+        limit=limit,
+    ):
+        shutil.rmtree(output_root, ignore_errors=True)
 
     packets: dict[PacketKey, list[tuple[dict[str, Any], Assignment]]] = defaultdict(list)
     skipped: list[dict[str, Any]] = []
@@ -302,6 +311,8 @@ def generate_topic_packets(
     validation_failures: list[str] = []
     broad_topic_only: list[str] = []
     needs_precise_subtopic_review: list[str] = []
+    quality_downgrades: list[dict[str, Any]] = []
+    quality_downgrade_reason_counts: Counter[str] = Counter()
     warning_counts: Counter[str] = Counter()
 
     for record in records:
@@ -377,6 +388,20 @@ def generate_topic_packets(
             skipped.append(_skip(record, "broad_topic_only", reasons=["broad_topic_only", "broad_topic_packets_disabled"]))
             broad_topic_only.append(question_id)
             continue
+
+        release_quality_reasons = _release_quality_reasons(record)
+        if assignment.strict_release_safe and release_quality_reasons:
+            assignment = _as_review_assignment(assignment, release_quality_reasons)
+            quality_downgrades.append(
+                _skip(
+                    record,
+                    "release_quality_gate_downgraded",
+                    reasons=release_quality_reasons,
+                    assigned_topic_id=assignment.topic_id,
+                    assigned_subtopic_id=assignment.subtopic_id,
+                )
+            )
+            quality_downgrade_reason_counts.update(release_quality_reasons)
 
         key = PacketKey(assignment_mode(assignment), assignment.paper_family, assignment.topic_id, assignment.subtopic_id)
         if not validate_packet_key(key, taxonomy):
@@ -517,6 +542,8 @@ def generate_topic_packets(
         validation_failures=validation_failures,
         broad_topic_only=broad_topic_only,
         needs_precise_subtopic_review=needs_precise_subtopic_review,
+        quality_downgrades=quality_downgrades,
+        quality_downgrade_reason_counts=quality_downgrade_reason_counts,
         warning_counts=warning_counts,
         generated_pdfs=generated_pdfs,
         empty_packets_skipped=empty_packets_skipped,
@@ -853,6 +880,7 @@ def _included_record_manifest(
         "mark_scheme_image_paths": answer_paths,
         "answer_available": answer_available,
         "warnings": warnings,
+        "review_reasons": list(assignment.review_reasons),
     }
 
 
@@ -1614,6 +1642,8 @@ def build_summary(
     validation_failures: Sequence[str],
     broad_topic_only: Sequence[str],
     needs_precise_subtopic_review: Sequence[str],
+    quality_downgrades: Sequence[dict[str, Any]],
+    quality_downgrade_reason_counts: Counter[str],
     warning_counts: Counter[str],
     generated_pdfs: Sequence[str],
     empty_packets_skipped: Sequence[dict[str, str]],
@@ -1689,6 +1719,9 @@ def build_summary(
         "records_with_unsafe_topic_assignment": [],
         "records_with_broad_topic_only_assignment": list(broad_topic_only),
         "records_needing_precise_subtopic_review": list(needs_precise_subtopic_review),
+        "records_downgraded_to_review": list(quality_downgrades),
+        "release_quality_downgrade_count": len(quality_downgrades),
+        "release_quality_downgrade_reason_counts": dict(sorted(quality_downgrade_reason_counts.items())),
         "per_paper_family_counts": _counts(p["paper_family"] for p in packets for _ in range(int(p["question_count"]))),
         "per_topic_counts": _counts(p["topic_id"] for p in packets for _ in range(int(p["question_count"]))),
         "per_subtopic_counts": _counts(p["subtopic_id"] or "broad_topic" for p in packets for _ in range(int(p["question_count"]))),
@@ -1735,7 +1768,39 @@ def _strict_assignment_status(raw: dict[str, Any]) -> tuple[bool, list[str]]:
     return not reasons, reasons
 
 
-def _as_review_assignment(assignment: Assignment) -> Assignment:
+def _release_quality_reasons(record: dict[str, Any]) -> list[str]:
+    reasons: list[str] = []
+    status_expectations = [
+        ("mapping_status", "pass", "mapping_status_not_pass"),
+        ("validation_status", "pass", "validation_status_not_pass"),
+        ("scope_quality_status", "clean", "scope_quality_status_not_clean"),
+        ("question_crop_confidence", "high", "question_crop_confidence_not_high"),
+        ("visual_curation_status", "ready", "visual_curation_status_not_ready"),
+    ]
+    for key, expected, reason in status_expectations:
+        if _status_value(record, key) != expected:
+            reasons.append(reason)
+    if _status_value(record, "text_only_status") == "fail":
+        reasons.append("text_only_status_fail")
+    return reasons
+
+
+def _should_clean_output_root(
+    *,
+    dry_run: bool,
+    paper_family: str | None,
+    topic: str | None,
+    subtopic: str | None,
+    limit: int | None,
+) -> bool:
+    return not dry_run and paper_family is None and topic is None and subtopic is None and limit is None
+
+
+def _as_review_assignment(assignment: Assignment, review_reasons: Sequence[str] | None = None) -> Assignment:
+    reasons = list(assignment.review_reasons)
+    for reason in review_reasons or ("review_required",):
+        if reason not in reasons:
+            reasons.append(reason)
     return Assignment(
         question_id=assignment.question_id,
         paper_family=assignment.paper_family,
@@ -1747,7 +1812,7 @@ def _as_review_assignment(assignment: Assignment) -> Assignment:
         confidence=assignment.confidence,
         trust_status=assignment.trust_status,
         strict_release_safe=False,
-        review_reasons=assignment.review_reasons or ("review_required",),
+        review_reasons=tuple(reasons),
     )
 
 

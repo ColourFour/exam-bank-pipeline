@@ -259,7 +259,7 @@ Compatibility: add `--split-question-answer-pdfs` when legacy `questions.pdf` an
 
 Layout options: `--page-size a4|letter`, `--orientation portrait|landscape`, `--layout compact|one-per-page`, and `--answer-placement end|inline`. Use `--layout one-per-page --answer-placement inline` for the previous paired page-heavy packet ordering.
 
-Hard exclusions: missing or invalid major topic, missing question image, `mapping_status=fail`, and `validation_status=fail`. Weak text/OCR/topic/crop signals are warnings in the manifest and summary, not blockers.
+Release packets are quality-first: records must have `mapping_status=pass`, `validation_status=pass`, `scope_quality_status=clean`, `question_crop_confidence=high`, and `visual_curation_status=ready`. Records with valid topics but risky visual status are written under `output/topic_packets/review_required/...` with review reasons. Weak topic/text signals can remain manifest warnings when the visual source is release-safe.
 
 Dry run:
 

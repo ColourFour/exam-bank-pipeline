@@ -367,6 +367,7 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
             "mapping_failure_reason": mark_scheme.failure_reason,
             "scope_quality_status": validation.scope_quality_status,
             "question_crop_confidence": images.question_crop_confidence or (CropConfidence.LOW if images.crop_uncertain else CropConfidence.HIGH),
+            "question_crop_diagnostics": images.question_crop_diagnostics,
             "text_source_profile": validation.text_source_profile,
             "text_fidelity_status": validation.text_fidelity_status,
             "text_fidelity_flags": validation.text_fidelity_flags,

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
+from typing import Iterable
 import json
 import re
 
@@ -230,8 +231,10 @@ def _detect_prompt_regions(
 
     regions, overlap_flags = _remove_meaningful_region_overlaps(regions, config)
     regions, dedupe_flags = _dedupe_crop_regions(regions)
+    regions, furniture_flags = _trim_vertical_furniture_from_regions(regions, layouts, config)
     flags.extend(overlap_flags)
     flags.extend(dedupe_flags)
+    flags.extend(furniture_flags)
     return regions, sorted(set(flags))
 
 
@@ -281,22 +284,20 @@ def _single_page_union_regions(
     if sparse_ratio > 7.5 and _box_height(padded) > layout.height * 0.42:
         return None, ["single_page_union_skipped_sparse"]
 
-    return [
-        CropRegion(
-            page_number=page_number,
-            bbox=padded,
-            text_blocks=sorted(text_blocks, key=lambda block: (block.bbox.y0, block.bbox.x0)),
-            graphics=graphics,
-            duplicate_graphics_removed=sum(region.duplicate_graphics_removed for region in regions),
-            original_bbox=union_box,
-            excluded_regions=_dedupe_excluded_regions(
-                [excluded for region in regions for excluded in region.excluded_regions]
-            ),
-            region_kind="single_page_union",
-            text_bbox=_union_boxes([block.bbox for block in text_blocks]) if text_blocks else None,
-            figure_bbox=_union_boxes(graphics) if graphics else None,
-        )
-    ], ["single_page_union_crop_used", f"single_page_union_fragments:{len(regions)}"]
+    union_region = CropRegion(
+        page_number=page_number,
+        bbox=padded,
+        text_blocks=sorted(text_blocks, key=lambda block: (block.bbox.y0, block.bbox.x0)),
+        graphics=graphics,
+        duplicate_graphics_removed=sum(region.duplicate_graphics_removed for region in regions),
+        original_bbox=union_box,
+        excluded_regions=_dedupe_excluded_regions([excluded for region in regions for excluded in region.excluded_regions]),
+        region_kind="single_page_union",
+        text_bbox=_union_boxes([block.bbox for block in text_blocks]) if text_blocks else None,
+        figure_bbox=_union_boxes(graphics) if graphics else None,
+    )
+    trimmed, trim_flags = _trim_vertical_furniture_from_regions([union_region], layouts, config)
+    return trimmed, ["single_page_union_crop_used", f"single_page_union_fragments:{len(regions)}", *trim_flags]
 
 
 def _same_page_diagram_union_regions(
@@ -328,7 +329,9 @@ def _same_page_diagram_union_regions(
 
     deduped, dedupe_flags = _dedupe_crop_regions(output)
     flags.extend(dedupe_flags)
-    return sorted(deduped, key=lambda region: (region.page_number, region.bbox.y0, region.bbox.x0)), flags
+    trimmed, trim_flags = _trim_vertical_furniture_from_regions(deduped, layouts, config)
+    flags.extend(trim_flags)
+    return sorted(trimmed, key=lambda region: (region.page_number, region.bbox.y0, region.bbox.x0)), flags
 
 
 def _nearby_region_groups(regions: list[CropRegion], config: AppConfig) -> list[list[CropRegion]]:
@@ -816,6 +819,8 @@ def _is_prompt_text_block(block: TextBlock, span: QuestionSpan, layout: PageLayo
         return False
     if _is_footer_or_header_box(block.bbox, layout, config):
         return False
+    if _is_centered_page_number_block(block, layout, config):
+        return False
     if _is_boilerplate_text(text):
         return False
     if _is_answer_space_text(text):
@@ -833,6 +838,186 @@ def _is_prompt_text_block(block: TextBlock, span: QuestionSpan, layout: PageLayo
     if text.isdigit() and (block.bbox.y0 < config.detection.crop_top_margin or block.bbox.y1 > layout.height - config.detection.bottom_margin):
         return False
     return True
+
+
+def _trim_vertical_furniture_from_regions(
+    regions: list[CropRegion],
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> tuple[list[CropRegion], list[str]]:
+    trimmed: list[CropRegion] = []
+    flags: list[str] = []
+    for region in regions:
+        layout = _layout_by_number(layouts, region.page_number)
+        updated, region_flags = _trim_vertical_furniture_from_region(region, layout, config)
+        trimmed.append(updated)
+        flags.extend(region_flags)
+    return trimmed, sorted(set(flags))
+
+
+def _trim_vertical_furniture_from_region(
+    region: CropRegion,
+    layout: PageLayout,
+    config: AppConfig,
+) -> tuple[CropRegion, list[str]]:
+    flags: list[str] = []
+    top_candidates: list[tuple[BoundingBox, str]] = []
+    bottom_candidates: list[tuple[BoundingBox, str]] = []
+    edge_band = max(48.0, config.detection.crop_padding * 4)
+
+    for block in layout.blocks:
+        label = _vertical_text_furniture_label(block, layout, config)
+        if label is None or not _boxes_intersect(region.bbox, block.bbox):
+            continue
+        if block.bbox.y0 <= region.bbox.y0 + edge_band:
+            top_candidates.append((block.bbox, label))
+        if block.bbox.y1 >= region.bbox.y1 - edge_band:
+            bottom_candidates.append((block.bbox, label))
+
+    answer_rule_bands = _answer_rule_y_bands(layout)
+    for graphic in layout.graphics:
+        label = _vertical_graphic_furniture_label(graphic, layout, config, answer_rule_bands)
+        if label is None or not _boxes_intersect(region.bbox, graphic):
+            continue
+        if graphic.y0 <= region.bbox.y0 + edge_band:
+            top_candidates.append((graphic, label))
+        if graphic.y1 >= region.bbox.y1 - edge_band:
+            bottom_candidates.append((graphic, label))
+
+    top = region.bbox.y0
+    bottom = region.bbox.y1
+    protected = _protected_region_boxes(region)
+
+    if top_candidates:
+        candidate_top, labels = _safe_top_furniture_trim(top_candidates, protected, top=top, bottom=bottom, config=config)
+        if candidate_top is not None:
+            top = candidate_top
+            flags.extend(_trim_flags_for_labels(labels))
+        elif max(box.y1 for box, _label in top_candidates) + 1.0 > region.bbox.y0 + 1.0:
+            flags.extend(["crop_furniture_trim_skipped_protected_content", "crop_uncertain"])
+
+    if bottom_candidates:
+        candidate_bottom, labels = _safe_bottom_furniture_trim(bottom_candidates, protected, top=top, bottom=bottom, config=config)
+        if candidate_bottom is not None:
+            bottom = candidate_bottom
+            flags.extend(_trim_flags_for_labels(labels))
+        elif min(box.y0 for box, _label in bottom_candidates) - 1.0 < region.bbox.y1 - 1.0:
+            flags.extend(["crop_furniture_trim_skipped_protected_content", "crop_uncertain"])
+
+    if top == region.bbox.y0 and bottom == region.bbox.y1:
+        return region, sorted(set(flags))
+
+    return replace(
+        region,
+        bbox=BoundingBox(region.bbox.x0, top, region.bbox.x1, bottom),
+        original_bbox=region.original_bbox or region.bbox,
+    ), sorted(set(flags))
+
+
+def _safe_top_furniture_trim(
+    candidates: list[tuple[BoundingBox, str]],
+    protected: list[BoundingBox],
+    *,
+    top: float,
+    bottom: float,
+    config: AppConfig,
+) -> tuple[float | None, list[str]]:
+    candidate_tops = sorted({box.y1 + 1.0 for box, _label in candidates if box.y1 + 1.0 > top + 1.0}, reverse=True)
+    for candidate_top in candidate_tops:
+        if candidate_top >= bottom - config.detection.min_crop_height:
+            continue
+        if not _trim_preserves_protected_boxes(protected, top=candidate_top, bottom=bottom):
+            continue
+        labels = [label for box, label in candidates if box.y1 + 1.0 <= candidate_top + 0.5]
+        return candidate_top, labels
+    return None, []
+
+
+def _safe_bottom_furniture_trim(
+    candidates: list[tuple[BoundingBox, str]],
+    protected: list[BoundingBox],
+    *,
+    top: float,
+    bottom: float,
+    config: AppConfig,
+) -> tuple[float | None, list[str]]:
+    candidate_bottoms = sorted({box.y0 - 1.0 for box, _label in candidates if box.y0 - 1.0 < bottom - 1.0})
+    for candidate_bottom in candidate_bottoms:
+        if candidate_bottom <= top + config.detection.min_crop_height:
+            continue
+        if not _trim_preserves_protected_boxes(protected, top=top, bottom=candidate_bottom):
+            continue
+        labels = [label for box, label in candidates if box.y0 - 1.0 >= candidate_bottom - 0.5]
+        return candidate_bottom, labels
+    return None, []
+
+
+def _vertical_text_furniture_label(block: TextBlock, layout: PageLayout, config: AppConfig) -> str | None:
+    text = _clean_text_line(block.text)
+    if not text:
+        return None
+    if _is_centered_page_number_block(block, layout, config):
+        return "centered_page_number"
+    if _is_footer_or_header_box(block.bbox, layout, config) or _is_boilerplate_text(text):
+        return "header_footer"
+    if _is_control_artifact_text(text):
+        return "control_artifact"
+    return None
+
+
+def _vertical_graphic_furniture_label(
+    box: BoundingBox,
+    layout: PageLayout,
+    config: AppConfig,
+    answer_rule_bands: list[float],
+) -> str | None:
+    label = _page_furniture_box_label(box, layout, config, answer_rule_bands)
+    if label in {"header_footer", "barcode", "scan_edge"}:
+        return label
+    return None
+
+
+def _is_centered_page_number_block(block: TextBlock, layout: PageLayout, config: AppConfig) -> bool:
+    text = _clean_text_line(block.text)
+    if not re.fullmatch(r"\d{1,3}", text):
+        return False
+    center_x = (block.bbox.x0 + block.bbox.x1) / 2
+    if not (layout.width * 0.35 <= center_x <= layout.width * 0.65):
+        return False
+    near_top = block.bbox.y0 <= config.detection.crop_top_margin + 18
+    near_bottom = block.bbox.y1 >= layout.height - config.detection.crop_bottom_margin - 18
+    return near_top or near_bottom
+
+
+def _protected_region_boxes(region: CropRegion) -> list[BoundingBox]:
+    boxes = [block.bbox for block in region.text_blocks]
+    boxes.extend(region.graphics)
+    if region.text_bbox is not None:
+        boxes.append(region.text_bbox)
+    if region.figure_bbox is not None:
+        boxes.append(region.figure_bbox)
+    return boxes
+
+
+def _trim_preserves_protected_boxes(protected_boxes: list[BoundingBox], *, top: float, bottom: float) -> bool:
+    for box in protected_boxes:
+        if box.y0 < top - 1.0 or box.y1 > bottom + 1.0:
+            return False
+    return True
+
+
+def _trim_flags_for_labels(labels: Iterable[str]) -> list[str]:
+    flags = ["crop_header_footer_trimmed"]
+    for label in labels:
+        if label == "centered_page_number":
+            flags.append("centered_page_number_trimmed")
+        elif label == "barcode":
+            flags.append("barcode_trimmed")
+        elif label == "scan_edge":
+            flags.append("scan_edge_trimmed")
+        elif label == "control_artifact":
+            flags.append("control_artifact_trimmed")
+    return flags
 
 
 def _fallback_regions(span: QuestionSpan, layouts: list[PageLayout], config: AppConfig) -> list[CropRegion]:
@@ -1145,6 +1330,10 @@ def _boxes_duplicate(a: BoundingBox, b: BoundingBox) -> bool:
         and abs(a.x1 - b.x1) <= 3
         and abs(a.y1 - b.y1) <= 3
     )
+
+
+def _boxes_intersect(a: BoundingBox, b: BoundingBox) -> bool:
+    return _intersection_area(a, b) > 1.0
 
 
 def _intersection_area(a: BoundingBox, b: BoundingBox) -> float:

@@ -144,6 +144,7 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert question["notes"]["difficulty_review_flags"] == []
     assert question["notes"]["difficulty_model_version"] == "local-difficulty-v1"
     assert question["notes"]["scope_quality_status"] == "clean"
+    assert question["notes"]["question_crop_diagnostics"] == {}
     assert question["notes"]["text_source_profile"] == "native_pdf"
     assert question["notes"]["text_fidelity_status"] == "clean"
     assert question["notes"]["text_fidelity_flags"] == []
