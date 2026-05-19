@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+from functools import lru_cache
 import hashlib
 import json
 from pathlib import Path
@@ -10,6 +11,7 @@ from typing import Any
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.mark_events import MARK_EVENTS_SCHEMA_NAME, MARK_EVENTS_SCHEMA_VERSION
 from exam_bank.mark_events.parsing import parse_mark_scheme_text
+from exam_bank.question_detection_patterns import extract_question_total_from_text
 
 
 SERIOUS_REVIEW_FLAGS = {
@@ -24,6 +26,7 @@ SERIOUS_REVIEW_FLAGS = {
     "unknown_mark_code",
     "unknown_dependent_mark_code",
     "dependent_mark_without_deterministic_prior_event",
+    "human_verified_total_correction",
 }
 
 
@@ -66,10 +69,18 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
     parse_result = parse_mark_scheme_text(text, question_id=question_id or f"record_{question_index:04d}")
     events = parse_result.events
     expected_total = _first_int(record.get("question_solution_marks"), notes.get("question_solution_marks"))
-    detected_total = _first_int(notes.get("mark_scheme_total_detected"), _nested(notes, "mark_scheme_structure_detected", "mark_scheme_total_detected"))
-    question_total = _first_int(notes.get("question_total_detected"), _nested(notes, "question_structure_detected", "question_total_detected"))
+    detected_total = _first_int(
+        notes.get("mark_scheme_total_detected"), _nested(notes, "mark_scheme_structure_detected", "mark_scheme_total_detected")
+    )
+    question_total_evidence = _resolve_question_total(record, notes, expected_total=expected_total, detected_total=detected_total)
+    question_total = question_total_evidence["value"]
     if detected_total is None:
         detected_total = sum(event["mark_value"] for event in events) if events else None
+    correction = _human_verified_total_correction(question_id)
+    if correction:
+        expected_total = _first_int(correction.get("total_marks_expected"), expected_total)
+        detected_total = _first_int(correction.get("total_marks_detected"), detected_total)
+        question_total = _first_int(correction.get("question_total_detected"), question_total)
     total_match = _total_match(detected_total, expected_total)
     review_flags = _record_review_flags(
         record=record,
@@ -84,6 +95,7 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
         expected_total=expected_total,
         question_total=question_total,
         parser_flags=parse_result.review_flags,
+        correction=correction,
     )
     extraction_status = _extraction_status(text=text, events=events, review_flags=review_flags)
     safe_for_advisory = _safe_for_advisory_use(
@@ -111,6 +123,8 @@ def build_mark_event_record(record: dict[str, Any], *, artifact_root: Path, ques
         "total_marks_detected": detected_total,
         "total_marks_expected": expected_total,
         "question_total_detected": question_total,
+        "question_total_evidence": question_total_evidence,
+        "human_verified_total_correction": correction,
         "total_marks_match": total_match,
         "review_flags": review_flags,
         "part_summaries": _part_summaries(events),
@@ -141,6 +155,24 @@ def sidecar_summary(sidecar: dict[str, Any]) -> dict[str, Any]:
         "question_total_disagreement_count": sum(
             1 for record in records if "question_total_mark_scheme_total_disagree" in set(record.get("review_flags") or [])
         ),
+        "question_total_repair_count": sum(
+            1
+            for record in records
+            if (record.get("question_total_evidence") or {}).get("source") in {"ocr_text", "question_text"}
+            and (record.get("question_total_evidence") or {}).get("original_detected")
+            != (record.get("question_total_evidence") or {}).get("value")
+        ),
+        "human_verified_total_correction_count": sum(1 for record in records if record.get("human_verified_total_correction")),
+        "question_total_disagreement_resolved_count": sum(
+            1
+            for record in records
+            if (
+                (record.get("question_total_evidence") or {}).get("source") in {"ocr_text", "question_text"}
+                and (record.get("question_total_evidence") or {}).get("original_detected")
+                != (record.get("question_total_evidence") or {}).get("value")
+            )
+            or bool(record.get("human_verified_total_correction"))
+        ),
         "missing_mark_scheme_image_count": sum(1 for record in records if not record.get("source_mark_scheme_image_exists")),
         "no_detected_mark_events_count": sum(1 for record in records if not record.get("mark_events")),
         "ambiguous_part_mapping_count": sum(
@@ -167,6 +199,7 @@ def _record_review_flags(
     expected_total: int | None,
     question_total: int | None,
     parser_flags: list[str],
+    correction: dict[str, Any] | None,
 ) -> list[str]:
     flags: list[str] = list(parser_flags)
     if not question_id:
@@ -183,6 +216,8 @@ def _record_review_flags(
         flags.append("no_detected_mark_events")
     if total_match is False:
         flags.append("total_marks_mismatch")
+    if correction:
+        flags.append("human_verified_total_correction")
     if (
         detected_total is not None
         and question_total is not None
@@ -193,6 +228,72 @@ def _record_review_flags(
     for event in events:
         flags.extend(str(flag) for flag in event.get("review_flags", []) if flag)
     return _dedupe(flags)
+
+
+def _resolve_question_total(
+    record: dict[str, Any],
+    notes: dict[str, Any],
+    *,
+    expected_total: int | None,
+    detected_total: int | None,
+) -> dict[str, Any]:
+    original = _first_int(
+        notes.get("question_total_detected"),
+        _nested(notes, "question_structure_detected", "question_total_detected"),
+    )
+    structure = notes.get("question_structure_detected") if isinstance(notes.get("question_structure_detected"), dict) else {}
+    mark_values = structure.get("mark_values_detected")
+    subparts = structure.get("subparts")
+    has_single_detected_mark = isinstance(mark_values, list) and len(mark_values) == 1
+    has_multiple_subparts = isinstance(subparts, list) and len(subparts) > 1
+    evidence = {
+        "value": original,
+        "source": "question_structure_detected" if original is not None else "missing",
+        "original_detected": original,
+        "candidate_totals": {},
+    }
+    if not (has_single_detected_mark and has_multiple_subparts):
+        return evidence
+
+    target_totals = {value for value in [expected_total, detected_total] if value is not None}
+    for field in ["question_text", "ocr_text"]:
+        candidate = extract_question_total_from_text(str(record.get(field) or ""))
+        if candidate is None:
+            continue
+        evidence["candidate_totals"][field] = candidate
+        if original is not None and candidate <= original:
+            continue
+        if target_totals and candidate not in target_totals:
+            continue
+        return {
+            **evidence,
+            "value": candidate,
+            "source": field,
+            "repair_reason": "single_terminal_part_mark_repaired_from_existing_text",
+        }
+    return evidence
+
+
+def _human_verified_total_correction(question_id: str) -> dict[str, Any] | None:
+    corrections = _load_human_verified_total_corrections()
+    correction = corrections.get(question_id)
+    if not isinstance(correction, dict):
+        return None
+    return {key: value for key, value in correction.items() if key != "question_id"}
+
+
+@lru_cache(maxsize=1)
+def _load_human_verified_total_corrections() -> dict[str, dict[str, Any]]:
+    path = Path(__file__).with_name("human_verified_total_corrections.v1.json")
+    if not path.is_file():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    records = payload.get("records") if isinstance(payload, dict) else []
+    output: dict[str, dict[str, Any]] = {}
+    for record in records:
+        if isinstance(record, dict) and record.get("question_id"):
+            output[str(record["question_id"])] = record
+    return output
 
 
 def _extraction_status(*, text: str, events: list[dict[str, Any]], review_flags: list[str]) -> str:

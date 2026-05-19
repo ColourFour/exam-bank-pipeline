@@ -46,6 +46,12 @@ def render_audit_report(sidecar: dict[str, Any]) -> str:
         f"- Safe for marking use: {summary['safe_for_marking_count']}",
         f"- Total mismatches: {summary['total_mismatch_count']}",
         f"- Question-total / mark-scheme-total disagreements: {summary['question_total_disagreement_count']}",
+        f"- Question totals repaired from existing text evidence: {summary['question_total_repair_count']}",
+        f"- Human-verified total corrections applied: {summary['human_verified_total_correction_count']}",
+        "- Question-total disagreements resolved this pass: "
+        f"{summary['question_total_disagreement_resolved_count']} "
+        f"(previous {summary['question_total_disagreement_count'] + summary['question_total_disagreement_resolved_count']} "
+        f"-> current {summary['question_total_disagreement_count']})",
         f"- Missing mark-scheme images: {summary['missing_mark_scheme_image_count']}",
         f"- Records with no detected mark events: {summary['no_detected_mark_events_count']}",
         f"- Ambiguous part mapping records: {summary['ambiguous_part_mapping_count']}",

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from exam_bank.mark_events import MARK_EVENTS_SCHEMA_NAME, MARK_EVENTS_SCHEMA_VERSION
 from exam_bank.mark_events.parsing import parse_mark_scheme_text
-from exam_bank.mark_events.sidecar import build_mark_events_sidecar
+from exam_bank.mark_events.sidecar import build_mark_events_sidecar, sidecar_summary
 from exam_bank.mark_events.validation import validate_mark_events
 
 
@@ -132,6 +132,95 @@ def test_validation_accepts_review_records_but_rejects_marking_claims_and_excess
     assert any(error.startswith("parsed_total_exceeds_expected") for error in report["errors"])
 
 
+def test_targeted_total_mismatch_repairs_and_correction_are_review_safe(tmp_path: Path) -> None:
+    question_bank_path, artifact_root = _write_targeted_total_fixture(tmp_path)
+    original = question_bank_path.read_text(encoding="utf-8")
+
+    sidecar = build_mark_events_sidecar(
+        question_bank_path=question_bank_path,
+        artifact_root=artifact_root,
+        generated_at="2026-05-19T00:00:00Z",
+        dry_run=True,
+    )
+
+    records = {record["question_id"]: record for record in sidecar["records"]}
+    assert records["51summer23_q04"]["question_total_detected"] == 9
+    assert records["51summer23_q04"]["total_marks_detected"] == 9
+    assert records["51summer23_q04"]["total_marks_expected"] == 9
+    assert records["51summer23_q04"]["question_total_evidence"]["source"] == "ocr_text"
+
+    assert records["51summer24_q02"]["question_total_detected"] == 7
+    assert records["51summer24_q02"]["total_marks_detected"] == 7
+    assert records["51summer24_q02"]["total_marks_expected"] == 7
+    assert records["51summer24_q02"]["question_total_evidence"]["source"] == "ocr_text"
+
+    q10 = records["32autumn25_q10"]
+    assert q10["question_total_detected"] == 4
+    assert q10["total_marks_detected"] == 4
+    assert q10["total_marks_expected"] == 4
+    assert q10["human_verified_total_correction"]["status"] == "human_verified"
+    assert "human_verified_total_correction" in q10["review_flags"]
+    assert q10["safe_for_advisory_use"] is False
+
+    summary = sidecar_summary(sidecar)
+    assert summary["question_total_disagreement_count"] == 0
+    assert summary["question_total_repair_count"] == 2
+    assert summary["human_verified_total_correction_count"] == 1
+    assert summary["question_total_disagreement_resolved_count"] == 3
+    assert all(record["safe_for_marking_use"] is False for record in sidecar["records"])
+    assert all(
+        "question_total_mark_scheme_total_disagree" not in set(record["review_flags"]) for record in sidecar["records"]
+    )
+    assert question_bank_path.read_text(encoding="utf-8") == original
+
+
+def test_safe_for_advisory_is_not_granted_by_human_total_correction(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    image = artifact_root / "p3" / "32autumn25" / "mark_scheme" / "q10.png"
+    image.parent.mkdir(parents=True)
+    image.write_bytes(b"mark-image")
+    payload = {
+        "schema_name": "exam_bank.question_bank",
+        "schema_version": 2,
+        "record_count": 1,
+        "questions": [
+            {
+                "question_id": "32autumn25_q10",
+                "paper": "32autumn25",
+                "paper_family": "p3",
+                "question_number": "10",
+                "mark_scheme_image_path": "p3/32autumn25/mark_scheme/q10.png",
+                "mark_scheme_image_paths": ["p3/32autumn25/mark_scheme/q10.png"],
+                "question_text": "10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
+                "mark_scheme_text": "10(a) State equation B1\nUse chain rule M1\nObtain k DM1\nObtain result A1 AG",
+                "question_solution_marks": 9,
+                "notes": {
+                    "source_paper_code": "32",
+                    "mapping_status": "pass",
+                    "mark_scheme_total_detected": 9,
+                    "question_total_detected": 4,
+                    "question_structure_detected": {"subparts": ["a", "b"], "mark_values_detected": [4]},
+                },
+            }
+        ],
+    }
+    question_bank_path = tmp_path / "output" / "json" / "question_bank.json"
+    question_bank_path.parent.mkdir(parents=True)
+    question_bank_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    sidecar = build_mark_events_sidecar(
+        question_bank_path=question_bank_path,
+        artifact_root=artifact_root,
+        generated_at="2026-05-19T00:00:00Z",
+        dry_run=True,
+    )
+
+    record = sidecar["records"][0]
+    assert record["total_marks_match"] is True
+    assert record["safe_for_advisory_use"] is False
+    assert record["extraction_status"] == "review"
+
+
 def _write_question_bank_fixture(tmp_path: Path, *, include_missing_image: bool = True) -> tuple[Path, Path]:
     artifact_root = tmp_path / "output"
     good_image = artifact_root / "p1" / "12spring21" / "mark_scheme" / "q01.png"
@@ -211,3 +300,120 @@ def _record(
         },
     }
 
+
+def _write_targeted_total_fixture(tmp_path: Path) -> tuple[Path, Path]:
+    artifact_root = tmp_path / "output"
+    for relative in [
+        "p5/51summer23/mark_scheme/q04.png",
+        "p5/51summer24/mark_scheme/q02.png",
+        "p3/32autumn25/mark_scheme/q10.png",
+    ]:
+        image = artifact_root / relative
+        image.parent.mkdir(parents=True, exist_ok=True)
+        image.write_bytes(b"mark-image")
+    records = [
+        _targeted_record(
+            question_id="51summer23_q04",
+            paper="51summer23",
+            paper_family="p5",
+            question_number="4",
+            mark_scheme_image_path="p5/51summer23/mark_scheme/q04.png",
+            question_text="4 (a) Find the expected count. (b) Find mu and sigma. [5]",
+            ocr_text="4 (a) Find the expected count. [4] (b) Find mu and sigma. [5]",
+            mark_scheme_text=(
+                "4(a) Use standardisation M1\nFind probability M1\nObtain probability A1\n"
+                "Special case B1\nObtain count B1 FT\n"
+                "4(b) Set equations M1 B1 B1\nSolve equations M1\nObtain values A1"
+            ),
+            question_solution_marks=9,
+            mark_scheme_total_detected=9,
+            question_total_detected=5,
+        ),
+        _targeted_record(
+            question_id="51summer24_q02",
+            paper="51summer24",
+            paper_family="p5",
+            question_number="2",
+            mark_scheme_image_path="p5/51summer24/mark_scheme/q02.png",
+            question_text="2 (a) Find the probability. (b) Find sigma. [3]",
+            ocr_text="2 (a) Find the probability. [4] (b) Find sigma. [3]",
+            mark_scheme_text=(
+                "2(a) Use standardisation M1\nCorrect formula A1\nFind area M1\nObtain answer A1\n"
+                "2(b) Critical value B1 cao\nUse standardisation M1\nObtain sigma A1"
+            ),
+            question_solution_marks=7,
+            mark_scheme_total_detected=7,
+            question_total_detected=3,
+        ),
+        _targeted_record(
+            question_id="32autumn25_q10",
+            paper="32autumn25",
+            paper_family="p3",
+            question_number="10",
+            mark_scheme_image_path="p3/32autumn25/mark_scheme/q10.png",
+            question_text="10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
+            ocr_text="10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
+            mark_scheme_text=(
+                "10(a) State dV/dt B1\nUse chain rule M1\nUse h = 20 DM1\nObtain result A1 AG\n"
+                "10(b) Separate variables B1\nObtain t term B1\nObtain log term B1\nUse constant M1\n"
+                "Obtain t = 16.1 A1"
+            ),
+            question_solution_marks=9,
+            mark_scheme_total_detected=9,
+            question_total_detected=4,
+        ),
+    ]
+    payload = {
+        "schema_name": "exam_bank.question_bank",
+        "schema_version": 2,
+        "record_count": len(records),
+        "questions": records,
+    }
+    question_bank_path = tmp_path / "output" / "json" / "question_bank.json"
+    question_bank_path.parent.mkdir(parents=True)
+    question_bank_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return question_bank_path, artifact_root
+
+
+def _targeted_record(
+    *,
+    question_id: str,
+    paper: str,
+    paper_family: str,
+    question_number: str,
+    mark_scheme_image_path: str,
+    question_text: str,
+    ocr_text: str,
+    mark_scheme_text: str,
+    question_solution_marks: int,
+    mark_scheme_total_detected: int,
+    question_total_detected: int,
+) -> dict:
+    return {
+        "question_id": question_id,
+        "paper": paper,
+        "paper_family": paper_family,
+        "question_number": question_number,
+        "mark_scheme_image_path": mark_scheme_image_path,
+        "mark_scheme_image_paths": [mark_scheme_image_path],
+        "question_text": question_text,
+        "ocr_text": ocr_text,
+        "mark_scheme_text": mark_scheme_text,
+        "question_solution_marks": question_solution_marks,
+        "notes": {
+            "source_paper_code": paper[:2],
+            "mapping_status": "pass",
+            "mapping_failure_reason": "",
+            "mark_scheme_total_detected": mark_scheme_total_detected,
+            "question_total_detected": question_total_detected,
+            "question_structure_detected": {
+                "subparts": ["a", "b"],
+                "mark_values_detected": [question_total_detected],
+                "question_total_detected": question_total_detected,
+            },
+            "mark_scheme_structure_detected": {
+                "question_total_detected": question_total_detected,
+                "mark_scheme_total_detected": mark_scheme_total_detected,
+            },
+        },
+    }

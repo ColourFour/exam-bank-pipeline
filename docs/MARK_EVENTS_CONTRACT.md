@@ -57,6 +57,12 @@ Every generated record must set:
 
 `safe_for_advisory_use` may be true only when the source image exists, deterministic mark events are present, totals match, and no serious review flags are present.
 
+## Total Evidence Corrections
+
+The sidecar may repair a stale question total from existing `question_text` or `ocr_text` when the stored question-structure evidence captured only one terminal part mark for a multi-part question and the recovered text total agrees with the expected or mark-scheme total.
+
+Human-verified total corrections are allowed only through `src/exam_bank/mark_events/human_verified_total_corrections.v1.json`. These corrections are narrow, reviewable, advisory-sidecar-only records keyed by `question_id`. Applying one adds the serious `human_verified_total_correction` review flag, so the record remains unsafe for advisory and marking use until a later reviewed workflow explicitly clears the evidence.
+
 ## Evidence Rules
 
 The parser recognizes common CAIE mark codes and annotations, including `M`, `A`, `B`, `E`, `DM`, follow-through markers, `AG`, `cao`, `oe`, `www`, `isw`, dependent, and independent notes.
@@ -91,4 +97,3 @@ Do not use mark events to:
 - replace official mark-scheme images
 - promote AI or OCR text to canonical mark-scheme content
 - bypass existing image-first, review, topic, difficulty, or generation gates
-

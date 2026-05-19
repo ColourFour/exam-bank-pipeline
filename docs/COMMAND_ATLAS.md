@@ -238,6 +238,7 @@ Category/runtime: advisory sidecar, fast
 ```
 
 Contract: [Mark-Event Evidence Contract](MARK_EVENTS_CONTRACT.md). The sidecar is advisory-only; `safe_for_marking_use` must remain false for generated records.
+Total repairs are limited to deterministic recovery from existing question/OCR text, plus narrow human-verified records in `src/exam_bank/mark_events/human_verified_total_corrections.v1.json`; those corrections keep the record review-only.
 
 ## Downstream Projections
 
