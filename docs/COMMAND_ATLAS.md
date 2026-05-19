@@ -18,6 +18,7 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | Audit | `audit`, `output-integrity-audit`, readiness script | Audit-only | Fast to medium | Optional report writes |
 | OCR candidate audit | `scripts/audit_ocr_candidates.py` | Audit-only/OCR | Fast | Optional report write |
 | Difficulty audit | `scripts/audit_difficulty.py` | Audit-only | Fast | Optional report write |
+| Mark-event sidecar | `scripts/build_mark_events.py`, `scripts/validate_mark_events.py` | Advisory sidecar | Fast | Sidecar/report writes |
 | Asterion export | `asterion-export` | Standard projection | Fast to medium | Yes |
 | Content Lab candidates | `asterion-content-lab-candidates` | Standard projection | Fast to medium | Yes |
 | Topic packets | `topic-packets` | Standard projection | Fast to medium | Yes |
@@ -208,6 +209,35 @@ Category/runtime: audit-only, fast
   --input output/json/question_bank.json \
   --json-output output/audits/current/difficulty_audit.json
 ```
+
+### Mark-Event Evidence Sidecar
+
+Purpose: build deterministic advisory mark-event evidence from existing official mark-scheme text and image links. This is not student marking and does not replace canonical mark-scheme crops.
+
+Input: `output/json/question_bank.json`, mark-scheme artifacts under `output/`
+
+Output: `output/json/question_bank.mark_events.v1.json`, `output/reports/mark_events_audit.md`, `output/reports/mark_events_review_queue.json`, optional validation report
+
+Category/runtime: advisory sidecar, fast
+
+```bash
+.venv/bin/python scripts/build_mark_events.py \
+  --question-bank output/json/question_bank.json \
+  --artifact-root output \
+  --out output/json/question_bank.mark_events.v1.json \
+  --report output/reports/mark_events_audit.md \
+  --review-queue output/reports/mark_events_review_queue.json
+```
+
+```bash
+.venv/bin/python scripts/validate_mark_events.py \
+  --question-bank output/json/question_bank.json \
+  --mark-events output/json/question_bank.mark_events.v1.json \
+  --artifact-root output \
+  --output output/json/question_bank.mark_events.validation.v1.json
+```
+
+Contract: [Mark-Event Evidence Contract](MARK_EVENTS_CONTRACT.md). The sidecar is advisory-only; `safe_for_marking_use` must remain false for generated records.
 
 ## Downstream Projections
 
