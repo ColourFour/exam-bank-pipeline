@@ -7,9 +7,9 @@ Canonical question and mark-scheme images remain the source of truth.
 
 - Records: 36
 - Question-bank context joined: 36
-- Records with useful warnings: 35
-- Records caught by practical-now gates: 35
-- Warning categories: available_now=94, requires_new_metadata=73, too_risky_or_ambiguous=54
+- Records with useful warnings: 36
+- Records caught by practical-now gates: 36
+- Warning categories: available_now=114, requires_new_metadata=73, too_risky_or_ambiguous=54
 
 ## Signals Available Now
 
@@ -21,6 +21,8 @@ Canonical question and mark-scheme images remain the source of truth.
 - page furniture dominates selected text: Safe when boilerplate or answer-space phrases dominate rather than merely appear.
 - mark-scheme/question mismatch risk: Safe when source metadata, mapping status, or missing mark-scheme image contradicts the question.
 - current selector warnings: Available in question-bank notes and useful as non-mutating warning evidence.
+- clean visual crop with degraded text: Safe as a review warning when crop confidence is high but selected text is degraded.
+- OCR selected with structural warnings: Safe as a review warning because it reports selector risk without changing the selected source.
 
 ## Signals Requiring New Metadata
 
@@ -39,6 +41,7 @@ Canonical question and mark-scheme images remain the source of truth.
 
 | Warning | Count |
 | --- | ---: |
+| clean_visual_crop_but_degraded_text | 10 |
 | low_crop_confidence | 23 |
 | math_expression_semantics | 13 |
 | missing_crop_pixel_dimensions | 36 |
@@ -46,6 +49,7 @@ Canonical question and mark-scheme images remain the source of truth.
 | missing_mark_bracket | 4 |
 | missing_raw_candidate_windows | 36 |
 | missing_text_line_bboxes | 1 |
+| selected_ocr_with_structural_warnings | 10 |
 | selector_structural_warning_present | 33 |
 | selector_warning_present | 27 |
 | short_single_part_question | 5 |
@@ -56,38 +60,38 @@ Canonical question and mark-scheme images remain the source of truth.
 
 | Record | Practical now | Requires metadata | Risky/ambiguous |
 | --- | --- | --- | --- |
-| 12summer21_q03 | low_crop_confidence, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
+| 12summer21_q03 | low_crop_confidence, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
 | 32autumn21_q04 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | short_single_part_question, visual_crop_scope_from_text_only |
 | 33autumn21_q04 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
 | 33autumn21_q05 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, short_single_part_question, visual_crop_scope_from_text_only |
 | 31summer22_q09 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
-| 32spring23_q04 | none | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 12summer23_q01 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 13summer23_q01 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows, missing_text_line_bboxes | visual_crop_scope_from_text_only |
+| 32spring23_q04 | clean_visual_crop_but_degraded_text | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 12summer23_q01 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 13summer23_q01 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows, missing_text_line_bboxes | visual_crop_scope_from_text_only |
 | 33summer24_q03 | low_crop_confidence, missing_mark_bracket, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 35summer25_q04 | low_crop_confidence, missing_mark_bracket, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
 | 33autumn25_q07 | low_crop_confidence, missing_mark_bracket, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 13autumn25_q09 | low_crop_confidence, missing_mark_bracket, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 43autumn21_q06 | missing_expected_question_number, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 12spring22_q08 | low_crop_confidence, missing_expected_question_number, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 52spring22_q06 | missing_expected_question_number, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 32summer23_q09 | low_crop_confidence, missing_expected_question_number, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
-| 41summer23_q06 | low_crop_confidence, missing_expected_question_number, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 52spring21_q05 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 51summer21_q05 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 52summer21_q02 | low_crop_confidence, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 52summer22_q02 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 53summer22_q07 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 11autumn23_q04 | selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
-| 12autumn23_q06 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
-| 51autumn23_q05 | selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 43autumn21_q06 | missing_expected_question_number, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 12spring22_q08 | low_crop_confidence, missing_expected_question_number, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 52spring22_q06 | missing_expected_question_number, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 32summer23_q09 | low_crop_confidence, missing_expected_question_number, selected_ocr_with_structural_warnings, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
+| 41summer23_q06 | low_crop_confidence, missing_expected_question_number, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 52spring21_q05 | low_crop_confidence, selected_ocr_with_structural_warnings, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 51summer21_q05 | low_crop_confidence, selected_ocr_with_structural_warnings, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 52summer21_q02 | low_crop_confidence, selected_ocr_with_structural_warnings, selector_structural_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 52summer22_q02 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 53summer22_q07 | clean_visual_crop_but_degraded_text, selected_ocr_with_structural_warnings, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 11autumn23_q04 | clean_visual_crop_but_degraded_text, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
+| 12autumn23_q06 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
+| 51autumn23_q05 | clean_visual_crop_but_degraded_text, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 42autumn21_q01 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 52autumn21_q01 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 31summer21_q01 | low_crop_confidence, selector_structural_warning_present, selector_warning_present, suspiciously_short_selected_text | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, short_single_part_question, visual_crop_scope_from_text_only |
 | 32summer21_q01 | low_crop_confidence, selector_structural_warning_present, selector_warning_present, suspiciously_short_selected_text | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, short_single_part_question, visual_crop_scope_from_text_only |
 | 33autumn21_q02 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, visual_crop_scope_from_text_only |
-| 32spring23_q03 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
-| 11summer23_q01 | selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, short_single_part_question, visual_crop_scope_from_text_only |
+| 32spring23_q03 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
+| 11summer23_q01 | clean_visual_crop_but_degraded_text, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | math_expression_semantics, short_single_part_question, visual_crop_scope_from_text_only |
 | 12spring21_q02 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 33summer21_q07 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
 | 52summer21_q04 | low_crop_confidence, selector_structural_warning_present, selector_warning_present | missing_crop_pixel_dimensions, missing_raw_candidate_windows | visual_crop_scope_from_text_only |
@@ -95,4 +99,4 @@ Canonical question and mark-scheme images remain the source of truth.
 
 ## Fixture Warning Threshold
 
-At least 20 fixture records received useful crop-context warnings (35).
+At least 20 fixture records received useful crop-context warnings (36).

@@ -1,4 +1,10 @@
-from exam_bank.crop_text_signals import audit_fixture_record, build_crop_text_signal_audit
+from copy import deepcopy
+
+from exam_bank.crop_text_signals import (
+    audit_fixture_record,
+    build_crop_text_signal_audit,
+    compute_crop_context_warning_codes,
+)
 
 
 def base_record(**overrides):
@@ -46,7 +52,7 @@ def test_detects_missing_subpart_labels() -> None:
 
     codes = warning_codes(record, {"subparts": ["a", "b"]})
 
-    assert "missing_expected_subpart_labels" in codes
+    assert "missing_subpart_labels" in codes
 
 
 def test_detects_next_question_contamination() -> None:
@@ -54,7 +60,69 @@ def test_detects_next_question_contamination() -> None:
 
     codes = warning_codes(record)
 
-    assert "next_question_contamination" in codes
+    assert "possible_next_question_contamination" in codes
+
+
+def test_detects_low_crop_confidence() -> None:
+    qbank = {"notes": {"question_crop_confidence": "low"}}
+
+    assert "low_crop_confidence" in warning_codes(base_record(), qbank)
+
+
+def test_detects_selector_warnings() -> None:
+    qbank = {
+        "notes": {
+            "review_flags": ["weak_question_text"],
+            "validation_flags": ["text_needs_review"],
+        }
+    }
+
+    codes = warning_codes(base_record(), qbank)
+
+    assert "selector_warning_present" in codes
+    assert "selector_structural_warning_present" in codes
+
+
+def test_detects_clean_crop_with_degraded_text() -> None:
+    qbank = {
+        "notes": {
+            "question_crop_confidence": "high",
+            "text_fidelity_status": "degraded",
+            "selected_text_score": 20,
+        }
+    }
+
+    assert "clean_visual_crop_but_degraded_text" in warning_codes(base_record(), qbank)
+
+
+def test_detects_selected_ocr_with_structural_warnings() -> None:
+    qbank = {
+        "notes": {
+            "ocr_selected": True,
+            "review_flags": ["weak_question_text"],
+        }
+    }
+
+    assert "selected_ocr_with_structural_warnings" in warning_codes(base_record(), qbank)
+
+
+def test_warning_codes_are_deterministic_and_do_not_mutate_inputs() -> None:
+    record = base_record(currently_selected_text="Find x.")
+    qbank = {
+        "question_text": "3 (a) Find x. [2] (b) Hence find y. [3]",
+        "subparts": ["a", "b"],
+        "notes": {"question_crop_confidence": "low", "review_flags": ["weak_question_text"]},
+    }
+    original_record = deepcopy(record)
+    original_qbank = deepcopy(qbank)
+
+    first = compute_crop_context_warning_codes(record, qbank)
+    second = compute_crop_context_warning_codes(record, qbank)
+
+    assert first == second
+    assert first == sorted(first)
+    assert record == original_record
+    assert qbank == original_qbank
 
 
 def test_build_audit_counts_useful_warnings() -> None:

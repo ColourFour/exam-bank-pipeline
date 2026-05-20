@@ -7,9 +7,23 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+from exam_bank.crop_text_signals import compute_crop_context_warnings
+
 
 SCHEMA_NAME = "exam_bank.text_fidelity.review_queue"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 3
+REVIEW_STATE_SCHEMA_NAME = "exam_bank.text_fidelity.review_state"
+REVIEW_STATE_SCHEMA_VERSION = 1
+DEFAULT_FIXTURE_TOP_N = 50
+
+VALID_REVIEW_STATUSES = {
+    "unresolved",
+    "accepted_text",
+    "needs_fixture",
+    "needs_crop_fix",
+    "needs_ocr_profile",
+    "false_positive",
+}
 
 QUESTION_NUMBER_RE = re.compile(r"^\s*(?:[A-Za-z]\s+)?(?P<number>\d{1,2})\b")
 MARK_BRACKET_RE = re.compile(r"\[(?P<marks>\d{1,2})\]")
@@ -19,14 +33,21 @@ WORD_RE = re.compile(r"[a-z0-9]+")
 REASON_WEIGHTS = {
     "known_fixture_membership": 200,
     "selected_ocr_with_structural_warnings": 70,
-    "next_question_contamination": 70,
+    "possible_next_question_contamination": 70,
     "clean_visual_crop_but_degraded_text": 65,
+    "missing_expected_question_number": 60,
     "missing_question_number": 60,
+    "missing_subpart_labels": 55,
     "lost_subpart_labels": 55,
+    "missing_mark_bracket": 50,
     "missing_marks": 50,
     "likely_math_symbol_loss": 45,
     "ocr_native_disagreement": 40,
+    "selector_structural_warning_present": 40,
     "suspiciously_short_text": 35,
+    "suspiciously_short_selected_text": 35,
+    "low_crop_confidence": 30,
+    "selector_warning_present": 25,
 }
 
 STRUCTURAL_WARNING_FLAGS = {
@@ -84,9 +105,53 @@ def load_fixture_ids(path: Path | None) -> set[str]:
     return {str(record.get("record_id") or record.get("question_id")) for record in records if record.get("record_id") or record.get("question_id")}
 
 
-def build_review_queue(records: list[dict[str, Any]], fixture_ids: set[str] | None = None) -> dict[str, Any]:
+def load_review_state(path: Path | None) -> dict[str, dict[str, Any]]:
+    if path is None or not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    records = payload.get("records") if isinstance(payload, dict) else payload
+    if not isinstance(records, list):
+        raise ValueError("Review state must be a list or contain a records list.")
+
+    state: dict[str, dict[str, Any]] = {}
+    for item in records:
+        if not isinstance(item, dict):
+            continue
+        record_id = str(item.get("record_id") or "").strip()
+        if not record_id:
+            continue
+        status = str(item.get("status") or "unresolved").strip()
+        if status not in VALID_REVIEW_STATUSES:
+            raise ValueError(f"Unexpected review status for {record_id}: {status}")
+        tags = item.get("tags") or []
+        if not isinstance(tags, list):
+            raise ValueError(f"Review tags must be a list for {record_id}.")
+        state[record_id] = {
+            "record_id": record_id,
+            "reviewed_at": text_value(item.get("reviewed_at")),
+            "reviewer_note": text_value(item.get("reviewer_note")),
+            "status": status,
+            "tags": [str(tag) for tag in tags],
+        }
+    return state
+
+
+def build_review_queue(
+    records: list[dict[str, Any]],
+    fixture_ids: set[str] | None = None,
+    review_state: dict[str, dict[str, Any]] | None = None,
+    *,
+    fixture_top_n: int = DEFAULT_FIXTURE_TOP_N,
+    include_reviewed: bool = True,
+) -> dict[str, Any]:
     fixture_ids = fixture_ids or set()
-    entries = [score_record(record, fixture_ids) for record in records]
+    review_state = review_state or {}
+    all_entries = [score_record(record, fixture_ids, review_state) for record in records]
+    all_entries.sort(key=entry_sort_key)
+    for index, entry in enumerate(all_entries, start=1):
+        entry["full_bank_rank"] = index
+
+    entries = all_entries if include_reviewed else [entry for entry in all_entries if not entry["review"]["reviewed"]]
     entries.sort(key=entry_sort_key)
     for index, entry in enumerate(entries, start=1):
         entry["rank"] = index
@@ -95,35 +160,48 @@ def build_review_queue(records: list[dict[str, Any]], fixture_ids: set[str] | No
     for entry in entries:
         reason_counts.update(entry["reason_codes"])
 
-    fixture_entries = [entry for entry in entries if entry["record_id"] in fixture_ids]
+    fixture_entries = [entry for entry in all_entries if entry["record_id"] in fixture_ids]
     fixtures_outside_top_50 = [
         {
             "record_id": entry["record_id"],
-            "rank": entry["rank"],
+            "rank": entry["full_bank_rank"],
             "priority_score": entry["priority_score"],
             "reason_codes": entry["reason_codes"],
-            "explanation": "Fixture was boosted but ranked below the top 50 because other records had more concrete concurrent failure signals.",
+            "explanation": f"Fixture was boosted but ranked below the top {fixture_top_n} because other records had more concrete concurrent failure signals.",
         }
         for entry in fixture_entries
-        if entry["rank"] > 50
+        if entry["full_bank_rank"] > fixture_top_n
     ]
+    fixture_ranks = {entry["record_id"]: entry["full_bank_rank"] for entry in fixture_entries}
+    reviewed_count = sum(1 for entry in all_entries if entry["review"]["reviewed"])
 
     return {
         "schema_name": SCHEMA_NAME,
         "schema_version": SCHEMA_VERSION,
-        "record_count": len(entries),
+        "record_count": len(all_entries),
+        "visible_record_count": len(entries),
         "queued_count": sum(1 for entry in entries if entry["priority_score"] > 0),
+        "include_reviewed": include_reviewed,
+        "review_state_summary": {
+            "state_records_loaded": len(review_state),
+            "reviewed_records_in_bank": reviewed_count,
+            "reviewed_records_not_in_bank": sorted(set(review_state) - {entry["record_id"] for entry in all_entries}),
+            "status_counts": dict(sorted(Counter(entry["review"]["status"] for entry in all_entries if entry["review"]["reviewed"]).items())),
+        },
         "reason_code_counts": dict(sorted(reason_counts.items())),
         "top_reason_codes": [
             {"reason_code": reason, "count": count}
             for reason, count in reason_counts.most_common()
         ],
         "fixture_summary": {
+            "fixture_top_n": fixture_top_n,
             "known_fixture_count": len(fixture_ids),
             "known_fixtures_found": len(fixture_entries),
-            "known_fixtures_missing_from_bank": sorted(fixture_ids - {entry["record_id"] for entry in fixture_entries}),
-            "known_fixtures_in_top_50": sum(1 for entry in fixture_entries if entry["rank"] <= 50),
-            "known_fixtures_in_top_100": sum(1 for entry in fixture_entries if entry["rank"] <= 100),
+            "known_fixtures_missing_from_bank": sorted(fixture_ids - set(fixture_ranks)),
+            "known_fixtures_in_top_n": sum(1 for rank in fixture_ranks.values() if rank <= fixture_top_n),
+            "known_fixtures_in_top_50": sum(1 for rank in fixture_ranks.values() if rank <= 50),
+            "known_fixtures_in_top_100": sum(1 for rank in fixture_ranks.values() if rank <= 100),
+            "known_fixture_ranks": dict(sorted(fixture_ranks.items(), key=lambda item: (item[1], item[0]))),
             "fixtures_outside_top_50": fixtures_outside_top_50,
         },
         "top_50": entries[:50],
@@ -131,8 +209,13 @@ def build_review_queue(records: list[dict[str, Any]], fixture_ids: set[str] | No
     }
 
 
-def score_record(record: dict[str, Any], fixture_ids: set[str] | None = None) -> dict[str, Any]:
+def score_record(
+    record: dict[str, Any],
+    fixture_ids: set[str] | None = None,
+    review_state: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     fixture_ids = fixture_ids or set()
+    review_state = review_state or {}
     record_id = str(record.get("question_id") or record.get("record_id") or "")
     notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
     selected = text_value(record.get("question_text"))
@@ -150,20 +233,37 @@ def score_record(record: dict[str, Any], fixture_ids: set[str] | None = None) ->
     add_selected_ocr_warning_reason(reasons, notes)
     add_clean_crop_degraded_reason(reasons, notes)
     add_next_question_contamination_reason(reasons, selected, question_number, notes)
+    crop_context_warnings = compute_crop_context_warnings(record)
+    add_crop_context_warning_reasons(reasons, crop_context_warnings)
 
     reasons = dedupe_reasons(reasons)
     priority_score = sum(reason["weight"] for reason in reasons)
     reason_codes = [reason["code"] for reason in reasons]
+    selected_source = notes.get("text_candidate_source") or notes.get("text_source_profile") or "unknown"
+    review = review_state.get(record_id)
 
     return {
         "rank": None,
+        "full_bank_rank": None,
         "record_id": record_id,
-        "paper_id": record.get("paper"),
+        "paper_id": record.get("paper") or record.get("paper_id"),
         "paper_family": record.get("paper_family"),
         "question_number": question_number,
         "priority_score": priority_score,
         "reason_codes": reason_codes,
         "reasons": reasons,
+        "crop_context_warning_codes": sorted(
+            {
+                warning["code"]
+                for warning in crop_context_warnings
+                if warning.get("gate_candidate") == "practical_now"
+            }
+        ),
+        "crop_context_warnings": [
+            warning for warning in crop_context_warnings if warning.get("gate_candidate") == "practical_now"
+        ],
+        "selected_text_source": selected_source,
+        "selected_text_preview": excerpt(selected),
         "text_source_profile": notes.get("text_source_profile"),
         "text_candidate_source": notes.get("text_candidate_source"),
         "ocr_selected": bool(notes.get("ocr_selected")),
@@ -175,6 +275,8 @@ def score_record(record: dict[str, Any], fixture_ids: set[str] | None = None) ->
         "ocr_text_score": notes.get("ocr_text_score"),
         "question_image_path": record.get("question_image_path"),
         "mark_scheme_image_path": record.get("mark_scheme_image_path"),
+        "fixture_membership": record_id in fixture_ids,
+        "review": review_entry(review),
         "selected_text_excerpt": excerpt(selected),
     }
 
@@ -321,14 +423,32 @@ def add_next_question_contamination_reason(
     if structure.get("contamination_detected") or foreign or text_pattern:
         reasons.append(
             reason(
-                "next_question_contamination",
+                "possible_next_question_contamination",
                 "Selected text or structure metadata indicates possible next-question contamination.",
                 evidence={"foreign_question_anchors": foreign[:5]},
             )
         )
 
 
+def add_crop_context_warning_reasons(reasons: list[dict[str, Any]], warnings: list[dict[str, Any]]) -> None:
+    for warning_item in warnings:
+        if warning_item.get("gate_candidate") != "practical_now":
+            continue
+        code = str(warning_item.get("code") or "")
+        if code not in REASON_WEIGHTS:
+            continue
+        reasons.append(
+            reason(
+                code,
+                str(warning_item.get("message") or "Crop/context warning applies."),
+                evidence=warning_item.get("evidence") if isinstance(warning_item.get("evidence"), dict) else {},
+            )
+        )
+
+
 def render_markdown(report: dict[str, Any]) -> str:
+    fixture_summary = report["fixture_summary"]
+    review_summary = report.get("review_state_summary", {})
     lines = [
         "# Text Fidelity Review Queue",
         "",
@@ -338,9 +458,12 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         f"- Records inspected: {report['record_count']}",
         f"- Records with non-zero queue score: {report['queued_count']}",
-        f"- Known bad fixtures found: {report['fixture_summary']['known_fixtures_found']} / {report['fixture_summary']['known_fixture_count']}",
-        f"- Known bad fixtures in top 50: {report['fixture_summary']['known_fixtures_in_top_50']}",
-        f"- Known bad fixtures in top 100: {report['fixture_summary']['known_fixtures_in_top_100']}",
+        f"- Review-state records loaded: {review_summary.get('state_records_loaded', 0)}",
+        f"- Reviewed records found in bank: {review_summary.get('reviewed_records_in_bank', 0)}",
+        f"- Known bad fixtures found: {fixture_summary['known_fixtures_found']} / {fixture_summary['known_fixture_count']}",
+        f"- Known bad fixtures in configured top-N ({fixture_summary.get('fixture_top_n', DEFAULT_FIXTURE_TOP_N)}): {fixture_summary['known_fixtures_in_top_n']}",
+        f"- Known bad fixtures in top 50: {fixture_summary['known_fixtures_in_top_50']}",
+        f"- Known bad fixtures in top 100: {fixture_summary['known_fixtures_in_top_100']}",
         f"- Top reason codes: {format_top_reason_codes(report['top_reason_codes'])}",
         "",
         "## Reason Weights",
@@ -351,19 +474,73 @@ def render_markdown(report: dict[str, Any]) -> str:
     for code, weight in sorted(REASON_WEIGHTS.items(), key=lambda item: (-item[1], item[0])):
         lines.append(f"| `{code}` | {weight} |")
 
-    lines.extend(["", "## Top 50 Review Items", "", "| Rank | Record | Score | Reasons | Explanation |", "| ---: | --- | ---: | --- | --- |"])
+    if review_summary.get("status_counts"):
+        lines.extend(["", "## Review State", "", "| Status | Count |", "| --- | ---: |"])
+        for status, count in review_summary["status_counts"].items():
+            lines.append(f"| `{status}` | {count} |")
+        if review_summary.get("reviewed_records_not_in_bank"):
+            lines.append("")
+            lines.append(f"- Review-state records not found in bank: {', '.join(review_summary['reviewed_records_not_in_bank'])}")
+
+    lines.extend(
+        [
+            "",
+            "## Top 50 Review Items",
+            "",
+            "| Rank | Record | Paper | Q | Score | Source | Status | Reasons | Images | Preview |",
+            "| ---: | --- | --- | ---: | ---: | --- | --- | --- | --- | --- |",
+        ]
+    )
     for entry in report["top_50"]:
-        explanation = "; ".join(reason["detail"] for reason in entry["reasons"][:3])
         lines.append(
-            f"| {entry['rank']} | `{entry['record_id']}` | {entry['priority_score']} | {', '.join(f'`{code}`' for code in entry['reason_codes'])} | {escape_table(explanation)} |"
+            "| "
+            + " | ".join(
+                [
+                    str(entry["rank"]),
+                    f"`{entry['record_id']}`{fixture_marker(entry)}",
+                    escape_table(str(entry.get("paper_id") or "")),
+                    escape_table(str(entry.get("question_number") or "")),
+                    str(entry["priority_score"]),
+                    f"`{entry.get('selected_text_source') or 'unknown'}`",
+                    format_review_status(entry),
+                    ", ".join(f"`{code}`" for code in entry["reason_codes"]),
+                    format_image_links(entry),
+                    escape_table(entry.get("selected_text_preview") or ""),
+                ]
+            )
+            + " |"
         )
 
-    fixture_summary = report["fixture_summary"]
+    lines.extend(
+        [
+            "",
+            "## Top Reason-Code Worklists",
+            "",
+            "These are overlapping worklists; a record can appear under more than one reason code.",
+        ]
+    )
+    for reason_row in report["top_reason_codes"][:6]:
+        code = reason_row["reason_code"]
+        entries = [entry for entry in report["entries"] if code in entry["reason_codes"]][:10]
+        if not entries:
+            continue
+        lines.extend(["", f"### `{code}`", "", "| Rank | Record | Score | Images | First explanation |", "| ---: | --- | ---: | --- | --- |"])
+        for entry in entries:
+            explanation = next((reason["detail"] for reason in entry["reasons"] if reason["code"] == code), "")
+            lines.append(
+                f"| {entry['rank']} | `{entry['record_id']}`{fixture_marker(entry)} | {entry['priority_score']} | {format_image_links(entry)} | {escape_table(explanation)} |"
+            )
+
     lines.extend(["", "## Fixture Rank Summary", ""])
     if fixture_summary["known_fixtures_missing_from_bank"]:
         lines.append(f"- Missing fixture records: {', '.join(fixture_summary['known_fixtures_missing_from_bank'])}")
     if fixture_summary["fixtures_outside_top_50"]:
-        lines.extend(["- Some known bad fixtures are outside the top 50; each retained the fixture boost, but other records accumulated more concurrent concrete signals.", ""])
+        lines.extend(
+            [
+                f"- Some known bad fixtures are outside the top {fixture_summary.get('fixture_top_n', DEFAULT_FIXTURE_TOP_N)}; each retained the fixture boost, but other records accumulated more concurrent concrete signals.",
+                "",
+            ]
+        )
         lines.extend(["| Fixture | Rank | Score | Reasons | Explanation |", "| --- | ---: | ---: | --- | --- |"])
         for fixture in fixture_summary["fixtures_outside_top_50"]:
             lines.append(
@@ -374,6 +551,49 @@ def render_markdown(report: dict[str, Any]) -> str:
 
     lines.extend(["", "## Advisory Boundary", "", "The queue is a review aid only. It does not change OCR/native selection, production exports, canonical images, or `question_bank.json`."])
     return "\n".join(lines) + "\n"
+
+
+def review_entry(review: dict[str, Any] | None) -> dict[str, Any]:
+    if not review:
+        return {
+            "reviewed": False,
+            "status": None,
+            "reviewed_at": None,
+            "reviewer_note": "",
+            "tags": [],
+        }
+    return {
+        "reviewed": True,
+        "status": review.get("status"),
+        "reviewed_at": review.get("reviewed_at"),
+        "reviewer_note": review.get("reviewer_note") or "",
+        "tags": review.get("tags") or [],
+    }
+
+
+def fixture_marker(entry: dict[str, Any]) -> str:
+    return " fixture" if entry.get("fixture_membership") else ""
+
+
+def format_review_status(entry: dict[str, Any]) -> str:
+    review = entry.get("review") or {}
+    if not review.get("reviewed"):
+        return "`unreviewed`"
+    status = review.get("status") or "unresolved"
+    note = review.get("reviewer_note") or ""
+    label = f"`{status}`"
+    return label if not note else f"{label}: {escape_table(excerpt(note, 80))}"
+
+
+def format_image_links(entry: dict[str, Any]) -> str:
+    question = text_value(entry.get("question_image_path"))
+    mark_scheme = text_value(entry.get("mark_scheme_image_path"))
+    links = []
+    if question:
+        links.append(f"[question]({question})")
+    if mark_scheme:
+        links.append(f"[mark scheme]({mark_scheme})")
+    return "<br>".join(links) if links else ""
 
 
 def reason(code: str, detail: str, evidence: dict[str, Any] | None = None) -> dict[str, Any]:

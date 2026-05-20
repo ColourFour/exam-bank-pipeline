@@ -8,7 +8,7 @@ from typing import Any
 
 
 SCHEMA_NAME = "exam_bank.crop_text_signal_audit"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 QUESTION_NUMBER_RE = re.compile(r"^\s*(?:[A-Za-z]\s+)?(?P<number>\d{1,2})\b")
 QUESTION_ANCHOR_RE = re.compile(r"(?:^|\n)\s*(?:[A-Za-z]\s+)?(?P<number>\d{1,2})\b")
@@ -33,17 +33,22 @@ ANSWER_SPACE_PATTERNS = (
     "do not write",
 )
 
-PRACTICAL_NOW_CODES = {
-    "missing_expected_question_number",
-    "missing_mark_bracket",
-    "missing_specific_mark_bracket",
-    "missing_expected_subpart_labels",
-    "next_question_contamination",
-    "page_furniture_or_answer_space_dominated",
-    "suspiciously_short_selected_text",
+APPROVED_PRACTICAL_NOW_WARNING_CODES = {
     "selector_warning_present",
     "selector_structural_warning_present",
     "low_crop_confidence",
+    "missing_expected_question_number",
+    "missing_mark_bracket",
+    "suspiciously_short_selected_text",
+    "clean_visual_crop_but_degraded_text",
+    "selected_ocr_with_structural_warnings",
+    "possible_next_question_contamination",
+    "missing_subpart_labels",
+}
+
+PRACTICAL_NOW_CODES = APPROVED_PRACTICAL_NOW_WARNING_CODES | {
+    "missing_specific_mark_bracket",
+    "page_furniture_or_answer_space_dominated",
     "detected_structure_contamination",
     "question_mark_scheme_metadata_mismatch",
 }
@@ -132,13 +137,26 @@ def build_crop_text_signal_audit(
     }
 
 
-def audit_fixture_record(record: dict[str, Any], question_bank_record: dict[str, Any] | None = None) -> dict[str, Any]:
+def compute_crop_context_warnings(
+    record: dict[str, Any],
+    question_bank_record: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """Return deterministic advisory crop/context warning dictionaries.
+
+    These warnings are review metadata only. This function reads selected/native/OCR
+    metadata but never mutates it, never changes source selection, and never
+    classifies canonical image crops as failures.
+    """
     selected = text_value(record.get("currently_selected_text"))
+    if not selected:
+        selected = text_value(record.get("question_text"))
     question_number = str(record.get("question_number") or "").strip()
+    if not question_number and question_bank_record:
+        question_number = str(question_bank_record.get("question_number") or "").strip()
     expectations = list(
         (record.get("expected_normalized_text_or_structural_expectations") or {}).get("expectations") or []
     )
-    qbank = question_bank_record or {}
+    qbank = question_bank_record or (record if "question_text" in record else {})
     notes = qbank.get("notes") if isinstance(qbank.get("notes"), dict) else {}
     structure = notes.get("question_structure_detected") if isinstance(notes.get("question_structure_detected"), dict) else {}
     warnings: list[dict[str, Any]] = []
@@ -151,10 +169,31 @@ def audit_fixture_record(record: dict[str, Any], question_bank_record: dict[str,
     add_furniture_warning(warnings, selected)
     add_mark_scheme_mismatch_warning(warnings, record, qbank, notes)
     add_selector_warning_metadata(warnings, record, qbank, notes)
+    add_clean_crop_degraded_warning(warnings, notes)
+    add_selected_ocr_structural_warning(warnings, notes)
     add_missing_metadata_warnings(warnings, record, qbank, notes)
     add_risky_signal_notes(warnings, selected, expectations, qbank)
 
-    warnings = dedupe_warnings(warnings)
+    return dedupe_warnings(warnings)
+
+
+def compute_crop_context_warning_codes(
+    record: dict[str, Any],
+    question_bank_record: dict[str, Any] | None = None,
+    *,
+    practical_now_only: bool = True,
+) -> list[str]:
+    warnings = compute_crop_context_warnings(record, question_bank_record)
+    if practical_now_only:
+        warnings = [item for item in warnings if item["gate_candidate"] == "practical_now"]
+    return sorted({item["code"] for item in warnings})
+
+
+def audit_fixture_record(record: dict[str, Any], question_bank_record: dict[str, Any] | None = None) -> dict[str, Any]:
+    selected = text_value(record.get("currently_selected_text"))
+    question_number = str(record.get("question_number") or "").strip()
+    qbank = question_bank_record or {}
+    warnings = compute_crop_context_warnings(record, question_bank_record)
     return {
         "record_id": record.get("record_id"),
         "paper_id": record.get("paper_id"),
@@ -201,8 +240,11 @@ def add_mark_warning(
     expected_marks = expected_mark_brackets(expectations)
     qbank_marks = qbank.get("question_solution_marks")
     qbank_subparts = qbank.get("subparts") or []
+    subpart_marks = qbank.get("subparts_solution_marks") if isinstance(qbank.get("subparts_solution_marks"), dict) else {}
     if not expected_marks and isinstance(qbank_marks, int) and not qbank_subparts:
         expected_marks.append(str(qbank_marks))
+    if not expected_marks and subpart_marks:
+        expected_marks.extend(str(value) for value in subpart_marks.values() if isinstance(value, int))
     expects_any_mark = bool(expected_marks) or any("mark bracket" in expectation.lower() for expectation in expectations)
     if not expects_any_mark:
         return
@@ -244,7 +286,7 @@ def add_subpart_warning(
     if missing:
         warnings.append(
             warning(
-                "missing_expected_subpart_labels",
+                "missing_subpart_labels",
                 "available_now",
                 "practical_now",
                 f"Selected text is missing expected subpart labels: {', '.join(missing)}.",
@@ -262,7 +304,7 @@ def add_next_question_warning(
     if next_number and re.search(rf"\[\d+\]\s+{re.escape(next_number)}\s+[A-Z][A-Za-z]", selected):
         warnings.append(
             warning(
-                "next_question_contamination",
+                "possible_next_question_contamination",
                 "available_now",
                 "practical_now",
                 f"Selected text appears to continue into question {next_number}.",
@@ -454,6 +496,36 @@ def add_selector_warning_metadata(
                 "requires_new_metadata",
                 "requires_new_metadata",
                 "Question-bank context exists but selector warning metadata is absent.",
+            )
+        )
+
+
+def add_clean_crop_degraded_warning(warnings: list[dict[str, Any]], notes: dict[str, Any]) -> None:
+    high_crop = notes.get("question_crop_confidence") == "high"
+    degraded = notes.get("text_fidelity_status") == "degraded" or int_value(notes.get("selected_text_score")) < 50
+    if high_crop and degraded:
+        warnings.append(
+            warning(
+                "clean_visual_crop_but_degraded_text",
+                "available_now",
+                "practical_now",
+                "Question crop confidence is high while selected advisory text is degraded or low-scoring.",
+            )
+        )
+
+
+def add_selected_ocr_structural_warning(warnings: list[dict[str, Any]], notes: dict[str, Any]) -> None:
+    if not notes.get("ocr_selected"):
+        return
+    flags = selector_warning_flags(notes)
+    if flags:
+        warnings.append(
+            warning(
+                "selected_ocr_with_structural_warnings",
+                "available_now",
+                "practical_now",
+                "OCR text is selected while selector or structure metadata contains warnings.",
+                evidence={"warning_flags": sorted(flags)},
             )
         )
 
@@ -658,6 +730,14 @@ def signal_assessment() -> dict[str, list[dict[str, str]]]:
                 "signal": "current selector warnings",
                 "assessment": "Available in question-bank notes and useful as non-mutating warning evidence.",
             },
+            {
+                "signal": "clean visual crop with degraded text",
+                "assessment": "Safe as a review warning when crop confidence is high but selected text is degraded.",
+            },
+            {
+                "signal": "OCR selected with structural warnings",
+                "assessment": "Safe as a review warning because it reports selector risk without changing the selected source.",
+            },
         ],
         "requires_new_metadata": [
             {
@@ -732,6 +812,28 @@ def normalized_session_token(path: str) -> str:
 
 def contains_number_token(text: str, number: str) -> bool:
     return any(match.group("number") == number for match in QUESTION_ANCHOR_RE.finditer(text))
+
+
+def selector_warning_flags(notes: dict[str, Any]) -> set[str]:
+    flags: set[str] = set()
+    for key in ("review_flags", "validation_flags", "extraction_quality_flags", "text_fidelity_flags"):
+        flags.update(str(flag) for flag in notes.get(key) or [])
+    structure = notes.get("question_structure_detected")
+    if isinstance(structure, dict):
+        if structure.get("weak_anchor"):
+            flags.add("weak_question_anchor")
+        if structure.get("missing_internal_subparts") or structure.get("subpart_sequence_gap"):
+            flags.add("question_subparts_incomplete")
+        if structure.get("contamination_detected"):
+            flags.add("question_scope_contaminated")
+    return flags & STRUCTURAL_REVIEW_FLAGS
+
+
+def int_value(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
 
 
 def warning(

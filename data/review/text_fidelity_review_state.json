@@ -1,0 +1,14 @@
+{
+  "schema_name": "exam_bank.text_fidelity.review_state",
+  "schema_version": 1,
+  "source_of_truth_note": "Reviewer state is advisory metadata only. Canonical question and mark-scheme images remain the source of truth.",
+  "statuses": [
+    "unresolved",
+    "accepted_text",
+    "needs_fixture",
+    "needs_crop_fix",
+    "needs_ocr_profile",
+    "false_positive"
+  ],
+  "records": []
+}
