@@ -21,9 +21,13 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIXTURE_PATH = REPO_ROOT / "tests" / "fixtures" / "text_fidelity" / "bad_text_records.json"
 DEFAULT_JSON_OUT = REPO_ROOT / "output" / "reports" / "ocr_profile_experiment.json"
 DEFAULT_MARKDOWN_OUT = REPO_ROOT / "output" / "reports" / "ocr_profile_experiment.md"
+DEFAULT_ROUTING_JSON_OUT = REPO_ROOT / "output" / "reports" / "ocr_profile_routing_experiment.json"
+DEFAULT_ROUTING_MARKDOWN_OUT = REPO_ROOT / "output" / "reports" / "ocr_profile_routing_experiment.md"
+DEFAULT_ROUTING_DOC_OUT = REPO_ROOT / "docs" / "text_extraction" / "OCR_PROFILE_ROUTING_EXPERIMENT.md"
 DEFAULT_IMAGE_ROOT = REPO_ROOT / "output"
 SCHEMA_NAME = "exam_bank.ocr_profile_experiment"
 SCHEMA_VERSION = 1
+ROUTING_SCHEMA_NAME = "exam_bank.ocr_profile_routing_experiment"
 
 
 def main() -> int:
@@ -32,8 +36,18 @@ def main() -> int:
     )
     parser.add_argument("--fixtures", default=str(DEFAULT_FIXTURE_PATH), help="Frozen bad-text fixture manifest path.")
     parser.add_argument("--image-root", default=str(DEFAULT_IMAGE_ROOT), help="Root containing canonical question images.")
-    parser.add_argument("--json-out", default=str(DEFAULT_JSON_OUT), help="JSON report output path.")
-    parser.add_argument("--markdown-out", default=str(DEFAULT_MARKDOWN_OUT), help="Markdown report output path.")
+    parser.add_argument("--json-out", default=None, help="JSON report output path.")
+    parser.add_argument("--markdown-out", default=None, help="Markdown report output path.")
+    parser.add_argument(
+        "--routing-analysis",
+        action="store_true",
+        help="Write layout/paper/failure-family routing analysis reports without changing production selection.",
+    )
+    parser.add_argument(
+        "--routing-doc-out",
+        default=str(DEFAULT_ROUTING_DOC_OUT),
+        help="Documentation copy path for --routing-analysis markdown.",
+    )
     parser.add_argument("--language", default="eng", help="Tesseract language.")
     parser.add_argument("--timeout-seconds", type=int, default=30, help="Per-image Tesseract timeout.")
     args = parser.parse_args()
@@ -44,17 +58,26 @@ def main() -> int:
         image_root=Path(args.image_root),
         language=args.language,
         timeout_seconds=args.timeout_seconds,
+        include_routing_analysis=args.routing_analysis,
     )
 
-    json_out = Path(args.json_out)
-    markdown_out = Path(args.markdown_out)
+    json_out = Path(args.json_out) if args.json_out else DEFAULT_ROUTING_JSON_OUT if args.routing_analysis else DEFAULT_JSON_OUT
+    markdown_out = (
+        Path(args.markdown_out) if args.markdown_out else DEFAULT_ROUTING_MARKDOWN_OUT if args.routing_analysis else DEFAULT_MARKDOWN_OUT
+    )
     json_out.parent.mkdir(parents=True, exist_ok=True)
     markdown_out.parent.mkdir(parents=True, exist_ok=True)
     json_out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     markdown_out.write_text(render_markdown(report), encoding="utf-8")
+    if args.routing_analysis:
+        routing_doc_out = Path(args.routing_doc_out)
+        routing_doc_out.parent.mkdir(parents=True, exist_ok=True)
+        routing_doc_out.write_text(render_markdown(report), encoding="utf-8")
 
     print(f"Wrote {json_out}")
     print(f"Wrote {markdown_out}")
+    if args.routing_analysis:
+        print(f"Wrote {args.routing_doc_out}")
     print(f"Best profile: {report['summary']['best_profile_by_average_score']}")
     print(f"Worst profile: {report['summary']['worst_profile_by_average_score']}")
     if report["summary"]["runtime_blockers"]:
@@ -68,6 +91,7 @@ def build_experiment_report(
     image_root: Path,
     language: str = "eng",
     timeout_seconds: int = 30,
+    include_routing_analysis: bool = False,
 ) -> dict[str, Any]:
     profiles = available_ocr_profiles()
     records: list[dict[str, Any]] = []
@@ -99,8 +123,8 @@ def build_experiment_report(
     profile_summary = summarize_profiles(records)
     family_summary = summarize_group(records, "paper_family")
     layout_summary = summarize_layouts(records)
-    return {
-        "schema_name": SCHEMA_NAME,
+    report = {
+        "schema_name": ROUTING_SCHEMA_NAME if include_routing_analysis else SCHEMA_NAME,
         "schema_version": SCHEMA_VERSION,
         "fixture_schema_name": manifest.get("schema_name"),
         "fixture_schema_version": manifest.get("schema_version"),
@@ -115,6 +139,20 @@ def build_experiment_report(
         "layout_type_summary": layout_summary,
         "records": records,
     }
+    if include_routing_analysis:
+        routing_slices = summarize_routing_slices(records)
+        report["routing_analysis"] = {
+            "scope": "report_only_candidate_routing",
+            "production_behavior_unchanged": True,
+            "writes_selected_text": False,
+            "writes_asterion_exports": False,
+            "treats_profile_output_as_canonical": False,
+            "safety_rule": "A profile is marked safely_better for a slice only when it has at least one improvement, positive average delta, and zero regressions versus baseline in that slice.",
+            "slice_summary": routing_slices,
+            "candidate_slices": [row for row in routing_slices if row["best_safe_profile"]],
+            "unsafe_or_no_safe_slices": [row for row in routing_slices if not row["best_safe_profile"]],
+        }
+    return report
 
 
 def score_profile_text(
@@ -185,6 +223,8 @@ def build_record_result(
         "paper_id": fixture.get("paper_id"),
         "paper_family": fixture.get("paper_family"),
         "layout_types": infer_layout_types(fixture),
+        "routing_slices": infer_routing_slices(fixture),
+        "failure_types": infer_failure_types(fixture),
         "question_number": fixture.get("question_number"),
         "question_image_path": fixture.get("question_image_path"),
         "resolved_image_path": str(image_path) if image_path else "",
@@ -224,6 +264,70 @@ def infer_layout_types(fixture: dict[str, Any]) -> list[str]:
     if not layouts:
         layouts.add("general_text")
     return sorted(layouts)
+
+
+def infer_failure_types(fixture: dict[str, Any]) -> list[str]:
+    tags = set(str(tag) for tag in fixture.get("failure_tags") or [])
+    expectations = " ".join(
+        (fixture.get("expected_normalized_text_or_structural_expectations") or {}).get("expectations") or []
+    ).lower()
+    failure_types: set[str] = set()
+    if tags & {"mark_bracket_missing", "mark_bracket_order"} or "mark bracket" in expectations:
+        failure_types.add("mark_bracket_recovery")
+    if tags & {"question_anchor_missing", "question_anchor_displaced"} or "starts with question number" in expectations:
+        failure_types.add("question_anchor_recovery")
+    if tags & {"truncated_text", "crop_boundary_or_contamination", "page_furniture_contamination"}:
+        failure_types.add("crop_or_contamination")
+    if tags & {"ocr_noise", "severe_ocr_noise", "bullet_list_ocr", "table_furniture_noise"}:
+        failure_types.add("ocr_noise")
+    if tags & {"clean_crop_degraded_text", "spacing_degradation"}:
+        failure_types.add("clean_crop_degraded_text")
+    if tags & {"math_notation", "greek_symbol", "integral_bounds", "trig_symbol_fidelity", "vector_matrix_layout"}:
+        failure_types.add("math_symbol_loss")
+    if not failure_types:
+        failure_types.add("other")
+    return sorted(failure_types)
+
+
+def infer_routing_slices(fixture: dict[str, Any]) -> list[dict[str, str]]:
+    tags = set(str(tag) for tag in fixture.get("failure_tags") or [])
+    expectations = " ".join(
+        (fixture.get("expected_normalized_text_or_structural_expectations") or {}).get("expectations") or []
+    ).lower()
+    slices: set[tuple[str, str]] = set()
+
+    paper_family = str(fixture.get("paper_family") or "unknown").upper()
+    if paper_family in {"P1", "P3", "P4", "P5"}:
+        slices.add(("paper_family", paper_family))
+
+    if tags & {"fraction_structure", "rational_expression", "polynomial_reading_order", "radical_or_power_structure", "complex_number_layout"}:
+        slices.add(("layout_family", "dense_algebra"))
+    if tags & {"calculus_expression", "integral_bounds", "derivative_layout"} or any(
+        token in expectations for token in ("integral", "dy/dx", "derivative", "ln(", "exponential")
+    ):
+        slices.add(("layout_family", "calculus_integrals"))
+    if tags & {"trig_symbol_fidelity", "greek_symbol"} or any(
+        token in expectations for token in ("theta", "cos", "sin", "sigma", "standard deviation")
+    ):
+        slices.add(("layout_family", "trig_log_notation"))
+    if tags & {"vector_matrix_layout", "transformation_diagram_order"} or "vector" in expectations:
+        slices.add(("layout_family", "vectors_matrices"))
+    if tags & {
+        "diagram_reading_order",
+        "mechanics_diagram",
+        "mechanics_graph_reading_order",
+        "statistics_table_structure",
+        "table_furniture_noise",
+    } or any(token in expectations for token in ("diagram", "table", "graph", "histogram", "spinner")):
+        slices.add(("layout_family", "diagrams_tables"))
+    if tags & {"mark_bracket_missing", "mark_bracket_order"} or "mark bracket" in expectations:
+        slices.add(("failure_type", "mark_bracket_recovery"))
+    if tags & {"question_anchor_missing", "question_anchor_displaced"} or "starts with question number" in expectations:
+        slices.add(("failure_type", "question_anchor_recovery"))
+    if tags & {"math_notation", "greek_symbol", "integral_bounds", "trig_symbol_fidelity", "vector_matrix_layout"}:
+        slices.add(("failure_type", "symbol_heavy_cases"))
+
+    return [{"slice_type": slice_type, "slice": name} for slice_type, name in sorted(slices)]
 
 
 def summarize_profiles(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -288,6 +392,130 @@ def summarize_record_group(group: str, records: list[dict[str, Any]]) -> dict[st
     }
 
 
+def summarize_routing_slices(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        for slice_ref in record["routing_slices"]:
+            grouped[(slice_ref["slice_type"], slice_ref["slice"])].append(record)
+
+    summaries = []
+    for (slice_type, slice_name), slice_records in sorted(grouped.items()):
+        profile_rows = [summarize_profile_for_slice(profile, rows) for profile, rows in rows_by_profile(slice_records).items()]
+        profile_rows = sorted(
+            profile_rows,
+            key=lambda row: (
+                -row["average_score"],
+                -row["average_delta_vs_baseline"],
+                row["regressed_count"],
+                -row["improved_count"],
+                row["average_runtime_seconds"],
+                row["profile"],
+            ),
+        )
+        safe_profiles = [row for row in profile_rows if row["safety_classification"] == "safely_better"]
+        best_safe = safe_profiles[0]["profile"] if safe_profiles else ""
+        no_safe_reason = ""
+        if not best_safe:
+            no_safe_reason = summarize_no_safe_reason(profile_rows)
+        summaries.append(
+            {
+                "slice_type": slice_type,
+                "slice": slice_name,
+                "record_count": len(slice_records),
+                "record_ids": [str(record["record_id"]) for record in slice_records],
+                "best_safe_profile": best_safe,
+                "no_safe_profile_reason": no_safe_reason,
+                "profile_summary": profile_rows,
+                "regressions": collect_slice_regressions(slice_records),
+                "improvements": collect_slice_improvements(slice_records),
+            }
+        )
+    return summaries
+
+
+def rows_by_profile(records: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        for row in record["profiles"]:
+            if row["profile"] == "baseline_current":
+                continue
+            grouped[row["profile"]].append(row)
+    return grouped
+
+
+def summarize_profile_for_slice(profile: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    deltas = [row["score_delta_vs_baseline"] for row in rows]
+    improved_count = sum(1 for delta in deltas if delta > 0)
+    regressed_count = sum(1 for delta in deltas if delta < 0)
+    average_delta = round(mean(deltas), 2)
+    if improved_count and average_delta > 0 and regressed_count == 0:
+        safety = "safely_better"
+    elif regressed_count:
+        safety = "unsafe_regressions"
+    elif improved_count:
+        safety = "mixed_no_net_gain"
+    else:
+        safety = "no_measured_gain"
+    return {
+        "profile": profile,
+        "record_count": len(rows),
+        "average_score": round(mean(row["fixture_score"] for row in rows), 2),
+        "average_delta_vs_baseline": average_delta,
+        "min_delta_vs_baseline": min(deltas),
+        "max_delta_vs_baseline": max(deltas),
+        "improved_count": improved_count,
+        "regressed_count": regressed_count,
+        "unchanged_count": sum(1 for delta in deltas if delta == 0),
+        "total_runtime_seconds": round(sum(row["runtime_seconds"] for row in rows), 4),
+        "average_runtime_seconds": round(mean(row["runtime_seconds"] for row in rows), 4),
+        "safety_classification": safety,
+    }
+
+
+def summarize_no_safe_reason(profile_rows: list[dict[str, Any]]) -> str:
+    if not profile_rows:
+        return "no non-baseline profile rows"
+    if all(row["regressed_count"] for row in profile_rows):
+        return "all profiles regressed on at least one fixture in this slice"
+    if not any(row["improved_count"] for row in profile_rows):
+        return "no profile improved over baseline in this slice"
+    return "candidate profiles either regressed or lacked positive net gain"
+
+
+def collect_slice_regressions(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    regressions = []
+    for record in records:
+        for row in record["profiles"]:
+            if row["profile"] == "baseline_current" or row["score_delta_vs_baseline"] >= 0:
+                continue
+            regressions.append(
+                {
+                    "record_id": record["record_id"],
+                    "profile": row["profile"],
+                    "delta": row["score_delta_vs_baseline"],
+                    "introduced_issue_keys": row["introduced_issue_keys_vs_baseline"],
+                }
+            )
+    return sorted(regressions, key=lambda row: (row["record_id"], row["profile"]))
+
+
+def collect_slice_improvements(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    improvements = []
+    for record in records:
+        for row in record["profiles"]:
+            if row["profile"] == "baseline_current" or row["score_delta_vs_baseline"] <= 0:
+                continue
+            improvements.append(
+                {
+                    "record_id": record["record_id"],
+                    "profile": row["profile"],
+                    "delta": row["score_delta_vs_baseline"],
+                    "resolved_issue_keys": row["resolved_issue_keys_vs_baseline"],
+                }
+            )
+    return sorted(improvements, key=lambda row: (row["record_id"], row["profile"]))
+
+
 def build_summary(profile_summary: list[dict[str, Any]]) -> dict[str, Any]:
     if not profile_summary:
         return {
@@ -310,8 +538,9 @@ def build_summary(profile_summary: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def render_markdown(report: dict[str, Any]) -> str:
+    title = "OCR Profile Routing Experiment" if report.get("routing_analysis") else "OCR Profile Experiment"
     lines = [
-        "# OCR Profile Experiment",
+        f"# {title}",
         "",
         "Experimental fixture-only OCR/preprocessing comparison. Canonical images remain the source of truth.",
         "",
@@ -347,6 +576,70 @@ def render_markdown(report: dict[str, Any]) -> str:
         lines.append(f"| paper_family | {row['group']} | {row['record_count']} | {row['best_profile']} |")
     for row in report["layout_type_summary"]:
         lines.append(f"| layout_type | {row['group']} | {row['record_count']} | {row['best_profile']} |")
+
+    if report.get("routing_analysis"):
+        routing = report["routing_analysis"]
+        lines.extend(
+            [
+                "",
+                "## Routing Safety Summary",
+                "",
+                f"- Routing scope: {routing['scope']}",
+                f"- Writes selected text: {routing['writes_selected_text']}",
+                f"- Writes Asterion exports: {routing['writes_asterion_exports']}",
+                f"- Treats profile output as canonical: {routing['treats_profile_output_as_canonical']}",
+                f"- Safety rule: {routing['safety_rule']}",
+                "",
+                "| Slice type | Slice | Records | Best safe profile | No-safe reason |",
+                "| --- | --- | ---: | --- | --- |",
+            ]
+        )
+        for row in routing["slice_summary"]:
+            best_safe = row["best_safe_profile"] or "none"
+            reason = row["no_safe_profile_reason"] or "none"
+            lines.append(f"| {row['slice_type']} | {row['slice']} | {row['record_count']} | {best_safe} | {reason} |")
+
+        lines.extend(
+            [
+                "",
+                "## Routing Slice Profile Detail",
+                "",
+                "| Slice | Profile | Avg score | Avg delta | Min delta | Max delta | Improved | Regressed | Runtime total | Safety |",
+                "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            ]
+        )
+        for row in routing["slice_summary"]:
+            slice_label = f"{row['slice_type']}:{row['slice']}"
+            for profile in row["profile_summary"]:
+                lines.append(
+                    f"| {slice_label} | {profile['profile']} | {profile['average_score']:.2f} | "
+                    f"{profile['average_delta_vs_baseline']:.2f} | {profile['min_delta_vs_baseline']} | "
+                    f"{profile['max_delta_vs_baseline']} | {profile['improved_count']} | "
+                    f"{profile['regressed_count']} | {profile['total_runtime_seconds']:.2f}s | "
+                    f"{profile['safety_classification']} |"
+                )
+
+        lines.extend(
+            [
+                "",
+                "## Routing Slice Regressions",
+                "",
+                "| Slice | Record | Profile | Delta | Introduced issues |",
+                "| --- | --- | --- | ---: | --- |",
+            ]
+        )
+        regression_count = 0
+        for row in routing["slice_summary"]:
+            slice_label = f"{row['slice_type']}:{row['slice']}"
+            for regression in row["regressions"]:
+                regression_count += 1
+                introduced = ", ".join(regression["introduced_issue_keys"]) or "score-only regression"
+                lines.append(
+                    f"| {slice_label} | {regression['record_id']} | {regression['profile']} | "
+                    f"{regression['delta']} | {introduced} |"
+                )
+        if regression_count == 0:
+            lines.append("| none | none | none | 0 | none |")
 
     lines.extend(
         [
