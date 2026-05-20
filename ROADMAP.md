@@ -1,376 +1,192 @@
 # Roadmap
 
-This roadmap is evidence-gated. The pipeline remains image-first: rendered question PNGs and rendered mark-scheme PNGs are the student-facing source of truth. Extracted text, OCR text, native PDF text, future vision text, topic labels, difficulty labels, crop confidence, validation fields, mapping fields, and readiness fields are support metadata for search, review, QA, and future adaptive practice.
+This roadmap reflects the current project state as of the local export generated on `2026-05-18`. Historical audit and handoff docs remain useful evidence, but this file is the active planning view.
 
-## Current Evidence
+The project remains image-first. Rendered question PNGs and rendered mark-scheme PNGs are the source of truth. Native PDF text, OCR text, normalized text, AI output, topic routing, advisory evidence, mark-event evidence, difficulty scores, readiness tiers, and Asterion projections are support metadata unless a documented consumer role gate explicitly permits use.
 
-The current measured-state baseline is [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Use that report for current counts, OCR status, generated-output names, known risks, and validation status. As of that audit, dated `2026-05-14`, `output/json/question_bank.json` is OCR-enabled; older roadmap entries that describe a no-OCR canonical export are historical iteration evidence, not current state.
+## Current Baseline
 
-Refresh current evidence with:
+Current canonical export:
+
+- Path: `output/json/question_bank.json`
+- Schema: `exam_bank.question_bank` version 2
+- Run: `20260518T235946Z-4e93c881aa77`
+- Generated at: `2026-05-18T23:59:46.928802+00:00`
+- Records: `1301`
+- Paper families: `p1: 401`, `p3: 396`, `p4: 258`, `p5: 246`
+- OCR: ran for all records with Tesseract `5.5.2`; selected over native text for `33` records
+- Mapping status: `1291 pass`, `10 fail`
+- Validation status: `917 pass`, `369 review`, `15 fail`
+- Scope quality: `923 clean`, `378 review`
+- Text fidelity: `1259 clean`, `42 degraded`
+- Visual curation: `213 ready`, `1073 review`, `15 fail`
+- Text-only status: `201 ready`, `1049 review`, `51 fail`
+- Question crop confidence: `337 high`, `964 low`
+- Mark-scheme crop confidence: `746 high`, `555 medium`
+- Missing question image paths: `0`
+- Missing mark-scheme image paths: `0`
+
+The dated audit baseline remains [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Treat it as the May 14 cleanup/audit baseline, not the live count source. Refresh current evidence with:
 
 ```bash
 .venv/bin/python -m exam_bank.cli audit \
-  --input output/json/question_bank.json
+  --input output/json/question_bank.json \
+  --output output/json/audit.current.json
+
+.venv/bin/python -m exam_bank.cli output-integrity-audit \
+  --input output/json/question_bank.json \
+  --artifact-root output \
+  --output output/json/audit.current.integrity.json
 
 .venv/bin/python scripts/audit_question_bank_readiness.py \
   --input output/json/question_bank.json \
-  --baseline output/triage/iteration_004/baseline_question_bank.json \
   --artifact-root output \
-  --out-dir output/audits/manual
+  --out-dir output/audits/current
 ```
 
-The iteration sections below preserve useful planning rationale and prior audit evidence. Do not copy their measured counts into current-state docs without rerunning the audit commands above.
+## Completed Foundations
 
-## Audit-Backed Cleanup and Optimization Path
+The following work is implemented and should be treated as current infrastructure, not future scope:
 
-The audit in [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md) proposed Phase 1 through Phase 5. The current accepted work path is narrower: use Phases 1 through 3 as the active cleanup and optimization plan, keep Phase 4 in future deeper-refactor territory, and treat later enrichment ideas as deferred roadmap notes rather than implementation scope.
+- Image-first extraction to paper-family image trees and `question_bank.json`.
+- OCR-enabled production-style export with run manifest, QA rollups, artifact root, and output-layout metadata.
+- Standard CLI commands for extraction, audit, output integrity, Asterion export, Content Lab candidates, topic packets, AI sidecars, triage, auto-triage, output inventory, cleanup planning, and export summary diffs.
+- Generator safety for taxonomy scripts: `--help` is safe and `--dry-run` reports planned writes.
+- Atomic JSON write helpers and tests.
+- Output inventory and dry-run cleanup planning.
+- Current release validation checklist.
+- Conservative Asterion export contract and role-gated Asterion projection.
+- Strict topic-routing sidecar contract and current sidecar at `output/json/question_bank.topic_routing.v1.json`.
+- Deterministic mark-event sidecar and validation report.
+- Deterministic advisory evidence sidecar from examiner reports and grade thresholds.
+- Advisory difficulty index sidecar and reports.
+- Image-first topic packet generation under `output/topic_packets/`.
+- Auto-triage planning, runbook, comparison, and decision files.
+- Text-extraction failure audit, bad-text fixture manifest, crop/context signal audit, OCR profile experiments, normalized text candidate contract, and text-fidelity review queue.
 
-### Phase 1 - Cleanup Prerequisites
+## Current Constraints
 
-Status: accepted as current cleanup prerequisite work.
+These constraints should drive near-term work:
 
-Purpose:
+- Canonical images remain authoritative; no text pipeline may silently replace image evidence.
+- Current topic routing is not safe for strict filters until its metadata says `safe_for_strict_filters=true`.
+- Difficulty index v1 is advisory and not approved for student-facing sequencing.
+- Mark-event evidence is advisory and not approved for automated student marking.
+- Advisory examiner-report and grade-threshold evidence may support review and difficulty context, but it must not overwrite canonical records.
+- AI enrichment sidecars remain review/debug evidence unless separately audited and role-gated.
+- Low question-crop confidence is still common and should be handled as review evidence, not hidden by text improvements.
+- Current generated outputs are large and ignored by git; cleanup must remain manifest-driven and dry-run first.
 
-- Make cleanup safe before generated artifacts, docs, or command defaults are reorganized.
-- Add or preserve guards around generator help/dry-run behavior.
-- Keep output integrity checks, archive manifests, Asterion contract docs, topic sidecar contract docs, and current-state README references as prerequisites for later cleanup.
+## Active Priorities
 
-Do not use Phase 1 to change extraction behavior, topic/difficulty algorithms, canonical question-bank records, generated outputs, or student-facing semantics.
+### 1. Release Validation Pass
 
-### Phase 2 - Cleanup and Reorganization
+Goal: make the current export reproducibly releasable.
 
-Status: accepted as current cleanup/reorganization work.
+Work:
 
-Purpose:
+- Run the full validation checklist in [docs/RELEASE_VALIDATION_CHECKLIST.md](docs/RELEASE_VALIDATION_CHECKLIST.md).
+- Record current test count, audit summaries, integrity audit, sidecar validation, topic sidecar safety metadata, and Asterion export status.
+- Use `export-summary-diff` before promoting any regenerated JSON.
+- Keep current outputs fixed unless a regeneration is intentional and audited.
 
-- Move or mark historical docs without losing their audit value.
-- Normalize current command documentation.
-- Classify archived generated artifacts using manifests before any deletion.
-- Remove only documented disposable files under ignored generated paths.
-- Keep current canonical outputs, current exports, taxonomy files, topic sidecars, and image trees fixed until a separate audited regeneration/change plan exists.
+Acceptance:
 
-Phase 2 is documentation and generated-artifact hygiene first. It should not silently change Asterion eligibility, record counts, topic safety, text readiness, or current generated output meaning.
+- Full tests pass.
+- Integrity audit passes.
+- Sidecar validations pass or only emit documented warnings.
+- Release notes identify which downstream roles are allowed, blocked, or review-only.
 
-### Phase 3 - Low-Risk Optimization
+### 2. Hard-Failure Reduction
 
-Status: accepted as current low-risk optimization work.
+Goal: reduce the remaining mapping, validation, and visual-curation failures without loosening trust gates.
 
-Purpose:
+Work:
 
-- Improve operational safety and developer workflow without changing data semantics.
-- Add atomic JSON writes where practical.
-- Improve run-status terminal output.
-- Add export summary diffs.
-- Split or mark tests for faster local feedback while preserving current CI expectations.
-- Update stale script defaults so they point at current paths or require explicit input paths.
+- Use `audit_question_bank_readiness.py` and `auto-triage-status` to identify dominant failure clusters.
+- Use `auto-triage-plan` for bounded implementation handoffs.
+- Prioritize mapping failures, validation failures, visual curation failures, and records where status fields contradict each other.
+- Preserve OCR-enabled comparisons when claiming production improvement.
 
-Phase 3 optimizations must keep standard outputs unchanged, or explicitly explain any intentional metadata-only differences.
+Acceptance:
 
-### Phase 4 - Future Deeper Refactors
+- Hard-failure counts decrease in an OCR-enabled comparison.
+- No broad trust-gate loosening.
+- Worsened records are explained or fixed.
+- Focused tests and full tests pass.
 
-Status: deferred future work, not current implementation scope.
+### 3. Text-Fidelity Review Workflow
 
-Potential Phase 4 work includes cache keys for OCR/rendering, AI batch checkpoint/resume, audit-script consolidation, mark-scheme subpart parsing improvements, and crop-confidence revisits with regression samples. These changes have larger behavioral and migration risk, so they should wait until Phases 1 through 3 are complete and the project has clear acceptance gates.
+Goal: turn text-fidelity evidence into a practical review loop while keeping text advisory.
 
-### Advisory Evidence and Difficulty Index
+Work:
 
-Status: deterministic advisory implementation is present; downstream promotion remains deferred.
+- Use the text-fidelity review queue to prioritize known bad and high-risk records.
+- Keep normalized text and OCR-profile outputs as candidate/report layers.
+- Add reviewed-state handling where it improves repeatability.
+- Use crop/context warnings to prevent over-trusting selected text.
 
-The repo now has deterministic examiner-report and grade-threshold evidence under `output/advisory_evidence/`, with the final sidecar at `output/advisory_evidence/question_bank.advisory_evidence.v1.json`. It also has an advisory difficulty index at `output/json/question_bank.difficulty_index.v1.json` and reports under `reports/`.
+Acceptance:
 
-Use these contracts as current guidance:
+- Known bad fixtures remain captured near the top of the queue.
+- Review outcomes are persisted without changing canonical text truth.
+- New candidate text fields include provenance and warnings.
+- Asterion and student-facing projections do not consume advisory candidates without a contract update.
 
-- [Advisory Evidence Contract](docs/ADVISORY_EVIDENCE_CONTRACT.md)
-- [Mark-Event Evidence Contract](docs/MARK_EVENTS_CONTRACT.md)
-- [Difficulty Index Contract](docs/DIFFICULTY_INDEX_CONTRACT.md)
+### 4. Topic Routing Recovery
 
-Current constraints:
+Goal: make strict topic filters usable by reducing current topic-routing sidecar failures.
 
-- Do not use advisory evidence to overwrite canonical question-bank records.
-- Do not use advisory evidence to overwrite strict topic routing or Asterion role gates.
-- Do not treat grade-threshold context as direct individual-question difficulty proof.
-- Do not promote advisory topic/difficulty metadata into student-facing truth.
-- Do not change canonical generated outputs for enrichment experiments without a separate audited plan.
-- Keep AI-assisted advisory enrichment for unresolved cases behind a separate audited plan.
+Work:
 
-## iteration_001 - Audit/reporting layer
+- Re-run or repair strict topic routing against canonical taxonomy IDs only.
+- Keep provider outputs sidecar-only.
+- Validate that failed records, review-required records, and `safe_for_strict_filters` metadata are accurate.
 
-Status: completed by Agent 2; pending/paired with Agent 3 focused tests as the next formal gate.
+Acceptance:
 
-Completed:
+- Schema-validation failures are reduced or explained.
+- `safe_for_strict_filters=true` is only set when the sidecar actually qualifies.
+- Downstream consumers can fail closed from sidecar metadata.
 
-- Implemented `scripts/audit_question_bank_readiness.py`.
-- Wrote implementation notes at `agent_handoffs/iteration_001/agent2_impl_notes.md`.
-- Ran the full-bank audit into ignored `output/audits/iteration_001/`.
-- Confirmed reliable baseline comparison: `0` added, `0` removed, `1301` shared.
-- Passed validation commands including `py_compile` and the focused existing test set: `34 passed`.
+### 5. Output Hygiene
 
-Historical documented audit result from `iteration_001`:
+Goal: keep generated outputs understandable and safe to clean.
 
-- At that iteration, the audited canonical export was not OCR-enabled.
-- OCR-selection quality cannot yet be judged because OCR text is blank.
-- Hard blockers: `23`.
-- Mapping: `pass: 1281`, `fail: 20`.
-- Validation: `pass: 921`, `review: 371`, `fail: 9`.
-- Asterion tiers: `0: 23`, `1: 360`, `2: 185`, `3: 13`, `4: 52`, `5: 668`.
-- Simple-fillable subpart mark candidates: `920`.
+Work:
 
-## iteration_002 - Agent 3 audit tests
+- Use `output-inventory` and `output-cleanup-plan` before touching generated roots.
+- Preserve current canonical JSON, image trees, Asterion exports, topic packets, sidecars, and frozen triage baselines.
+- Move or banner historical docs rather than mixing old counts with current instructions.
 
-Goal: add focused tests for the new reporting script.
+Acceptance:
 
-Status: required gate before further extraction changes. The current worktree contains `tests/test_question_bank_readiness_audit.py`; keep this iteration explicit until those tests are accepted with the branch.
+- Cleanup plans remain dry-run and reviewed before action.
+- Archive decisions are documented.
+- No current export or image tree is deleted during doc or hygiene work.
 
-Scope:
+## Deferred Work
 
-- Field discovery.
-- Top-level vs `notes` field resolution.
-- Missing optional fields.
-- Missing OCR fields.
-- No fake zeroes for missing numeric values.
-- Readiness tier classification.
-- Hard blocker detection.
-- Mapping/validation distribution.
-- Subpart fillable detection.
-- Baseline comparison.
-- Deterministic output shape.
+These items are still valuable but should wait until the active priorities above are stable:
 
-Non-goals:
-
-- No OCR engine changes.
-- No extraction behavior changes.
-- No crop fixes.
-- No mark-scheme mapping fixes.
-- No topic/difficulty changes.
-- No network/API-key tests.
+- Tiered Asterion slice files such as gold, multimodal, and master exports.
+- Automated subpart mark promotion for nested marks.
+- Production-quality canonical text candidate schema with raw native/OCR/vision candidates, normalized candidate text, provenance, and confidence.
+- Layout-aware math text recovery promoted beyond report-only experiments.
+- OCR profile routing promoted beyond report-only experiments.
+- AI batch checkpoint/resume improvements beyond current status support.
+- OCR/rendering cache-key refactors.
+- Audit-script consolidation.
+- Mark-scheme subpart parsing suitable for automated marking workflows.
+- Topic/difficulty model refresh after crop, mapping, marks, and text reliability improve.
 
-## iteration_003 - Resolve OCR activation/export disconnect
+## Historical References
 
-Goal: determine why the canonical audited export has `ocr_ran=0`, blank `ocr_text`, and `text_candidate_source=native: 1301`.
+Use these documents for context, not as live count sources:
 
-Questions to answer:
-
-- Is OCR disabled in config?
-- Is OCR running but not exported?
-- Is the audit reading the wrong source field?
-- Is there a difference between historical/uploaded JSONs and current canonical repo output?
-- Are top-level OCR fields and `notes` OCR fields being populated differently?
-- Is the export intentionally native-only?
-
-Deliverables:
-
-- Root-cause note.
-- Minimal fix if needed.
-- Rerun audit after fix.
-- Compare OCR activity before and after.
-
-Non-goals:
-
-- No OCR threshold tuning.
-- No broad OCR quality tuning.
-- No new OCR engine.
-- No schema-breaking changes.
-
-## iteration_004 - Fix hard blockers
-
-Goal: reduce hard blockers as close to zero as possible.
-
-Use `hard_blockers.csv` and `mapping_validation_report.csv`.
-
-Focus:
-
-- Mapping failures.
-- Validation failures.
-- Missing mark-scheme text/image paths.
-- Records where mapping fail coexists with validation pass.
-- Local mark-total mismatches.
-- Records with missing or unusable marks.
-- Artifact path failures if present.
-
-Acceptance criteria:
-
-- Hard blocker count reduced.
-- Mapping fail count reduced.
-- Validation fail count reduced.
-- No record with mapping fail is presented as cleanly validation-pass without a contradiction flag.
-- Audit rerun documents before/after changes.
-
-## iteration_005 - Dedicated 2024-2025 layout/crop recovery
-
-Goal: improve newer CAIE format records if the audit confirms they are disproportionately weak.
-
-Focus:
-
-- `caie_2024_2025` or equivalent format profile.
-- Weak question anchors.
-- Side panels.
-- Barcode/page furniture exclusion.
-- Terminal mark totals.
-- Multi-page continuation.
-- Diagram/text region union.
-- Avoiding next-question contamination.
-- Improving question crop confidence.
-- Improving visual curation status.
-
-Deliverables:
-
-- Format-profile before/after metrics.
-- Crop-quality before/after metrics.
-- Validation/mapping before/after metrics.
-
-## iteration_006 - Crop metadata and artifact QA
-
-Goal: make image crops auditable and reproducible.
-
-Proposed metadata:
-
-```json
-{
-  "question_crop_bbox": [],
-  "mark_scheme_crop_bbox": [],
-  "crop_source_pages": [],
-  "crop_includes_diagram": true,
-  "crop_excludes_page_furniture": true,
-  "crop_validation_reason": "",
-  "image_sha256": "",
-  "image_width": 0,
-  "image_height": 0
-}
-```
-
-Also add or strengthen artifact existence checks.
-
-Acceptance criteria:
-
-- Audit can verify image paths.
-- Crop metadata exists for generated artifacts.
-- Artifact-root checks are deterministic.
-- Missing image artifacts become hard blockers or explicit review flags.
-
-## iteration_007 - Promote subpart marks
-
-Goal: turn detected mark values into usable subpart mark fields.
-
-Use the audit finding that `920` records look simple-fillable.
-
-Proposed structure:
-
-```json
-"subpart_marks": [
-  {
-    "part_path": ["a"],
-    "marks": 3,
-    "source": "question_mark_bracket",
-    "confidence": "high"
-  },
-  {
-    "part_path": ["b", "i"],
-    "marks": 2,
-    "source": "question_mark_bracket",
-    "confidence": "medium"
-  }
-]
-```
-
-Support nested paths such as `["a", "i"]`, `["a", "ii"]`, and `["b"]`.
-
-Acceptance criteria:
-
-- Simple fillable records are populated.
-- Nested records are not incorrectly flattened.
-- Detected marks sum to question total where possible.
-- Subpart marks agree with mark-scheme totals where available.
-- Ambiguous records remain review, not falsely ready.
-
-## iteration_008 - Canonical text candidate system
-
-Goal: separate raw text candidates from canonical text.
-
-Do this only after OCR activation/export state is resolved.
-
-Move toward fields like:
-
-```json
-{
-  "native_pdf_text_raw": "",
-  "ocr_text_raw": "",
-  "vision_text_raw": "",
-  "canonical_question_text": "",
-  "canonical_question_latex": "",
-  "question_text_trust": "",
-  "text_validation_flags": [],
-  "text_needs_image": true
-}
-```
-
-Principles:
-
-- Image artifacts remain canonical for visual-required records.
-- Text-ready means text preserves question number, marks, subparts, mathematical content, and scope.
-- OCR/native/vision text are candidates, not automatically student-facing text.
-- Do not inflate readiness/trust because text looks prettier.
-
-## iteration_009 - Run manifest and export contract
-
-Goal: make future JSONs auditable from the file alone.
-
-Status: substantially implemented. New exports include `run_manifest`, `artifact_root`, QA rollups, and `output_layout` profile metadata. Generated-output inventory and dry-run cleanup planning are available through `exam_bank.cli output-inventory` and `exam_bank.cli output-cleanup-plan`.
-
-Add top-level run metadata such as:
-
-```json
-"run_metadata": {
-  "generated_at": "...",
-  "run_id": "...",
-  "pipeline_version": "...",
-  "git_commit": "...",
-  "model_versions": {
-    "vision_text": "...",
-    "topic_classifier": "...",
-    "difficulty_model": "local-difficulty-v1"
-  },
-  "ocr_engine_version": "...",
-  "input_manifest_sha256": "...",
-  "artifact_root": "...",
-  "qa_summary": {}
-}
-```
-
-Acceptance criteria:
-
-- Future audits can identify when/how the JSON was produced.
-- Model/pipeline versions are explicit.
-- Artifact root is explicit.
-- QA summary is embedded.
-- Output layout profile is explicit.
-- Generated output can be inventoried without deleting or moving files.
-
-## iteration_010 - Tiered Asterion exports
-
-Goal: generate separate exports for different uses.
-
-Current compatibility step: conservative Asterion exports now default to `output*/asterion/exports/latest/` instead of mixing sidecars into `json/` or paper artifact folders. Tiered slices remain future work.
-
-Suggested exports:
-
-```text
-asterion_gold.json
-asterion_multimodal.json
-question_bank_master.json
-```
-
-Suggested meanings:
-
-- `asterion_gold.json`: clean pilot subset.
-- `asterion_multimodal.json`: image-canonical records with clean mapping/validation and usable mark schemes.
-- `question_bank_master.json`: full bank with all flags retained for continued extraction work.
-
-Do not implement until readiness tier semantics are stable.
-
-## iteration_011 - Topic/difficulty rerun
-
-Goal: rerun or improve topic/difficulty only after extraction quality improves.
-
-Do not optimize topic/difficulty before crop, mapping, marks, and canonical text are more reliable.
-
-Current topic/difficulty should be treated as support metadata, not final truth, especially where text fidelity is degraded.
+- [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md)
+- [Phase 1 Cleanup Prerequisite Closeout](docs/PHASE_1_CLEANUP_PREREQ_CLOSEOUT.md)
+- [Text Extraction Improvement Decision Packet](docs/text_extraction/TEXT_EXTRACTION_IMPROVEMENT_DECISION_PACKET.md)
+- [Auto-Triage Workflow](docs/AUTO_TRIAGE.md)
+- [Command Atlas](docs/COMMAND_ATLAS.md)
+- [Release Validation Checklist](docs/RELEASE_VALIDATION_CHECKLIST.md)
