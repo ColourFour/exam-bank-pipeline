@@ -70,6 +70,24 @@ def test_build_fixture_report_includes_counts_and_per_fixture_details() -> None:
     assert report["issue_code_counts"]
     assert any(record["issues"] for record in report["records"])
     assert "mark_bracket" in report["failure_type_counts"]
+    assert report["normalized_advisory_candidates_included"] is False
+
+
+def test_build_fixture_report_can_include_advisory_normalized_candidates() -> None:
+    manifest = load_fixture_manifest(FIXTURE_PATH)
+    report = build_fixture_report(manifest, include_normalized=True)
+
+    assert report["normalized_advisory_candidates_included"] is True
+    assert report["normalization_summary"]["measurable_improvement_count"] >= 10
+    candidate = next(record for record in report["records"] if record["record_id"] == "35summer25_q04")
+    assert candidate["selected_text_raw"] == "4 Find the exact coordinates of the stationary point of the curve with equation y = 3x^{3} ln x^{4}, for x20."
+    assert candidate["native_pdf_text_raw"] == ""
+    assert candidate["ocr_text_raw"].startswith("4 Find the exact coordinates")
+    assert "for x > 0" in candidate["question_text_normalized"]
+    assert "ln(x^{4})" in candidate["question_text_normalized"]
+    assert candidate["normalization_is_advisory"] is True
+    assert "inequality_notation_normalized" in candidate["normalization_flags"]
+    assert candidate["normalization_confidence"] < 1.0
 
 
 def test_render_markdown_contains_summary_and_per_fixture_table() -> None:
@@ -82,3 +100,12 @@ def test_render_markdown_contains_summary_and_per_fixture_table() -> None:
     assert "| Record | Status | Issues | Measurable targets |" in markdown
     assert manifest["records"][0]["record_id"] in markdown
 
+
+def test_render_markdown_describes_normalized_candidates_as_advisory() -> None:
+    manifest = load_fixture_manifest(FIXTURE_PATH)
+    report = build_fixture_report(manifest, include_normalized=True)
+    markdown = render_markdown(report)
+
+    assert "Advisory normalized candidates: included" in markdown
+    assert "These normalized strings are candidates for review only" in markdown
+    assert "| Record | Status | Issues | Measurable targets | Normalized classification | Flags | Confidence |" in markdown

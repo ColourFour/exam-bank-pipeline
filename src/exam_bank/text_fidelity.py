@@ -7,6 +7,8 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+from exam_bank.text_normalization import normalize_advisory_question_text
+
 
 SCHEMA_NAME = "exam_bank.text_fidelity.fixture_report"
 SCHEMA_VERSION = 1
@@ -74,8 +76,8 @@ def load_fixture_manifest(path: Path) -> dict[str, Any]:
     return manifest
 
 
-def build_fixture_report(manifest: dict[str, Any]) -> dict[str, Any]:
-    records = [score_fixture_record(record) for record in manifest["records"]]
+def build_fixture_report(manifest: dict[str, Any], *, include_normalized: bool = False) -> dict[str, Any]:
+    records = [score_fixture_record(record, include_normalized=include_normalized) for record in manifest["records"]]
     status_counts = Counter(record["status"] for record in records)
     issue_code_counts: Counter[str] = Counter()
     failure_type_counts: Counter[str] = Counter()
@@ -91,9 +93,10 @@ def build_fixture_report(manifest: dict[str, Any]) -> dict[str, Any]:
             if code == "expected_structural_requirement_missing":
                 expected_missing_counts[issue["requirement_code"]] += 1
 
-    return {
+    report = {
         "schema_name": SCHEMA_NAME,
         "schema_version": SCHEMA_VERSION,
+        "normalized_advisory_candidates_included": include_normalized,
         "fixture_schema_name": manifest.get("schema_name"),
         "fixture_schema_version": manifest.get("schema_version"),
         "record_count": len(records),
@@ -108,9 +111,12 @@ def build_fixture_report(manifest: dict[str, Any]) -> dict[str, Any]:
         ],
         "records": records,
     }
+    if include_normalized:
+        report["normalization_summary"] = build_normalization_summary(records)
+    return report
 
 
-def score_fixture_record(record: dict[str, Any]) -> dict[str, Any]:
+def score_fixture_record(record: dict[str, Any], *, include_normalized: bool = False) -> dict[str, Any]:
     selected = text_value(record.get("currently_selected_text"))
     native = text_value(record.get("native_pdf_text_raw"))
     ocr = text_value(record.get("ocr_text_raw"))
@@ -121,20 +127,9 @@ def score_fixture_record(record: dict[str, Any]) -> dict[str, Any]:
     failure_tags = [str(tag) for tag in record.get("failure_tags") or []]
     existing_flags = [str(flag) for flag in record.get("text_fidelity_flags") or []]
 
-    issues: list[dict[str, Any]] = []
-    add_question_number_issues(issues, selected, question_number, expectations)
-    add_mark_bracket_issues(issues, selected, expectations)
-    add_subpart_issues(issues, selected, native, ocr, expectations)
-    add_short_text_issues(issues, selected, native, ocr)
-    add_disagreement_issues(issues, selected, native, ocr)
-    add_math_symbol_loss_issues(issues, selected, native, ocr, failure_tags, expectations)
-    add_contamination_issues(issues, selected, question_number)
-    add_structural_rejection_issues(issues, record, existing_flags)
-    add_expected_requirement_issues(issues, selected, question_number, expectations)
-
-    issues = dedupe_issues(issues)
+    issues = score_text_issues(record, selected, native, ocr, question_number, expectations, failure_tags, existing_flags)
     status = "fail" if any(issue["severity"] == "fail" for issue in issues) else "warn" if issues else "pass"
-    return {
+    scored = {
         "record_id": record.get("record_id"),
         "paper_id": record.get("paper_id"),
         "paper_family": record.get("paper_family"),
@@ -151,6 +146,90 @@ def score_fixture_record(record: dict[str, Any]) -> dict[str, Any]:
         "issues": issues,
         "measurable_improvement_targets": measurable_improvement_targets(issues),
     }
+    if include_normalized:
+        normalized = normalize_advisory_question_text(
+            selected,
+            native_pdf_text_raw=native,
+            ocr_text_raw=ocr,
+            metadata={
+                "record_id": record.get("record_id"),
+                "failure_tags": failure_tags,
+                "expectations": expectations,
+            },
+        )
+        comparable_raw_issues = score_text_issues(
+            record,
+            selected,
+            native,
+            ocr,
+            question_number,
+            expectations,
+            failure_tags,
+            existing_flags,
+            include_disagreement=False,
+            include_structural_rejection=False,
+        )
+        normalized_issues = score_text_issues(
+            record,
+            normalized.normalized_text,
+            native,
+            ocr,
+            question_number,
+            expectations,
+            failure_tags,
+            existing_flags,
+            include_disagreement=False,
+            include_structural_rejection=False,
+        )
+        raw_issue_codes = {issue_key(issue) for issue in comparable_raw_issues}
+        normalized_issue_codes = {issue_key(issue) for issue in normalized_issues}
+        resolved = sorted(raw_issue_codes - normalized_issue_codes)
+        introduced = sorted(normalized_issue_codes - raw_issue_codes)
+        scored.update(
+            {
+                "native_pdf_text_raw": native,
+                "ocr_text_raw": ocr,
+                "selected_text_raw": selected,
+                "question_text_normalized": normalized.normalized_text,
+                "normalization_flags": normalized.flags,
+                "normalization_confidence": normalized.confidence,
+                "normalization_warnings": normalized.warnings,
+                "normalization_is_advisory": True,
+                "normalization_issue_count": len(normalized_issues),
+                "normalization_resolved_issue_keys": resolved,
+                "normalization_introduced_issue_keys": introduced,
+                "normalization_classification": classify_normalization_result(resolved, introduced, normalized.flags),
+            }
+        )
+    return scored
+
+
+def score_text_issues(
+    record: dict[str, Any],
+    selected: str,
+    native: str,
+    ocr: str,
+    question_number: str,
+    expectations: list[str],
+    failure_tags: list[str],
+    existing_flags: list[str],
+    *,
+    include_disagreement: bool = True,
+    include_structural_rejection: bool = True,
+) -> list[dict[str, Any]]:
+    issues: list[dict[str, Any]] = []
+    add_question_number_issues(issues, selected, question_number, expectations)
+    add_mark_bracket_issues(issues, selected, expectations)
+    add_subpart_issues(issues, selected, native, ocr, expectations)
+    add_short_text_issues(issues, selected, native, ocr)
+    if include_disagreement:
+        add_disagreement_issues(issues, selected, native, ocr)
+    add_math_symbol_loss_issues(issues, selected, native, ocr, failure_tags, expectations)
+    add_contamination_issues(issues, selected, question_number)
+    if include_structural_rejection:
+        add_structural_rejection_issues(issues, record, existing_flags)
+    add_expected_requirement_issues(issues, selected, question_number, expectations)
+    return dedupe_issues(issues)
 
 
 def add_question_number_issues(
@@ -415,20 +494,63 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"- Records: {report['record_count']}",
         f"- Status counts: {format_counts(report['status_counts'])}",
         f"- Failure type counts: {format_counts(report['failure_type_counts'])}",
-        "",
-        "## Top Failure Types",
-        "",
-        "| Failure type | Count |",
-        "| --- | ---: |",
     ]
+    if report.get("normalized_advisory_candidates_included"):
+        summary = report.get("normalization_summary") or {}
+        lines.extend(
+            [
+                "- Advisory normalized candidates: included; raw native/OCR/selected text is preserved per fixture",
+                f"- Normalization classifications: {format_counts(summary.get('classification_counts') or {})}",
+                f"- Fixtures with measurable normalized improvement: {summary.get('measurable_improvement_count', 0)}",
+            ]
+        )
+    lines.extend(["", "## Top Failure Types", "", "| Failure type | Count |", "| --- | ---: |"])
     for row in report["top_failure_types"]:
         lines.append(f"| {row['failure_type']} | {row['count']} |")
 
-    lines.extend(["", "## Per-Fixture Details", "", "| Record | Status | Issues | Measurable targets |", "| --- | --- | --- | --- |"])
+    lines.extend(["", "## Per-Fixture Details", ""])
+    if report.get("normalized_advisory_candidates_included"):
+        lines.extend(
+            [
+                "| Record | Status | Issues | Measurable targets | Normalized classification | Flags | Confidence |",
+                "| --- | --- | --- | --- | --- | --- | ---: |",
+            ]
+        )
+    else:
+        lines.extend(["| Record | Status | Issues | Measurable targets |", "| --- | --- | --- | --- |"])
     for record in report["records"]:
         issue_codes = ", ".join(issue["code"] for issue in record["issues"]) or "none"
         targets = ", ".join(record["measurable_improvement_targets"]) or "none"
-        lines.append(f"| {record['record_id']} | {record['status']} | {issue_codes} | {targets} |")
+        if report.get("normalized_advisory_candidates_included"):
+            flags = ", ".join(record["normalization_flags"]) or "none"
+            lines.append(
+                f"| {record['record_id']} | {record['status']} | {issue_codes} | {targets} | "
+                f"{record['normalization_classification']} | {flags} | {record['normalization_confidence']:.2f} |"
+            )
+        else:
+            lines.append(f"| {record['record_id']} | {record['status']} | {issue_codes} | {targets} |")
+
+    if report.get("normalized_advisory_candidates_included"):
+        lines.extend(
+            [
+                "",
+                "## Advisory Normalization Examples",
+                "",
+                "These normalized strings are candidates for review only; they are not canonical question text.",
+                "",
+                "| Record | Classification | Resolved issue keys | Warnings |",
+                "| --- | --- | --- | --- |",
+            ]
+        )
+        improved_records = [
+            record
+            for record in report["records"]
+            if record.get("normalization_classification") in {"improved", "clearer_failure_classification"}
+        ][:12]
+        for record in improved_records:
+            resolved = ", ".join(record.get("normalization_resolved_issue_keys") or []) or "none"
+            warnings = ", ".join(record.get("normalization_warnings") or []) or "none"
+            lines.append(f"| {record['record_id']} | {record['normalization_classification']} | {resolved} | {warnings} |")
 
     lines.extend(["", "## Expected Requirement Gaps", ""])
     if report["expected_requirement_missing_counts"]:
@@ -493,8 +615,46 @@ def dedupe_issues(issues: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return deduped
 
 
+def issue_key(item: dict[str, Any]) -> str:
+    if item.get("code") == "expected_structural_requirement_missing":
+        return f"{item['code']}:{item.get('requirement_code', '')}"
+    return str(item["code"])
+
+
 def measurable_improvement_targets(issues: list[dict[str, Any]]) -> list[str]:
     return sorted({issue["failure_type"] for issue in issues if issue["severity"] in {"fail", "warn"}})
+
+
+def classify_normalization_result(resolved: list[str], introduced: list[str], flags: list[str]) -> str:
+    if resolved and not introduced:
+        return "improved"
+    if resolved and introduced:
+        return "mixed"
+    if flags:
+        return "clearer_failure_classification"
+    return "unchanged"
+
+
+def build_normalization_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
+    classification_counts = Counter(record.get("normalization_classification", "missing") for record in records)
+    flag_counts: Counter[str] = Counter()
+    warning_counts: Counter[str] = Counter()
+    for record in records:
+        flag_counts.update(record.get("normalization_flags") or [])
+        warning_counts.update(record.get("normalization_warnings") or [])
+    measurable = [
+        record["record_id"]
+        for record in records
+        if record.get("normalization_classification") in {"improved", "clearer_failure_classification"}
+    ]
+    return {
+        "classification_counts": dict(sorted(classification_counts.items())),
+        "flag_counts": dict(sorted(flag_counts.items())),
+        "warning_counts": dict(sorted(warning_counts.items())),
+        "measurable_improvement_count": len(measurable),
+        "measurable_improvement_record_ids": measurable,
+        "note": "Normalized candidates are advisory report fields only and do not overwrite raw or selected text.",
+    }
 
 
 def format_counts(counts: dict[str, int]) -> str:
