@@ -12,6 +12,7 @@ from exam_bank.auto_grade import (
     AUTO_GRADE_VALIDATION_SCHEMA,
 )
 from exam_bank.auto_grade.constants import ELIGIBILITY_STATUSES, GRADING_STATUSES, STUDENT_SAFE_STATUSES
+from exam_bank.auto_grade.reviewed_rubrics import approved_question_ids_from_reviewed_rubrics
 from exam_bank.auto_grade.schemas import load_reviewed_rubrics
 
 
@@ -29,7 +30,13 @@ def validate_eligible_items(
     questions = _question_records(question_bank)
     question_ids = [str(record.get("question_id") or "") for record in questions]
     question_id_set = {question_id for question_id in question_ids if question_id}
-    rubrics, rubric_errors = load_reviewed_rubrics(_load_optional_json(reviewed_rubrics_path))
+    rubrics_payload = _load_optional_json(reviewed_rubrics_path)
+    rubrics, rubric_errors = load_reviewed_rubrics(rubrics_payload)
+    approved_question_ids = approved_question_ids_from_reviewed_rubrics(
+        rubrics_payload,
+        question_bank_payload=question_bank,
+    ) if rubrics_payload else set()
+    rubrics = {question_id: rubric for question_id, rubric in rubrics.items() if question_id in approved_question_ids}
     errors: list[str] = []
     warnings: list[str] = list(rubric_errors)
 
@@ -133,7 +140,10 @@ def _validate_item(
         rubric = rubrics.get(question_id)
         if not rubric or not rubric.is_approved:
             errors.append(f"unsafe_promotion_without_reviewed_rubric:{index}:{question_id}:{status}")
+        elif status == "teacher_beta" and not rubric.safe_for_teacher_beta:
+            errors.append(f"teacher_beta_without_rubric_approval:{index}:{question_id}:{status}")
         if status in STUDENT_SAFE_STATUSES:
+            errors.append(f"student_safe_status_forbidden_in_phase_2a:{index}:{question_id}:{status}")
             if not rubric:
                 errors.append(f"student_safe_without_reviewed_rubric:{index}:{question_id}:{status}")
             elif status not in set(rubric.approved_for):

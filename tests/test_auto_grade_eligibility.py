@@ -65,14 +65,30 @@ def test_reviewed_rubric_can_only_unlock_teacher_beta_not_student_ready_by_defau
             {
                 "schema": "exam_bank.auto_grade.reviewed_rubrics",
                 "schema_version": 1,
-                "records": [
+                "rubric_count": 1,
+                "event_count": 2,
+                "rubrics": [
                     {
-                        "question_id": "11summer26_q01",
                         "rubric_id": "rubric-1",
+                        "source_question_id": "11summer26_q01",
+                        "source_mark_scheme_image_path": "p1/11summer26/mark_scheme/q01.png",
+                        "paper": "11summer26",
+                        "paper_family": "p1",
+                        "question_number": "01",
+                        "part_path": [],
                         "total_marks": 4,
+                        "rubric_total_verified": True,
+                        "safe_for_auto_grade_lab": True,
+                        "safe_for_teacher_beta": True,
+                        "safe_for_student_self_check": False,
+                        "review_status": "approved",
                         "reviewed_by": "reviewer",
                         "reviewed_at": "2026-05-21T00:00:00Z",
-                        "approved_for": ["teacher_beta"],
+                        "approval_scope": "teacher_beta",
+                        "events": [
+                            _rubric_event("rubric-1-e1", "M", 2),
+                            _rubric_event("rubric-1-e2", "A", 2),
+                        ],
                     }
                 ],
             }
@@ -205,4 +221,22 @@ def _mark_event(question_id: str, *, total_match: bool) -> dict[str, object]:
         "question_total_detected": 4,
         "total_marks_match": total_match,
         "review_flags": [] if total_match else ["total_marks_mismatch"],
+    }
+
+
+def _rubric_event(event_id: str, mark_code: str, mark_value: int) -> dict[str, object]:
+    return {
+        "event_id": event_id,
+        "part_path": [],
+        "mark_code": mark_code,
+        "mark_type": mark_code,
+        "mark_value": mark_value,
+        "dependency": "independent",
+        "follow_through_policy": "none",
+        "accepted_evidence": ["human-reviewed mark-scheme evidence"],
+        "common_errors": [],
+        "alternative_methods": [],
+        "learning_target_ids": ["9709_p1_topic_algebra"],
+        "review_status": "approved",
+        "review_notes": "fixture",
     }

@@ -10,6 +10,7 @@ from typing import Any
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.auto_grade import AUTO_GRADE_ELIGIBLE_ITEMS_SCHEMA, AUTO_GRADE_SCHEMA_VERSION
 from exam_bank.auto_grade.constants import DEFAULT_REVIEWED_RUBRICS_PATH
+from exam_bank.auto_grade.reviewed_rubrics import approved_question_ids_from_reviewed_rubrics
 from exam_bank.auto_grade.schemas import ReviewedRubric, load_reviewed_rubrics
 
 
@@ -29,6 +30,11 @@ def build_eligible_items(
     questions = _question_records(question_bank)
     rubrics_payload = _load_optional_json(reviewed_rubrics_path)
     rubrics, rubric_errors = load_reviewed_rubrics(rubrics_payload)
+    strictly_approved_question_ids = approved_question_ids_from_reviewed_rubrics(
+        rubrics_payload,
+        question_bank_payload=question_bank,
+    ) if rubrics_payload else set()
+    rubrics = {question_id: rubric for question_id, rubric in rubrics.items() if question_id in strictly_approved_question_ids}
     mark_events = _records_by_question_id(_load_optional_json(mark_events_path).get("records", []))
     topic_routing = _topic_routing_by_question_id(_load_optional_json(topic_routing_path).get("records", {}))
 
@@ -56,7 +62,8 @@ def build_eligible_items(
         },
         "source_sidecars": {
             "reviewed_rubrics_path": _rel_path(reviewed_rubrics_path) if reviewed_rubrics_path else None,
-            "reviewed_rubrics_loaded": bool(rubrics),
+            "reviewed_rubrics_loaded": bool(rubrics_payload),
+            "reviewed_rubrics_strictly_approved_count": len(strictly_approved_question_ids),
             "reviewed_rubric_error_count": len(rubric_errors),
             "mark_events_path": _rel_path(mark_events_path) if mark_events_path else None,
             "topic_routing_path": _rel_path(topic_routing_path) if topic_routing_path else None,
