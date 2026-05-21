@@ -149,6 +149,7 @@ def build_reviewed_rubrics_draft_from_batch(batch: dict[str, Any], *, generated_
 def check_rubric_review_completion(
     *,
     reviewed_rubrics_path: str | Path = DEFAULT_DRAFT_REVIEWED_RUBRICS_PATH,
+    reviewer_packet_dir: str | Path | None = None,
     report_path: str | Path | None = DEFAULT_COMPLETION_REPORT_PATH,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
@@ -162,8 +163,13 @@ def check_rubric_review_completion(
     promotion_candidates = 0
     student_self_check = 0
     student_ready = 0
+    packet_report = _reviewer_packet_report(reviewer_packet_dir, rubrics)
+    packet_by_question_id = {
+        str(item.get("source_question_id") or ""): item for item in packet_report.get("rubrics", []) if isinstance(item, dict)
+    }
     for rubric in rubrics:
-        blockers = _completion_blockers(rubric)
+        packet_item = packet_by_question_id.get(str(rubric.get("source_question_id") or ""))
+        blockers = _completion_blockers(rubric, packet_item=packet_item)
         blocker_counts.update(blockers)
         is_approved = str(rubric.get("review_status") or "") == "approved"
         if is_approved:
@@ -197,9 +203,14 @@ def check_rubric_review_completion(
         "dependency_policy_gap_count": blocker_counts.get("dependency_policy_gap", 0),
         "follow_through_policy_gap_count": blocker_counts.get("follow_through_policy_gap", 0),
         "missing_learning_target_ids_count": blocker_counts.get("missing_learning_target_ids", 0),
+        "missing_source_question_image_path_count": blocker_counts.get("missing_source_question_image_path", 0),
+        "missing_source_mark_scheme_image_path_count": blocker_counts.get("missing_source_mark_scheme_image_path", 0),
+        "placeholder_value_count": blocker_counts.get("placeholder_value", 0),
+        "missing_reviewer_packet_page_count": packet_report.get("missing_page_count", 0),
         "eligibility_promotion_candidate_count": promotion_candidates,
         "student_self_check_beta_candidate_count": student_self_check,
         "student_ready_candidate_count": student_ready,
+        "reviewer_packet": packet_report,
         "blocker_counts": dict(blocker_counts),
         "rubrics": rubric_reports,
     }
@@ -280,6 +291,7 @@ def write_review_completion_report(
 
 
 def render_review_completion_report(report: dict[str, Any]) -> str:
+    packet = report.get("reviewer_packet") if isinstance(report.get("reviewer_packet"), dict) else {}
     lines = [
         "# Rubric Review Completion 0001",
         "",
@@ -292,9 +304,21 @@ def render_review_completion_report(report: dict[str, Any]) -> str:
         "",
         "Student-safe statuses remain 0 when both student counts above are 0.",
         "",
+        "## Reviewer Packet",
+        "",
+        f"- Packet directory: `{packet.get('packet_dir') or 'not provided'}`",
+        f"- Packet generated: {packet.get('packet_generated', False)}",
+        f"- Packet index present: {packet.get('index_present', False)}",
+        f"- Candidate pages present: {packet.get('page_present_count', 0)}",
+        f"- Candidate pages missing: {packet.get('missing_page_count', 0)}",
+        "",
         "## Blockers To Approval",
         "",
         *_counter_lines(report.get("blocker_counts") or {}),
+        "",
+        "## Packet Page Gaps",
+        "",
+        *_packet_gap_lines(packet.get("rubrics") or []),
         "",
         "## Rubric Status",
         "",
@@ -367,6 +391,7 @@ def _draft_rubric(candidate: dict[str, Any]) -> dict[str, Any]:
     return {
         "rubric_id": candidate.get("proposed_rubric_id"),
         "source_question_id": candidate.get("question_id"),
+        "source_question_image_path": candidate.get("canonical_question_artifact"),
         "source_mark_scheme_image_path": candidate.get("canonical_mark_scheme_artifact"),
         "source_mark_events_record_id": (candidate.get("mark_event_source_reference") or {}).get("record_id"),
         "paper": candidate.get("paper"),
@@ -482,12 +507,21 @@ def _batch_sort_key(candidate: dict[str, Any]) -> tuple[Any, ...]:
     )
 
 
-def _completion_blockers(rubric: dict[str, Any]) -> list[str]:
+def _completion_blockers(rubric: dict[str, Any], *, packet_item: dict[str, Any] | None = None) -> list[str]:
     blockers: list[str] = []
-    if str(rubric.get("review_status") or "") != "approved":
+    is_approved = str(rubric.get("review_status") or "") == "approved"
+    if not is_approved:
         blockers.append("not_approved")
+    if packet_item is not None and packet_item.get("page_present") is not True:
+        blockers.append("missing_reviewer_packet_page")
     if not str(rubric.get("reviewed_by") or "").strip() or not str(rubric.get("reviewed_at") or "").strip():
         blockers.append("missing_reviewer_metadata")
+    if _contains_placeholder(rubric):
+        blockers.append("placeholder_value")
+    if is_approved and not str(rubric.get("source_question_image_path") or "").strip():
+        blockers.append("missing_source_question_image_path")
+    if is_approved and not str(rubric.get("source_mark_scheme_image_path") or "").strip():
+        blockers.append("missing_source_mark_scheme_image_path")
     if rubric.get("rubric_total_verified") is not True:
         blockers.append("total_not_verified")
     total_marks = _int_or_none(rubric.get("total_marks"))
@@ -514,8 +548,54 @@ def _completion_blockers(rubric: dict[str, Any]) -> list[str]:
     if rubric.get("safe_for_teacher_beta") is True and rubric.get("safe_for_auto_grade_lab") is not True:
         blockers.append("teacher_beta_without_lab_safety")
     if rubric.get("safe_for_student_self_check") is True:
-        blockers.append("student_self_check_forbidden_in_phase_2b")
+        blockers.append("student_self_check_forbidden_in_phase_2c")
+    if "student_ready" in {str(value) for value in rubric.get("approved_for") or []}:
+        blockers.append("student_ready_forbidden_in_phase_2c")
     return sorted(set(blockers))
+
+
+def _reviewer_packet_report(reviewer_packet_dir: str | Path | None, rubrics: list[dict[str, Any]]) -> dict[str, Any]:
+    if reviewer_packet_dir is None:
+        return {
+            "packet_dir": None,
+            "packet_generated": False,
+            "index_present": False,
+            "page_present_count": 0,
+            "missing_page_count": len(rubrics),
+            "rubrics": [
+                {
+                    "rubric_id": rubric.get("rubric_id"),
+                    "source_question_id": rubric.get("source_question_id"),
+                    "page_present": False,
+                    "page": None,
+                }
+                for rubric in rubrics
+            ],
+        }
+    packet_dir = Path(reviewer_packet_dir)
+    packet_generated = packet_dir.exists()
+    index_present = (packet_dir / "index.md").exists()
+    pages = set(packet_dir.glob("rubric_*_*.md")) if packet_generated else set()
+    rubric_items: list[dict[str, Any]] = []
+    for rubric in rubrics:
+        question_id = str(rubric.get("source_question_id") or "")
+        matches = sorted(path for path in pages if path.name.endswith(f"_{question_id}.md"))
+        rubric_items.append(
+            {
+                "rubric_id": rubric.get("rubric_id"),
+                "source_question_id": question_id,
+                "page_present": bool(matches),
+                "page": str(matches[0]) if matches else None,
+            }
+        )
+    return {
+        "packet_dir": _rel_path(packet_dir),
+        "packet_generated": packet_generated,
+        "index_present": index_present,
+        "page_present_count": sum(1 for item in rubric_items if item["page_present"]),
+        "missing_page_count": sum(1 for item in rubric_items if not item["page_present"]),
+        "rubrics": rubric_items,
+    }
 
 
 def _mark_events_for_record(record: dict[str, Any]) -> list[dict[str, Any]]:
@@ -549,6 +629,17 @@ def _policy_complete(value: Any) -> bool:
     if isinstance(value, str) and value.strip() in {"needs_human_review", "TODO", "todo"}:
         return False
     return True
+
+
+def _contains_placeholder(value: Any) -> bool:
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        return normalized in {"todo", "tbd", "placeholder"} or normalized.startswith("todo_") or normalized.startswith("todo:")
+    if isinstance(value, list):
+        return any(_contains_placeholder(item) for item in value)
+    if isinstance(value, dict):
+        return any(_contains_placeholder(item) for item in value.values())
+    return False
 
 
 def _has_content(value: Any) -> bool:
@@ -607,6 +698,15 @@ def _counter_lines(values: dict[str, int]) -> list[str]:
     if not values:
         return ["- none"]
     return [f"- `{key}`: {values[key]}" for key in sorted(values)]
+
+
+def _packet_gap_lines(values: list[dict[str, Any]]) -> list[str]:
+    lines = [
+        f"- `{item.get('source_question_id')}` / `{item.get('rubric_id')}`: missing reviewer packet page"
+        for item in values
+        if isinstance(item, dict) and item.get("page_present") is not True
+    ]
+    return lines or ["- none"]
 
 
 def _list_lines(values: list[str]) -> list[str]:

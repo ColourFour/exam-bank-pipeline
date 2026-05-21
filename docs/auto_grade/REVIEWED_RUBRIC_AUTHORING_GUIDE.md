@@ -54,6 +54,7 @@ Leave the rubric as `needs_human_review` when any evidence needs checking, any m
 {
   "rubric_id": "rr_11autumn21_q05",
   "source_question_id": "11autumn21_q05",
+  "source_question_image_path": "p1/11autumn21/questions/q05.png",
   "source_mark_scheme_image_path": "p1/11autumn21/mark_scheme/q05.png",
   "source_mark_events_record_id": "11autumn21_q05",
   "paper": "11autumn21",

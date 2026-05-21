@@ -9,6 +9,14 @@
 
 Student-safe statuses remain 0 when both student counts above are 0.
 
+## Reviewer Packet
+
+- Packet directory: `reports/auto_grade/reviewer_packets/review_batch_0001`
+- Packet generated: True
+- Packet index present: True
+- Candidate pages present: 21
+- Candidate pages missing: 0
+
 ## Blockers To Approval
 
 - `missing_accepted_evidence`: 21
@@ -16,6 +24,10 @@ Student-safe statuses remain 0 when both student counts above are 0.
 - `missing_reviewer_metadata`: 21
 - `not_approved`: 21
 - `total_not_verified`: 21
+
+## Packet Page Gaps
+
+- none
 
 ## Rubric Status
 

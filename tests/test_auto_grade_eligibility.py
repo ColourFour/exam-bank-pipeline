@@ -71,6 +71,7 @@ def test_reviewed_rubric_can_only_unlock_teacher_beta_not_student_ready_by_defau
                     {
                         "rubric_id": "rubric-1",
                         "source_question_id": "11summer26_q01",
+                        "source_question_image_path": "p1/11summer26/questions/q01.png",
                         "source_mark_scheme_image_path": "p1/11summer26/mark_scheme/q01.png",
                         "paper": "11summer26",
                         "paper_family": "p1",

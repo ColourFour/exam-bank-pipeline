@@ -182,6 +182,7 @@ def _valid_rubric() -> dict[str, object]:
     return {
         "rubric_id": "fixture-rubric-1",
         "source_question_id": "11summer26_q01",
+        "source_question_image_path": "p1/11summer26/questions/q01.png",
         "source_mark_scheme_image_path": "p1/11summer26/mark_scheme/q01.png",
         "source_mark_events_record_id": "11summer26_q01",
         "paper": "11summer26",

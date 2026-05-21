@@ -280,15 +280,23 @@ def _validate_rubric(
     approved = review_status in APPROVED_REVIEW_STATUSES or lab_safe or teacher_safe or student_safe
     if phase == "2A" and student_safe:
         errors.append(f"{prefix}:student_safe_flag_forbidden_in_phase_2a")
+    if phase.upper() in {"2B", "2C"} and student_safe:
+        errors.append(f"{prefix}:student_safe_flag_forbidden_in_phase_{phase.lower()}")
     if student_safe and not teacher_safe:
         errors.append(f"{prefix}:student_safe_without_teacher_beta")
     if teacher_safe and not lab_safe:
         errors.append(f"{prefix}:teacher_beta_without_auto_grade_lab_safety")
     if approved:
+        if not str(rubric.get("source_question_image_path") or "").strip():
+            errors.append(f"{prefix}:missing_source_question_image_path")
+        if not str(rubric.get("source_mark_scheme_image_path") or "").strip():
+            errors.append(f"{prefix}:missing_source_mark_scheme_image_path")
         if not str(rubric.get("reviewed_by") or "").strip():
             errors.append(f"{prefix}:missing_reviewer_identity")
         if not str(rubric.get("reviewed_at") or "").strip():
             errors.append(f"{prefix}:missing_reviewed_at")
+        if _contains_placeholder(rubric):
+            errors.append(f"{prefix}:approved_rubric_contains_placeholder_value")
         if review_status not in APPROVED_REVIEW_STATUSES:
             errors.append(f"{prefix}:approved_scope_without_approved_review_status")
         if _bool(rubric.get("rubric_total_verified")) is not True:
@@ -352,6 +360,8 @@ def _validate_event(
         errors.append(f"{event_prefix}:approved_event_missing_learning_target_ids")
     if approved and str(event.get("review_status") or "") not in APPROVED_REVIEW_STATUSES:
         errors.append(f"{event_prefix}:approved_rubric_contains_unapproved_event")
+    if approved and _contains_placeholder(event):
+        errors.append(f"{event_prefix}:approved_event_contains_placeholder_value")
     return errors, mark_value
 
 
@@ -572,6 +582,17 @@ def _has_content(value: Any) -> bool:
     if isinstance(value, dict):
         return any(_has_content(item) for item in value.values())
     return value not in (None, False)
+
+
+def _contains_placeholder(value: Any) -> bool:
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        return normalized in {"todo", "tbd", "placeholder"} or normalized.startswith("todo_") or normalized.startswith("todo:")
+    if isinstance(value, list):
+        return any(_contains_placeholder(item) for item in value)
+    if isinstance(value, dict):
+        return any(_contains_placeholder(item) for item in value.values())
+    return False
 
 
 def _counter_lines(values: dict[str, int]) -> list[str]:

@@ -12,12 +12,19 @@ from exam_bank.auto_grade.review_batch import (
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Check Phase 2B reviewed-rubric draft completion without approving it.")
+    parser = argparse.ArgumentParser(description="Check Phase 2C reviewed-rubric completion without approving it.")
     parser.add_argument("--reviewed-rubrics", type=Path, default=Path(DEFAULT_DRAFT_REVIEWED_RUBRICS_PATH))
+    parser.add_argument("--reviewer-packet-dir", type=Path, default=None)
     parser.add_argument("--report", type=Path, default=Path(DEFAULT_COMPLETION_REPORT_PATH))
+    parser.add_argument("--output", type=Path, default=None, help="Alias for --report.")
     args = parser.parse_args(argv)
 
-    report = check_rubric_review_completion(reviewed_rubrics_path=args.reviewed_rubrics, report_path=args.report)
+    report_path = args.output or args.report
+    report = check_rubric_review_completion(
+        reviewed_rubrics_path=args.reviewed_rubrics,
+        reviewer_packet_dir=args.reviewer_packet_dir,
+        report_path=report_path,
+    )
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 

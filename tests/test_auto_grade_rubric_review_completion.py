@@ -38,6 +38,42 @@ def test_completion_checker_reports_draft_gaps(tmp_path: Path) -> None:
     assert (tmp_path / "completion.md").exists()
 
 
+def test_completion_checker_detects_missing_packet_pages(tmp_path: Path) -> None:
+    reviewed = tmp_path / "reviewed.json"
+    _write_reviewed(reviewed, _valid_rubric())
+    packet_dir = tmp_path / "packet"
+    packet_dir.mkdir()
+    (packet_dir / "index.md").write_text("# packet\n", encoding="utf-8")
+
+    report = check_rubric_review_completion(
+        reviewed_rubrics_path=reviewed,
+        reviewer_packet_dir=packet_dir,
+        report_path=None,
+        generated_at="2026-05-21T00:00:00Z",
+    )
+
+    assert report["reviewer_packet"]["packet_generated"] is True
+    assert report["missing_reviewer_packet_page_count"] == 1
+    assert "missing_reviewer_packet_page" in report["rubrics"][0]["blockers"]
+
+
+def test_completion_checker_detects_placeholder_values(tmp_path: Path) -> None:
+    reviewed = tmp_path / "reviewed.json"
+    rubric = _valid_rubric()
+    rubric["reviewed_by"] = "TODO_REVIEWED_BY"
+    rubric["events"][0]["accepted_evidence"] = ["TODO_REWRITE_FROM_IMAGE"]
+    _write_reviewed(reviewed, rubric)
+
+    report = check_rubric_review_completion(
+        reviewed_rubrics_path=reviewed,
+        report_path=None,
+        generated_at="2026-05-21T00:00:00Z",
+    )
+
+    assert report["placeholder_value_count"] == 1
+    assert "placeholder_value" in report["rubrics"][0]["blockers"]
+
+
 def test_completion_checker_reports_dependency_follow_through_unknown_and_total_gaps(tmp_path: Path) -> None:
     reviewed = tmp_path / "reviewed.json"
     rubric = _valid_rubric()
@@ -98,6 +134,25 @@ def test_explicit_student_safe_fixture_does_not_promote_student_statuses(tmp_pat
     assert "student_ready" not in statuses
     assert payload["summary"]["student_self_check_beta_count"] == 0
     assert payload["summary"]["student_ready_count"] == 0
+
+
+def test_phase_2c_student_safe_reviewed_rubric_fails_validation(tmp_path: Path) -> None:
+    from exam_bank.auto_grade.reviewed_rubrics import validate_reviewed_rubrics
+
+    paths = _write_fixture(tmp_path)
+    rubric = _valid_rubric()
+    rubric["safe_for_student_self_check"] = True
+    _write_reviewed(paths["reviewed_rubrics"], rubric)
+
+    report = validate_reviewed_rubrics(
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        question_bank_path=paths["question_bank"],
+        report_path=None,
+        phase="2C",
+    )
+
+    assert report["ok"] is False
+    assert any("student_safe_flag_forbidden_in_phase_2c" in error for error in report["errors"])
 
 
 def test_review_completion_cli_help_exits_successfully() -> None:
