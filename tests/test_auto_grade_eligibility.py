@@ -214,6 +214,13 @@ def _question(question_id: str, q_label: str, marks: int) -> dict[str, object]:
 def _mark_event(question_id: str, *, total_match: bool) -> dict[str, object]:
     return {
         "question_id": question_id,
+        "paper_id": "11summer26",
+        "paper": "11summer26",
+        "paper_family": "p1",
+        "question_number": question_id.rsplit("_q", 1)[-1],
+        "part_path": [],
+        "source_mark_scheme_image_path": f"p1/11summer26/mark_scheme/q{question_id.rsplit('_q', 1)[-1]}.png",
+        "extraction_status": "parsed",
         "safe_for_advisory_use": True,
         "safe_for_marking_use": False,
         "total_marks_detected": 4 if total_match else 3,
@@ -221,6 +228,37 @@ def _mark_event(question_id: str, *, total_match: bool) -> dict[str, object]:
         "question_total_detected": 4,
         "total_marks_match": total_match,
         "review_flags": [] if total_match else ["total_marks_mismatch"],
+        "mark_events": [
+            _source_mark_event(question_id, "me0001", "M2", "method", 2),
+            _source_mark_event(question_id, "me0002", "A2", "accuracy", 2),
+        ],
+    }
+
+
+def _source_mark_event(
+    question_id: str,
+    event_suffix: str,
+    mark_code_raw: str,
+    mark_type: str,
+    mark_value: int,
+) -> dict[str, object]:
+    return {
+        "event_id": f"{question_id}_{event_suffix}",
+        "part_path": [],
+        "raw_text": f"{mark_code_raw} fixture mark scheme line",
+        "normalized_text": f"{mark_code_raw} fixture mark scheme line",
+        "mark_code_raw": mark_code_raw,
+        "mark_type": mark_type,
+        "mark_value": mark_value,
+        "is_follow_through": False,
+        "is_dependent": False,
+        "depends_on_event_ids": [],
+        "alternative_group_id": None,
+        "condition_text": "",
+        "answer_text": "fixture answer",
+        "common_error_text": "",
+        "confidence": "high",
+        "review_flags": [],
     }
 
 

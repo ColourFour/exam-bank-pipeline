@@ -9,7 +9,12 @@ from tests.test_auto_grade_eligibility import _write_fixture
 
 
 def test_scripts_help_exits_successfully() -> None:
-    for script in ["scripts/build_auto_grade_eligible_items.py", "scripts/validate_auto_grade_eligible_items.py"]:
+    for script in [
+        "scripts/build_auto_grade_eligible_items.py",
+        "scripts/validate_auto_grade_eligible_items.py",
+        "scripts/build_auto_grade_rubric_review_batch.py",
+        "scripts/check_auto_grade_rubric_review_completion.py",
+    ]:
         result = subprocess.run([sys.executable, script, "--help"], cwd=Path.cwd(), text=True, capture_output=True)
         assert result.returncode == 0
         assert "usage:" in result.stdout

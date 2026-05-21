@@ -31,6 +31,12 @@ Phase 2A artifacts:
 - `output/auto_grade/reviewed_rubrics.v1.json`
 - `output/auto_grade/rubric_review_queue.v1.json`
 
+Phase 2B human review workflow artifacts:
+
+- `output/auto_grade/review_batches/review_batch_0001.v1.json`
+- `output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json`
+- `docs/auto_grade/REVIEWED_RUBRIC_AUTHORING_GUIDE.md`
+
 Future artifacts:
 
 - `output/auto_grade/benchmark_submissions.v1.json`
@@ -48,6 +54,8 @@ Phase 2A introduces `output/auto_grade/reviewed_rubrics.v1.json`. This artifact 
 The reviewed-rubric artifact records source question id, canonical mark-scheme image path, optional source mark-events record id, paper metadata, part path, total marks, explicit total-mark verification, approval flags, reviewer identity, review timestamp, review status, approval scope, and reviewed mark events. Each reviewed event records mark code, mark type, mark value, dependency policy, follow-through policy, accepted evidence, common errors, alternative methods, learning-target ids, review status, and review notes.
 
 The review queue artifact, `output/auto_grade/rubric_review_queue.v1.json`, converts advisory mark-event sidecars into human-review candidates. It ranks safer candidates first but does not exclude harder cases. The queue is planning evidence only. It is not approved scoring evidence.
+
+Phase 2B introduces review-batch and draft-workspace artifacts for authoring the first human reviewed rubric gold set. A review batch is a bounded human worklist selected from the queue. A draft reviewed-rubrics workspace may copy advisory mark-event data into draft fields, but all entries must default to `review_status: "needs_human_review"` with no safety flags. These artifacts are not approved scoring evidence. They can affect eligibility only after a human intentionally completes required metadata, accepted evidence, total verification, and approval flags in an explicit reviewed-rubrics file that passes validation.
 
 Phase 2A distinguishes these records:
 
