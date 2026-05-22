@@ -2,6 +2,8 @@
 
 Phase 2B review batches are worklists, not scoring evidence. A reviewer turns one batch candidate into an approved rubric only by editing a reviewed-rubrics draft entry and completing the checks below.
 
+The live approved registry is `output/auto_grade/reviewed_rubrics.v1.json`. Do not point eligibility builds at an unapproved draft workspace. Draft workspaces may contain incomplete records; the promotion command selects only records that are already approved and validates them before writing the live registry.
+
 ## Source Checks
 
 1. Open `canonical_question_artifact` from the batch candidate and confirm the question, parts, and total marks.
@@ -47,6 +49,64 @@ Set a rubric to `review_status: approved` only when all of these are true:
 - `safe_for_student_self_check` remains `false` in Phase 2B.
 
 Leave the rubric as `needs_human_review` when any evidence needs checking, any mark code is unresolved, dependencies or follow-through are unclear, learning targets are missing, or total marks do not reconcile. Use `blocked` when a canonical source mismatch or missing image prevents review.
+
+## Approved Registry Workflow
+
+1. Review candidate pages in `reports/auto_grade/reviewer_packets/review_batch_0001/`.
+2. Edit the draft reviewed-rubrics workspace, for example `output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json`.
+3. Validate the draft/workspace:
+
+```bash
+.venv/bin/python scripts/validate_auto_grade_reviewed_rubrics.py \
+  --reviewed-rubrics output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json \
+  --question-bank output/json/question_bank.json
+```
+
+4. Run the completion checker:
+
+```bash
+.venv/bin/python scripts/check_auto_grade_rubric_review_completion.py \
+  --reviewed-rubrics output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json
+```
+
+5. Promote only approved rubrics into the live registry:
+
+```bash
+.venv/bin/python scripts/promote_auto_grade_reviewed_rubrics.py \
+  --source-reviewed-rubrics output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json \
+  --question-bank output/json/question_bank.json \
+  --output output/auto_grade/reviewed_rubrics.v1.json \
+  --mode replace-approved
+```
+
+6. Validate the live registry:
+
+```bash
+.venv/bin/python scripts/validate_auto_grade_reviewed_rubrics.py \
+  --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json \
+  --question-bank output/json/question_bank.json
+```
+
+7. Rebuild eligible items from the live registry:
+
+```bash
+.venv/bin/python scripts/build_auto_grade_eligible_items.py \
+  --question-bank output/json/question_bank.json \
+  --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json \
+  --output output/auto_grade/eligible_items.v1.json
+```
+
+8. Validate eligible items:
+
+```bash
+.venv/bin/python scripts/validate_auto_grade_eligible_items.py \
+  --eligible-items output/auto_grade/eligible_items.v1.json \
+  --question-bank output/json/question_bank.json
+```
+
+9. Confirm that only `teacher_beta` changed. `student_self_check_beta` and `student_ready` must remain `0`.
+
+The promotion summary is written to `reports/auto_grade/reviewed_rubrics_registry_summary.md`. Incomplete `needs_human_review` entries stay in the draft workspace and are counted as excluded from the live registry; they are not scoring or promotion candidates.
 
 ## Minimal Approved Shape
 

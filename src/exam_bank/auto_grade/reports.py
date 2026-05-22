@@ -25,6 +25,12 @@ def render_eligible_items_summary(eligible_items: dict[str, Any]) -> str:
     summary = eligible_items.get("summary") if isinstance(eligible_items.get("summary"), dict) else summarize_eligible_items(items)
     status_counts = summary.get("status_counts") or {}
     top_reasons = summary.get("top_block_reasons") or {}
+    source_sidecars = eligible_items.get("source_sidecars") if isinstance(eligible_items.get("source_sidecars"), dict) else {}
+    teacher_beta_items = sorted(
+        str(item.get("question_id") or "")
+        for item in items
+        if item.get("eligibility_status") == "teacher_beta"
+    )
     lines = [
         "# Auto-Grade Eligible Items Summary",
         "",
@@ -33,8 +39,11 @@ def render_eligible_items_summary(eligible_items: dict[str, Any]) -> str:
         "## Summary",
         "",
         f"- Total records classified: {summary.get('record_count', len(items))}",
+        f"- Reviewed-rubrics source path used: `{source_sidecars.get('reviewed_rubrics_path') or 'none'}`",
+        f"- Reviewed-rubrics source hash: `{source_sidecars.get('reviewed_rubrics_sha256') or 'none'}`",
         "- Count by eligibility status:",
         *_counter_lines(status_counts),
+        f"- Teacher-beta items: {status_counts.get('teacher_beta', 0)}",
         f"- Canonical question images present: {summary.get('canonical_question_image_present_count', 0)}",
         f"- Canonical question images missing: {summary.get('canonical_question_image_missing_count', 0)}",
         f"- Canonical mark-scheme images present: {summary.get('canonical_mark_scheme_image_present_count', 0)}",
@@ -52,6 +61,10 @@ def render_eligible_items_summary(eligible_items: dict[str, Any]) -> str:
         f"- Student-ready items: {summary.get('student_ready_count', 0)}",
         f"- Student self-check beta items: {summary.get('student_self_check_beta_count', 0)}",
         "",
+        "## Teacher Beta Promoted Question IDs",
+        "",
+        *_list_lines(teacher_beta_items),
+        "",
         "Phase 1 produced 0 student-ready items unless reviewed rubrics already existed and validated.",
     ]
     return "\n".join(lines).rstrip() + "\n"
@@ -61,3 +74,9 @@ def _counter_lines(values: dict[str, int]) -> list[str]:
     if not values:
         return ["- none"]
     return [f"- `{key}`: {values[key]}" for key in sorted(values)]
+
+
+def _list_lines(values: list[str]) -> list[str]:
+    if not values:
+        return ["- none"]
+    return [f"- `{value}`" for value in values]

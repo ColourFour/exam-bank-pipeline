@@ -37,6 +37,10 @@ Phase 2B human review workflow artifacts:
 - `output/auto_grade/review_batches/reviewed_rubrics_draft_0001.v1.json`
 - `docs/auto_grade/REVIEWED_RUBRIC_AUTHORING_GUIDE.md`
 
+Phase 2D registry workflow artifact:
+
+- `output/auto_grade/reviewed_rubrics.v1.json`
+
 Future artifacts:
 
 - `output/auto_grade/benchmark_submissions.v1.json`
@@ -49,13 +53,15 @@ Student submission images are not part of Phase 1 or Phase 2A and must not be co
 
 ## Reviewed Rubrics
 
-Phase 2A introduces `output/auto_grade/reviewed_rubrics.v1.json`. This artifact is the first scoring-rubric contract, but it is still limited to human-reviewed rubric metadata and teacher-beta readiness. It does not score student work, inspect student submissions, call OCR or vision systems, call LLMs, or produce student-facing feedback.
+Phase 2A introduces `output/auto_grade/reviewed_rubrics.v1.json`. Phase 2D makes this path the explicit live approved reviewed-rubric registry. This artifact is the first scoring-rubric contract, but it is still limited to human-reviewed rubric metadata and teacher-beta readiness. It does not score student work, inspect student submissions, call OCR or vision systems, call LLMs, or produce student-facing feedback.
 
 The reviewed-rubric artifact records source question id, canonical mark-scheme image path, optional source mark-events record id, paper metadata, part path, total marks, explicit total-mark verification, approval flags, reviewer identity, review timestamp, review status, approval scope, and reviewed mark events. Each reviewed event records mark code, mark type, mark value, dependency policy, follow-through policy, accepted evidence, common errors, alternative methods, learning-target ids, review status, and review notes.
 
 The review queue artifact, `output/auto_grade/rubric_review_queue.v1.json`, converts advisory mark-event sidecars into human-review candidates. It ranks safer candidates first but does not exclude harder cases. The queue is planning evidence only. It is not approved scoring evidence.
 
-Phase 2B introduces review-batch and draft-workspace artifacts for authoring the first human reviewed rubric gold set. A review batch is a bounded human worklist selected from the queue. A draft reviewed-rubrics workspace may copy advisory mark-event data into draft fields, but all entries must default to `review_status: "needs_human_review"` with no safety flags. These artifacts are not approved scoring evidence. They can affect eligibility only after a human intentionally completes required metadata, accepted evidence, total verification, and approval flags in an explicit reviewed-rubrics file that passes validation.
+Phase 2B introduces review-batch and draft-workspace artifacts for authoring the first human reviewed rubric gold set. A review batch is a bounded human worklist selected from the queue. A draft reviewed-rubrics workspace may copy advisory mark-event data into draft fields, but all entries must default to `review_status: "needs_human_review"` with no safety flags. These artifacts are not approved scoring evidence. They can affect eligibility only after a human intentionally completes required metadata, accepted evidence, total verification, and approval flags, then promotes the already approved records into the live registry at `output/auto_grade/reviewed_rubrics.v1.json`.
+
+The live registry must identify itself with registry metadata, including source draft/workspace path, source review batch path when available, generated timestamp, promotion mode, reviewer identities represented, approved rubric count, excluded incomplete count, teacher-beta-safe count, and student-self-check-safe count. A draft workspace may contain incomplete records; the live registry must not silently include those incomplete records as promotion candidates.
 
 Phase 2A distinguishes these records:
 
@@ -98,6 +104,22 @@ The eligible-items validator must reject malformed artifacts, record-count misma
 The reviewed-rubrics validator must reject malformed top-level schema, duplicate rubric ids, duplicate event ids within a rubric, source question ids not in the question bank, missing source mark-scheme image paths, missing reviewer identity or timestamp for approved rubrics, unverified totals, event totals that do not match rubric totals, approved unknown mark codes, missing accepted evidence, missing dependency or follow-through policies, student-safe flags in Phase 2A, teacher-beta approval without lab safety, and advisory-only promotion attempts without review metadata.
 
 Validation may emit warnings for review-only concerns, but any student-safe promotion is an error in Phase 2A.
+
+## Approved-Rubric Workflow
+
+The approved reviewed-rubric workflow is:
+
+1. Review candidate pages from the reviewer packet and canonical image artifacts.
+2. Edit the draft reviewed-rubrics workspace, leaving incomplete entries as `needs_human_review`.
+3. Validate the draft/workspace with `scripts/validate_auto_grade_reviewed_rubrics.py`.
+4. Run the completion checker with `scripts/check_auto_grade_rubric_review_completion.py`.
+5. Promote only already approved rubrics into `output/auto_grade/reviewed_rubrics.v1.json` with `scripts/promote_auto_grade_reviewed_rubrics.py`.
+6. Validate the live registry with `scripts/validate_auto_grade_reviewed_rubrics.py --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json`.
+7. Rebuild eligible items with `scripts/build_auto_grade_eligible_items.py --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json`.
+8. Validate eligible items with `scripts/validate_auto_grade_eligible_items.py`.
+9. Confirm only `teacher_beta` changed and `student_self_check_beta` plus `student_ready` remain zero.
+
+The eligibility artifact records the reviewed-rubrics registry path and hash used at build time. Eligibility validation defaults to the recorded source path when present. Validation must fail closed when teacher-beta promotions are checked against an empty, missing, mismatched, or hash-mismatched reviewed-rubrics source.
 
 ## Fail-Closed Behavior
 

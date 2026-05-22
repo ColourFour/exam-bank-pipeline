@@ -14,6 +14,7 @@ def test_scripts_help_exits_successfully() -> None:
         "scripts/validate_auto_grade_eligible_items.py",
         "scripts/build_auto_grade_rubric_review_batch.py",
         "scripts/check_auto_grade_rubric_review_completion.py",
+        "scripts/promote_auto_grade_reviewed_rubrics.py",
     ]:
         result = subprocess.run([sys.executable, script, "--help"], cwd=Path.cwd(), text=True, capture_output=True)
         assert result.returncode == 0

@@ -280,7 +280,7 @@ def _validate_rubric(
     approved = review_status in APPROVED_REVIEW_STATUSES or lab_safe or teacher_safe or student_safe
     if phase == "2A" and student_safe:
         errors.append(f"{prefix}:student_safe_flag_forbidden_in_phase_2a")
-    if phase.upper() in {"2B", "2C"} and student_safe:
+    if phase.upper() in {"2B", "2C", "2D"} and student_safe:
         errors.append(f"{prefix}:student_safe_flag_forbidden_in_phase_{phase.lower()}")
     if student_safe and not teacher_safe:
         errors.append(f"{prefix}:student_safe_without_teacher_beta")

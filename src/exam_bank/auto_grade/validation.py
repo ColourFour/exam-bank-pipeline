@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -45,6 +46,21 @@ def validate_eligible_items(
     rubrics = {question_id: rubric for question_id, rubric in rubrics.items() if question_id in approved_question_ids}
     errors: list[str] = []
     warnings: list[str] = list(rubric_errors)
+    source_sidecars = eligible.get("source_sidecars") if isinstance(eligible.get("source_sidecars"), dict) else {}
+    items_for_source_check = eligible.get("items") if isinstance(eligible.get("items"), list) else []
+    teacher_beta_promotions = [
+        str(item.get("question_id") or "")
+        for item in items_for_source_check
+        if isinstance(item, dict) and item.get("eligibility_status") == "teacher_beta"
+    ]
+    _validate_reviewed_rubrics_source(
+        reviewed_rubrics_path=reviewed_rubrics_path,
+        source_sidecars=source_sidecars,
+        teacher_beta_promotions=teacher_beta_promotions,
+        rubrics_payload=rubrics_payload,
+        errors=errors,
+        warnings=warnings,
+    )
 
     if eligible.get("schema") != AUTO_GRADE_ELIGIBLE_ITEMS_SCHEMA:
         errors.append(f"schema_mismatch:expected={AUTO_GRADE_ELIGIBLE_ITEMS_SCHEMA}:actual={eligible.get('schema')}")
@@ -96,6 +112,46 @@ def validate_eligible_items(
     if output_path:
         write_atomic_json(report, output_path, sort_keys=True)
     return report
+
+
+def _validate_reviewed_rubrics_source(
+    *,
+    reviewed_rubrics_path: str | Path | None,
+    source_sidecars: dict[str, Any],
+    teacher_beta_promotions: list[str],
+    rubrics_payload: Any,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    requested_path = Path(reviewed_rubrics_path) if reviewed_rubrics_path else None
+    recorded_path = str(source_sidecars.get("reviewed_rubrics_path") or "").strip()
+    recorded_hash = str(source_sidecars.get("reviewed_rubrics_sha256") or "").strip()
+    if recorded_path and not Path(recorded_path).exists():
+        errors.append(f"reviewed_rubrics_source_missing:{recorded_path}")
+    if requested_path and recorded_path and _path_key(requested_path) != _path_key(recorded_path):
+        message = f"reviewed_rubrics_path_mismatch:artifact={recorded_path}:validation={_rel_path(requested_path)}"
+        if teacher_beta_promotions:
+            errors.append(f"{message}:teacher_beta_promotions={','.join(sorted(teacher_beta_promotions))}")
+        else:
+            warnings.append(message)
+    if requested_path and requested_path.exists() and recorded_hash:
+        actual_hash = _sha256_file(requested_path)
+        if actual_hash != recorded_hash:
+            errors.append(
+                f"reviewed_rubrics_hash_mismatch:path={_rel_path(requested_path)}:artifact={recorded_hash}:actual={actual_hash}"
+            )
+    if teacher_beta_promotions and not rubrics_payload:
+        errors.append(
+            "teacher_beta_promotions_without_loaded_reviewed_rubrics:"
+            + ",".join(sorted(teacher_beta_promotions))
+        )
+    if teacher_beta_promotions and isinstance(rubrics_payload, dict):
+        rubrics = rubrics_payload.get("rubrics")
+        if isinstance(rubrics, list) and not rubrics:
+            errors.append(
+                "teacher_beta_promotions_against_empty_reviewed_rubrics:"
+                + ",".join(sorted(teacher_beta_promotions))
+            )
 
 
 def _validate_item(
@@ -219,3 +275,27 @@ def _int_or_none(value: Any) -> int | None:
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _sha256_file(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _path_key(path: str | Path) -> str:
+    try:
+        return str(Path(path).resolve())
+    except OSError:
+        return str(path)
+
+
+def _rel_path(path: str | Path | None) -> str:
+    if path is None:
+        return ""
+    try:
+        return str(Path(path).resolve().relative_to(Path.cwd().resolve()))
+    except ValueError:
+        return str(path)

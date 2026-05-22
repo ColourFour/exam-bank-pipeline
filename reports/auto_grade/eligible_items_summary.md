@@ -5,10 +5,13 @@ Phase 1 is contracts and readiness classification only. It did not score submiss
 ## Summary
 
 - Total records classified: 1301
+- Reviewed-rubrics source path used: `output/auto_grade/reviewed_rubrics.v1.json`
+- Reviewed-rubrics source hash: `18987cfe6af218cbde2cdc96a7d82f62a4d9256b7724d80ca0e669380e46a68a`
 - Count by eligibility status:
 - `blocked`: 18
 - `review_only`: 1280
 - `teacher_beta`: 3
+- Teacher-beta items: 3
 - Canonical question images present: 1301
 - Canonical question images missing: 0
 - Canonical mark-scheme images present: 1301
@@ -31,5 +34,11 @@ Phase 1 is contracts and readiness classification only. It did not score submiss
 
 - Student-ready items: 0
 - Student self-check beta items: 0
+
+## Teacher Beta Promoted Question IDs
+
+- `11autumn23_q03`
+- `11summer24_q04`
+- `13autumn24_q02`
 
 Phase 1 produced 0 student-ready items unless reviewed rubrics already existed and validated.

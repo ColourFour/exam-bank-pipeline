@@ -28,6 +28,8 @@ def build_eligible_items(
     question_bank_path = Path(question_bank_path)
     question_bank = _load_json(question_bank_path)
     questions = _question_records(question_bank)
+    reviewed_rubrics_source_path = Path(reviewed_rubrics_path) if reviewed_rubrics_path else None
+    reviewed_rubrics_source_exists = bool(reviewed_rubrics_source_path and reviewed_rubrics_source_path.exists())
     rubrics_payload = _load_optional_json(reviewed_rubrics_path)
     rubrics, rubric_errors = load_reviewed_rubrics(rubrics_payload)
     strictly_approved_question_ids = approved_question_ids_from_reviewed_rubrics(
@@ -61,7 +63,10 @@ def build_eligible_items(
             "schema_version": question_bank.get("schema_version") if isinstance(question_bank, dict) else None,
         },
         "source_sidecars": {
-            "reviewed_rubrics_path": _rel_path(reviewed_rubrics_path) if reviewed_rubrics_path else None,
+            "reviewed_rubrics_path": _rel_path(reviewed_rubrics_source_path) if reviewed_rubrics_source_exists else None,
+            "reviewed_rubrics_sha256": _sha256_file(reviewed_rubrics_source_path)
+            if reviewed_rubrics_source_exists and reviewed_rubrics_source_path is not None
+            else None,
             "reviewed_rubrics_loaded": bool(rubrics_payload),
             "reviewed_rubrics_strictly_approved_count": len(strictly_approved_question_ids),
             "reviewed_rubric_error_count": len(rubric_errors),
@@ -205,6 +210,7 @@ def summarize_eligible_items(items: list[dict[str, Any]]) -> dict[str, Any]:
         "blocked_or_review_only_actionable_reason_percent": round((len(actionable) / len(blocked_or_review)) * 100, 2)
         if blocked_or_review
         else 100.0,
+        "teacher_beta_count": status_counts.get("teacher_beta", 0),
         "student_ready_count": status_counts.get("student_ready", 0),
         "student_self_check_beta_count": status_counts.get("student_self_check_beta", 0),
     }
