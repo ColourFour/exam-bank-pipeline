@@ -3,7 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from exam_bank.auto_grade.eligibility import build_eligible_items
+from exam_bank.auto_grade.reviewed_rubrics import validate_reviewed_rubrics
 
 
 def test_builder_classifies_tiny_fixture_and_does_not_mutate_input(tmp_path: Path) -> None:
@@ -111,6 +114,143 @@ def test_reviewed_rubric_can_only_unlock_teacher_beta_not_student_ready_by_defau
     by_id = {item["question_id"]: item for item in payload["items"]}
     assert by_id["11summer26_q01"]["eligibility_status"] == "teacher_beta"
     assert payload["summary"]["student_ready_count"] == 0
+
+
+def test_three_approved_reviewed_rubrics_promote_exactly_three_teacher_beta_items(tmp_path: Path) -> None:
+    paths = _write_fixture(tmp_path)
+    _ensure_fixture_artifacts(paths["artifact_root"], "q02", "q03")
+    originals = {
+        name: path.read_text(encoding="utf-8")
+        for name, path in {
+            "question_bank": paths["question_bank"],
+            "mark_events": paths["mark_events"],
+            "topic_routing": paths["topic_routing"],
+        }.items()
+    }
+    _write_reviewed_payload(
+        paths["reviewed_rubrics"],
+        _approved_rubric("rubric-1", "11summer26_q01", "q01"),
+        _approved_rubric("rubric-2", "11summer26_q02", "q02"),
+        _approved_rubric("rubric-3", "11summer26_q03", "q03"),
+        _reviewed_rubric(
+            "rubric-4",
+            "11summer26_q04",
+            "q04",
+            review_status="needs_human_review",
+            safe_for_auto_grade_lab=False,
+            safe_for_teacher_beta=False,
+        ),
+    )
+
+    payload = build_eligible_items(
+        question_bank_path=paths["question_bank"],
+        output_path=paths["eligible"],
+        artifact_root=paths["artifact_root"],
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        mark_events_path=paths["mark_events"],
+        topic_routing_path=paths["topic_routing"],
+        generated_at="2026-05-21T00:00:00Z",
+    )
+
+    promoted = {item["question_id"] for item in payload["items"] if item["eligibility_status"] == "teacher_beta"}
+    assert promoted == {"11summer26_q01", "11summer26_q02", "11summer26_q03"}
+    assert payload["summary"]["student_self_check_beta_count"] == 0
+    assert payload["summary"]["student_ready_count"] == 0
+    assert payload["source_sidecars"]["reviewed_rubric_error_count"] == 0
+    for name, path in {
+        "question_bank": paths["question_bank"],
+        "mark_events": paths["mark_events"],
+        "topic_routing": paths["topic_routing"],
+    }.items():
+        assert path.read_text(encoding="utf-8") == originals[name]
+
+
+@pytest.mark.parametrize(
+    ("review_status", "safe_for_auto_grade_lab", "safe_for_teacher_beta"),
+    [
+        ("approved", False, True),
+        ("needs_human_review", True, True),
+        ("approved", True, False),
+    ],
+)
+def test_incomplete_needs_review_or_lab_only_rubrics_do_not_promote_teacher_beta(
+    tmp_path: Path,
+    review_status: str,
+    safe_for_auto_grade_lab: bool,
+    safe_for_teacher_beta: bool,
+) -> None:
+    paths = _write_fixture(tmp_path)
+    _write_reviewed_payload(
+        paths["reviewed_rubrics"],
+        _reviewed_rubric(
+            "rubric-1",
+            "11summer26_q01",
+            "q01",
+            review_status=review_status,
+            safe_for_auto_grade_lab=safe_for_auto_grade_lab,
+            safe_for_teacher_beta=safe_for_teacher_beta,
+        ),
+    )
+
+    payload = build_eligible_items(
+        question_bank_path=paths["question_bank"],
+        output_path=None,
+        artifact_root=paths["artifact_root"],
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        mark_events_path=paths["mark_events"],
+        topic_routing_path=paths["topic_routing"],
+        generated_at="2026-05-21T00:00:00Z",
+        dry_run=True,
+    )
+
+    by_id = {item["question_id"]: item for item in payload["items"]}
+    assert by_id["11summer26_q01"]["eligibility_status"] == "review_only"
+    assert "student_self_check_beta" not in {item["eligibility_status"] for item in payload["items"]}
+    assert "student_ready" not in {item["eligibility_status"] for item in payload["items"]}
+
+
+def test_student_safe_reviewed_rubric_is_rejected_for_this_phase(tmp_path: Path) -> None:
+    paths = _write_fixture(tmp_path)
+    _write_reviewed_payload(
+        paths["reviewed_rubrics"],
+        _reviewed_rubric(
+            "rubric-1",
+            "11summer26_q01",
+            "q01",
+            safe_for_student_self_check=True,
+        ),
+    )
+
+    report = validate_reviewed_rubrics(
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        question_bank_path=paths["question_bank"],
+        phase="2C",
+        report_path=None,
+    )
+
+    assert report["ok"] is False
+    assert any("student_safe_flag_forbidden_in_phase_2c" in error for error in report["errors"])
+
+
+def test_wrong_source_question_id_does_not_promote_any_item(tmp_path: Path) -> None:
+    paths = _write_fixture(tmp_path)
+    _write_reviewed_payload(
+        paths["reviewed_rubrics"],
+        _approved_rubric("rubric-1", "11summer26_q99", "q01"),
+    )
+
+    payload = build_eligible_items(
+        question_bank_path=paths["question_bank"],
+        output_path=None,
+        artifact_root=paths["artifact_root"],
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        mark_events_path=paths["mark_events"],
+        topic_routing_path=paths["topic_routing"],
+        generated_at="2026-05-21T00:00:00Z",
+        dry_run=True,
+    )
+
+    assert not any(item["eligibility_status"] == "teacher_beta" for item in payload["items"])
 
 
 def _write_fixture(tmp_path: Path) -> dict[str, Path]:
@@ -278,4 +418,71 @@ def _rubric_event(event_id: str, mark_code: str, mark_value: int) -> dict[str, o
         "learning_target_ids": ["9709_p1_topic_algebra"],
         "review_status": "approved",
         "review_notes": "fixture",
+    }
+
+
+def _ensure_fixture_artifacts(artifact_root: Path, *q_labels: str) -> None:
+    for q_label in q_labels:
+        for relative in [
+            f"p1/11summer26/questions/{q_label}.png",
+            f"p1/11summer26/mark_scheme/{q_label}.png",
+        ]:
+            path = artifact_root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"image")
+
+
+def _write_reviewed_payload(path: Path, *rubrics: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "exam_bank.auto_grade.reviewed_rubrics",
+                "schema_version": 1,
+                "rubric_count": len(rubrics),
+                "event_count": sum(len(rubric["events"]) for rubric in rubrics),
+                "rubrics": list(rubrics),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+
+def _approved_rubric(rubric_id: str, question_id: str, q_label: str) -> dict[str, object]:
+    return _reviewed_rubric(rubric_id, question_id, q_label)
+
+
+def _reviewed_rubric(
+    rubric_id: str,
+    question_id: str,
+    q_label: str,
+    *,
+    review_status: str = "approved",
+    safe_for_auto_grade_lab: bool = True,
+    safe_for_teacher_beta: bool = True,
+    safe_for_student_self_check: bool = False,
+) -> dict[str, object]:
+    return {
+        "rubric_id": rubric_id,
+        "source_question_id": question_id,
+        "source_question_image_path": f"p1/11summer26/questions/{q_label}.png",
+        "source_mark_scheme_image_path": f"p1/11summer26/mark_scheme/{q_label}.png",
+        "paper": "11summer26",
+        "paper_family": "p1",
+        "question_number": q_label.removeprefix("q"),
+        "part_path": [],
+        "total_marks": 4,
+        "rubric_total_verified": review_status == "approved",
+        "safe_for_auto_grade_lab": safe_for_auto_grade_lab,
+        "safe_for_teacher_beta": safe_for_teacher_beta,
+        "safe_for_student_self_check": safe_for_student_self_check,
+        "review_status": review_status,
+        "reviewed_by": "fixture reviewer" if review_status == "approved" else "",
+        "reviewed_at": "2026-05-21T00:00:00Z" if review_status == "approved" else "",
+        "approval_scope": "teacher_beta" if safe_for_teacher_beta else "auto_grade_lab",
+        "events": [
+            _rubric_event(f"{rubric_id}-e1", "M", 2),
+            _rubric_event(f"{rubric_id}-e2", "A", 2),
+        ],
     }

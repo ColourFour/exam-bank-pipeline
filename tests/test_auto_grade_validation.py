@@ -5,7 +5,7 @@ from pathlib import Path
 
 from exam_bank.auto_grade.eligibility import build_eligible_items
 from exam_bank.auto_grade.validation import validate_eligible_items
-from tests.test_auto_grade_eligibility import _write_fixture
+from tests.test_auto_grade_eligibility import _approved_rubric, _write_fixture, _write_reviewed_payload
 
 
 def test_validator_accepts_generated_fixture_artifact(tmp_path: Path) -> None:
@@ -27,6 +27,33 @@ def test_validator_accepts_generated_fixture_artifact(tmp_path: Path) -> None:
         question_bank_path=paths["question_bank"],
         artifact_root=paths["artifact_root"],
         reviewed_rubrics_path=paths["reviewed_rubrics"],
+    )
+
+    assert report["ok"] is True
+
+
+def test_validator_uses_reviewed_rubrics_source_recorded_in_eligible_items(tmp_path: Path) -> None:
+    paths = _write_fixture(tmp_path)
+    _write_bytes(paths["artifact_root"] / "p1/11summer26/questions/q02.png")
+    _write_bytes(paths["artifact_root"] / "p1/11summer26/mark_scheme/q03.png")
+    _write_reviewed_payload(
+        paths["reviewed_rubrics"],
+        _approved_rubric("rubric-1", "11summer26_q01", "q01"),
+    )
+    build_eligible_items(
+        question_bank_path=paths["question_bank"],
+        output_path=paths["eligible"],
+        artifact_root=paths["artifact_root"],
+        reviewed_rubrics_path=paths["reviewed_rubrics"],
+        mark_events_path=paths["mark_events"],
+        topic_routing_path=paths["topic_routing"],
+        generated_at="2026-05-21T00:00:00Z",
+    )
+
+    report = validate_eligible_items(
+        eligible_items_path=paths["eligible"],
+        question_bank_path=paths["question_bank"],
+        artifact_root=paths["artifact_root"],
     )
 
     assert report["ok"] is True

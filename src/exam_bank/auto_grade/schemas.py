@@ -79,8 +79,6 @@ def load_reviewed_rubrics(payload: Any) -> tuple[dict[str, ReviewedRubric], list
             safe_for_teacher_beta=safe_for_teacher_beta,
             safe_for_student_self_check=safe_for_student_self_check,
         )
-        if not rubric.is_approved:
-            errors.append(f"reviewed_rubric_missing_approval_metadata:{index}:{question_id}")
         rubrics[question_id] = rubric
     return rubrics, errors
 

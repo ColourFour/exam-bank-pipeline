@@ -1,8 +1,8 @@
 # Reviewed Rubrics Validation
 
 - OK: True
-- Rubrics checked: 0
-- Approved rubrics accepted: 0
+- Rubrics checked: 21
+- Approved rubrics accepted: 3
 - Error count: 0
 - Warning count: 0
 

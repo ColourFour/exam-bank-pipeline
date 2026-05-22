@@ -11,7 +11,12 @@ from exam_bank.auto_grade import (
     AUTO_GRADE_SCHEMA_VERSION,
     AUTO_GRADE_VALIDATION_SCHEMA,
 )
-from exam_bank.auto_grade.constants import ELIGIBILITY_STATUSES, GRADING_STATUSES, STUDENT_SAFE_STATUSES
+from exam_bank.auto_grade.constants import (
+    DEFAULT_REVIEWED_RUBRICS_PATH,
+    ELIGIBILITY_STATUSES,
+    GRADING_STATUSES,
+    STUDENT_SAFE_STATUSES,
+)
 from exam_bank.auto_grade.reviewed_rubrics import approved_question_ids_from_reviewed_rubrics
 from exam_bank.auto_grade.schemas import load_reviewed_rubrics
 
@@ -21,7 +26,7 @@ def validate_eligible_items(
     eligible_items_path: str | Path = "output/auto_grade/eligible_items.v1.json",
     question_bank_path: str | Path = "output/json/question_bank.json",
     artifact_root: str | Path = "output",
-    reviewed_rubrics_path: str | Path | None = "output/auto_grade/reviewed_rubrics.v1.json",
+    reviewed_rubrics_path: str | Path | None = None,
     check_artifact_existence: bool = True,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
@@ -30,6 +35,7 @@ def validate_eligible_items(
     questions = _question_records(question_bank)
     question_ids = [str(record.get("question_id") or "") for record in questions]
     question_id_set = {question_id for question_id in question_ids if question_id}
+    reviewed_rubrics_path = _reviewed_rubrics_path_for_validation(eligible, reviewed_rubrics_path)
     rubrics_payload = _load_optional_json(reviewed_rubrics_path)
     rubrics, rubric_errors = load_reviewed_rubrics(rubrics_payload)
     approved_question_ids = approved_question_ids_from_reviewed_rubrics(
@@ -171,6 +177,20 @@ def _load_optional_json(path: str | Path | None) -> Any:
     if not path.exists():
         return {}
     return _load_json(path)
+
+
+def _reviewed_rubrics_path_for_validation(
+    eligible: dict[str, Any],
+    reviewed_rubrics_path: str | Path | None,
+) -> str | Path | None:
+    if reviewed_rubrics_path is not None:
+        return reviewed_rubrics_path
+    source_sidecars = eligible.get("source_sidecars")
+    if isinstance(source_sidecars, dict):
+        source_path = str(source_sidecars.get("reviewed_rubrics_path") or "").strip()
+        if source_path:
+            return source_path
+    return DEFAULT_REVIEWED_RUBRICS_PATH
 
 
 def _question_records(payload: Any) -> list[dict[str, Any]]:

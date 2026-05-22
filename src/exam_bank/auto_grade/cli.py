@@ -45,7 +45,12 @@ def run_validate(argv: list[str] | None = None) -> int:
     parser.add_argument("--eligible-items", type=Path, default=Path(DEFAULT_ELIGIBLE_ITEMS_PATH))
     parser.add_argument("--question-bank", type=Path, default=Path("output/json/question_bank.json"))
     parser.add_argument("--artifact-root", type=Path, default=Path("output"))
-    parser.add_argument("--reviewed-rubrics", type=Path, default=Path(DEFAULT_REVIEWED_RUBRICS_PATH))
+    parser.add_argument(
+        "--reviewed-rubrics",
+        type=Path,
+        default=None,
+        help="Reviewed rubrics to validate promotions against. Defaults to the path recorded in eligible_items.",
+    )
     parser.add_argument("--output", type=Path, default=Path("output/auto_grade/eligible_items.validation.v1.json"))
     parser.add_argument("--no-existence-check", action="store_true")
     args = parser.parse_args(argv)
