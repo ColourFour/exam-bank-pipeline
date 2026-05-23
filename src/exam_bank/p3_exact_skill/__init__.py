@@ -16,6 +16,7 @@ DEFAULT_P3_TOPIC_ASSIGNMENTS_PATH = (
 )
 DEFAULT_REVIEW_QUEUE_JSON_PATH = "reports/p3_exact_skill_review_queue.v1.json"
 DEFAULT_REVIEW_QUEUE_REPORT_PATH = "reports/p3_exact_skill_review_queue.md"
+DEFAULT_REVIEW_BATCH_DIR = "data/review/p3_exact_skill_batches"
 
 ROUTE_STATUSES = {
     "clean",
@@ -36,3 +37,5 @@ ALLOWED_USE_CASE_KEYS = {
 }
 
 REVIEW_QUEUE_SCHEMA = "exam_bank.p3_exact_skill.review_queue"
+REVIEW_BATCH_MANIFEST_SCHEMA = "exam_bank.p3_exact_skill.review_batch_manifest"
+REVIEW_BATCH_TEMPLATE_SCHEMA = "exam_bank.p3_exact_skill.review_batch_template"

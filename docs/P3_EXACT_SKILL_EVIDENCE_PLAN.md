@@ -63,6 +63,72 @@ Queue statuses deliberately use candidate names such as `clean_candidate`, `ambi
 
 The Markdown report summarizes status counts, top blockers, priority review items, blocked/fallback groups, existing reviewed-decision reconciliation, and reviewer checklist guidance. The JSON report preserves the full queue item list for downstream review tooling.
 
+## Phase 3 Review Batch Packet Workflow
+
+Phase 3 adds a small-batch review workflow so a human reviewer can work through the highest-value P3 exact-skill candidates without scanning the full queue. The batch builder consumes the Phase 2 queue and the Phase 1 reviewed-decision registry, excludes already-reviewed scopes, and writes reviewer handoff artifacts under:
+
+```text
+data/review/p3_exact_skill_batches/
+```
+
+This location is intentional: the packet and manifest are generated handoff artifacts, and the decision template is human-editable review input. They are not Asterion runtime exports and they do not create or update:
+
+```text
+output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
+```
+
+Generate the default first batch with:
+
+```text
+.venv/bin/python scripts/build_p3_exact_skill_review_batch.py --batch-id batch_0001 --limit 25
+```
+
+The command writes:
+
+```text
+data/review/p3_exact_skill_batches/batch_0001_review_packet.md
+data/review/p3_exact_skill_batches/batch_0001_decision_template.v1.json
+data/review/p3_exact_skill_batches/batch_0001_manifest.v1.json
+```
+
+The review packet Markdown is the reviewer-facing checklist. For each selected item it includes the queue ID, question and part/subpart scope, paper/session/variant, candidate P3 skill IDs, prerequisite/support skill context, candidate region/topic, topic-routing context, Content Lab blocker context, canonical question and mark-scheme asset refs, advisory-only mark-event refs, proposed blockers, recommended review action, and an exact checklist for inspecting images and deciding scope, skill, blockers, route status, allowed use cases, and evidence basis.
+
+The decision template is deliberately not the reviewed-decision registry schema. It uses `exam_bank.p3_exact_skill.review_batch_template` so it cannot be confused with final reviewed evidence. Each generated record defaults to `route_status: review_needed`, `blockers: ["pending_human_review"]`, empty `reviewed_source_skill_ids`, a separate `suggested_source_skill_ids` draft field, empty reviewer fields, empty `evidence_basis`, and all allowed use cases set to `false`. A reviewer must manually inspect the source images, decide the exact skill and safe scope, write project-wording evidence basis, and then copy or merge approved records into `data/review/p3_exact_skill_reviewed_decisions.v1.json`.
+
+The manifest records the queue and registry paths used, filters, selected and skipped counts, selected queue/question IDs, and an estimated sparse-skill coverage delta. It also warns that the batch is not reviewed evidence and is not the final Asterion sidecar.
+
+Selection is conservative. The default batch selects from `clean_candidate` queue items only, requires candidate P3 skill IDs and both canonical question and mark-scheme asset refs, excludes already-reviewed scopes, prefers lower-ambiguity single-skill candidates, boosts skills with zero clean reviewed evidence, prefers Content Lab candidates and image/mark-event-backed review context, and applies light diversity penalties for repeated question, paper, session, and skill. Mark-event refs are preserved only as advisory context; they are never promotion authority.
+
+No candidate is clean until a human reviewer has inspected the canonical question and mark-scheme images and manually moved an approved record into the reviewed-decision registry. The future exporter must continue to treat `clean_candidate` and review-batch templates as non-authoritative inputs.
+
+## Phase 3B Visual Review Packet Workflow
+
+Phase 3B adds a visual HTML packet for an existing Phase 3 batch. The purpose is to make manual review practical: the reviewer can open one local file and inspect the question image, mark-scheme image, candidate skill context, blockers, advisory mark-event refs, and checklist together for each selected item.
+
+Generate the visual packet with:
+
+```text
+.venv/bin/python scripts/build_p3_exact_skill_visual_review_packet.py --batch-id batch_0001
+```
+
+The default output is:
+
+```text
+data/review/p3_exact_skill_batches/batch_0001_visual_review.html
+```
+
+The visual builder reads the existing batch manifest, Markdown packet, and decision template. It also reads the queue JSON referenced by the manifest when available, so it can recover candidate region/topic, topic-routing context, Content Lab blocker context, proposed blockers, and recommended review action. The HTML is static and has no external network dependencies.
+
+Asset refs are resolved against the repo root. If a ref such as `p3/...` is not present directly under the repo root, the builder also checks `output/p3/...`, which matches the current canonical crop layout. Existing assets are linked with relative paths from the HTML file so the packet can be opened locally without copying images. Missing assets are shown as visible warnings beside the review item.
+
+This visual packet is still not reviewed evidence. It does not edit `data/review/p3_exact_skill_reviewed_decisions.v1.json`, does not promote any candidate, does not change the decision template, and does not create:
+
+```text
+output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
+```
+
+Use the visual packet to inspect images and make the human decision. Approved decisions must still be manually written or merged into the reviewed-decision registry, with project-wording `evidence_basis`, explicit `route_status`, reviewer metadata, blockers, and allowed use cases. The reviewed-decision validator remains the gate before any future sidecar exporter can consume those records.
+
 ## Purpose
 
 Asterion Content Lab needs a reviewed, image-backed evidence surface for exact P3 skill examples. The sidecar should answer a narrow question: which canonical question or part has been safely reviewed as evidence for one exact P3 skill, with stable question and mark-scheme image refs, explicit route status, provenance, blockers, and allowed runtime use cases?
