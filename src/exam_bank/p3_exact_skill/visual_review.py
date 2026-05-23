@@ -288,39 +288,25 @@ def _response_form(index: int, record: dict[str, Any]) -> str:
     queue_id = _text(record.get("queue_id"))
     question_id = _text(record.get("question_id"))
     subpart_id = _text(record.get("subpart_id"))
+    yes_no_review = ["not_reviewed", "yes", "no", "uncertain"]
     return (
         '      <section class="response-card">\n'
         "        <h3>Your Review Response</h3>\n"
         "        <p class=\"warning small\">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>\n"
         f'        <form class="review-response-form" data-item-number="{index}" data-queue-id="{escape(queue_id)}" data-question-id="{escape(question_id)}" data-subpart-id="{escape(subpart_id)}">\n'
-        '          <div class="form-grid">\n'
-        f"{_input('Reviewer', 'reviewer', 'text')}"
-        f"{_select('Route status', 'route_status', ['review_needed', 'clean', 'thin', 'ambiguous', 'blocked', 'deferred', 'fallback_only'])}"
-        f"{_select('Reviewed scope', 'reviewed_scope', ['reviewer_decide', 'whole_question', 'part_level', 'subpart_level'])}"
-        f"{_input('Reviewed exact skill ID', 'reviewed_skill_id', 'text')}"
+        '          <div class="response-question-grid">\n'
+        f"{_select('Have you inspected the question image?', 'inspected_question_image', yes_no_review)}"
+        f"{_select('Have you inspected the mark-scheme image?', 'inspected_mark_scheme_image', yes_no_review)}"
+        f"{_select('Does this confirm the suggested exact P3 skill?', 'exact_skill_confirmed', ['not_reviewed', 'yes', 'no_wrong_skill', 'uncertain', 'needs_split'])}"
+        f"{_select('Is the current scope safe?', 'scope_decision', ['not_reviewed', 'whole_question_safe', 'part_level_needed', 'subpart_level_needed', 'unsafe_or_unclear'])}"
+        f"{_select('Is P1/support-only material involved?', 'support_material_decision', ['not_reviewed', 'no', 'supporting_context_only', 'possible_target_skill', 'uncertain'])}"
+        f"{_select('What route status would you choose?', 'route_status', ['review_needed', 'clean', 'thin', 'ambiguous', 'blocked', 'deferred', 'fallback_only'])}"
+        f"{_select('What use-case allowance seems plausible after review?', 'allowed_use_case_summary', ['none', 'export_only', 'source_backed_examples', 'mastery_possible', 'guardian_possible', 'candidate_generation_possible', 'uncertain'])}"
+        f"{_select('Is the evidence basis ready to write?', 'evidence_basis_status', ['not_started', 'drafted', 'needs_more_review', 'not_applicable'])}"
         "          </div>\n"
-        "          <fieldset>\n"
-        "            <legend>Allowed use cases</legend>\n"
-        f"{_checkbox('Mastery', 'allowed_mastery')}"
-        f"{_checkbox('Guardian', 'allowed_guardian')}"
-        f"{_checkbox('Export', 'allowed_export')}"
-        f"{_checkbox('Source-backed examples', 'allowed_source_backed_examples')}"
-        f"{_checkbox('Candidate generation', 'allowed_candidate_generation')}"
-        "          </fieldset>\n"
-        f"{_textarea('Evidence basis', 'evidence_basis', 'Write the image-backed evidence basis in project wording.')}"
-        f"{_textarea('Blockers', 'blockers', 'List unresolved blockers, one per line or comma-separated.')}"
-        f"{_textarea('Reviewer notes', 'reviewer_notes', 'Capture uncertainties, split suggestions, or follow-up questions.')}"
+        f"{_textarea('Notes', 'reviewer_notes', 'Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions.')}"
         "        </form>\n"
         "      </section>\n"
-    )
-
-
-def _input(label: str, field: str, input_type: str) -> str:
-    return (
-        '            <label>'
-        f"<span>{escape(label)}</span>"
-        f'<input type="{escape(input_type)}" data-field="{escape(field)}">'
-        "</label>\n"
     )
 
 
@@ -330,15 +316,6 @@ def _select(label: str, field: str, options: list[str]) -> str:
         '            <label>'
         f"<span>{escape(label)}</span>"
         f'<select data-field="{escape(field)}">{options_html}</select>'
-        "</label>\n"
-    )
-
-
-def _checkbox(label: str, field: str) -> str:
-    return (
-        '            <label class="checkbox-label">'
-        f'<input type="checkbox" data-field="{escape(field)}">'
-        f"<span>{escape(label)}</span>"
         "</label>\n"
     )
 
@@ -611,7 +588,7 @@ code, pre {
   display: inline-block;
   margin-left: 8px;
 }
-.form-grid {
+.response-question-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
@@ -637,16 +614,6 @@ code, pre {
 .response-card textarea {
   min-height: 86px;
   resize: vertical;
-}
-.response-card fieldset {
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  margin: 12px 0;
-}
-.checkbox-label {
-  display: inline-flex;
-  gap: 6px;
-  margin: 4px 14px 4px 0;
 }
 .wide-field {
   display: block;

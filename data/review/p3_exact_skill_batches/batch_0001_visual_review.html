@@ -72,7 +72,7 @@ code, pre {
   display: inline-block;
   margin-left: 8px;
 }
-.form-grid {
+.response-question-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
@@ -98,16 +98,6 @@ code, pre {
 .response-card textarea {
   min-height: 86px;
   resize: vertical;
-}
-.response-card fieldset {
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  margin: 12px 0;
-}
-.checkbox-label {
-  display: inline-flex;
-  gap: 6px;
-  margin: 4px 14px 4px 0;
 }
 .wide-field {
   display: block;
@@ -200,7 +190,7 @@ pre {
       <h2>Summary</h2>
       <p><strong>Batch ID:</strong> <code>batch_0001</code></p>
       <p><strong>Selected count:</strong> <code>25</code></p>
-      <p><strong>Generated at:</strong> <code>2026-05-23T04:46:45Z</code></p>
+      <p><strong>Generated at:</strong> <code>2026-05-23T04:55:42Z</code></p>
       <p><strong>Manifest selected count:</strong> <code>25</code></p>
       <p><strong>Source packet:</strong> <code>data/review/p3_exact_skill_batches/batch_0001_review_packet.md</code> (available)</p>
       <p><strong>Decision template:</strong> <code>data/review/p3_exact_skill_batches/batch_0001_decision_template.v1.json</code></p>
@@ -609,23 +599,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="1" data-queue-id="p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b" data-question-id="33summer23_q11" data-subpart-id="33summer23_q11_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -834,23 +818,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="2" data-queue-id="p3_exact_skill_review_queue:v1:33autumn21_q10:33autumn21_q10_c" data-question-id="33autumn21_q10" data-subpart-id="33autumn21_q10_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -1161,23 +1139,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="3" data-queue-id="p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b" data-question-id="32autumn23_q09" data-subpart-id="32autumn23_q09_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -1369,23 +1341,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="4" data-queue-id="p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b" data-question-id="33autumn23_q10" data-subpart-id="33autumn23_q10_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -1692,23 +1658,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="5" data-queue-id="p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b" data-question-id="33summer23_q09" data-subpart-id="33summer23_q09_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -1917,23 +1877,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="6" data-queue-id="p3_exact_skill_review_queue:v1:32autumn21_q11:32autumn21_q11_c" data-question-id="32autumn21_q11" data-subpart-id="32autumn21_q11_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -2125,23 +2079,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="7" data-queue-id="p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c" data-question-id="32summer23_q06" data-subpart-id="32summer23_q06_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -2314,23 +2262,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="8" data-queue-id="p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b" data-question-id="32spring23_q05" data-subpart-id="32spring23_q05_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -2593,23 +2535,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="9" data-queue-id="p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d" data-question-id="32summer22_q10" data-subpart-id="32summer22_q10_d">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -2799,23 +2735,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="10" data-queue-id="p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c" data-question-id="32autumn23_q06" data-subpart-id="32autumn23_q06_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -2980,23 +2910,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="11" data-queue-id="p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole" data-question-id="33summer23_q04" data-subpart-id="33summer23_q04_whole">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -3188,23 +3112,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="12" data-queue-id="p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c" data-question-id="31autumn21_q07" data-subpart-id="31autumn21_q07_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -3392,23 +3310,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="13" data-queue-id="p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole" data-question-id="33autumn23_q03" data-subpart-id="33autumn23_q03_whole">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -3608,23 +3520,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="14" data-queue-id="p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b" data-question-id="32summer23_q07" data-subpart-id="32summer23_q07_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -3763,23 +3669,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="15" data-queue-id="p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole" data-question-id="31summer24_q01" data-subpart-id="31summer24_q01_whole">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -3987,23 +3887,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="16" data-queue-id="p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b" data-question-id="33summer23_q06" data-subpart-id="33summer23_q06_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -4195,23 +4089,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="17" data-queue-id="p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b" data-question-id="33autumn23_q07" data-subpart-id="33autumn23_q07_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -4402,23 +4290,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="18" data-queue-id="p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c" data-question-id="32spring23_q10" data-subpart-id="32spring23_q10_c">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -4599,23 +4481,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="19" data-queue-id="p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b" data-question-id="33autumn23_q06" data-subpart-id="33autumn23_q06_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -4781,23 +4657,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="20" data-queue-id="p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole" data-question-id="33autumn23_q01" data-subpart-id="33autumn23_q01_whole">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -4979,23 +4849,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="21" data-queue-id="p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b" data-question-id="32autumn23_q04" data-subpart-id="32autumn23_q04_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -5168,23 +5032,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="22" data-queue-id="p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b" data-question-id="32spring23_q02" data-subpart-id="32spring23_q02_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -5348,23 +5206,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="23" data-queue-id="p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b" data-question-id="31summer24_q07" data-subpart-id="31summer24_q07_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -5509,23 +5361,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="24" data-queue-id="p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b" data-question-id="31summer24_q04" data-subpart-id="31summer24_q04_b">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>
@@ -5663,23 +5509,17 @@ pre {
         <h3>Your Review Response</h3>
         <p class="warning small">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>
         <form class="review-response-form" data-item-number="25" data-queue-id="p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole" data-question-id="31summer24_q03" data-subpart-id="31summer24_q03_whole">
-          <div class="form-grid">
-            <label><span>Reviewer</span><input type="text" data-field="reviewer"></label>
-            <label><span>Route status</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
-            <label><span>Reviewed scope</span><select data-field="reviewed_scope"><option value="reviewer_decide">reviewer_decide</option><option value="whole_question">whole_question</option><option value="part_level">part_level</option><option value="subpart_level">subpart_level</option></select></label>
-            <label><span>Reviewed exact skill ID</span><input type="text" data-field="reviewed_skill_id"></label>
+          <div class="response-question-grid">
+            <label><span>Have you inspected the question image?</span><select data-field="inspected_question_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Have you inspected the mark-scheme image?</span><select data-field="inspected_mark_scheme_image"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no">no</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Does this confirm the suggested exact P3 skill?</span><select data-field="exact_skill_confirmed"><option value="not_reviewed">not_reviewed</option><option value="yes">yes</option><option value="no_wrong_skill">no_wrong_skill</option><option value="uncertain">uncertain</option><option value="needs_split">needs_split</option></select></label>
+            <label><span>Is the current scope safe?</span><select data-field="scope_decision"><option value="not_reviewed">not_reviewed</option><option value="whole_question_safe">whole_question_safe</option><option value="part_level_needed">part_level_needed</option><option value="subpart_level_needed">subpart_level_needed</option><option value="unsafe_or_unclear">unsafe_or_unclear</option></select></label>
+            <label><span>Is P1/support-only material involved?</span><select data-field="support_material_decision"><option value="not_reviewed">not_reviewed</option><option value="no">no</option><option value="supporting_context_only">supporting_context_only</option><option value="possible_target_skill">possible_target_skill</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>What route status would you choose?</span><select data-field="route_status"><option value="review_needed">review_needed</option><option value="clean">clean</option><option value="thin">thin</option><option value="ambiguous">ambiguous</option><option value="blocked">blocked</option><option value="deferred">deferred</option><option value="fallback_only">fallback_only</option></select></label>
+            <label><span>What use-case allowance seems plausible after review?</span><select data-field="allowed_use_case_summary"><option value="none">none</option><option value="export_only">export_only</option><option value="source_backed_examples">source_backed_examples</option><option value="mastery_possible">mastery_possible</option><option value="guardian_possible">guardian_possible</option><option value="candidate_generation_possible">candidate_generation_possible</option><option value="uncertain">uncertain</option></select></label>
+            <label><span>Is the evidence basis ready to write?</span><select data-field="evidence_basis_status"><option value="not_started">not_started</option><option value="drafted">drafted</option><option value="needs_more_review">needs_more_review</option><option value="not_applicable">not_applicable</option></select></label>
           </div>
-          <fieldset>
-            <legend>Allowed use cases</legend>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_mastery"><span>Mastery</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_guardian"><span>Guardian</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_export"><span>Export</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_source_backed_examples"><span>Source-backed examples</span></label>
-            <label class="checkbox-label"><input type="checkbox" data-field="allowed_candidate_generation"><span>Candidate generation</span></label>
-          </fieldset>
-          <label class="wide-field"><span>Evidence basis</span><textarea data-field="evidence_basis" placeholder="Write the image-backed evidence basis in project wording."></textarea></label>
-          <label class="wide-field"><span>Blockers</span><textarea data-field="blockers" placeholder="List unresolved blockers, one per line or comma-separated."></textarea></label>
-          <label class="wide-field"><span>Reviewer notes</span><textarea data-field="reviewer_notes" placeholder="Capture uncertainties, split suggestions, or follow-up questions."></textarea></label>
+          <label class="wide-field"><span>Notes</span><textarea data-field="reviewer_notes" placeholder="Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions."></textarea></label>
         </form>
       </section>
     </article>

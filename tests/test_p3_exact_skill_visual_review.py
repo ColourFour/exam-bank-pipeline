@@ -132,8 +132,13 @@ def test_visual_review_includes_response_capture_controls(tmp_path: Path) -> Non
 
     html = result["html"]
     assert "Your Review Response" in html
+    assert "Have you inspected the question image?" in html
+    assert "Does this confirm the suggested exact P3 skill?" in html
     assert "data-field=\"route_status\"" in html
-    assert "data-field=\"evidence_basis\"" in html
+    assert "data-field=\"allowed_use_case_summary\"" in html
+    assert "data-field=\"reviewer_notes\"" in html
+    assert "allowed_mastery" not in html
+    assert "data-field=\"evidence_basis\"" not in html
     assert "p3ExactSkillReviewResponses:batch_test" in html
     assert "/p3-exact-skill-review-responses" in html
     assert "Export JSON" in html
