@@ -142,9 +142,19 @@ def render_visual_review_html(
         "        <li>Record the final route status, allowed use cases, and evidence basis in the separate decision template or reviewed registry workflow.</li>\n"
         "        <li>Only manually reviewed and validated records may be copied into the reviewed-decision registry.</li>\n"
         "      </ol>\n"
+        '      <div class="response-toolbar">\n'
+        "        <h3>Response Capture</h3>\n"
+        "        <p>Responses autosave in this browser. Export JSON anytime, or run the local save server and submit responses back into the repo.</p>\n"
+        f'        <p><strong>Browser save key:</strong> <code>p3ExactSkillReviewResponses:{escape(batch_id)}</code></p>\n'
+        '        <button type="button" id="saveResponses">Save now</button>\n'
+        '        <button type="button" id="exportResponses">Export JSON</button>\n'
+        '        <button type="button" id="submitResponses">Submit to local save server</button>\n'
+        '        <span id="responseStatus" role="status"></span>\n'
+        "      </div>\n"
         "    </section>\n"
         f"{item_html}\n"
         "  </main>\n"
+        f"  <script>{_javascript(batch_id)}</script>\n"
         "</body>\n"
         "</html>\n"
     )
@@ -206,6 +216,7 @@ def _render_item(
         f"{''.join(f'<li>{escape(item)}</li>' for item in VISUAL_REVIEW_CHECKLIST)}"
         "        </ul>\n"
         "      </section>\n"
+        f"{_response_form(index, record)}"
         "    </article>\n"
     )
 
@@ -270,6 +281,74 @@ def _asset_group(title: str, refs: list[Any], *, repo_root: Path, output_path: P
         f"          <h3>{escape(title)}</h3>\n"
         f"{''.join(rendered)}"
         "        </section>\n"
+    )
+
+
+def _response_form(index: int, record: dict[str, Any]) -> str:
+    queue_id = _text(record.get("queue_id"))
+    question_id = _text(record.get("question_id"))
+    subpart_id = _text(record.get("subpart_id"))
+    return (
+        '      <section class="response-card">\n'
+        "        <h3>Your Review Response</h3>\n"
+        "        <p class=\"warning small\">These notes are draft review responses only. They do not update the reviewed registry or make any candidate clean.</p>\n"
+        f'        <form class="review-response-form" data-item-number="{index}" data-queue-id="{escape(queue_id)}" data-question-id="{escape(question_id)}" data-subpart-id="{escape(subpart_id)}">\n'
+        '          <div class="form-grid">\n'
+        f"{_input('Reviewer', 'reviewer', 'text')}"
+        f"{_select('Route status', 'route_status', ['review_needed', 'clean', 'thin', 'ambiguous', 'blocked', 'deferred', 'fallback_only'])}"
+        f"{_select('Reviewed scope', 'reviewed_scope', ['reviewer_decide', 'whole_question', 'part_level', 'subpart_level'])}"
+        f"{_input('Reviewed exact skill ID', 'reviewed_skill_id', 'text')}"
+        "          </div>\n"
+        "          <fieldset>\n"
+        "            <legend>Allowed use cases</legend>\n"
+        f"{_checkbox('Mastery', 'allowed_mastery')}"
+        f"{_checkbox('Guardian', 'allowed_guardian')}"
+        f"{_checkbox('Export', 'allowed_export')}"
+        f"{_checkbox('Source-backed examples', 'allowed_source_backed_examples')}"
+        f"{_checkbox('Candidate generation', 'allowed_candidate_generation')}"
+        "          </fieldset>\n"
+        f"{_textarea('Evidence basis', 'evidence_basis', 'Write the image-backed evidence basis in project wording.')}"
+        f"{_textarea('Blockers', 'blockers', 'List unresolved blockers, one per line or comma-separated.')}"
+        f"{_textarea('Reviewer notes', 'reviewer_notes', 'Capture uncertainties, split suggestions, or follow-up questions.')}"
+        "        </form>\n"
+        "      </section>\n"
+    )
+
+
+def _input(label: str, field: str, input_type: str) -> str:
+    return (
+        '            <label>'
+        f"<span>{escape(label)}</span>"
+        f'<input type="{escape(input_type)}" data-field="{escape(field)}">'
+        "</label>\n"
+    )
+
+
+def _select(label: str, field: str, options: list[str]) -> str:
+    options_html = "".join(f'<option value="{escape(option)}">{escape(option)}</option>' for option in options)
+    return (
+        '            <label>'
+        f"<span>{escape(label)}</span>"
+        f'<select data-field="{escape(field)}">{options_html}</select>'
+        "</label>\n"
+    )
+
+
+def _checkbox(label: str, field: str) -> str:
+    return (
+        '            <label class="checkbox-label">'
+        f'<input type="checkbox" data-field="{escape(field)}">'
+        f"<span>{escape(label)}</span>"
+        "</label>\n"
+    )
+
+
+def _textarea(label: str, field: str, placeholder: str) -> str:
+    return (
+        '          <label class="wide-field">'
+        f"<span>{escape(label)}</span>"
+        f'<textarea data-field="{escape(field)}" placeholder="{escape(placeholder)}"></textarea>'
+        "</label>\n"
     )
 
 
@@ -343,6 +422,126 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def _javascript(batch_id: str) -> str:
+    batch_json = json.dumps(batch_id)
+    return f"""
+(function () {{
+  const batchId = {batch_json};
+  const storageKey = `p3ExactSkillReviewResponses:${{batchId}}`;
+  const status = document.getElementById('responseStatus');
+  const forms = Array.from(document.querySelectorAll('.review-response-form'));
+
+  function setStatus(message) {{
+    if (!status) return;
+    status.textContent = message;
+  }}
+
+  function readStored() {{
+    try {{
+      return JSON.parse(localStorage.getItem(storageKey) || '{{}}');
+    }} catch (error) {{
+      return {{}};
+    }}
+  }}
+
+  function collectForm(form) {{
+    const response = {{
+      item_number: Number(form.dataset.itemNumber || 0),
+      queue_id: form.dataset.queueId || '',
+      question_id: form.dataset.questionId || '',
+      subpart_id: form.dataset.subpartId || '',
+      fields: {{}}
+    }};
+    form.querySelectorAll('[data-field]').forEach((control) => {{
+      const field = control.dataset.field;
+      response.fields[field] = control.type === 'checkbox' ? control.checked : control.value;
+    }});
+    return response;
+  }}
+
+  function collectPayload() {{
+    return {{
+      schema: 'exam_bank.p3_exact_skill.review_batch_responses',
+      schema_version: 1,
+      artifact_kind: 'human_review_response_draft',
+      batch_id: batchId,
+      saved_at: new Date().toISOString(),
+      warning: 'Draft human review notes only. Not reviewed evidence and not the reviewed-decision registry.',
+      responses: forms.map(collectForm)
+    }};
+  }}
+
+  function saveLocal() {{
+    const payload = collectPayload();
+    localStorage.setItem(storageKey, JSON.stringify(payload));
+    setStatus(`Saved in browser at ${{new Date().toLocaleTimeString()}}`);
+    return payload;
+  }}
+
+  function restoreLocal() {{
+    const payload = readStored();
+    const byQueueId = new Map((payload.responses || []).map((response) => [response.queue_id, response]));
+    forms.forEach((form) => {{
+      const response = byQueueId.get(form.dataset.queueId);
+      if (!response || !response.fields) return;
+      form.querySelectorAll('[data-field]').forEach((control) => {{
+        const value = response.fields[control.dataset.field];
+        if (value === undefined) return;
+        if (control.type === 'checkbox') {{
+          control.checked = Boolean(value);
+        }} else {{
+          control.value = value;
+        }}
+      }});
+    }});
+    if ((payload.responses || []).length) {{
+      setStatus(`Restored ${{payload.responses.length}} saved responses from this browser.`);
+    }}
+  }}
+
+  function exportJson() {{
+    const payload = saveLocal();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {{type: 'application/json'}});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${{batchId}}_review_responses.v1.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }}
+
+  async function submitToServer() {{
+    const payload = saveLocal();
+    try {{
+      const response = await fetch('/p3-exact-skill-review-responses', {{
+        method: 'POST',
+        headers: {{'Content-Type': 'application/json'}},
+        body: JSON.stringify(payload)
+      }});
+      if (!response.ok) {{
+        throw new Error(`HTTP ${{response.status}}`);
+      }}
+      const result = await response.json();
+      setStatus(`Saved to repo: ${{result.path || 'response file'}}`);
+    }} catch (error) {{
+      setStatus('Could not save to server. Use Export JSON, or run scripts/serve_p3_exact_skill_visual_review.py.');
+    }}
+  }}
+
+  forms.forEach((form) => {{
+    form.addEventListener('input', saveLocal);
+    form.addEventListener('change', saveLocal);
+  }});
+  document.getElementById('saveResponses')?.addEventListener('click', saveLocal);
+  document.getElementById('exportResponses')?.addEventListener('click', exportJson);
+  document.getElementById('submitResponses')?.addEventListener('click', submitToServer);
+  restoreLocal();
+}})();
+"""
+
+
 def _css() -> str:
     return """
 body {
@@ -389,6 +588,69 @@ code, pre {
   border-left: 4px solid #b45309;
   border-color: #fed7aa;
   background: #fff7ed;
+}
+.response-toolbar, .response-card {
+  border: 1px solid #d8d6cf;
+  border-radius: 8px;
+  background: #fafaf8;
+  padding: 12px;
+  margin-top: 14px;
+}
+.response-toolbar button {
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  font: inherit;
+  margin: 4px 8px 4px 0;
+  padding: 8px 10px;
+}
+#responseStatus {
+  color: #475569;
+  display: inline-block;
+  margin-left: 8px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.response-card label span,
+.response-card legend {
+  color: #475569;
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.response-card input[type="text"],
+.response-card select,
+.response-card textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font: inherit;
+  padding: 8px;
+  width: 100%;
+}
+.response-card textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+.response-card fieldset {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin: 12px 0;
+}
+.checkbox-label {
+  display: inline-flex;
+  gap: 6px;
+  margin: 4px 14px 4px 0;
+}
+.wide-field {
+  display: block;
+  margin: 10px 0;
 }
 .meta-grid {
   display: grid;

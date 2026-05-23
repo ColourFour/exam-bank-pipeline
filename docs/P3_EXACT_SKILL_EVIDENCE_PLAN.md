@@ -119,6 +119,20 @@ data/review/p3_exact_skill_batches/batch_0001_visual_review.html
 
 The visual builder reads the existing batch manifest, Markdown packet, and decision template. It also reads the queue JSON referenced by the manifest when available, so it can recover candidate region/topic, topic-routing context, Content Lab blocker context, proposed blockers, and recommended review action. The HTML is static and has no external network dependencies.
 
+The HTML includes draft response controls for each item. Responses autosave in browser `localStorage` under a batch-specific key and can be exported as JSON. To save responses directly into the repo while reviewing, serve the page with:
+
+```text
+.venv/bin/python scripts/serve_p3_exact_skill_visual_review.py --batch-id batch_0001
+```
+
+Open the printed local URL, fill in the response fields, and click `Submit to local save server`. The server writes:
+
+```text
+data/review/p3_exact_skill_batches/batch_0001_review_responses.v1.json
+```
+
+This response file is a draft human-review note artifact only. It is not the reviewed-decision registry and is not consumed as clean evidence.
+
 Asset refs are resolved against the repo root. If a ref such as `p3/...` is not present directly under the repo root, the builder also checks `output/p3/...`, which matches the current canonical crop layout. Existing assets are linked with relative paths from the HTML file so the packet can be opened locally without copying images. Missing assets are shown as visible warnings beside the review item.
 
 This visual packet is still not reviewed evidence. It does not edit `data/review/p3_exact_skill_reviewed_decisions.v1.json`, does not promote any candidate, does not change the decision template, and does not create:

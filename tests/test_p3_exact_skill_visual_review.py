@@ -119,6 +119,26 @@ def test_visual_review_renders_cross_topic_review_section(tmp_path: Path) -> Non
     assert "Supporting skills are not automatically reviewed source evidence" in result["html"]
 
 
+def test_visual_review_includes_response_capture_controls(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path)
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    html = result["html"]
+    assert "Your Review Response" in html
+    assert "data-field=\"route_status\"" in html
+    assert "data-field=\"evidence_basis\"" in html
+    assert "p3ExactSkillReviewResponses:batch_test" in html
+    assert "/p3-exact-skill-review-responses" in html
+    assert "Export JSON" in html
+
+
 def test_dry_run_does_not_write_files(tmp_path: Path) -> None:
     paths = _write_visual_fixture(tmp_path)
     output = paths["batch_dir"] / "batch_test_visual_review.html"
@@ -138,6 +158,18 @@ def test_dry_run_does_not_write_files(tmp_path: Path) -> None:
 def test_visual_review_cli_help_exits_successfully() -> None:
     result = subprocess.run(
         [sys.executable, "scripts/build_p3_exact_skill_visual_review_packet.py", "--help"],
+        cwd=Path.cwd(),
+        text=True,
+        capture_output=True,
+    )
+
+    assert result.returncode == 0
+    assert "usage:" in result.stdout
+
+
+def test_visual_review_save_server_cli_help_exits_successfully() -> None:
+    result = subprocess.run(
+        [sys.executable, "scripts/serve_p3_exact_skill_visual_review.py", "--help"],
         cwd=Path.cwd(),
         text=True,
         capture_output=True,
