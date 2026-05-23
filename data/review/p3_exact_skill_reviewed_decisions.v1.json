@@ -1,0 +1,200 @@
+{
+  "schema": "exam_bank.p3_exact_skill.reviewed_decisions",
+  "schema_version": 1,
+  "artifact_kind": "manual_reviewed_decision_input",
+  "generated_at": "2026-05-23T00:00:00Z",
+  "source_question_bank_path": "output/json/question_bank.json",
+  "source_mark_events_path": "output/json/question_bank.mark_events.v1.json",
+  "source_p3_skill_map_path": "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
+  "record_count": 3,
+  "records": [
+    {
+      "evidence_id": "p3_exact_skill_review:v1:32spring21_q01:whole",
+      "question_id": "32spring21_q01",
+      "part_id": "whole",
+      "subpart_id": "32spring21_q01_whole",
+      "paper": "32spring21",
+      "session": "March",
+      "variant": "32",
+      "reviewed_source_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "reviewed_region": null,
+      "route_status": "review_needed",
+      "source_question_asset_refs": [
+        {
+          "path": "p3/32spring21/questions/q01.png",
+          "sha256": "c9501d9ad5e2ab9b8d4287376b05438a6e24f097a45e32ea9bd018e9d8a7950e",
+          "verified": false
+        }
+      ],
+      "source_mark_scheme_asset_refs": [
+        {
+          "path": "p3/32spring21/mark_scheme/q01.png",
+          "sha256": "76c38d5fbaff89b448f9791f90c8089b5750397fdd3cdbc232f726925854356b",
+          "verified": false
+        }
+      ],
+      "mark_event_refs": [
+        {
+          "event_id": "32spring21_q01_me0001",
+          "source": "output/json/question_bank.mark_events.v1.json",
+          "review_status": "advisory"
+        },
+        {
+          "event_id": "32spring21_q01_me0002",
+          "source": "output/json/question_bank.mark_events.v1.json",
+          "review_status": "advisory"
+        }
+      ],
+      "evidence_basis": {
+        "basis_type": "review_seed_from_advisory_inputs",
+        "advisory_inputs_used": [
+          "mark_events",
+          "p3_question_skill_mapping_candidate"
+        ],
+        "review_notes": "Candidate exact-skill link is plausible, but no reviewer has verified the canonical question and mark-scheme images as clean exact-skill evidence."
+      },
+      "blockers": [
+        "source_images_not_human_verified",
+        "exact_skill_not_human_approved",
+        "mark_events_advisory_only"
+      ],
+      "allowed_use_cases": {
+        "mastery": false,
+        "guardian": false,
+        "export": false,
+        "source_backed_examples": false,
+        "candidate_generation": false
+      },
+      "reviewer": {
+        "review_status": "review_needed",
+        "reviewed_by": "",
+        "reviewed_at": ""
+      },
+      "provenance": {
+        "decision_source": "Phase 1 conservative seed fixture",
+        "timestamp": "2026-05-23T00:00:00Z",
+        "notes": "This is manually curated review input, not generated Asterion output."
+      }
+    },
+    {
+      "evidence_id": "p3_exact_skill_review:v1:32spring21_q02:whole",
+      "question_id": "32spring21_q02",
+      "part_id": "whole",
+      "subpart_id": "32spring21_q02_whole",
+      "paper": "32spring21",
+      "session": "March",
+      "variant": "32",
+      "reviewed_source_skill_ids": [],
+      "reviewed_region": null,
+      "route_status": "thin",
+      "source_question_asset_refs": [
+        {
+          "path": "p3/32spring21/questions/q02.png",
+          "sha256": "9a66c7801146d1fe974c70e42577e417b8e1ee26907465d98793f15c6ee7f8d4",
+          "verified": false
+        }
+      ],
+      "source_mark_scheme_asset_refs": [
+        {
+          "path": "p3/32spring21/mark_scheme/q02.png",
+          "sha256": "c8c784ddb2e0d74d3f2dadd4981d178825a2fe084e9a4be03b47d5eda2f10163",
+          "verified": false
+        }
+      ],
+      "mark_event_refs": [
+        {
+          "event_id": "32spring21_q02_me0001",
+          "source": "output/json/question_bank.mark_events.v1.json",
+          "review_status": "advisory"
+        }
+      ],
+      "evidence_basis": {
+        "basis_type": "insufficient_reviewed_skill_basis",
+        "review_notes": "Asset refs exist, but no reviewed P3 exact-skill decision has been made."
+      },
+      "blockers": [
+        "reviewed_source_skill_missing",
+        "source_images_not_human_verified"
+      ],
+      "allowed_use_cases": {
+        "mastery": false,
+        "guardian": false,
+        "export": false,
+        "source_backed_examples": false,
+        "candidate_generation": false
+      },
+      "reviewer": {
+        "review_status": "review_needed",
+        "reviewed_by": "",
+        "reviewed_at": ""
+      },
+      "provenance": {
+        "decision_source": "Phase 1 conservative seed fixture",
+        "timestamp": "2026-05-23T00:00:00Z",
+        "notes": "Included to exercise non-clean review-decision validation."
+      }
+    },
+    {
+      "evidence_id": "p3_exact_skill_review:v1:31summer21_q01:whole",
+      "question_id": "31summer21_q01",
+      "part_id": "whole",
+      "subpart_id": "31summer21_q01_whole",
+      "paper": "31summer21",
+      "session": "MayJune",
+      "variant": "31",
+      "reviewed_source_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "reviewed_region": null,
+      "route_status": "blocked",
+      "source_question_asset_refs": [
+        {
+          "path": "p3/31summer21/questions/q01.png",
+          "sha256": "ddc849623a326c6a2a2b5b36464da5e6d2fb2168c06f03b12e7a3e267533984b",
+          "verified": false
+        }
+      ],
+      "source_mark_scheme_asset_refs": [
+        {
+          "path": "p3/31summer21/mark_scheme/q01.png",
+          "sha256": "42f883be6fe6c1865d562389b1978337a9ecb673857342e6e1471ee7a7a95c5d",
+          "verified": false
+        }
+      ],
+      "mark_event_refs": [
+        {
+          "event_id": "31summer21_q01_me0001",
+          "source": "output/json/question_bank.mark_events.v1.json",
+          "review_status": "advisory"
+        }
+      ],
+      "evidence_basis": {
+        "basis_type": "blocked_until_image_review",
+        "review_notes": "Candidate skill and mark events are advisory review inputs only; this record intentionally cannot support mastery or generation."
+      },
+      "blockers": [
+        "exact_skill_not_human_approved",
+        "mark_events_advisory_only"
+      ],
+      "allowed_use_cases": {
+        "mastery": false,
+        "guardian": false,
+        "export": false,
+        "source_backed_examples": false,
+        "candidate_generation": false
+      },
+      "reviewer": {
+        "review_status": "blocked",
+        "reviewed_by": "",
+        "reviewed_at": ""
+      },
+      "provenance": {
+        "decision_source": "Phase 1 conservative seed fixture",
+        "timestamp": "2026-05-23T00:00:00Z",
+        "notes": "No clean reviewed evidence is asserted by this fixture."
+      }
+    }
+  ]
+}
