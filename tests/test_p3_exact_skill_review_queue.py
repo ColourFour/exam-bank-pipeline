@@ -134,6 +134,103 @@ def test_advisory_only_mark_events_do_not_produce_clean_reviewed_evidence() -> N
     assert item["reviewed_decision_status"] == "not_reviewed"
 
 
+def test_dydx_alone_does_not_imply_parametric_implicit_differentiation() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={
+            "evidence": {
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "question_text_snippet": "Find dy/dx at the point where x = 1.",
+                "mark_scheme_text_snippet": "Differentiate and substitute x = 1.",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "ambiguous_candidate"
+    assert "weak_parametric_implicit_evidence_dydx_only" in blockers
+    assert action == "verify_de_vs_implicit_differentiation"
+
+
+def test_separation_of_variables_context_downgrades_parametric_candidate() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={
+            "confidence": "high",
+            "review_required": False,
+            "primary_topic_id": "9709_p3_topic_differential_equations",
+        },
+        mapping={
+            "evidence": {
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "question_text_snippet": "Solve the differential equation dy/dx = e^y sin x.",
+                "mark_scheme_text_snippet": "Separate variables correctly and integrate both sides.",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "ambiguous_candidate"
+    assert "possible_differential_equation_not_parametric_or_implicit" in blockers
+    assert action == "verify_de_vs_implicit_differentiation"
+
+
+def test_queue_item_with_separation_context_is_not_clean_parametric_candidate() -> None:
+    item = build_review_queue_item(
+        mapping={
+            **_mapping(),
+            "primary_skill_ids": ["9709_p3_3_4_parametric_implicit_differentiation"],
+            "prerequisite_skill_ids": ["9709_p3_3_4_derivative_rules"],
+            "evidence": {
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "question_text_snippet": "The variables x and y satisfy the differential equation dy/dx = y sin x.",
+                "mark_scheme_text_snippet": "Separate variables correctly, integrate, and use x = 0, y = 1.",
+            },
+        },
+        question=_question(),
+        topic_route={"primary_topic_id": "9709_p3_topic_differential_equations", "confidence": "high"},
+        mark_event_record=_mark_events(),
+    )
+
+    assert item["proposed_route_status"] == "ambiguous_candidate"
+    assert item["recommended_review_action"] == "verify_de_vs_implicit_differentiation"
+    assert "possible_differential_equation_not_parametric_or_implicit" in item["proposed_blockers"]
+
+
+def test_valid_implicit_differentiation_candidate_is_not_blocked_by_boundary_rule() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={
+            "evidence": {
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "question_text_snippet": "The curve is defined implicitly by x^2 + xy + y^2 = 7.",
+                "mark_scheme_text_snippet": "Differentiate implicitly and collect terms in dy/dx; isolate dy/dx.",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "clean_candidate"
+    assert "possible_differential_equation_not_parametric_or_implicit" not in blockers
+    assert "weak_parametric_implicit_evidence_dydx_only" not in blockers
+    assert action == "review_assets_and_skill"
+
+
 def test_duplicate_reviewed_registry_scopes_are_surfaced(tmp_path: Path) -> None:
     paths = _write_queue_fixture(tmp_path, duplicate_reviewed=True)
 

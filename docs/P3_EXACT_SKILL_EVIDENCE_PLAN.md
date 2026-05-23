@@ -129,6 +129,14 @@ output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
 
 Use the visual packet to inspect images and make the human decision. Approved decisions must still be manually written or merged into the reviewed-decision registry, with project-wording `evidence_basis`, explicit `route_status`, reviewer metadata, blockers, and allowed use cases. The reviewed-decision validator remains the gate before any future sidecar exporter can consume those records.
 
+### Known Skill-Boundary Risk: DE vs Parametric/Implicit Differentiation
+
+Reviewers must not classify a record as parametric/implicit differentiation merely because `dy/dx` appears. Parametric/implicit differentiation should be used only when the task requires differentiating a parametric relation or an implicit relation where `y` cannot simply be treated as an explicit function of `x`, especially where `dy/dx` must be isolated from multiple differentiable terms.
+
+If the first meaningful mark-scheme method step is separation of variables, integration of separated terms, solving a differential equation, or applying an initial/boundary condition to a differential-equation solution, the item should route to differential equations / separation of variables instead. Mark-scheme method order is useful review context for distinguishing these cases, but OCR/native/advisory text still is not curriculum authority. Uncertain cases should remain `ambiguous` or `review_needed`, not `clean_candidate`.
+
+The review queue now flags this boundary with blockers such as `possible_differential_equation_not_parametric_or_implicit` or `weak_parametric_implicit_evidence_dydx_only` and recommended action `verify_de_vs_implicit_differentiation`.
+
 ## Purpose
 
 Asterion Content Lab needs a reviewed, image-backed evidence surface for exact P3 skill examples. The sidecar should answer a narrow question: which canonical question or part has been safely reviewed as evidence for one exact P3 skill, with stable question and mark-scheme image refs, explicit route status, provenance, blockers, and allowed runtime use cases?

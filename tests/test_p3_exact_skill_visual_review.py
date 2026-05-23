@@ -88,6 +88,21 @@ def test_generated_html_does_not_call_candidates_clean(tmp_path: Path) -> None:
     assert "route_status: clean" not in result["html"]
 
 
+def test_visual_review_surfaces_de_vs_implicit_warning_context(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path, de_vs_implicit_warning=True)
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    assert "possible_differential_equation_not_parametric_or_implicit" in result["html"]
+    assert "verify_de_vs_implicit_differentiation" in result["html"]
+
+
 def test_dry_run_does_not_write_files(tmp_path: Path) -> None:
     paths = _write_visual_fixture(tmp_path)
     output = paths["batch_dir"] / "batch_test_visual_review.html"
@@ -116,7 +131,12 @@ def test_visual_review_cli_help_exits_successfully() -> None:
     assert "usage:" in result.stdout
 
 
-def _write_visual_fixture(tmp_path: Path, *, write_images: bool = True) -> dict[str, Path]:
+def _write_visual_fixture(
+    tmp_path: Path,
+    *,
+    write_images: bool = True,
+    de_vs_implicit_warning: bool = False,
+) -> dict[str, Path]:
     repo_root = tmp_path / "repo"
     batch_dir = repo_root / "data" / "review" / "p3_exact_skill_batches"
     queue_path = repo_root / "reports" / "p3_exact_skill_review_queue.v1.json"
@@ -168,8 +188,14 @@ def _write_visual_fixture(tmp_path: Path, *, write_images: bool = True) -> dict[
                     "queue_id": "p3_exact_skill_review_queue:v1:q1:q1_whole",
                     "candidate_p3_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
                     "candidate_region_topic": {"topic_assignment_name": "Logarithmic and exponential functions"},
-                    "recommended_review_action": "review_assets_and_skill",
-                    "proposed_blockers": ["mark_events_advisory_only"],
+                    "recommended_review_action": (
+                        "verify_de_vs_implicit_differentiation" if de_vs_implicit_warning else "review_assets_and_skill"
+                    ),
+                    "proposed_blockers": [
+                        "possible_differential_equation_not_parametric_or_implicit"
+                        if de_vs_implicit_warning
+                        else "mark_events_advisory_only"
+                    ],
                     "asterion_candidate": {"generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved"]},
                     "topic_routing": {"confidence": "high"},
                 }

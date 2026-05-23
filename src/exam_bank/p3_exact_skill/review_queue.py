@@ -37,7 +37,10 @@ REVIEW_ACTIONS = {
     "defer_visual_dependency",
     "already_reviewed",
     "needs_human_math_review",
+    "verify_de_vs_implicit_differentiation",
 }
+
+PARAMETRIC_IMPLICIT_SKILL_ID = "9709_p3_3_4_parametric_implicit_differentiation"
 
 
 def build_p3_exact_skill_review_queue(
@@ -308,6 +311,13 @@ def classify_review_queue_item(
         blockers.append("text_or_ocr_not_authoritative")
     if quality_gate and quality_gate.get("visual_required") is True:
         blockers.append("visual_dependency")
+    parametric_boundary_blocker = _parametric_implicit_boundary_blocker(
+        p3_skill_ids=p3_skill_ids,
+        topic_route=topic_route,
+        mapping=mapping,
+    )
+    if parametric_boundary_blocker:
+        blockers.append(parametric_boundary_blocker)
 
     if "missing_question_asset" in blockers:
         return "blocked_candidate", blockers, "reject_missing_question_asset"
@@ -317,6 +327,8 @@ def classify_review_queue_item(
         return "blocked_candidate", blockers, "reject_p1_prerequisite_only"
     if "no_candidate_p3_skill" in blockers:
         return "blocked_candidate", blockers, "needs_human_math_review"
+    if parametric_boundary_blocker:
+        return "ambiguous_candidate", blockers, "verify_de_vs_implicit_differentiation"
     if "mixed_or_ambiguous_topic" in blockers or len(p3_skill_ids) > 1:
         return "ambiguous_candidate", blockers, "defer_ambiguous_skill"
     if "visual_dependency" in blockers and "question_crop_not_high_confidence" in blockers:
@@ -458,6 +470,9 @@ def reviewer_checklist_for_action(action: str, blockers: list[str]) -> list[str]
         checklist.append("Split the evidence by part or subpart before approving an exact skill.")
     if action == "verify_mark_scheme_alignment":
         checklist.append("Check that mark-event refs align to the proposed part/subpart.")
+    if action == "verify_de_vs_implicit_differentiation":
+        checklist.append("Check whether the method is separation of variables or an actual parametric/implicit differentiation task.")
+        checklist.append("Do not approve parametric/implicit differentiation from dy/dx notation alone.")
     if action == "defer_visual_dependency" or "visual_dependency" in blockers:
         checklist.append("Inspect visual/diagram dependency manually; text is insufficient.")
     if action.startswith("reject_"):
@@ -613,6 +628,65 @@ def _topic_ambiguous(topic_route: dict[str, Any], mapping: dict[str, Any]) -> bo
         or evidence.get("topic_uncertain")
         or _text(evidence.get("topic_confidence")) == "low"
     )
+
+
+def _parametric_implicit_boundary_blocker(
+    *,
+    p3_skill_ids: list[str],
+    topic_route: dict[str, Any],
+    mapping: dict[str, Any],
+) -> str | None:
+    if PARAMETRIC_IMPLICIT_SKILL_ID not in p3_skill_ids:
+        return None
+    evidence = mapping.get("evidence") if isinstance(mapping.get("evidence"), dict) else {}
+    text = _normalised_evidence_text(evidence)
+    if _has_separable_de_context(text, topic_route):
+        return "possible_differential_equation_not_parametric_or_implicit"
+    if _has_dydx_signal(text) and not _has_strong_parametric_or_implicit_context(text):
+        return "weak_parametric_implicit_evidence_dydx_only"
+    return None
+
+
+def _normalised_evidence_text(evidence: dict[str, Any]) -> str:
+    pieces = [
+        evidence.get("question_text_snippet"),
+        evidence.get("mark_scheme_text_snippet"),
+    ]
+    return " ".join(_text(piece).lower() for piece in pieces if _text(piece))
+
+
+def _has_separable_de_context(text: str, topic_route: dict[str, Any]) -> bool:
+    routed_to_de = _text(topic_route.get("primary_topic_id")) == "9709_p3_topic_differential_equations"
+    method_terms = (
+        "separate variables",
+        "separated variables",
+        "separation of variables",
+        "solve the differential equation",
+        "differential equation",
+        "initial condition",
+        "boundary condition",
+    )
+    return routed_to_de or any(term in text for term in method_terms)
+
+
+def _has_dydx_signal(text: str) -> bool:
+    dydx_terms = ("dy/dx", "d y/d x", "dy)/(dx", "ddyx", "dydx", "dx/dy")
+    return any(term in text for term in dydx_terms)
+
+
+def _has_strong_parametric_or_implicit_context(text: str) -> bool:
+    strong_terms = (
+        "parametric",
+        "parameter",
+        "in terms of t",
+        "dx/dt",
+        "dy/dt",
+        "implicit",
+        "implicitly",
+        "dy/dx must be isolated",
+        "isolate dy/dx",
+    )
+    return any(term in text for term in strong_terms)
 
 
 def _mark_events_advisory_only(mark_event_record: dict[str, Any]) -> bool:

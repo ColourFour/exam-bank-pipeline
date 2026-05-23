@@ -4,7 +4,7 @@ This packet is for human review only. It does not assert clean evidence, does no
 
 ## Batch Metadata
 
-- Generated at: `2026-05-23T02:04:19Z`
+- Generated at: `2026-05-23T04:13:07Z`
 - Source queue: `reports/p3_exact_skill_review_queue.v1.json`
 - Reviewed registry checked for exclusions: `data/review/p3_exact_skill_reviewed_decisions.v1.json`
 - Selection status: `clean_candidate`
@@ -372,35 +372,35 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 8. `32spring23_q09` / `32spring23_q09_whole`
+### 8. `32spring23_q05` / `32spring23_q05_b`
 
-- Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q09:32spring23_q09_whole`
-- Question ID: `32spring23_q09`
-- Part/subpart: `whole` / `32spring23_q09_whole`
+- Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b`
+- Question ID: `32spring23_q05`
+- Part/subpart: `b` / `32spring23_q05_b`
 - Paper/session/variant: `32spring23` / `March` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differential_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q09_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 7}`
+- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q05_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32spring23/questions/q09.png", "sha256": "8c426942d6c1249b91c6873338cf21ff33badaf8cc62fa677b5c1a528ec6a7ca"}`
+- `{"exists": true, "path": "p3/32spring23/questions/q05.png", "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32spring23/mark_scheme/q09.png", "sha256": "791d5a0c6351f1687366d22a5fa312dff999a64206755a86b98bf632c4b032d0"}`
+- `{"exists": true, "path": "p3/32spring23/mark_scheme/q05.png", "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0002", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0005", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q09_me0007", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0005", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0006", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0007", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -412,49 +412,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 9. `33autumn23_q08` / `33autumn23_q08_whole`
-
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q08:33autumn23_q08_whole`
-- Question ID: `33autumn23_q08`
-- Part/subpart: `whole` / `33autumn23_q08_whole`
-- Paper/session/variant: `33autumn23` / `November` / `3`
-- Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
-- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differential_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q08_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 9}`
-- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
-- Reconciliation flags: none
-- Recommended review action: `review_assets_and_skill`
-
-Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q08.png", "sha256": "0deebfe954767bf7c4a9b0582286e27d6e92e15d994b7aff3b3e991f1f0fef58"}`
-
-Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q08.png", "sha256": "33d98a3306e1878c905aa09c50fbb69001e8032139b21ad809b06f1cb07f4d93"}`
-
-Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0002", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0003", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0004", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0005", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0007", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0008", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q08_me0009", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-
-Reviewer checklist:
-- [ ] Inspect the canonical question image.
-- [ ] Inspect the canonical mark-scheme image.
-- [ ] Confirm the exact P3 skill.
-- [ ] Confirm whether whole-question or part-level scope is safe.
-- [ ] Confirm whether P1 prerequisite/support-only material is involved.
-- [ ] Confirm allowed use cases.
-- [ ] Write evidence_basis in project wording.
-- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
-
-### 10. `32summer22_q10` / `32summer22_q10_d`
+### 9. `32summer22_q10` / `32summer22_q10_d`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d`
 - Question ID: `32summer22_q10`
@@ -504,7 +462,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 11. `32autumn23_q06` / `32autumn23_q06_c`
+### 10. `32autumn23_q06` / `32autumn23_q06_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c`
 - Question ID: `32autumn23_q06`
@@ -546,7 +504,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 12. `33summer23_q04` / `33summer23_q04_whole`
+### 11. `33summer23_q04` / `33summer23_q04_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole`
 - Question ID: `33summer23_q04`
@@ -587,88 +545,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 13. `32summer23_q08` / `32summer23_q08_b`
-
-- Queue ID: `p3_exact_skill_review_queue:v1:32summer23_q08:32summer23_q08_b`
-- Question ID: `32summer23_q08`
-- Part/subpart: `b` / `32summer23_q08_b`
-- Paper/session/variant: `32summer23` / `June` / `2`
-- Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
-- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differential_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32summer23_q08_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 1}`
-- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
-- Reconciliation flags: none
-- Recommended review action: `review_assets_and_skill`
-
-Question asset refs:
-- `{"exists": true, "path": "p3/32summer23/questions/q08.png", "sha256": "7e504f2efb92cb536d2d7e7dde58afb13fe3ee3f04bc7d16309c8614f1b8b45c"}`
-
-Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32summer23/mark_scheme/q08.png", "sha256": "ab851474db773498fae2765a13c95224fffb37c30c9dc3516469e0fe9e14cfe9"}`
-
-Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0003", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0005", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0006", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0007", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32summer23_q08_me0008", "mark_code": "B1FT", "part_path": ["b"], "review_status": "advisory"}`
-
-Reviewer checklist:
-- [ ] Inspect the canonical question image.
-- [ ] Inspect the canonical mark-scheme image.
-- [ ] Confirm the exact P3 skill.
-- [ ] Confirm whether whole-question or part-level scope is safe.
-- [ ] Confirm whether P1 prerequisite/support-only material is involved.
-- [ ] Confirm allowed use cases.
-- [ ] Write evidence_basis in project wording.
-- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
-
-### 14. `32spring23_q05` / `32spring23_q05_b`
-
-- Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b`
-- Question ID: `32spring23_q05`
-- Part/subpart: `b` / `32spring23_q05_b`
-- Paper/session/variant: `32spring23` / `March` / `2`
-- Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
-- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q05_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
-- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
-- Reconciliation flags: none
-- Recommended review action: `review_assets_and_skill`
-
-Question asset refs:
-- `{"exists": true, "path": "p3/32spring23/questions/q05.png", "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"}`
-
-Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32spring23/mark_scheme/q05.png", "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"}`
-
-Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0005", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0006", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0007", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-
-Reviewer checklist:
-- [ ] Inspect the canonical question image.
-- [ ] Inspect the canonical mark-scheme image.
-- [ ] Confirm the exact P3 skill.
-- [ ] Confirm whether whole-question or part-level scope is safe.
-- [ ] Confirm whether P1 prerequisite/support-only material is involved.
-- [ ] Confirm allowed use cases.
-- [ ] Write evidence_basis in project wording.
-- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
-
-### 15. `31autumn21_q07` / `31autumn21_q07_c`
+### 12. `31autumn21_q07` / `31autumn21_q07_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c`
 - Question ID: `31autumn21_q07`
@@ -710,7 +587,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 16. `33autumn23_q03` / `33autumn23_q03_whole`
+### 13. `33autumn23_q03` / `33autumn23_q03_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole`
 - Question ID: `33autumn23_q03`
@@ -754,7 +631,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 17. `32summer23_q07` / `32summer23_q07_b`
+### 14. `32summer23_q07` / `32summer23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b`
 - Question ID: `32summer23_q07`
@@ -797,7 +674,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 18. `31summer24_q01` / `31summer24_q01_whole`
+### 15. `31summer24_q01` / `31summer24_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole`
 - Question ID: `31summer24_q01`
@@ -834,7 +711,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 19. `33summer23_q06` / `33summer23_q06_b`
+### 16. `33summer23_q06` / `33summer23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b`
 - Question ID: `33summer23_q06`
@@ -878,7 +755,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 20. `33autumn23_q07` / `33autumn23_q07_b`
+### 17. `33autumn23_q07` / `33autumn23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b`
 - Question ID: `33autumn23_q07`
@@ -920,7 +797,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 21. `32spring23_q10` / `32spring23_q10_c`
+### 18. `32spring23_q10` / `32spring23_q10_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c`
 - Question ID: `32spring23_q10`
@@ -962,7 +839,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 22. `33autumn23_q06` / `33autumn23_q06_b`
+### 19. `33autumn23_q06` / `33autumn23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b`
 - Question ID: `33autumn23_q06`
@@ -1003,7 +880,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 23. `33autumn23_q01` / `33autumn23_q01_whole`
+### 20. `33autumn23_q01` / `33autumn23_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole`
 - Question ID: `33autumn23_q01`
@@ -1044,7 +921,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 24. `32autumn23_q04` / `32autumn23_q04_b`
+### 21. `32autumn23_q04` / `32autumn23_q04_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b`
 - Question ID: `32autumn23_q04`
@@ -1085,7 +962,7 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
-### 25. `32spring23_q02` / `32spring23_q02_b`
+### 22. `32spring23_q02` / `32spring23_q02_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b`
 - Question ID: `32spring23_q02`
@@ -1114,6 +991,119 @@ Advisory-only mark-event refs:
 - `{"advisory_only": true, "event_id": "32spring23_q02_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
 - `{"advisory_only": true, "event_id": "32spring23_q02_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 - `{"advisory_only": true, "event_id": "32spring23_q02_me0007", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+
+Reviewer checklist:
+- [ ] Inspect the canonical question image.
+- [ ] Inspect the canonical mark-scheme image.
+- [ ] Confirm the exact P3 skill.
+- [ ] Confirm whether whole-question or part-level scope is safe.
+- [ ] Confirm whether P1 prerequisite/support-only material is involved.
+- [ ] Confirm allowed use cases.
+- [ ] Write evidence_basis in project wording.
+- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
+
+### 23. `31summer24_q07` / `31summer24_q07_b`
+
+- Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b`
+- Question ID: `31summer24_q07`
+- Part/subpart: `b` / `31summer24_q07_b`
+- Paper/session/variant: `31summer24` / `June` / `1`
+- Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q07_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 2}`
+- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
+- Reconciliation flags: none
+- Recommended review action: `review_assets_and_skill`
+
+Question asset refs:
+- `{"exists": true, "path": "p3/31summer24/questions/q07.png", "sha256": "ddbe73ff02bfd9c7c14c95a9e81f849525610a775c469dcf5bbe0f34a71aec9f"}`
+
+Mark-scheme asset refs:
+- `{"exists": true, "path": "p3/31summer24/mark_scheme/q07.png", "sha256": "b5befbb3e3dc2de11155cee164849c3122a400e64a0766353503f471e8823262"}`
+
+Advisory-only mark-event refs:
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0002", "mark_code": "B1FT", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0004", "mark_code": "B1FT", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q07_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+
+Reviewer checklist:
+- [ ] Inspect the canonical question image.
+- [ ] Inspect the canonical mark-scheme image.
+- [ ] Confirm the exact P3 skill.
+- [ ] Confirm whether whole-question or part-level scope is safe.
+- [ ] Confirm whether P1 prerequisite/support-only material is involved.
+- [ ] Confirm allowed use cases.
+- [ ] Write evidence_basis in project wording.
+- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
+
+### 24. `31summer24_q04` / `31summer24_q04_b`
+
+- Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b`
+- Question ID: `31summer24_q04`
+- Part/subpart: `b` / `31summer24_q04_b`
+- Paper/session/variant: `31summer24` / `June` / `1`
+- Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q04_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 2}`
+- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
+- Reconciliation flags: none
+- Recommended review action: `review_assets_and_skill`
+
+Question asset refs:
+- `{"exists": true, "path": "p3/31summer24/questions/q04.png", "sha256": "45b9960f8e8233dc6d8044de904914d246113f08b97fea5346753b5df0cd98c7"}`
+
+Mark-scheme asset refs:
+- `{"exists": true, "path": "p3/31summer24/mark_scheme/q04.png", "sha256": "313c4569535f9715209434b86c896cccc13a6561b88da1fe88c38a2ec149fda2"}`
+
+Advisory-only mark-event refs:
+- `{"advisory_only": true, "event_id": "31summer24_q04_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q04_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q04_me0003", "mark_code": "B1FT", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q04_me0004", "mark_code": "B1FT", "part_path": ["b"], "review_status": "advisory"}`
+
+Reviewer checklist:
+- [ ] Inspect the canonical question image.
+- [ ] Inspect the canonical mark-scheme image.
+- [ ] Confirm the exact P3 skill.
+- [ ] Confirm whether whole-question or part-level scope is safe.
+- [ ] Confirm whether P1 prerequisite/support-only material is involved.
+- [ ] Confirm allowed use cases.
+- [ ] Write evidence_basis in project wording.
+- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
+
+### 25. `31summer24_q03` / `31summer24_q03_whole`
+
+- Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole`
+- Question ID: `31summer24_q03`
+- Part/subpart: `whole` / `31summer24_q03_whole`
+- Paper/session/variant: `31summer24` / `June` / `1`
+- Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_2_log_exponential_equations`, `9709_p1_functions_domain_range_one_one`
+- Candidate region/topic: `{"mapping_source_topic": "logarithms_and_exponentials", "subtopic_id": "9709_p3_subtopic_log_exponential_equations", "subtopic_name": "Logarithmic and exponential equations", "topic_assignment_id": "9709_p3_topic_logarithmic_and_exponential_functions", "topic_assignment_name": "Logarithmic and exponential functions", "topic_routing_primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
+- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
+- Reconciliation flags: none
+- Recommended review action: `review_assets_and_skill`
+
+Question asset refs:
+- `{"exists": true, "path": "p3/31summer24/questions/q03.png", "sha256": "9882c76544e320bd0f4583087244b7ecdf420296828589e5be47295fe0649e8e"}`
+
+Mark-scheme asset refs:
+- `{"exists": true, "path": "p3/31summer24/mark_scheme/q03.png", "sha256": "56ed72b3dd6e8da01d404392070a6b851571db55bf87f15de2d1de55c5b3d6a7"}`
+
+Advisory-only mark-event refs:
+- `{"advisory_only": true, "event_id": "31summer24_q03_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q03_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q03_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q03_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
