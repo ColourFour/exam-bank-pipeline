@@ -137,6 +137,16 @@ If the first meaningful mark-scheme method step is separation of variables, inte
 
 The review queue now flags this boundary with blockers such as `possible_differential_equation_not_parametric_or_implicit` or `weak_parametric_implicit_evidence_dydx_only` and recommended action `verify_de_vs_implicit_differentiation`.
 
+### Cross-Topic Review Rules
+
+Cross-topic context does not automatically mean a candidate is wrong. Many P3 questions use one method inside another, such as differentiating first and then solving a trigonometric equation, or using integration inside a differential-equation solution. The review queue therefore records cross-topic fields including `cross_topic_status`, `primary_candidate_skill_ids`, `supporting_candidate_skill_ids`, `topic_routing_topic_ids`, `topic_routing_alignment`, `cross_topic_notes`, and `recommended_scope`.
+
+`cross_topic_reviewable` means the item can remain in a human review packet, but the reviewer must decide which exact skill is the target and whether the supporting context makes the current scope unsafe. Supporting skills are not mastery evidence unless they are reviewed directly as the actual target skill. Whole-question evidence should not be marked clean if only one part supports the exact skill; split by part or subpart where possible.
+
+If a question requires method A and then method B, the reviewer must decide whether reviewed evidence is for A, B, both as separate records, or too mixed for clean use. A topic-routing mismatch should produce a review cue, not automatic rejection, unless method context clearly indicates misclassification. `cross_topic_split_needed` means the current whole-question scope is too broad for a clean exact-skill decision. `conflict_needs_review` is reserved for genuine unsafe boundary patterns.
+
+The differential-equation vs parametric/implicit guard remains a special known-risk boundary: `dy/dx` alone is insufficient for parametric/implicit differentiation, and separation of variables should route toward differential-equation review.
+
 ## Purpose
 
 Asterion Content Lab needs a reviewed, image-backed evidence surface for exact P3 skill examples. The sidecar should answer a narrow question: which canonical question or part has been safely reviewed as evidence for one exact P3 skill, with stable question and mark-scheme image refs, explicit route status, provenance, blockers, and allowed runtime use cases?

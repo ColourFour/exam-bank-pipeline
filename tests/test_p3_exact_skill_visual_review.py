@@ -103,6 +103,22 @@ def test_visual_review_surfaces_de_vs_implicit_warning_context(tmp_path: Path) -
     assert "verify_de_vs_implicit_differentiation" in result["html"]
 
 
+def test_visual_review_renders_cross_topic_review_section(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path, cross_topic_status="cross_topic_reviewable")
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    assert "Cross-topic Review" in result["html"]
+    assert "cross_topic_reviewable" in result["html"]
+    assert "Supporting skills are not automatically reviewed source evidence" in result["html"]
+
+
 def test_dry_run_does_not_write_files(tmp_path: Path) -> None:
     paths = _write_visual_fixture(tmp_path)
     output = paths["batch_dir"] / "batch_test_visual_review.html"
@@ -136,6 +152,7 @@ def _write_visual_fixture(
     *,
     write_images: bool = True,
     de_vs_implicit_warning: bool = False,
+    cross_topic_status: str = "single_skill_candidate",
 ) -> dict[str, Path]:
     repo_root = tmp_path / "repo"
     batch_dir = repo_root / "data" / "review" / "p3_exact_skill_batches"
@@ -173,6 +190,16 @@ def _write_visual_fixture(
                     "session": "June",
                     "variant": "1",
                     "suggested_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                    "suggested_primary_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                    "suggested_supporting_skill_ids": (
+                        ["9709_p3_3_3_trigonometric_equations"]
+                        if cross_topic_status == "cross_topic_reviewable"
+                        else []
+                    ),
+                    "suggested_cross_topic_status": cross_topic_status,
+                    "suggested_recommended_scope": (
+                        "reviewer_decide" if cross_topic_status == "cross_topic_reviewable" else "whole_question"
+                    ),
                     "source_question_asset_refs": [{"path": "p3/test/questions/q1.png"}],
                     "source_mark_scheme_asset_refs": [{"path": "p3/test/mark_scheme/q1.png"}],
                     "mark_event_refs": [{"event_id": "q1_me0001", "review_status": "advisory", "advisory_only": True}],
@@ -187,7 +214,25 @@ def _write_visual_fixture(
                 {
                     "queue_id": "p3_exact_skill_review_queue:v1:q1:q1_whole",
                     "candidate_p3_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                    "primary_candidate_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                    "supporting_candidate_skill_ids": (
+                        ["9709_p3_3_3_trigonometric_equations"]
+                        if cross_topic_status == "cross_topic_reviewable"
+                        else []
+                    ),
                     "candidate_region_topic": {"topic_assignment_name": "Logarithmic and exponential functions"},
+                    "cross_topic_status": "conflict_needs_review" if de_vs_implicit_warning else cross_topic_status,
+                    "topic_routing_topic_ids": ["9709_p3_topic_trigonometry"],
+                    "topic_routing_alignment": (
+                        "conflicting"
+                        if de_vs_implicit_warning
+                        else "supporting_topic"
+                        if cross_topic_status == "cross_topic_reviewable"
+                        else "aligned"
+                    ),
+                    "cross_topic_notes": ["Supporting candidate skills are review context only."],
+                    "recommended_scope": "reviewer_decide",
+                    "reviewer_cross_topic_checklist": ["Identify the main skill being assessed."],
                     "recommended_review_action": (
                         "verify_de_vs_implicit_differentiation" if de_vs_implicit_warning else "review_assets_and_skill"
                     ),

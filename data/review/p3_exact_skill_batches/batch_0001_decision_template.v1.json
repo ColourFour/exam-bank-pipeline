@@ -1,7 +1,7 @@
 {
   "artifact_kind": "human_editable_review_batch_template",
   "batch_id": "batch_0001",
-  "generated_at": "2026-05-23T04:13:07Z",
+  "generated_at": "2026-05-23T04:39:10Z",
   "record_count": 25,
   "records": [
     {
@@ -302,7 +302,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -332,8 +332,16 @@
         }
       ],
       "subpart_id": "33summer23_q11_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "3"
     },
@@ -455,7 +463,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn21_q10:33autumn21_q10_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -485,8 +493,16 @@
         }
       ],
       "subpart_id": "33autumn21_q10_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_6_root_location"
       ],
       "variant": "3"
     },
@@ -707,7 +723,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -737,8 +753,16 @@
         }
       ],
       "subpart_id": "32autumn23_q09_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "2"
     },
@@ -842,7 +866,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -872,8 +896,16 @@
         }
       ],
       "subpart_id": "33autumn23_q10_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_4_derivative_rules"
       ],
       "variant": "3"
     },
@@ -1094,7 +1126,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1124,8 +1156,16 @@
         }
       ],
       "subpart_id": "33summer23_q09_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_coordinate_line_geometry"
       ],
       "variant": "3"
     },
@@ -1247,7 +1287,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn21_q11:32autumn21_q11_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1277,8 +1317,16 @@
         }
       ],
       "subpart_id": "32autumn21_q11_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_6_root_location"
       ],
       "variant": "2"
     },
@@ -1382,7 +1430,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1412,8 +1460,16 @@
         }
       ],
       "subpart_id": "32summer23_q06_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_6_root_location"
       ],
       "variant": "2"
     },
@@ -1499,7 +1555,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1529,8 +1585,16 @@
         }
       ],
       "subpart_id": "32spring23_q05_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_4_derivative_rules"
       ],
       "variant": "2"
     },
@@ -1706,7 +1770,7 @@
       "part_id": "d",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1736,8 +1800,16 @@
         }
       ],
       "subpart_id": "32summer22_q10_d",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "2"
     },
@@ -1841,7 +1913,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1871,8 +1943,16 @@
         }
       ],
       "subpart_id": "32autumn23_q06_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_6_root_location"
       ],
       "variant": "2"
     },
@@ -1951,7 +2031,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1981,8 +2061,16 @@
         }
       ],
       "subpart_id": "33summer23_q04_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
         "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p3_3_4_derivative_rules"
       ],
       "variant": "3"
     },
@@ -2086,7 +2174,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2116,8 +2204,16 @@
         }
       ],
       "subpart_id": "31autumn21_q07_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
       ],
       "variant": "1"
     },
@@ -2217,7 +2313,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2247,8 +2343,16 @@
         }
       ],
       "subpart_id": "33autumn23_q03_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
         "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_quadratics_discriminant_intersections"
       ],
       "variant": "3"
     },
@@ -2361,7 +2465,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2391,8 +2495,16 @@
         }
       ],
       "subpart_id": "32summer23_q07_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_4_derivative_rules"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_4_derivative_rules"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_differentiation_power_chain"
       ],
       "variant": "2"
     },
@@ -2443,7 +2555,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2473,8 +2585,16 @@
         }
       ],
       "subpart_id": "31summer24_q01_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_1_binomial_rational_expansion"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
         "9709_p3_3_1_binomial_rational_expansion"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_series_binomial_positive_integer"
       ],
       "variant": "1"
     },
@@ -2596,7 +2716,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2626,8 +2746,16 @@
         }
       ],
       "subpart_id": "33summer23_q06_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "3"
     },
@@ -2731,7 +2859,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2761,8 +2889,16 @@
         }
       ],
       "subpart_id": "33autumn23_q07_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_quadratics_discriminant_intersections"
       ],
       "variant": "3"
     },
@@ -2866,7 +3002,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2896,8 +3032,16 @@
         }
       ],
       "subpart_id": "32spring23_q10_c",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_coordinate_line_geometry"
       ],
       "variant": "2"
     },
@@ -2992,7 +3136,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3022,8 +3166,16 @@
         }
       ],
       "subpart_id": "33autumn23_q06_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "3"
     },
@@ -3102,7 +3254,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3132,8 +3284,16 @@
         }
       ],
       "subpart_id": "33autumn23_q01_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
       ],
       "variant": "3"
     },
@@ -3228,7 +3388,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3258,8 +3418,16 @@
         }
       ],
       "subpart_id": "32autumn23_q04_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "2"
     },
@@ -3345,7 +3513,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3375,8 +3543,16 @@
         }
       ],
       "subpart_id": "32spring23_q02_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "2"
     },
@@ -3453,7 +3629,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3483,8 +3659,16 @@
         }
       ],
       "subpart_id": "31summer24_q07_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "1"
     },
@@ -3543,7 +3727,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3573,8 +3757,16 @@
         }
       ],
       "subpart_id": "31summer24_q04_b",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_recommended_scope": "subpart_level",
       "suggested_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_trigonometry_equations_intervals"
       ],
       "variant": "1"
     },
@@ -3625,7 +3817,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:13:07Z",
+        "generated_at": "2026-05-23T04:39:10Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3655,8 +3847,16 @@
         }
       ],
       "subpart_id": "31summer24_q03_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
       ],
       "variant": "1"
     }

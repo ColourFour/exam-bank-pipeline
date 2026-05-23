@@ -206,6 +206,8 @@ def build_batch_manifest(
 ) -> dict[str, Any]:
     selected_skills = sorted({skill_id for item in items for skill_id in _p3_skill_ids(item)})
     sparse_selected_skills = [skill_id for skill_id in selected_skills if clean_reviewed_counts.get(skill_id, 0) == 0]
+    cross_topic_status_counts = Counter(_text(item.get("cross_topic_status")) or "unknown" for item in items)
+    topic_routing_alignment_counts = Counter(_text(item.get("topic_routing_alignment")) or "unknown" for item in items)
     return {
         "schema": REVIEW_BATCH_MANIFEST_SCHEMA,
         "schema_version": REVIEW_BATCH_SCHEMA_VERSION,
@@ -227,6 +229,19 @@ def build_batch_manifest(
         "skip_reason_counts_are_not_mutually_exclusive": True,
         "selected_queue_ids": [item["queue_id"] for item in items],
         "selected_question_ids": sorted({_text(item.get("question_id")) for item in items if _text(item.get("question_id"))}),
+        "cross_topic_summary": {
+            "cross_topic_status_counts": dict(cross_topic_status_counts),
+            "topic_routing_alignment_counts": dict(topic_routing_alignment_counts),
+            "selected_items": [
+                {
+                    "queue_id": item["queue_id"],
+                    "cross_topic_status": _text(item.get("cross_topic_status")) or "unknown",
+                    "topic_routing_alignment": _text(item.get("topic_routing_alignment")) or "unknown",
+                    "recommended_scope": _text(item.get("recommended_scope")) or "reviewer_decide",
+                }
+                for item in items
+            ],
+        },
         "skill_coverage_delta_estimate": {
             "selected_unique_p3_skill_count": len(selected_skills),
             "selected_sparse_or_zero_clean_skill_count": len(sparse_selected_skills),
@@ -339,6 +354,10 @@ def _template_record(item: dict[str, Any], *, batch_id: str, generated_at: str) 
         "session": _text(item.get("session")),
         "variant": _text(item.get("variant")),
         "suggested_source_skill_ids": _p3_skill_ids(item),
+        "suggested_primary_skill_ids": _unique_texts(item.get("primary_candidate_skill_ids") or _p3_skill_ids(item)),
+        "suggested_supporting_skill_ids": _unique_texts(item.get("supporting_candidate_skill_ids") or []),
+        "suggested_cross_topic_status": _text(item.get("cross_topic_status")) or "unknown",
+        "suggested_recommended_scope": _text(item.get("recommended_scope")) or "reviewer_decide",
         "reviewed_source_skill_ids": [],
         "reviewed_region": None,
         "route_status": "review_needed",
@@ -367,6 +386,8 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
     source_skills = ", ".join(f"`{skill}`" for skill in item.get("candidate_source_skill_ids") or []) or "none"
     blockers = ", ".join(f"`{blocker}`" for blocker in item.get("proposed_blockers") or []) or "none"
     reconciliation = ", ".join(f"`{flag}`" for flag in item.get("reconciliation_flags") or []) or "none"
+    supporting_skills = ", ".join(f"`{skill}`" for skill in item.get("supporting_candidate_skill_ids") or []) or "none"
+    cross_topic_notes = "; ".join(_text(note) for note in item.get("cross_topic_notes") or [] if _text(note)) or "none"
     lines = [
         f"### {index}. `{item.get('question_id')}` / `{item.get('subpart_id')}`",
         "",
@@ -376,8 +397,15 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
         f"- Paper/session/variant: `{item.get('paper')}` / `{item.get('session')}` / `{item.get('variant')}`",
         f"- Candidate P3 skill IDs: {skills}",
         f"- Candidate source skill IDs, including prerequisite/support context: {source_skills}",
+        f"- Primary candidate skill IDs: {', '.join(f'`{skill}`' for skill in item.get('primary_candidate_skill_ids') or []) or 'none'}",
+        f"- Supporting candidate skill IDs: {supporting_skills}",
         f"- Candidate region/topic: `{json.dumps(item.get('candidate_region_topic') or {}, sort_keys=True)}`",
         f"- Topic-routing context: `{json.dumps(item.get('topic_routing') or {}, sort_keys=True)}`",
+        f"- Cross-topic status: `{item.get('cross_topic_status') or 'unknown'}`",
+        f"- Topic-routing topic IDs: `{json.dumps(item.get('topic_routing_topic_ids') or [])}`",
+        f"- Topic-routing alignment: `{item.get('topic_routing_alignment') or 'unknown'}`",
+        f"- Recommended scope: `{item.get('recommended_scope') or 'reviewer_decide'}`",
+        f"- Cross-topic notes: {cross_topic_notes}",
         f"- Content Lab blocker context: `{json.dumps(item.get('asterion_candidate') or {}, sort_keys=True)}`",
         f"- Proposed blockers: {blockers}",
         f"- Reconciliation flags: {reconciliation}",
@@ -394,6 +422,9 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
         "",
         "Reviewer checklist:",
         *[f"- [ ] {check}" for check in REVIEWER_CHECKLIST],
+        "",
+        "Cross-topic reviewer checklist:",
+        *[f"- [ ] {check}" for check in item.get("reviewer_cross_topic_checklist") or []],
         "",
     ]
     return lines

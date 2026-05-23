@@ -168,6 +168,7 @@ def _render_item(
         record.get("suggested_source_skill_ids") if isinstance(record.get("suggested_source_skill_ids"), list) else []
     )
     blockers = queue_item.get("proposed_blockers") if isinstance(queue_item.get("proposed_blockers"), list) else []
+    cross_topic_status = _text(queue_item.get("cross_topic_status") or record.get("suggested_cross_topic_status") or "unknown")
     return (
         f'    <article class="review-item" id="item-{index}">\n'
         f"      <h2>{index}. {escape(_text(record.get('question_id')))} / {escape(_text(record.get('subpart_id')))}</h2>\n"
@@ -178,6 +179,8 @@ def _render_item(
         f"{_meta('Paper / session / variant', f'{_text(record.get('paper'))} / {_text(record.get('session'))} / {_text(record.get('variant'))}')}"
         f"{_meta('Candidate skill IDs', ', '.join(_texts(candidate_skill_ids)) or 'none')}"
         f"{_meta('Suggested source skill IDs', ', '.join(_texts(suggested_skill_ids)) or 'none')}"
+        f"{_meta('Cross-topic status', cross_topic_status)}"
+        f"{_meta('Recommended scope', queue_item.get('recommended_scope') or record.get('suggested_recommended_scope') or 'reviewer_decide')}"
         f"{_meta('Recommended review action', queue_item.get('recommended_review_action') or 'missing queue context')}"
         f"{_meta('Proposed blockers', ', '.join(_texts(blockers)) or 'none')}"
         "      </div>\n"
@@ -191,6 +194,7 @@ def _render_item(
         f"{_json_block('Topic-routing context', queue_item.get('topic_routing') or {})}"
         f"{_json_block('Content Lab blocker context', queue_item.get('asterion_candidate') or {})}"
         "      </details>\n"
+        f"{_cross_topic_section(record, queue_item)}"
         '      <details>\n'
         "        <summary>Advisory-Only Mark-Event Refs</summary>\n"
         f'        <p class="warning small">{escape(ADVISORY_MARK_EVENT_WARNING)}</p>\n'
@@ -203,6 +207,38 @@ def _render_item(
         "        </ul>\n"
         "      </section>\n"
         "    </article>\n"
+    )
+
+
+def _cross_topic_section(record: dict[str, Any], queue_item: dict[str, Any]) -> str:
+    status = _text(queue_item.get("cross_topic_status") or record.get("suggested_cross_topic_status"))
+    if not status or status in {"single_skill_candidate", "unknown"}:
+        return ""
+    primary = queue_item.get("primary_candidate_skill_ids") or record.get("suggested_primary_skill_ids") or []
+    supporting = queue_item.get("supporting_candidate_skill_ids") or record.get("suggested_supporting_skill_ids") or []
+    notes = queue_item.get("cross_topic_notes") if isinstance(queue_item.get("cross_topic_notes"), list) else []
+    checklist = (
+        queue_item.get("reviewer_cross_topic_checklist")
+        if isinstance(queue_item.get("reviewer_cross_topic_checklist"), list)
+        else []
+    )
+    warning_class = " warning" if status in {"cross_topic_split_needed", "conflict_needs_review"} else ""
+    return (
+        f'      <section class="cross-topic{warning_class}">\n'
+        "        <h3>Cross-topic Review</h3>\n"
+        f"        <p><strong>Status:</strong> <code>{escape(status)}</code></p>\n"
+        f"        <p><strong>Primary candidate skill:</strong> <code>{escape(', '.join(_texts(primary)) or 'none')}</code></p>\n"
+        f"        <p><strong>Supporting skill/topic context:</strong> <code>{escape(', '.join(_texts(supporting)) or 'none')}</code></p>\n"
+        f"        <p><strong>Topic-routing topic:</strong> <code>{escape(', '.join(_texts(queue_item.get('topic_routing_topic_ids') or [])) or 'unknown')}</code></p>\n"
+        f"        <p><strong>Topic-routing alignment:</strong> <code>{escape(_text(queue_item.get('topic_routing_alignment')) or 'unknown')}</code></p>\n"
+        f"        <p><strong>Recommended scope:</strong> <code>{escape(_text(queue_item.get('recommended_scope') or record.get('suggested_recommended_scope')) or 'reviewer_decide')}</code></p>\n"
+        "        <p class=\"warning small\">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>\n"
+        f"{_json_block('Cross-topic notes', notes)}"
+        "        <h4>Cross-topic checklist</h4>\n"
+        "        <ul>\n"
+        f"{''.join(f'<li>{escape(_text(item))}</li>' for item in checklist)}"
+        "        </ul>\n"
+        "      </section>\n"
     )
 
 
@@ -341,6 +377,18 @@ code, pre {
 }
 .warning.small {
   font-size: 0.95rem;
+}
+.cross-topic {
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  padding: 12px;
+  margin: 12px 0;
+}
+.cross-topic.warning {
+  border-left: 4px solid #b45309;
+  border-color: #fed7aa;
+  background: #fff7ed;
 }
 .meta-grid {
   display: grid;

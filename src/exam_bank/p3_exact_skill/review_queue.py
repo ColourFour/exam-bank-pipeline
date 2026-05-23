@@ -41,6 +41,14 @@ REVIEW_ACTIONS = {
 }
 
 PARAMETRIC_IMPLICIT_SKILL_ID = "9709_p3_3_4_parametric_implicit_differentiation"
+CROSS_TOPIC_REVIEWER_CHECKLIST = [
+    "Identify the main skill being assessed.",
+    "Identify any supporting skills used in the method.",
+    "Decide whether the current whole-question/part scope is safe.",
+    "Split by part/subpart if the item tests multiple independent skills.",
+    "Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.",
+    "Do not use supporting skill context as mastery evidence unless reviewed directly.",
+]
 
 
 def build_p3_exact_skill_review_queue(
@@ -191,7 +199,11 @@ def build_review_queue_item(
         + list(mapping.get("secondary_skill_ids") or [])
         + list(content_lab_candidate.get("source_skill_ids") or [])
     )
+    primary_candidate_skill_ids = _unique_texts(
+        list(mapping.get("primary_skill_ids") or []) + list(content_lab_candidate.get("source_skill_ids") or [])
+    )
     prerequisite_ids = _unique_texts(mapping.get("prerequisite_skill_ids") or [])
+    supporting_candidate_skill_ids = _unique_texts(list(mapping.get("secondary_skill_ids") or []) + prerequisite_ids)
     candidate_source_skill_ids = _unique_texts(candidate_p3_ids + prerequisite_ids)
     non_p3_candidate_ids = [skill_id for skill_id in candidate_source_skill_ids if not skill_id.startswith("9709_p3_")]
 
@@ -208,6 +220,15 @@ def build_review_queue_item(
         mapping=mapping,
         mark_event_record=mark_event_record,
         quality_gate=quality_gate,
+    )
+    cross_topic = build_cross_topic_context(
+        mapping=mapping,
+        topic_route=topic_route,
+        topic_assignment=topic_assignment,
+        primary_candidate_skill_ids=primary_candidate_skill_ids,
+        supporting_candidate_skill_ids=supporting_candidate_skill_ids,
+        candidate_p3_skill_ids=candidate_p3_ids,
+        proposed_blockers=blockers,
     )
     reviewed_status = "not_reviewed"
     reviewed_route_status = None
@@ -237,9 +258,17 @@ def build_review_queue_item(
         "question_number": _text(mapping.get("question_number") or question.get("question_number")),
         "candidate_source_skill_ids": candidate_source_skill_ids,
         "candidate_p3_skill_ids": candidate_p3_ids,
+        "primary_candidate_skill_ids": primary_candidate_skill_ids,
+        "supporting_candidate_skill_ids": supporting_candidate_skill_ids,
         "candidate_prerequisite_skill_ids": prerequisite_ids,
         "candidate_region_topic": _candidate_region_topic(mapping, topic_assignment, topic_route),
         "topic_routing": _topic_routing_summary(topic_route),
+        "cross_topic_status": cross_topic["cross_topic_status"],
+        "topic_routing_topic_ids": cross_topic["topic_routing_topic_ids"],
+        "topic_routing_alignment": cross_topic["topic_routing_alignment"],
+        "cross_topic_notes": cross_topic["cross_topic_notes"],
+        "recommended_scope": cross_topic["recommended_scope"],
+        "reviewer_cross_topic_checklist": cross_topic["reviewer_cross_topic_checklist"],
         "asterion_candidate": _content_lab_summary(content_lab_candidate),
         "source_question_asset_refs": question_assets,
         "source_mark_scheme_asset_refs": mark_scheme_assets,
@@ -342,6 +371,8 @@ def summarize_review_queue(items: list[dict[str, Any]], *, reconciliation: dict[
     status_counts = Counter(_text(item.get("proposed_route_status")) for item in items)
     blockers = Counter(blocker for item in items for blocker in item.get("proposed_blockers") or [])
     actions = Counter(_text(item.get("recommended_review_action")) for item in items)
+    cross_topic_statuses = Counter(_text(item.get("cross_topic_status")) for item in items)
+    topic_alignments = Counter(_text(item.get("topic_routing_alignment")) for item in items)
     already_reviewed = sum(1 for item in items if item.get("reviewed_decision_status") == "already_reviewed")
     reconciliation_flags = Counter(flag for item in items for flag in item.get("reconciliation_flags") or [])
     return {
@@ -363,6 +394,8 @@ def summarize_review_queue(items: list[dict[str, Any]], *, reconciliation: dict[
         "no_candidate_skill_count": blockers.get("no_candidate_p3_skill", 0),
         "advisory_only_mark_event_count": blockers.get("mark_events_advisory_only", 0),
         "status_counts": dict(status_counts),
+        "cross_topic_status_counts": dict(cross_topic_statuses),
+        "topic_routing_alignment_counts": dict(topic_alignments),
         "blocker_counts": dict(blockers.most_common()),
         "recommended_action_counts": dict(actions.most_common()),
         "reconciliation_flag_counts": dict(reconciliation_flags.most_common()),
@@ -417,6 +450,14 @@ def render_review_queue_report(queue: dict[str, Any]) -> str:
         "## Status Counts",
         "",
         *_counter_lines(summary.get("status_counts") or {}),
+        "",
+        "## Cross-Topic Status Counts",
+        "",
+        *_counter_lines(summary.get("cross_topic_status_counts") or {}),
+        "",
+        "## Topic-Routing Alignment Counts",
+        "",
+        *_counter_lines(summary.get("topic_routing_alignment_counts") or {}),
         "",
         "## Priority Review Items",
         "",
@@ -478,6 +519,80 @@ def reviewer_checklist_for_action(action: str, blockers: list[str]) -> list[str]
     if action.startswith("reject_"):
         checklist.append("Keep the rejected scope with blockers if it remains useful review context.")
     return checklist
+
+
+def build_cross_topic_context(
+    *,
+    mapping: dict[str, Any],
+    topic_route: dict[str, Any],
+    topic_assignment: dict[str, Any],
+    primary_candidate_skill_ids: list[str],
+    supporting_candidate_skill_ids: list[str],
+    candidate_p3_skill_ids: list[str],
+    proposed_blockers: list[str],
+) -> dict[str, Any]:
+    assignment_topic_ids = _topic_assignment_topic_ids(topic_assignment)
+    routing_topic_ids = _topic_routing_topic_ids(topic_route)
+    primary_route_topic_id = _text(topic_route.get("primary_topic_id"))
+    source_topic = _text(_nested(mapping, "evidence", "source_topic"))
+    subpart_label = _text(mapping.get("subpart_label")) or "whole"
+    evidence_granularity = _text(mapping.get("evidence_granularity"))
+    blockers = set(proposed_blockers)
+    notes: list[str] = []
+
+    if routing_topic_ids and assignment_topic_ids:
+        if set(routing_topic_ids) & set(assignment_topic_ids):
+            alignment = "aligned"
+        elif supporting_candidate_skill_ids or _plausible_cross_topic_source(source_topic):
+            alignment = "supporting_topic"
+            notes.append("Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.")
+        else:
+            alignment = "cross_topic_possible"
+            notes.append("Candidate topic and topic-routing topic differ; reviewer should decide whether this is support context or a conflict.")
+    elif routing_topic_ids or assignment_topic_ids:
+        alignment = "unknown"
+        notes.append("Only one side of candidate topic or topic-routing context is available.")
+    else:
+        alignment = "unknown"
+
+    if supporting_candidate_skill_ids:
+        notes.append("Supporting candidate skills are review context only, not mastery evidence.")
+    if source_topic:
+        notes.append(f"Source topic hint: {source_topic}.")
+
+    conflict_blockers = {
+        "possible_differential_equation_not_parametric_or_implicit",
+        "weak_parametric_implicit_evidence_dydx_only",
+    }
+    if blockers & conflict_blockers:
+        status = "conflict_needs_review"
+        alignment = "conflicting"
+        recommended_scope = "reviewer_decide"
+        notes.append("Method-critical mismatch flagged; do not treat this as ordinary supporting-topic context.")
+    elif len(candidate_p3_skill_ids) > 1 and (subpart_label == "whole" or evidence_granularity == "whole_question_only"):
+        status = "cross_topic_split_needed"
+        recommended_scope = "part_level"
+        notes.append("Multiple candidate P3 skills on a broad scope; reviewer should split by part/subpart if possible.")
+    elif alignment in {"supporting_topic", "cross_topic_possible"} or supporting_candidate_skill_ids:
+        status = "cross_topic_reviewable"
+        recommended_scope = "reviewer_decide" if subpart_label == "whole" else "subpart_level"
+    elif len(primary_candidate_skill_ids) == 1:
+        status = "single_skill_candidate"
+        recommended_scope = "whole_question" if subpart_label == "whole" else "subpart_level"
+    else:
+        status = "unknown"
+        recommended_scope = "reviewer_decide"
+
+    return {
+        "cross_topic_status": status,
+        "primary_candidate_skill_ids": primary_candidate_skill_ids,
+        "supporting_candidate_skill_ids": supporting_candidate_skill_ids,
+        "topic_routing_topic_ids": routing_topic_ids or ([primary_route_topic_id] if primary_route_topic_id else []),
+        "topic_routing_alignment": alignment,
+        "cross_topic_notes": _unique_texts(notes),
+        "recommended_scope": recommended_scope,
+        "reviewer_cross_topic_checklist": CROSS_TOPIC_REVIEWER_CHECKLIST,
+    }
 
 
 def _question_asset_refs(
@@ -604,6 +719,42 @@ def _topic_routing_summary(topic_route: dict[str, Any]) -> dict[str, Any]:
         "review_reasons": topic_route.get("review_reasons") if isinstance(topic_route.get("review_reasons"), list) else [],
         "evidence_used": topic_route.get("evidence_used") if isinstance(topic_route.get("evidence_used"), list) else [],
         "routing_source": _text(topic_route.get("routing_source")),
+    }
+
+
+def _topic_assignment_topic_ids(topic_assignment: dict[str, Any]) -> list[str]:
+    assignments = topic_assignment.get("topic_assignments")
+    if not isinstance(assignments, list):
+        return []
+    return _unique_texts(
+        [
+            assignment.get("topic_id")
+            for assignment in assignments
+            if isinstance(assignment, dict) and _text(assignment.get("topic_id"))
+        ]
+    )
+
+
+def _topic_routing_topic_ids(topic_route: dict[str, Any]) -> list[str]:
+    topic_ids = [_text(topic_route.get("primary_topic_id"))]
+    distribution = topic_route.get("topic_distribution")
+    if isinstance(distribution, list):
+        topic_ids.extend(
+            _text(entry.get("topic_id"))
+            for entry in distribution
+            if isinstance(entry, dict) and _text(entry.get("topic_id"))
+        )
+    return _unique_texts(topic_ids)
+
+
+def _plausible_cross_topic_source(source_topic: str) -> bool:
+    return source_topic in {
+        "differentiation",
+        "differential_equations",
+        "integration",
+        "parametric_equations",
+        "trigonometry",
+        "vectors",
     }
 
 
@@ -890,10 +1041,12 @@ def _item_lines(items: list[dict[str, Any]]) -> list[str]:
     for item in items:
         skills = ", ".join(item.get("candidate_p3_skill_ids") or []) or "none"
         blockers = ", ".join(item.get("proposed_blockers") or []) or "none"
+        cross_topic = item.get("cross_topic_status") or "unknown"
         lines.append(
             "- "
             f"`{item.get('queue_id')}` | `{item.get('proposed_route_status')}` | "
-            f"action `{item.get('recommended_review_action')}` | skills `{skills}` | blockers `{blockers}`"
+            f"cross-topic `{cross_topic}` | action `{item.get('recommended_review_action')}` | "
+            f"skills `{skills}` | blockers `{blockers}`"
         )
     return lines
 

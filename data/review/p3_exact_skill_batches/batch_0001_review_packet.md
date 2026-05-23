@@ -4,7 +4,7 @@ This packet is for human review only. It does not assert clean evidence, does no
 
 ## Batch Metadata
 
-- Generated at: `2026-05-23T04:13:07Z`
+- Generated at: `2026-05-23T04:39:10Z`
 - Source queue: `reports/p3_exact_skill_review_queue.v1.json`
 - Reviewed registry checked for exclusions: `data/review/p3_exact_skill_reviewed_decisions.v1.json`
 - Selection status: `clean_candidate`
@@ -34,8 +34,15 @@ This packet is for human review only. It does not assert clean evidence, does no
 - Paper/session/variant: `33summer23` / `June` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33summer23_q11_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -90,6 +97,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 2. `33autumn21_q10` / `33autumn21_q10_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn21_q10:33autumn21_q10_c`
@@ -98,8 +113,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn21` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_6_fixed_point_iteration`, `9709_p3_3_6_root_location`
+- Primary candidate skill IDs: `9709_p3_3_6_fixed_point_iteration`
+- Supporting candidate skill IDs: `9709_p3_3_6_root_location`
 - Candidate region/topic: `{"mapping_source_topic": "numerical_methods", "subtopic_id": "9709_p3_subtopic_fixed_point_iteration", "subtopic_name": "Fixed-point iteration", "topic_assignment_id": "9709_p3_topic_numerical_solution_of_equations", "topic_assignment_name": "Numerical solution of equations", "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differential_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differential_equations", "9709_p3_topic_numerical_solution_of_equations"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn21_q10_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -134,6 +156,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 3. `32autumn23_q09` / `32autumn23_q09_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b`
@@ -142,8 +172,15 @@ Reviewer checklist:
 - Paper/session/variant: `32autumn23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_3_identities_compound_double_angle_equations`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations", "subtopic_name": "Identities, compound angles and trigonometric equations", "topic_assignment_id": "9709_p3_topic_trigonometry", "topic_assignment_name": "Trigonometry", "topic_routing_primary_topic_id": "9709_p3_topic_integration"}`
 - Topic-routing context: `{"confidence": "medium", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_integration", "review_reasons": ["Question involves both differentiation and integration; primary topic set to integration based on final objective."], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_integration", "9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `supporting_topic`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q09_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 12}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -189,6 +226,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 4. `33autumn23_q10` / `33autumn23_q10_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b`
@@ -197,8 +242,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
+- Primary candidate skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
+- Supporting candidate skill IDs: `9709_p3_3_4_derivative_rules`
 - Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_integration"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_integration", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_integration"]`
+- Topic-routing alignment: `supporting_topic`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q10_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 5}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -231,6 +283,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 5. `33summer23_q09` / `33summer23_q09_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b`
@@ -239,8 +299,15 @@ Reviewer checklist:
 - Paper/session/variant: `33summer23` / `June` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_7_vector_lines`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_7_vector_lines`, `9709_p1_coordinate_line_geometry`
+- Primary candidate skill IDs: `9709_p3_3_7_vector_lines`
+- Supporting candidate skill IDs: `9709_p1_coordinate_line_geometry`
 - Candidate region/topic: `{"mapping_source_topic": "vectors", "subtopic_id": "9709_p3_subtopic_vector_lines", "subtopic_name": "Vector equations of lines and intersections", "topic_assignment_id": "9709_p3_topic_vectors", "topic_assignment_name": "Vectors", "topic_routing_primary_topic_id": "9709_p3_topic_vectors"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text"], "primary_topic_id": "9709_p3_topic_vectors", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_vectors"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: vectors.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33summer23_q09_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 17}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -286,6 +353,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 6. `32autumn21_q11` / `32autumn21_q11_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn21_q11:32autumn21_q11_c`
@@ -294,8 +369,15 @@ Reviewer checklist:
 - Paper/session/variant: `32autumn21` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_6_fixed_point_iteration`, `9709_p3_3_6_root_location`
+- Primary candidate skill IDs: `9709_p3_3_6_fixed_point_iteration`
+- Supporting candidate skill IDs: `9709_p3_3_6_root_location`
 - Candidate region/topic: `{"mapping_source_topic": "numerical_methods", "subtopic_id": "9709_p3_subtopic_fixed_point_iteration", "subtopic_name": "Fixed-point iteration", "topic_assignment_id": "9709_p3_topic_numerical_solution_of_equations", "topic_assignment_name": "Numerical solution of equations", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation", "9709_p3_topic_algebra", "9709_p3_topic_numerical_solution_of_equations"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32autumn21_q11_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -330,6 +412,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 7. `32summer23_q06` / `32summer23_q06_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c`
@@ -338,8 +428,15 @@ Reviewer checklist:
 - Paper/session/variant: `32summer23` / `June` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_6_fixed_point_iteration`, `9709_p3_3_6_root_location`
+- Primary candidate skill IDs: `9709_p3_3_6_fixed_point_iteration`
+- Supporting candidate skill IDs: `9709_p3_3_6_root_location`
 - Candidate region/topic: `{"mapping_source_topic": "numerical_methods", "subtopic_id": "9709_p3_subtopic_fixed_point_iteration", "subtopic_name": "Fixed-point iteration", "topic_assignment_id": "9709_p3_topic_numerical_solution_of_equations", "topic_assignment_name": "Numerical solution of equations", "topic_routing_primary_topic_id": "9709_p3_topic_numerical_solution_of_equations"}`
 - Topic-routing context: `{"confidence": "medium", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_numerical_solution_of_equations", "review_reasons": ["No OCR text provided, mark scheme only used; involves iterative method"], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_numerical_solution_of_equations"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32summer23_q06_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -372,6 +469,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 8. `32spring23_q05` / `32spring23_q05_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b`
@@ -380,8 +485,15 @@ Reviewer checklist:
 - Paper/session/variant: `32spring23` / `March` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
+- Primary candidate skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
+- Supporting candidate skill IDs: `9709_p3_3_4_derivative_rules`
 - Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q05_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -412,6 +524,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 9. `32summer22_q10` / `32summer22_q10_d`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d`
@@ -420,8 +540,15 @@ Reviewer checklist:
 - Paper/session/variant: `32summer22` / `June` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32summer22_q10_d", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 2}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -462,6 +589,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 10. `32autumn23_q06` / `32autumn23_q06_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c`
@@ -470,8 +605,15 @@ Reviewer checklist:
 - Paper/session/variant: `32autumn23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_6_fixed_point_iteration`, `9709_p3_3_6_root_location`
+- Primary candidate skill IDs: `9709_p3_3_6_fixed_point_iteration`
+- Supporting candidate skill IDs: `9709_p3_3_6_root_location`
 - Candidate region/topic: `{"mapping_source_topic": "numerical_methods", "subtopic_id": "9709_p3_subtopic_fixed_point_iteration", "subtopic_name": "Fixed-point iteration", "topic_assignment_id": "9709_p3_topic_numerical_solution_of_equations", "topic_assignment_name": "Numerical solution of equations", "topic_routing_primary_topic_id": "9709_p3_topic_numerical_solution_of_equations"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_numerical_solution_of_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_numerical_solution_of_equations"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q06_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -504,6 +646,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 11. `33summer23_q04` / `33summer23_q04_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole`
@@ -512,8 +662,15 @@ Reviewer checklist:
 - Paper/session/variant: `33summer23` / `June` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
+- Primary candidate skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
+- Supporting candidate skill IDs: `9709_p3_3_4_derivative_rules`
 - Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33summer23_q04_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -545,6 +702,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 12. `31autumn21_q07` / `31autumn21_q07_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c`
@@ -553,8 +718,15 @@ Reviewer checklist:
 - Paper/session/variant: `31autumn21` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_2_log_exponential_equations`, `9709_p1_functions_domain_range_one_one`
+- Primary candidate skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Supporting candidate skill IDs: `9709_p1_functions_domain_range_one_one`
 - Candidate region/topic: `{"mapping_source_topic": "logarithms_and_exponentials", "subtopic_id": "9709_p3_subtopic_log_exponential_equations", "subtopic_name": "Logarithmic and exponential equations", "topic_assignment_id": "9709_p3_topic_logarithmic_and_exponential_functions", "topic_assignment_name": "Logarithmic and exponential functions", "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differential_equations", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differential_equations"]`
+- Topic-routing alignment: `supporting_topic`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 - Content Lab blocker context: `{"candidate_id": "content_lab_31autumn21_q07_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 1}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -587,6 +759,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 13. `33autumn23_q03` / `33autumn23_q03_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole`
@@ -595,8 +775,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_1_polynomial_division_factor_remainder`, `9709_p1_quadratics_discriminant_intersections`
+- Primary candidate skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
+- Supporting candidate skill IDs: `9709_p1_quadratics_discriminant_intersections`
 - Candidate region/topic: `{"mapping_source_topic": "polynomials", "subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder", "subtopic_name": "Polynomial division, factors and remainders", "topic_assignment_id": "9709_p3_topic_algebra", "topic_assignment_name": "Algebra", "topic_routing_primary_topic_id": "9709_p3_topic_algebra"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["question_text", "ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_algebra", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_algebra"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 11}`
 - Proposed blockers: `mark_events_advisory_only`
 - Reconciliation flags: none
@@ -631,6 +818,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 14. `32summer23_q07` / `32summer23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b`
@@ -639,8 +834,15 @@ Reviewer checklist:
 - Paper/session/variant: `32summer23` / `June` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_4_derivative_rules`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_derivative_rules`, `9709_p1_differentiation_power_chain`
+- Primary candidate skill IDs: `9709_p3_3_4_derivative_rules`
+- Supporting candidate skill IDs: `9709_p1_differentiation_power_chain`
 - Candidate region/topic: `{"mapping_source_topic": "differentiation", "subtopic_id": "9709_p3_subtopic_derivative_rules", "subtopic_name": "Derivative rules for P3 functions", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: differentiation.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32summer23_q07_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -674,6 +876,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 15. `31summer24_q01` / `31summer24_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole`
@@ -682,8 +892,15 @@ Reviewer checklist:
 - Paper/session/variant: `31summer24` / `June` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_1_binomial_rational_expansion`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_1_binomial_rational_expansion`, `9709_p1_series_binomial_positive_integer`
+- Primary candidate skill IDs: `9709_p3_3_1_binomial_rational_expansion`
+- Supporting candidate skill IDs: `9709_p1_series_binomial_positive_integer`
 - Candidate region/topic: `{"mapping_source_topic": "binomial_expansion", "subtopic_id": "9709_p3_subtopic_binomial_rational_expansion", "subtopic_name": "Binomial expansion for rational powers", "topic_assignment_id": "9709_p3_topic_algebra", "topic_assignment_name": "Algebra", "topic_routing_primary_topic_id": "9709_p3_topic_algebra"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["question_text", "ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_algebra", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_algebra"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: binomial_expansion.
 - Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q01_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`
 - Reconciliation flags: none
@@ -711,6 +928,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 16. `33summer23_q06` / `33summer23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b`
@@ -719,8 +944,15 @@ Reviewer checklist:
 - Paper/session/variant: `33summer23` / `June` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_3_identities_compound_double_angle_equations`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "trigonometry", "subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations", "subtopic_name": "Identities, compound angles and trigonometric equations", "topic_assignment_id": "9709_p3_topic_trigonometry", "topic_assignment_name": "Trigonometry", "topic_routing_primary_topic_id": "9709_p3_topic_trigonometry"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text"], "primary_topic_id": "9709_p3_topic_trigonometry", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_trigonometry"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: trigonometry.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33summer23_q06_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -755,6 +987,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 17. `33autumn23_q07` / `33autumn23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b`
@@ -763,8 +1003,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_1_polynomial_division_factor_remainder`, `9709_p1_quadratics_discriminant_intersections`
+- Primary candidate skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
+- Supporting candidate skill IDs: `9709_p1_quadratics_discriminant_intersections`
 - Candidate region/topic: `{"mapping_source_topic": "polynomials", "subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder", "subtopic_name": "Polynomial division, factors and remainders", "topic_assignment_id": "9709_p3_topic_algebra", "topic_assignment_name": "Algebra", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `supporting_topic`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q07_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 5}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -797,6 +1044,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 18. `32spring23_q10` / `32spring23_q10_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c`
@@ -805,8 +1060,15 @@ Reviewer checklist:
 - Paper/session/variant: `32spring23` / `March` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_7_vector_lines`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_7_vector_lines`, `9709_p1_coordinate_line_geometry`
+- Primary candidate skill IDs: `9709_p3_3_7_vector_lines`
+- Supporting candidate skill IDs: `9709_p1_coordinate_line_geometry`
 - Candidate region/topic: `{"mapping_source_topic": "vectors", "subtopic_id": "9709_p3_subtopic_vector_lines", "subtopic_name": "Vector equations of lines and intersections", "topic_assignment_id": "9709_p3_topic_vectors", "topic_assignment_name": "Vectors", "topic_routing_primary_topic_id": "9709_p3_topic_vectors"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_vectors", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_vectors"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: vectors.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q10_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -839,6 +1101,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 19. `33autumn23_q06` / `33autumn23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b`
@@ -847,8 +1117,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_3_identities_compound_double_angle_equations`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "trigonometry", "subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations", "subtopic_name": "Identities, compound angles and trigonometric equations", "topic_assignment_id": "9709_p3_topic_trigonometry", "topic_assignment_name": "Trigonometry", "topic_routing_primary_topic_id": "9709_p3_topic_trigonometry"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_trigonometry", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_trigonometry"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: trigonometry.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q06_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -880,6 +1157,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 20. `33autumn23_q01` / `33autumn23_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole`
@@ -888,8 +1173,15 @@ Reviewer checklist:
 - Paper/session/variant: `33autumn23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_2_log_exponential_equations`, `9709_p1_functions_domain_range_one_one`
+- Primary candidate skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Supporting candidate skill IDs: `9709_p1_functions_domain_range_one_one`
 - Candidate region/topic: `{"mapping_source_topic": "logarithms_and_exponentials", "subtopic_id": "9709_p3_subtopic_log_exponential_equations", "subtopic_name": "Logarithmic and exponential equations", "topic_assignment_id": "9709_p3_topic_logarithmic_and_exponential_functions", "topic_assignment_name": "Logarithmic and exponential functions", "topic_routing_primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_logarithmic_and_exponential_functions"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 - Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q01_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -921,6 +1213,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 21. `32autumn23_q04` / `32autumn23_q04_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b`
@@ -929,8 +1229,15 @@ Reviewer checklist:
 - Paper/session/variant: `32autumn23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q04_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -962,6 +1269,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 22. `32spring23_q02` / `32spring23_q02_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b`
@@ -970,8 +1285,15 @@ Reviewer checklist:
 - Paper/session/variant: `32spring23` / `March` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q02_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -1002,6 +1324,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 23. `31summer24_q07` / `31summer24_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b`
@@ -1010,8 +1340,15 @@ Reviewer checklist:
 - Paper/session/variant: `31summer24` / `June` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q07_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 2}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -1041,6 +1378,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 24. `31summer24_q04` / `31summer24_q04_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b`
@@ -1049,8 +1394,15 @@ Reviewer checklist:
 - Paper/session/variant: `31summer24` / `June` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_9_complex_arithmetic_polar_form`, `9709_p1_trigonometry_equations_intervals`
+- Primary candidate skill IDs: `9709_p3_3_9_complex_arithmetic_polar_form`
+- Supporting candidate skill IDs: `9709_p1_trigonometry_equations_intervals`
 - Candidate region/topic: `{"mapping_source_topic": "complex_numbers", "subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form", "subtopic_name": "Complex arithmetic, modulus, argument and polar form", "topic_assignment_id": "9709_p3_topic_complex_numbers", "topic_assignment_name": "Complex numbers", "topic_routing_primary_topic_id": "9709_p3_topic_complex_numbers"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["mark_scheme_text"], "primary_topic_id": "9709_p3_topic_complex_numbers", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_complex_numbers"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `subpart_level`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: complex_numbers.
 - Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q04_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 2}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -1078,6 +1430,14 @@ Reviewer checklist:
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
 
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
 ### 25. `31summer24_q03` / `31summer24_q03_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole`
@@ -1086,8 +1446,15 @@ Reviewer checklist:
 - Paper/session/variant: `31summer24` / `June` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_2_log_exponential_equations`, `9709_p1_functions_domain_range_one_one`
+- Primary candidate skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Supporting candidate skill IDs: `9709_p1_functions_domain_range_one_one`
 - Candidate region/topic: `{"mapping_source_topic": "logarithms_and_exponentials", "subtopic_id": "9709_p3_subtopic_log_exponential_equations", "subtopic_name": "Logarithmic and exponential equations", "topic_assignment_id": "9709_p3_topic_logarithmic_and_exponential_functions", "topic_assignment_name": "Logarithmic and exponential functions", "topic_routing_primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"}`
 - Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_logarithmic_and_exponential_functions"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 - Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
@@ -1114,3 +1481,11 @@ Reviewer checklist:
 - [ ] Confirm allowed use cases.
 - [ ] Write evidence_basis in project wording.
 - [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
+
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.

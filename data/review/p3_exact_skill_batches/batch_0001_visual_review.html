@@ -38,6 +38,18 @@ code, pre {
 .warning.small {
   font-size: 0.95rem;
 }
+.cross-topic {
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  padding: 12px;
+  margin: 12px 0;
+}
+.cross-topic.warning {
+  border-left: 4px solid #b45309;
+  border-color: #fed7aa;
+  background: #fff7ed;
+}
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -125,7 +137,7 @@ pre {
       <h2>Summary</h2>
       <p><strong>Batch ID:</strong> <code>batch_0001</code></p>
       <p><strong>Selected count:</strong> <code>25</code></p>
-      <p><strong>Generated at:</strong> <code>2026-05-23T04:13:19Z</code></p>
+      <p><strong>Generated at:</strong> <code>2026-05-23T04:39:10Z</code></p>
       <p><strong>Manifest selected count:</strong> <code>25</code></p>
       <p><strong>Source packet:</strong> <code>data/review/p3_exact_skill_batches/batch_0001_review_packet.md</code> (available)</p>
       <p><strong>Decision template:</strong> <code>data/review/p3_exact_skill_batches/batch_0001_decision_template.v1.json</code></p>
@@ -151,6 +163,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33summer23 / June / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -211,6 +225,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -512,6 +544,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn21 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -573,6 +607,24 @@ pre {
   &quot;source_mark_event_count&quot;: 3
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_6_fixed_point_iteration</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_6_root_location</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differential_equations, 9709_p3_topic_numerical_solution_of_equations</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: numerical_methods.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -694,6 +746,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32autumn23 / November / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -757,6 +811,25 @@ pre {
   &quot;source_mark_event_count&quot;: 12
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_3_identities_compound_double_angle_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_integration, 9709_p3_topic_differentiation</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>supporting_topic</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.&quot;,
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: parametric_equations.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -977,6 +1050,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn23 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1038,6 +1113,25 @@ pre {
   &quot;source_mark_event_count&quot;: 5
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_4_parametric_implicit_differentiation</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_4_derivative_rules</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_integration</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>supporting_topic</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.&quot;,
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: parametric_equations.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -1141,6 +1235,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33summer23 / June / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_7_vector_lines</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_7_vector_lines</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1201,6 +1297,24 @@ pre {
   &quot;source_mark_event_count&quot;: 17
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_7_vector_lines</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_coordinate_line_geometry</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_vectors</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: vectors.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -1421,6 +1535,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32autumn21 / November / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1482,6 +1598,24 @@ pre {
   &quot;source_mark_event_count&quot;: 3
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_6_fixed_point_iteration</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_6_root_location</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differentiation, 9709_p3_topic_algebra, 9709_p3_topic_numerical_solution_of_equations</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: numerical_methods.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -1603,6 +1737,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32summer23 / June / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1665,6 +1801,24 @@ pre {
   &quot;source_mark_event_count&quot;: 3
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_6_fixed_point_iteration</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_6_root_location</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_numerical_solution_of_equations</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: numerical_methods.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -1768,6 +1922,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32spring23 / March / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1829,6 +1985,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_4_parametric_implicit_differentiation</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_4_derivative_rules</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differentiation</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: parametric_equations.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -1914,6 +2088,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32summer22 / June / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -1975,6 +2151,24 @@ pre {
   &quot;source_mark_event_count&quot;: 2
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2150,6 +2344,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32autumn23 / November / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_6_fixed_point_iteration</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -2210,6 +2406,24 @@ pre {
   &quot;source_mark_event_count&quot;: 3
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_6_fixed_point_iteration</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_6_root_location</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_numerical_solution_of_equations</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: numerical_methods.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2313,6 +2527,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33summer23 / June / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_4_parametric_implicit_differentiation</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>reviewer_decide</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -2373,6 +2589,24 @@ pre {
   &quot;source_mark_event_count&quot;: 8
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_4_parametric_implicit_differentiation</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p3_3_4_derivative_rules</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differentiation</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>reviewer_decide</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: parametric_equations.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2451,6 +2685,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>31autumn21 / November / 1</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -2512,6 +2748,25 @@ pre {
   &quot;source_mark_event_count&quot;: 1
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_2_log_exponential_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_functions_domain_range_one_one</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differential_equations</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>supporting_topic</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.&quot;,
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: logarithms_and_exponentials.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2615,6 +2870,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn23 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_1_polynomial_division_factor_remainder</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_1_polynomial_division_factor_remainder</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>reviewer_decide</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only</code></div>
       </div>
@@ -2677,6 +2934,24 @@ pre {
   &quot;source_mark_event_count&quot;: 11
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_1_polynomial_division_factor_remainder</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_quadratics_discriminant_intersections</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_algebra</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>reviewer_decide</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: polynomials.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2776,6 +3051,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32summer23 / June / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_4_derivative_rules</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_4_derivative_rules</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -2837,6 +3114,24 @@ pre {
   &quot;source_mark_event_count&quot;: 6
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_4_derivative_rules</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_differentiation_power_chain</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differentiation</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: differentiation.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -2949,6 +3244,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>31summer24 / June / 1</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_1_binomial_rational_expansion</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_1_binomial_rational_expansion</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>reviewer_decide</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only</code></div>
       </div>
@@ -3011,6 +3308,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_1_binomial_rational_expansion</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_series_binomial_positive_integer</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_algebra</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>reviewer_decide</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: binomial_expansion.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3061,6 +3376,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33summer23 / June / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3121,6 +3438,24 @@ pre {
   &quot;source_mark_event_count&quot;: 6
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_3_identities_compound_double_angle_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_trigonometry</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: trigonometry.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3242,6 +3577,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn23 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_1_polynomial_division_factor_remainder</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_1_polynomial_division_factor_remainder</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3303,6 +3640,25 @@ pre {
   &quot;source_mark_event_count&quot;: 5
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_1_polynomial_division_factor_remainder</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_quadratics_discriminant_intersections</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_differentiation</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>supporting_topic</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.&quot;,
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: polynomials.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3406,6 +3762,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32spring23 / March / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_7_vector_lines</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_7_vector_lines</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3467,6 +3825,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_7_vector_lines</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_coordinate_line_geometry</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_vectors</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: vectors.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3570,6 +3946,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn23 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_3_identities_compound_double_angle_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3630,6 +4008,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_3_identities_compound_double_angle_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_trigonometry</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: trigonometry.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3724,6 +4120,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>33autumn23 / November / 3</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>reviewer_decide</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3785,6 +4183,24 @@ pre {
   &quot;source_mark_event_count&quot;: 8
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_2_log_exponential_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_functions_domain_range_one_one</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_logarithmic_and_exponential_functions</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>reviewer_decide</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: logarithms_and_exponentials.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -3863,6 +4279,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32autumn23 / November / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -3924,6 +4342,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -4018,6 +4454,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>32spring23 / March / 2</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -4079,6 +4517,24 @@ pre {
   &quot;source_mark_event_count&quot;: 3
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -4164,6 +4620,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>31summer24 / June / 1</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -4225,6 +4683,24 @@ pre {
   &quot;source_mark_event_count&quot;: 2
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -4301,6 +4777,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>31summer24 / June / 1</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_9_complex_arithmetic_polar_form</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>subpart_level</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -4361,6 +4839,24 @@ pre {
   &quot;source_mark_event_count&quot;: 2
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_9_complex_arithmetic_polar_form</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_trigonometry_equations_intervals</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_complex_numbers</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>subpart_level</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: complex_numbers.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>
@@ -4419,6 +4915,8 @@ pre {
         <div class="meta-row"><span>Paper / session / variant</span><code>31summer24 / June / 1</code></div>
         <div class="meta-row"><span>Candidate skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
         <div class="meta-row"><span>Suggested source skill IDs</span><code>9709_p3_3_2_log_exponential_equations</code></div>
+        <div class="meta-row"><span>Cross-topic status</span><code>cross_topic_reviewable</code></div>
+        <div class="meta-row"><span>Recommended scope</span><code>reviewer_decide</code></div>
         <div class="meta-row"><span>Recommended review action</span><code>review_assets_and_skill</code></div>
         <div class="meta-row"><span>Proposed blockers</span><code>mark_events_advisory_only, text_or_ocr_not_authoritative, visual_dependency</code></div>
       </div>
@@ -4480,6 +4978,24 @@ pre {
   &quot;source_mark_event_count&quot;: 4
 }</pre>
       </details>
+      <section class="cross-topic">
+        <h3>Cross-topic Review</h3>
+        <p><strong>Status:</strong> <code>cross_topic_reviewable</code></p>
+        <p><strong>Primary candidate skill:</strong> <code>9709_p3_3_2_log_exponential_equations</code></p>
+        <p><strong>Supporting skill/topic context:</strong> <code>9709_p1_functions_domain_range_one_one</code></p>
+        <p><strong>Topic-routing topic:</strong> <code>9709_p3_topic_logarithmic_and_exponential_functions</code></p>
+        <p><strong>Topic-routing alignment:</strong> <code>aligned</code></p>
+        <p><strong>Recommended scope:</strong> <code>reviewer_decide</code></p>
+        <p class="warning small">Supporting skills are not automatically reviewed source evidence. They need direct review before use as mastery evidence.</p>
+        <h3>Cross-topic notes</h3>
+        <pre>[
+  &quot;Supporting candidate skills are review context only, not mastery evidence.&quot;,
+  &quot;Source topic hint: logarithms_and_exponentials.&quot;
+]</pre>
+        <h4>Cross-topic checklist</h4>
+        <ul>
+<li>Identify the main skill being assessed.</li><li>Identify any supporting skills used in the method.</li><li>Decide whether the current whole-question/part scope is safe.</li><li>Split by part/subpart if the item tests multiple independent skills.</li><li>Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.</li><li>Do not use supporting skill context as mastery evidence unless reviewed directly.</li>        </ul>
+      </section>
       <details>
         <summary>Advisory-Only Mark-Event Refs</summary>
         <p class="warning small">Mark-event refs are advisory-only review context. They are not authority for clean evidence, marking use, or candidate generation.</p>

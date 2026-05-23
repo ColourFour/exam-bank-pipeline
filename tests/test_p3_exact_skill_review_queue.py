@@ -205,6 +205,8 @@ def test_queue_item_with_separation_context_is_not_clean_parametric_candidate() 
     assert item["proposed_route_status"] == "ambiguous_candidate"
     assert item["recommended_review_action"] == "verify_de_vs_implicit_differentiation"
     assert "possible_differential_equation_not_parametric_or_implicit" in item["proposed_blockers"]
+    assert item["cross_topic_status"] == "conflict_needs_review"
+    assert item["topic_routing_alignment"] == "conflicting"
 
 
 def test_valid_implicit_differentiation_candidate_is_not_blocked_by_boundary_rule() -> None:
@@ -229,6 +231,69 @@ def test_valid_implicit_differentiation_candidate_is_not_blocked_by_boundary_rul
     assert "possible_differential_equation_not_parametric_or_implicit" not in blockers
     assert "weak_parametric_implicit_evidence_dydx_only" not in blockers
     assert action == "review_assets_and_skill"
+
+
+def test_topic_routing_mismatch_can_be_cross_topic_reviewable() -> None:
+    item = build_review_queue_item(
+        mapping={
+            **_mapping(),
+            "primary_skill_ids": ["9709_p3_3_4_derivative_rules"],
+            "prerequisite_skill_ids": ["9709_p3_3_3_trigonometric_equations"],
+            "evidence": {
+                "source_topic": "differentiation",
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "question_text_snippet": "Differentiate and solve the resulting trigonometric equation.",
+            },
+        },
+        question=_question(),
+        topic_route={
+            "primary_topic_id": "9709_p3_topic_trigonometry",
+            "topic_distribution": [{"topic_id": "9709_p3_topic_trigonometry", "fit_percent": 60}],
+            "confidence": "high",
+        },
+        topic_assignment=_topic_assignment("9709_p3_topic_differentiation"),
+        mark_event_record=_mark_events(),
+    )
+
+    assert item["proposed_route_status"] == "clean_candidate"
+    assert item["cross_topic_status"] == "cross_topic_reviewable"
+    assert item["topic_routing_alignment"] == "supporting_topic"
+    assert item["recommended_scope"] == "reviewer_decide"
+    assert any("Supporting candidate skills are review context only" in note for note in item["cross_topic_notes"])
+
+
+def test_whole_question_with_multiple_candidate_skills_needs_cross_topic_split() -> None:
+    item = build_review_queue_item(
+        mapping={
+            **_mapping(),
+            "primary_skill_ids": ["9709_p3_3_4_derivative_rules"],
+            "secondary_skill_ids": ["9709_p3_3_3_trigonometric_equations"],
+            "evidence_granularity": "whole_question_only",
+            "evidence": {"topic_confidence": "high", "topic_uncertain": False},
+        },
+        question=_question(),
+        topic_route={"primary_topic_id": "9709_p3_topic_differentiation", "confidence": "high"},
+        topic_assignment=_topic_assignment("9709_p3_topic_differentiation"),
+        mark_event_record=_mark_events(),
+    )
+
+    assert item["proposed_route_status"] == "ambiguous_candidate"
+    assert item["cross_topic_status"] == "cross_topic_split_needed"
+    assert item["recommended_scope"] == "part_level"
+
+
+def test_aligned_single_skill_gets_single_skill_cross_topic_status() -> None:
+    item = build_review_queue_item(
+        mapping=_mapping(),
+        question=_question(),
+        topic_route={"primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions", "confidence": "high"},
+        topic_assignment=_topic_assignment("9709_p3_topic_logarithmic_and_exponential_functions"),
+        mark_event_record=_mark_events(),
+    )
+
+    assert item["cross_topic_status"] == "single_skill_candidate"
+    assert item["topic_routing_alignment"] == "aligned"
 
 
 def test_duplicate_reviewed_registry_scopes_are_surfaced(tmp_path: Path) -> None:
@@ -300,6 +365,19 @@ def _mark_events(*, safe_for_marking_use: bool = False) -> dict[str, object]:
         "safe_for_marking_use": safe_for_marking_use,
         "total_marks_match": True,
         "mark_events": [{"event_id": "32spring21_q01_me0001", "mark_code_raw": "M1", "part_path": []}],
+    }
+
+
+def _topic_assignment(topic_id: str) -> dict[str, object]:
+    return {
+        "topic_assignments": [
+            {
+                "topic_id": topic_id,
+                "topic_name": topic_id,
+                "subtopic_id": f"{topic_id}_subtopic",
+                "subtopic_name": topic_id,
+            }
+        ]
     }
 
 
