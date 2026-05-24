@@ -119,6 +119,55 @@ def test_visual_review_renders_cross_topic_review_section(tmp_path: Path) -> Non
     assert "Supporting skills are not automatically reviewed source evidence" in result["html"]
 
 
+def test_visual_review_renders_sharper_status_warnings(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path, candidate_status="split_needed_candidate")
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    assert "Candidate status" in result["html"]
+    assert "split_needed_candidate" in result["html"]
+    assert "Do not approve whole-question evidence" in result["html"]
+
+
+def test_visual_review_renders_conflict_status_warning(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path, candidate_status="conflict_candidate", de_vs_implicit_warning=True)
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    assert "Known-risk conflict" in result["html"]
+    assert "Treat as ambiguous or blocked" in result["html"]
+
+
+def test_visual_review_renders_part_decomposition_section(tmp_path: Path) -> None:
+    paths = _write_visual_fixture(tmp_path, with_part_decomposition=True)
+
+    result = build_p3_exact_skill_visual_review_packet(
+        batch_dir=paths["batch_dir"],
+        batch_id="batch_test",
+        repo_root=paths["repo_root"],
+        dry_run=True,
+        generated_at="2026-05-23T00:00:00Z",
+    )
+
+    assert "Part-level Decomposition" in result["html"]
+    assert "Is this part actually testing one specific skill?" in result["html"]
+    assert "data-field=\"part_boundary_confirmed\"" in result["html"]
+    assert "data-field=\"decomposition_accepted\"" in result["html"]
+    assert "data-field=\"reviewed_part_subpart\"" in result["html"]
+
+
 def test_visual_review_includes_response_capture_controls(tmp_path: Path) -> None:
     paths = _write_visual_fixture(tmp_path)
 
@@ -191,6 +240,8 @@ def _write_visual_fixture(
     write_images: bool = True,
     de_vs_implicit_warning: bool = False,
     cross_topic_status: str = "single_skill_candidate",
+    candidate_status: str = "cross_topic_candidate",
+    with_part_decomposition: bool = False,
 ) -> dict[str, Path]:
     repo_root = tmp_path / "repo"
     batch_dir = repo_root / "data" / "review" / "p3_exact_skill_batches"
@@ -235,6 +286,27 @@ def _write_visual_fixture(
                         else []
                     ),
                     "suggested_cross_topic_status": cross_topic_status,
+                    "suggested_candidate_status": candidate_status,
+                    "suggested_review_priority": "2_cross_topic_candidate",
+                    "suggested_scope_risk": "reviewer_decide",
+                    "suggested_ambiguity_reason": "cross_topic_reviewable",
+                    "suggested_decomposition_status": "part_level_candidate" if with_part_decomposition else "not_decomposable",
+                    "suggested_part_level_candidates": (
+                        [
+                            {
+                                "decomposition_id": "p3_part_decomp:v1:q1:a",
+                                "proposed_part_id": "a",
+                                "decomposition_status": "part_level_candidate",
+                                "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                                "candidate_topic_ids": ["9709_p3_topic_test"],
+                                "matching_mark_event_refs": [{"event_id": "q1_me0001", "part_path": ["a"]}],
+                                "other_part_mark_event_refs": [],
+                                "evidence_signals": {"mark_event_part_match": True},
+                            }
+                        ]
+                        if with_part_decomposition
+                        else []
+                    ),
                     "suggested_recommended_scope": (
                         "reviewer_decide" if cross_topic_status == "cross_topic_reviewable" else "whole_question"
                     ),
@@ -274,6 +346,28 @@ def _write_visual_fixture(
                     "recommended_review_action": (
                         "verify_de_vs_implicit_differentiation" if de_vs_implicit_warning else "review_assets_and_skill"
                     ),
+                    "proposed_route_status": candidate_status,
+                    "review_priority_group": "2_cross_topic_candidate",
+                    "ambiguity_reason": "cross_topic_reviewable",
+                    "decomposition_status": "part_level_candidate" if with_part_decomposition else "not_decomposable",
+                    "proposed_part_level_candidates": (
+                        [
+                            {
+                                "decomposition_id": "p3_part_decomp:v1:q1:a",
+                                "proposed_part_id": "a",
+                                "decomposition_status": "part_level_candidate",
+                                "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"],
+                                "candidate_topic_ids": ["9709_p3_topic_test"],
+                                "matching_mark_event_refs": [{"event_id": "q1_me0001", "part_path": ["a"]}],
+                                "other_part_mark_event_refs": [],
+                                "evidence_signals": {"mark_event_part_match": True},
+                            }
+                        ]
+                        if with_part_decomposition
+                        else []
+                    ),
+                    "part_signal_summary": {"has_part_labeled_mark_events": with_part_decomposition},
+                    "part_scope_warning": "Use whole-question images to confirm part boundary.",
                     "proposed_blockers": [
                         "possible_differential_equation_not_parametric_or_implicit"
                         if de_vs_implicit_warning

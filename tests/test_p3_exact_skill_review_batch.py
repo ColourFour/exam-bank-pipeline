@@ -15,7 +15,12 @@ from exam_bank.p3_exact_skill.reviewed_decisions import validate_reviewed_decisi
 
 def test_selects_clean_candidate_before_ambiguous_or_fallback() -> None:
     selected, skipped = select_review_batch_items(
-        [_item("q1", status="ambiguous_candidate"), _item("q2"), _item("q3", status="fallback_only")],
+        [
+            _item("q1", status="ambiguous_candidate"),
+            _item("q2"),
+            _item("q3", status="fallback_only"),
+            _item("q4", status="cross_topic_candidate", cross_topic_status="cross_topic_reviewable"),
+        ],
         reviewed_scopes=set(),
         clean_reviewed_counts={},
         limit=10,
@@ -23,7 +28,48 @@ def test_selects_clean_candidate_before_ambiguous_or_fallback() -> None:
     )
 
     assert [item["question_id"] for item in selected] == ["q2"]
-    assert skipped["status_filter"] == 2
+    assert skipped["status_filter"] == 3
+
+
+def test_default_batch_selection_includes_cross_topic_and_excludes_conflicts() -> None:
+    selected, skipped = select_review_batch_items(
+        [
+            _item("q1", status="conflict_candidate"),
+            _item("q2", status="cross_topic_candidate", cross_topic_status="cross_topic_reviewable"),
+            _item("q3", status="fallback_only"),
+            _item("q4", status="ambiguous_candidate"),
+        ],
+        reviewed_scopes=set(),
+        clean_reviewed_counts={},
+        limit=10,
+    )
+
+    assert [item["question_id"] for item in selected] == ["q2"]
+    assert skipped["excluded_status"] == 3
+
+
+def test_part_decomposition_review_prioritizes_items_with_part_candidates() -> None:
+    selected, skipped = select_review_batch_items(
+        [
+            _item("q1", status="cross_topic_candidate", cross_topic_status="cross_topic_reviewable"),
+            _item(
+                "q2",
+                status="cross_topic_candidate",
+                cross_topic_status="cross_topic_reviewable",
+                decomposition_candidates=True,
+                priority=100,
+            ),
+            _item("q3", status="conflict_candidate", decomposition_candidates=True),
+        ],
+        reviewed_scopes=set(),
+        clean_reviewed_counts={},
+        limit=10,
+        batch_purpose="part_decomposition_review",
+    )
+
+    assert [item["question_id"] for item in selected] == ["q2"]
+    assert skipped["no_part_decomposition_candidates"] == 1
+    assert skipped["excluded_status"] == 1
 
 
 def test_excludes_already_reviewed_scopes_by_default() -> None:
@@ -126,6 +172,10 @@ def test_decision_template_includes_cross_topic_suggestions_without_reviewed_ski
     assert record["suggested_supporting_skill_ids"] == ["9709_p3_3_3_trigonometric_equations"]
     assert record["suggested_cross_topic_status"] == "cross_topic_reviewable"
     assert record["suggested_recommended_scope"] == "reviewer_decide"
+    assert record["suggested_candidate_status"] == "clean_candidate"
+    assert record["suggested_review_priority"] == "1_clean_candidate"
+    assert record["suggested_scope_risk"] == "reviewer_decide"
+    assert record["suggested_ambiguity_reason"] == "cross_topic_reviewable"
     assert record["reviewed_source_skill_ids"] == []
     assert record["route_status"] == "review_needed"
 
@@ -202,6 +252,7 @@ def _item(
     question_asset: bool = True,
     mark_asset: bool = True,
     cross_topic_status: str = "single_skill_candidate",
+    decomposition_candidates: bool = False,
 ) -> dict[str, object]:
     return {
         "queue_id": f"p3_exact_skill_review_queue:v1:{question_id}:{question_id}_whole",
@@ -224,6 +275,22 @@ def _item(
         "cross_topic_status": cross_topic_status,
         "cross_topic_notes": ["Supporting candidate skills are review context only."],
         "recommended_scope": "reviewer_decide" if cross_topic_status == "cross_topic_reviewable" else "whole_question",
+        "decomposition_status": "part_level_candidate" if decomposition_candidates else "not_decomposable",
+        "proposed_part_level_candidates": (
+            [{"decomposition_id": f"decomp:{question_id}:a", "decomposition_status": "part_level_candidate"}]
+            if decomposition_candidates
+            else []
+        ),
+        "part_signal_summary": {"has_part_labeled_mark_events": decomposition_candidates},
+        "part_scope_warning": "Use whole-question images to confirm part boundary." if decomposition_candidates else "",
+        "review_priority_group": {
+            "clean_candidate": "1_clean_candidate",
+            "cross_topic_candidate": "2_cross_topic_candidate",
+            "conflict_candidate": "5_conflict_candidate",
+            "fallback_only": "6_fallback_only",
+            "ambiguous_candidate": "7_ambiguous_candidate",
+        }.get(status, "9_review_needed"),
+        "ambiguity_reason": "cross_topic_reviewable" if cross_topic_status == "cross_topic_reviewable" else "unknown_ambiguity",
         "reviewer_cross_topic_checklist": ["Identify the main skill being assessed."],
         "asterion_candidate": {"candidate_id": f"content_lab_{question_id}", "generation_gate_block_reasons": []},
         "source_question_asset_refs": [{"path": f"p3/questions/{question_id}.png", "exists": question_asset}],

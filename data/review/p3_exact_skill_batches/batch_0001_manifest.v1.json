@@ -92,6 +92,12 @@
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
+        "queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d",
+        "recommended_scope": "subpart_level",
+        "topic_routing_alignment": "unknown"
+      },
+      {
+        "cross_topic_status": "cross_topic_reviewable",
         "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "aligned"
@@ -134,6 +140,12 @@
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
+        "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q04:31summer23_q04_b",
+        "recommended_scope": "subpart_level",
+        "topic_routing_alignment": "unknown"
+      },
+      {
+        "cross_topic_status": "cross_topic_reviewable",
         "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "aligned"
@@ -143,35 +155,24 @@
         "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "aligned"
-      },
-      {
-        "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole",
-        "recommended_scope": "reviewer_decide",
-        "topic_routing_alignment": "aligned"
-      },
-      {
-        "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q02:31summer24_q02_whole",
-        "recommended_scope": "reviewer_decide",
-        "topic_routing_alignment": "aligned"
       }
     ],
     "topic_routing_alignment_counts": {
-      "aligned": 22,
-      "supporting_topic": 3
+      "aligned": 20,
+      "supporting_topic": 3,
+      "unknown": 2
     }
   },
-  "generated_at": "2026-05-24T03:46:48Z",
+  "generated_at": "2026-05-24T04:22:38Z",
   "reviewed_registry_path": "data/review/p3_exact_skill_reviewed_decisions.v1.json",
   "schema": "exam_bank.p3_exact_skill.review_batch_manifest",
   "schema_version": 1,
   "selected_count": 25,
   "selected_question_ids": [
     "31autumn21_q07",
+    "31autumn23_q08",
+    "31summer23_q04",
     "31summer24_q01",
-    "31summer24_q02",
-    "31summer24_q03",
     "31summer24_q04",
     "31summer24_q07",
     "32autumn21_q11",
@@ -209,6 +210,7 @@
     "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
     "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
     "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
+    "p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d",
     "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
     "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
     "p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c",
@@ -216,14 +218,24 @@
     "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
     "p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b",
     "p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b",
+    "p3_exact_skill_review_queue:v1:31summer23_q04:31summer23_q04_b",
     "p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b",
-    "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
-    "p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole",
-    "p3_exact_skill_review_queue:v1:31summer24_q02:31summer24_q02_whole"
+    "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b"
   ],
   "selection_filters": {
+    "batch_purpose": "exact_skill_review",
     "exclude_already_reviewed": true,
-    "proposed_route_status": "clean_candidate",
+    "exclude_statuses": [
+      "conflict_candidate",
+      "fallback_only",
+      "ambiguous_candidate",
+      "blocked_candidate"
+    ],
+    "include_statuses": [
+      "clean_candidate",
+      "cross_topic_candidate"
+    ],
+    "proposed_route_status": null,
     "require_mark_scheme_asset_refs": true,
     "require_p3_candidate_skill": true,
     "require_question_asset_refs": true
@@ -248,9 +260,10 @@
   "skipped_count_by_reason": {
     "already_reviewed": 3,
     "crop_blocker": 644,
+    "excluded_status": 160,
     "mark_events_not_advisory_safe": 37,
-    "not_selected_limit": 15,
-    "status_filter": 673
+    "not_selected_limit": 51,
+    "status_filter": 181
   },
   "source_queue_path": "reports/p3_exact_skill_review_queue.v1.json",
   "warning": "This batch is a review packet only. It is not reviewed evidence, does not promote clean records, and is not the final Asterion p3_exact_skill_evidence_v1.json sidecar."

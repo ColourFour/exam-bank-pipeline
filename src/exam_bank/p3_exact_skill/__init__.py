@@ -16,6 +16,8 @@ DEFAULT_P3_TOPIC_ASSIGNMENTS_PATH = (
 )
 DEFAULT_REVIEW_QUEUE_JSON_PATH = "reports/p3_exact_skill_review_queue.v1.json"
 DEFAULT_REVIEW_QUEUE_REPORT_PATH = "reports/p3_exact_skill_review_queue.md"
+DEFAULT_AMBIGUITY_AUDIT_JSON_PATH = "reports/p3_exact_skill_ambiguity_audit.v1.json"
+DEFAULT_AMBIGUITY_AUDIT_REPORT_PATH = "reports/p3_exact_skill_ambiguity_audit.md"
 DEFAULT_REVIEW_BATCH_DIR = "data/review/p3_exact_skill_batches"
 
 ROUTE_STATUSES = {

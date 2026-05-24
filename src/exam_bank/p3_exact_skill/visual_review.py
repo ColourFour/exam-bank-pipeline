@@ -179,6 +179,7 @@ def _render_item(
     )
     blockers = queue_item.get("proposed_blockers") if isinstance(queue_item.get("proposed_blockers"), list) else []
     cross_topic_status = _text(queue_item.get("cross_topic_status") or record.get("suggested_cross_topic_status") or "unknown")
+    candidate_status = _text(queue_item.get("proposed_route_status") or record.get("suggested_candidate_status") or "unknown")
     return (
         f'    <article class="review-item" id="item-{index}">\n'
         f"      <h2>{index}. {escape(_text(record.get('question_id')))} / {escape(_text(record.get('subpart_id')))}</h2>\n"
@@ -189,11 +190,16 @@ def _render_item(
         f"{_meta('Paper / session / variant', f'{_text(record.get('paper'))} / {_text(record.get('session'))} / {_text(record.get('variant'))}')}"
         f"{_meta('Candidate skill IDs', ', '.join(_texts(candidate_skill_ids)) or 'none')}"
         f"{_meta('Suggested source skill IDs', ', '.join(_texts(suggested_skill_ids)) or 'none')}"
+        f"{_meta('Candidate status', candidate_status)}"
+        f"{_meta('Review priority', queue_item.get('review_priority_group') or record.get('suggested_review_priority') or 'unknown')}"
+        f"{_meta('Ambiguity reason', queue_item.get('ambiguity_reason') or record.get('suggested_ambiguity_reason') or 'unknown')}"
         f"{_meta('Cross-topic status', cross_topic_status)}"
         f"{_meta('Recommended scope', queue_item.get('recommended_scope') or record.get('suggested_recommended_scope') or 'reviewer_decide')}"
         f"{_meta('Recommended review action', queue_item.get('recommended_review_action') or 'missing queue context')}"
         f"{_meta('Proposed blockers', ', '.join(_texts(blockers)) or 'none')}"
         "      </div>\n"
+        f"{_status_warning(candidate_status)}"
+        f"{_part_decomposition_section(record, queue_item)}"
         '      <div class="image-grid">\n'
         f"{_asset_group('Question Image', question_assets, repo_root=repo_root, output_path=output_path)}"
         f"{_asset_group('Mark-Scheme Image', mark_assets, repo_root=repo_root, output_path=output_path)}"
@@ -253,6 +259,61 @@ def _cross_topic_section(record: dict[str, Any], queue_item: dict[str, Any]) -> 
     )
 
 
+def _status_warning(candidate_status: str) -> str:
+    if candidate_status == "split_needed_candidate":
+        return (
+            '      <p class="warning">Split-needed candidate. Do not approve whole-question evidence unless the reviewed skill is genuinely assessed across the whole scope.</p>\n'
+        )
+    if candidate_status == "conflict_candidate":
+        return (
+            '      <p class="warning">Known-risk conflict. Treat as ambiguous or blocked unless canonical images clearly resolve it.</p>\n'
+        )
+    if candidate_status == "weak_candidate":
+        return (
+            '      <p class="warning small">Weak candidate. Review only as context unless the canonical images provide direct exact-skill evidence.</p>\n'
+        )
+    return ""
+
+
+def _part_decomposition_section(record: dict[str, Any], queue_item: dict[str, Any]) -> str:
+    candidates = queue_item.get("proposed_part_level_candidates") or record.get("suggested_part_level_candidates") or []
+    status = _text(queue_item.get("decomposition_status") or record.get("suggested_decomposition_status"))
+    if not candidates and not status:
+        return ""
+    summary = queue_item.get("part_signal_summary") if isinstance(queue_item.get("part_signal_summary"), dict) else {}
+    warning = _text(queue_item.get("part_scope_warning")) or "This is a decomposition review aid, not reviewed evidence."
+    candidate_blocks = []
+    for candidate in candidates if isinstance(candidates, list) else []:
+        if not isinstance(candidate, dict):
+            continue
+        candidate_blocks.append(
+            "          <details open>\n"
+            f"            <summary>{escape(_text(candidate.get('decomposition_status')))}: part {escape(_text(candidate.get('proposed_part_id')) or 'unknown')}</summary>\n"
+            f"{_json_block('Proposed skill/topic for this part', {'skills': candidate.get('candidate_source_skill_ids') or [], 'topics': candidate.get('candidate_topic_ids') or [], 'supporting_skills': candidate.get('supporting_skill_ids') or []})}"
+            f"{_json_block('Evidence signals', candidate.get('evidence_signals') or {})}"
+            f"{_json_block('Matching mark-event refs', candidate.get('matching_mark_event_refs') or [])}"
+            f"{_json_block('Other-part mark-event refs', candidate.get('other_part_mark_event_refs') or [])}"
+            "          </details>\n"
+        )
+    return (
+        '      <section class="part-decomposition">\n'
+        "        <h3>Part-level Decomposition</h3>\n"
+        f"        <p><strong>Status:</strong> <code>{escape(status or 'unknown')}</code></p>\n"
+        f'        <p class="warning small">{escape(warning)}</p>\n'
+        f"{_json_block('Part signal summary', summary)}"
+        f"{''.join(candidate_blocks) if candidate_blocks else '        <p>No proposed part-level candidates.</p>\\n'}"
+        "        <h4>Part-boundary review questions</h4>\n"
+        "        <ul>\n"
+        "          <li>Is this part actually testing one specific skill?</li>\n"
+        "          <li>Is the proposed part boundary correct?</li>\n"
+        "          <li>Are other parts testing different skills?</li>\n"
+        "          <li>Should the reviewed registry record be whole-question, part-level, or subpart-level?</li>\n"
+        "          <li>Does the mark scheme confirm this part's target method?</li>\n"
+        "        </ul>\n"
+        "      </section>\n"
+    )
+
+
 def _asset_group(title: str, refs: list[Any], *, repo_root: Path, output_path: Path) -> str:
     if not refs:
         return (
@@ -299,11 +360,14 @@ def _response_form(index: int, record: dict[str, Any]) -> str:
         f"{_select('Have you inspected the mark-scheme image?', 'inspected_mark_scheme_image', yes_no_review)}"
         f"{_select('Does this confirm the suggested exact P3 skill?', 'exact_skill_confirmed', ['not_reviewed', 'yes', 'no_wrong_skill', 'uncertain', 'needs_split'])}"
         f"{_select('Is the current scope safe?', 'scope_decision', ['not_reviewed', 'whole_question_safe', 'part_level_needed', 'subpart_level_needed', 'unsafe_or_unclear'])}"
+        f"{_select('Is the proposed part boundary confirmed?', 'part_boundary_confirmed', ['not_reviewed', 'yes', 'no', 'uncertain'])}"
+        f"{_select('Accept the decomposition suggestion?', 'decomposition_accepted', ['not_reviewed', 'yes', 'no', 'needs_adjustment', 'uncertain'])}"
         f"{_select('Is P1/support-only material involved?', 'support_material_decision', ['not_reviewed', 'no', 'supporting_context_only', 'possible_target_skill', 'uncertain'])}"
         f"{_select('What route status would you choose?', 'route_status', ['review_needed', 'clean', 'thin', 'ambiguous', 'blocked', 'deferred', 'fallback_only'])}"
         f"{_select('What use-case allowance seems plausible after review?', 'allowed_use_case_summary', ['none', 'export_only', 'source_backed_examples', 'mastery_possible', 'guardian_possible', 'candidate_generation_possible', 'uncertain'])}"
         f"{_select('Is the evidence basis ready to write?', 'evidence_basis_status', ['not_started', 'drafted', 'needs_more_review', 'not_applicable'])}"
         "          </div>\n"
+        f"{_textarea('Reviewed part/subpart', 'reviewed_part_subpart', 'Optional: final part/subpart id to use in reviewed registry, e.g. b or a.ii.')}"
         f"{_textarea('Notes', 'reviewer_notes', 'Optional: evidence basis draft, blocker details, split suggestions, or follow-up questions.')}"
         "        </form>\n"
         "      </section>\n"

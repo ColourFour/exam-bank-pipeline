@@ -16,11 +16,15 @@ from exam_bank.p3_exact_skill import (
     DEFAULT_REVIEW_QUEUE_REPORT_PATH,
     REVIEW_QUEUE_SCHEMA,
 )
+from exam_bank.p3_exact_skill.part_decomposition import enrich_queue_items_with_part_decomposition
 
 QUEUE_SCHEMA_VERSION = 1
 QUEUE_STATUSES = {
     "clean_candidate",
-    "thin_candidate",
+    "cross_topic_candidate",
+    "split_needed_candidate",
+    "conflict_candidate",
+    "weak_candidate",
     "ambiguous_candidate",
     "blocked_candidate",
     "review_needed",
@@ -144,6 +148,7 @@ def build_p3_exact_skill_review_queue(
         if scope in reconciliation["duplicate_reviewed_scopes"]:
             item["reconciliation_flags"].append("duplicate_reviewed_registry_scope")
 
+    enrich_queue_items_with_part_decomposition(items)
     items.sort(key=lambda item: (-int(item["priority_score"]), item["question_id"], item["subpart_id"]))
     summary = summarize_review_queue(items, reconciliation=reconciliation)
     payload = {
@@ -232,6 +237,12 @@ def build_review_queue_item(
         candidate_p3_skill_ids=candidate_p3_ids,
         proposed_blockers=blockers,
     )
+    route_status, action = refine_route_status_for_review_triage(
+        route_status=route_status,
+        action=action,
+        cross_topic_status=cross_topic["cross_topic_status"],
+        blockers=blockers,
+    )
     reviewed_status = "not_reviewed"
     reviewed_route_status = None
     reviewed_evidence_ids: list[str] = []
@@ -271,6 +282,15 @@ def build_review_queue_item(
         "cross_topic_notes": cross_topic["cross_topic_notes"],
         "recommended_scope": cross_topic["recommended_scope"],
         "reviewer_cross_topic_checklist": cross_topic["reviewer_cross_topic_checklist"],
+        "ambiguity_reason": ambiguity_reason_for_item(
+            route_status=route_status,
+            cross_topic_status=cross_topic["cross_topic_status"],
+            topic_routing_alignment=cross_topic["topic_routing_alignment"],
+            blockers=blockers,
+            candidate_p3_skill_count=len(candidate_p3_ids),
+            subpart_label=subpart_label,
+        ),
+        "review_priority_group": review_priority_group(route_status),
         "asterion_candidate": _content_lab_summary(content_lab_candidate),
         "source_question_asset_refs": question_assets,
         "source_mark_scheme_asset_refs": mark_scheme_assets,
@@ -360,15 +380,115 @@ def classify_review_queue_item(
         return "blocked_candidate", blockers, "needs_human_math_review"
     if parametric_boundary_blocker:
         if parametric_boundary_blocker == "weak_parametric_equation_evidence_missing_parameter":
-            return "ambiguous_candidate", blockers, "verify_parametric_equation_parameter"
-        return "ambiguous_candidate", blockers, "verify_de_vs_implicit_differentiation"
+            return "conflict_candidate", blockers, "verify_parametric_equation_parameter"
+        return "conflict_candidate", blockers, "verify_de_vs_implicit_differentiation"
     if "mixed_or_ambiguous_topic" in blockers or len(p3_skill_ids) > 1:
         return "ambiguous_candidate", blockers, "defer_ambiguous_skill"
     if "visual_dependency" in blockers and "question_crop_not_high_confidence" in blockers:
         return "fallback_only", blockers, "defer_visual_dependency"
     if not _mark_event_refs_present(mark_event_record):
-        return "thin_candidate", blockers, "verify_mark_scheme_alignment"
+        return "weak_candidate", blockers, "verify_mark_scheme_alignment"
     return "clean_candidate", blockers, "review_assets_and_skill"
+
+
+def refine_route_status_for_review_triage(
+    *,
+    route_status: str,
+    action: str,
+    cross_topic_status: str,
+    blockers: list[str],
+) -> tuple[str, str]:
+    if route_status in {"blocked_candidate", "fallback_only", "conflict_candidate"}:
+        return route_status, action
+    if cross_topic_status == "conflict_needs_review":
+        return "conflict_candidate", action
+    if cross_topic_status == "cross_topic_split_needed":
+        return "split_needed_candidate", "split_by_part"
+    if cross_topic_status == "cross_topic_reviewable":
+        return "cross_topic_candidate", action
+    if route_status == "weak_candidate":
+        return route_status, action
+    if route_status == "ambiguous_candidate" and _only_weak_context_blockers(blockers):
+        return "weak_candidate", action
+    return route_status, action
+
+
+def _only_weak_context_blockers(blockers: list[str]) -> bool:
+    strong_blockers = {
+        "missing_question_asset",
+        "missing_mark_scheme_asset",
+        "p1_or_support_only_candidate_skill",
+        "no_candidate_p3_skill",
+        "mixed_or_ambiguous_topic",
+        "possible_differential_equation_not_parametric_or_implicit",
+        "weak_parametric_implicit_evidence_dydx_only",
+        "weak_parametric_equation_evidence_missing_parameter",
+    }
+    return bool(blockers) and not (set(blockers) & strong_blockers)
+
+
+def review_priority_group(route_status: str) -> str:
+    return {
+        "clean_candidate": "1_clean_candidate",
+        "cross_topic_candidate": "2_cross_topic_candidate",
+        "split_needed_candidate": "3_split_needed_candidate",
+        "weak_candidate": "4_weak_candidate",
+        "conflict_candidate": "5_conflict_candidate",
+        "fallback_only": "6_fallback_only",
+        "ambiguous_candidate": "7_ambiguous_candidate",
+        "blocked_candidate": "8_blocked_candidate",
+    }.get(route_status, "9_review_needed")
+
+
+def ambiguity_reason_for_item(
+    *,
+    route_status: str,
+    cross_topic_status: str,
+    topic_routing_alignment: str,
+    blockers: list[str],
+    candidate_p3_skill_count: int,
+    subpart_label: str,
+) -> str:
+    blocker_set = set(blockers)
+    if route_status == "conflict_candidate":
+        if "possible_differential_equation_not_parametric_or_implicit" in blocker_set:
+            return "de_vs_parametric_implicit_conflict"
+        if "weak_parametric_implicit_evidence_dydx_only" in blocker_set:
+            return "de_vs_parametric_implicit_conflict"
+        if "weak_parametric_equation_evidence_missing_parameter" in blocker_set:
+            return "weak_candidate_skill_context"
+        return "topic_routing_candidate_mismatch"
+    if route_status == "cross_topic_candidate":
+        return "topic_routing_candidate_mismatch" if topic_routing_alignment == "supporting_topic" else "cross_topic_reviewable"
+    if route_status == "split_needed_candidate":
+        if subpart_label == "whole":
+            return "broad_whole_question_scope"
+        return "multiple_candidate_skills"
+    if route_status == "weak_candidate":
+        return "fallback_or_low_quality_context" if _has_quality_blockers(blocker_set) else "weak_candidate_skill_context"
+    if route_status == "fallback_only":
+        return "fallback_or_low_quality_context"
+    if route_status == "blocked_candidate":
+        return "fallback_or_low_quality_context"
+    if route_status == "ambiguous_candidate":
+        if candidate_p3_skill_count > 1:
+            return "multiple_candidate_skills"
+        if cross_topic_status == "unknown":
+            return "unknown_ambiguity"
+    return "unknown_ambiguity"
+
+
+def _has_quality_blockers(blockers: set[str]) -> bool:
+    return bool(
+        blockers
+        & {
+            "question_crop_not_high_confidence",
+            "mark_scheme_crop_not_high_confidence",
+            "text_or_ocr_not_authoritative",
+            "visual_dependency",
+            "mark_events_not_advisory_safe",
+        }
+    )
 
 
 def summarize_review_queue(items: list[dict[str, Any]], *, reconciliation: dict[str, Any]) -> dict[str, Any]:
@@ -389,6 +509,10 @@ def summarize_review_queue(items: list[dict[str, Any]], *, reconciliation: dict[
         ),
         "thin_candidates": status_counts.get("thin_candidate", 0),
         "ambiguous_candidates": status_counts.get("ambiguous_candidate", 0),
+        "cross_topic_candidates": status_counts.get("cross_topic_candidate", 0),
+        "split_needed_candidates": status_counts.get("split_needed_candidate", 0),
+        "conflict_candidates": status_counts.get("conflict_candidate", 0),
+        "weak_candidates": status_counts.get("weak_candidate", 0),
         "blocked_candidates": status_counts.get("blocked_candidate", 0),
         "fallback_only_candidates": status_counts.get("fallback_only", 0),
         "review_needed_candidates": status_counts.get("review_needed", 0),
@@ -425,23 +549,43 @@ def render_review_queue_report(queue: dict[str, Any]) -> str:
     summary = queue.get("summary") if isinstance(queue.get("summary"), dict) else {}
     reconciliation = queue.get("reconciliation") if isinstance(queue.get("reconciliation"), dict) else {}
     items = [item for item in queue.get("items", []) if isinstance(item, dict)]
+    priority_order = [
+        "clean_candidate",
+        "cross_topic_candidate",
+        "split_needed_candidate",
+        "weak_candidate",
+        "conflict_candidate",
+        "fallback_only",
+        "ambiguous_candidate",
+        "blocked_candidate",
+    ]
     priority_items = [
         item
         for item in items
         if item.get("reviewed_decision_status") != "already_reviewed"
-        and item.get("proposed_route_status") in {"clean_candidate", "thin_candidate", "ambiguous_candidate"}
+        and item.get("proposed_route_status")
+        in {"clean_candidate", "cross_topic_candidate", "split_needed_candidate", "weak_candidate"}
     ][:40]
-    blocked_items = [item for item in items if item.get("proposed_route_status") in {"blocked_candidate", "fallback_only"}]
+    blocked_items = [
+        item
+        for item in items
+        if item.get("proposed_route_status") in {"blocked_candidate", "fallback_only", "conflict_candidate"}
+    ]
     lines = [
         "# P3 Exact-Skill Review Queue",
         "",
         "This is a reviewer queue, not the final Asterion sidecar. `clean_candidate` means worth review; it does not mean reviewed clean evidence.",
+        "Reduced ambiguity is triage only. New candidate statuses explain review handling; they do not increase trust or create reviewed evidence.",
         "",
         "## Summary",
         "",
         f"- Total queue items: {summary.get('total_queue_items', 0)}",
         f"- Candidate clean-looking but not reviewed: {summary.get('candidate_clean_looking_not_reviewed', 0)}",
         f"- Thin candidates: {summary.get('thin_candidates', 0)}",
+        f"- Cross-topic candidates: {summary.get('cross_topic_candidates', 0)}",
+        f"- Split-needed candidates: {summary.get('split_needed_candidates', 0)}",
+        f"- Conflict candidates: {summary.get('conflict_candidates', 0)}",
+        f"- Weak candidates: {summary.get('weak_candidates', 0)}",
         f"- Ambiguous candidates: {summary.get('ambiguous_candidates', 0)}",
         f"- Blocked candidates: {summary.get('blocked_candidates', 0)}",
         f"- Fallback-only candidates: {summary.get('fallback_only_candidates', 0)}",
@@ -453,7 +597,11 @@ def render_review_queue_report(queue: dict[str, Any]) -> str:
         "",
         "## Status Counts",
         "",
-        *_counter_lines(summary.get("status_counts") or {}),
+        *_ordered_counter_lines(summary.get("status_counts") or {}, priority_order),
+        "",
+        "## Human-Review Priority Groups",
+        "",
+        *_priority_group_lines(summary.get("status_counts") or {}, priority_order),
         "",
         "## Cross-Topic Status Counts",
         "",
@@ -1085,6 +1233,34 @@ def _counter_lines(counter: dict[str, Any]) -> list[str]:
     if not counter:
         return ["- None"]
     return [f"- `{key}`: {value}" for key, value in counter.items()]
+
+
+def _ordered_counter_lines(counter: dict[str, Any], order: list[str]) -> list[str]:
+    if not counter:
+        return ["- None"]
+    lines = [f"- `{key}`: {counter.get(key, 0)}" for key in order if key in counter]
+    lines.extend(f"- `{key}`: {value}" for key, value in counter.items() if key not in order)
+    return lines or ["- None"]
+
+
+def _priority_group_lines(counter: dict[str, Any], order: list[str]) -> list[str]:
+    if not counter:
+        return ["- None"]
+    descriptions = {
+        "clean_candidate": "clean-looking source-backed review candidates; still not reviewed evidence",
+        "cross_topic_candidate": "plausible primary/supporting P3 cross-topic candidates",
+        "split_needed_candidate": "scope likely too broad; part/subpart review needed",
+        "weak_candidate": "some skill evidence, but weaker context or alignment",
+        "conflict_candidate": "known-risk or method-critical conflict; avoid routine batches",
+        "fallback_only": "low-quality/visual-dependent fallback review only",
+        "ambiguous_candidate": "true unresolved ambiguity after sharper triage",
+        "blocked_candidate": "missing or invalid inputs for review",
+    }
+    return [
+        f"- `{status}`: {counter.get(status, 0)} ({descriptions[status]})"
+        for status in order
+        if status in counter or counter.get(status, 0)
+    ]
 
 
 def _item_lines(items: list[dict[str, Any]]) -> list[str]:

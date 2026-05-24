@@ -163,6 +163,39 @@ If a question requires method A and then method B, the reviewer must decide whet
 
 The differential-equation vs parametric/implicit guard remains a special known-risk boundary: `dy/dx` alone is insufficient for parametric/implicit differentiation, and separation of variables should route toward differential-equation review.
 
+### Ambiguity Reduction Is Triage, Not Trust Promotion
+
+The review queue now uses sharper candidate statuses so broad `ambiguous_candidate` records are not all handled the same way. This does not make any record reviewed evidence and does not increase allowed use cases. Only `data/review/p3_exact_skill_reviewed_decisions.v1.json`, after manual review and validation, can assert clean evidence.
+
+The queue statuses are review categories:
+
+- `clean_candidate`: single-skill clean-looking review candidate, still not reviewed evidence.
+- `cross_topic_candidate`: plausible primary/supporting P3 context; reviewer must identify the target skill and avoid treating support context as mastery evidence.
+- `split_needed_candidate`: current scope is likely too broad; part/subpart review is needed before any clean decision.
+- `conflict_candidate`: known-risk or method-critical mismatch, including DE vs parametric/implicit conflicts; treat as ambiguous or blocked unless canonical images clearly resolve it.
+- `weak_candidate`: some skill evidence exists, but the context is weaker or too thin for priority review.
+- `ambiguous_candidate`: reserved for true unresolved uncertainty after sharper triage.
+- `fallback_only` and `blocked_candidate`: low-quality fallback or blocked review contexts remain visible in reports.
+
+Lowering the ambiguous count means the review workflow has better triage, not more trusted evidence. The ambiguity audit artifacts, `reports/p3_exact_skill_ambiguity_audit.v1.json` and `reports/p3_exact_skill_ambiguity_audit.md`, show where broad ambiguity moved and how each group should be handled.
+
+### Part-Level Decomposition Review
+
+Many P3 questions are cross-topic at whole-question level because different parts test different skills. A subpart is often closer to one exact skill than the full question, so the workflow now generates conservative part-level decomposition candidates as review assistance.
+
+The decomposition pass uses existing queue scopes, question-bank subpart labels, and advisory mark-event `part_path` labels. It does not create part crops, does not infer curriculum authority from OCR/native text, and does not promote any candidate. When part-level crops are unavailable, the visual packet links the whole-question and whole mark-scheme images and warns the reviewer to confirm the part boundary manually.
+
+The report artifacts are:
+
+```text
+reports/p3_exact_skill_part_decomposition.v1.json
+reports/p3_exact_skill_part_decomposition.md
+```
+
+Decomposition statuses include `part_level_candidate`, `subpart_level_candidate`, `already_part_scoped`, `needs_manual_split`, `insufficient_part_signal`, `conflict_needs_review`, and `not_decomposable`. A `part_level_candidate` means there is enough existing part-label signal to make a human review packet more focused; it is still not reviewed evidence.
+
+Use `scripts/build_p3_exact_skill_review_batch.py --batch-purpose part_decomposition_review` to build a batch that prioritizes cross-topic or split-needed records with proposed part-level candidates. The reviewer must still decide whether the reviewed registry record should be whole-question, part-level, subpart-level, ambiguous, blocked, or deferred. Supporting skills remain context only unless reviewed directly as the target skill.
+
 ## Purpose
 
 Asterion Content Lab needs a reviewed, image-backed evidence surface for exact P3 skill examples. The sidecar should answer a narrow question: which canonical question or part has been safely reviewed as evidence for one exact P3 skill, with stable question and mark-scheme image refs, explicit route status, provenance, blockers, and allowed runtime use cases?

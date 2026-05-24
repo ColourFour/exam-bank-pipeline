@@ -17,7 +17,14 @@ from exam_bank.p3_exact_skill import (
 )
 
 REVIEW_BATCH_SCHEMA_VERSION = 1
-DEFAULT_BATCH_STATUS = "clean_candidate"
+DEFAULT_BATCH_STATUSES = ("clean_candidate", "cross_topic_candidate")
+DEFAULT_EXCLUDED_BATCH_STATUSES = ("conflict_candidate", "fallback_only", "ambiguous_candidate", "blocked_candidate")
+PURPOSE_STATUS_DEFAULTS = {
+    "exact_skill_review": DEFAULT_BATCH_STATUSES,
+    "split_review": ("split_needed_candidate",),
+    "conflict_review": ("conflict_candidate",),
+    "part_decomposition_review": ("cross_topic_candidate", "split_needed_candidate"),
+}
 ADVISORY_MARK_EVENT_WARNING = (
     "Mark-event refs are advisory-only review context. They are not authority for clean evidence, "
     "marking use, or candidate generation."
@@ -41,7 +48,10 @@ def build_p3_exact_skill_review_batch(
     batch_id: str = "batch_0001",
     limit: int = 25,
     out_dir: str | Path = DEFAULT_REVIEW_BATCH_DIR,
-    status: str = DEFAULT_BATCH_STATUS,
+    status: str | None = None,
+    include_statuses: list[str] | tuple[str, ...] | None = None,
+    exclude_statuses: list[str] | tuple[str, ...] | None = DEFAULT_EXCLUDED_BATCH_STATUSES,
+    batch_purpose: str = "exact_skill_review",
     generated_at: str | None = None,
     dry_run: bool = False,
 ) -> dict[str, Any]:
@@ -62,6 +72,9 @@ def build_p3_exact_skill_review_batch(
         clean_reviewed_counts=clean_counts,
         limit=limit,
         status=status,
+        include_statuses=include_statuses,
+        exclude_statuses=exclude_statuses,
+        batch_purpose=batch_purpose,
     )
     packet = render_review_packet(
         selected,
@@ -71,6 +84,9 @@ def build_p3_exact_skill_review_batch(
         reviewed_path=reviewed_path,
         limit=limit,
         status=status,
+        include_statuses=_effective_include_statuses(status, include_statuses, batch_purpose),
+        exclude_statuses=_normalise_statuses(exclude_statuses),
+        batch_purpose=batch_purpose,
     )
     template = build_decision_template(
         selected,
@@ -88,6 +104,9 @@ def build_p3_exact_skill_review_batch(
         reviewed_path=reviewed_path,
         limit=limit,
         status=status,
+        include_statuses=_effective_include_statuses(status, include_statuses, batch_purpose),
+        exclude_statuses=_normalise_statuses(exclude_statuses),
+        batch_purpose=batch_purpose,
         clean_reviewed_counts=clean_counts,
     )
 
@@ -122,12 +141,23 @@ def select_review_batch_items(
     reviewed_scopes: set[tuple[str, str]],
     clean_reviewed_counts: dict[str, int],
     limit: int,
-    status: str = DEFAULT_BATCH_STATUS,
+    status: str | None = None,
+    include_statuses: list[str] | tuple[str, ...] | None = None,
+    exclude_statuses: list[str] | tuple[str, ...] | None = DEFAULT_EXCLUDED_BATCH_STATUSES,
+    batch_purpose: str = "exact_skill_review",
 ) -> tuple[list[dict[str, Any]], Counter[str]]:
     skipped: Counter[str] = Counter()
     eligible: list[dict[str, Any]] = []
+    included = _effective_include_statuses(status, include_statuses, batch_purpose)
+    excluded = _normalise_statuses(exclude_statuses)
     for item in items:
-        reasons = _skip_reasons(item, reviewed_scopes=reviewed_scopes, status=status)
+        reasons = _skip_reasons(
+            item,
+            reviewed_scopes=reviewed_scopes,
+            include_statuses=included,
+            exclude_statuses=excluded,
+            batch_purpose=batch_purpose,
+        )
         if reasons:
             skipped.update(reasons)
             continue
@@ -153,6 +183,7 @@ def select_review_batch_items(
                 selected_papers=selected_papers,
                 selected_sessions=selected_sessions,
                 selected_skills=selected_skills,
+                batch_purpose=batch_purpose,
             ),
         )
         item = remaining.pop(best_index)
@@ -202,6 +233,9 @@ def build_batch_manifest(
     reviewed_path: str | Path,
     limit: int,
     status: str,
+    include_statuses: list[str],
+    exclude_statuses: list[str],
+    batch_purpose: str,
     clean_reviewed_counts: dict[str, int],
 ) -> dict[str, Any]:
     selected_skills = sorted({skill_id for item in items for skill_id in _p3_skill_ids(item)})
@@ -219,6 +253,9 @@ def build_batch_manifest(
         "selection_limit": limit,
         "selection_filters": {
             "proposed_route_status": status,
+            "include_statuses": include_statuses,
+            "exclude_statuses": exclude_statuses,
+            "batch_purpose": batch_purpose,
             "exclude_already_reviewed": True,
             "require_p3_candidate_skill": True,
             "require_question_asset_refs": True,
@@ -263,6 +300,9 @@ def render_review_packet(
     reviewed_path: str | Path,
     limit: int,
     status: str,
+    include_statuses: list[str],
+    exclude_statuses: list[str],
+    batch_purpose: str,
 ) -> str:
     lines = [
         f"# P3 Exact-Skill Review Packet: {batch_id}",
@@ -274,7 +314,10 @@ def render_review_packet(
         f"- Generated at: `{generated_at}`",
         f"- Source queue: `{queue_path}`",
         f"- Reviewed registry checked for exclusions: `{reviewed_path}`",
-        f"- Selection status: `{status}`",
+        f"- Selection status: `{status or 'multiple'}`",
+        f"- Included statuses: `{', '.join(include_statuses) or 'none'}`",
+        f"- Excluded statuses: `{', '.join(exclude_statuses) or 'none'}`",
+        f"- Batch purpose: `{batch_purpose}`",
         f"- Selection limit: `{limit}`",
         f"- Selected items: `{len(items)}`",
         "",
@@ -295,10 +338,22 @@ def render_review_packet(
     return "\n".join(lines).rstrip() + "\n"
 
 
-def _skip_reasons(item: dict[str, Any], *, reviewed_scopes: set[tuple[str, str]], status: str) -> list[str]:
+def _skip_reasons(
+    item: dict[str, Any],
+    *,
+    reviewed_scopes: set[tuple[str, str]],
+    include_statuses: list[str],
+    exclude_statuses: list[str],
+    batch_purpose: str,
+) -> list[str]:
     reasons: list[str] = []
-    if _text(item.get("proposed_route_status")) != status:
+    item_status = _text(item.get("proposed_route_status"))
+    if item_status not in include_statuses:
         reasons.append("status_filter")
+    if item_status in exclude_statuses:
+        reasons.append("excluded_status")
+    if batch_purpose == "part_decomposition_review" and not item.get("proposed_part_level_candidates"):
+        reasons.append("no_part_decomposition_candidates")
     scope = (_text(item.get("question_id")), _text(item.get("subpart_id")) or f"{_text(item.get('question_id'))}_whole")
     if item.get("reviewed_decision_status") == "already_reviewed" or scope in reviewed_scopes:
         reasons.append("already_reviewed")
@@ -326,10 +381,24 @@ def _selection_score(
     selected_papers: set[str],
     selected_sessions: set[str],
     selected_skills: set[str],
+    batch_purpose: str,
 ) -> tuple[int, str, str]:
     skills = _p3_skill_ids(item)
     blockers = set(item.get("proposed_blockers") or [])
     score = int(item.get("priority_score") or 0)
+    score += {
+        "clean_candidate": 120,
+        "cross_topic_candidate": 90,
+        "split_needed_candidate": 55,
+        "weak_candidate": 25,
+        "conflict_candidate": -80,
+        "fallback_only": -100,
+        "ambiguous_candidate": -120,
+    }.get(_text(item.get("proposed_route_status")), 0)
+    if batch_purpose == "part_decomposition_review":
+        score += 120 if item.get("proposed_part_level_candidates") else -200
+        score += 40 if _text(item.get("decomposition_status")) in {"part_level_candidate", "subpart_level_candidate", "already_part_scoped"} else 0
+        score += sum(len(candidate.get("other_part_mark_event_refs") or []) for candidate in item.get("proposed_part_level_candidates") or [])
     score += 80 if any(clean_reviewed_counts.get(skill_id, 0) == 0 for skill_id in skills) else 0
     score += 30 if len(skills) == 1 else -25
     score += 15 if _text(_nested(item, "asterion_candidate", "candidate_id")) else 0
@@ -358,6 +427,12 @@ def _template_record(item: dict[str, Any], *, batch_id: str, generated_at: str) 
         "suggested_supporting_skill_ids": _unique_texts(item.get("supporting_candidate_skill_ids") or []),
         "suggested_cross_topic_status": _text(item.get("cross_topic_status")) or "unknown",
         "suggested_recommended_scope": _text(item.get("recommended_scope")) or "reviewer_decide",
+        "suggested_candidate_status": _text(item.get("proposed_route_status")) or "review_needed",
+        "suggested_review_priority": _text(item.get("review_priority_group")) or "unknown",
+        "suggested_scope_risk": _scope_risk(item),
+        "suggested_ambiguity_reason": _text(item.get("ambiguity_reason")) or "unknown_ambiguity",
+        "suggested_decomposition_status": _text(item.get("decomposition_status")) or "not_decomposable",
+        "suggested_part_level_candidates": item.get("proposed_part_level_candidates") or [],
         "reviewed_source_skill_ids": [],
         "reviewed_region": None,
         "route_status": "review_needed",
@@ -396,6 +471,10 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
         f"- Part/subpart: `{item.get('part_id')}` / `{item.get('subpart_id')}`",
         f"- Paper/session/variant: `{item.get('paper')}` / `{item.get('session')}` / `{item.get('variant')}`",
         f"- Candidate P3 skill IDs: {skills}",
+        f"- Suggested candidate status: `{item.get('proposed_route_status') or 'unknown'}`",
+        f"- Suggested review priority: `{item.get('review_priority_group') or 'unknown'}`",
+        f"- Suggested ambiguity reason: `{item.get('ambiguity_reason') or 'unknown_ambiguity'}`",
+        f"- Decomposition status: `{item.get('decomposition_status') or 'not_decomposable'}`",
         f"- Candidate source skill IDs, including prerequisite/support context: {source_skills}",
         f"- Primary candidate skill IDs: {', '.join(f'`{skill}`' for skill in item.get('primary_candidate_skill_ids') or []) or 'none'}",
         f"- Supporting candidate skill IDs: {supporting_skills}",
@@ -406,6 +485,8 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
         f"- Topic-routing alignment: `{item.get('topic_routing_alignment') or 'unknown'}`",
         f"- Recommended scope: `{item.get('recommended_scope') or 'reviewer_decide'}`",
         f"- Cross-topic notes: {cross_topic_notes}",
+        "Part-level decomposition candidates:",
+        *_json_bullets(item.get("proposed_part_level_candidates") or []),
         f"- Content Lab blocker context: `{json.dumps(item.get('asterion_candidate') or {}, sort_keys=True)}`",
         f"- Proposed blockers: {blockers}",
         f"- Reconciliation flags: {reconciliation}",
@@ -428,6 +509,39 @@ def _packet_item_lines(index: int, item: dict[str, Any]) -> list[str]:
         "",
     ]
     return lines
+
+
+def _effective_include_statuses(
+    status: str | None,
+    include_statuses: list[str] | tuple[str, ...] | None,
+    batch_purpose: str,
+) -> list[str]:
+    if include_statuses:
+        return _normalise_statuses(include_statuses)
+    if status:
+        return _normalise_statuses([status])
+    return list(PURPOSE_STATUS_DEFAULTS.get(batch_purpose, DEFAULT_BATCH_STATUSES))
+
+
+def _normalise_statuses(statuses: list[str] | tuple[str, ...] | None) -> list[str]:
+    result: list[str] = []
+    for status in statuses or []:
+        for part in _text(status).split(","):
+            text = _text(part)
+            if text and text not in result:
+                result.append(text)
+    return result
+
+
+def _scope_risk(item: dict[str, Any]) -> str:
+    status = _text(item.get("proposed_route_status"))
+    if status == "split_needed_candidate":
+        return "scope_split_likely"
+    if _text(item.get("recommended_scope")) in {"part_level", "subpart_level"}:
+        return "part_or_subpart_scope_review"
+    if status == "conflict_candidate":
+        return "known_conflict"
+    return "reviewer_decide"
 
 
 def _reviewed_scopes(payload: dict[str, Any]) -> set[tuple[str, str]]:

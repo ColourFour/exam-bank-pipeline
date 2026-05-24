@@ -19,7 +19,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch-id", default="batch_0001")
     parser.add_argument("--limit", type=int, default=25)
     parser.add_argument("--out-dir", type=Path, default=Path(DEFAULT_REVIEW_BATCH_DIR))
-    parser.add_argument("--status", default="clean_candidate")
+    parser.add_argument("--status", default=None)
+    parser.add_argument("--include-status", default=None, help="Comma-separated candidate statuses to include.")
+    parser.add_argument(
+        "--exclude-status",
+        default="conflict_candidate,fallback_only,ambiguous_candidate,blocked_candidate",
+        help="Comma-separated candidate statuses to exclude.",
+    )
+    parser.add_argument(
+        "--batch-purpose",
+        choices=["exact_skill_review", "split_review", "conflict_review", "part_decomposition_review"],
+        default="exact_skill_review",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
@@ -30,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
         limit=args.limit,
         out_dir=args.out_dir,
         status=args.status,
+        include_statuses=args.include_status.split(",") if args.include_status else None,
+        exclude_statuses=args.exclude_status.split(",") if args.exclude_status else None,
+        batch_purpose=args.batch_purpose,
         dry_run=args.dry_run,
     )
     print(

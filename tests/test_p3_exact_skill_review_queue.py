@@ -9,6 +9,7 @@ from exam_bank.p3_exact_skill.review_queue import (
     build_p3_exact_skill_review_queue,
     build_review_queue_item,
     classify_review_queue_item,
+    summarize_review_queue,
 )
 
 
@@ -152,7 +153,7 @@ def test_dydx_alone_does_not_imply_parametric_implicit_differentiation() -> None
         mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
     )
 
-    assert status == "ambiguous_candidate"
+    assert status == "conflict_candidate"
     assert "weak_parametric_implicit_evidence_dydx_only" in blockers
     assert action == "verify_de_vs_implicit_differentiation"
 
@@ -179,7 +180,7 @@ def test_separation_of_variables_context_downgrades_parametric_candidate() -> No
         mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
     )
 
-    assert status == "ambiguous_candidate"
+    assert status == "conflict_candidate"
     assert "possible_differential_equation_not_parametric_or_implicit" in blockers
     assert action == "verify_de_vs_implicit_differentiation"
 
@@ -202,7 +203,7 @@ def test_queue_item_with_separation_context_is_not_clean_parametric_candidate() 
         mark_event_record=_mark_events(),
     )
 
-    assert item["proposed_route_status"] == "ambiguous_candidate"
+    assert item["proposed_route_status"] == "conflict_candidate"
     assert item["recommended_review_action"] == "verify_de_vs_implicit_differentiation"
     assert "possible_differential_equation_not_parametric_or_implicit" in item["proposed_blockers"]
     assert item["cross_topic_status"] == "conflict_needs_review"
@@ -253,7 +254,7 @@ def test_parametric_source_without_parameter_context_is_not_clean_candidate() ->
         mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
     )
 
-    assert status == "ambiguous_candidate"
+    assert status == "conflict_candidate"
     assert "weak_parametric_equation_evidence_missing_parameter" in blockers
     assert action == "verify_parametric_equation_parameter"
 
@@ -331,7 +332,7 @@ def test_topic_routing_mismatch_can_be_cross_topic_reviewable() -> None:
         mark_event_record=_mark_events(),
     )
 
-    assert item["proposed_route_status"] == "clean_candidate"
+    assert item["proposed_route_status"] == "cross_topic_candidate"
     assert item["cross_topic_status"] == "cross_topic_reviewable"
     assert item["topic_routing_alignment"] == "supporting_topic"
     assert item["recommended_scope"] == "reviewer_decide"
@@ -353,7 +354,7 @@ def test_whole_question_with_multiple_candidate_skills_needs_cross_topic_split()
         mark_event_record=_mark_events(),
     )
 
-    assert item["proposed_route_status"] == "ambiguous_candidate"
+    assert item["proposed_route_status"] == "split_needed_candidate"
     assert item["cross_topic_status"] == "cross_topic_split_needed"
     assert item["recommended_scope"] == "part_level"
 
@@ -369,6 +370,58 @@ def test_aligned_single_skill_gets_single_skill_cross_topic_status() -> None:
 
     assert item["cross_topic_status"] == "single_skill_candidate"
     assert item["topic_routing_alignment"] == "aligned"
+
+
+def test_weak_candidate_without_mark_events_is_not_clean_candidate() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_2_log_exponential_equations"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={"evidence": {"topic_uncertain": False, "topic_confidence": "high"}},
+        mark_event_record={"mark_events": [], "safe_for_marking_use": False},
+    )
+
+    assert status == "weak_candidate"
+    assert "mark_events_advisory_only" not in blockers
+    assert action == "verify_mark_scheme_alignment"
+
+
+def test_unknown_ambiguous_case_remains_ambiguous_candidate() -> None:
+    item = build_review_queue_item(
+        mapping={
+            **_mapping(),
+            "evidence": {"topic_confidence": "low", "topic_uncertain": True},
+        },
+        question=_question(),
+        topic_route={"confidence": "low", "review_required": True},
+        topic_assignment={},
+        mark_event_record=_mark_events(),
+    )
+
+    assert item["proposed_route_status"] == "ambiguous_candidate"
+    assert item["ambiguity_reason"] == "unknown_ambiguity"
+
+
+def test_clean_candidate_count_is_not_increased_by_triage_statuses() -> None:
+    summary = summarize_review_queue(
+        [
+            {"proposed_route_status": "cross_topic_candidate", "reviewed_decision_status": "not_reviewed"},
+            {"proposed_route_status": "split_needed_candidate", "reviewed_decision_status": "not_reviewed"},
+            {"proposed_route_status": "conflict_candidate", "reviewed_decision_status": "not_reviewed"},
+        ],
+        reconciliation={
+            "duplicate_reviewed_scopes": [],
+            "reviewed_records_without_bank_match": [],
+            "reviewed_records_missing_from_queue_inputs": [],
+        },
+    )
+
+    assert summary["candidate_clean_looking_not_reviewed"] == 0
+    assert summary["cross_topic_candidates"] == 1
+    assert summary["split_needed_candidates"] == 1
+    assert summary["conflict_candidates"] == 1
 
 
 def test_duplicate_reviewed_registry_scopes_are_surfaced(tmp_path: Path) -> None:
