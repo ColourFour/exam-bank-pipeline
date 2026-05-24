@@ -144,11 +144,11 @@ def render_visual_review_html(
         "      </ol>\n"
         '      <div class="response-toolbar">\n'
         "        <h3>Response Capture</h3>\n"
-        "        <p>Responses autosave in this browser. Export JSON anytime, or run the local save server and submit responses back into the repo.</p>\n"
+        "        <p>Responses autosave in this browser only. To create a repo file, run the local save server and use the repo-save button, or download the JSON.</p>\n"
         f'        <p><strong>Browser save key:</strong> <code>p3ExactSkillReviewResponses:{escape(batch_id)}</code></p>\n'
-        '        <button type="button" id="saveResponses">Save now</button>\n'
-        '        <button type="button" id="exportResponses">Export JSON</button>\n'
-        '        <button type="button" id="submitResponses">Submit to local save server</button>\n'
+        '        <button type="button" id="saveResponses">Save in this browser</button>\n'
+        '        <button type="button" id="exportResponses">Download JSON</button>\n'
+        '        <button type="button" id="submitResponses">Write repo JSON (server required)</button>\n'
         '        <span id="responseStatus" role="status"></span>\n'
         "      </div>\n"
         "    </section>\n"
@@ -451,7 +451,7 @@ def _javascript(batch_id: str) -> str:
   function saveLocal() {{
     const payload = collectPayload();
     localStorage.setItem(storageKey, JSON.stringify(payload));
-    setStatus(`Saved in browser at ${{new Date().toLocaleTimeString()}}`);
+    setStatus(`Saved in this browser at ${{new Date().toLocaleTimeString()}}; no repo file is written until you download JSON or use the save server.`);
     return payload;
   }}
 
@@ -503,7 +503,7 @@ def _javascript(batch_id: str) -> str:
       const result = await response.json();
       setStatus(`Saved to repo: ${{result.path || 'response file'}}`);
     }} catch (error) {{
-      setStatus('Could not save to server. Use Export JSON, or run scripts/serve_p3_exact_skill_visual_review.py.');
+      setStatus('No repo file written. Use Download JSON, or run scripts/serve_p3_exact_skill_visual_review.py and try the repo-save button again.');
     }}
   }}
 

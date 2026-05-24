@@ -141,7 +141,8 @@ def test_visual_review_includes_response_capture_controls(tmp_path: Path) -> Non
     assert "data-field=\"evidence_basis\"" not in html
     assert "p3ExactSkillReviewResponses:batch_test" in html
     assert "/p3-exact-skill-review-responses" in html
-    assert "Export JSON" in html
+    assert "Download JSON" in html
+    assert "Write repo JSON (server required)" in html
 
 
 def test_dry_run_does_not_write_files(tmp_path: Path) -> None:

@@ -233,6 +233,81 @@ def test_valid_implicit_differentiation_candidate_is_not_blocked_by_boundary_rul
     assert action == "review_assets_and_skill"
 
 
+def test_parametric_source_without_parameter_context_is_not_clean_candidate() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={
+            "evidence": {
+                "source_topic": "parametric_equations",
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "matched_signals": ["legacy_topic:parametric_equations", "signal:parametric", "signal:x ="],
+                "question_text_snippet": "Find the exact area of the shaded region bounded by the curve and the x-axis.",
+                "mark_scheme_text_snippet": "Integrate by parts and use limits of x = 0 and x = pi/4.",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "ambiguous_candidate"
+    assert "weak_parametric_equation_evidence_missing_parameter" in blockers
+    assert action == "verify_parametric_equation_parameter"
+
+
+def test_valid_parametric_candidate_with_t_parameter_is_not_blocked() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={
+            "evidence": {
+                "source_topic": "parametric_equations",
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "matched_signals": ["legacy_topic:parametric_equations", "signal:parametric", "signal:x =", "signal:y ="],
+                "question_text_snippet": "The parametric equations of a curve are x = t^2 + 1, y = 2t - 3.",
+                "mark_scheme_text_snippet": "Find dx/dt and dy/dt, then use dy/dx = (dy/dt)/(dx/dt).",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "clean_candidate"
+    assert "weak_parametric_equation_evidence_missing_parameter" not in blockers
+    assert action == "review_assets_and_skill"
+
+
+def test_valid_parametric_candidate_with_theta_parameter_is_not_blocked() -> None:
+    status, blockers, action = classify_review_queue_item(
+        has_question_asset=True,
+        has_mark_scheme_asset=True,
+        p3_skill_ids=["9709_p3_3_4_parametric_implicit_differentiation"],
+        non_p3_skill_ids=[],
+        topic_route={"confidence": "high", "review_required": False},
+        mapping={
+            "evidence": {
+                "source_topic": "parametric_equations",
+                "topic_confidence": "high",
+                "topic_uncertain": False,
+                "matched_signals": ["legacy_topic:parametric_equations", "signal:parametric", "signal:x =", "signal:y ="],
+                "question_text_snippet": "The parametric equations of a curve are x = cos theta, y = 1 + 2 sin theta.",
+                "mark_scheme_text_snippet": "Use dy/dx = (dy/dtheta)/(dx/dtheta).",
+            }
+        },
+        mark_event_record={"mark_events": [{"event_id": "e1"}], "safe_for_marking_use": False},
+    )
+
+    assert status == "clean_candidate"
+    assert "weak_parametric_equation_evidence_missing_parameter" not in blockers
+    assert action == "review_assets_and_skill"
+
+
 def test_topic_routing_mismatch_can_be_cross_topic_reviewable() -> None:
     item = build_review_queue_item(
         mapping={

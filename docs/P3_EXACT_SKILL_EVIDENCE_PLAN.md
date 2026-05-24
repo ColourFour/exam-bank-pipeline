@@ -147,6 +147,8 @@ Use the visual packet to inspect images and make the human decision. Approved de
 
 Reviewers must not classify a record as parametric/implicit differentiation merely because `dy/dx` appears. Parametric/implicit differentiation should be used only when the task requires differentiating a parametric relation or an implicit relation where `y` cannot simply be treated as an explicit function of `x`, especially where `dy/dx` must be isolated from multiple differentiable terms.
 
+Parametric-equation evidence needs an actual parameterized setup: separate `x` and `y` relations in a parameter such as `t` or `theta`, or method evidence such as `dx/dt` and `dy/dt`. A source-topic hint, the word `parametric`, or loose `x =` / `y =` OCR text is not enough. The queue flags weak cases with `weak_parametric_equation_evidence_missing_parameter` and recommended action `verify_parametric_equation_parameter`.
+
 If the first meaningful mark-scheme method step is separation of variables, integration of separated terms, solving a differential equation, or applying an initial/boundary condition to a differential-equation solution, the item should route to differential equations / separation of variables instead. Mark-scheme method order is useful review context for distinguishing these cases, but OCR/native/advisory text still is not curriculum authority. Uncertain cases should remain `ambiguous` or `review_needed`, not `clean_candidate`.
 
 The review queue now flags this boundary with blockers such as `possible_differential_equation_not_parametric_or_implicit` or `weak_parametric_implicit_evidence_dydx_only` and recommended action `verify_de_vs_implicit_differentiation`.

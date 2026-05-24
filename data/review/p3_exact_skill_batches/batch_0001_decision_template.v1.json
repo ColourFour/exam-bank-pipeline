@@ -1,7 +1,7 @@
 {
   "artifact_kind": "human_editable_review_batch_template",
   "batch_id": "batch_0001",
-  "generated_at": "2026-05-23T04:39:10Z",
+  "generated_at": "2026-05-24T03:46:48Z",
   "record_count": 25,
   "records": [
     {
@@ -302,7 +302,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -463,7 +463,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn21_q10:33autumn21_q10_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -723,7 +723,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -778,11 +778,20 @@
         "pending_human_review"
       ],
       "evidence_basis": "",
-      "evidence_id": "p3_exact_skill_review:batch_0001:33autumn23_q10:33autumn23_q10_b",
+      "evidence_id": "p3_exact_skill_review:batch_0001:32spring23_q05:32spring23_q05_b",
       "mark_event_refs": [
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0001",
+          "event_id": "32spring23_q05_me0001",
+          "mark_code": "B1",
+          "part_path": [
+            "a"
+          ],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "32spring23_q05_me0002",
           "mark_code": "M1",
           "part_path": [
             "a"
@@ -791,7 +800,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0002",
+          "event_id": "32spring23_q05_me0003",
           "mark_code": "A1",
           "part_path": [
             "a"
@@ -800,26 +809,8 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0003",
-          "mark_code": "A1FT",
-          "part_path": [
-            "a"
-          ],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q10_me0004",
-          "mark_code": "A1",
-          "part_path": [
-            "a"
-          ],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q10_me0005",
-          "mark_code": "M1",
+          "event_id": "32spring23_q05_me0004",
+          "mark_code": "B1",
           "part_path": [
             "b"
           ],
@@ -827,8 +818,8 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0006",
-          "mark_code": "A1",
+          "event_id": "32spring23_q05_me0005",
+          "mark_code": "B1",
           "part_path": [
             "b"
           ],
@@ -836,8 +827,8 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0007",
-          "mark_code": "A1",
+          "event_id": "32spring23_q05_me0006",
+          "mark_code": "B1",
           "part_path": [
             "b"
           ],
@@ -845,33 +836,24 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q10_me0008",
-          "mark_code": "DM1",
-          "part_path": [
-            "b"
-          ],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q10_me0009",
-          "mark_code": "A1",
+          "event_id": "32spring23_q05_me0007",
+          "mark_code": "B1",
           "part_path": [
             "b"
           ],
           "review_status": "advisory"
         }
       ],
-      "paper": "33autumn23",
+      "paper": "32spring23",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b",
+        "generated_at": "2026-05-24T03:46:48Z",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
-      "question_id": "33autumn23_q10",
-      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b",
+      "question_id": "32spring23_q05",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
       "reviewer": {
@@ -880,22 +862,22 @@
         "reviewed_by": ""
       },
       "route_status": "review_needed",
-      "session": "November",
+      "session": "March",
       "source_mark_scheme_asset_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn23/mark_scheme/q10.png",
-          "sha256": "e3f518bb7b2479809dc9978ceae102c1a21736be7ae1547d44e9990205991919"
+          "path": "p3/32spring23/mark_scheme/q05.png",
+          "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"
         }
       ],
       "source_question_asset_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn23/questions/q10.png",
-          "sha256": "9ac41542ed1e74d086f669ded7020ea4ca96991242d2511d3fb921b4009a552b"
+          "path": "p3/32spring23/questions/q05.png",
+          "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"
         }
       ],
-      "subpart_id": "33autumn23_q10_b",
+      "subpart_id": "32spring23_q05_b",
       "suggested_cross_topic_status": "cross_topic_reviewable",
       "suggested_primary_skill_ids": [
         "9709_p3_3_4_parametric_implicit_differentiation"
@@ -907,7 +889,7 @@
       "suggested_supporting_skill_ids": [
         "9709_p3_3_4_derivative_rules"
       ],
-      "variant": "3"
+      "variant": "2"
     },
     {
       "allowed_use_cases": {
@@ -1126,7 +1108,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1287,7 +1269,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn21_q11:32autumn21_q11_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1430,7 +1412,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1485,82 +1467,96 @@
         "pending_human_review"
       ],
       "evidence_basis": "",
-      "evidence_id": "p3_exact_skill_review:batch_0001:32spring23_q05:32spring23_q05_b",
+      "evidence_id": "p3_exact_skill_review:batch_0001:33autumn23_q03:33autumn23_q03_whole",
       "mark_event_refs": [
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0001",
-          "mark_code": "B1",
-          "part_path": [
-            "a"
-          ],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "32spring23_q05_me0002",
+          "event_id": "33autumn23_q03_me0001",
           "mark_code": "M1",
-          "part_path": [
-            "a"
-          ],
+          "part_path": [],
           "review_status": "advisory"
         },
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0003",
+          "event_id": "33autumn23_q03_me0002",
           "mark_code": "A1",
-          "part_path": [
-            "a"
-          ],
+          "part_path": [],
           "review_status": "advisory"
         },
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0004",
-          "mark_code": "B1",
-          "part_path": [
-            "b"
-          ],
+          "event_id": "33autumn23_q03_me0003",
+          "mark_code": "M1",
+          "part_path": [],
           "review_status": "advisory"
         },
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0005",
-          "mark_code": "B1",
-          "part_path": [
-            "b"
-          ],
+          "event_id": "33autumn23_q03_me0004",
+          "mark_code": "B2",
+          "part_path": [],
           "review_status": "advisory"
         },
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0006",
-          "mark_code": "B1",
-          "part_path": [
-            "b"
-          ],
+          "event_id": "33autumn23_q03_me0005",
+          "mark_code": "A2",
+          "part_path": [],
           "review_status": "advisory"
         },
         {
           "advisory_only": true,
-          "event_id": "32spring23_q05_me0007",
-          "mark_code": "B1",
-          "part_path": [
-            "b"
-          ],
+          "event_id": "33autumn23_q03_me0006",
+          "mark_code": "A2",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "33autumn23_q03_me0007",
+          "mark_code": "A2",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "33autumn23_q03_me0008",
+          "mark_code": "B2",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "33autumn23_q03_me0009",
+          "mark_code": "A4",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "33autumn23_q03_me0010",
+          "mark_code": "A1",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "33autumn23_q03_me0011",
+          "mark_code": "A1",
+          "part_path": [],
           "review_status": "advisory"
         }
       ],
-      "paper": "32spring23",
-      "part_id": "b",
+      "paper": "33autumn23",
+      "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
+        "generated_at": "2026-05-24T03:46:48Z",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
-      "question_id": "32spring23_q05",
-      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
+      "question_id": "33autumn23_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
       "reviewer": {
@@ -1569,34 +1565,34 @@
         "reviewed_by": ""
       },
       "route_status": "review_needed",
-      "session": "March",
+      "session": "November",
       "source_mark_scheme_asset_refs": [
         {
           "exists": true,
-          "path": "p3/32spring23/mark_scheme/q05.png",
-          "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"
+          "path": "p3/33autumn23/mark_scheme/q03.png",
+          "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"
         }
       ],
       "source_question_asset_refs": [
         {
           "exists": true,
-          "path": "p3/32spring23/questions/q05.png",
-          "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"
+          "path": "p3/33autumn23/questions/q03.png",
+          "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"
         }
       ],
-      "subpart_id": "32spring23_q05_b",
+      "subpart_id": "33autumn23_q03_whole",
       "suggested_cross_topic_status": "cross_topic_reviewable",
       "suggested_primary_skill_ids": [
-        "9709_p3_3_4_parametric_implicit_differentiation"
+        "9709_p3_3_1_polynomial_division_factor_remainder"
       ],
-      "suggested_recommended_scope": "subpart_level",
+      "suggested_recommended_scope": "reviewer_decide",
       "suggested_source_skill_ids": [
-        "9709_p3_3_4_parametric_implicit_differentiation"
+        "9709_p3_3_1_polynomial_division_factor_remainder"
       ],
       "suggested_supporting_skill_ids": [
-        "9709_p3_3_4_derivative_rules"
+        "9709_p1_quadratics_discriminant_intersections"
       ],
-      "variant": "2"
+      "variant": "3"
     },
     {
       "allowed_use_cases": {
@@ -1770,7 +1766,7 @@
       "part_id": "d",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1913,7 +1909,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2031,7 +2027,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2174,7 +2170,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2216,145 +2212,6 @@
         "9709_p1_functions_domain_range_one_one"
       ],
       "variant": "1"
-    },
-    {
-      "allowed_use_cases": {
-        "candidate_generation": false,
-        "export": false,
-        "guardian": false,
-        "mastery": false,
-        "source_backed_examples": false
-      },
-      "blockers": [
-        "pending_human_review"
-      ],
-      "evidence_basis": "",
-      "evidence_id": "p3_exact_skill_review:batch_0001:33autumn23_q03:33autumn23_q03_whole",
-      "mark_event_refs": [
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0001",
-          "mark_code": "M1",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0002",
-          "mark_code": "A1",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0003",
-          "mark_code": "M1",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0004",
-          "mark_code": "B2",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0005",
-          "mark_code": "A2",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0006",
-          "mark_code": "A2",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0007",
-          "mark_code": "A2",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0008",
-          "mark_code": "B2",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0009",
-          "mark_code": "A4",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0010",
-          "mark_code": "A1",
-          "part_path": [],
-          "review_status": "advisory"
-        },
-        {
-          "advisory_only": true,
-          "event_id": "33autumn23_q03_me0011",
-          "mark_code": "A1",
-          "part_path": [],
-          "review_status": "advisory"
-        }
-      ],
-      "paper": "33autumn23",
-      "part_id": "whole",
-      "provenance": {
-        "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
-        "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
-      },
-      "question_id": "33autumn23_q03",
-      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
-      "reviewed_region": null,
-      "reviewed_source_skill_ids": [],
-      "reviewer": {
-        "review_status": "review_needed",
-        "reviewed_at": "",
-        "reviewed_by": ""
-      },
-      "route_status": "review_needed",
-      "session": "November",
-      "source_mark_scheme_asset_refs": [
-        {
-          "exists": true,
-          "path": "p3/33autumn23/mark_scheme/q03.png",
-          "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"
-        }
-      ],
-      "source_question_asset_refs": [
-        {
-          "exists": true,
-          "path": "p3/33autumn23/questions/q03.png",
-          "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"
-        }
-      ],
-      "subpart_id": "33autumn23_q03_whole",
-      "suggested_cross_topic_status": "cross_topic_reviewable",
-      "suggested_primary_skill_ids": [
-        "9709_p3_3_1_polynomial_division_factor_remainder"
-      ],
-      "suggested_recommended_scope": "reviewer_decide",
-      "suggested_source_skill_ids": [
-        "9709_p3_3_1_polynomial_division_factor_remainder"
-      ],
-      "suggested_supporting_skill_ids": [
-        "9709_p1_quadratics_discriminant_intersections"
-      ],
-      "variant": "3"
     },
     {
       "allowed_use_cases": {
@@ -2465,7 +2322,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2555,7 +2412,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2716,7 +2573,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2859,7 +2716,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3002,7 +2859,7 @@
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3136,7 +2993,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3254,7 +3111,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3388,7 +3245,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3513,7 +3370,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3629,7 +3486,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3727,7 +3584,7 @@
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3817,7 +3674,7 @@
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0001",
-        "generated_at": "2026-05-23T04:39:10Z",
+        "generated_at": "2026-05-24T03:46:48Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3847,6 +3704,96 @@
         }
       ],
       "subpart_id": "31summer24_q03_whole",
+      "suggested_cross_topic_status": "cross_topic_reviewable",
+      "suggested_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_recommended_scope": "reviewer_decide",
+      "suggested_source_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "suggested_supporting_skill_ids": [
+        "9709_p1_functions_domain_range_one_one"
+      ],
+      "variant": "1"
+    },
+    {
+      "allowed_use_cases": {
+        "candidate_generation": false,
+        "export": false,
+        "guardian": false,
+        "mastery": false,
+        "source_backed_examples": false
+      },
+      "blockers": [
+        "pending_human_review"
+      ],
+      "evidence_basis": "",
+      "evidence_id": "p3_exact_skill_review:batch_0001:31summer24_q02:31summer24_q02_whole",
+      "mark_event_refs": [
+        {
+          "advisory_only": true,
+          "event_id": "31summer24_q02_me0001",
+          "mark_code": "M1",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "31summer24_q02_me0002",
+          "mark_code": "DM1",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "31summer24_q02_me0003",
+          "mark_code": "A1",
+          "part_path": [],
+          "review_status": "advisory"
+        },
+        {
+          "advisory_only": true,
+          "event_id": "31summer24_q02_me0004",
+          "mark_code": "A1",
+          "part_path": [],
+          "review_status": "advisory"
+        }
+      ],
+      "paper": "31summer24",
+      "part_id": "whole",
+      "provenance": {
+        "batch_id": "batch_0001",
+        "generated_at": "2026-05-24T03:46:48Z",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q02:31summer24_q02_whole",
+        "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
+      },
+      "question_id": "31summer24_q02",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q02:31summer24_q02_whole",
+      "reviewed_region": null,
+      "reviewed_source_skill_ids": [],
+      "reviewer": {
+        "review_status": "review_needed",
+        "reviewed_at": "",
+        "reviewed_by": ""
+      },
+      "route_status": "review_needed",
+      "session": "June",
+      "source_mark_scheme_asset_refs": [
+        {
+          "exists": true,
+          "path": "p3/31summer24/mark_scheme/q02.png",
+          "sha256": "046025a968243320316e8bef73d727194e7dc69535b58d007f06dde017a52459"
+        }
+      ],
+      "source_question_asset_refs": [
+        {
+          "exists": true,
+          "path": "p3/31summer24/questions/q02.png",
+          "sha256": "105316253b72312dd824a638f41abfdda9f9505463f1c49282c3f990aa9dab8f"
+        }
+      ],
+      "subpart_id": "31summer24_q02_whole",
       "suggested_cross_topic_status": "cross_topic_reviewable",
       "suggested_primary_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"

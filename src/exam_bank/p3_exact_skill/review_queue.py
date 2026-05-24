@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 from exam_bank.atomic_json import write_atomic_json
@@ -38,6 +39,7 @@ REVIEW_ACTIONS = {
     "already_reviewed",
     "needs_human_math_review",
     "verify_de_vs_implicit_differentiation",
+    "verify_parametric_equation_parameter",
 }
 
 PARAMETRIC_IMPLICIT_SKILL_ID = "9709_p3_3_4_parametric_implicit_differentiation"
@@ -357,6 +359,8 @@ def classify_review_queue_item(
     if "no_candidate_p3_skill" in blockers:
         return "blocked_candidate", blockers, "needs_human_math_review"
     if parametric_boundary_blocker:
+        if parametric_boundary_blocker == "weak_parametric_equation_evidence_missing_parameter":
+            return "ambiguous_candidate", blockers, "verify_parametric_equation_parameter"
         return "ambiguous_candidate", blockers, "verify_de_vs_implicit_differentiation"
     if "mixed_or_ambiguous_topic" in blockers or len(p3_skill_ids) > 1:
         return "ambiguous_candidate", blockers, "defer_ambiguous_skill"
@@ -514,6 +518,9 @@ def reviewer_checklist_for_action(action: str, blockers: list[str]) -> list[str]
     if action == "verify_de_vs_implicit_differentiation":
         checklist.append("Check whether the method is separation of variables or an actual parametric/implicit differentiation task.")
         checklist.append("Do not approve parametric/implicit differentiation from dy/dx notation alone.")
+    if action == "verify_parametric_equation_parameter":
+        checklist.append("Check that parametric evidence has separate x and y relations in a parameter such as t or theta.")
+        checklist.append("Do not approve parametric differentiation from a source-topic hint or loose x = / y = text alone.")
     if action == "defer_visual_dependency" or "visual_dependency" in blockers:
         checklist.append("Inspect visual/diagram dependency manually; text is insufficient.")
     if action.startswith("reject_"):
@@ -563,6 +570,7 @@ def build_cross_topic_context(
     conflict_blockers = {
         "possible_differential_equation_not_parametric_or_implicit",
         "weak_parametric_implicit_evidence_dydx_only",
+        "weak_parametric_equation_evidence_missing_parameter",
     }
     if blockers & conflict_blockers:
         status = "conflict_needs_review"
@@ -793,6 +801,12 @@ def _parametric_implicit_boundary_blocker(
     text = _normalised_evidence_text(evidence)
     if _has_separable_de_context(text, topic_route):
         return "possible_differential_equation_not_parametric_or_implicit"
+    if (
+        _looks_like_parametric_source(evidence)
+        and not _has_implicit_context(text)
+        and not _has_true_parametric_equation_context(text)
+    ):
+        return "weak_parametric_equation_evidence_missing_parameter"
     if _has_dydx_signal(text) and not _has_strong_parametric_or_implicit_context(text):
         return "weak_parametric_implicit_evidence_dydx_only"
     return None
@@ -838,6 +852,45 @@ def _has_strong_parametric_or_implicit_context(text: str) -> bool:
         "isolate dy/dx",
     )
     return any(term in text for term in strong_terms)
+
+
+def _looks_like_parametric_source(evidence: dict[str, Any]) -> bool:
+    if _text(evidence.get("source_topic")) == "parametric_equations":
+        return True
+    matched_signals = evidence.get("matched_signals") if isinstance(evidence.get("matched_signals"), list) else []
+    return any("parametric" in _text(signal) for signal in matched_signals)
+
+
+def _has_implicit_context(text: str) -> bool:
+    implicit_terms = (
+        "implicit",
+        "implicitly",
+        "dy/dx must be isolated",
+        "isolate dy/dx",
+        "collect terms in dy/dx",
+    )
+    return any(term in text for term in implicit_terms)
+
+
+def _has_true_parametric_equation_context(text: str) -> bool:
+    has_x_relation = bool(re.search(r"\bx\s*=", text))
+    has_y_relation = bool(re.search(r"\by\s*=", text))
+    parameter_terms = (
+        "in terms of t",
+        "where t",
+        "at t",
+        "t =",
+        "dx/dt",
+        "dy/dt",
+        "d x/d t",
+        "d y/d t",
+        "theta",
+        "θ",
+        "\u03b8",
+        "dθ",
+        "d θ",
+    )
+    return has_x_relation and has_y_relation and any(term in text for term in parameter_terms)
 
 
 def _mark_events_advisory_only(mark_event_record: dict[str, Any]) -> bool:

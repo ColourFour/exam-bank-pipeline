@@ -4,7 +4,7 @@ This packet is for human review only. It does not assert clean evidence, does no
 
 ## Batch Metadata
 
-- Generated at: `2026-05-23T04:39:10Z`
+- Generated at: `2026-05-24T03:46:48Z`
 - Source queue: `reports/p3_exact_skill_review_queue.v1.json`
 - Reviewed registry checked for exclusions: `data/review/p3_exact_skill_reviewed_decisions.v1.json`
 - Selection status: `clean_candidate`
@@ -234,44 +234,42 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 4. `33autumn23_q10` / `33autumn23_q10_b`
+### 4. `32spring23_q05` / `32spring23_q05_b`
 
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q10:33autumn23_q10_b`
-- Question ID: `33autumn23_q10`
-- Part/subpart: `b` / `33autumn23_q10_b`
-- Paper/session/variant: `33autumn23` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b`
+- Question ID: `32spring23_q05`
+- Part/subpart: `b` / `32spring23_q05_b`
+- Paper/session/variant: `32spring23` / `March` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
 - Primary candidate skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Supporting candidate skill IDs: `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_integration"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_integration", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
 - Cross-topic status: `cross_topic_reviewable`
-- Topic-routing topic IDs: `["9709_p3_topic_integration"]`
-- Topic-routing alignment: `supporting_topic`
+- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing alignment: `aligned`
 - Recommended scope: `subpart_level`
-- Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q10_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 5}`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
+- Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q05_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q10.png", "sha256": "9ac41542ed1e74d086f669ded7020ea4ca96991242d2511d3fb921b4009a552b"}`
+- `{"exists": true, "path": "p3/32spring23/questions/q05.png", "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q10.png", "sha256": "e3f518bb7b2479809dc9978ceae102c1a21736be7ae1547d44e9990205991919"}`
+- `{"exists": true, "path": "p3/32spring23/mark_scheme/q05.png", "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0002", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0003", "mark_code": "A1FT", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0008", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q10_me0009", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0005", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0006", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32spring23_q05_me0007", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -477,42 +475,46 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 8. `32spring23_q05` / `32spring23_q05_b`
+### 8. `33autumn23_q03` / `33autumn23_q03_whole`
 
-- Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b`
-- Question ID: `32spring23_q05`
-- Part/subpart: `b` / `32spring23_q05_b`
-- Paper/session/variant: `32spring23` / `March` / `2`
-- Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
-- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_4_parametric_implicit_differentiation`, `9709_p3_3_4_derivative_rules`
-- Primary candidate skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
-- Supporting candidate skill IDs: `9709_p3_3_4_derivative_rules`
-- Candidate region/topic: `{"mapping_source_topic": "parametric_equations", "subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation", "subtopic_name": "Parametric and implicit differentiation", "topic_assignment_id": "9709_p3_topic_differentiation", "topic_assignment_name": "Differentiation", "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_differentiation", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole`
+- Question ID: `33autumn23_q03`
+- Part/subpart: `whole` / `33autumn23_q03_whole`
+- Paper/session/variant: `33autumn23` / `November` / `3`
+- Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
+- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_1_polynomial_division_factor_remainder`, `9709_p1_quadratics_discriminant_intersections`
+- Primary candidate skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
+- Supporting candidate skill IDs: `9709_p1_quadratics_discriminant_intersections`
+- Candidate region/topic: `{"mapping_source_topic": "polynomials", "subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder", "subtopic_name": "Polynomial division, factors and remainders", "topic_assignment_id": "9709_p3_topic_algebra", "topic_assignment_name": "Algebra", "topic_routing_primary_topic_id": "9709_p3_topic_algebra"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["question_text", "ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_algebra", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
 - Cross-topic status: `cross_topic_reviewable`
-- Topic-routing topic IDs: `["9709_p3_topic_differentiation"]`
+- Topic-routing topic IDs: `["9709_p3_topic_algebra"]`
 - Topic-routing alignment: `aligned`
-- Recommended scope: `subpart_level`
-- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
-- Content Lab blocker context: `{"candidate_id": "content_lab_32spring23_q05_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
-- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
+- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 11}`
+- Proposed blockers: `mark_events_advisory_only`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32spring23/questions/q05.png", "sha256": "f01c011e876a81bafd3465e64a2a03120f3eb9d18aceb31e1fa6277dee9dfa05"}`
+- `{"exists": true, "path": "p3/33autumn23/questions/q03.png", "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32spring23/mark_scheme/q05.png", "sha256": "fe64329e305bd1560aa8acb873aae885e45ef6220c001e31327920bc57858df0"}`
+- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q03.png", "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0005", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0006", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32spring23_q05_me0007", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0004", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0005", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0006", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0007", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0008", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0009", "mark_code": "A4", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0010", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33autumn23_q03_me0011", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -767,66 +769,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 13. `33autumn23_q03` / `33autumn23_q03_whole`
-
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole`
-- Question ID: `33autumn23_q03`
-- Part/subpart: `whole` / `33autumn23_q03_whole`
-- Paper/session/variant: `33autumn23` / `November` / `3`
-- Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
-- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_1_polynomial_division_factor_remainder`, `9709_p1_quadratics_discriminant_intersections`
-- Primary candidate skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
-- Supporting candidate skill IDs: `9709_p1_quadratics_discriminant_intersections`
-- Candidate region/topic: `{"mapping_source_topic": "polynomials", "subtopic_id": "9709_p3_subtopic_polynomial_division_factor_remainder", "subtopic_name": "Polynomial division, factors and remainders", "topic_assignment_id": "9709_p3_topic_algebra", "topic_assignment_name": "Algebra", "topic_routing_primary_topic_id": "9709_p3_topic_algebra"}`
-- Topic-routing context: `{"confidence": "high", "evidence_used": ["question_text", "ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_algebra", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
-- Cross-topic status: `cross_topic_reviewable`
-- Topic-routing topic IDs: `["9709_p3_topic_algebra"]`
-- Topic-routing alignment: `aligned`
-- Recommended scope: `reviewer_decide`
-- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 11}`
-- Proposed blockers: `mark_events_advisory_only`
-- Reconciliation flags: none
-- Recommended review action: `review_assets_and_skill`
-
-Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q03.png", "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"}`
-
-Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q03.png", "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"}`
-
-Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0004", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0005", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0006", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0007", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0008", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0009", "mark_code": "A4", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0010", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0011", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-
-Reviewer checklist:
-- [ ] Inspect the canonical question image.
-- [ ] Inspect the canonical mark-scheme image.
-- [ ] Confirm the exact P3 skill.
-- [ ] Confirm whether whole-question or part-level scope is safe.
-- [ ] Confirm whether P1 prerequisite/support-only material is involved.
-- [ ] Confirm allowed use cases.
-- [ ] Write evidence_basis in project wording.
-- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
-
-Cross-topic reviewer checklist:
-- [ ] Identify the main skill being assessed.
-- [ ] Identify any supporting skills used in the method.
-- [ ] Decide whether the current whole-question/part scope is safe.
-- [ ] Split by part/subpart if the item tests multiple independent skills.
-- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
-- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
-
-### 14. `32summer23_q07` / `32summer23_q07_b`
+### 13. `32summer23_q07` / `32summer23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b`
 - Question ID: `32summer23_q07`
@@ -884,7 +827,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 15. `31summer24_q01` / `31summer24_q01_whole`
+### 14. `31summer24_q01` / `31summer24_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole`
 - Question ID: `31summer24_q01`
@@ -936,7 +879,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 16. `33summer23_q06` / `33summer23_q06_b`
+### 15. `33summer23_q06` / `33summer23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b`
 - Question ID: `33summer23_q06`
@@ -995,7 +938,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 17. `33autumn23_q07` / `33autumn23_q07_b`
+### 16. `33autumn23_q07` / `33autumn23_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b`
 - Question ID: `33autumn23_q07`
@@ -1052,7 +995,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 18. `32spring23_q10` / `32spring23_q10_c`
+### 17. `32spring23_q10` / `32spring23_q10_c`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c`
 - Question ID: `32spring23_q10`
@@ -1109,7 +1052,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 19. `33autumn23_q06` / `33autumn23_q06_b`
+### 18. `33autumn23_q06` / `33autumn23_q06_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b`
 - Question ID: `33autumn23_q06`
@@ -1165,7 +1108,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 20. `33autumn23_q01` / `33autumn23_q01_whole`
+### 19. `33autumn23_q01` / `33autumn23_q01_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole`
 - Question ID: `33autumn23_q01`
@@ -1221,7 +1164,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 21. `32autumn23_q04` / `32autumn23_q04_b`
+### 20. `32autumn23_q04` / `32autumn23_q04_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b`
 - Question ID: `32autumn23_q04`
@@ -1277,7 +1220,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 22. `32spring23_q02` / `32spring23_q02_b`
+### 21. `32spring23_q02` / `32spring23_q02_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b`
 - Question ID: `32spring23_q02`
@@ -1332,7 +1275,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 23. `31summer24_q07` / `31summer24_q07_b`
+### 22. `31summer24_q07` / `31summer24_q07_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b`
 - Question ID: `31summer24_q07`
@@ -1386,7 +1329,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 24. `31summer24_q04` / `31summer24_q04_b`
+### 23. `31summer24_q04` / `31summer24_q04_b`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b`
 - Question ID: `31summer24_q04`
@@ -1438,7 +1381,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 25. `31summer24_q03` / `31summer24_q03_whole`
+### 24. `31summer24_q03` / `31summer24_q03_whole`
 
 - Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q03:31summer24_q03_whole`
 - Question ID: `31summer24_q03`
@@ -1471,6 +1414,58 @@ Advisory-only mark-event refs:
 - `{"advisory_only": true, "event_id": "31summer24_q03_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
 - `{"advisory_only": true, "event_id": "31summer24_q03_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 - `{"advisory_only": true, "event_id": "31summer24_q03_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+
+Reviewer checklist:
+- [ ] Inspect the canonical question image.
+- [ ] Inspect the canonical mark-scheme image.
+- [ ] Confirm the exact P3 skill.
+- [ ] Confirm whether whole-question or part-level scope is safe.
+- [ ] Confirm whether P1 prerequisite/support-only material is involved.
+- [ ] Confirm allowed use cases.
+- [ ] Write evidence_basis in project wording.
+- [ ] Choose route_status: clean, thin, ambiguous, blocked, deferred, review_needed, fallback_only.
+
+Cross-topic reviewer checklist:
+- [ ] Identify the main skill being assessed.
+- [ ] Identify any supporting skills used in the method.
+- [ ] Decide whether the current whole-question/part scope is safe.
+- [ ] Split by part/subpart if the item tests multiple independent skills.
+- [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
+- [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
+
+### 25. `31summer24_q02` / `31summer24_q02_whole`
+
+- Queue ID: `p3_exact_skill_review_queue:v1:31summer24_q02:31summer24_q02_whole`
+- Question ID: `31summer24_q02`
+- Part/subpart: `whole` / `31summer24_q02_whole`
+- Paper/session/variant: `31summer24` / `June` / `1`
+- Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Candidate source skill IDs, including prerequisite/support context: `9709_p3_3_2_log_exponential_equations`, `9709_p1_functions_domain_range_one_one`
+- Primary candidate skill IDs: `9709_p3_3_2_log_exponential_equations`
+- Supporting candidate skill IDs: `9709_p1_functions_domain_range_one_one`
+- Candidate region/topic: `{"mapping_source_topic": "logarithms_and_exponentials", "subtopic_id": "9709_p3_subtopic_log_exponential_equations", "subtopic_name": "Logarithmic and exponential equations", "topic_assignment_id": "9709_p3_topic_logarithmic_and_exponential_functions", "topic_assignment_name": "Logarithmic and exponential functions", "topic_routing_primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"}`
+- Topic-routing context: `{"confidence": "high", "evidence_used": ["ocr_text", "mark_scheme_text"], "primary_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions", "review_reasons": [], "review_required": false, "routing_source": "deepseek_topic_routing"}`
+- Cross-topic status: `cross_topic_reviewable`
+- Topic-routing topic IDs: `["9709_p3_topic_logarithmic_and_exponential_functions"]`
+- Topic-routing alignment: `aligned`
+- Recommended scope: `reviewer_decide`
+- Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
+- Content Lab blocker context: `{"candidate_id": "content_lab_31summer24_q02_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
+- Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
+- Reconciliation flags: none
+- Recommended review action: `review_assets_and_skill`
+
+Question asset refs:
+- `{"exists": true, "path": "p3/31summer24/questions/q02.png", "sha256": "105316253b72312dd824a638f41abfdda9f9505463f1c49282c3f990aa9dab8f"}`
+
+Mark-scheme asset refs:
+- `{"exists": true, "path": "p3/31summer24/mark_scheme/q02.png", "sha256": "046025a968243320316e8bef73d727194e7dc69535b58d007f06dde017a52459"}`
+
+Advisory-only mark-event refs:
+- `{"advisory_only": true, "event_id": "31summer24_q02_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q02_me0002", "mark_code": "DM1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q02_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31summer24_q02_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
