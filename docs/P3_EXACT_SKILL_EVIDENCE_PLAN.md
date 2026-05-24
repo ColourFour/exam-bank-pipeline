@@ -8,6 +8,48 @@ Planned future sidecar:
 output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
 ```
 
+## Current State As Of 2026-05-25
+
+The P3 exact-skill workflow is currently a review-diagnostics system, not a runtime evidence system. It has a conservative reviewed-decision registry, a full review queue, small review batches, visual and interactive review packets, sharper ambiguity triage, cross-topic handling, and part-level decomposition reports. These artifacts make human review more practical, but they do not create reviewed clean evidence by themselves.
+
+The reviewed-decision registry lives at:
+
+```text
+data/review/p3_exact_skill_reviewed_decisions.v1.json
+```
+
+It is the only current artifact allowed to assert reviewed route status. The registry remains deliberately fail-closed: the current seed has `0` clean records, `1` thin record, `1` blocked record, and `1` review-needed record. The validator is still the gate for this curated input.
+
+The review queue lives at:
+
+```text
+reports/p3_exact_skill_review_queue.v1.json
+reports/p3_exact_skill_review_queue.md
+```
+
+It covers all `749` current P3 exact-skill candidates. Current route-status triage is `568` `cross_topic_candidate`, `21` `split_needed_candidate`, `126` `conflict_candidate`, `34` `fallback_only`, `0` `ambiguous_candidate`, and `0` `clean_candidate`. All `749` queue items still carry advisory-only mark-event context, which is allowed for review diagnostics but not authority.
+
+The batch and visual review workflow writes generated handoff artifacts under:
+
+```text
+data/review/p3_exact_skill_batches/
+```
+
+The Markdown packet, manifest, decision template, visual HTML packet, interactive browser notes, and saved response JSON are all review aids. They do not edit the reviewed registry and they do not create the final Asterion sidecar. Decision templates and browser responses remain safe by default: `route_status` stays `review_needed`, `reviewed_source_skill_ids` stays empty unless a human reviewer completes it, blockers include pending human review, and all allowed use cases remain `false`.
+
+Ambiguity reduction is now explicit triage. `cross_topic_candidate` means the item is reviewable but includes primary/supporting topic context. `split_needed_candidate` means the current scope is likely too broad and should be reviewed at part or subpart level. `conflict_candidate` means there is a method-critical or known-risk mismatch, especially the differential-equation vs parametric/implicit boundary. `fallback_only` remains visible instead of being hidden.
+
+Part-level decomposition is implemented as review assistance through:
+
+```text
+reports/p3_exact_skill_part_decomposition.v1.json
+reports/p3_exact_skill_part_decomposition.md
+```
+
+The current pass identifies `513` already part-scoped decomposition candidates, `21` records needing manual split, `81` records with insufficient part signal, `126` conflict records, and `8` not-decomposable records. It does not create fake part crops, does not infer curriculum authority from mark events or OCR, and does not promote any part-level suggestion to clean evidence.
+
+Asterion can safely consume this workflow now only as Content Lab, admin, or reviewer diagnostics: status summaries, candidate status, cross-topic status, split-needed/conflict/fallback flags, proposed decomposition, recommended review action, canonical asset refs for inspection, and blocker diagnostics. Asterion must not consume suggested skill IDs, candidate skills, advisory mark events, OCR/native/advisory text labels, browser review responses, cross-topic candidates, or decomposition candidates as mastery, Guardian, candidate-generation, export, or source-backed worked-example authority.
+
 `docs/asterion/` does not currently exist. This plan is placed in `docs/` beside `ASTERION_EXPORT_CONTRACT.md`, `TOPIC_ROUTING_SIDECAR_CONTRACT.md`, `MARK_EVENTS_CONTRACT.md`, and `TRUST_MODEL.md` because those root-level docs are the current contract location for Asterion-facing and sidecar-facing behavior.
 
 ## Phase 1 Reviewed-Decision Foundation

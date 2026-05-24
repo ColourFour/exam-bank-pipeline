@@ -1,0 +1,159 @@
+{
+  "artifact_kind": "p3_exact_skill_current_state_audit",
+  "asterion_recommendation": {
+    "allowed_capacity": "Content Lab/admin/reviewer diagnostics only",
+    "can_connect_now": true,
+    "must_not_consume_as_authority": [
+      "suggested_source_skill_ids",
+      "candidate skills as mastery evidence",
+      "advisory mark events as source-backed example evidence",
+      "OCR/native/advisory text labels",
+      "browser review responses before registry validation",
+      "cross-topic candidates as clean evidence",
+      "decomposition candidates as reviewed part boundaries"
+    ],
+    "not_allowed_capacities": [
+      "runtime mastery authority",
+      "Guardian authority",
+      "candidate-generation authority",
+      "source-backed worked-example authority"
+    ],
+    "safe_to_consume_now": [
+      "review status summaries",
+      "candidate status",
+      "cross-topic status",
+      "split-needed/conflict/fallback flags",
+      "proposed part-level decomposition",
+      "recommended review action",
+      "canonical asset refs for reviewer inspection",
+      "blocker diagnostics"
+    ]
+  },
+  "comparison_to_previous_known_state": {
+    "ambiguous_candidate": {
+      "current": 0,
+      "delta": 0,
+      "previous": 0
+    },
+    "clean_candidate": {
+      "current": 0,
+      "delta": 0,
+      "previous": 0
+    },
+    "conflict_candidate": {
+      "current": 126,
+      "delta": 0,
+      "previous": 126
+    },
+    "cross_topic_candidate": {
+      "current": 568,
+      "delta": 0,
+      "previous": 568
+    },
+    "fallback_only": {
+      "current": 34,
+      "delta": 0,
+      "previous": 34
+    },
+    "split_needed_candidate": {
+      "current": 21,
+      "delta": 0,
+      "previous": 21
+    },
+    "total_queue_items": {
+      "current": 749,
+      "delta": 0,
+      "previous": 749
+    }
+  },
+  "generated_at": "2026-05-24T23:31:24Z",
+  "previous_known_state": {
+    "ambiguous_candidate": 0,
+    "clean_candidate": 0,
+    "conflict_candidate": 126,
+    "cross_topic_candidate": 568,
+    "fallback_only": 34,
+    "split_needed_candidate": 21,
+    "total_queue_items": 749
+  },
+  "readiness_verdicts": [
+    "READY_FOR_ASTERION_CONTENT_LAB_REVIEW_DIAGNOSTICS",
+    "NOT_READY_FOR_ASTERION_RUNTIME_MASTERY",
+    "NOT_READY_FOR_GUARDIAN",
+    "NOT_READY_FOR_CANDIDATE_GENERATION",
+    "NOT_READY_FOR_SOURCE_BACKED_WORKED_EXAMPLES"
+  ],
+  "schema": "exam_bank.p3_exact_skill.current_state_audit",
+  "schema_version": 1,
+  "source_paths": {
+    "ambiguity_audit": "reports/p3_exact_skill_ambiguity_audit.v1.json",
+    "forbidden_runtime_sidecar": "output/asterion/exports/latest/p3_exact_skill_evidence_v1.json",
+    "part_decomposition": "reports/p3_exact_skill_part_decomposition.v1.json",
+    "queue": "reports/p3_exact_skill_review_queue.v1.json",
+    "reviewed_registry": "data/review/p3_exact_skill_reviewed_decisions.v1.json"
+  },
+  "summary": {
+    "advisory_only_mark_event_count": 749,
+    "already_reviewed_queue_scopes": 3,
+    "ambiguous_audit_group_counts": {
+      "advisory_only_mark_events": 749,
+      "broad_whole_question_scope": 21,
+      "cross_topic_reviewable": 602,
+      "cross_topic_split_needed": 21,
+      "de_vs_parametric_implicit_conflict": 21,
+      "fallback_or_low_quality_context": 747,
+      "multiple_candidate_skills": 260,
+      "reviewed_registry_conflict": 3,
+      "topic_routing_candidate_mismatch": 199,
+      "weak_candidate_skill_context": 105
+    },
+    "ambiguous_reviewed_registry_count": 0,
+    "blocked_reviewed_registry_count": 1,
+    "clean_reviewed_registry_count": 0,
+    "conflict_needs_review_count": 126,
+    "cross_topic_status_counts": {
+      "conflict_needs_review": 126,
+      "cross_topic_reviewable": 602,
+      "cross_topic_split_needed": 21
+    },
+    "decomposition_candidate_count": 513,
+    "decomposition_status_counts": {
+      "already_part_scoped": 513,
+      "conflict_needs_review": 126,
+      "insufficient_part_signal": 81,
+      "needs_manual_split": 21,
+      "not_decomposable": 8
+    },
+    "deferred_reviewed_registry_count": 0,
+    "fallback_only_count": 34,
+    "forbidden_runtime_sidecar_exists": false,
+    "insufficient_part_signal_count": 81,
+    "missing_mark_scheme_asset_count": 0,
+    "missing_question_asset_count": 0,
+    "needs_manual_split_count": 21,
+    "no_candidate_p3_skill_count": 0,
+    "part_level_decomposition_candidate_count": 0,
+    "review_needed_reviewed_registry_count": 1,
+    "reviewed_registry_route_status_counts": {
+      "blocked": 1,
+      "review_needed": 1,
+      "thin": 1
+    },
+    "status_counts": {
+      "conflict_candidate": 126,
+      "cross_topic_candidate": 568,
+      "fallback_only": 34,
+      "split_needed_candidate": 21
+    },
+    "subpart_level_decomposition_candidate_count": 0,
+    "thin_reviewed_registry_count": 1,
+    "topic_routing_alignment_counts": {
+      "aligned": 465,
+      "conflicting": 126,
+      "supporting_topic": 73,
+      "unknown": 85
+    },
+    "total_queue_items": 749
+  },
+  "warning": "This audit is review-diagnostic metadata only. It must not be consumed as clean evidence, runtime mastery authority, Guardian authority, or candidate-generation authority."
+}
