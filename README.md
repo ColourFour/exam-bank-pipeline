@@ -26,6 +26,7 @@ Current important generated artifacts:
 
 - Canonical question bank: `output/json/question_bank.json`
 - Canonical image trees: `output/p*/<paper>/questions/*.png` and `output/p*/<paper>/mark_scheme/*.png`
+- Canonical asset index: `output/json/asset_manifest.v1.json`
 - Strict topic-routing sidecar: `output/json/question_bank.topic_routing.v1.json`
 - Mark-event evidence sidecar: `output/json/question_bank.mark_events.v1.json`
 - Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
@@ -140,6 +141,22 @@ Create a dry-run cleanup plan:
   --root output \
   --write output/output_cleanup_plan.md
 ```
+
+Audit exact storage duplicates and write the canonical asset manifest:
+
+```bash
+.venv/bin/python scripts/audit_output_storage.py --dry-run
+.venv/bin/python scripts/validate_asset_references.py
+```
+
+Storage policy lives in [`docs/OUTPUT_STORAGE_CONTRACT.md`](docs/OUTPUT_STORAGE_CONTRACT.md). Exact duplicates are identified by SHA-256, and cleanup apply mode quarantines files instead of deleting them.
+Hard-delete cleanup is opt-in only:
+
+```bash
+.venv/bin/python scripts/audit_output_storage.py --apply-delete
+```
+
+This writes `reports/output_storage_delete_manifest.v1.json` before deleting allowlisted non-canonical exact duplicates from generated/candidate/archive/cache-style paths.
 
 Cleanup planning does not delete or move files.
 

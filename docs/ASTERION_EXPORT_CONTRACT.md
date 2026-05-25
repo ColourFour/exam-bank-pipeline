@@ -11,7 +11,7 @@ Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1
 
 ## Export Purposes
 
-`asterion_question_bank_v1.json` is the main Asterion projection. It carries stable identifiers, provenance, canonical image artifact references, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, and `usage_roles`. Its purpose is to give Asterion one conservative handoff file while preserving blocked and review states.
+`asterion_question_bank_v1.json` is the main Asterion projection. It carries stable identifiers, provenance, canonical image artifact references, asset IDs, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, and `usage_roles`. Its purpose is to give Asterion one conservative handoff file while preserving blocked and review states.
 
 `asterion_content_lab_candidates_v1.json` is a metadata-only candidate projection derived from the Asterion question-bank projection. It is for Content Lab review, planning, and future generation workflows. It does not contain generated student-facing content. Its `policy`, `role_statuses`, `generation_gate`, and `review_status` fields are part of the permission contract.
 
@@ -21,7 +21,7 @@ Canonical fields for Asterion consumption:
 
 - `schema_name`, `schema_version`, `source_schema`, and `record_count` define the file contract and source export relationship.
 - `question_id`, `paper`, `paper_family`, and `question_number` are stable identity and routing fields.
-- `canonical_question_artifact`, `canonical_mark_scheme_artifact`, `artifact_integrity`, and `source_pdf` are the canonical provenance and artifact fields.
+- `canonical_question_artifact`, `canonical_mark_scheme_artifact`, `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, `artifact_integrity`, and `source_pdf` are the canonical provenance and artifact fields.
 - `usage_roles` is the canonical role permission surface for `asterion_question_bank_v1.json`.
 - `quality_gate` booleans are canonical gate inputs and summaries. `quality_gate.reason_codes` are diagnostics, not a replacement for `usage_roles`.
 - In the Content Lab export, `policy`, `role_statuses`, `generation_gate`, and top-level `review_status` are canonical permission fields.
@@ -33,7 +33,7 @@ Advisory fields:
 - `mark_events` are machine candidates unless their own `review_status` or approval metadata explicitly says they have been reviewed or approved.
 - `candidate_selection`, `possible_content_lab_roles`, `source_skill_ids`, `source_mark_event_count`, and `generated_warmup_pattern_source` are planning metadata. They do not override `role_statuses` or `generation_gate`.
 
-The canonical rendered images remain the source of truth for student-visible question and mark-scheme content. Native text and OCR text are advisory unless a specific role gate permits their use. OCR/native text must not replace the canonical question or mark-scheme images for math-heavy display.
+The canonical rendered images remain the source of truth for student-visible question and mark-scheme content. Native text and OCR text are advisory unless a specific role gate permits their use. OCR/native text must not replace the canonical question or mark-scheme images for math-heavy display. Consumers may resolve `*_asset_id` values through `output/json/asset_manifest.v1.json`; path fields remain for compatibility and should still point at canonical relative paths.
 
 ## Role Gates
 

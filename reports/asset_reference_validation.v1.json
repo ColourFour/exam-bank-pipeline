@@ -1,0 +1,29 @@
+{
+  "schema_name": "exam_bank.asset_reference_validation",
+  "schema_version": 1,
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "summary": {
+    "manifest_asset_count": 2602,
+    "question_bank_records": 1301,
+    "asterion_records": 1301,
+    "content_lab_candidates": 2432,
+    "topic_routing": {
+      "schema_name": "exam_bank.topic_routing_sidecar",
+      "schema_version": 1,
+      "generated_at": "2026-05-13T12:29:09.664228+00:00",
+      "total_records": 1301,
+      "attempted_records": 1301,
+      "successful_records": 1148,
+      "failed_records": 153,
+      "review_required_records": 221,
+      "provider_failure_records": 0,
+      "strict_filter_records": 1080,
+      "failures_by_reason": {
+        "schema_validation_error": 153
+      },
+      "safe_for_strict_filters": false
+    }
+  }
+}

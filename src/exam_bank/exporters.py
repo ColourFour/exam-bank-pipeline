@@ -317,6 +317,7 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
         "paper_family": family,
         "question_number": extraction.question_number,
         "canonical_question_artifact": question_image_path,
+        "canonical_mark_scheme_artifact": mark_scheme_image_path,
         "question_image_path": question_image_path,
         "mark_scheme_image_path": mark_scheme_image_path,
         "question_text": extraction.combined_question_text,

@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .asset_manifest import MARK_SCHEME_IMAGE_KIND, QUESTION_IMAGE_KIND, asset_id_for_record
 from .atomic_json import write_atomic_json
 from .output_layout import default_asterion_export_path
 
@@ -149,6 +150,10 @@ def build_asterion_record(
     mark_scheme_images = _image_integrity(_mark_scheme_image_paths(record), artifact_root=artifact_root, base_dir=base_dir)
     canonical_question = _first_path(question_images)
     canonical_mark_scheme = _first_path(mark_scheme_images)
+    canonical_question_asset_id = asset_id_for_record(QUESTION_IMAGE_KIND, record, canonical_question) if canonical_question else None
+    canonical_mark_scheme_asset_id = (
+        asset_id_for_record(MARK_SCHEME_IMAGE_KIND, record, canonical_mark_scheme) if canonical_mark_scheme else None
+    )
     source_pdf = _source_pdf_metadata(record, base_dir=base_dir)
     quality_gate = _quality_gate(record, question_images, mark_scheme_images)
     total_marks = _total_marks(record)
@@ -159,6 +164,8 @@ def build_asterion_record(
         total_marks=total_marks,
         question_crop_path=canonical_question,
         mark_scheme_crop_path=canonical_mark_scheme,
+        question_asset_id=canonical_question_asset_id,
+        mark_scheme_asset_id=canonical_mark_scheme_asset_id,
         text_only_display_allowed=bool(quality_gate["text_only_display_allowed"]),
         mark_scheme_crop_ok=bool(quality_gate["mark_scheme_crop_ok"]),
         skill_mappings=skill_mappings or {},
@@ -173,6 +180,8 @@ def build_asterion_record(
         "source_pdf": source_pdf,
         "canonical_question_artifact": canonical_question,
         "canonical_mark_scheme_artifact": canonical_mark_scheme,
+        "canonical_question_asset_id": canonical_question_asset_id,
+        "canonical_mark_scheme_asset_id": canonical_mark_scheme_asset_id,
         "artifact_integrity": {
             "question_images": question_images,
             "mark_scheme_images": mark_scheme_images,
@@ -455,6 +464,8 @@ def _subpart_records(
     total_marks: int | None,
     question_crop_path: str,
     mark_scheme_crop_path: str,
+    question_asset_id: str | None,
+    mark_scheme_asset_id: str | None,
     text_only_display_allowed: bool,
     mark_scheme_crop_ok: bool,
     skill_mappings: dict[str, list[str]],
@@ -482,6 +493,8 @@ def _subpart_records(
                 "marks": marks,
                 "question_crop_path": question_crop_path or None,
                 "mark_scheme_crop_path": mark_scheme_crop_path or None,
+                "question_asset_id": question_asset_id,
+                "mark_scheme_asset_id": mark_scheme_asset_id,
                 "question_text": {
                     "text": question_texts.get(label),
                     "trust_level": _get(record, "question_text_trust"),
@@ -574,6 +587,8 @@ def _content_lab_candidate(record: dict[str, Any], subpart: dict[str, Any]) -> d
         "source_artifacts": {
             "question_crop_path": subpart.get("question_crop_path"),
             "mark_scheme_crop_path": subpart.get("mark_scheme_crop_path"),
+            "question_asset_id": subpart.get("question_asset_id"),
+            "mark_scheme_asset_id": subpart.get("mark_scheme_asset_id"),
         },
         "possible_content_lab_roles": possible_roles,
         "role_statuses": role_statuses,
@@ -1183,9 +1198,10 @@ def _question_image_paths(record: dict[str, Any]) -> list[str]:
 
 def _mark_scheme_image_paths(record: dict[str, Any]) -> list[str]:
     paths = _list_paths(_get(record, "mark_scheme_image_paths"))
-    value = _get(record, "mark_scheme_image_path")
-    if value:
-        paths.append(str(value))
+    for field in ["canonical_mark_scheme_artifact", "mark_scheme_image_path"]:
+        value = _get(record, field)
+        if value:
+            paths.append(str(value))
     return _dedupe(paths)
 
 
