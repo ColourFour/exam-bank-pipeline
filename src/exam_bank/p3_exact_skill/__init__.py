@@ -5,8 +5,14 @@ P3_EXACT_SKILL_REVIEWED_DECISIONS_VALIDATION_SCHEMA = (
     "exam_bank.p3_exact_skill.reviewed_decisions.validation"
 )
 P3_EXACT_SKILL_REVIEWED_DECISIONS_SCHEMA_VERSION = 1
+P3_EXACT_SKILL_REVIEWED_MARK_EVENTS_SCHEMA = "exam_bank.p3_exact_skill.reviewed_mark_events"
+P3_EXACT_SKILL_REVIEWED_MARK_EVENTS_VALIDATION_SCHEMA = (
+    "exam_bank.p3_exact_skill.reviewed_mark_events.validation"
+)
+P3_EXACT_SKILL_REVIEWED_MARK_EVENTS_SCHEMA_VERSION = 1
 
 DEFAULT_REVIEWED_DECISIONS_PATH = "data/review/p3_exact_skill_reviewed_decisions.v1.json"
+DEFAULT_REVIEWED_MARK_EVENTS_PATH = "data/review/p3_exact_skill_reviewed_mark_events.v1.json"
 DEFAULT_P3_SKILL_MAP_PATH = "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json"
 DEFAULT_P3_SKILL_MAPPINGS_PATH = (
     "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json"
@@ -25,6 +31,12 @@ DEFAULT_REVIEW_BATCH_DIR = "data/review/p3_exact_skill_batches"
 ROUTE_STATUSES = {
     "clean",
     "thin",
+    "thin_control",
+    "supporting_evidence_only",
+    "exact_but_not_seed_quality",
+    "cross_content_not_exact_skill_isolatable",
+    "supporting_method_not_target_skill",
+    "thin_or_adjacent_context",
     "ambiguous",
     "blocked",
     "deferred",

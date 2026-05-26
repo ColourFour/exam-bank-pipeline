@@ -64,6 +64,12 @@ BATCH_0003_NOT_PROMOTED_SUBPART_IDS = {
     "32spring24_q05_b",
 }
 
+CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS = {
+    "content_lab_33summer23_q11_b",
+    "content_lab_31summer24_q06_d",
+    "content_lab_31summer24_q09_b",
+}
+
 
 def test_valid_conservative_fixture_passes() -> None:
     report = validate_reviewed_decisions(
@@ -138,19 +144,48 @@ def test_clean_seed_records_keep_unreviewed_mark_events_generation_blocked() -> 
     )
 
 
-def test_batch_0003_mark_event_probes_do_not_change_content_lab_generation_readiness() -> None:
+def test_content_lab_generation_readiness_changes_only_for_control_authority_pass() -> None:
     conclusions = json.loads(Path("reports/manual_review_batch_0003_conclusions.v1.json").read_text(encoding="utf-8"))
     content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
-    ready_count = sum(
-        1
+    ready_candidate_ids = {
+        candidate["candidate_id"]
         for candidate in content_lab["candidates"]
-        if (candidate.get("generation_gate") or {}).get("blocked") is False
-        or (candidate.get("generation_gate") or {}).get("status") in {"ready", "generation_ready", "generation-ready"}
-    )
+        if (candidate.get("generation_gate") or {}).get("status") == "allow"
+    }
 
     assert conclusions["outcome_counts"]["approved_mark_event_count"] == 0
     assert conclusions["outcome_counts"]["content_lab_generation_ready_after"] == 0
-    assert ready_count == 0
+    assert ready_candidate_ids == CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS
+
+
+def test_batch_0003_retagged_thin_and_cross_content_records_remain_blocked() -> None:
+    content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
+    by_subpart = {candidate["subpart_id"]: candidate for candidate in content_lab["candidates"]}
+
+    present_batch_0003_candidates = [
+        by_subpart[subpart_id]
+        for subpart_id in BATCH_0003_NOT_PROMOTED_SUBPART_IDS
+        if subpart_id in by_subpart
+    ]
+
+    assert present_batch_0003_candidates
+    assert all(candidate["generation_gate"]["status"] != "allow" for candidate in present_batch_0003_candidates)
+    assert all(candidate["source_skill_review_gate"]["status"] != "allow" for candidate in present_batch_0003_candidates)
+
+
+def test_control_authority_candidates_have_stable_explainable_gate_metadata() -> None:
+    content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
+    by_id = {candidate["candidate_id"]: candidate for candidate in content_lab["candidates"]}
+
+    for candidate_id in CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS:
+        candidate = by_id[candidate_id]
+        assert candidate["generation_gate"] == {"status": "allow", "blocked": False, "block_reasons": []}
+        assert candidate["mark_event_review_gate"]["status"] == "allow"
+        assert candidate["source_skill_review_gate"]["status"] == "allow"
+        assert candidate["mapping_review_gate"]["status"] == "allow"
+        assert candidate["reviewed_source_skill_decision_id"]
+        assert candidate["reviewed_source_skill_ids"] == candidate["source_skill_ids"]
+        assert set(candidate["source_mark_event_ids"]) == set(candidate["mark_event_review_gate"]["generation_satisfying_event_ids"])
 
 
 def test_clean_seed_records_require_verified_asset_refs_and_provenance() -> None:
@@ -231,6 +266,24 @@ def test_mastery_true_on_non_clean_route_fails() -> None:
     errors, _ = validate_reviewed_decisions_payload(payload, p3_skill_ids=P3_SKILL_IDS)
 
     assert any("mastery_true_requires_clean_route" in error for error in errors)
+
+
+def test_thin_and_supporting_categories_do_not_promote_clean_seed_records() -> None:
+    for route_status in (
+        "thin_control",
+        "supporting_evidence_only",
+        "exact_but_not_seed_quality",
+        "cross_content_not_exact_skill_isolatable",
+        "supporting_method_not_target_skill",
+        "thin_or_adjacent_context",
+    ):
+        record = _non_clean_record(route_status=route_status)
+        record["allowed_use_cases"]["source_backed_examples"] = True
+        payload = _payload(record)
+
+        errors, _ = validate_reviewed_decisions_payload(payload, p3_skill_ids=P3_SKILL_IDS)
+
+        assert any("source_backed_examples_true_requires_clean_route" in error for error in errors)
 
 
 def test_source_backed_examples_true_on_non_clean_route_fails() -> None:

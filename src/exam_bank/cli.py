@@ -142,6 +142,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional skill-map JSON sidecar used to attach mapped skill IDs to Content Lab mark-event candidates.",
     )
     content_lab.add_argument(
+        "--reviewed-source-skills",
+        default="data/review/p3_exact_skill_reviewed_decisions.v1.json",
+        help="Reviewed exact-skill decision artifact used for Content Lab source-skill and mapping gating.",
+    )
+    content_lab.add_argument(
+        "--reviewed-mark-events",
+        default="data/review/p3_exact_skill_reviewed_mark_events.v1.json",
+        help="Reviewed mark-event decision artifact used for Content Lab generation gating.",
+    )
+    content_lab.add_argument(
+        "--mark-events",
+        default="",
+        help="Optional canonical mark-events sidecar used to map Content Lab subpart events to reviewed event IDs.",
+    )
+    content_lab.add_argument(
         "--allow-unusable-ai-sidecar",
         action="store_true",
         help="Allow using a failed or mixed AI-assisted sidecar as an explicitly documented fallback.",
@@ -462,11 +477,17 @@ def cmd_asterion_content_lab_candidates(args: argparse.Namespace) -> int:
     output = Path(args.output) if args.output else None
     artifact_root = Path(args.artifact_root) if args.artifact_root else None
     skill_map_path = Path(args.skill_map) if args.skill_map else None
+    reviewed_source_skills_path = Path(args.reviewed_source_skills) if args.reviewed_source_skills else None
+    reviewed_mark_events_path = Path(args.reviewed_mark_events) if args.reviewed_mark_events else None
+    mark_events_path = Path(args.mark_events) if args.mark_events else None
     path = export_asterion_content_lab_candidates(
         args.input,
         output,
         artifact_root=artifact_root,
         skill_map_path=skill_map_path,
+        reviewed_source_skills_path=reviewed_source_skills_path,
+        reviewed_mark_events_path=reviewed_mark_events_path,
+        mark_events_path=mark_events_path,
         allow_unusable_ai_sidecar=bool(getattr(args, "allow_unusable_ai_sidecar", False)),
     )
     print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))

@@ -97,6 +97,9 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     content_lab_parser = action.choices["asterion-content-lab-candidates"]
     content_lab_options = {option for parser_action in content_lab_parser._actions for option in parser_action.option_strings}
     assert "--skill-map" in content_lab_options
+    assert "--reviewed-source-skills" in content_lab_options
+    assert "--reviewed-mark-events" in content_lab_options
+    assert "--mark-events" in content_lab_options
 
     process_calls = _function_call_names(CLI_PATH, "cmd_process")
     assert process_calls >= {"load_config", "process_inputs", "_print_result"}

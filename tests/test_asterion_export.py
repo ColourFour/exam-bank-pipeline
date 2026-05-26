@@ -88,6 +88,7 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert q1["subparts"][0]["review_status"] == "review"
     assert q1["subparts"][0]["mark_events"] == [
         {
+            "event_id": "12spring21_q01_a_me0001",
             "subpart_id": "12spring21_q01_a",
             "mark_code": "B1",
             "mark_type": "independent_fact",
@@ -277,6 +278,13 @@ def test_content_lab_candidates_emit_roles_and_block_warmup_until_reviewed(tmp_p
         "emits_candidates_and_metadata_only": True,
         "content_lab_generation_requires_reviewed_or_approved_mapping": True,
         "content_lab_generation_requires_reviewed_or_approved_mark_events": True,
+        "content_lab_generation_requires_reviewed_source_skill": True,
+        "reviewed_source_skill_decisions_path": None,
+        "reviewed_mark_event_decisions_path": None,
+        "reviewed_source_skill_generation_satisfying_route_statuses": ["clean"],
+        "reviewed_source_skill_generation_satisfying_review_statuses": ["approved", "reviewed"],
+        "reviewed_mark_event_generation_satisfying_statuses": ["approved", "reviewed"],
+        "canonical_mark_event_ids_used_for_generation_gate": False,
     }
     by_subpart = {candidate["subpart_id"]: candidate for candidate in payload["candidates"]}
     candidate = by_subpart["12spring21_q01_a"]
@@ -290,8 +298,12 @@ def test_content_lab_candidates_emit_roles_and_block_warmup_until_reviewed(tmp_p
     assert candidate["role_statuses"]["quick_check_source"] == "block"
     assert candidate["role_statuses"]["generated_warmup_pattern_source"] == "blocked_until_reviewed"
     assert candidate["generation_gate"]["blocked"] is True
-    assert "mark_events_not_reviewed_or_approved" in candidate["generation_gate"]["block_reasons"]
+    assert "reviewed_mark_event_decision_missing" in candidate["generation_gate"]["block_reasons"]
     assert "mapping_or_subpart_not_reviewed_or_approved" in candidate["generation_gate"]["block_reasons"]
+    assert "reviewed_source_skill_decision_missing" in candidate["generation_gate"]["block_reasons"]
+    assert candidate["source_skill_review_gate"]["source_skill_review_satisfied"] is False
+    assert candidate["mapping_review_gate"]["mapping_review_satisfied"] is False
+    assert candidate["mark_event_review_gate"]["missing_event_ids"] == ["12spring21_q01_a_me0001"]
     warmup = candidate["generated_warmup_pattern_source"]
     assert warmup["method_pattern_id"] == "9709_p1_series_binomial_positive_integer__independent_fact"
     assert warmup["source_skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
@@ -302,7 +314,7 @@ def test_content_lab_candidates_emit_roles_and_block_warmup_until_reviewed(tmp_p
     assert warmup["review_status"] == "blocked_until_reviewed"
 
 
-def test_content_lab_candidates_allow_warmup_only_after_mapping_and_mark_event_approval(tmp_path: Path) -> None:
+def test_content_lab_candidates_do_not_allow_warmup_from_inline_mark_event_approval(tmp_path: Path) -> None:
     artifact_root = _write_artifacts(tmp_path)
     asterion = build_asterion_export(
         _question_bank_fixture(),
@@ -327,7 +339,69 @@ def test_content_lab_candidates_allow_warmup_only_after_mapping_and_mark_event_a
     payload = build_content_lab_candidates(asterion)
     candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q02_whole")
 
+    assert candidate["generation_gate"]["status"] == "blocked_until_reviewed"
+    assert candidate["generation_gate"]["blocked"] is True
+    assert candidate["generation_gate"]["block_reasons"] == [
+        "reviewed_mark_event_decision_missing",
+        "reviewed_source_skill_decision_missing",
+    ]
+    assert candidate["role_statuses"]["generated_warmup_pattern_source"] == "blocked_until_reviewed"
+
+
+def test_content_lab_candidates_allow_warmup_after_reviewed_mark_event_decisions(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(
+        _question_bank_fixture(),
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        skill_mappings={"12spring21_q02_whole": ["9709_p1_algebra_quadratics"]},
+    )
+    q2 = next(record for record in asterion["questions"] if record["question_id"] == "12spring21_q02")
+    q2["quality_gate"]["content_lab_generation_allowed"] = True
+    q2["usage_roles"] = {
+        "canonical_practice": "allow",
+        "field_guide_source": "allow",
+        "quick_check_source": "allow",
+        "warmup_generator_source": "allow",
+        "guardian_candidate": "allow",
+        "p3_readiness_metric": "exclude",
+    }
+    q2["subparts"][0]["review_status"] = "approved"
+    decisions = {
+        "decisions": [
+            {
+                "event_id": event["event_id"],
+                "status": "approved",
+                "source_question_id": "12spring21_q02",
+                "part_path": ["whole"],
+            }
+            for event in q2["subparts"][0]["mark_events"]
+        ]
+    }
+    reviewed_source_skills = _reviewed_source_skill_decisions(
+        q2["question_id"],
+        q2["subparts"][0]["subpart_id"],
+        "whole",
+        ["9709_p1_algebra_quadratics"],
+        [event["event_id"] for event in q2["subparts"][0]["mark_events"]],
+    )
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=reviewed_source_skills,
+        reviewed_mark_events=decisions,
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q02_whole")
+
     assert candidate["generation_gate"] == {"status": "allow", "blocked": False, "block_reasons": []}
+    assert candidate["mark_event_review_gate"]["generation_satisfying_event_ids"] == [
+        "12spring21_q02_whole_me0001",
+        "12spring21_q02_whole_me0002",
+        "12spring21_q02_whole_me0003",
+        "12spring21_q02_whole_me0004",
+    ]
+    assert candidate["source_skill_review_gate"]["status"] == "allow"
+    assert candidate["mapping_review_gate"]["status"] == "allow"
     assert candidate["role_statuses"]["generated_warmup_pattern_source"] == "allow"
     assert candidate["role_statuses"]["field_guide_source"] == "allow"
     assert candidate["role_statuses"]["guardian_candidate"] == "allow"
@@ -336,6 +410,235 @@ def test_content_lab_candidates_allow_warmup_only_after_mapping_and_mark_event_a
     assert "generation_blocked_until_mapping_and_mark_events_reviewed" not in candidate["generated_warmup_pattern_source"][
         "required_parameter_constraints"
     ]
+
+
+def test_content_lab_candidates_block_rejected_reviewed_mark_event_decisions(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(
+        _question_bank_fixture(),
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        skill_mappings={"12spring21_q02_whole": ["9709_p1_algebra_quadratics"]},
+    )
+    q2 = next(record for record in asterion["questions"] if record["question_id"] == "12spring21_q02")
+    q2["quality_gate"]["content_lab_generation_allowed"] = True
+    q2["subparts"][0]["review_status"] = "approved"
+    decisions = {
+        "decisions": [
+            {"event_id": q2["subparts"][0]["mark_events"][0]["event_id"], "status": "rejected"},
+            *[
+                {"event_id": event["event_id"], "status": "approved"}
+                for event in q2["subparts"][0]["mark_events"][1:]
+            ],
+        ]
+    }
+
+    payload = build_content_lab_candidates(asterion, reviewed_mark_events=decisions)
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q02_whole")
+
+    assert candidate["generation_gate"]["status"] == "block"
+    assert "reviewed_mark_event_rejected" in candidate["generation_gate"]["block_reasons"]
+
+
+def test_reviewed_mark_events_satisfy_only_mark_event_gate(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(
+        _question_bank_fixture(),
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        skill_mappings={"12spring21_q01_a": ["9709_p1_series_binomial_positive_integer"]},
+    )
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "reviewed"}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["mark_event_review_gate"]["status"] == "allow"
+    assert candidate["source_skill_review_gate"]["status"] == "blocked_until_reviewed"
+    assert candidate["generation_gate"]["blocked"] is True
+    assert "question_quality_gate_blocks_content_lab_generation" in candidate["generation_gate"]["block_reasons"]
+    assert "mapping_or_subpart_not_reviewed_or_approved" in candidate["generation_gate"]["block_reasons"]
+    assert "reviewed_source_skill_decision_missing" in candidate["generation_gate"]["block_reasons"]
+
+
+def test_content_lab_candidates_can_gate_on_canonical_mark_event_ids(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(
+        _question_bank_fixture(),
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        skill_mappings={"12spring21_q01_a": ["9709_p1_series_binomial_positive_integer"]},
+    )
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_mark_events={"decisions": [{"event_id": "12spring21_q01_me0001", "status": "approved"}]},
+        canonical_mark_event_ids_by_subpart={"12spring21_q01_a": ["12spring21_q01_me0001"]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert payload["policy"]["canonical_mark_event_ids_used_for_generation_gate"] is True
+    assert candidate["source_mark_event_ids"] == ["12spring21_q01_me0001"]
+    assert candidate["content_lab_mark_event_ids"] == ["12spring21_q01_a_me0001"]
+    assert candidate["mark_event_review_gate"]["status"] == "allow"
+    assert candidate["generated_warmup_pattern_source"]["source_mark_events"][0]["review_event_id"] == "12spring21_q01_me0001"
+
+
+def test_reviewed_source_skill_decisions_satisfy_only_matching_candidates(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=_reviewed_source_skill_decisions(
+            "12spring21_q01",
+            "12spring21_q01_a",
+            "a",
+            ["9709_p1_series_binomial_positive_integer"],
+            [event_id],
+        ),
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved", "source_question_id": "12spring21_q01", "part_path": ["a"]}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["source_skill_ids"] == ["9709_p1_series_binomial_positive_integer"]
+    assert candidate["source_skill_review_gate"]["status"] == "allow"
+    assert candidate["source_skill_review_satisfied"] is True
+    assert candidate["mapping_review_gate"]["status"] == "allow"
+
+
+def test_missing_source_skill_ids_produces_clear_block(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved"}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["source_skill_ids"] == []
+    assert "missing_source_skill_ids" in candidate["generation_gate"]["block_reasons"]
+    assert candidate["source_skill_review_gate"]["block_reasons"] == ["reviewed_source_skill_decision_missing"]
+
+
+def test_reviewed_source_skill_does_not_satisfy_mark_event_gate_by_itself(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=_reviewed_source_skill_decisions(
+            "12spring21_q01",
+            "12spring21_q01_a",
+            "a",
+            ["9709_p1_series_binomial_positive_integer"],
+            [event_id],
+        ),
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["source_skill_review_gate"]["status"] == "allow"
+    assert candidate["mark_event_review_gate"]["status"] == "blocked_until_reviewed"
+    assert "reviewed_mark_event_decision_missing" in candidate["generation_gate"]["block_reasons"]
+
+
+def test_reviewed_mark_events_do_not_satisfy_source_skill_gate_by_themselves(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(
+        _question_bank_fixture(),
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        skill_mappings={"12spring21_q01_a": ["9709_p1_series_binomial_positive_integer"]},
+    )
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved"}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["mark_event_review_gate"]["status"] == "allow"
+    assert candidate["source_skill_review_gate"]["status"] == "blocked_until_reviewed"
+    assert "reviewed_source_skill_decision_missing" in candidate["generation_gate"]["block_reasons"]
+
+
+def test_part_path_mismatch_blocks_reviewed_mapping_authority(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=_reviewed_source_skill_decisions(
+            "12spring21_q01",
+            "12spring21_q01_a",
+            "b",
+            ["9709_p1_series_binomial_positive_integer"],
+            [event_id],
+        ),
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved", "source_question_id": "12spring21_q01", "part_path": ["a"]}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert "reviewed_source_skill_part_path_mismatch" in candidate["source_skill_review_gate"]["block_reasons"]
+    assert candidate["mapping_review_gate"]["status"] == "blocked_until_reviewed"
+    assert "mapping_or_subpart_not_reviewed_or_approved" in candidate["generation_gate"]["block_reasons"]
+
+
+def test_other_part_mark_event_ids_cannot_satisfy_matching_event_authority(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=_reviewed_source_skill_decisions(
+            "12spring21_q01",
+            "12spring21_q01_a",
+            "a",
+            ["9709_p1_series_binomial_positive_integer"],
+            ["12spring21_q01_b_me0001"],
+        ),
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved", "source_question_id": "12spring21_q01", "part_path": ["a"]}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert "reviewed_source_skill_mark_event_refs_do_not_cover_candidate" in candidate["source_skill_review_gate"]["block_reasons"]
+    assert candidate["mapping_review_gate"]["status"] == "blocked_until_reviewed"
+
+
+def test_control_record_does_not_promote_without_approved_review_status(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    asterion = build_asterion_export(_question_bank_fixture(), artifact_root=artifact_root, base_dir=tmp_path)
+    event_id = asterion["questions"][0]["subparts"][0]["mark_events"][0]["event_id"]
+    reviewed_source_skills = _reviewed_source_skill_decisions(
+        "12spring21_q01",
+        "12spring21_q01_a",
+        "a",
+        ["9709_p1_series_binomial_positive_integer"],
+        [event_id],
+        route_status="review_needed",
+        reviewer_status="review_needed",
+    )
+    reviewed_source_skills["records"][0]["control_record"] = True
+
+    payload = build_content_lab_candidates(
+        asterion,
+        reviewed_source_skill_decisions=reviewed_source_skills,
+        reviewed_mark_events={"decisions": [{"event_id": event_id, "status": "approved"}]},
+    )
+    candidate = next(item for item in payload["candidates"] if item["subpart_id"] == "12spring21_q01_a")
+
+    assert candidate["source_skill_review_satisfied"] is False
+    assert candidate["source_skill_review_gate"]["reviewed_source_skill_status"] == "not_generation_satisfying"
 
 
 def test_content_lab_candidates_export_writes_sidecar_from_question_bank(tmp_path: Path) -> None:
@@ -362,6 +665,34 @@ def test_content_lab_candidates_export_writes_sidecar_from_question_bank(tmp_pat
     assert payload["record_count"] >= 1
     q1a = next(candidate for candidate in payload["candidates"] if candidate["subpart_id"] == "12spring21_q01_a")
     assert q1a["source_skill_ids"] == ["skill-one"]
+
+
+def _reviewed_source_skill_decisions(
+    question_id: str,
+    subpart_id: str,
+    part_id: str,
+    skill_ids: list[str],
+    mark_event_ids: list[str],
+    *,
+    route_status: str = "clean",
+    reviewer_status: str = "approved",
+    blockers: list[str] | None = None,
+) -> dict:
+    return {
+        "records": [
+            {
+                "evidence_id": f"reviewed:{question_id}:{subpart_id}",
+                "question_id": question_id,
+                "part_id": part_id,
+                "subpart_id": subpart_id,
+                "route_status": route_status,
+                "reviewer": {"review_status": reviewer_status},
+                "reviewed_source_skill_ids": skill_ids,
+                "blockers": blockers or [],
+                "mark_event_refs": [{"event_id": event_id, "part_path": [part_id]} for event_id in mark_event_ids],
+            }
+        ]
+    }
 
 
 def _write_artifacts(tmp_path: Path) -> Path:

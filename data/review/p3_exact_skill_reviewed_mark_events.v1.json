@@ -1,0 +1,463 @@
+{
+  "artifact_kind": "manual_reviewed_mark_event_decision_input",
+  "decision_count": 11,
+  "decisions": [
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:33summer23_q11_me0028",
+      "event_id": "33summer23_q11_me0028",
+      "mark_scheme_image_path": "output/p3/33summer23/mark_scheme/q11.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/mark_scheme/q11.png",
+        "sha256": "3d9aef0a40d6a74a47948e1255762f5fbbcadb6cc649b4e95b06c74979451daf",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b",
+        "exact_skill_id:9709_p3_3_9_complex_arithmetic_polar_form",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/33summer23/questions/q11.png",
+      "question_image_ref": {
+        "asset_id": "question_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/questions/q11.png",
+        "sha256": "a8efab1f28aabe6e55a5487a87b60b67ede6e3998c7dfbbc44e33a76e11f0bf3",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "rationale": "Part (b) explicitly asks for z^3 in polar/exponential form, and this B1 mark states the argument of z^3. The event is part-path matched to (b) and supports the approved complex polar/modulus exact skill.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "33summer23_q11",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:33summer23_q11_me0029",
+      "event_id": "33summer23_q11_me0029",
+      "mark_scheme_image_path": "output/p3/33summer23/mark_scheme/q11.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/mark_scheme/q11.png",
+        "sha256": "3d9aef0a40d6a74a47948e1255762f5fbbcadb6cc649b4e95b06c74979451daf",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b",
+        "exact_skill_id:9709_p3_3_9_complex_arithmetic_polar_form",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/33summer23/questions/q11.png",
+      "question_image_ref": {
+        "asset_id": "question_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/questions/q11.png",
+        "sha256": "a8efab1f28aabe6e55a5487a87b60b67ede6e3998c7dfbbc44e33a76e11f0bf3",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "rationale": "Part (b) requires the modulus r for z^3; this M1 mark awards the complete method for obtaining r from z. It is matched to part (b) and is not an adjacent-part method.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "33summer23_q11",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:33summer23_q11_me0030",
+      "event_id": "33summer23_q11_me0030",
+      "mark_scheme_image_path": "output/p3/33summer23/mark_scheme/q11.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/mark_scheme/q11.png",
+        "sha256": "3d9aef0a40d6a74a47948e1255762f5fbbcadb6cc649b4e95b06c74979451daf",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b",
+        "exact_skill_id:9709_p3_3_9_complex_arithmetic_polar_form",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/33summer23/questions/q11.png",
+      "question_image_ref": {
+        "asset_id": "question_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/questions/q11.png",
+        "sha256": "a8efab1f28aabe6e55a5487a87b60b67ede6e3998c7dfbbc44e33a76e11f0bf3",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark awards the correct exact modulus r = 16 sqrt(2) for z^3 in part (b). It aligns directly with the approved complex polar/modulus source-skill record.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "33summer23_q11",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:33summer23_q11_me0031",
+      "event_id": "33summer23_q11_me0031",
+      "mark_scheme_image_path": "output/p3/33summer23/mark_scheme/q11.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/mark_scheme/q11.png",
+        "sha256": "3d9aef0a40d6a74a47948e1255762f5fbbcadb6cc649b4e95b06c74979451daf",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b",
+        "exact_skill_id:9709_p3_3_9_complex_arithmetic_polar_form",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/33summer23/questions/q11.png",
+      "question_image_ref": {
+        "asset_id": "question_image:33summer23:33summer23_q11",
+        "path": "p3/33summer23/questions/q11.png",
+        "sha256": "a8efab1f28aabe6e55a5487a87b60b67ede6e3998c7dfbbc44e33a76e11f0bf3",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0001_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark is tied to correct use of z = 2 - 2i in part (b), supporting the same z^3 polar/exponential result. It is part-path matched and understandable as an accuracy mark within the approved target skill.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "33summer23_q11",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q06_me0006",
+      "event_id": "31summer24_q06_me0006",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q06.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/mark_scheme/q06.png",
+        "sha256": "bdfdda551e3b32bb16b4a617d5d58f3b72f15f983cb2788339561e35f8184d41",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d",
+        "exact_skill_id:9709_p3_3_6_fixed_point_iteration",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "d"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q06.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/questions/q06.png",
+        "sha256": "82fb5f1e01c9e0b9a5dc97c19b2ec40dcbbd26864be605a002ad2731dd28e00a",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "Part (d) asks students to use the given iterative formula; this M1 mark awards using that iterative formula correctly at least twice. It is part-path matched to (d) and directly supports fixed-point iteration.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q06",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q06_me0007",
+      "event_id": "31summer24_q06_me0007",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q06.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/mark_scheme/q06.png",
+        "sha256": "bdfdda551e3b32bb16b4a617d5d58f3b72f15f983cb2788339561e35f8184d41",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d",
+        "exact_skill_id:9709_p3_3_6_fixed_point_iteration",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "d"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q06.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/questions/q06.png",
+        "sha256": "82fb5f1e01c9e0b9a5dc97c19b2ec40dcbbd26864be605a002ad2731dd28e00a",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark awards the final fixed-point iteration answer 1.50 for part (d). It belongs to the reviewed part and directly supports the approved fixed-point iteration skill.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q06",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q06_me0008",
+      "event_id": "31summer24_q06_me0008",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q06.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/mark_scheme/q06.png",
+        "sha256": "bdfdda551e3b32bb16b4a617d5d58f3b72f15f983cb2788339561e35f8184d41",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d",
+        "exact_skill_id:9709_p3_3_6_fixed_point_iteration",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "d"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q06.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q06",
+        "path": "p3/31summer24/questions/q06.png",
+        "sha256": "82fb5f1e01c9e0b9a5dc97c19b2ec40dcbbd26864be605a002ad2731dd28e00a",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark awards sufficient iteration evidence to justify the two-decimal-place result in part (d). It is matched to the reviewed part and is safe for the fixed-point iteration gate.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q06",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q09_me0002",
+      "event_id": "31summer24_q09_me0002",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q09.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/mark_scheme/q09.png",
+        "sha256": "3143cc68c0c31368f421d1b1bbea90fa5a784062fcf9c8f1e1b7a67adaeba1f7",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+        "exact_skill_id:9709_p3_3_7_vector_lines",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q09.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/questions/q09.png",
+        "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "Part (b) asks for the vector point of intersection; this B1 mark awards expressing a point on one line in component form. It is matched to part (b) and supports vector-line intersection setup.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q09",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q09_me0003",
+      "event_id": "31summer24_q09_me0003",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q09.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/mark_scheme/q09.png",
+        "sha256": "3143cc68c0c31368f421d1b1bbea90fa5a784062fcf9c8f1e1b7a67adaeba1f7",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+        "exact_skill_id:9709_p3_3_7_vector_lines",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q09.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/questions/q09.png",
+        "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "This M1 mark awards equating components and solving for a line parameter in part (b). It directly supports the approved vector-line intersection target skill.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q09",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q09_me0004",
+      "event_id": "31summer24_q09_me0004",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q09.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/mark_scheme/q09.png",
+        "sha256": "3143cc68c0c31368f421d1b1bbea90fa5a784062fcf9c8f1e1b7a67adaeba1f7",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+        "exact_skill_id:9709_p3_3_7_vector_lines",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q09.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/questions/q09.png",
+        "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark awards the correct parameter value in part (b), a direct intermediate for the vector-line intersection solution.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q09",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    },
+    {
+      "decision_id": "p3_reviewed_mark_event:0001:31summer24_q09_me0005",
+      "event_id": "31summer24_q09_me0005",
+      "mark_scheme_image_path": "output/p3/31summer24/mark_scheme/q09.png",
+      "mark_scheme_image_ref": {
+        "asset_id": "mark_scheme_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/mark_scheme/q09.png",
+        "sha256": "3143cc68c0c31368f421d1b1bbea90fa5a784062fcf9c8f1e1b7a67adaeba1f7",
+        "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "notes": [
+        "source_exact_skill_decision:p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+        "exact_skill_id:9709_p3_3_7_vector_lines",
+        "approved_from_batch_0001_0002_clean_control_only",
+        "matching_mark_event_id_for_reviewed_part"
+      ],
+      "part_path": [
+        "b"
+      ],
+      "question_image_path": "output/p3/31summer24/questions/q09.png",
+      "question_image_ref": {
+        "asset_id": "question_image:31summer24:31summer24_q09",
+        "path": "p3/31summer24/questions/q09.png",
+        "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711",
+        "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
+        "verified": true
+      },
+      "rationale": "This A1 mark awards the final position vector of the intersection point in part (b). It is part-path matched and directly supports the approved vector-line intersections exact skill.",
+      "reviewed_at": "2026-05-26T02:45:00Z",
+      "reviewer": "codex_mark_event_population_0001",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31summer24_q09",
+      "status": "approved",
+      "warnings": [
+        "Approval applies only to this event ID and reviewed part path.",
+        "Other-part mark events for the same question were not approved in this pass."
+      ]
+    }
+  ],
+  "generated_at": "2026-05-26T02:45:00Z",
+  "schema": "exam_bank.p3_exact_skill.reviewed_mark_events",
+  "schema_version": 1,
+  "selection_policy": {
+    "approved_only_when_matching_part_path": true,
+    "batch_0003_retagged_records_excluded": true,
+    "population_pass": "p3_reviewed_mark_events_0001",
+    "source_scope": "already-promoted clean source-skill controls from Batch 0001 and Batch 0002 only",
+    "source_skill_promotions_added": 0
+  },
+  "status_semantics": {
+    "advisory": "Mark event remains advisory-only and must not unlock Content Lab generation.",
+    "approved": "Mark event is explicitly approved for Content Lab generation gating.",
+    "rejected": "Mark event was reviewed and must not be used for Content Lab generation gating.",
+    "reviewed": "Mark event has been human-reviewed and may satisfy Content Lab generation gating."
+  },
+  "warning": "Approved/reviewed statuses satisfy the mark-event generation gate; advisory, rejected, and missing decisions do not."
+}

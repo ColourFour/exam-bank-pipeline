@@ -7,7 +7,10 @@ Batch 0003 is an adversarial exact-skill retagging and mark-event approval probe
 - Reviewed records: `14`
 - Selection categories: `{"clean_control_mark_event_probe": 3, "deferred_exact_skill_boundary_probe": 1, "prior_ambiguous_retag_probe": 6, "prior_blocked_confirmation": 2, "thin_adjacent_part_probe": 2}`
 - Exact-skill decisions: `{"approved_control_already_promoted": 3, "blocked": 2, "deferred": 1, "deferred_thin": 2, "retagged_not_promoted": 6}`
+- Review outcome categories: `{"clean_seed": 3, "cross_content_not_exact_skill_isolatable": 5, "exact_but_not_seed_quality": 2, "supporting_method_not_target_skill": 4}`
 - Promoted exact-skill records: `0`
+- New promotions excluding controls: `0`
+- Control records: `3`
 - Clean registry count before/after: `15` / `15`
 - Mark-event approval probes: `3`
 - Approved mark events: `0`
@@ -30,7 +33,15 @@ Batch 0003 is an adversarial exact-skill retagging and mark-event approval probe
 
 - No mark events were approved.
 - All mark-event refs remain advisory-only.
-- Required later workflow change: Add a reviewed mark-event decision artifact with event_id, part_path, source asset refs, reviewer identity, reviewed_at, reviewed/approved/rejected status, and validator checks that bind approved event IDs to a clean source-skill record before Content Lab generation can be enabled.
+- Reviewed mark-event workflow added after this batch: `data/review/p3_exact_skill_reviewed_mark_events.v1.json` plus `scripts/validate_p3_exact_skill_reviewed_mark_events.py`.
+- Approved/reviewed mark-event decisions can satisfy the mark-event generation gate; rejected, advisory, and missing decisions cannot.
+
+## Thin And Supporting Evidence Categories
+
+- `exact_but_not_seed_quality`: exact skill may be plausible, but evidence is too thin for seed promotion.
+- `supporting_method_not_target_skill`: proposed skill appears as method support, not the assessed target.
+- `cross_content_not_exact_skill_isolatable`: reviewed part crosses content boundaries and should not be forced into one exact-skill seed.
+- `clean_seed`: already-promoted controls only in this batch; these are not new promotions.
 
 ## Promoted Exact-Skill Records
 
@@ -58,14 +69,14 @@ Batch 0003 is an adversarial exact-skill retagging and mark-event approval probe
 
 ## Clean Controls Not Re-Promoted
 
-- `33summer23_q11_b`: `approved_control_already_promoted`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: The existing reviewed registry record already covers part (b) polar/exponential complex work. Batch 0003 does not duplicate the record or approve mark events.
-- `31summer24_q06_d`: `approved_control_already_promoted`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: Part (d) contains the substantive iterative calculation and is already in the reviewed registry; adjacent part (c) remains thin.
-- `31summer24_q09_b`: `approved_control_already_promoted`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: Part (b) is the substantive vector-line record already promoted in Batch 0002; part (a) remains thin.
+- `33summer23_q11_b`: `approved_control_already_promoted`; `control_record: true`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: The existing reviewed registry record already covers part (b) polar/exponential complex work. Batch 0003 does not duplicate the record or approve mark events.
+- `31summer24_q06_d`: `approved_control_already_promoted`; `control_record: true`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: Part (d) contains the substantive iterative calculation and is already in the reviewed registry; adjacent part (c) remains thin.
+- `31summer24_q09_b`: `approved_control_already_promoted`; `control_record: true`; mark event: `left_advisory_only`; evidence: `part-level plus mark-event probe`; retag: `none`; reason: Part (b) is the substantive vector-line record already promoted in Batch 0002; part (a) remains thin.
 
 ## Generation Readiness
 
 - Changed: `false`
-- Reason: Reviewed source-skill decisions were kept separate from mark-event approval; no explicit reviewed mark-event path exists in this batch.
+- Reason: Reviewed source-skill decisions are kept separate from mark-event approval; the reviewed mark-event artifact currently has no approved/reviewed decisions.
 
 ## Remaining Risks
 
@@ -75,6 +86,6 @@ Batch 0003 is an adversarial exact-skill retagging and mark-event approval probe
 
 ## Suggested Next Steps
 
-- Create a dedicated reviewed mark-event schema and validator before attempting Content Lab generation approval.
+- Populate the reviewed mark-event artifact only after explicit event-level review of matching part-level mark events.
 - Run a small promotion pass only for retagged records whose narrower skill IDs can be cleanly proven from canonical images.
 - Keep thin adjacent parts as negative controls in future batches.

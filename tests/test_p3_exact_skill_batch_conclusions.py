@@ -85,6 +85,12 @@ def test_batch_0003_conclusions_separate_exact_skill_and_mark_event_decisions() 
     assert any(record["exact_skill_decision"] == "deferred_thin" for record in records)
     assert all(record["mark_event_decision"] == "left_advisory_only" for record in records)
     assert all(record["content_lab_generation_allowed"] is False for record in records)
+    controls = [record for record in records if record["selection_category"] == "clean_control_mark_event_probe"]
+    thin = [record for record in records if record["selection_category"] == "thin_adjacent_part_probe"]
+    assert controls and all(record["control_record"] is True for record in controls)
+    assert thin and all(record["review_outcome_category"] == "exact_but_not_seed_quality" for record in thin)
+    assert payload["outcome_counts"]["new_promotions_excluding_controls"] == 0
+    assert payload["outcome_counts"]["by_review_outcome_category"]["supporting_method_not_target_skill"] >= 1
 
 
 def test_batch_0003_seed_report_promotes_no_records() -> None:

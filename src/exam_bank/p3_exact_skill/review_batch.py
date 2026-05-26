@@ -34,6 +34,17 @@ BATCH_0003_SELECTION_CATEGORIES = {
     "clean_control_mark_event_probe",
     "deferred_exact_skill_boundary_probe",
 }
+REVIEW_OUTCOME_CATEGORIES = {
+    "clean_seed",
+    "thin_control",
+    "supporting_evidence_only",
+    "exact_but_not_seed_quality",
+    "cross_content_not_exact_skill_isolatable",
+    "supporting_method_not_target_skill",
+    "thin_or_adjacent_context",
+    "blocked_wrong_or_unsafe_label",
+    "review_needed",
+}
 SEED_REGISTRY_SUBPART_IDS = (
     "33summer23_q11_b",
     "31summer24_q04_b",
@@ -1202,6 +1213,17 @@ def validate_batch_0003_artifacts(manifest: dict[str, Any], template: dict[str, 
         for item in selected_items
     ):
         errors.append("batch_0003:mark_event_default_not_advisory_only")
+    if any(
+        isinstance(item, dict)
+        and item.get("control_record") is True
+        and (
+            _text(item.get("selection_category")) != "clean_control_mark_event_probe"
+            or item.get("related_reviewed_registry_evidence_exists") is not True
+            or not item.get("related_reviewed_evidence_ids")
+        )
+        for item in selected_items
+    ):
+        errors.append("batch_0003:control_record_without_existing_reviewed_decision")
     return errors
 
 
@@ -1280,6 +1302,7 @@ def _batch_0002_manifest_fields(items: list[dict[str, Any]], selection_notes: di
     return {
         "selection_strategy": BATCH_0002_PURPOSE,
         "selection_categories": sorted(BATCH_0002_SELECTION_CATEGORIES),
+        "review_outcome_categories": sorted(REVIEW_OUTCOME_CATEGORIES),
         "category_counts": dict(category_counts),
         "known_risk_flag_counts": dict(risk_counts),
         "selected_items": [_batch_0002_manifest_item(item) for item in items],
@@ -1300,6 +1323,7 @@ def _batch_0003_manifest_fields(items: list[dict[str, Any]], selection_notes: di
     return {
         "selection_strategy": BATCH_0003_PURPOSE,
         "selection_categories": sorted(BATCH_0003_SELECTION_CATEGORIES),
+        "review_outcome_categories": sorted(REVIEW_OUTCOME_CATEGORIES),
         "category_counts": dict(category_counts),
         "known_risk_flag_counts": dict(risk_counts),
         "selected_items": [_batch_0003_manifest_item(item) for item in items],
@@ -1318,6 +1342,7 @@ def _batch_0003_manifest_fields(items: list[dict[str, Any]], selection_notes: di
 def _batch_0002_manifest_item(item: dict[str, Any]) -> dict[str, Any]:
     proposed_skill_ids = _p3_skill_ids(item)
     alignment = _text(item.get("topic_routing_alignment")) or "unknown"
+    mark_event_filtering = _part_level_mark_event_filtering(item)
     return {
         "queue_id": _text(item.get("queue_id")),
         "question_id": _text(item.get("question_id")),
@@ -1339,6 +1364,9 @@ def _batch_0002_manifest_item(item: dict[str, Any]) -> dict[str, Any]:
             "cross_topic_status": _text(item.get("cross_topic_status")) or "unknown",
             "cross_topic_notes": item.get("cross_topic_notes") or [],
             "mark_event_refs": _advisory_mark_event_refs(item.get("mark_event_refs") or []),
+            "matching_mark_event_ids": mark_event_filtering["matching_mark_event_ids"],
+            "other_part_mark_event_ids": mark_event_filtering["other_part_mark_event_ids"],
+            "mark_event_filter_confidence": mark_event_filtering["confidence"],
             "content_lab_blocker_context": item.get("asterion_candidate") or {},
         },
         "known_risk_flags": _selection_list(item, "known_risk_flags"),
@@ -1349,6 +1377,9 @@ def _batch_0002_manifest_item(item: dict[str, Any]) -> dict[str, Any]:
             item, "related_reviewed_registry_evidence_exists"
         ),
         "related_reviewed_evidence_ids": _selection_list(item, "related_reviewed_evidence_ids"),
+        "control_record": _selection_bool(item, "control_record"),
+        "review_outcome_category_default": _review_outcome_category_default(item),
+        "mark_event_filtering": mark_event_filtering,
         "mark_scheme_evidence_expected": True,
         "generation_ready": False,
         "unknown_alignment_reason": "topic_routing_alignment_unknown" if alignment == "unknown" else "",
@@ -1360,6 +1391,7 @@ def _batch_0003_manifest_item(item: dict[str, Any]) -> dict[str, Any]:
     base["mark_event_approval_probe"] = "mark_event_approval_probe" in set(base.get("known_risk_flags") or [])
     base["mark_event_decision_default"] = "advisory_only"
     base["exact_skill_decision_default"] = "review_needed"
+    base["control_record"] = base.get("control_record") or base["selection_category"] == "clean_control_mark_event_probe"
     return base
 
 
@@ -1405,6 +1437,7 @@ def _annotate_batch_0003_item(
         "review_scope_level": _review_scope_level(item),
         "related_reviewed_registry_evidence_exists": bool(related),
         "related_reviewed_evidence_ids": [_text(record.get("evidence_id")) for record in related if _text(record.get("evidence_id"))],
+        "control_record": category == "clean_control_mark_event_probe",
     }
     return annotated
 
@@ -1496,6 +1529,67 @@ def _review_scope_level(item: dict[str, Any]) -> str:
     if _text(item.get("subpart_label")) == "whole" or _text(item.get("part_id")) == "whole":
         return "whole_question"
     return "part_level"
+
+
+def _review_outcome_category_default(item: dict[str, Any]) -> str:
+    selection_category = _selection_value(item, "selection_category")
+    risks = set(_selection_list(item, "known_risk_flags"))
+    if selection_category == "clean_control_mark_event_probe":
+        return "clean_seed"
+    if selection_category == "thin_adjacent_part_probe":
+        return "thin_or_adjacent_context"
+    if "thin_adjacent_part" in risks:
+        return "exact_but_not_seed_quality"
+    if "supporting_method_confusion" in risks:
+        return "supporting_method_not_target_skill"
+    if "wrong_skill_routing" in risks:
+        return "blocked_wrong_or_unsafe_label"
+    if selection_category in {"prior_ambiguous_retag_probe", "prior_blocked_confirmation"}:
+        return "cross_content_not_exact_skill_isolatable"
+    return "review_needed"
+
+
+def _part_level_mark_event_filtering(item: dict[str, Any]) -> dict[str, Any]:
+    all_refs = _advisory_mark_event_refs(item.get("mark_event_refs") or [])
+    all_ids = _event_ids(all_refs)
+    matching_ids: list[str] = []
+    other_ids: list[str] = []
+    source_subpart_label = _text(item.get("subpart_label") or item.get("part_id"))
+    candidates = item.get("proposed_part_level_candidates") if isinstance(item.get("proposed_part_level_candidates"), list) else []
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        candidate_path = [_text(part) for part in candidate.get("part_path") or [] if _text(part)]
+        candidate_matches_source = bool(candidate_path) and source_subpart_label and candidate_path[0] == source_subpart_label
+        if candidate_matches_source or candidate.get("decomposition_status") == "already_part_scoped":
+            matching_ids.extend(_event_ids(candidate.get("matching_mark_event_refs") or []))
+            other_ids.extend(_event_ids(candidate.get("other_part_mark_event_refs") or []))
+        matching_ids = _unique_texts(matching_ids)
+    if matching_ids:
+        other_ids = _unique_texts(other_ids + [event_id for event_id in all_ids if event_id not in set(matching_ids)])
+        confidence = "part_path_matched"
+    else:
+        other_ids = all_ids
+        confidence = "uncertain_no_confident_part_match" if all_ids else "no_mark_events"
+    return {
+        "matching_mark_event_ids": matching_ids,
+        "other_part_mark_event_ids": other_ids,
+        "confidence": confidence,
+        "warning": (
+            "Only matching_mark_event_ids should be used for future part-level mark-event review probes. "
+            "When confidence is uncertain, all event IDs remain outside the matching set."
+        ),
+    }
+
+
+def _event_ids(refs: Any) -> list[str]:
+    result: list[str] = []
+    if not isinstance(refs, list):
+        return result
+    for ref in refs:
+        if isinstance(ref, dict) and _text(ref.get("event_id")):
+            result.append(_text(ref.get("event_id")))
+    return _unique_texts(result)
 
 
 def _has_primary_skill(item: dict[str, Any], skill_id: str) -> bool:
@@ -1619,6 +1713,7 @@ def _selection_score(
 
 
 def _template_record(item: dict[str, Any], *, batch_id: str, generated_at: str) -> dict[str, Any]:
+    mark_event_filtering = _part_level_mark_event_filtering(item)
     return {
         "evidence_id": f"p3_exact_skill_review:{batch_id}:{_text(item.get('question_id'))}:{_text(item.get('subpart_id'))}",
         "queue_id": _text(item.get("queue_id")),
@@ -1630,6 +1725,8 @@ def _template_record(item: dict[str, Any], *, batch_id: str, generated_at: str) 
             item, "related_reviewed_registry_evidence_exists"
         ),
         "related_reviewed_evidence_ids": _selection_list(item, "related_reviewed_evidence_ids"),
+        "control_record": _selection_bool(item, "control_record"),
+        "review_outcome_category_default": _review_outcome_category_default(item),
         "generation_readiness": {
             "must_remain_blocked": True,
             "candidate_generation_allowed_by_template": False,
@@ -1658,6 +1755,9 @@ def _template_record(item: dict[str, Any], *, batch_id: str, generated_at: str) 
         "source_question_asset_refs": item.get("source_question_asset_refs") or [],
         "source_mark_scheme_asset_refs": item.get("source_mark_scheme_asset_refs") or [],
         "mark_event_refs": _advisory_mark_event_refs(item.get("mark_event_refs") or []),
+        "mark_event_filtering": mark_event_filtering,
+        "matching_mark_event_ids": mark_event_filtering["matching_mark_event_ids"],
+        "other_part_mark_event_ids": mark_event_filtering["other_part_mark_event_ids"],
         "evidence_basis": "",
         "blockers": ["pending_human_review"],
         "allowed_use_cases": {key: False for key in sorted(ALLOWED_USE_CASE_KEYS)},

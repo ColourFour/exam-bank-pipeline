@@ -113,7 +113,7 @@
       "supporting_topic": 5
     }
   },
-  "generated_at": "2026-05-26T01:58:24Z",
+  "generated_at": "2026-05-26T02:26:00Z",
   "known_risk_flag_counts": {
     "adjacent_part_contamination": 2,
     "already_promoted_clean_control": 3,
@@ -135,6 +135,17 @@
     "whole_question_review_scope": 1,
     "wrong_skill_routing": 3
   },
+  "review_outcome_categories": [
+    "blocked_wrong_or_unsafe_label",
+    "clean_seed",
+    "cross_content_not_exact_skill_isolatable",
+    "exact_but_not_seed_quality",
+    "review_needed",
+    "supporting_evidence_only",
+    "supporting_method_not_target_skill",
+    "thin_control",
+    "thin_or_adjacent_context"
+  ],
   "reviewed_registry_path": "data/review/p3_exact_skill_reviewed_decisions.v1.json",
   "schema": "exam_bank.p3_exact_skill.review_batch_manifest",
   "schema_version": 1,
@@ -175,6 +186,7 @@
           "Source topic hint: parametric_equations."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -375,6 +387,32 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "32autumn23_q09_me0011",
+          "32autumn23_q09_me0012",
+          "32autumn23_q09_me0013",
+          "32autumn23_q09_me0014",
+          "32autumn23_q09_me0015",
+          "32autumn23_q09_me0016",
+          "32autumn23_q09_me0017",
+          "32autumn23_q09_me0018",
+          "32autumn23_q09_me0019",
+          "32autumn23_q09_me0020",
+          "32autumn23_q09_me0021",
+          "32autumn23_q09_me0022"
+        ],
+        "other_part_mark_event_ids": [
+          "32autumn23_q09_me0001",
+          "32autumn23_q09_me0002",
+          "32autumn23_q09_me0003",
+          "32autumn23_q09_me0004",
+          "32autumn23_q09_me0005",
+          "32autumn23_q09_me0006",
+          "32autumn23_q09_me0007",
+          "32autumn23_q09_me0008",
+          "32autumn23_q09_me0009",
+          "32autumn23_q09_me0010"
+        ],
         "topic_routing": {
           "confidence": "medium",
           "evidence_used": [
@@ -404,6 +442,7 @@
           "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -415,6 +454,36 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32autumn23_q09_me0011",
+          "32autumn23_q09_me0012",
+          "32autumn23_q09_me0013",
+          "32autumn23_q09_me0014",
+          "32autumn23_q09_me0015",
+          "32autumn23_q09_me0016",
+          "32autumn23_q09_me0017",
+          "32autumn23_q09_me0018",
+          "32autumn23_q09_me0019",
+          "32autumn23_q09_me0020",
+          "32autumn23_q09_me0021",
+          "32autumn23_q09_me0022"
+        ],
+        "other_part_mark_event_ids": [
+          "32autumn23_q09_me0001",
+          "32autumn23_q09_me0002",
+          "32autumn23_q09_me0003",
+          "32autumn23_q09_me0004",
+          "32autumn23_q09_me0005",
+          "32autumn23_q09_me0006",
+          "32autumn23_q09_me0007",
+          "32autumn23_q09_me0008",
+          "32autumn23_q09_me0009",
+          "32autumn23_q09_me0010"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "32autumn23",
       "part_id": "b",
@@ -427,6 +496,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0001/0002 trig-identity ambiguity where area/integration is the assessed target and trig identities are method support.",
@@ -471,6 +541,7 @@
           "Source topic hint: logarithms_and_exponentials."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -554,6 +625,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "31autumn21_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "31autumn21_q07_me0001",
+          "31autumn21_q07_me0002",
+          "31autumn21_q07_me0003",
+          "31autumn21_q07_me0004",
+          "31autumn21_q07_me0005",
+          "31autumn21_q07_me0006",
+          "31autumn21_q07_me0007",
+          "31autumn21_q07_me0008"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -581,6 +665,7 @@
           "sha256": "94854043f612f37e702b9fe3f6f56ee45787056d7b02b0df951586037cb323ba"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -592,6 +677,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31autumn21_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "31autumn21_q07_me0001",
+          "31autumn21_q07_me0002",
+          "31autumn21_q07_me0003",
+          "31autumn21_q07_me0004",
+          "31autumn21_q07_me0005",
+          "31autumn21_q07_me0006",
+          "31autumn21_q07_me0007",
+          "31autumn21_q07_me0008"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31autumn21",
       "part_id": "c",
@@ -604,6 +706,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0001 DE/log ambiguity where the selected part is limiting behaviour from a differential-equation solution.",
@@ -647,6 +750,7 @@
           "Source topic hint: differentiation."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -739,6 +843,20 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "32summer23_q07_me0005",
+          "32summer23_q07_me0006",
+          "32summer23_q07_me0007",
+          "32summer23_q07_me0008",
+          "32summer23_q07_me0009",
+          "32summer23_q07_me0010"
+        ],
+        "other_part_mark_event_ids": [
+          "32summer23_q07_me0001",
+          "32summer23_q07_me0002",
+          "32summer23_q07_me0003",
+          "32summer23_q07_me0004"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -766,6 +884,7 @@
           "sha256": "d844c7af809670b8e6beca8011b133b98d41bd83817dbea9f1f6775ba1c55693"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -777,6 +896,24 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32summer23_q07_me0005",
+          "32summer23_q07_me0006",
+          "32summer23_q07_me0007",
+          "32summer23_q07_me0008",
+          "32summer23_q07_me0009",
+          "32summer23_q07_me0010"
+        ],
+        "other_part_mark_event_ids": [
+          "32summer23_q07_me0001",
+          "32summer23_q07_me0002",
+          "32summer23_q07_me0003",
+          "32summer23_q07_me0004"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "32summer23",
       "part_id": "b",
@@ -789,6 +926,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0001 derivative-rules ambiguity where implicit differentiation and tangent conditions are the safer target.",
@@ -834,6 +972,7 @@
           "Source topic hint: logarithms_and_exponentials."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -917,6 +1056,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -944,6 +1096,7 @@
           "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -955,6 +1108,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "33autumn22",
       "part_id": "a",
@@ -967,6 +1137,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0002 log/exponential ambiguity where the subpart identifies constants in a differential-equation model.",
@@ -1012,6 +1183,7 @@
           "Source topic hint: logarithms_and_exponentials."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1095,6 +1267,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0001",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -1122,6 +1307,7 @@
           "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1133,6 +1319,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0001",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "33autumn22",
       "part_id": "b",
@@ -1145,6 +1348,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0002 log/exponential ambiguity where logarithms occur during separable differential-equation solving.",
@@ -1190,6 +1394,7 @@
           "Source topic hint: integration."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "uncertain_no_confident_part_match",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1234,6 +1439,15 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31autumn21_q04_me0001",
+          "31autumn21_q04_me0002",
+          "31autumn21_q04_me0003",
+          "31autumn21_q04_me0004",
+          "31autumn21_q04_me0005",
+          "31autumn21_q04_me0006"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -1261,6 +1475,7 @@
           "sha256": "ad5427ac36cf4c78ff3cb2f8939815d36b9e38c43ea9f18cae27a6afdff967c1"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1273,6 +1488,19 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "uncertain_no_confident_part_match",
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31autumn21_q04_me0001",
+          "31autumn21_q04_me0002",
+          "31autumn21_q04_me0003",
+          "31autumn21_q04_me0004",
+          "31autumn21_q04_me0005",
+          "31autumn21_q04_me0006"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31autumn21",
       "part_id": "whole",
@@ -1285,6 +1513,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "cross_content_not_exact_skill_isolatable",
       "review_scope_level": "whole_question",
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest broad standard-integration routing where substitution, changed limits, and improper-limit structure need narrower treatment.",
@@ -1329,6 +1558,7 @@
           "Source topic hint: polynomials."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1412,6 +1642,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "33autumn23_q07_me0005",
+          "33autumn23_q07_me0006",
+          "33autumn23_q07_me0007",
+          "33autumn23_q07_me0008",
+          "33autumn23_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn23_q07_me0001",
+          "33autumn23_q07_me0002",
+          "33autumn23_q07_me0003",
+          "33autumn23_q07_me0004"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -1439,6 +1682,7 @@
           "sha256": "8aa237bc12120cdfed4bd7e9fde899b0abe39270eaa6bd413388ecf21785c864"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1450,6 +1694,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn23_q07_me0005",
+          "33autumn23_q07_me0006",
+          "33autumn23_q07_me0007",
+          "33autumn23_q07_me0008",
+          "33autumn23_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn23_q07_me0001",
+          "33autumn23_q07_me0002",
+          "33autumn23_q07_me0003",
+          "33autumn23_q07_me0004"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "33autumn23",
       "part_id": "b",
@@ -1462,6 +1723,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "selection_category": "prior_blocked_confirmation",
       "selection_reason": "Confirm Batch 0001 blocked polynomial/remainder route on an implicit-differentiation stationary-tangent subpart.",
@@ -1507,6 +1769,7 @@
           "Method-critical mismatch flagged; do not treat this as ordinary supporting-topic context."
         ],
         "cross_topic_status": "conflict_needs_review",
+        "mark_event_filter_confidence": "uncertain_no_confident_part_match",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1599,6 +1862,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31summer23_q02_me0001",
+          "31summer23_q02_me0002",
+          "31summer23_q02_me0003",
+          "31summer23_q02_me0004",
+          "31summer23_q02_me0005",
+          "31summer23_q02_me0006",
+          "31summer23_q02_me0007",
+          "31summer23_q02_me0008",
+          "31summer23_q02_me0009",
+          "31summer23_q02_me0010"
+        ],
         "topic_routing": {
           "confidence": "low",
           "evidence_used": [
@@ -1628,6 +1904,7 @@
           "sha256": "42aec17208c0f262fb00333135d667c13497000d96131fcc434cb2120a92055a"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1639,6 +1916,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "uncertain_no_confident_part_match",
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31summer23_q02_me0001",
+          "31summer23_q02_me0002",
+          "31summer23_q02_me0003",
+          "31summer23_q02_me0004",
+          "31summer23_q02_me0005",
+          "31summer23_q02_me0006",
+          "31summer23_q02_me0007",
+          "31summer23_q02_me0008",
+          "31summer23_q02_me0009",
+          "31summer23_q02_me0010"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31summer23",
       "part_id": "a",
@@ -1651,6 +1945,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q02:31summer23_q02_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "selection_category": "prior_blocked_confirmation",
       "selection_reason": "Confirm Batch 0002 blocked parametric/implicit route on a modulus graph or linear-inequality subpart.",
@@ -1695,6 +1990,7 @@
           "Source topic hint: numerical_methods."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1778,6 +2074,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008",
+          "31summer24_q06_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -1804,6 +2113,7 @@
           "sha256": "82fb5f1e01c9e0b9a5dc97c19b2ec40dcbbd26864be605a002ad2731dd28e00a"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1814,6 +2124,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008",
+          "31summer24_q06_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31summer24",
       "part_id": "c",
@@ -1826,6 +2153,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_c",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "thin_or_adjacent_context",
       "review_scope_level": "part_level",
       "selection_category": "thin_adjacent_part_probe",
       "selection_reason": "Retest thin fixed-point adjacent part against promoted part (d); exact but not enough evidence as a standalone source example.",
@@ -1870,6 +2198,7 @@
           "Source topic hint: vectors."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -1953,6 +2282,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -1980,6 +2322,7 @@
           "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -1990,6 +2333,23 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31summer24",
       "part_id": "a",
@@ -2002,6 +2362,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "thin_or_adjacent_context",
       "review_scope_level": "part_level",
       "selection_category": "thin_adjacent_part_probe",
       "selection_reason": "Retest thin vector adjacent part against promoted part (b); one-mark scalar-product evidence remains too thin.",
@@ -2046,6 +2407,7 @@
           "Source topic hint: complex_numbers."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -2120,6 +2482,18 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "32spring24_q05_me0006",
+          "32spring24_q05_me0007",
+          "32spring24_q05_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "32spring24_q05_me0001",
+          "32spring24_q05_me0002",
+          "32spring24_q05_me0003",
+          "32spring24_q05_me0004",
+          "32spring24_q05_me0005"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -2147,6 +2521,7 @@
           "sha256": "3be3316fd569b3d49be602e8dce04f2ce25c7511deefc332882ae00f84a9d359"
         }
       ],
+      "control_record": false,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -2157,6 +2532,22 @@
       ],
       "mark_event_approval_probe": false,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32spring24_q05_me0006",
+          "32spring24_q05_me0007",
+          "32spring24_q05_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "32spring24_q05_me0001",
+          "32spring24_q05_me0002",
+          "32spring24_q05_me0003",
+          "32spring24_q05_me0004",
+          "32spring24_q05_me0005"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "32spring24",
       "part_id": "b",
@@ -2169,6 +2560,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q05:32spring24_q05_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "review_needed",
       "review_scope_level": "part_level",
       "selection_category": "deferred_exact_skill_boundary_probe",
       "selection_reason": "Retest clean-looking complex evidence skipped in Batch 0002 because the narrower Argand/loci boundary was not resolved.",
@@ -2212,6 +2604,7 @@
           "Source topic hint: complex_numbers."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -2493,6 +2886,41 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "33summer23_q11_me0028",
+          "33summer23_q11_me0029",
+          "33summer23_q11_me0030",
+          "33summer23_q11_me0031"
+        ],
+        "other_part_mark_event_ids": [
+          "33summer23_q11_me0001",
+          "33summer23_q11_me0002",
+          "33summer23_q11_me0003",
+          "33summer23_q11_me0004",
+          "33summer23_q11_me0005",
+          "33summer23_q11_me0006",
+          "33summer23_q11_me0007",
+          "33summer23_q11_me0008",
+          "33summer23_q11_me0009",
+          "33summer23_q11_me0010",
+          "33summer23_q11_me0011",
+          "33summer23_q11_me0012",
+          "33summer23_q11_me0013",
+          "33summer23_q11_me0014",
+          "33summer23_q11_me0015",
+          "33summer23_q11_me0016",
+          "33summer23_q11_me0017",
+          "33summer23_q11_me0018",
+          "33summer23_q11_me0019",
+          "33summer23_q11_me0020",
+          "33summer23_q11_me0021",
+          "33summer23_q11_me0022",
+          "33summer23_q11_me0023",
+          "33summer23_q11_me0024",
+          "33summer23_q11_me0025",
+          "33summer23_q11_me0026",
+          "33summer23_q11_me0027"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -2519,6 +2947,7 @@
           "sha256": "a8efab1f28aabe6e55a5487a87b60b67ede6e3998c7dfbbc44e33a76e11f0bf3"
         }
       ],
+      "control_record": true,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -2529,6 +2958,45 @@
       ],
       "mark_event_approval_probe": true,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33summer23_q11_me0028",
+          "33summer23_q11_me0029",
+          "33summer23_q11_me0030",
+          "33summer23_q11_me0031"
+        ],
+        "other_part_mark_event_ids": [
+          "33summer23_q11_me0001",
+          "33summer23_q11_me0002",
+          "33summer23_q11_me0003",
+          "33summer23_q11_me0004",
+          "33summer23_q11_me0005",
+          "33summer23_q11_me0006",
+          "33summer23_q11_me0007",
+          "33summer23_q11_me0008",
+          "33summer23_q11_me0009",
+          "33summer23_q11_me0010",
+          "33summer23_q11_me0011",
+          "33summer23_q11_me0012",
+          "33summer23_q11_me0013",
+          "33summer23_q11_me0014",
+          "33summer23_q11_me0015",
+          "33summer23_q11_me0016",
+          "33summer23_q11_me0017",
+          "33summer23_q11_me0018",
+          "33summer23_q11_me0019",
+          "33summer23_q11_me0020",
+          "33summer23_q11_me0021",
+          "33summer23_q11_me0022",
+          "33summer23_q11_me0023",
+          "33summer23_q11_me0024",
+          "33summer23_q11_me0025",
+          "33summer23_q11_me0026",
+          "33summer23_q11_me0027"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "33summer23",
       "part_id": "b",
@@ -2543,6 +3011,7 @@
         "p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "selection_category": "clean_control_mark_event_probe",
       "selection_reason": "Already-promoted clean control: verify source-skill machinery still marks it safe while mark-event refs remain advisory-only.",
@@ -2587,6 +3056,7 @@
           "Source topic hint: numerical_methods."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -2670,6 +3140,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0005",
+          "31summer24_q06_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -2696,6 +3179,7 @@
           "sha256": "82fb5f1e01c9e0b9a5dc97c19b2ec40dcbbd26864be605a002ad2731dd28e00a"
         }
       ],
+      "control_record": true,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -2706,6 +3190,23 @@
       ],
       "mark_event_approval_probe": true,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0005",
+          "31summer24_q06_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31summer24",
       "part_id": "d",
@@ -2720,6 +3221,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "selection_category": "clean_control_mark_event_probe",
       "selection_reason": "Already-promoted clean control: compare against thin adjacent part (c) and probe whether event-level approval exists.",
@@ -2764,6 +3266,7 @@
           "Source topic hint: vectors."
         ],
         "cross_topic_status": "cross_topic_reviewable",
+        "mark_event_filter_confidence": "part_path_matched",
         "mark_event_refs": [
           {
             "advisory_only": true,
@@ -2847,6 +3350,19 @@
             "review_status": "advisory"
           }
         ],
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0001",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
         "topic_routing": {
           "confidence": "high",
           "evidence_used": [
@@ -2874,6 +3390,7 @@
           "sha256": "e8d1b32432ca7c5c8d76096a33d6c139842e98e04e8edb4855c24203cb23a711"
         }
       ],
+      "control_record": true,
       "exact_skill_decision_default": "review_needed",
       "generation_ready": false,
       "known_risk_flags": [
@@ -2884,6 +3401,23 @@
       ],
       "mark_event_approval_probe": true,
       "mark_event_decision_default": "advisory_only",
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0001",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_scheme_evidence_expected": true,
       "paper": "31summer24",
       "part_id": "b",
@@ -2898,6 +3432,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "selection_category": "clean_control_mark_event_probe",
       "selection_reason": "Already-promoted clean control: compare against thin adjacent part (a) and probe whether event-level approval exists.",

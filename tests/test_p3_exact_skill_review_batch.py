@@ -142,6 +142,9 @@ def test_preserves_advisory_mark_event_refs_but_labels_them_advisory_only() -> N
     ref = template["records"][0]["mark_event_refs"][0]
     assert ref["review_status"] == "advisory"
     assert ref["advisory_only"] is True
+    assert template["records"][0]["matching_mark_event_ids"] == []
+    assert template["records"][0]["other_part_mark_event_ids"] == ["q1_me0001"]
+    assert template["records"][0]["mark_event_filtering"]["confidence"] == "uncertain_no_confident_part_match"
 
 
 def test_generated_decision_template_defaults_to_review_needed_and_blocks_use_cases() -> None:
@@ -328,11 +331,18 @@ def test_batch_0003_dry_run_builds_adversarial_review_categories() -> None:
     assert result["manifest"]["batch_0003_constraints"]["generation_readiness_change_allowed"] is False
     assert result["manifest"]["batch_0003_constraints"]["mark_event_runtime_behavior_changed"] is False
     assert result["manifest"]["selection_filters"]["exclude_already_reviewed"] is False
+    assert "thin_or_adjacent_context" in result["manifest"]["review_outcome_categories"]
+    assert "supporting_method_not_target_skill" in result["manifest"]["review_outcome_categories"]
     assert all(record["route_status"] == "review_needed" for record in result["decision_template"]["records"])
     assert all(
         record["allowed_use_cases"]["candidate_generation"] is False
         for record in result["decision_template"]["records"]
     )
+    controls = [item for item in result["manifest"]["selected_items"] if item["selection_category"] == "clean_control_mark_event_probe"]
+    assert controls
+    assert all(item["control_record"] is True for item in controls)
+    assert all(item["related_reviewed_evidence_ids"] for item in controls)
+    assert all(item["review_outcome_category_default"] == "clean_seed" for item in controls)
 
 
 def test_batch_0003_validation_rejects_generation_ready_and_missing_controls() -> None:

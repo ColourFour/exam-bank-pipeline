@@ -1,7 +1,7 @@
 {
   "artifact_kind": "human_editable_review_batch_template",
   "batch_id": "batch_0003",
-  "generated_at": "2026-05-26T01:58:24Z",
+  "generated_at": "2026-05-26T02:26:00Z",
   "record_count": 14,
   "records": [
     {
@@ -15,6 +15,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:32autumn23_q09:32autumn23_q09_b",
       "generation_readiness": {
@@ -29,6 +30,36 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32autumn23_q09_me0011",
+          "32autumn23_q09_me0012",
+          "32autumn23_q09_me0013",
+          "32autumn23_q09_me0014",
+          "32autumn23_q09_me0015",
+          "32autumn23_q09_me0016",
+          "32autumn23_q09_me0017",
+          "32autumn23_q09_me0018",
+          "32autumn23_q09_me0019",
+          "32autumn23_q09_me0020",
+          "32autumn23_q09_me0021",
+          "32autumn23_q09_me0022"
+        ],
+        "other_part_mark_event_ids": [
+          "32autumn23_q09_me0001",
+          "32autumn23_q09_me0002",
+          "32autumn23_q09_me0003",
+          "32autumn23_q09_me0004",
+          "32autumn23_q09_me0005",
+          "32autumn23_q09_me0006",
+          "32autumn23_q09_me0007",
+          "32autumn23_q09_me0008",
+          "32autumn23_q09_me0009",
+          "32autumn23_q09_me0010"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -229,11 +260,37 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "32autumn23_q09_me0011",
+        "32autumn23_q09_me0012",
+        "32autumn23_q09_me0013",
+        "32autumn23_q09_me0014",
+        "32autumn23_q09_me0015",
+        "32autumn23_q09_me0016",
+        "32autumn23_q09_me0017",
+        "32autumn23_q09_me0018",
+        "32autumn23_q09_me0019",
+        "32autumn23_q09_me0020",
+        "32autumn23_q09_me0021",
+        "32autumn23_q09_me0022"
+      ],
+      "other_part_mark_event_ids": [
+        "32autumn23_q09_me0001",
+        "32autumn23_q09_me0002",
+        "32autumn23_q09_me0003",
+        "32autumn23_q09_me0004",
+        "32autumn23_q09_me0005",
+        "32autumn23_q09_me0006",
+        "32autumn23_q09_me0007",
+        "32autumn23_q09_me0008",
+        "32autumn23_q09_me0009",
+        "32autumn23_q09_me0010"
+      ],
       "paper": "32autumn23",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -241,6 +298,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -527,6 +585,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31autumn21_q07:31autumn21_q07_c",
       "generation_readiness": {
@@ -541,6 +600,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31autumn21_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "31autumn21_q07_me0001",
+          "31autumn21_q07_me0002",
+          "31autumn21_q07_me0003",
+          "31autumn21_q07_me0004",
+          "31autumn21_q07_me0005",
+          "31autumn21_q07_me0006",
+          "31autumn21_q07_me0007",
+          "31autumn21_q07_me0008"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -624,11 +700,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "31autumn21_q07_me0009"
+      ],
+      "other_part_mark_event_ids": [
+        "31autumn21_q07_me0001",
+        "31autumn21_q07_me0002",
+        "31autumn21_q07_me0003",
+        "31autumn21_q07_me0004",
+        "31autumn21_q07_me0005",
+        "31autumn21_q07_me0006",
+        "31autumn21_q07_me0007",
+        "31autumn21_q07_me0008"
+      ],
       "paper": "31autumn21",
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -636,6 +725,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -817,6 +907,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:32summer23_q07:32summer23_q07_b",
       "generation_readiness": {
@@ -831,6 +922,24 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32summer23_q07_me0005",
+          "32summer23_q07_me0006",
+          "32summer23_q07_me0007",
+          "32summer23_q07_me0008",
+          "32summer23_q07_me0009",
+          "32summer23_q07_me0010"
+        ],
+        "other_part_mark_event_ids": [
+          "32summer23_q07_me0001",
+          "32summer23_q07_me0002",
+          "32summer23_q07_me0003",
+          "32summer23_q07_me0004"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -923,11 +1032,25 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "32summer23_q07_me0005",
+        "32summer23_q07_me0006",
+        "32summer23_q07_me0007",
+        "32summer23_q07_me0008",
+        "32summer23_q07_me0009",
+        "32summer23_q07_me0010"
+      ],
+      "other_part_mark_event_ids": [
+        "32summer23_q07_me0001",
+        "32summer23_q07_me0002",
+        "32summer23_q07_me0003",
+        "32summer23_q07_me0004"
+      ],
       "paper": "32summer23",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -935,6 +1058,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -1124,6 +1248,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:33autumn22_q10:33autumn22_q10_a",
       "generation_readiness": {
@@ -1138,6 +1263,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -1221,11 +1363,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "33autumn22_q10_me0001"
+      ],
+      "other_part_mark_event_ids": [
+        "33autumn22_q10_me0002",
+        "33autumn22_q10_me0003",
+        "33autumn22_q10_me0004",
+        "33autumn22_q10_me0005",
+        "33autumn22_q10_me0006",
+        "33autumn22_q10_me0007",
+        "33autumn22_q10_me0008",
+        "33autumn22_q10_me0009"
+      ],
       "paper": "33autumn22",
       "part_id": "a",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1233,6 +1388,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -1414,6 +1570,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:33autumn22_q10:33autumn22_q10_b",
       "generation_readiness": {
@@ -1428,6 +1585,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn22_q10_me0002",
+          "33autumn22_q10_me0003",
+          "33autumn22_q10_me0004",
+          "33autumn22_q10_me0005",
+          "33autumn22_q10_me0006",
+          "33autumn22_q10_me0007"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn22_q10_me0001",
+          "33autumn22_q10_me0008",
+          "33autumn22_q10_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -1511,11 +1685,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "33autumn22_q10_me0002",
+        "33autumn22_q10_me0003",
+        "33autumn22_q10_me0004",
+        "33autumn22_q10_me0005",
+        "33autumn22_q10_me0006",
+        "33autumn22_q10_me0007"
+      ],
+      "other_part_mark_event_ids": [
+        "33autumn22_q10_me0001",
+        "33autumn22_q10_me0008",
+        "33autumn22_q10_me0009"
+      ],
       "paper": "33autumn22",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1523,6 +1710,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "supporting_method_not_target_skill",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -1704,6 +1892,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31autumn21_q04:31autumn21_q04_whole",
       "generation_readiness": {
@@ -1719,6 +1908,19 @@
         "whole_question_review_scope",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "uncertain_no_confident_part_match",
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31autumn21_q04_me0001",
+          "31autumn21_q04_me0002",
+          "31autumn21_q04_me0003",
+          "31autumn21_q04_me0004",
+          "31autumn21_q04_me0005",
+          "31autumn21_q04_me0006"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -1763,11 +1965,20 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [],
+      "other_part_mark_event_ids": [
+        "31autumn21_q04_me0001",
+        "31autumn21_q04_me0002",
+        "31autumn21_q04_me0003",
+        "31autumn21_q04_me0004",
+        "31autumn21_q04_me0005",
+        "31autumn21_q04_me0006"
+      ],
       "paper": "31autumn21",
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1775,6 +1986,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "cross_content_not_exact_skill_isolatable",
       "review_scope_level": "whole_question",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -1832,6 +2044,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:33autumn23_q07:33autumn23_q07_b",
       "generation_readiness": {
@@ -1846,6 +2059,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33autumn23_q07_me0005",
+          "33autumn23_q07_me0006",
+          "33autumn23_q07_me0007",
+          "33autumn23_q07_me0008",
+          "33autumn23_q07_me0009"
+        ],
+        "other_part_mark_event_ids": [
+          "33autumn23_q07_me0001",
+          "33autumn23_q07_me0002",
+          "33autumn23_q07_me0003",
+          "33autumn23_q07_me0004"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -1929,11 +2159,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "33autumn23_q07_me0005",
+        "33autumn23_q07_me0006",
+        "33autumn23_q07_me0007",
+        "33autumn23_q07_me0008",
+        "33autumn23_q07_me0009"
+      ],
+      "other_part_mark_event_ids": [
+        "33autumn23_q07_me0001",
+        "33autumn23_q07_me0002",
+        "33autumn23_q07_me0003",
+        "33autumn23_q07_me0004"
+      ],
       "paper": "33autumn23",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -1941,6 +2184,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -2122,6 +2366,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31summer23_q02:31summer23_q02_a",
       "generation_readiness": {
@@ -2136,6 +2381,23 @@
         "mixed_or_ambiguous_topic",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "uncertain_no_confident_part_match",
+        "matching_mark_event_ids": [],
+        "other_part_mark_event_ids": [
+          "31summer23_q02_me0001",
+          "31summer23_q02_me0002",
+          "31summer23_q02_me0003",
+          "31summer23_q02_me0004",
+          "31summer23_q02_me0005",
+          "31summer23_q02_me0006",
+          "31summer23_q02_me0007",
+          "31summer23_q02_me0008",
+          "31summer23_q02_me0009",
+          "31summer23_q02_me0010"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -2228,11 +2490,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [],
+      "other_part_mark_event_ids": [
+        "31summer23_q02_me0001",
+        "31summer23_q02_me0002",
+        "31summer23_q02_me0003",
+        "31summer23_q02_me0004",
+        "31summer23_q02_me0005",
+        "31summer23_q02_me0006",
+        "31summer23_q02_me0007",
+        "31summer23_q02_me0008",
+        "31summer23_q02_me0009",
+        "31summer23_q02_me0010"
+      ],
       "paper": "31summer23",
       "part_id": "a",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer23_q02:31summer23_q02_a",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2240,6 +2515,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q02:31summer23_q02_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -2297,6 +2573,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31summer24_q06:31summer24_q06_c",
       "generation_readiness": {
@@ -2310,6 +2587,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008",
+          "31summer24_q06_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -2393,11 +2687,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "31summer24_q06_me0005"
+      ],
+      "other_part_mark_event_ids": [
+        "31summer24_q06_me0001",
+        "31summer24_q06_me0002",
+        "31summer24_q06_me0003",
+        "31summer24_q06_me0004",
+        "31summer24_q06_me0006",
+        "31summer24_q06_me0007",
+        "31summer24_q06_me0008",
+        "31summer24_q06_me0009"
+      ],
       "paper": "31summer24",
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_c",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2405,6 +2712,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_c",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "thin_or_adjacent_context",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -2586,6 +2894,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31summer24_q09:31summer24_q09_a",
       "generation_readiness": {
@@ -2599,6 +2908,23 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0001"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -2682,11 +3008,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "31summer24_q09_me0001"
+      ],
+      "other_part_mark_event_ids": [
+        "31summer24_q09_me0002",
+        "31summer24_q09_me0003",
+        "31summer24_q09_me0004",
+        "31summer24_q09_me0005",
+        "31summer24_q09_me0006",
+        "31summer24_q09_me0007",
+        "31summer24_q09_me0008",
+        "31summer24_q09_me0009"
+      ],
       "paper": "31summer24",
       "part_id": "a",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_a",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2694,6 +3033,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "thin_or_adjacent_context",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -2875,6 +3215,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": false,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:32spring24_q05:32spring24_q05_b",
       "generation_readiness": {
@@ -2888,6 +3229,22 @@
         "part_level_scope_uses_whole_images",
         "mark_events_advisory_only"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "32spring24_q05_me0006",
+          "32spring24_q05_me0007",
+          "32spring24_q05_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "32spring24_q05_me0001",
+          "32spring24_q05_me0002",
+          "32spring24_q05_me0003",
+          "32spring24_q05_me0004",
+          "32spring24_q05_me0005"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -2962,11 +3319,23 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "32spring24_q05_me0006",
+        "32spring24_q05_me0007",
+        "32spring24_q05_me0008"
+      ],
+      "other_part_mark_event_ids": [
+        "32spring24_q05_me0001",
+        "32spring24_q05_me0002",
+        "32spring24_q05_me0003",
+        "32spring24_q05_me0004",
+        "32spring24_q05_me0005"
+      ],
       "paper": "32spring24",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:32spring24_q05:32spring24_q05_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -2974,6 +3343,7 @@
       "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q05:32spring24_q05_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
+      "review_outcome_category_default": "review_needed",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -3147,6 +3517,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": true,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:33summer23_q11:33summer23_q11_b",
       "generation_readiness": {
@@ -3160,6 +3531,45 @@
         "mark_event_approval_probe",
         "part_level_scope_uses_whole_images"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "33summer23_q11_me0028",
+          "33summer23_q11_me0029",
+          "33summer23_q11_me0030",
+          "33summer23_q11_me0031"
+        ],
+        "other_part_mark_event_ids": [
+          "33summer23_q11_me0001",
+          "33summer23_q11_me0002",
+          "33summer23_q11_me0003",
+          "33summer23_q11_me0004",
+          "33summer23_q11_me0005",
+          "33summer23_q11_me0006",
+          "33summer23_q11_me0007",
+          "33summer23_q11_me0008",
+          "33summer23_q11_me0009",
+          "33summer23_q11_me0010",
+          "33summer23_q11_me0011",
+          "33summer23_q11_me0012",
+          "33summer23_q11_me0013",
+          "33summer23_q11_me0014",
+          "33summer23_q11_me0015",
+          "33summer23_q11_me0016",
+          "33summer23_q11_me0017",
+          "33summer23_q11_me0018",
+          "33summer23_q11_me0019",
+          "33summer23_q11_me0020",
+          "33summer23_q11_me0021",
+          "33summer23_q11_me0022",
+          "33summer23_q11_me0023",
+          "33summer23_q11_me0024",
+          "33summer23_q11_me0025",
+          "33summer23_q11_me0026",
+          "33summer23_q11_me0027"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -3441,11 +3851,46 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "33summer23_q11_me0028",
+        "33summer23_q11_me0029",
+        "33summer23_q11_me0030",
+        "33summer23_q11_me0031"
+      ],
+      "other_part_mark_event_ids": [
+        "33summer23_q11_me0001",
+        "33summer23_q11_me0002",
+        "33summer23_q11_me0003",
+        "33summer23_q11_me0004",
+        "33summer23_q11_me0005",
+        "33summer23_q11_me0006",
+        "33summer23_q11_me0007",
+        "33summer23_q11_me0008",
+        "33summer23_q11_me0009",
+        "33summer23_q11_me0010",
+        "33summer23_q11_me0011",
+        "33summer23_q11_me0012",
+        "33summer23_q11_me0013",
+        "33summer23_q11_me0014",
+        "33summer23_q11_me0015",
+        "33summer23_q11_me0016",
+        "33summer23_q11_me0017",
+        "33summer23_q11_me0018",
+        "33summer23_q11_me0019",
+        "33summer23_q11_me0020",
+        "33summer23_q11_me0021",
+        "33summer23_q11_me0022",
+        "33summer23_q11_me0023",
+        "33summer23_q11_me0024",
+        "33summer23_q11_me0025",
+        "33summer23_q11_me0026",
+        "33summer23_q11_me0027"
+      ],
       "paper": "33summer23",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3455,6 +3900,7 @@
         "p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -3812,6 +4258,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": true,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31summer24_q06:31summer24_q06_d",
       "generation_readiness": {
@@ -3825,6 +4272,23 @@
         "mark_event_approval_probe",
         "part_level_scope_uses_whole_images"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q06_me0006",
+          "31summer24_q06_me0007",
+          "31summer24_q06_me0008"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q06_me0001",
+          "31summer24_q06_me0002",
+          "31summer24_q06_me0003",
+          "31summer24_q06_me0004",
+          "31summer24_q06_me0005",
+          "31summer24_q06_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -3908,11 +4372,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "31summer24_q06_me0006",
+        "31summer24_q06_me0007",
+        "31summer24_q06_me0008"
+      ],
+      "other_part_mark_event_ids": [
+        "31summer24_q06_me0001",
+        "31summer24_q06_me0002",
+        "31summer24_q06_me0003",
+        "31summer24_q06_me0004",
+        "31summer24_q06_me0005",
+        "31summer24_q06_me0009"
+      ],
       "paper": "31summer24",
       "part_id": "d",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_d",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -3922,6 +4399,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],
@@ -4103,6 +4581,7 @@
       "blockers": [
         "pending_human_review"
       ],
+      "control_record": true,
       "evidence_basis": "",
       "evidence_id": "p3_exact_skill_review:batch_0003:31summer24_q09:31summer24_q09_b",
       "generation_readiness": {
@@ -4116,6 +4595,23 @@
         "mark_event_approval_probe",
         "part_level_scope_uses_whole_images"
       ],
+      "mark_event_filtering": {
+        "confidence": "part_path_matched",
+        "matching_mark_event_ids": [
+          "31summer24_q09_me0002",
+          "31summer24_q09_me0003",
+          "31summer24_q09_me0004",
+          "31summer24_q09_me0005"
+        ],
+        "other_part_mark_event_ids": [
+          "31summer24_q09_me0001",
+          "31summer24_q09_me0006",
+          "31summer24_q09_me0007",
+          "31summer24_q09_me0008",
+          "31summer24_q09_me0009"
+        ],
+        "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
+      },
       "mark_event_refs": [
         {
           "advisory_only": true,
@@ -4199,11 +4695,24 @@
           "review_status": "advisory"
         }
       ],
+      "matching_mark_event_ids": [
+        "31summer24_q09_me0002",
+        "31summer24_q09_me0003",
+        "31summer24_q09_me0004",
+        "31summer24_q09_me0005"
+      ],
+      "other_part_mark_event_ids": [
+        "31summer24_q09_me0001",
+        "31summer24_q09_me0006",
+        "31summer24_q09_me0007",
+        "31summer24_q09_me0008",
+        "31summer24_q09_me0009"
+      ],
       "paper": "31summer24",
       "part_id": "b",
       "provenance": {
         "batch_id": "batch_0003",
-        "generated_at": "2026-05-26T01:58:24Z",
+        "generated_at": "2026-05-26T02:26:00Z",
         "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_b",
         "template_note": "Draft template only; manually convert approved decisions into the reviewed registry."
       },
@@ -4213,6 +4722,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b"
       ],
       "related_reviewed_registry_evidence_exists": true,
+      "review_outcome_category_default": "clean_seed",
       "review_scope_level": "part_level",
       "reviewed_region": null,
       "reviewed_source_skill_ids": [],

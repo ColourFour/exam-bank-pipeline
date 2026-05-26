@@ -27,6 +27,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "blocked",
       "exact_skill_outcome": "Log/exponential label rejected; the selected part is limiting behaviour after a differential-equation solution.",
@@ -44,11 +45,13 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "31autumn21_q07_c"
+      "subpart_id": "31autumn21_q07_c",
+      "unsafe_label_category": "unsafe"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -69,6 +72,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "blocked",
       "exact_skill_outcome": "Log/exponential label rejected; constants/model setup are being identified, not solved as log/exponential equations.",
@@ -88,11 +92,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_8_initial_conditions_models"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "33autumn22_q10_a"
+      "subpart_id": "33autumn22_q10_a",
+      "unsafe_label_category": "unsafe"
     }
   ],
   "clean_control_records": [
@@ -136,6 +142,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted complex polar/modulus evidence remains clean as source-backed example evidence only.",
@@ -144,6 +151,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 31,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
       ],
@@ -155,6 +163,7 @@
         "p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
       ],
@@ -181,6 +190,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted fixed-point iteration evidence remains clean as source-backed example evidence only.",
@@ -189,6 +199,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 9,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
@@ -200,6 +211,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
@@ -226,6 +238,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted vector-line intersection evidence remains clean as source-backed example evidence only.",
@@ -234,6 +247,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 9,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
@@ -245,6 +259,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
@@ -271,6 +286,12 @@
       "deferred_thin": 2,
       "retagged_not_promoted": 6
     },
+    "by_review_outcome_category": {
+      "clean_seed": 3,
+      "cross_content_not_exact_skill_isolatable": 5,
+      "exact_but_not_seed_quality": 2,
+      "supporting_method_not_target_skill": 4
+    },
     "by_selection_category": {
       "clean_control_mark_event_probe": 3,
       "deferred_exact_skill_boundary_probe": 1,
@@ -283,7 +304,9 @@
     "clean_registry_count_before": 15,
     "content_lab_generation_ready_after": 0,
     "content_lab_generation_ready_before": 0,
+    "control_records": 3,
     "explicit_mark_event_approval_probes": 3,
+    "new_promotions_excluding_controls": 0,
     "promoted_exact_skill_records": 0,
     "retagged_not_promoted_records": 6,
     "thin_or_deferred_records": 3,
@@ -323,6 +346,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Original trig-identity label rejected as the assessed target; safer target is integration area work using trigonometric integration support.",
@@ -343,11 +367,13 @@
         "9709_p3_3_5_area_volume_applications",
         "9709_p3_3_5_trig_and_partial_fraction_integration"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "32autumn23_q09_b"
+      "subpart_id": "32autumn23_q09_b",
+      "unsafe_label_category": "unsafe"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -368,6 +394,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "blocked",
       "exact_skill_outcome": "Log/exponential label rejected; the selected part is limiting behaviour after a differential-equation solution.",
@@ -385,11 +412,13 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "31autumn21_q07_c"
+      "subpart_id": "31autumn21_q07_c",
+      "unsafe_label_category": "unsafe"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -411,6 +440,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Derivative-rules label rejected as too broad; safer target is implicit differentiation with tangent/stationary-point use.",
@@ -431,11 +461,13 @@
         "9709_p3_3_4_parametric_implicit_differentiation",
         "9709_p3_3_4_tangents_normals_stationary_points"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "32summer23_q07_b"
+      "subpart_id": "32summer23_q07_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -456,6 +488,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "blocked",
       "exact_skill_outcome": "Log/exponential label rejected; constants/model setup are being identified, not solved as log/exponential equations.",
@@ -475,11 +508,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_8_initial_conditions_models"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "33autumn22_q10_a"
+      "subpart_id": "33autumn22_q10_a",
+      "unsafe_label_category": "unsafe"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -500,6 +535,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Log/exponential label rejected as supporting method; safer target is separable differential equations.",
@@ -519,11 +555,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_8_separable_differential_equations"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "33autumn22_q10_b"
+      "subpart_id": "33autumn22_q10_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -541,6 +579,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "whole-question",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Broad standard-integration label rejected; narrower substitution/changed-limits handling is required.",
@@ -560,11 +599,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_5_substitution_and_parts"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_broad_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "31autumn21_q04_whole"
+      "subpart_id": "31autumn21_q04_whole",
+      "unsafe_label_category": "unsafe_for_broad_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -585,6 +626,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Polynomial/remainder label rejected; safer target is implicit differentiation and tangent/stationary-point analysis.",
@@ -605,11 +647,13 @@
         "9709_p3_3_4_parametric_implicit_differentiation",
         "9709_p3_3_4_tangents_normals_stationary_points"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_blocked_confirmation",
-      "subpart_id": "33autumn23_q07_b"
+      "subpart_id": "33autumn23_q07_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -631,6 +675,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Parametric/implicit differentiation label rejected; likely target is modulus equations/inequalities, but not promoted in this batch.",
@@ -650,11 +695,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_1_modulus_equations_inequalities"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_blocked_confirmation",
-      "subpart_id": "31summer23_q02_a"
+      "subpart_id": "31summer23_q02_a",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -675,6 +722,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred_thin",
       "exact_skill_outcome": "Fixed-point label is plausible but too thin for registry seed promotion.",
@@ -692,13 +740,15 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "exact_but_not_seed_quality",
       "reviewed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
       "route_status": "thin",
       "safe_or_unsafe": "exact_but_thin",
       "selection_category": "thin_adjacent_part_probe",
-      "subpart_id": "31summer24_q06_c"
+      "subpart_id": "31summer24_q06_c",
+      "unsafe_label_category": null
     },
     {
       "advisory_only_mark_event_ids": [
@@ -719,6 +769,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred_thin",
       "exact_skill_outcome": "Vector-lines label is plausible but too thin for registry seed promotion.",
@@ -736,13 +787,15 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "exact_but_not_seed_quality",
       "reviewed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
       "route_status": "thin",
       "safe_or_unsafe": "exact_but_thin",
       "selection_category": "thin_adjacent_part_probe",
-      "subpart_id": "31summer24_q09_a"
+      "subpart_id": "31summer24_q09_a",
+      "unsafe_label_category": null
     },
     {
       "advisory_only_mark_event_ids": [
@@ -761,6 +814,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred",
       "exact_skill_outcome": "Complex polar-form label not promoted because the Argand/loci boundary remains unresolved.",
@@ -780,11 +834,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_9_argand_loci_geometry"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "deferred",
       "safe_or_unsafe": "needs_narrower_review",
       "selection_category": "deferred_exact_skill_boundary_probe",
-      "subpart_id": "32spring24_q05_b"
+      "subpart_id": "32spring24_q05_b",
+      "unsafe_label_category": "needs_narrower_review"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -826,6 +882,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted complex polar/modulus evidence remains clean as source-backed example evidence only.",
@@ -834,6 +891,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 31,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
       ],
@@ -845,6 +903,7 @@
         "p3_exact_skill_review:batch_0001_seed:33summer23_q11:33summer23_q11_b"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_9_complex_arithmetic_polar_form"
       ],
@@ -871,6 +930,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted fixed-point iteration evidence remains clean as source-backed example evidence only.",
@@ -879,6 +939,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 9,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
@@ -890,6 +951,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
@@ -916,6 +978,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": true,
       "evidence_level": "part-level plus mark-event probe",
       "exact_skill_decision": "approved_control_already_promoted",
       "exact_skill_outcome": "Control confirms already-promoted vector-line intersection evidence remains clean as source-backed example evidence only.",
@@ -924,6 +987,7 @@
       "mark_event_approval_probe": true,
       "mark_event_decision": "left_advisory_only",
       "mark_event_ref_count": 9,
+      "new_promotion": false,
       "proposed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
@@ -935,6 +999,7 @@
         "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b"
       ],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "clean_seed",
       "reviewed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
@@ -982,6 +1047,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Original trig-identity label rejected as the assessed target; safer target is integration area work using trigonometric integration support.",
@@ -1002,11 +1068,13 @@
         "9709_p3_3_5_area_volume_applications",
         "9709_p3_3_5_trig_and_partial_fraction_integration"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "32autumn23_q09_b"
+      "subpart_id": "32autumn23_q09_b",
+      "unsafe_label_category": "unsafe"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1028,6 +1096,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Derivative-rules label rejected as too broad; safer target is implicit differentiation with tangent/stationary-point use.",
@@ -1048,11 +1117,13 @@
         "9709_p3_3_4_parametric_implicit_differentiation",
         "9709_p3_3_4_tangents_normals_stationary_points"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "32summer23_q07_b"
+      "subpart_id": "32summer23_q07_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1073,6 +1144,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Log/exponential label rejected as supporting method; safer target is separable differential equations.",
@@ -1092,11 +1164,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_8_separable_differential_equations"
       ],
+      "review_outcome_category": "supporting_method_not_target_skill",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "33autumn22_q10_b"
+      "subpart_id": "33autumn22_q10_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1114,6 +1188,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "whole-question",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Broad standard-integration label rejected; narrower substitution/changed-limits handling is required.",
@@ -1133,11 +1208,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_5_substitution_and_parts"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "ambiguous",
       "safe_or_unsafe": "unsafe_for_broad_label",
       "selection_category": "prior_ambiguous_retag_probe",
-      "subpart_id": "31autumn21_q04_whole"
+      "subpart_id": "31autumn21_q04_whole",
+      "unsafe_label_category": "unsafe_for_broad_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1158,6 +1235,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Polynomial/remainder label rejected; safer target is implicit differentiation and tangent/stationary-point analysis.",
@@ -1178,11 +1256,13 @@
         "9709_p3_3_4_parametric_implicit_differentiation",
         "9709_p3_3_4_tangents_normals_stationary_points"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_blocked_confirmation",
-      "subpart_id": "33autumn23_q07_b"
+      "subpart_id": "33autumn23_q07_b",
+      "unsafe_label_category": "unsafe_for_original_label"
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1204,6 +1284,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "retagged_not_promoted",
       "exact_skill_outcome": "Parametric/implicit differentiation label rejected; likely target is modulus equations/inequalities, but not promoted in this batch.",
@@ -1223,13 +1304,23 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_1_modulus_equations_inequalities"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "blocked",
       "safe_or_unsafe": "unsafe_for_original_label",
       "selection_category": "prior_blocked_confirmation",
-      "subpart_id": "31summer23_q02_a"
+      "subpart_id": "31summer23_q02_a",
+      "unsafe_label_category": "unsafe_for_original_label"
     }
   ],
+  "review_outcome_category_semantics": {
+    "cross_content_not_exact_skill_isolatable": "The reviewed part crosses content boundaries and should not be forced into one exact-skill seed.",
+    "exact_but_not_seed_quality": "Exact skill is plausible but too thin for seed-quality promotion.",
+    "supporting_evidence_only": "Evidence may help explain a solution but is not the assessed exact skill.",
+    "supporting_method_not_target_skill": "The proposed skill appears as method support, not the target assessed skill.",
+    "thin_control": "Reviewed control or near-control evidence that is intentionally not a new promotion.",
+    "thin_or_adjacent_context": "The evidence is adjacent to a stronger neighbouring part and should remain contextual."
+  },
   "safety_boundary": {
     "canonical_assets_changed": false,
     "reviewed_decisions_registry_updated": false,
@@ -1276,6 +1367,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred_thin",
       "exact_skill_outcome": "Fixed-point label is plausible but too thin for registry seed promotion.",
@@ -1293,13 +1385,15 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "exact_but_not_seed_quality",
       "reviewed_source_skill_ids": [
         "9709_p3_3_6_fixed_point_iteration"
       ],
       "route_status": "thin",
       "safe_or_unsafe": "exact_but_thin",
       "selection_category": "thin_adjacent_part_probe",
-      "subpart_id": "31summer24_q06_c"
+      "subpart_id": "31summer24_q06_c",
+      "unsafe_label_category": null
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1320,6 +1414,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred_thin",
       "exact_skill_outcome": "Vector-lines label is plausible but too thin for registry seed promotion.",
@@ -1337,13 +1432,15 @@
       "registry_seed_eligible": false,
       "related_reviewed_evidence_ids": [],
       "retagged_source_skill_ids": [],
+      "review_outcome_category": "exact_but_not_seed_quality",
       "reviewed_source_skill_ids": [
         "9709_p3_3_7_vector_lines"
       ],
       "route_status": "thin",
       "safe_or_unsafe": "exact_but_thin",
       "selection_category": "thin_adjacent_part_probe",
-      "subpart_id": "31summer24_q09_a"
+      "subpart_id": "31summer24_q09_a",
+      "unsafe_label_category": null
     },
     {
       "advisory_only_mark_event_ids": [
@@ -1362,6 +1459,7 @@
         "mark_events_advisory_only"
       ],
       "content_lab_generation_allowed": false,
+      "control_record": false,
       "evidence_level": "part-level",
       "exact_skill_decision": "deferred",
       "exact_skill_outcome": "Complex polar-form label not promoted because the Argand/loci boundary remains unresolved.",
@@ -1381,11 +1479,13 @@
       "retagged_source_skill_ids": [
         "9709_p3_3_9_argand_loci_geometry"
       ],
+      "review_outcome_category": "cross_content_not_exact_skill_isolatable",
       "reviewed_source_skill_ids": [],
       "route_status": "deferred",
       "safe_or_unsafe": "needs_narrower_review",
       "selection_category": "deferred_exact_skill_boundary_probe",
-      "subpart_id": "32spring24_q05_b"
+      "subpart_id": "32spring24_q05_b",
+      "unsafe_label_category": "needs_narrower_review"
     }
   ]
 }

@@ -9,6 +9,11 @@ from typing import Any
 from .asset_manifest import MARK_SCHEME_IMAGE_KIND, QUESTION_IMAGE_KIND, asset_id_for_record
 from .atomic_json import write_atomic_json
 from .output_layout import default_asterion_export_path
+from .p3_exact_skill import DEFAULT_REVIEWED_DECISIONS_PATH, DEFAULT_REVIEWED_MARK_EVENTS_PATH
+from .p3_exact_skill.reviewed_mark_events import (
+    mark_event_status_satisfies_generation,
+    reviewed_mark_event_status_by_id,
+)
 
 
 ASTERION_SCHEMA_NAME = "asterion.question_bank"
@@ -58,6 +63,9 @@ def export_asterion_content_lab_candidates(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_map_path: str | Path | None = None,
+    reviewed_source_skills_path: str | Path | None = DEFAULT_REVIEWED_DECISIONS_PATH,
+    reviewed_mark_events_path: str | Path | None = DEFAULT_REVIEWED_MARK_EVENTS_PATH,
+    mark_events_path: str | Path | None = None,
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
@@ -66,8 +74,21 @@ def export_asterion_content_lab_candidates(
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, CONTENT_LAB_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
+    reviewed_source_skills = load_reviewed_source_skill_decisions(reviewed_source_skills_path)
+    reviewed_mark_events = load_reviewed_mark_event_decisions(reviewed_mark_events_path)
+    canonical_mark_events = load_canonical_mark_event_ids_by_subpart(
+        mark_events_path if mark_events_path is not None else _default_mark_events_path(input_path)
+    )
     asterion_payload = _ensure_asterion_payload(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings)
-    write_atomic_json(build_content_lab_candidates(asterion_payload), output)
+    write_atomic_json(
+        build_content_lab_candidates(
+            asterion_payload,
+            reviewed_source_skill_decisions=reviewed_source_skills,
+            reviewed_mark_events=reviewed_mark_events,
+            canonical_mark_event_ids_by_subpart=canonical_mark_events,
+        ),
+        output,
+    )
     return output
 
 
@@ -103,12 +124,22 @@ def build_asterion_export(
     }
 
 
-def build_content_lab_candidates(asterion_question_bank: dict[str, Any]) -> dict[str, Any]:
+def build_content_lab_candidates(
+    asterion_question_bank: dict[str, Any],
+    *,
+    reviewed_source_skill_decisions: dict[str, Any] | None = None,
+    reviewed_mark_events: dict[str, Any] | None = None,
+    canonical_mark_event_ids_by_subpart: dict[str, list[str]] | None = None,
+) -> dict[str, Any]:
     if asterion_question_bank.get("schema_name") != ASTERION_SCHEMA_NAME:
         raise ValueError("Content Lab candidates require asterion.question_bank input")
     if int(asterion_question_bank.get("schema_version") or 0) != ASTERION_SCHEMA_VERSION:
         raise ValueError("Content Lab candidates require asterion.question_bank schema_version 1")
 
+    reviewed_source_skill_records = _reviewed_source_skill_records_by_subpart(reviewed_source_skill_decisions or {})
+    reviewed_mark_event_statuses = reviewed_mark_event_status_by_id(reviewed_mark_events or {})
+    reviewed_mark_event_decisions = _reviewed_mark_event_decisions_by_id(reviewed_mark_events or {})
+    canonical_mark_event_ids_by_subpart = canonical_mark_event_ids_by_subpart or {}
     candidates: list[dict[str, Any]] = []
     for record in asterion_question_bank.get("questions", []):
         if not isinstance(record, dict):
@@ -118,7 +149,16 @@ def build_content_lab_candidates(asterion_question_bank: dict[str, Any]) -> dict
                 continue
             if not _content_lab_candidate_subpart(record, subpart):
                 continue
-            candidates.append(_content_lab_candidate(record, subpart))
+            candidates.append(
+                _content_lab_candidate(
+                    record,
+                    subpart,
+                    reviewed_source_skill_records=reviewed_source_skill_records,
+                    reviewed_mark_event_statuses=reviewed_mark_event_statuses,
+                    reviewed_mark_event_decisions=reviewed_mark_event_decisions,
+                    canonical_mark_event_ids_by_subpart=canonical_mark_event_ids_by_subpart,
+                )
+            )
 
     return {
         "schema_name": CONTENT_LAB_SCHEMA_NAME,
@@ -133,6 +173,17 @@ def build_content_lab_candidates(asterion_question_bank: dict[str, Any]) -> dict
             "emits_candidates_and_metadata_only": True,
             "content_lab_generation_requires_reviewed_or_approved_mapping": True,
             "content_lab_generation_requires_reviewed_or_approved_mark_events": True,
+            "content_lab_generation_requires_reviewed_source_skill": True,
+            "reviewed_source_skill_decisions_path": str(reviewed_source_skill_decisions.get("_source_path"))
+            if isinstance(reviewed_source_skill_decisions, dict) and reviewed_source_skill_decisions.get("_source_path")
+            else None,
+            "reviewed_mark_event_decisions_path": str(reviewed_mark_events.get("_source_path"))
+            if isinstance(reviewed_mark_events, dict) and reviewed_mark_events.get("_source_path")
+            else None,
+            "reviewed_source_skill_generation_satisfying_route_statuses": ["clean"],
+            "reviewed_source_skill_generation_satisfying_review_statuses": ["approved", "reviewed"],
+            "reviewed_mark_event_generation_satisfying_statuses": ["approved", "reviewed"],
+            "canonical_mark_event_ids_used_for_generation_gate": bool(canonical_mark_event_ids_by_subpart),
         },
         "record_count": len(candidates),
         "candidates": candidates,
@@ -227,6 +278,69 @@ def load_skill_mappings(path: str | Path, *, allow_unusable_ai_sidecar: bool = F
         if skill_ids:
             by_subpart[subpart_id] = skill_ids
     return by_subpart
+
+
+def load_reviewed_mark_event_decisions(path: str | Path | None) -> dict[str, Any]:
+    if path is None:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}
+    payload = dict(payload)
+    payload["_source_path"] = str(path)
+    return payload
+
+
+def load_reviewed_source_skill_decisions(path: str | Path | None) -> dict[str, Any]:
+    if path is None:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}
+    payload = dict(payload)
+    payload["_source_path"] = str(path)
+    return payload
+
+
+def load_canonical_mark_event_ids_by_subpart(path: str | Path | None) -> dict[str, list[str]]:
+    if path is None:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    records = payload.get("records") if isinstance(payload, dict) else []
+    if not isinstance(records, list):
+        return {}
+    result: dict[str, list[str]] = {}
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        question_id = str(record.get("question_id") or "").strip()
+        if not question_id:
+            continue
+        events = record.get("mark_events") if isinstance(record.get("mark_events"), list) else []
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            event_id = str(event.get("event_id") or "").strip()
+            if not event_id:
+                continue
+            part_path = [str(part).strip() for part in event.get("part_path") or [] if str(part).strip()]
+            suffix = "_".join(part_path) if part_path else "whole"
+            result.setdefault(f"{question_id}_{suffix}", []).append(event_id)
+    return result
+
+
+def _default_mark_events_path(input_path: Path) -> Path | None:
+    sibling = input_path.parent / "question_bank.mark_events.v1.json"
+    return sibling if sibling.exists() else None
 
 
 def load_ai_assisted_strict_filter_mappings(
@@ -548,9 +662,20 @@ def _content_lab_candidate_subpart(record: dict[str, Any], subpart: dict[str, An
     return _minimum_mark_event_confidence(events) >= 0.84
 
 
-def _content_lab_candidate(record: dict[str, Any], subpart: dict[str, Any]) -> dict[str, Any]:
+def _content_lab_candidate(
+    record: dict[str, Any],
+    subpart: dict[str, Any],
+    *,
+    reviewed_source_skill_records: dict[str, list[dict[str, Any]]],
+    reviewed_mark_event_statuses: dict[str, str],
+    reviewed_mark_event_decisions: dict[str, dict[str, Any]],
+    canonical_mark_event_ids_by_subpart: dict[str, list[str]],
+) -> dict[str, Any]:
     subpart_id = str(subpart.get("subpart_id") or "")
-    events = _mark_events(subpart)
+    events = _with_review_event_ids(
+        _mark_events(subpart),
+        canonical_mark_event_ids_by_subpart.get(subpart_id, []),
+    )
     skill_ids = _dedupe(
         [
             skill_id
@@ -561,9 +686,38 @@ def _content_lab_candidate(record: dict[str, Any], subpart: dict[str, Any]) -> d
     if not skill_ids:
         skill_ids = _list_string_values(subpart.get("skill_ids"))
 
-    role_statuses = _content_lab_role_statuses(record, subpart, events, skill_ids)
+    mark_event_gate = _mark_event_generation_gate(events, reviewed_mark_event_statuses)
+    source_skill_gate = _source_skill_review_gate(record, subpart, events, skill_ids, reviewed_source_skill_records)
+    if not skill_ids and source_skill_gate.get("source_skill_review_satisfied"):
+        skill_ids = _list_string_values(source_skill_gate.get("reviewed_source_skill_ids"))
+    mapping_gate = _mapping_review_gate(
+        record,
+        subpart,
+        events,
+        skill_ids,
+        source_skill_gate=source_skill_gate,
+        mark_event_gate=mark_event_gate,
+        reviewed_mark_event_decisions=reviewed_mark_event_decisions,
+    )
+    role_statuses = _content_lab_role_statuses(
+        record,
+        subpart,
+        events,
+        skill_ids,
+        mark_event_gate=mark_event_gate,
+        source_skill_gate=source_skill_gate,
+        mapping_gate=mapping_gate,
+    )
     possible_roles = [role for role, status in role_statuses.items() if status != "block"]
-    generation_gate = _content_lab_generation_gate(record, subpart, events, skill_ids)
+    generation_gate = _content_lab_generation_gate(
+        record,
+        subpart,
+        events,
+        skill_ids,
+        mark_event_gate=mark_event_gate,
+        source_skill_gate=source_skill_gate,
+        mapping_gate=mapping_gate,
+    )
     warmup_pattern = (
         _generated_warmup_pattern_source(subpart, events, skill_ids, generation_gate=generation_gate)
         if role_statuses["generated_warmup_pattern_source"] != "block"
@@ -594,6 +748,20 @@ def _content_lab_candidate(record: dict[str, Any], subpart: dict[str, Any]) -> d
         "role_statuses": role_statuses,
         "source_skill_ids": skill_ids,
         "source_mark_event_count": len(events),
+        "source_mark_event_ids": _mark_event_ids(events),
+        "content_lab_mark_event_ids": _content_lab_mark_event_ids(events),
+        "mark_event_review_gate": mark_event_gate,
+        "source_skill_review_gate": source_skill_gate,
+        "reviewed_source_skill_decision_id": source_skill_gate.get("reviewed_source_skill_decision_id"),
+        "reviewed_source_skill_status": source_skill_gate.get("reviewed_source_skill_status"),
+        "reviewed_source_skill_ids": source_skill_gate.get("reviewed_source_skill_ids", []),
+        "reviewed_source_skill_part_path": source_skill_gate.get("reviewed_source_skill_part_path"),
+        "source_skill_review_satisfied": bool(source_skill_gate.get("source_skill_review_satisfied")),
+        "mapping_review_gate": mapping_gate,
+        "reviewed_mapping_source": mapping_gate.get("reviewed_mapping_source"),
+        "reviewed_part_path": mapping_gate.get("reviewed_part_path"),
+        "mapping_review_satisfied": bool(mapping_gate.get("mapping_review_satisfied")),
+        "mapping_review_blocked_reasons": mapping_gate.get("mapping_review_blocked_reasons", []),
         "generated_warmup_pattern_source": warmup_pattern,
         "generation_gate": generation_gate,
         "review_status": _candidate_review_status(role_statuses, generation_gate),
@@ -605,12 +773,28 @@ def _content_lab_role_statuses(
     subpart: dict[str, Any],
     events: list[dict[str, Any]],
     skill_ids: list[str],
+    *,
+    mark_event_gate: dict[str, Any],
+    source_skill_gate: dict[str, Any],
+    mapping_gate: dict[str, Any],
 ) -> dict[str, str]:
     usage_roles = record.get("usage_roles") if isinstance(record.get("usage_roles"), dict) else {}
-    generation_gate = _content_lab_generation_gate(record, subpart, events, skill_ids)
-    review_needed = not _subpart_reviewed_or_approved(subpart)
+    generation_gate = _content_lab_generation_gate(
+        record,
+        subpart,
+        events,
+        skill_ids,
+        mark_event_gate=mark_event_gate,
+        source_skill_gate=source_skill_gate,
+        mapping_gate=mapping_gate,
+    )
+    review_needed = not mapping_gate.get("mapping_review_satisfied")
     has_events = bool(events)
     has_skills = bool(skill_ids)
+    mixed_review = _mixed_review_candidate(record, subpart, events)
+    mixed_review_status = "block"
+    if mixed_review:
+        mixed_review_status = "allow" if mapping_gate.get("mapping_review_satisfied") else CONTENT_LAB_BLOCKED_UNTIL_REVIEWED
 
     roles = {
         "field_guide_source": _candidate_role_status(str(usage_roles.get("field_guide_source") or ""), review_needed=review_needed),
@@ -618,7 +802,7 @@ def _content_lab_role_statuses(
         "generated_warmup_pattern_source": generation_gate["status"] if has_events and has_skills else "block",
         "guardian_candidate": _candidate_role_status(str(usage_roles.get("guardian_candidate") or ""), review_needed=review_needed),
         "prerequisite_repair_source": _prerequisite_repair_role_status(record, subpart, skill_ids, review_needed=review_needed),
-        "mixed_review_source": CONTENT_LAB_BLOCKED_UNTIL_REVIEWED if _mixed_review_candidate(record, subpart, events) else "block",
+        "mixed_review_source": mixed_review_status,
     }
     return roles
 
@@ -660,24 +844,29 @@ def _content_lab_generation_gate(
     subpart: dict[str, Any],
     events: list[dict[str, Any]],
     skill_ids: list[str],
+    *,
+    mark_event_gate: dict[str, Any],
+    source_skill_gate: dict[str, Any],
+    mapping_gate: dict[str, Any],
 ) -> dict[str, Any]:
     reasons: list[str] = []
     quality_gate = record.get("quality_gate") if isinstance(record.get("quality_gate"), dict) else {}
     if not quality_gate.get("content_lab_generation_allowed"):
         reasons.append("question_quality_gate_blocks_content_lab_generation")
-    if not _subpart_reviewed_or_approved(subpart):
+    if not mapping_gate.get("mapping_review_satisfied"):
         reasons.append("mapping_or_subpart_not_reviewed_or_approved")
     if not events:
         reasons.append("missing_source_mark_events")
-    if any(not _mark_event_reviewed_or_approved(event) for event in events):
-        reasons.append("mark_events_not_reviewed_or_approved")
+    reasons.extend(mark_event_gate.get("block_reasons") or [])
     if any(_mark_event_quarantined(event) for event in events):
         reasons.append("mark_events_quarantined")
     if not skill_ids:
         reasons.append("missing_source_skill_ids")
+    reasons.extend(source_skill_gate.get("block_reasons") or [])
 
+    rejected = "reviewed_mark_event_rejected" in reasons
     return {
-        "status": "allow" if not reasons else CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
+        "status": "allow" if not reasons else "block" if rejected else CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
         "blocked": bool(reasons),
         "block_reasons": _dedupe(reasons),
     }
@@ -704,6 +893,8 @@ def _generated_warmup_pattern_source(
 
 def _content_lab_source_mark_event(event: dict[str, Any]) -> dict[str, Any]:
     return {
+        "event_id": event.get("event_id"),
+        "review_event_id": event.get("review_event_id"),
         "mark_code": event.get("mark_code"),
         "mark_type": event.get("mark_type"),
         "student_action": event.get("student_action"),
@@ -771,6 +962,230 @@ def _common_errors_to_target(events: list[dict[str, Any]]) -> list[str]:
     )
 
 
+def _source_skill_review_gate(
+    record: dict[str, Any],
+    subpart: dict[str, Any],
+    events: list[dict[str, Any]],
+    skill_ids: list[str],
+    reviewed_records: dict[str, list[dict[str, Any]]],
+) -> dict[str, Any]:
+    question_id = str(record.get("question_id") or "").strip()
+    subpart_id = str(subpart.get("subpart_id") or "").strip()
+    candidate_part_path = _part_path_from_subpart(record, subpart)
+    candidate_event_ids = _mark_event_ids(events)
+    decisions: list[dict[str, Any]] = []
+    for reviewed in reviewed_records.get(subpart_id, []):
+        if str(reviewed.get("question_id") or "").strip() != question_id:
+            continue
+        decision = _source_skill_decision_summary(
+            reviewed,
+            candidate_part_path=candidate_part_path,
+            candidate_skill_ids=skill_ids,
+            candidate_event_ids=candidate_event_ids,
+        )
+        decisions.append(decision)
+        if decision["satisfies_generation_gate"]:
+            reviewed_skill_ids = _list_string_values(reviewed.get("reviewed_source_skill_ids"))
+            reviewed_part_path = _reviewed_source_skill_part_path(reviewed)
+            return {
+                "status": "allow",
+                "blocked": False,
+                "block_reasons": [],
+                "decisions": decisions,
+                "reviewed_source_skill_decision_id": str(reviewed.get("evidence_id") or ""),
+                "reviewed_source_skill_status": _reviewed_source_skill_status(reviewed),
+                "reviewed_source_skill_ids": reviewed_skill_ids,
+                "reviewed_source_skill_part_path": reviewed_part_path,
+                "matching_mark_event_ids": _reviewed_source_skill_mark_event_ids(reviewed),
+                "source_skill_review_satisfied": True,
+            }
+
+    reasons = ["reviewed_source_skill_decision_missing"] if not decisions else _dedupe(
+        reason
+        for decision in decisions
+        for reason in _list_string_values(decision.get("block_reasons"))
+    )
+    return {
+        "status": CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
+        "blocked": True,
+        "block_reasons": reasons,
+        "decisions": decisions,
+        "reviewed_source_skill_decision_id": None,
+        "reviewed_source_skill_status": "missing" if not decisions else "not_generation_satisfying",
+        "reviewed_source_skill_ids": [],
+        "reviewed_source_skill_part_path": None,
+        "matching_mark_event_ids": [],
+        "source_skill_review_satisfied": False,
+    }
+
+
+def _source_skill_decision_summary(
+    reviewed: dict[str, Any],
+    *,
+    candidate_part_path: list[str],
+    candidate_skill_ids: list[str],
+    candidate_event_ids: list[str],
+) -> dict[str, Any]:
+    reasons: list[str] = []
+    route_status = str(reviewed.get("route_status") or "").strip().lower()
+    reviewer_status = _reviewed_source_skill_status(reviewed)
+    reviewed_skill_ids = _list_string_values(reviewed.get("reviewed_source_skill_ids"))
+    reviewed_part_path = _reviewed_source_skill_part_path(reviewed)
+    reviewed_event_ids = _reviewed_source_skill_mark_event_ids(reviewed)
+
+    if route_status != "clean":
+        reasons.append(f"reviewed_source_skill_route_status_{route_status or 'missing'}")
+    if reviewer_status not in {"approved", "reviewed"}:
+        reasons.append(f"reviewed_source_skill_status_{reviewer_status or 'missing'}")
+    if not reviewed_skill_ids:
+        reasons.append("reviewed_source_skill_ids_missing")
+    if reviewed.get("blockers"):
+        reasons.append("reviewed_source_skill_has_blockers")
+    if reviewed_part_path != candidate_part_path:
+        reasons.append("reviewed_source_skill_part_path_mismatch")
+    if candidate_skill_ids and not set(candidate_skill_ids).intersection(reviewed_skill_ids):
+        reasons.append("reviewed_source_skill_id_mismatch")
+    if candidate_event_ids and not set(candidate_event_ids).issubset(set(reviewed_event_ids)):
+        reasons.append("reviewed_source_skill_mark_event_refs_do_not_cover_candidate")
+
+    return {
+        "decision_id": str(reviewed.get("evidence_id") or ""),
+        "decision_status": reviewer_status,
+        "route_status": route_status,
+        "reviewed_source_skill_ids": reviewed_skill_ids,
+        "reviewed_part_path": reviewed_part_path,
+        "matching_mark_event_ids": reviewed_event_ids,
+        "satisfies_generation_gate": not reasons,
+        "block_reasons": _dedupe(reasons),
+    }
+
+
+def _mapping_review_gate(
+    record: dict[str, Any],
+    subpart: dict[str, Any],
+    events: list[dict[str, Any]],
+    skill_ids: list[str],
+    *,
+    source_skill_gate: dict[str, Any],
+    mark_event_gate: dict[str, Any],
+    reviewed_mark_event_decisions: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    inline_satisfied = _subpart_reviewed_or_approved(subpart)
+    reviewed_source_satisfied = bool(source_skill_gate.get("source_skill_review_satisfied"))
+    candidate_part_path = _part_path_from_subpart(record, subpart)
+    reviewed_part_path = _list_string_values(source_skill_gate.get("reviewed_source_skill_part_path"))
+    source_event_ids = set(_list_string_values(source_skill_gate.get("matching_mark_event_ids")))
+    candidate_event_ids = _mark_event_ids(events)
+    generation_satisfying_event_ids = set(_list_string_values(mark_event_gate.get("generation_satisfying_event_ids")))
+    reviewed_skill_ids = set(_list_string_values(source_skill_gate.get("reviewed_source_skill_ids")))
+
+    reasons: list[str] = []
+    if not inline_satisfied and not reviewed_source_satisfied:
+        reasons.append("reviewed_mapping_source_missing")
+    if reviewed_source_satisfied:
+        if reviewed_part_path != candidate_part_path:
+            reasons.append("reviewed_mapping_part_path_mismatch")
+        if skill_ids and reviewed_skill_ids and not set(skill_ids).intersection(reviewed_skill_ids):
+            reasons.append("reviewed_mapping_exact_skill_mismatch")
+        if candidate_event_ids and not set(candidate_event_ids).issubset(source_event_ids):
+            reasons.append("reviewed_mapping_mark_events_not_in_matching_set")
+        if candidate_event_ids and not set(candidate_event_ids).issubset(generation_satisfying_event_ids):
+            reasons.append("reviewed_mapping_mark_events_not_generation_satisfying")
+        for event_id in candidate_event_ids:
+            mark_event_decision = reviewed_mark_event_decisions.get(event_id)
+            if not mark_event_decision:
+                reasons.append("reviewed_mapping_mark_event_decision_missing")
+                continue
+            if str(mark_event_decision.get("source_question_id") or "").strip() != str(record.get("question_id") or "").strip():
+                reasons.append("reviewed_mapping_mark_event_question_mismatch")
+            if _list_string_values(mark_event_decision.get("part_path")) != reviewed_part_path:
+                reasons.append("reviewed_mapping_mark_event_part_path_mismatch")
+
+    satisfied = inline_satisfied or (reviewed_source_satisfied and not reasons)
+    source = "asterion_subpart_review_status" if inline_satisfied else None
+    if reviewed_source_satisfied and not reasons:
+        source = "reviewed_exact_skill_decision"
+    elif reviewed_source_satisfied:
+        source = "reviewed_exact_skill_decision_blocked"
+    return {
+        "status": "allow" if satisfied else CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
+        "blocked": not satisfied,
+        "block_reasons": _dedupe(reasons),
+        "reviewed_mapping_source": source,
+        "reviewed_part_path": reviewed_part_path if reviewed_part_path else candidate_part_path if inline_satisfied else None,
+        "mapping_review_satisfied": satisfied,
+        "mapping_review_blocked_reasons": _dedupe(reasons),
+    }
+
+
+def _reviewed_source_skill_records_by_subpart(payload: Any) -> dict[str, list[dict[str, Any]]]:
+    if not isinstance(payload, dict):
+        return {}
+    records = payload.get("records")
+    if not isinstance(records, list):
+        return {}
+    result: dict[str, list[dict[str, Any]]] = {}
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        subpart_id = str(record.get("subpart_id") or "").strip()
+        if subpart_id:
+            result.setdefault(subpart_id, []).append(record)
+    return result
+
+
+def _reviewed_mark_event_decisions_by_id(payload: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(payload, dict):
+        return {}
+    decisions = payload.get("decisions")
+    if not isinstance(decisions, list):
+        return {}
+    result: dict[str, dict[str, Any]] = {}
+    for decision in decisions:
+        if not isinstance(decision, dict):
+            continue
+        event_id = str(decision.get("event_id") or "").strip()
+        if event_id:
+            result[event_id] = decision
+    return result
+
+
+def _reviewed_source_skill_status(record: dict[str, Any]) -> str:
+    reviewer = record.get("reviewer") if isinstance(record.get("reviewer"), dict) else {}
+    return str(reviewer.get("review_status") or "").strip().lower()
+
+
+def _reviewed_source_skill_part_path(record: dict[str, Any]) -> list[str]:
+    part_id = str(record.get("part_id") or "").strip()
+    if not part_id or part_id == "whole":
+        return ["whole"]
+    return [part_id]
+
+
+def _part_path_from_subpart(record: dict[str, Any], subpart: dict[str, Any]) -> list[str]:
+    label = str(subpart.get("label") or "").strip()
+    if label:
+        return ["whole"] if label == "whole" else [label]
+    subpart_id = str(subpart.get("subpart_id") or "").strip()
+    question_id = str(record.get("question_id") or "").strip()
+    prefix = f"{question_id}_"
+    if question_id and subpart_id.startswith(prefix):
+        suffix = subpart_id[len(prefix) :]
+        return ["whole"] if suffix == "whole" else [suffix]
+    return []
+
+
+def _reviewed_source_skill_mark_event_ids(record: dict[str, Any]) -> list[str]:
+    refs = record.get("mark_event_refs")
+    if not isinstance(refs, list):
+        return []
+    return _dedupe(
+        str(ref.get("event_id") or "").strip()
+        for ref in refs
+        if isinstance(ref, dict) and str(ref.get("event_id") or "").strip()
+    )
+
+
 def _candidate_review_status(role_statuses: dict[str, str], generation_gate: dict[str, Any]) -> str:
     if generation_gate["status"] == "allow" and all(status in {"allow", "block"} for status in role_statuses.values()):
         return "ready"
@@ -809,6 +1224,95 @@ def _mark_events(subpart: dict[str, Any]) -> list[dict[str, Any]]:
     if not isinstance(events, list):
         return []
     return [event for event in events if isinstance(event, dict)]
+
+
+def _mark_event_ids(events: list[dict[str, Any]]) -> list[str]:
+    return _dedupe(_review_gate_event_id(event) for event in events if _review_gate_event_id(event))
+
+
+def _content_lab_mark_event_ids(events: list[dict[str, Any]]) -> list[str]:
+    return _dedupe(str(event.get("event_id") or "") for event in events if event.get("event_id"))
+
+
+def _with_review_event_ids(events: list[dict[str, Any]], review_event_ids: list[str]) -> list[dict[str, Any]]:
+    if not review_event_ids:
+        return events
+    result: list[dict[str, Any]] = []
+    for index, event in enumerate(events):
+        updated = dict(event)
+        if index < len(review_event_ids):
+            updated["review_event_id"] = review_event_ids[index]
+        result.append(updated)
+    return result
+
+
+def _review_gate_event_id(event: dict[str, Any]) -> str:
+    return str(event.get("review_event_id") or event.get("event_id") or "").strip()
+
+
+def _mark_event_generation_gate(events: list[dict[str, Any]], reviewed_statuses: dict[str, str]) -> dict[str, Any]:
+    decisions: list[dict[str, Any]] = []
+    reasons: list[str] = []
+    rejected_ids: list[str] = []
+    missing_ids: list[str] = []
+    advisory_ids: list[str] = []
+    non_satisfying_ids: list[str] = []
+    if not events:
+        return {
+            "status": CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
+            "blocked": True,
+            "block_reasons": ["missing_source_mark_events"],
+            "decisions": decisions,
+            "missing_event_ids": missing_ids,
+            "advisory_event_ids": advisory_ids,
+            "rejected_event_ids": rejected_ids,
+            "generation_satisfying_event_ids": [],
+        }
+    for index, event in enumerate(events):
+        event_id = _review_gate_event_id(event)
+        if not event_id:
+            missing_ids.append(f"index_{index}")
+            decisions.append({"event_id": None, "decision_status": "missing", "satisfies_generation_gate": False})
+            continue
+        status = str(reviewed_statuses.get(event_id) or "missing").strip().lower()
+        satisfies = mark_event_status_satisfies_generation(status)
+        decisions.append(
+            {
+                "event_id": event_id,
+                "decision_status": status,
+                "satisfies_generation_gate": satisfies,
+            }
+        )
+        if status == "missing":
+            missing_ids.append(event_id)
+        elif status == "advisory":
+            advisory_ids.append(event_id)
+        elif status == "rejected":
+            rejected_ids.append(event_id)
+        elif not satisfies:
+            non_satisfying_ids.append(event_id)
+    if missing_ids:
+        reasons.append("reviewed_mark_event_decision_missing")
+    if advisory_ids:
+        reasons.append("reviewed_mark_event_advisory_only")
+    if rejected_ids:
+        reasons.append("reviewed_mark_event_rejected")
+    if non_satisfying_ids:
+        reasons.append("reviewed_mark_event_status_not_generation_satisfying")
+    return {
+        "status": "allow" if not reasons else "block" if rejected_ids else CONTENT_LAB_BLOCKED_UNTIL_REVIEWED,
+        "blocked": bool(reasons),
+        "block_reasons": reasons,
+        "decisions": decisions,
+        "missing_event_ids": missing_ids,
+        "advisory_event_ids": advisory_ids,
+        "rejected_event_ids": rejected_ids,
+        "generation_satisfying_event_ids": [
+            decision["event_id"]
+            for decision in decisions
+            if decision.get("event_id") and decision.get("satisfies_generation_gate") is True
+        ],
+    }
 
 
 def _content_lab_hard_blocked(record: dict[str, Any]) -> bool:
@@ -859,6 +1363,7 @@ def _mark_events_from_text(
             mark_type = _mark_type(mark_code, evidence)
             answer_target = _answer_target_from_action(action, mark_code=mark_code)
             event = {
+                "event_id": f"{subpart_id}_me{len(events) + 1:04d}",
                 "subpart_id": subpart_id,
                 "mark_code": mark_code,
                 "mark_type": mark_type,
