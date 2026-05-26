@@ -1,0 +1,670 @@
+{
+  "ambiguous_blocked_or_thin_records": [
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "no_wrong_skill",
+      "draft_route_status": "ambiguous",
+      "question_id": "32autumn23_q09",
+      "reviewer_note": "Draft review adjustment: part (b) asks for exact area under y = sin x cos 2x and the mark scheme is integration with trig identities as method support. The proposed trig-identities skill is not the safest target skill for the selected part; this should be retagged toward integration/area evidence before clean use. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "ambiguous_draft_response_not_promoted",
+      "source_batch_0002_response_item_number": 14,
+      "subpart_id": "32autumn23_q09_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "draft_exact_skill_confirmed": "no_wrong_skill",
+      "draft_route_status": "ambiguous",
+      "question_id": "33autumn22_q10",
+      "reviewer_note": "Draft review adjustment: selected part (a) only identifies constants in a differential equation model. The proposed log/exponential algebra skill is not assessed in this subpart; this should stay out of clean source-skill evidence. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "ambiguous_draft_response_not_promoted",
+      "source_batch_0002_response_item_number": 17,
+      "subpart_id": "33autumn22_q10_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_2_log_exponential_equations"
+      ],
+      "draft_exact_skill_confirmed": "no_wrong_skill",
+      "draft_route_status": "ambiguous",
+      "question_id": "33autumn22_q10",
+      "reviewer_note": "Draft review adjustment: part (b) solves a separable differential equation and uses logarithms during integration/constant evaluation. Log/exponential algebra is supporting method context, while the target skill is differential equations. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "ambiguous_draft_response_not_promoted",
+      "source_batch_0002_response_item_number": 18,
+      "subpart_id": "33autumn22_q10_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "draft_exact_skill_confirmed": "no_wrong_skill",
+      "draft_route_status": "blocked",
+      "question_id": "31summer23_q02",
+      "reviewer_note": "Draft review blocked: selected item is a modulus graph/linear inequality question, not parametric or implicit differentiation. The proposed P3 exact skill is unsupported by the canonical text and mark scheme; do not promote without rerouting. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "blocked_draft_response_not_promoted",
+      "source_batch_0002_response_item_number": 21,
+      "subpart_id": "31summer23_q02_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_5_standard_integration"
+      ],
+      "draft_exact_skill_confirmed": "no_wrong_skill",
+      "draft_route_status": "ambiguous",
+      "question_id": "31autumn21_q04",
+      "reviewer_note": "Draft review adjustment: whole question explicitly requires substitution u = sqrt(x) and changing/evaluating limits for an improper integral. The proposed standard-integration skill is too broad; safer exact target is integration by substitution and by parts/substitution before clean use. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "ambiguous_draft_response_not_promoted",
+      "source_batch_0002_response_item_number": 25,
+      "subpart_id": "31autumn21_q04_whole"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "thin",
+      "question_id": "31summer24_q06",
+      "reviewer_note": "Draft review: part (c) only rearranges the equation to show the fixed-point formula converges to the root; the actual iterative calculation is in part (d). This is exact but thin fixed-point evidence and should not be promoted as a strong clean example alone. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "thin_record_not_promoted",
+      "source_batch_0002_response_item_number": 29,
+      "subpart_id": "31summer24_q06_c"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "thin",
+      "question_id": "31summer24_q09",
+      "reviewer_note": "Draft review: part (a) is a one-mark scalar-product check to show the parameter value making two vector lines perpendicular. It is aligned to vector-line evidence but thin as standalone reviewed evidence. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "thin_record_not_promoted",
+      "source_batch_0002_response_item_number": 33,
+      "subpart_id": "31summer24_q09_a"
+    }
+  ],
+  "artifact_kind": "p3_exact_skill_registry_seed_report",
+  "batch_id": "batch_0002",
+  "candidate_generation_policy": {
+    "content_lab_candidates_generation_ready": 0,
+    "new_generation_ready_from_this_pass": 0,
+    "policy": "Reviewed source-skill evidence supports source_backed_examples only. Candidate generation remains false until mark-event and mapping gates are explicitly reviewed."
+  },
+  "generated_at": "2026-05-26T01:45:00Z",
+  "mark_event_policy": {
+    "approved_mark_event_count": 0,
+    "policy": "No Batch 0002 response explicitly approved mark events; all promoted mark-event refs remain advisory-only."
+  },
+  "records_intentionally_skipped": [
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33summer23_q11",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 1,
+      "subpart_id": "33summer23_q11_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31summer24_q04",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 2,
+      "subpart_id": "31summer24_q04_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32summer23_q06",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 3,
+      "subpart_id": "32summer23_q06_c"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32autumn23_q06",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 4,
+      "subpart_id": "32autumn23_q06_c"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33summer23_q06",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 5,
+      "subpart_id": "33summer23_q06_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33summer23_q09",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 6,
+      "subpart_id": "33summer23_q09_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring23_q05",
+      "selection_category": "seed_mark_event_alignment_probe",
+      "skip_reason": "already_promoted_in_batch_0001_seed_registry",
+      "source_batch_0002_response_item_number": 7,
+      "subpart_id": "32spring23_q05_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33summer23_q04",
+      "selection_category": "deferred_batch_0001_clean",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 11,
+      "subpart_id": "33summer23_q04_whole"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31autumn23_q08",
+      "selection_category": "deferred_batch_0001_clean",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 12,
+      "subpart_id": "31autumn23_q08_d"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31summer23_q04",
+      "selection_category": "deferred_batch_0001_clean",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 13,
+      "subpart_id": "31summer23_q04_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32autumn21_q06",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 16,
+      "subpart_id": "32autumn21_q06_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31autumn23_q06",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 19,
+      "subpart_id": "31autumn23_q06_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_4_parametric_implicit_differentiation"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31autumn23_q06",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 20,
+      "subpart_id": "31autumn23_q06_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32autumn23_q03",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 22,
+      "subpart_id": "32autumn23_q03_whole"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_1_polynomial_division_factor_remainder"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring23_q03",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 23,
+      "subpart_id": "32spring23_q03_whole"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_1_modulus_equations_inequalities"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "31autumn21_q01",
+      "selection_category": "known_failure_mode_probe",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 24,
+      "subpart_id": "31autumn21_q01_whole"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring24_q03",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 27,
+      "subpart_id": "32spring24_q03_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_9_complex_arithmetic_polar_form"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring24_q05",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "clean_but_narrower_argand_loci_skill_uncertainty_not_resolved",
+      "source_batch_0002_response_item_number": 28,
+      "subpart_id": "32spring24_q05_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33autumn23_q06",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 31,
+      "subpart_id": "33autumn23_q06_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_3_identities_compound_double_angle_equations"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "33summer23_q06",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 32,
+      "subpart_id": "33summer23_q06_a"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_7_vector_lines"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring23_q10",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 36,
+      "subpart_id": "32spring23_q10_b"
+    },
+    {
+      "candidate_primary_skill_ids": [
+        "9709_p3_3_6_fixed_point_iteration"
+      ],
+      "draft_exact_skill_confirmed": "yes",
+      "draft_route_status": "clean",
+      "question_id": "32spring24_q07",
+      "selection_category": "reliable_pattern_confirmation",
+      "skip_reason": "not_in_small_batch_0002_seed_subset",
+      "source_batch_0002_response_item_number": 37,
+      "subpart_id": "32spring24_q07_c"
+    }
+  ],
+  "registry_after_promotion": {
+    "clean_validated_registry_record_count": 15,
+    "route_status_counts": {
+      "blocked": 1,
+      "clean": 15,
+      "review_needed": 1,
+      "thin": 1
+    },
+    "total_record_count": 18
+  },
+  "schema": "exam_bank.p3_exact_skill.registry_seed_report",
+  "schema_version": 1,
+  "selected_count": 8,
+  "selected_record_ids": [
+    "p3_exact_skill_review:batch_0002_seed:31summer24_q01:31summer24_q01_whole",
+    "p3_exact_skill_review:batch_0002_seed:33autumn23_q01:33autumn23_q01_whole",
+    "p3_exact_skill_review:batch_0002_seed:33autumn23_q03:33autumn23_q03_whole",
+    "p3_exact_skill_review:batch_0002_seed:31summer21_q04:31summer21_q04_a",
+    "p3_exact_skill_review:batch_0002_seed:32spring24_q03:32spring24_q03_a",
+    "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d",
+    "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+    "p3_exact_skill_review:batch_0002_seed:33summer25_q05:33summer25_q05_a"
+  ],
+  "selected_records": [
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:31summer24:31summer24_q01",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:31summer24:31summer24_q01",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_31summer24_q01_whole",
+        "generation_gate_block_reasons": [
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:31summer24_q01:31summer24_q01_whole",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 4,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "31summer24_q01",
+      "reviewed_source_skill_id": "9709_p3_3_1_binomial_rational_expansion",
+      "selection_category": "deferred_batch_0001_clean",
+      "selection_pattern": "binomial rational expansion",
+      "selection_rationale": "Adds a whole-question-safe binomial rational expansion record; canonical evidence is a single expansion/product task with no part-boundary ambiguity.",
+      "source_batch_0002_response_item_number": 8,
+      "source_draft_response_id": "batch_0002:8:p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
+      "subpart_id": "31summer24_q01_whole"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn23:33autumn23_q01",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:33autumn23:33autumn23_q01",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_33autumn23_q01_whole",
+        "generation_gate_block_reasons": [
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33autumn23_q01:33autumn23_q01_whole",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 8,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "33autumn23_q01",
+      "reviewed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
+      "selection_category": "deferred_batch_0001_clean",
+      "selection_pattern": "log/exponential equations",
+      "selection_rationale": "Adds log/exponential equation coverage where the whole task is the target skill rather than a supporting method inside another topic.",
+      "source_batch_0002_response_item_number": 9,
+      "source_draft_response_id": "batch_0002:9:p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
+      "subpart_id": "33autumn23_q01_whole"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn23:33autumn23_q03",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:33autumn23:33autumn23_q03",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_33autumn23_q03_whole",
+        "generation_gate_block_reasons": [
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33autumn23_q03:33autumn23_q03_whole",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 11,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "33autumn23_q03",
+      "reviewed_source_skill_id": "9709_p3_3_1_polynomial_division_factor_remainder",
+      "selection_category": "deferred_batch_0001_clean",
+      "selection_pattern": "polynomial division/factor/remainder",
+      "selection_rationale": "Adds polynomial division/factor/remainder coverage from a whole-question-safe algebra task.",
+      "source_batch_0002_response_item_number": 10,
+      "source_draft_response_id": "batch_0002:10:p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
+      "subpart_id": "33autumn23_q03_whole"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:31summer21:31summer21_q04",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:31summer21:31summer21_q04",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_31summer21_q04_a",
+        "generation_gate_block_reasons": [
+          "question_quality_gate_blocks_content_lab_generation",
+          "mapping_or_subpart_not_reviewed_or_approved",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:31summer21_q04:31summer21_q04_a",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 2,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "31summer21_q04",
+      "reviewed_source_skill_id": "9709_p3_3_3_identities_compound_double_angle_equations",
+      "selection_category": "known_failure_mode_probe",
+      "selection_pattern": "trig identities/equations",
+      "selection_rationale": "Promotes a resolved suspicious pattern: the whole question later uses integration, but reviewed part (a) itself is a direct trigonometric identity proof.",
+      "source_batch_0002_response_item_number": 15,
+      "source_draft_response_id": "batch_0002:15:p3_exact_skill_review_queue:v1:31summer21_q04:31summer21_q04_a",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:31summer21_q04:31summer21_q04_a",
+      "subpart_id": "31summer21_q04_a"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:32spring24:32spring24_q03",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:32spring24:32spring24_q03",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_32spring24_q03_a",
+        "generation_gate_block_reasons": [
+          "mapping_or_subpart_not_reviewed_or_approved",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:32spring24_q03:32spring24_q03_a",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 12,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "32spring24_q03",
+      "reviewed_source_skill_id": "9709_p3_3_9_complex_arithmetic_polar_form",
+      "selection_category": "reliable_pattern_confirmation",
+      "selection_pattern": "complex polar/modulus work",
+      "selection_rationale": "Adds a new part-specific complex polar/modulus example from outside the Batch 0001 seed records.",
+      "source_batch_0002_response_item_number": 26,
+      "source_draft_response_id": "batch_0002:26:p3_exact_skill_review_queue:v1:32spring24_q03:32spring24_q03_a",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:32spring24_q03:32spring24_q03_a",
+      "subpart_id": "32spring24_q03_a"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:31summer24:31summer24_q06",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:31summer24:31summer24_q06",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_31summer24_q06_d",
+        "generation_gate_block_reasons": [
+          "mapping_or_subpart_not_reviewed_or_approved",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:31summer24_q06:31summer24_q06_d",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 3,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "31summer24_q06",
+      "reviewed_source_skill_id": "9709_p3_3_6_fixed_point_iteration",
+      "selection_category": "reliable_pattern_confirmation",
+      "selection_pattern": "fixed-point iteration",
+      "selection_rationale": "Promotes the strong fixed-point iteration subpart and leaves adjacent thin part (c) unpromoted.",
+      "source_batch_0002_response_item_number": 30,
+      "source_draft_response_id": "batch_0002:30:p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_d",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_d",
+      "subpart_id": "31summer24_q06_d"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:31summer24:31summer24_q09",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:31summer24:31summer24_q09",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_31summer24_q09_b",
+        "generation_gate_block_reasons": [
+          "mapping_or_subpart_not_reviewed_or_approved",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:31summer24_q09:31summer24_q09_b",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 4,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "31summer24_q09",
+      "reviewed_source_skill_id": "9709_p3_3_7_vector_lines",
+      "selection_category": "reliable_pattern_confirmation",
+      "selection_pattern": "vector lines",
+      "selection_rationale": "Adds a vector-line intersection record while leaving the adjacent one-mark scalar-product part unpromoted as thin.",
+      "source_batch_0002_response_item_number": 34,
+      "source_draft_response_id": "batch_0002:34:p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_b",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_b",
+      "subpart_id": "31summer24_q09_b"
+    },
+    {
+      "asset_verification_status": {
+        "mark_scheme_asset_id": "mark_scheme_image:33summer25:33summer25_q05",
+        "mark_scheme_asset_verified": true,
+        "question_asset_id": "question_image:33summer25:33summer25_q05",
+        "question_asset_verified": true
+      },
+      "candidate_gating_status_after_conversion": {
+        "candidate_id": "content_lab_33summer25_q05_a",
+        "generation_gate_block_reasons": [
+          "question_quality_gate_blocks_content_lab_generation",
+          "mapping_or_subpart_not_reviewed_or_approved",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "generation_gate_status": "blocked_until_reviewed",
+        "registry_candidate_generation_allowed": false
+      },
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33summer25_q05:33summer25_q05_a",
+      "mark_event_status": {
+        "approved_event_ids": [],
+        "matching_mark_event_count": 8,
+        "review_status": "advisory_only",
+        "reviewed_or_approved_count": 0
+      },
+      "question_id": "33summer25_q05",
+      "reviewed_source_skill_id": "9709_p3_3_4_parametric_implicit_differentiation",
+      "selection_category": "reliable_pattern_confirmation",
+      "selection_pattern": "parametric/implicit differentiation",
+      "selection_rationale": "Adds a recent implicit differentiation proof with derivative-rule work treated as support only.",
+      "source_batch_0002_response_item_number": 35,
+      "source_draft_response_id": "batch_0002:35:p3_exact_skill_review_queue:v1:33summer25_q05:33summer25_q05_a",
+      "source_queue_id": "p3_exact_skill_review_queue:v1:33summer25_q05:33summer25_q05_a",
+      "subpart_id": "33summer25_q05_a"
+    }
+  ],
+  "selection_target": "Promote 5-10 clean Batch 0002 responses into validated reviewed-decision records without changing mark-event or generation gates."
+}

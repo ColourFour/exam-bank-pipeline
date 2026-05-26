@@ -1,0 +1,751 @@
+{
+  "schema": "exam_bank.p3_exact_skill.review_batch_responses",
+  "schema_version": 1,
+  "artifact_kind": "human_review_response_draft",
+  "batch_id": "batch_0002",
+  "saved_at": "2026-05-26T01:04:17.302799Z",
+  "warning": "Draft Batch 0002 review notes only. Not reviewed evidence, not a promotion pass, not mark-event approval, and not the reviewed-decision registry.",
+  "review_basis": "Drafted from Batch 0002 packet, reviewed registry seed notes, queue context, canonical asset refs, and extracted question/mark-scheme text. User should double-check against canonical images before any promotion.",
+  "responses": [
+    {
+      "item_number": 1,
+      "question_id": "33summer23_q11",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b",
+      "subpart_id": "33summer23_q11_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (b), which asks for r and z^3 in exponential/polar form; the mark scheme part-path b awards modulus and argument work. The selected mark events appear aligned to part (b) but remain advisory-only and do not create candidate-generation readiness. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 2,
+      "question_id": "31summer24_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
+      "subpart_id": "31summer24_q04_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (b), which asks for uv in re^{i theta} form; the mark scheme part-path b awards follow-through modulus and argument values. Mark-event pairing looks scope-aligned but remains advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 3,
+      "question_id": "32summer23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c",
+      "subpart_id": "32summer23_q06_c",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (c), which requires using the given iterative formula and listing iterations to 4 decimal places. Root-location work in earlier parts is supporting context; selected part (c) mark events are aligned but advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 4,
+      "question_id": "32autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
+      "subpart_id": "32autumn23_q06_c",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (c), which requires iterative calculation from the given formula to a 2 decimal place root. Mark-event refs for part (c) align to iteration work but stay advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 5,
+      "question_id": "33summer23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
+      "subpart_id": "33summer23_q06_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (b), which solves the transformed trigonometric equation using the compound-angle/R cos form from part (a). The part (b) mark events align with equation solving and remain advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 6,
+      "question_id": "33summer23_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b",
+      "subpart_id": "33summer23_q09_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (b), which uses vector-line/perpendicular projection work to find Q and then R. Selected part (b) mark events are scope-aligned but advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 7,
+      "question_id": "32spring23_q05",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
+      "subpart_id": "32spring23_q05_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: seed source-skill evidence is consistent with part (b), which uses parametric differentiation from part (a) to handle the normal at t = -1. Mark-event refs are part (b)-aligned but still advisory-only. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 8,
+      "question_id": "31summer24_q01",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
+      "subpart_id": "31summer24_q01_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question is a binomial rational expansion multiplied by a linear factor, with the mark scheme awarding expansion terms through x^2 and product collection. Whole-question scope is safe for this source skill. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 9,
+      "question_id": "33autumn23_q01",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
+      "subpart_id": "33autumn23_q01_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question is a logarithmic/exponential inequality; the mark scheme requires forming bounds, solving equations of the form 2^x = a, and combining the strict interval. Whole-question scope is safe. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 10,
+      "question_id": "33autumn23_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
+      "subpart_id": "33autumn23_q03_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question is a remainder theorem / polynomial division problem using p(-2) and p(1/2), or equivalent division, to solve for constants. Whole-question polynomial factor/remainder evidence is clean. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 11,
+      "question_id": "33summer23_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole",
+      "subpart_id": "33summer23_q04_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole item is parametric differentiation using dx/dtheta, dy/dtheta, quotient/product-rule work, and dy/dx. Whole-question scope is safe because the only task is the parametric derivative proof. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 12,
+      "question_id": "31autumn23_q08",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d",
+      "subpart_id": "31autumn23_q08_d",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "d",
+        "reviewer_notes": "Draft review: deferred clean draft still looks aligned. Part (d) asks for iterative calculation from the formula to 2 decimal places with iterations shown to 4 decimal places. Topic alignment was unknown in the queue, so this should be double-checked visually before promotion. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 13,
+      "question_id": "31summer23_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q04:31summer23_q04_b",
+      "subpart_id": "31summer23_q04_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: deferred clean draft still looks aligned. Part (b) solves the trigonometric equation using the identity from part (a), with factorisation/quadratic-in-tan methods in the mark scheme. P1 interval solving is supporting context. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 14,
+      "question_id": "32autumn23_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
+      "subpart_id": "32autumn23_q09_b",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review adjustment: part (b) asks for exact area under y = sin x cos 2x and the mark scheme is integration with trig identities as method support. The proposed trig-identities skill is not the safest target skill for the selected part; this should be retagged toward integration/area evidence before clean use. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      }
+    },
+    {
+      "item_number": 15,
+      "question_id": "31summer21_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer21_q04:31summer21_q04_a",
+      "subpart_id": "31summer21_q04_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: although the whole question later uses integration, selected part (a) is directly an identity proof using double-angle formulae. For this subpart, trig identities are the target skill, not merely support. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 16,
+      "question_id": "32autumn21_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn21_q06:32autumn21_q06_a",
+      "subpart_id": "32autumn21_q06_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: selected part (a) directly proves a trigonometric identity using expansions of sin(3x+2x) and sin(3x-2x). The integration in part (b) is outside this reviewed subpart. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 17,
+      "question_id": "33autumn22_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
+      "subpart_id": "33autumn22_q10_a",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review adjustment: selected part (a) only identifies constants in a differential equation model. The proposed log/exponential algebra skill is not assessed in this subpart; this should stay out of clean source-skill evidence. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      }
+    },
+    {
+      "item_number": 18,
+      "question_id": "33autumn22_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
+      "subpart_id": "33autumn22_q10_b",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review adjustment: part (b) solves a separable differential equation and uses logarithms during integration/constant evaluation. Log/exponential algebra is supporting method context, while the target skill is differential equations. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      }
+    },
+    {
+      "item_number": 19,
+      "question_id": "31autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q06:31autumn23_q06_a",
+      "subpart_id": "31autumn23_q06_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) is a parametric differentiation task, differentiating x and y with respect to t and using dy/dx = (dy/dt)/(dx/dt). The proposed parametric differentiation skill is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 20,
+      "question_id": "31autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q06:31autumn23_q06_b",
+      "subpart_id": "31autumn23_q06_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: part (b) depends on the parametric derivative from part (a) to use the normal gradient and find exact coordinates. This is acceptable subpart-level parametric differentiation/normal evidence, with derivative-rule work only supporting. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 21,
+      "question_id": "31summer23_q02",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q02:31summer23_q02_a",
+      "subpart_id": "31summer23_q02_a",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review blocked: selected item is a modulus graph/linear inequality question, not parametric or implicit differentiation. The proposed P3 exact skill is unsupported by the canonical text and mark scheme; do not promote without rerouting. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "blocked",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "not_target_skill"
+      }
+    },
+    {
+      "item_number": 22,
+      "question_id": "32autumn23_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q03:32autumn23_q03_whole",
+      "subpart_id": "32autumn23_q03_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question is clean polynomial factor/remainder evidence, using divisibility by 2x-1 and remainder on division by x+1 to solve for a and b. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 23,
+      "question_id": "32spring23_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q03:32spring23_q03_whole",
+      "subpart_id": "32spring23_q03_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question is polynomial division/remainder evidence, requiring division by a quadratic or equivalent remainder theorem work to find a and b. Whole-question scope is safe. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 24,
+      "question_id": "31autumn21_q01",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q01:31autumn21_q01_whole",
+      "subpart_id": "31autumn21_q01_whole",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review: whole question solves a modulus/exponential equation by splitting the modulus or squaring and then solving exponential equations. The proposed modulus equations/inequalities skill is confirmed; exponential solving is supporting method context. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 25,
+      "question_id": "31autumn21_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
+      "subpart_id": "31autumn21_q04_whole",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Draft review adjustment: whole question explicitly requires substitution u = sqrt(x) and changing/evaluating limits for an improper integral. The proposed standard-integration skill is too broad; safer exact target is integration by substitution and by parts/substitution before clean use. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "possible_target_skill"
+      }
+    },
+    {
+      "item_number": 26,
+      "question_id": "32spring24_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q03:32spring24_q03_a",
+      "subpart_id": "32spring24_q03_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) asks for z^2 in exponential/polar form and the mark scheme awards modulus and argument work. Complex polar/modulus evidence is confirmed for this subpart. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 27,
+      "question_id": "32spring24_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q03:32spring24_q03_b",
+      "subpart_id": "32spring24_q03_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: part (b) uses the modulus and argument of z^2 to find possible values of another complex number in exponential form. Complex polar/modulus evidence is confirmed for the selected subpart. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 28,
+      "question_id": "32spring24_q05",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q05:32spring24_q05_b",
+      "subpart_id": "32spring24_q05_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: part (b) finds the greatest value of arg z for an Argand-region question. The evidence is complex argument/Argand geometry; acceptable as complex modulus/argument source evidence, but a later promotion should consider whether Argand-loci is the narrower skill id. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 29,
+      "question_id": "31summer24_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_c",
+      "subpart_id": "31summer24_q06_c",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "thin",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Draft review: part (c) only rearranges the equation to show the fixed-point formula converges to the root; the actual iterative calculation is in part (d). This is exact but thin fixed-point evidence and should not be promoted as a strong clean example alone. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "thin",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 30,
+      "question_id": "31summer24_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_d",
+      "subpart_id": "31summer24_q06_d",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "d",
+        "reviewer_notes": "Draft review: part (d) directly uses the iterative formula with an initial value, records iterations, and determines the root to 2 decimal places. Fixed-point iteration is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 31,
+      "question_id": "33autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_a",
+      "subpart_id": "33autumn23_q06_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) is a direct trigonometric identity transformation using cot/sec or sin/cos and double-angle formulae to reach the given quartic in sin. Trig identity skill is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 32,
+      "question_id": "33summer23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_a",
+      "subpart_id": "33summer23_q06_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) directly expands 3 cos x + 2 cos(x-60) into R cos(x-alpha), requiring compound-angle expansion and R/alpha calculation. Trig identities/Rcos form evidence is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 33,
+      "question_id": "31summer24_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_a",
+      "subpart_id": "31summer24_q09_a",
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "thin",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) is a one-mark scalar-product check to show the parameter value making two vector lines perpendicular. It is aligned to vector-line evidence but thin as standalone reviewed evidence. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "thin",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 34,
+      "question_id": "31summer24_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_b",
+      "subpart_id": "31summer24_q09_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: part (b) finds the intersection of two vector lines by equating component forms and solving for parameters. Vector-line evidence is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 35,
+      "question_id": "33summer25_q05",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer25_q05:33summer25_q05_a",
+      "subpart_id": "33summer25_q05_a",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "a",
+        "reviewer_notes": "Draft review: part (a) is an implicit differentiation proof for xy + y^2 e^{-x} = 4, using product rule terms and solving for dy/dx. The proposed parametric/implicit differentiation skill is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 36,
+      "question_id": "32spring23_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_b",
+      "subpart_id": "32spring23_q10_b",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Draft review: part (b) asks for a vector equation of the line through A and B. The mark scheme confirms direction-vector line-equation construction, so vector-line evidence is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    },
+    {
+      "item_number": 37,
+      "question_id": "32spring24_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring24_q07:32spring24_q07_c",
+      "subpart_id": "32spring24_q07_c",
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "text_extract_and_asset_refs_reviewed",
+        "inspected_question_image": "text_extract_and_asset_refs_reviewed",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Draft review: part (c) directly uses an iterative formula based on part (a) to determine a to 2 decimal places with iterations shown. Fixed-point iteration evidence is confirmed. Draft Batch 0002 review only; canonical images remain the authority for user double-check and this is not reviewed-registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      }
+    }
+  ]
+}

@@ -212,7 +212,14 @@ def _validate_record(
                 errors.append(f"{prefix}:{field}_ref_missing_path:{ref_index}")
 
     if route_status == "clean":
-        _validate_clean_record(prefix, record, skill_ids=skill_ids, unknown_p3_skill_ids=unknown_p3_skill_ids, errors=errors)
+        _validate_clean_record(
+            prefix,
+            record,
+            skill_ids=skill_ids,
+            unknown_p3_skill_ids=unknown_p3_skill_ids,
+            errors=errors,
+            warnings=warnings,
+        )
     elif unknown_p3_skill_ids:
         warnings.append(f"{prefix}:unknown_p3_skill_ids_on_non_clean_record:{','.join(unknown_p3_skill_ids)}")
 
@@ -227,6 +234,7 @@ def _validate_clean_record(
     skill_ids: list[str],
     unknown_p3_skill_ids: list[str],
     errors: list[str],
+    warnings: list[str],
 ) -> None:
     if not skill_ids:
         errors.append(f"{prefix}:clean_without_reviewed_p3_skill")
@@ -244,6 +252,15 @@ def _validate_clean_record(
         errors.append(f"{prefix}:clean_without_mark_scheme_asset_refs")
     if record.get("blockers"):
         errors.append(f"{prefix}:clean_with_unresolved_blockers")
+    unreviewed_mark_event_ids = _unreviewed_mark_event_ids(record)
+    if unreviewed_mark_event_ids:
+        warnings.append(f"{prefix}:clean_with_unreviewed_mark_event_refs:{','.join(unreviewed_mark_event_ids)}")
+    unverified_question_refs = _unverified_asset_ref_paths(record, "source_question_asset_refs")
+    if unverified_question_refs:
+        errors.append(f"{prefix}:clean_with_unverified_question_asset_refs:{','.join(unverified_question_refs)}")
+    unverified_mark_scheme_refs = _unverified_asset_ref_paths(record, "source_mark_scheme_asset_refs")
+    if unverified_mark_scheme_refs:
+        errors.append(f"{prefix}:clean_with_unverified_mark_scheme_asset_refs:{','.join(unverified_mark_scheme_refs)}")
 
     reviewer = record.get("reviewer")
     if not isinstance(reviewer, dict):
@@ -275,6 +292,32 @@ def _has_candidate_generation_basis(record: dict[str, Any]) -> bool:
     if not isinstance(mark_event_refs, list) or not mark_event_refs:
         return False
     return all(isinstance(ref, dict) and ref.get("review_status") in {"reviewed", "approved"} for ref in mark_event_refs)
+
+
+def _unreviewed_mark_event_ids(record: dict[str, Any]) -> list[str]:
+    refs = record.get("mark_event_refs")
+    if not isinstance(refs, list):
+        return []
+    event_ids: list[str] = []
+    for index, ref in enumerate(refs):
+        if not isinstance(ref, dict):
+            continue
+        if ref.get("review_status") not in {"reviewed", "approved"}:
+            event_ids.append(_text(ref.get("event_id")) or f"index_{index}")
+    return event_ids
+
+
+def _unverified_asset_ref_paths(record: dict[str, Any], field: str) -> list[str]:
+    refs = record.get(field)
+    if not isinstance(refs, list):
+        return []
+    paths: list[str] = []
+    for index, ref in enumerate(refs):
+        if not isinstance(ref, dict):
+            continue
+        if ref.get("verified") is not True:
+            paths.append(_text(ref.get("path")) or f"index_{index}")
+    return paths
 
 
 def _advisory_only(record: dict[str, Any]) -> bool:

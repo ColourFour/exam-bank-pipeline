@@ -7,8 +7,12 @@ from pathlib import Path
 
 from exam_bank.p3_exact_skill.review_batch import (
     build_decision_template,
+    build_p3_exact_skill_batch_0002,
+    build_p3_exact_skill_batch_0003,
     build_p3_exact_skill_review_batch,
     select_review_batch_items,
+    validate_batch_0002_artifacts,
+    validate_batch_0003_artifacts,
 )
 from exam_bank.p3_exact_skill.reviewed_decisions import validate_reviewed_decisions_payload
 
@@ -240,6 +244,131 @@ def test_build_review_batch_cli_help_exits_successfully() -> None:
 
     assert result.returncode == 0
     assert "usage:" in result.stdout
+
+
+def test_batch_0002_dry_run_builds_mixed_review_categories() -> None:
+    result = build_p3_exact_skill_batch_0002(
+        batch_id="batch_0002_test",
+        dry_run=True,
+        generated_at="2026-05-26T00:00:00Z",
+    )
+
+    assert result["selected_count"] == 37
+    assert result["category_counts"] == {
+        "deferred_batch_0001_clean": 6,
+        "known_failure_mode_probe": 12,
+        "reliable_pattern_confirmation": 12,
+        "seed_mark_event_alignment_probe": 7,
+    }
+    assert result["manifest"]["batch_0002_constraints"]["auto_promotion_allowed"] is False
+    assert result["manifest"]["selection_filters"]["exclude_already_reviewed"] is False
+    assert all(record["route_status"] == "review_needed" for record in result["decision_template"]["records"])
+    assert all(
+        record["allowed_use_cases"]["candidate_generation"] is False
+        for record in result["decision_template"]["records"]
+    )
+
+
+def test_batch_0002_validation_rejects_missing_category_and_clean_failure_probe() -> None:
+    item = _item("q1")
+    manifest = {
+        "selected_items": [
+            {
+                "queue_id": item["queue_id"],
+                "selection_category": "known_failure_mode_probe",
+                "selection_reason": "Probe a known failure mode.",
+                "canonical_question_image_refs": item["source_question_asset_refs"],
+                "canonical_mark_scheme_image_refs": item["source_mark_scheme_asset_refs"],
+                "proposed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
+                "known_risk_flags": [],
+                "generation_ready": False,
+            },
+            {
+                "queue_id": "missing-category",
+                "selection_reason": "",
+                "canonical_question_image_refs": [],
+                "canonical_mark_scheme_image_refs": [],
+                "proposed_source_skill_id": "",
+            },
+        ]
+    }
+    template = {
+        "records": [
+            {
+                "queue_id": item["queue_id"],
+                "route_status": "clean",
+                "allowed_use_cases": {"candidate_generation": False},
+            }
+        ]
+    }
+
+    errors = validate_batch_0002_artifacts(manifest, template)
+
+    assert f"{item['queue_id']}:failure_probe_defaulted_to_clean" in errors
+    assert f"{item['queue_id']}:failure_probe_missing_do_not_default_to_clean_risk" in errors
+    assert "missing-category:missing_or_invalid_selection_category" in errors
+
+
+def test_batch_0003_dry_run_builds_adversarial_review_categories() -> None:
+    result = build_p3_exact_skill_batch_0003(
+        batch_id="batch_0003_test",
+        dry_run=True,
+        generated_at="2026-05-26T00:00:00Z",
+    )
+
+    assert result["selected_count"] == 14
+    assert result["category_counts"] == {
+        "clean_control_mark_event_probe": 3,
+        "deferred_exact_skill_boundary_probe": 1,
+        "prior_ambiguous_retag_probe": 6,
+        "prior_blocked_confirmation": 2,
+        "thin_adjacent_part_probe": 2,
+    }
+    assert result["manifest"]["batch_0003_constraints"]["auto_promotion_allowed"] is False
+    assert result["manifest"]["batch_0003_constraints"]["generation_readiness_change_allowed"] is False
+    assert result["manifest"]["batch_0003_constraints"]["mark_event_runtime_behavior_changed"] is False
+    assert result["manifest"]["selection_filters"]["exclude_already_reviewed"] is False
+    assert all(record["route_status"] == "review_needed" for record in result["decision_template"]["records"])
+    assert all(
+        record["allowed_use_cases"]["candidate_generation"] is False
+        for record in result["decision_template"]["records"]
+    )
+
+
+def test_batch_0003_validation_rejects_generation_ready_and_missing_controls() -> None:
+    item = _item("q1")
+    manifest = {
+        "selected_items": [
+            {
+                "queue_id": item["queue_id"],
+                "selection_category": "prior_ambiguous_retag_probe",
+                "selection_reason": "Probe a known failure mode.",
+                "canonical_question_image_refs": item["source_question_asset_refs"],
+                "canonical_mark_scheme_image_refs": item["source_mark_scheme_asset_refs"],
+                "proposed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
+                "known_risk_flags": [],
+                "generation_ready": True,
+                "mark_event_decision_default": "approved",
+            }
+        ]
+    }
+    template = {
+        "records": [
+            {
+                "queue_id": item["queue_id"],
+                "route_status": "review_needed",
+                "allowed_use_cases": {"candidate_generation": False},
+            }
+        ]
+    }
+
+    errors = validate_batch_0003_artifacts(manifest, template)
+
+    assert "batch_0003:selected_count_outside_target_range:1" in errors
+    assert "batch_0003:missing_minimum_clean_controls" in errors
+    assert "batch_0003:failure_or_boundary_probe_missing_do_not_default_to_clean" in errors
+    assert "batch_0003:selected_item_marked_generation_ready" in errors
+    assert "batch_0003:mark_event_default_not_advisory_only" in errors
 
 
 def _item(

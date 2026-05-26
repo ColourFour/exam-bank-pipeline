@@ -1,0 +1,510 @@
+{
+  "artifact_kind": "human_review_response_draft",
+  "batch_id": "batch_0001",
+  "responses": [
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: question part (b) asks for r and z^3 in re^{i theta} form; mark scheme part (b) uses modulus/argument method. Primary P3 complex arithmetic/modulus/argument/polar-form skill is confirmed for subpart b. P1 trigonometry is supporting context only. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 1,
+      "question_id": "33summer23_q11",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q11:33summer23_q11_b",
+      "subpart_id": "33summer23_q11_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft review: part (c) explicitly requires use of an iterative formula and the mark scheme awards iteration steps and convergence justification. Fixed-point iteration is the primary skill; root-location context is supporting. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 2,
+      "question_id": "33autumn21_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn21_q10:33autumn21_q10_c",
+      "subpart_id": "33autumn21_q10_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft adjustment: part (b) asks for the exact area of a region and the mark scheme uses integration with trig identities. The suggested trig-identities skill is supporting method context, not the safest exact target; likely needs routing toward integration/area evidence before clean use. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      },
+      "item_number": 3,
+      "question_id": "32autumn23_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
+      "subpart_id": "32autumn23_q09_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: the question uses parametric equations and part (b) applies dy/dx from part (a) to the normal at t = -1. Mark scheme confirms dx/dt, dy/dt and normal-gradient work. Parametric differentiation is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 4,
+      "question_id": "32spring23_q05",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q05:32spring23_q05_b",
+      "subpart_id": "32spring23_q05_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) finds a point on a 3D line by perpendicular projection and extends a vector ratio. Mark scheme uses vector-line equations and scalar product/perpendicularity. Vector lines skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 5,
+      "question_id": "33summer23_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q09:33summer23_q09_b",
+      "subpart_id": "33summer23_q09_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft review: part (c) gives an iterative formula and asks for iterations to determine a. Mark scheme awards iteration to 4 d.p. and final 2 d.p. value. Fixed-point iteration is confirmed for subpart c. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 6,
+      "question_id": "32autumn21_q11",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn21_q11:32autumn21_q11_c",
+      "subpart_id": "32autumn21_q11_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft review: part (c) requires using the given iterative formula to calculate the root with each iteration. Mark scheme confirms iterative formula use and final accuracy. Fixed-point iteration is confirmed for subpart c. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 7,
+      "question_id": "32summer23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:32summer23_q06:32summer23_q06_c",
+      "subpart_id": "32summer23_q06_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Automated draft review: whole question is a remainder theorem / polynomial division setup with two remainders to solve for constants. Mark scheme substitutes x=-2 and x=1/2 or uses polynomial division. Whole-question polynomial division/factor-remainder skill is confirmed. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 8,
+      "question_id": "33autumn23_q03",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
+      "subpart_id": "33autumn23_q03_whole"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "d",
+        "reviewer_notes": "Automated draft review: part (d) asks for the greatest value of arg z on an Argand locus; mark scheme uses argument geometry. Complex modulus/argument skill is confirmed for subpart d. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 9,
+      "question_id": "32summer22_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:32summer22_q10:32summer22_q10_d",
+      "subpart_id": "32summer22_q10_d"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft review: part (c) explicitly uses an iterative formula to determine the root and mark scheme awards iteration outputs. Fixed-point iteration is confirmed for subpart c. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 10,
+      "question_id": "32autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
+      "subpart_id": "32autumn23_q06_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Automated draft review: whole item is parametric differentiation, requiring dx/dtheta, dy/dtheta, quotient-rule differentiation and dy/dx. Parametric differentiation is confirmed for whole question. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 11,
+      "question_id": "33summer23_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q04:33summer23_q04_whole",
+      "subpart_id": "33summer23_q04_whole"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft adjustment: the selected subpart (c) only asks for limiting behaviour from the differential-equation solution; the main method in part (b) is separable differential equations with logarithms. Log/exponential equations are supporting algebra, not a clean exact target for subpart c alone. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      },
+      "item_number": 12,
+      "question_id": "31autumn21_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
+      "subpart_id": "31autumn21_q07_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft adjustment: the mark scheme differentiates an implicit curve and solves a tangent-gradient condition. The suggested derivative-rules skill is supporting; the safer exact P3 target is parametric/implicit differentiation. Do not promote as derivative-rules evidence without retagging. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "ambiguous",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      },
+      "item_number": 13,
+      "question_id": "32summer23_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
+      "subpart_id": "32summer23_q07_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Automated draft review: whole item asks for a binomial expansion of (3+x)(1-2x)^{1/2} up to x^2. Mark scheme confirms binomial expansion coefficients and multiplication. P3 rational binomial expansion is confirmed. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 14,
+      "question_id": "31summer24_q01",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q01:31summer24_q01_whole",
+      "subpart_id": "31summer24_q01_whole"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "d",
+        "reviewer_notes": "Automated draft adjustment: although the queue action says defer_ambiguous_skill, part (d) explicitly uses the iterative formula x_{n+1}=ln(3+x_n) to calculate the root. Mark scheme confirms iteration and final root. Fixed-point iteration is confirmed for subpart d. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 15,
+      "question_id": "31autumn23_q08",
+      "queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d",
+      "subpart_id": "31autumn23_q08_d"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) solves a trig equation using the R cos(x-alpha) result and interval control. Mark scheme confirms trig equation solving. Trig identities/compound-angle/equation skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 16,
+      "question_id": "33summer23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:33summer23_q06:33summer23_q06_b",
+      "subpart_id": "33summer23_q06_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "none",
+        "decomposition_accepted": "needs_adjustment",
+        "evidence_basis_status": "needs_more_review",
+        "exact_skill_confirmed": "no_wrong_skill",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft adjustment: the question is implicit differentiation and stationary tangents. The suggested polynomial division/factor-remainder skill is not supported by the question or mark scheme. Block this candidate unless retagged to parametric/implicit differentiation. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "blocked",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "possible_target_skill"
+      },
+      "item_number": 17,
+      "question_id": "33autumn23_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
+      "subpart_id": "33autumn23_q07_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "c",
+        "reviewer_notes": "Automated draft review: part (c) finds the intersection of two 3D lines using vector equations. Mark scheme confirms line equations and solving parameters. Vector lines skill is confirmed for subpart c. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 18,
+      "question_id": "32spring23_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q10:32spring23_q10_c",
+      "subpart_id": "32spring23_q10_c"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) solves the trig equation using the double-angle transformed equation from part (a). Mark scheme confirms solving for sin^2 theta and interval solutions. Trig identities/equations skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 19,
+      "question_id": "33autumn23_q06",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_b",
+      "subpart_id": "33autumn23_q06_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "no",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "whole",
+        "reviewer_notes": "Automated draft review: whole item solves an exponential inequality involving 2^{x+1}; mark scheme confirms logarithmic/exponential inequality solution. Logarithmic and exponential equations skill is confirmed. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "whole_question_safe",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 20,
+      "question_id": "33autumn23_q01",
+      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
+      "subpart_id": "33autumn23_q01_whole"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) finds greatest arg z for an Argand region. Mark scheme confirms argument geometry. Complex modulus/argument skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 21,
+      "question_id": "32autumn23_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q04:32autumn23_q04_b",
+      "subpart_id": "32autumn23_q04_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) calculates least arg z for the Argand region from part (a). Mark scheme confirms argument calculation in radians. Complex modulus/argument skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 22,
+      "question_id": "32spring23_q02",
+      "queue_id": "p3_exact_skill_review_queue:v1:32spring23_q02:32spring23_q02_b",
+      "subpart_id": "32spring23_q02_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft adjustment: despite the queue action defer_ambiguous_skill, part (b) solves a trig equation using the identity established in part (a). Mark scheme confirms factorisation and interval solutions. Trig identities/equations skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 23,
+      "question_id": "31summer23_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer23_q04:31summer23_q04_b",
+      "subpart_id": "31summer23_q04_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) uses Argand loci and modulus distance to find least |z-w|. This falls under complex modulus/argument/loci evidence. Complex arithmetic/modulus skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 24,
+      "question_id": "31summer24_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q07:31summer24_q07_b",
+      "subpart_id": "31summer24_q07_b"
+    },
+    {
+      "fields": {
+        "allowed_use_case_summary": "source_backed_examples",
+        "decomposition_accepted": "yes",
+        "evidence_basis_status": "drafted",
+        "exact_skill_confirmed": "yes",
+        "inspected_mark_scheme_image": "yes",
+        "inspected_question_image": "yes",
+        "part_boundary_confirmed": "yes",
+        "reviewed_part_subpart": "b",
+        "reviewer_notes": "Automated draft review: part (b) multiplies complex numbers in polar/exponential form and combines moduli and arguments. Mark scheme confirms r and theta values. Complex arithmetic/polar form skill is confirmed for subpart b. This is an automated draft selection saved from the visual review packet; it is not reviewed registry evidence.",
+        "route_status": "clean",
+        "scope_decision": "subpart_level_needed",
+        "support_material_decision": "supporting_context_only"
+      },
+      "item_number": 25,
+      "question_id": "31summer24_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31summer24_q04:31summer24_q04_b",
+      "subpart_id": "31summer24_q04_b"
+    }
+  ],
+  "saved_at": "2026-05-25T23:54:07.346Z",
+  "schema": "exam_bank.p3_exact_skill.review_batch_responses",
+  "schema_version": 1,
+  "warning": "Draft human review notes only. Not reviewed evidence and not the reviewed-decision registry."
+}

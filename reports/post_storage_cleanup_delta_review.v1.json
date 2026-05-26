@@ -1,0 +1,1632 @@
+{
+  "content_lab_delta": {
+    "added_candidate_id_count": 19,
+    "added_candidate_ids": [
+      "content_lab_33autumn25_q01_whole",
+      "content_lab_33autumn25_q02_whole",
+      "content_lab_33autumn25_q03_whole",
+      "content_lab_33autumn25_q04_whole",
+      "content_lab_33autumn25_q05_a",
+      "content_lab_33autumn25_q05_b",
+      "content_lab_33autumn25_q06_whole",
+      "content_lab_33autumn25_q07_whole",
+      "content_lab_33autumn25_q08_a",
+      "content_lab_33autumn25_q08_b",
+      "content_lab_33autumn25_q08_c",
+      "content_lab_33autumn25_q08_d",
+      "content_lab_33autumn25_q09_a",
+      "content_lab_33autumn25_q09_b",
+      "content_lab_33autumn25_q09_c",
+      "content_lab_33autumn25_q10_a",
+      "content_lab_33autumn25_q10_b",
+      "content_lab_33autumn25_q11_a",
+      "content_lab_33autumn25_q11_b"
+    ],
+    "assessment": "expected_regeneration_delta_not_storage_cleanup_effect",
+    "assessment_reasons": [
+      "The compared previous export is an archived generated-cleanup OCR candidate export, not a current live export snapshot.",
+      "The net +16 consists of 19 added IDs and 3 removed IDs, so this is an actual regenerated candidate-set delta rather than ordering or record-count metadata only.",
+      "All 19 added IDs are from 33autumn25, where the previous archived question bank had empty mark_scheme_image_path and mapping_status=fail; the current question bank has mark-scheme paths and mapping_status=pass.",
+      "All added candidates remain blocked_until_reviewed/review-only; none are generation-ready.",
+      "Deleted storage-cleanup paths do not overlap current Content Lab source_artifact paths."
+    ],
+    "common_candidate_field_change_counts": {
+      "candidate_selection": 75,
+      "generated_warmup_pattern_source": 1426,
+      "generation_gate": 1479,
+      "possible_content_lab_roles": 1450,
+      "review_status": 252,
+      "role_statuses": 1450,
+      "source_artifacts": 2413,
+      "source_skill_ids": 1426
+    },
+    "common_candidate_id_count": 2413,
+    "current_candidate_id_count": 2432,
+    "current_record_count": 2432,
+    "net_delta": 16,
+    "previous_candidate_id_count": 2416,
+    "previous_record_count": 2416,
+    "removed_candidate_id_count": 3,
+    "removed_candidate_ids": [
+      "content_lab_12autumn22_q11_c",
+      "content_lab_41summer23_q06_a",
+      "content_lab_42summer22_q05_whole"
+    ],
+    "review_status_transition_counts": {
+      "blocked_until_reviewed -> machine_candidate": 237,
+      "machine_candidate -> blocked_until_reviewed": 15
+    },
+    "source_artifact_key_transition_counts": {
+      "['mark_scheme_crop_path', 'question_crop_path'] -> ['mark_scheme_asset_id', 'mark_scheme_crop_path', 'question_asset_id', 'question_crop_path']": 2413
+    }
+  },
+  "inputs": {
+    "current_asterion_export": "output/asterion/exports/latest/asterion_question_bank_v1.json",
+    "current_content_lab_candidates": "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
+    "current_question_bank": "output/json/question_bank.json",
+    "previous_content_lab_candidates": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/json/asterion_content_lab_candidates_v1.json",
+    "previous_question_bank": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/json/question_bank.json",
+    "storage_audit": "reports/output_storage_duplicate_audit.v1.json",
+    "storage_delete_manifest": "reports/output_storage_delete_manifest.v1.json",
+    "topic_routing_sidecar": "output/json/question_bank.topic_routing.v1.json"
+  },
+  "new_candidates": [
+    {
+      "candidate_id": "content_lab_33autumn25_q01_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q01",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q01.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q01",
+        "question_crop_path": "p3/33autumn25/questions/q01.png"
+      },
+      "marks": 4,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q01",
+      "question_number": "1",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q01.png",
+        "current_text_only_status": "ready",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q01_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "parametric_equations",
+        "topic_confidence": "medium",
+        "topic_trust_status": "review_required",
+        "topic_uncertain": false
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q02_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q02",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q02.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q02",
+        "question_crop_path": "p3/33autumn25/questions/q02.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q02",
+      "question_number": "2",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q02.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q02_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "polynomials",
+        "topic_confidence": "low",
+        "topic_trust_status": "review_required",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q03_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q03",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q03.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q03",
+        "question_crop_path": "p3/33autumn25/questions/q03.png"
+      },
+      "marks": 4,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q03",
+      "question_number": "3",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q03.png",
+        "current_text_only_status": "fail",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q03_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "logarithms_and_exponentials",
+        "topic_confidence": "low",
+        "topic_trust_status": "review_required",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q04_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q04",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q04.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q04",
+        "question_crop_path": "p3/33autumn25/questions/q04.png"
+      },
+      "marks": 5,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q04",
+      "question_number": "4",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q04.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q04_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "complex_numbers",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q05_a",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q05",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q05.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q05",
+        "question_crop_path": "p3/33autumn25/questions/q05.png"
+      },
+      "marks": 4,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q05",
+      "question_number": "5",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q05.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q05_a",
+      "subpart_label": "a",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "trigonometry",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q05_b",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q05",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q05.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q05",
+        "question_crop_path": "p3/33autumn25/questions/q05.png"
+      },
+      "marks": 4,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q05",
+      "question_number": "5",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q05.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q05_b",
+      "subpart_label": "b",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "trigonometry",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q06_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q06",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q06.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q06",
+        "question_crop_path": "p3/33autumn25/questions/q06.png"
+      },
+      "marks": 6,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q06",
+      "question_number": "6",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q06.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q06_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "integration",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q07_whole",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q07",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q07.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q07",
+        "question_crop_path": "p3/33autumn25/questions/q07.png"
+      },
+      "marks": 6,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q07",
+      "question_number": "7",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q07.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q07_whole",
+      "subpart_label": "whole",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "algebra",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q08_a",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q08",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q08.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q08",
+        "question_crop_path": "p3/33autumn25/questions/q08.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q08",
+      "question_number": "8",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q08.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q08_a",
+      "subpart_label": "a",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "numerical_methods",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q08_b",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q08",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q08.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q08",
+        "question_crop_path": "p3/33autumn25/questions/q08.png"
+      },
+      "marks": 2,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q08",
+      "question_number": "8",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q08.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q08_b",
+      "subpart_label": "b",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "numerical_methods",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q08_c",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q08",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q08.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q08",
+        "question_crop_path": "p3/33autumn25/questions/q08.png"
+      },
+      "marks": 2,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q08",
+      "question_number": "8",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q08.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q08_c",
+      "subpart_label": "c",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "numerical_methods",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q08_d",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q08",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q08.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q08",
+        "question_crop_path": "p3/33autumn25/questions/q08.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q08",
+      "question_number": "8",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q08.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q08_d",
+      "subpart_label": "d",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "numerical_methods",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q09_a",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q09",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q09.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q09",
+        "question_crop_path": "p3/33autumn25/questions/q09.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q09",
+      "question_number": "9",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q09.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q09_a",
+      "subpart_label": "a",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "vectors",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q09_b",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q09",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q09.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q09",
+        "question_crop_path": "p3/33autumn25/questions/q09.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q09",
+      "question_number": "9",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q09.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q09_b",
+      "subpart_label": "b",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "vectors",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q09_c",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q09",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q09.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q09",
+        "question_crop_path": "p3/33autumn25/questions/q09.png"
+      },
+      "marks": 3,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q09",
+      "question_number": "9",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q09.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q09_c",
+      "subpart_label": "c",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "vectors",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q10_a",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q10",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q10.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q10",
+        "question_crop_path": "p3/33autumn25/questions/q10.png"
+      },
+      "marks": 2,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q10",
+      "question_number": "10",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q10.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q10_a",
+      "subpart_label": "a",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "partial_fractions",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q10_b",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q10",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q10.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q10",
+        "question_crop_path": "p3/33autumn25/questions/q10.png"
+      },
+      "marks": 6,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q10",
+      "question_number": "10",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q10.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q10_b",
+      "subpart_label": "b",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "partial_fractions",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q11_a",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q11",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q11.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q11",
+        "question_crop_path": "p3/33autumn25/questions/q11.png"
+      },
+      "marks": 6,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q11",
+      "question_number": "11",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q11.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q11_a",
+      "subpart_label": "a",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "parametric_equations",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    },
+    {
+      "candidate_id": "content_lab_33autumn25_q11_b",
+      "gating_review_status": {
+        "generation_gate": {
+          "block_reasons": [
+            "question_quality_gate_blocks_content_lab_generation",
+            "mapping_or_subpart_not_reviewed_or_approved",
+            "mark_events_not_reviewed_or_approved",
+            "missing_source_skill_ids"
+          ],
+          "blocked": true,
+          "status": "blocked_until_reviewed"
+        },
+        "possible_content_lab_roles": [
+          "mixed_review_source"
+        ],
+        "review_status": "blocked_until_reviewed",
+        "role_statuses": {
+          "field_guide_source": "block",
+          "generated_warmup_pattern_source": "block",
+          "guardian_candidate": "block",
+          "mixed_review_source": "blocked_until_reviewed",
+          "prerequisite_repair_source": "block",
+          "quick_check_source": "block"
+        },
+        "safety_classification": "review_only_blocked_until_reviewed"
+      },
+      "image_asset_references": {
+        "mark_scheme_asset_id": "mark_scheme_image:33autumn25:33autumn25_q11",
+        "mark_scheme_crop_path": "p3/33autumn25/mark_scheme/q11.png",
+        "question_asset_id": "question_image:33autumn25:33autumn25_q11",
+        "question_crop_path": "p3/33autumn25/questions/q11.png"
+      },
+      "marks": 6,
+      "paper": "33autumn25",
+      "paper_family": "p3",
+      "question_id": "33autumn25_q11",
+      "question_number": "11",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_mark_scheme_image_path": "p3/33autumn25/mark_scheme/q11.png",
+        "current_text_only_status": "review",
+        "previous_mapping_status": "fail",
+        "previous_mark_scheme_image_path": "",
+        "previous_text_only_status": "fail"
+      },
+      "subpart_id": "33autumn25_q11_b",
+      "subpart_label": "b",
+      "topic_skill_fields": {
+        "source_skill_ids": [],
+        "subtopic": "general",
+        "topic": "parametric_equations",
+        "topic_confidence": "low",
+        "topic_trust_status": "degraded_text",
+        "topic_uncertain": true
+      }
+    }
+  ],
+  "remaining_duplicate_groups": {
+    "conclusion": "Remaining duplicates are tiny, marked do not touch, and show 0 B reclaimable under the hard-delete policy; they were intentionally left untouched.",
+    "groups": [
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q08.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q08.png",
+          "output/codex_text_extraction_targeted/p1/12summer23/questions/q08.png"
+        ],
+        "sha256": "48e5c6064df4fe378ca65ec4fee0f7496485b1a4b492df58a41821885dcf1dd4",
+        "wasted_bytes": 178920,
+        "wasted_human": "174.73 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/11autumn25/questions/q07.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/11autumn25/questions/q07.png",
+          "output/codex_text_extraction_targeted/p1/11autumn25/questions/q07.png"
+        ],
+        "sha256": "6b00b7887fdb745967c7556de909a7fbd929611aec17dfb92a22c6cace7cf4a3",
+        "wasted_bytes": 141532,
+        "wasted_human": "138.21 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q10.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q10.png",
+          "output/codex_text_extraction_targeted/p1/12spring22/questions/q10.png"
+        ],
+        "sha256": "7ea1edc49a0ce1055ea40d263333dadd892045efea6a1417e6dcc6d7a841a03a",
+        "wasted_bytes": 109326,
+        "wasted_human": "106.76 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q06.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q06.png",
+          "output/codex_text_extraction_targeted/p1/12spring22/questions/q06.png"
+        ],
+        "sha256": "7cb2a99b4ee53a9b69c1df3cba01fef115dbe97006578e8d6c3c1f63cffc7538",
+        "wasted_bytes": 100834,
+        "wasted_human": "98.47 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q08.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q08.png",
+          "output/codex_text_extraction_targeted/p1/12spring22/questions/q08.png"
+        ],
+        "sha256": "34bbcd109bde3ce0b00b5e4d9ac8c8eba3dddf2e0d12e7cb1bc24c7fb52bf501",
+        "wasted_bytes": 97854,
+        "wasted_human": "95.56 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q06.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q06.png",
+          "output/codex_text_extraction_targeted/p1/12summer23/questions/q06.png"
+        ],
+        "sha256": "6f77114d0342585768da4a6a6a43b94dbfdb440342154a6c293be79aa5eabdf8",
+        "wasted_bytes": 70323,
+        "wasted_human": "68.67 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q05.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12summer23/questions/q05.png",
+          "output/codex_text_extraction_targeted/p1/12summer23/questions/q05.png"
+        ],
+        "sha256": "829acffef2f23581ef479fcfb28a96825f5adfcf3af547fdc8c81afe7e1217eb",
+        "wasted_bytes": 59000,
+        "wasted_human": "57.62 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q07.png",
+        "file_count": 2,
+        "media_type": "image",
+        "paths": [
+          "output/archive/generated_cleanup_20260513T233456Z/output_ocr_candidate/p1/12spring22/questions/q07.png",
+          "output/codex_text_extraction_targeted/p1/12spring22/questions/q07.png"
+        ],
+        "sha256": "f4fc3c123565c81f72d38f51025f29c3026f237384e5549bb7183222b0137c6a",
+        "wasted_bytes": 43706,
+        "wasted_human": "42.68 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/output_inventory.after_cleanup.json",
+        "file_count": 2,
+        "media_type": "json",
+        "paths": [
+          "output/output_inventory.after_cleanup.json",
+          "output/output_inventory.before_cleanup.json"
+        ],
+        "sha256": "7abcfaf273bde749ef114025760a1509094e01a88f010d36e00785bb44e4d9d0",
+        "wasted_bytes": 2272,
+        "wasted_human": "2.22 KiB"
+      },
+      {
+        "actions": {
+          "do not touch": 2
+        },
+        "canonical_file": "output/output_inventory.after_cleanup.md",
+        "file_count": 2,
+        "media_type": "report",
+        "paths": [
+          "output/output_inventory.after_cleanup.md",
+          "output/output_inventory.before_cleanup.md"
+        ],
+        "sha256": "32a39a1dab95f74f53e0b1b04790dfba039c321f12f4d602af7d6d5d692770aa",
+        "wasted_bytes": 1080,
+        "wasted_human": "1.05 KiB"
+      }
+    ],
+    "summary": {
+      "duplicate_file_count": 20,
+      "duplicate_group_count": 10,
+      "duplicate_wasted_bytes": 804847,
+      "duplicate_wasted_human": "785.98 KiB",
+      "estimated_reclaimable_bytes": 0,
+      "estimated_reclaimable_human": "0 B",
+      "referenced_file_count": 2604,
+      "total_file_count": 4101,
+      "total_size_bytes": 1245251646,
+      "total_size_human": "1.16 GiB",
+      "unreferenced_file_count": 1497
+    }
+  },
+  "removed_candidates": [
+    {
+      "candidate_id": "content_lab_12autumn22_q11_c",
+      "current_mark_event_count": 4,
+      "current_min_mark_event_confidence": 0.81,
+      "current_quality_gate": {
+        "canonical_assets_ok": true,
+        "content_lab_generation_allowed": true,
+        "mark_scheme_crop_ok": true,
+        "marks_consistent": true,
+        "paper_total_consistent": true,
+        "question_crop_ok": false,
+        "reason_codes": [
+          "question_crop_not_high_confidence",
+          "text_only_blocked_status_review",
+          "text_only_blocked_trust_medium",
+          "text_only_blocked_visual_required"
+        ],
+        "text_only_display_allowed": false,
+        "visual_required": true
+      },
+      "current_subpart_review_status": "review",
+      "likely_reason_no_longer_selected": "current record is review-status only and mark-event confidence is below the 0.84 machine-candidate threshold after crop confidence/status downgrade",
+      "paper": "12autumn22",
+      "paper_family": "p1",
+      "previous_generation_gate": {
+        "block_reasons": [
+          "mark_events_not_reviewed_or_approved"
+        ],
+        "blocked": true,
+        "status": "blocked_until_reviewed"
+      },
+      "previous_review_status": "blocked_until_reviewed",
+      "question_id": "12autumn22_q11",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_question_crop_confidence": "low",
+        "current_text_candidate_decision": "native_retained",
+        "current_visual_curation_status": "review",
+        "previous_mapping_status": "pass",
+        "previous_question_crop_confidence": "high",
+        "previous_text_candidate_decision": "native_retained",
+        "previous_visual_curation_status": "ready"
+      },
+      "subpart_id": "12autumn22_q11_c",
+      "subpart_label": "c"
+    },
+    {
+      "candidate_id": "content_lab_41summer23_q06_a",
+      "current_mark_event_count": 4,
+      "current_min_mark_event_confidence": 0.81,
+      "current_quality_gate": {
+        "canonical_assets_ok": true,
+        "content_lab_generation_allowed": false,
+        "mark_scheme_crop_ok": true,
+        "marks_consistent": true,
+        "paper_total_consistent": true,
+        "question_crop_ok": false,
+        "reason_codes": [
+          "content_lab_blocked_topic_confidence_low",
+          "content_lab_blocked_topic_uncertain",
+          "question_crop_not_high_confidence",
+          "text_only_blocked_status_review",
+          "text_only_blocked_trust_medium",
+          "text_only_blocked_visual_required"
+        ],
+        "text_only_display_allowed": false,
+        "visual_required": true
+      },
+      "current_subpart_review_status": "review",
+      "likely_reason_no_longer_selected": "current record is review-status only and mark-event confidence is below the 0.84 machine-candidate threshold after crop confidence/status downgrade",
+      "paper": "41summer23",
+      "paper_family": "p4",
+      "previous_generation_gate": {
+        "block_reasons": [
+          "question_quality_gate_blocks_content_lab_generation",
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "blocked": true,
+        "status": "blocked_until_reviewed"
+      },
+      "previous_review_status": "machine_candidate",
+      "question_id": "41summer23_q06",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_question_crop_confidence": "low",
+        "current_text_candidate_decision": "ocr_selected",
+        "current_visual_curation_status": "review",
+        "previous_mapping_status": "pass",
+        "previous_question_crop_confidence": "high",
+        "previous_text_candidate_decision": "ocr_selected",
+        "previous_visual_curation_status": "ready"
+      },
+      "subpart_id": "41summer23_q06_a",
+      "subpart_label": "a"
+    },
+    {
+      "candidate_id": "content_lab_42summer22_q05_whole",
+      "current_mark_event_count": 6,
+      "current_min_mark_event_confidence": 0.81,
+      "current_quality_gate": {
+        "canonical_assets_ok": true,
+        "content_lab_generation_allowed": true,
+        "mark_scheme_crop_ok": true,
+        "marks_consistent": true,
+        "paper_total_consistent": true,
+        "question_crop_ok": false,
+        "reason_codes": [
+          "question_crop_not_high_confidence",
+          "text_only_blocked_status_review",
+          "text_only_blocked_trust_medium",
+          "text_only_blocked_visual_required"
+        ],
+        "text_only_display_allowed": false,
+        "visual_required": true
+      },
+      "current_subpart_review_status": "review",
+      "likely_reason_no_longer_selected": "current record is review-status only and mark-event confidence is below the 0.84 machine-candidate threshold after crop confidence/status downgrade",
+      "paper": "42summer22",
+      "paper_family": "p4",
+      "previous_generation_gate": {
+        "block_reasons": [
+          "mark_events_not_reviewed_or_approved",
+          "missing_source_skill_ids"
+        ],
+        "blocked": true,
+        "status": "blocked_until_reviewed"
+      },
+      "previous_review_status": "machine_candidate",
+      "question_id": "42summer22_q05",
+      "source_delta_from_previous_question_bank": {
+        "current_mapping_status": "pass",
+        "current_question_crop_confidence": "low",
+        "current_text_candidate_decision": "native_retained",
+        "current_visual_curation_status": "review",
+        "previous_mapping_status": "pass",
+        "previous_question_crop_confidence": "high",
+        "previous_text_candidate_decision": "native_retained",
+        "previous_visual_curation_status": "ready"
+      },
+      "subpart_id": "42summer22_q05_whole",
+      "subpart_label": "whole"
+    }
+  ],
+  "schema_name": "exam_bank.post_storage_cleanup_delta_review",
+  "schema_version": 1,
+  "storage_cleanup_effect": {
+    "added_candidate_deleted_source_ref_overlap": [],
+    "added_candidate_deleted_source_ref_overlap_count": 0,
+    "conclusion": "No evidence that storage cleanup caused a functional Content Lab export change; current candidate source artifacts resolve to canonical output paths and none were hard-deleted.",
+    "current_content_lab_source_ref_count": 2510,
+    "deleted_bytes": 2106067542,
+    "deleted_file_count": 13198,
+    "deleted_human": "1.96 GiB",
+    "deleted_source_ref_overlap": [],
+    "deleted_source_ref_overlap_count": 0,
+    "missing_current_source_ref_count": 0,
+    "missing_current_source_refs": []
+  },
+  "topic_routing_failures": {
+    "compact_diagnosis": "All 153 failures are provider/schema validation failures caused by evidence_used values that reference evidence not supplied in the routing packet. The errors are independent of storage cleanup and keep safe_for_strict_filters=false.",
+    "failure_by_blamed_record": {
+      "12autumn21_q06": 12,
+      "12summer24_q02": 10,
+      "13autumn23_q11": 11,
+      "31autumn23_q07": 11,
+      "31summer23_q04": 10,
+      "32autumn22_q07": 10,
+      "32spring21_q05": 10,
+      "33autumn24_q05": 11,
+      "42spring22_q03": 7,
+      "51summer21_q04": 7,
+      "51summer22_q03": 6,
+      "51summer23_q04": 7,
+      "51summer24_q05": 7,
+      "52spring23_q01": 7,
+      "52summer24_q03": 7,
+      "53autumn21_q06": 7,
+      "53autumn23_q03": 6,
+      "53summer23_q06": 7
+    },
+    "failure_by_family": {
+      "p1": 33,
+      "p3": 52,
+      "p4": 7,
+      "p5": 61
+    },
+    "failure_by_paper": {
+      "12autumn21": 12,
+      "12summer24": 10,
+      "13autumn23": 11,
+      "31autumn23": 11,
+      "31summer23": 10,
+      "32autumn22": 10,
+      "32spring21": 10,
+      "33autumn24": 11,
+      "42spring22": 7,
+      "51summer21": 7,
+      "51summer22": 6,
+      "51summer23": 7,
+      "51summer24": 7,
+      "52spring23": 7,
+      "52summer24": 7,
+      "53autumn21": 7,
+      "53autumn23": 6,
+      "53summer23": 7
+    },
+    "failure_category_counts": {
+      "unsupported_evidence_used": 153
+    },
+    "failure_count": 153,
+    "failure_message_counts": {
+      "records[12autumn21_q06]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 12,
+      "records[12summer24_q02]: evidence_used contains evidence that was not supplied: ['question_text'].": 10,
+      "records[13autumn23_q11]: evidence_used contains evidence that was not supplied: ['question_text'].": 11,
+      "records[31autumn23_q07]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 11,
+      "records[31summer23_q04]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 10,
+      "records[32autumn22_q07]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 10,
+      "records[32spring21_q05]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 10,
+      "records[33autumn24_q05]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 11,
+      "records[42spring22_q03]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 7,
+      "records[51summer21_q04]: evidence_used contains evidence that was not supplied: ['question_text'].": 7,
+      "records[51summer22_q03]: evidence_used contains evidence that was not supplied: ['question_text'].": 6,
+      "records[51summer23_q04]: evidence_used contains evidence that was not supplied: ['question_text'].": 7,
+      "records[51summer24_q05]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 7,
+      "records[52spring23_q01]: evidence_used contains evidence that was not supplied: ['question_text'].": 7,
+      "records[52summer24_q03]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 7,
+      "records[53autumn21_q06]: evidence_used contains evidence that was not supplied: ['question_text'].": 7,
+      "records[53autumn23_q03]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 6,
+      "records[53summer23_q06]: evidence_used contains evidence that was not supplied: ['ocr_text'].": 7
+    },
+    "run_summary": {
+      "attempted_records": 1301,
+      "failed_records": 153,
+      "failures_by_reason": {
+        "schema_validation_error": 153
+      },
+      "generated_at": "2026-05-13T12:29:09.664228+00:00",
+      "provider_failure_records": 0,
+      "review_required_records": 221,
+      "safe_for_strict_filters": false,
+      "schema_name": "exam_bank.topic_routing_sidecar",
+      "schema_version": 1,
+      "strict_filter_records": 1080,
+      "successful_records": 1148,
+      "total_records": 1301
+    }
+  },
+  "validation": {
+    "asset_reference_validation": {
+      "command": ".venv/bin/python scripts/validate_asset_references.py --output reports/asset_reference_validation.v1.json",
+      "ok": true,
+      "summary": {
+        "asterion_records": 1301,
+        "content_lab_candidates": 2432,
+        "manifest_asset_count": 2602,
+        "question_bank_records": 1301,
+        "topic_routing": {
+          "attempted_records": 1301,
+          "failed_records": 153,
+          "failures_by_reason": {
+            "schema_validation_error": 153
+          },
+          "generated_at": "2026-05-13T12:29:09.664228+00:00",
+          "provider_failure_records": 0,
+          "review_required_records": 221,
+          "safe_for_strict_filters": false,
+          "schema_name": "exam_bank.topic_routing_sidecar",
+          "schema_version": 1,
+          "strict_filter_records": 1080,
+          "successful_records": 1148,
+          "total_records": 1301
+        }
+      }
+    },
+    "content_lab_regeneration": {
+      "command": ".venv/bin/python -m exam_bank.cli asterion-content-lab-candidates --input output/json/question_bank.json --artifact-root output",
+      "ok": true,
+      "record_count": 2432
+    },
+    "targeted_tests": {
+      "command": ".venv/bin/python -m pytest -q tests/test_asterion_export.py tests/test_topic_routing.py tests/test_asset_manifest_storage_audit.py",
+      "ok": true,
+      "result": "30 passed"
+    },
+    "topic_routing_audit": {
+      "command": ".venv/bin/python - <<'PY' ... audit_topic_routing_sidecar('output/json/question_bank.topic_routing.v1.json')",
+      "ok": true,
+      "summary": {
+        "attempted_records": 1301,
+        "failed_records": 153,
+        "failures_by_reason": {
+          "schema_validation_error": 153
+        },
+        "generated_at": "2026-05-13T12:29:09.664228+00:00",
+        "provider_failure_records": 0,
+        "review_required_records": 221,
+        "safe_for_strict_filters": false,
+        "schema_name": "exam_bank.topic_routing_sidecar",
+        "schema_version": 1,
+        "strict_filter_records": 1080,
+        "successful_records": 1148,
+        "total_records": 1301
+      }
+    }
+  }
+}
