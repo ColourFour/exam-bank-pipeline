@@ -427,6 +427,11 @@ def test_full_pool_classification_and_batch_exclude_sample_rows(tmp_path: Path) 
     mappings["mappings"][4]["confidence"] = 0.82
     mappings["mappings"][4]["secondary_skill_ids"] = ["9709_p3_3_7_vector_lines"]
     _write_json(paths["mappings"], mappings)
+    inventory_rows = list(csv.DictReader((paths["audit_dir"] / "p3_candidate_inventory.csv").open(encoding="utf-8")))
+    inventory_rows[0]["passed"] = "True"
+    _write_csv(paths["audit_dir"] / "p3_candidate_inventory.csv", inventory_rows)
+    backlog_path = tmp_path / "regeneration_backlog.json"
+    _write_json(backlog_path, {"rows": [{"original_candidate_id": "content_lab_q6_whole"}]})
 
     payload = build_full_pool_classification(
         audit_dir=paths["audit_dir"],
@@ -435,13 +440,16 @@ def test_full_pool_classification_and_batch_exclude_sample_rows(tmp_path: Path) 
         mark_events_path=paths["mark_events"],
         artifact_root=paths["artifact_root"],
         out_dir=tmp_path / "review",
+        loop005_regeneration_backlog_path=backlog_path,
         skill_map_path=paths["skill_map"],
         question_skill_mappings_path=paths["mappings"],
     )
     counts = payload["classification_counts"]
-    assert counts["eligible_for_direct_agentic_review"] == 5
+    assert counts["eligible_for_direct_agentic_review"] == 3
     assert counts["mapping_correctable"] == 1
-    assert payload["estimated_additional_approvals_needed"]["for_70_percent"] == 5
+    assert counts["regenerate_candidate_required"] == 1
+    assert payload["estimated_additional_approvals_needed"]["for_70_percent"] == 4
+    assert "content_lab_q1_whole" not in {row["candidate_id"] for row in payload["rows"]}
     assert (tmp_path / "review" / "full_pool_classification.csv").exists()
     assert (tmp_path / "review" / "full_pool_classification.md").exists()
 
@@ -463,6 +471,7 @@ def test_full_pool_classification_and_batch_exclude_sample_rows(tmp_path: Path) 
     assert {row["candidate_id"] for row in batch["rows"]}.isdisjoint(
         {row["candidate_id"] for row in sample_rows}
     )
+    assert "content_lab_q6_whole" not in {row["candidate_id"] for row in batch["rows"]}
 
 
 def test_codex_decisions_import_and_improve_only_from_valid_reviewed_evidence(tmp_path: Path) -> None:

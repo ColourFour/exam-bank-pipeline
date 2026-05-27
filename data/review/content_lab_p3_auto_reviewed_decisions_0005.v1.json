@@ -1,0 +1,19 @@
+{
+  "confidence_threshold": 0.9,
+  "created_at": "2026-05-27T23:44:07Z",
+  "decision_version": "content_lab_p3_auto_review_decision_v1",
+  "mark_event_decisions": [],
+  "mark_event_decisions_schema_version": 1,
+  "note": "No Loop 004 approvals imported because direct canonical image review could not run without OPENAI_API_KEY.",
+  "record_count": 0,
+  "records": [],
+  "review_source": "automated_agentic_review",
+  "schema": "exam_bank.content_lab.auto_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "asterion_runtime_safe_loop_004",
+  "source_batch_path": "output/review/asterion_runtime_safe_loop_004/auto_review_batch.json",
+  "source_review_file": "output/review/asterion_runtime_safe_loop_004/auto_review_decisions.jsonl",
+  "source_skill_records": [],
+  "source_skill_records_schema": "exam_bank.p3_exact_skill.reviewed_decisions",
+  "source_skill_records_schema_version": 1
+}
