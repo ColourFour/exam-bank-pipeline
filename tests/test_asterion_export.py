@@ -26,16 +26,20 @@ from exam_bank.asterion_export import (
 def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: Path) -> None:
     artifact_root = _write_artifacts(tmp_path)
     bank = _question_bank_fixture()
+    generated_at = "2026-05-27T15:20:00+00:00"
 
     payload = build_asterion_export(
         bank,
         artifact_root=artifact_root,
         base_dir=tmp_path,
         skill_mappings={"12spring21_q01_a": ["9709_p1_series_binomial_positive_integer"]},
+        generated_at=generated_at,
     )
 
     assert payload["schema_name"] == ASTERION_SCHEMA_NAME
     assert payload["schema_version"] == ASTERION_SCHEMA_VERSION
+    assert payload["generated_at"] == generated_at
+    assert payload["last_run_at"] == generated_at
     assert payload["record_count"] == 2
 
     by_id = {record["question_id"]: record for record in payload["questions"]}
@@ -268,11 +272,14 @@ def test_content_lab_candidates_emit_roles_and_block_warmup_until_reviewed(tmp_p
         base_dir=tmp_path,
         skill_mappings={"12spring21_q01_a": ["9709_p1_series_binomial_positive_integer"]},
     )
+    generated_at = "2026-05-27T15:20:00+00:00"
 
-    payload = build_content_lab_candidates(asterion)
+    payload = build_content_lab_candidates(asterion, generated_at=generated_at)
 
     assert payload["schema_name"] == CONTENT_LAB_SCHEMA_NAME
     assert payload["schema_version"] == CONTENT_LAB_SCHEMA_VERSION
+    assert payload["generated_at"] == generated_at
+    assert payload["last_run_at"] == generated_at
     assert payload["policy"] == {
         "no_student_facing_generated_content": True,
         "emits_candidates_and_metadata_only": True,

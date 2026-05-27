@@ -87,7 +87,7 @@ def build_output_inventory(
             [entry for entry in comparison_entries if entry.path.name.startswith("comparison.auto-")]
         ),
         "triage_comparisons": _entry_dicts(comparison_entries),
-        "asterion_outputs": _entry_dicts(asterion_entries),
+        "asterion_outputs": _asterion_entry_dicts(asterion_entries),
         "audit_folders": _entry_dicts(audit_entries),
         "run_status_files": _entry_dicts(by_kind.get("run_status", [])),
         "frozen_baselines": _entry_dicts(frozen_baselines),
@@ -405,6 +405,29 @@ def _entry_dicts(entries: list[PathEntry]) -> list[dict[str, Any]]:
     return [entry.as_dict() for entry in sorted(entries, key=lambda item: str(item.path))]
 
 
+def _asterion_entry_dicts(entries: list[PathEntry]) -> list[dict[str, Any]]:
+    values: list[dict[str, Any]] = []
+    for entry in sorted(entries, key=lambda item: str(item.path)):
+        payload = entry.as_dict()
+        if entry.path.suffix == ".json":
+            last_run_at = _json_last_run_at(entry.path)
+            if last_run_at:
+                payload["last_run_at"] = last_run_at
+        values.append(payload)
+    return values
+
+
+def _json_last_run_at(path: Path) -> str:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ""
+    if not isinstance(payload, dict):
+        return ""
+    value = payload.get("last_run_at") or payload.get("generated_at")
+    return str(value) if value else ""
+
+
 def _markdown_section(title: str, value: Any) -> list[str]:
     lines = [f"## {title}"]
     if not value:
@@ -413,7 +436,8 @@ def _markdown_section(title: str, value: Any) -> list[str]:
         for item in value:
             if isinstance(item, dict):
                 size = f" ({item['size_bytes']} bytes)" if "size_bytes" in item else ""
-                lines.append(f"- `{item.get('path')}`{size}")
+                last_run = f" - last run: `{item['last_run_at']}`" if "last_run_at" in item else ""
+                lines.append(f"- `{item.get('path')}`{size}{last_run}")
             else:
                 lines.append(f"- `{item}`")
     else:

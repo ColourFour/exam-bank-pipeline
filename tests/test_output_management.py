@@ -11,7 +11,10 @@ def test_output_inventory_finds_contract_paths(tmp_path: Path, capsys) -> None:
     _write(root / "p1" / "12spring21" / "questions" / "q01.png", "png")
     _write(root / "triage" / "iteration_001" / "baseline_question_bank.json", {"questions": []})
     _write(root / "triage" / "iteration_001" / "comparisons" / "comparison.auto-iteration-001.json", {"ok": True})
-    _write(root / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json", {"questions": []})
+    _write(
+        root / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
+        {"generated_at": "2026-05-27T15:20:00+00:00", "questions": []},
+    )
     _write(root / "audits" / "iteration_001" / "audit_summary.json", {"ok": True})
     _write(root / "run_status" / "run-1" / "run_status.json", {"run_id": "run-1"})
 
@@ -27,11 +30,13 @@ def test_output_inventory_finds_contract_paths(tmp_path: Path, capsys) -> None:
     assert [item["path"] for item in report["auto_triage_comparisons"]] == [
         str(root / "triage" / "iteration_001" / "comparisons" / "comparison.auto-iteration-001.json")
     ]
+    assert report["asterion_outputs"][0]["last_run_at"] == "2026-05-27T15:20:00+00:00"
 
     output_json = root / "output_inventory.json"
     assert main(["output-inventory", "--root", str(root), "--json", str(output_json)]) == 0
     captured = capsys.readouterr()
     assert "Generated Output Inventory" in captured.out
+    assert "last run" in captured.out
     assert json.loads(output_json.read_text(encoding="utf-8"))["schema_name"] == "exam_bank.output_inventory"
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
@@ -98,6 +99,7 @@ def build_asterion_export(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_mappings: dict[str, list[str]] | None = None,
+    generated_at: str | None = None,
 ) -> dict[str, Any]:
     if question_bank.get("schema_name") != "exam_bank.question_bank":
         raise ValueError("Asterion export requires exam_bank.question_bank input")
@@ -111,9 +113,12 @@ def build_asterion_export(
         build_asterion_record(record, artifact_root=root, base_dir=base, skill_mappings=skills)
         for record in question_bank.get("questions", [])
     ]
+    run_timestamp = generated_at or _utc_now_iso()
     return {
         "schema_name": ASTERION_SCHEMA_NAME,
         "schema_version": ASTERION_SCHEMA_VERSION,
+        "generated_at": run_timestamp,
+        "last_run_at": run_timestamp,
         "source_schema": {
             "schema_name": question_bank.get("schema_name"),
             "schema_version": question_bank.get("schema_version"),
@@ -130,6 +135,7 @@ def build_content_lab_candidates(
     reviewed_source_skill_decisions: dict[str, Any] | None = None,
     reviewed_mark_events: dict[str, Any] | None = None,
     canonical_mark_event_ids_by_subpart: dict[str, list[str]] | None = None,
+    generated_at: str | None = None,
 ) -> dict[str, Any]:
     if asterion_question_bank.get("schema_name") != ASTERION_SCHEMA_NAME:
         raise ValueError("Content Lab candidates require asterion.question_bank input")
@@ -160,9 +166,12 @@ def build_content_lab_candidates(
                 )
             )
 
+    run_timestamp = generated_at or _utc_now_iso()
     return {
         "schema_name": CONTENT_LAB_SCHEMA_NAME,
         "schema_version": CONTENT_LAB_SCHEMA_VERSION,
+        "generated_at": run_timestamp,
+        "last_run_at": run_timestamp,
         "source_schema": {
             "schema_name": asterion_question_bank.get("schema_name"),
             "schema_version": asterion_question_bank.get("schema_version"),
@@ -249,6 +258,10 @@ def infer_artifact_root(input_path: str | Path) -> Path | None:
     if path.parent.name == "json":
         return path.parent.parent
     return path.parent
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def load_skill_mappings(path: str | Path, *, allow_unusable_ai_sidecar: bool = False) -> dict[str, list[str]]:
