@@ -231,6 +231,12 @@ def test_corrected_mapping_provenance_rejects_unchanged_rejected_mapping(tmp_pat
 
     assert "corrected_mapping_matches_rejected_original" in validate_mapping_correction_provenance(decision)
 
+    decision["mapping_correction"]["correction_decision"] = "original_mapping_confirmed_after_canonical_review"
+    assert validate_mapping_correction_provenance(decision) == []
+
+    decision["mapping_correction"]["correction_decision"] = (
+        "existing_candidate_can_be_safely_approved_with_corrected_reviewed_metadata"
+    )
     decision["approved_source_skill_ids"] = ["9709_p3_3_7_vector_lines"]
     decision["approved_exact_skill_ids"] = ["9709_p3_3_7_vector_lines"]
     assert validate_mapping_correction_provenance(decision) == []

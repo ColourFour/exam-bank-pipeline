@@ -78,7 +78,7 @@ AMBIGUITY_TERMS = {
 CONTRACT = [
     "Canonical question image exists.",
     "Canonical mark-scheme image exists where mark-scheme evidence is required.",
-    "Candidate has validated question/question-part identity.",
+    "Candidate has validated question/question-part identity, either through source validation pass or reviewed canonical evidence for review-stale source validation.",
     "Candidate has reviewed exact/source skill mapping.",
     "Candidate has reviewed mark-event/subpart evidence where required.",
     "Candidate is not ambiguous or quarantined.",
@@ -398,9 +398,11 @@ def _evaluate_candidate(
     if _status(source_question, "mapping_status") != "pass":
         blockers.append("validated_identity")
         reasons.append(f"mapping_status_{_status(source_question, 'mapping_status') or 'missing'}")
-    if _status(source_question, "validation_status") != "pass":
+    validation_status = _status(source_question, "validation_status")
+    reviewed_identity_validation = validation_status == "review" and content_lab_reviewed
+    if validation_status != "pass" and not reviewed_identity_validation:
         blockers.append("validated_identity")
-        reasons.append(f"validation_status_{_status(source_question, 'validation_status') or 'missing'}")
+        reasons.append(f"validation_status_{validation_status or 'missing'}")
     if _status(source_question, "mapping_status") == "fail" and _status(source_question, "validation_status") == "pass":
         blockers.append("mapping_validation_contradiction")
         reasons.append("mapping_fail_validation_pass_contradiction")

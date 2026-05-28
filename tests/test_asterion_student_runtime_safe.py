@@ -225,6 +225,40 @@ def test_stale_runtime_role_promotes_only_with_validated_runtime_safe_decision(t
     ]
 
 
+def test_review_stale_validation_status_can_be_satisfied_by_reviewed_canonical_evidence(tmp_path: Path) -> None:
+    paths = _write_fixture(tmp_path)
+    question_bank = json.loads(paths["question_bank"].read_text(encoding="utf-8"))
+    q1 = next(question for question in question_bank["questions"] if question["question_id"] == "31spring24_q01")
+    q1["notes"]["validation_status"] = "review"
+    _write_json(paths["question_bank"], question_bank)
+
+    summary = run_runtime_safe_audit(
+        candidates_path=paths["candidates"],
+        question_bank_path=paths["question_bank"],
+        topic_routing_path=paths["topic_routing"],
+        asterion_bank_path=paths["asterion_bank"],
+        mark_events_path=paths["mark_events"],
+        reviewed_decisions_path=paths["reviewed_decisions"],
+        reviewed_source_skills_path=paths["reviewed_source_skills"],
+        reviewed_mark_events_path=paths["reviewed_mark_events"],
+        artifact_root=paths["artifact_root"],
+        out_dir=tmp_path / "audit",
+        target_pass_rate=0.50,
+        skill_map_path=paths["skill_map"],
+        question_skill_mappings_path=paths["question_skill_mappings"],
+        deterministic_sample_path=paths["sample"],
+        regeneration_backlog_path=paths["backlog"],
+        write_promotion_decisions_path=tmp_path / "runtime_safe_decisions.json",
+    )
+
+    assert summary["final_student_runtime_safe_true_count"] == 1
+    rows = {
+        row["candidate_id"]: row
+        for row in json.loads((tmp_path / "audit" / "runtime_safe_classification.json").read_text(encoding="utf-8"))["rows"]
+    }
+    assert "validated_identity" not in rows["content_lab_31spring24_q01_whole"]["blocker_classes"]
+
+
 def test_runtime_role_is_not_bypassed_without_reviewed_evidence(tmp_path: Path) -> None:
     paths = _write_fixture(tmp_path)
     out_dir = tmp_path / "audit"

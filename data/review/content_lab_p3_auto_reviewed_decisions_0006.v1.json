@@ -1,0 +1,302 @@
+{
+  "confidence_threshold": 0.9,
+  "created_at": "2026-05-27T23:56:18Z",
+  "decision_version": "content_lab_p3_auto_review_decision_v1",
+  "mark_event_decisions": [
+    {
+      "decision_id": "content_lab_auto_mark_event:content_lab_31autumn24_q10_a:31autumn24_q10_me0001",
+      "event_id": "31autumn24_q10_me0001",
+      "mark_scheme_image_path": "output/p3/31autumn24/mark_scheme/q10.png",
+      "notes": [
+        "source_auto_review_decision:content_lab_auto_review:content_lab_31autumn24_q10_a",
+        "source_batch_id:asterion_runtime_safe_loop_004b_direct_visual_subset"
+      ],
+      "part_path": [
+        "a"
+      ],
+      "question_image_path": "output/p3/31autumn24/questions/q10.png",
+      "rationale": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed.",
+      "reviewed_at": "2026-05-27T23:56:08Z",
+      "reviewer": "automated_agentic_review:gpt-5-codex-2026-05-28",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31autumn24_q10",
+      "status": "approved"
+    },
+    {
+      "decision_id": "content_lab_auto_mark_event:content_lab_31autumn24_q10_a:31autumn24_q10_me0002",
+      "event_id": "31autumn24_q10_me0002",
+      "mark_scheme_image_path": "output/p3/31autumn24/mark_scheme/q10.png",
+      "notes": [
+        "source_auto_review_decision:content_lab_auto_review:content_lab_31autumn24_q10_a",
+        "source_batch_id:asterion_runtime_safe_loop_004b_direct_visual_subset"
+      ],
+      "part_path": [
+        "a"
+      ],
+      "question_image_path": "output/p3/31autumn24/questions/q10.png",
+      "rationale": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed.",
+      "reviewed_at": "2026-05-27T23:56:08Z",
+      "reviewer": "automated_agentic_review:gpt-5-codex-2026-05-28",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31autumn24_q10",
+      "status": "approved"
+    },
+    {
+      "decision_id": "content_lab_auto_mark_event:content_lab_31autumn24_q10_a:31autumn24_q10_me0003",
+      "event_id": "31autumn24_q10_me0003",
+      "mark_scheme_image_path": "output/p3/31autumn24/mark_scheme/q10.png",
+      "notes": [
+        "source_auto_review_decision:content_lab_auto_review:content_lab_31autumn24_q10_a",
+        "source_batch_id:asterion_runtime_safe_loop_004b_direct_visual_subset"
+      ],
+      "part_path": [
+        "a"
+      ],
+      "question_image_path": "output/p3/31autumn24/questions/q10.png",
+      "rationale": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed.",
+      "reviewed_at": "2026-05-27T23:56:08Z",
+      "reviewer": "automated_agentic_review:gpt-5-codex-2026-05-28",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31autumn24_q10",
+      "status": "approved"
+    },
+    {
+      "decision_id": "content_lab_auto_mark_event:content_lab_31autumn24_q10_a:31autumn24_q10_me0004",
+      "event_id": "31autumn24_q10_me0004",
+      "mark_scheme_image_path": "output/p3/31autumn24/mark_scheme/q10.png",
+      "notes": [
+        "source_auto_review_decision:content_lab_auto_review:content_lab_31autumn24_q10_a",
+        "source_batch_id:asterion_runtime_safe_loop_004b_direct_visual_subset"
+      ],
+      "part_path": [
+        "a"
+      ],
+      "question_image_path": "output/p3/31autumn24/questions/q10.png",
+      "rationale": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed.",
+      "reviewed_at": "2026-05-27T23:56:08Z",
+      "reviewer": "automated_agentic_review:gpt-5-codex-2026-05-28",
+      "satisfies_generation_gate": true,
+      "schema_version": 1,
+      "source_question_id": "31autumn24_q10",
+      "status": "approved"
+    }
+  ],
+  "mark_event_decisions_schema_version": 1,
+  "record_count": 1,
+  "records": [
+    {
+      "adjudication": {
+        "reviewer_verifier_agree": true,
+        "status": "approved"
+      },
+      "approved_exact_skill_ids": [
+        "9709_p3_3_8_separable_differential_equations"
+      ],
+      "approved_mark_event_refs": [
+        {
+          "event_id": "31autumn24_q10_me0001",
+          "part_path": [
+            "a"
+          ]
+        },
+        {
+          "event_id": "31autumn24_q10_me0002",
+          "part_path": [
+            "a"
+          ]
+        },
+        {
+          "event_id": "31autumn24_q10_me0003",
+          "part_path": [
+            "a"
+          ]
+        },
+        {
+          "event_id": "31autumn24_q10_me0004",
+          "part_path": [
+            "a"
+          ]
+        }
+      ],
+      "approved_source_skill_ids": [
+        "9709_p3_3_8_separable_differential_equations"
+      ],
+      "candidate_id": "content_lab_31autumn24_q10_a",
+      "candidate_metadata": {
+        "marks": 4,
+        "paper": "31autumn24",
+        "paper_family": "p3",
+        "question_number": "10",
+        "subpart_label": "a"
+      },
+      "canonical_mark_scheme_image_path": "output/p3/31autumn24/mark_scheme/q10.png",
+      "canonical_question_image_path": "output/p3/31autumn24/questions/q10.png",
+      "confidence": 0.92,
+      "decision_id": "content_lab_auto_review:content_lab_31autumn24_q10_a",
+      "decision_version": "content_lab_p3_auto_review_decision_v1",
+      "evidence_refs": [
+        {
+          "path": "output/p3/31autumn24/questions/q10.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/p3/31autumn24/mark_scheme/q10.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "explanation": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed.",
+      "mapping_correction": {
+        "canonical_evidence_refs": [
+          {
+            "path": "output/p3/31autumn24/questions/q10.png",
+            "type": "canonical_question_image"
+          },
+          {
+            "path": "output/p3/31autumn24/mark_scheme/q10.png",
+            "type": "canonical_mark_scheme_image"
+          }
+        ],
+        "correction_decision": "original_mapping_confirmed_after_canonical_review",
+        "original_proposed_skill_ids": [
+          "9709_p3_3_8_separable_differential_equations"
+        ],
+        "original_rejection_reason": "Loop 004 full-pool classification marked this row mapping_correctable/lower-confidence; Loop 004B direct canonical visual review confirmed the original primary skill is supported.",
+        "source_loop": "runtime_safe_loop_004"
+      },
+      "question_id": "31autumn24_q10",
+      "region": "Differential Shrine",
+      "review_source": "automated_agentic_review",
+      "reviewed_at": "2026-05-27T23:56:08Z",
+      "reviewer_model": "gpt-5-codex-2026-05-28",
+      "reviewer_provider": "codex",
+      "risk_flags": [],
+      "source_batch_id": "asterion_runtime_safe_loop_004b_direct_visual_subset",
+      "source_batch_index": 1,
+      "source_loop": "runtime_safe_loop_004b",
+      "subpart_id": "31autumn24_q10_a",
+      "verifier_model": "content_lab_auto_review_validator_v1",
+      "verifier_provider": "deterministic_validator"
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema": "exam_bank.content_lab.auto_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "asterion_runtime_safe_loop_004b_direct_visual_subset",
+  "source_batch_path": "output/review/asterion_runtime_safe_loop_004b/auto_review_batch.json",
+  "source_skill_records": [
+    {
+      "allowed_use_cases": {
+        "candidate_generation": true,
+        "export": true,
+        "guardian": true,
+        "mastery": true,
+        "source_backed_examples": true
+      },
+      "blockers": [],
+      "evidence_basis": {
+        "basis_type": "automated_agentic_canonical_image_review",
+        "candidate_generation_reviewed": true,
+        "inspected_mark_scheme_image": true,
+        "inspected_question_image": true,
+        "review_notes": "Direct Codex visual inspection of the canonical question image and mark-scheme image confirmed subpart 10(a): the question asks to derive a differential equation for tank depth and the mark scheme awards the full four marks for forming dV/dt, applying V=16*pi*h and obtaining dh/dt=-lambda*sqrt(h). The proposed separable differential equations skill and all four source mark events for part (a) are supported by the canonical evidence; no ambiguity or quarantine was observed."
+      },
+      "evidence_id": "content_lab_auto_exact_skill:content_lab_31autumn24_q10_a",
+      "mark_event_refs": [
+        {
+          "event_id": "31autumn24_q10_me0001",
+          "part_path": [
+            "a"
+          ],
+          "review_status": "approved",
+          "source": "output/json/question_bank.mark_events.v1.json"
+        },
+        {
+          "event_id": "31autumn24_q10_me0002",
+          "part_path": [
+            "a"
+          ],
+          "review_status": "approved",
+          "source": "output/json/question_bank.mark_events.v1.json"
+        },
+        {
+          "event_id": "31autumn24_q10_me0003",
+          "part_path": [
+            "a"
+          ],
+          "review_status": "approved",
+          "source": "output/json/question_bank.mark_events.v1.json"
+        },
+        {
+          "event_id": "31autumn24_q10_me0004",
+          "part_path": [
+            "a"
+          ],
+          "review_status": "approved",
+          "source": "output/json/question_bank.mark_events.v1.json"
+        }
+      ],
+      "paper": "31autumn24",
+      "part_id": "a",
+      "provenance": {
+        "decision_source": "automated_agentic_review",
+        "mapping_correction": {
+          "canonical_evidence_refs": [
+            {
+              "path": "output/p3/31autumn24/questions/q10.png",
+              "type": "canonical_question_image"
+            },
+            {
+              "path": "output/p3/31autumn24/mark_scheme/q10.png",
+              "type": "canonical_mark_scheme_image"
+            }
+          ],
+          "correction_decision": "original_mapping_confirmed_after_canonical_review",
+          "original_proposed_skill_ids": [
+            "9709_p3_3_8_separable_differential_equations"
+          ],
+          "original_rejection_reason": "Loop 004 full-pool classification marked this row mapping_correctable/lower-confidence; Loop 004B direct canonical visual review confirmed the original primary skill is supported.",
+          "source_loop": "runtime_safe_loop_004"
+        },
+        "reviewer_model": "gpt-5-codex-2026-05-28",
+        "source_batch_id": "asterion_runtime_safe_loop_004b_direct_visual_subset",
+        "source_loop": "runtime_safe_loop_004b",
+        "timestamp": "2026-05-27T23:56:08Z",
+        "verifier_model": "content_lab_auto_review_validator_v1"
+      },
+      "question_id": "31autumn24_q10",
+      "reviewed_region": {
+        "region": "Differential Shrine",
+        "skill_id": "9709_p3_3_8_separable_differential_equations"
+      },
+      "reviewed_source_skill_ids": [
+        "9709_p3_3_8_separable_differential_equations"
+      ],
+      "reviewer": {
+        "review_status": "approved",
+        "reviewed_at": "2026-05-27T23:56:08Z",
+        "reviewed_by": "automated_agentic_review:gpt-5-codex-2026-05-28"
+      },
+      "route_status": "clean",
+      "session": "automated",
+      "source_mark_scheme_asset_refs": [
+        {
+          "path": "p3/31autumn24/mark_scheme/q10.png",
+          "verified": true
+        }
+      ],
+      "source_question_asset_refs": [
+        {
+          "path": "p3/31autumn24/questions/q10.png",
+          "verified": true
+        }
+      ],
+      "subpart_id": "31autumn24_q10_a",
+      "variant": "automated"
+    }
+  ],
+  "source_skill_records_schema": "exam_bank.p3_exact_skill.reviewed_decisions",
+  "source_skill_records_schema_version": 1
+}

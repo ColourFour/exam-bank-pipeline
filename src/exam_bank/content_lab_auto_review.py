@@ -952,7 +952,9 @@ def validate_mapping_correction_provenance(decision: dict[str, Any]) -> list[str
         errors.append("mapping_correction_missing_source_loop")
     if not str(correction.get("correction_decision") or "").strip():
         errors.append("mapping_correction_missing_correction_decision")
-    if original_skill_ids and corrected_skill_ids and corrected_skill_ids == original_skill_ids:
+    correction_decision = str(correction.get("correction_decision") or "").strip()
+    original_confirmed = correction_decision == "original_mapping_confirmed_after_canonical_review"
+    if original_skill_ids and corrected_skill_ids and corrected_skill_ids == original_skill_ids and not original_confirmed:
         errors.append("corrected_mapping_matches_rejected_original")
     if not correction.get("canonical_evidence_refs"):
         errors.append("mapping_correction_missing_canonical_evidence_refs")
