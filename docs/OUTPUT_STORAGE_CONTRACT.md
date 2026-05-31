@@ -38,6 +38,8 @@ Downstream JSON should reference canonical assets with one or both of:
 
 Asterion exports preserve path fields for runtime compatibility, but those fields should point at canonical relative paths. New consumers should prefer `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, and subpart/source artifact `*_asset_id` fields when available, resolving them through the manifest.
 
+The Asterion question-bank export also carries course-aware runtime fields for the static 9709 site: `course_id`, `component_name`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status`. Supported course IDs are `p1`, `p3`, `m1`, and `s1`; source paper families `p4` and `p5` map to `m1` and `s1`. These fields do not change the canonical image policy. A student-visible course page should still resolve and display the canonical image references, and should show an empty reviewed-record state when no `student_runtime_safe=true` records exist for a course.
+
 ## Copying And Embedding Policy
 
 Copying canonical images into downstream folders is allowed only for portable bundles that cannot resolve repository-relative paths. The copy must be exact, rebuildable, and documented by the bundle manifest.
@@ -83,3 +85,4 @@ Validation must confirm:
 - no copied image appears in non-canonical export folders unless explicitly allowlisted
 - canonical image files remain present
 - topic-routing and Content Lab sidecars still have valid counts and schema names
+- course-aware Asterion filters do not expose Content Lab candidates or invalid course IDs to student runtime

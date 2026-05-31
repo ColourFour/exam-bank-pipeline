@@ -321,6 +321,8 @@ Output: `output/asterion/exports/latest/asterion_question_bank_v1.json`
 
 Category/runtime: standard projection, fast to medium
 
+Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component and to keep P1/M1/S1 empty states separate from P3 runtime records.
+
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-export \
   --input output/json/question_bank.json \
@@ -336,6 +338,8 @@ Input: `output/json/question_bank.json` or the Asterion export, artifacts under 
 Output: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 
 Category/runtime: standard projection, fast to medium
+
+Content Lab candidates are review material only and are not accepted by the course-aware student-runtime loader.
 
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-content-lab-candidates \

@@ -9,11 +9,15 @@ These files are role-gated projections from the image-first question bank. Aster
 
 Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Asterion must require `metadata.run_summary.safe_for_strict_filters=true` before using that sidecar for strict topic filtering.
 
+The question-bank projection is also course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. P3 remains the developed runtime path. P1, M1, and S1 are scaffolded and must fail closed to an empty reviewed-record state until reviewed records are intentionally promoted.
+
 ## Export Purposes
 
 `asterion_question_bank_v1.json` is the main Asterion projection. It carries stable identifiers, provenance, canonical image artifact references, asset IDs, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, and `usage_roles`. Its purpose is to give Asterion one conservative handoff file while preserving blocked and review states.
 
 `asterion_content_lab_candidates_v1.json` is a metadata-only candidate projection derived from the Asterion question-bank projection. It is for Content Lab review, planning, and future generation workflows. It does not contain generated student-facing content. Its `policy`, `role_statuses`, `generation_gate`, and `review_status` fields are part of the permission contract.
+
+`src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns empty arrays for scaffolded courses; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
 
 ## Canonical And Advisory Fields
 
@@ -21,6 +25,7 @@ Canonical fields for Asterion consumption:
 
 - `schema_name`, `schema_version`, `source_schema`, and `record_count` define the file contract and source export relationship.
 - `question_id`, `paper`, `paper_family`, and `question_number` are stable identity and routing fields.
+- `course_id`, `component_name`, `source_exam`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` are the course-aware static-site fields.
 - `canonical_question_artifact`, `canonical_mark_scheme_artifact`, `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, `artifact_integrity`, and `source_pdf` are the canonical provenance and artifact fields.
 - `usage_roles` is the canonical role permission surface for `asterion_question_bank_v1.json`.
 - `quality_gate` booleans are canonical gate inputs and summaries. `quality_gate.reason_codes` are diagnostics, not a replacement for `usage_roles`.
@@ -40,6 +45,8 @@ The canonical rendered images remain the source of truth for student-visible que
 Consumers must honor role-specific `allow`, `block`, `block_until_reviewed`, `include`, and `exclude` decisions exactly. A status for one role does not imply permission for another role. Unknown or missing role statuses should be treated as denied.
 
 `usage_roles.canonical_practice` controls student-facing canonical practice. It has `allow` or `block`. Only `allow` records may enter canonical practice. `block` records remain out of student-facing practice even if they have useful advisory text or metadata.
+
+For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. P3 preserves the legacy behavior where `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true`. P1, M1, and S1 do not inherit runtime safety from historical role gates; they require explicit reviewed/safe promotion before student display.
 
 `usage_roles.field_guide_source` controls field-guide source use. `allow` may be consumed for that role. `block_until_reviewed` may be shown only in review or teacher-controlled workflows that preserve the review state. `block` must not be used.
 
@@ -78,21 +85,27 @@ These counts are dated release evidence, not eligibility rules. Regenerated expo
 
 Student-facing readiness is limited. The current export is useful for review and controlled downstream workflows, but only role-allowed subsets are eligible for student-facing practice, quick checks, Guardian candidate flows, or generation inputs.
 
+Course readiness is uneven. P3 is the most developed exam-bank path. P1, M1, and S1 have course IDs and safe empty-state behavior, but they should show `No reviewed exam-bank records available yet.` until official course topic maps and reviewed records are added. Do not reuse P3 questions for these courses.
+
 Subpart marks are incomplete. In the dated export evidence above, the Asterion projection has `968` records with labeled subparts, and `48` records have missing subpart marks. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
 
 The source set is missing the mark scheme for `9709_2025_November_33`. This accounts for `11` records with missing mark-scheme image paths, including `33autumn25_q01` through `33autumn25_q11`. These records must remain blocked or review-only until the source companion mark scheme is added and the export is regenerated and validated.
 
 Mark events and generated warmup pattern metadata are not reviewed content. They are machine candidates unless reviewed or approved status is present and the candidate generation gate allows use.
 
+Content Lab candidates remain isolated review material. `asterion_content_lab_candidates_v1.json` must not be loaded into student exam-bank pages, even when a candidate looks promising or has source artifacts. Candidate promotion requires a separate reviewed runtime-safe contract.
+
 ## Asterion Consumer Checklist
 
 1. Verify `schema_name`, `schema_version`, `source_schema`, and `record_count` before loading.
-2. Resolve image paths against the artifact root and require expected integrity metadata for any student-visible image display.
-3. Gate every use by the exact role field for that workflow. Default deny unknown, missing, `block`, and inappropriate `block_until_reviewed` statuses.
-4. Never use a role's `allow` status to imply another role's permission.
-5. Treat canonical images as source of truth. Treat native/OCR text, mark-scheme text, detected mark values, and mark events as advisory unless the relevant role gate permits use.
-6. Preserve blocked and review states in user interfaces, logs, and downstream queues.
-7. For Content Lab, require both candidate `role_statuses` and `generation_gate.status=allow` before any generated content is considered. Do not emit student-facing generated content from `blocked_until_reviewed` candidates.
-8. Keep `p3_readiness_metric` separate from product eligibility; it is a reporting inclusion flag, not a practice gate.
-9. For strict topic filters, require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the sidecar is missing, unsafe, or failed.
-10. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.
+2. Verify `course_id` is one of `p1`, `p3`, `m1`, or `s1`; default to empty results for invalid or unsupported IDs.
+3. Resolve image paths against the artifact root and require expected integrity metadata for any student-visible image display.
+4. Gate static student runtime by `student_runtime_safe=true` and `review_status=reviewed`.
+5. Gate every other use by the exact role field for that workflow. Default deny unknown, missing, `block`, and inappropriate `block_until_reviewed` statuses.
+6. Never use a role's `allow` status to imply another role's permission.
+7. Treat canonical images as source of truth. Treat native/OCR text, mark-scheme text, detected mark values, and mark events as advisory unless the relevant role gate permits use.
+8. Preserve blocked and review states in user interfaces, logs, and downstream queues.
+9. For Content Lab, require both candidate `role_statuses` and `generation_gate.status=allow` before any generated content is considered. Do not emit student-facing generated content from `blocked_until_reviewed` candidates.
+10. Keep `p3_readiness_metric` separate from product eligibility; it is a reporting inclusion flag, not a practice gate.
+11. For strict topic filters, require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the sidecar is missing, unsafe, or failed.
+12. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.

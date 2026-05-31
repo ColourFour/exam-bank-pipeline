@@ -8,6 +8,16 @@ from pathlib import Path
 from typing import Any
 
 from .asset_manifest import MARK_SCHEME_IMAGE_KIND, QUESTION_IMAGE_KIND, asset_id_for_record
+from .asterion_course_contract import (
+    COURSE_IDS,
+    course_counts,
+    course_registry,
+    component_name_for_course,
+    course_id_for_record,
+    review_status_for_record,
+    student_runtime_safe_for_record,
+    topic_id_for_record,
+)
 from .atomic_json import write_atomic_json
 from .output_layout import default_asterion_export_path
 from .p3_exact_skill import DEFAULT_REVIEWED_DECISIONS_PATH, DEFAULT_REVIEWED_MARK_EVENTS_PATH
@@ -124,6 +134,14 @@ def build_asterion_export(
             "schema_version": question_bank.get("schema_version"),
             "record_count": question_bank.get("record_count"),
         },
+        "course_contract": {
+            "course_ids": list(COURSE_IDS),
+            "courses": course_registry(),
+            "student_runtime_default": "student_runtime_safe=true and review_status=reviewed",
+            "p3_legacy_runtime_preserved": True,
+            "content_lab_candidates_student_runtime": False,
+        },
+        "courses": course_counts(records),
         "record_count": len(records),
         "questions": records,
     }
@@ -231,7 +249,7 @@ def build_asterion_record(
         skill_mappings=skill_mappings or {},
     )
 
-    return {
+    output_record = {
         "question_id": question_id,
         "paper": _get(record, "paper"),
         "paper_family": _get(record, "paper_family"),
@@ -251,6 +269,20 @@ def build_asterion_record(
         "subparts": subparts,
         "usage_roles": _usage_roles(record, quality_gate),
     }
+    course_id = course_id_for_record(output_record)
+    output_record.update(
+        {
+            "course_id": course_id,
+            "component_name": component_name_for_course(course_id),
+            "topic_id": topic_id_for_record(record),
+            "source_exam": _get(record, "paper"),
+            "question_image_path": canonical_question,
+            "mark_scheme_image_path": canonical_mark_scheme,
+        }
+    )
+    output_record["student_runtime_safe"] = student_runtime_safe_for_record(output_record)
+    output_record["review_status"] = review_status_for_record(output_record)
+    return output_record
 
 
 def infer_artifact_root(input_path: str | Path) -> Path | None:

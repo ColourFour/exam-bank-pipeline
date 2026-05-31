@@ -37,6 +37,8 @@ Asterion region or skill routing from the broad v2 sidecar should consume only `
 
 Content Lab may use `ai_assisted_items[].worked_example_seed` and `ai_assisted_items[].warmup_seed` as lesson-planning seeds. They are not generated lessons and should still be paired with visual evidence and mark-scheme review.
 
+The static Asterion student runtime must not use AI labels, topic-routing labels, or Content Lab candidates to promote records. Course-aware runtime loading is limited to `p1`, `p3`, `m1`, and `s1` records that are explicitly `student_runtime_safe=true` and `review_status=reviewed` in the Asterion course contract. P3 preserves its existing reviewed/safe projection; P1, M1, and S1 remain scaffolded until reviewed records are added.
+
 ## Review-Only Fields
 
 The following are useful for review and mixed practice planning but are not strict-filter truth by themselves:

@@ -40,6 +40,8 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert payload["schema_version"] == ASTERION_SCHEMA_VERSION
     assert payload["generated_at"] == generated_at
     assert payload["last_run_at"] == generated_at
+    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1"]
+    assert {course["course_id"] for course in payload["courses"]} == {"p1", "p3", "m1", "s1"}
     assert payload["record_count"] == 2
 
     by_id = {record["question_id"]: record for record in payload["questions"]}
@@ -51,6 +53,12 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert "review_flags" not in q1
     assert q1["canonical_question_artifact"] == "p1/12spring21/questions/q01.png"
     assert q1["canonical_mark_scheme_artifact"] == "p1/12spring21/mark_scheme/q01.png"
+    assert q1["course_id"] == "p1"
+    assert q1["component_name"] == "Pure Mathematics 1"
+    assert q1["question_image_path"] == "p1/12spring21/questions/q01.png"
+    assert q1["mark_scheme_image_path"] == "p1/12spring21/mark_scheme/q01.png"
+    assert q1["student_runtime_safe"] is False
+    assert q1["review_status"] == "needs_review"
     assert q1["artifact_integrity"]["question_images"][0]["sha256"] == _sha256(b"question-one")
     assert q1["artifact_integrity"]["mark_scheme_images"][0]["sha256"] == _sha256(b"mark-one")
     assert q1["artifact_integrity"]["question_images"][0]["exists"] is True
@@ -112,6 +120,8 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert q1["subparts"][2]["mark_events"][0]["mark_type"] == "accuracy"
 
     assert q2["total_marks"] == 4
+    assert q2["course_id"] == "p1"
+    assert q2["student_runtime_safe"] is False
     assert q2["quality_gate"]["text_only_display_allowed"] is False
     assert q2["quality_gate"]["content_lab_generation_allowed"] is False
     assert len(q2["subparts"]) == 1
@@ -186,6 +196,51 @@ def test_asterion_export_writes_sidecar_without_mutating_question_bank(tmp_path:
     assert payload["schema_name"] == ASTERION_SCHEMA_NAME
     assert payload["record_count"] == 2
     assert [record["question_id"] for record in payload["questions"]] == ["12spring21_q01", "12spring21_q02"]
+
+
+def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    p3_root = artifact_root / "p3" / "31spring24"
+    (p3_root / "questions" / "q01.png").parent.mkdir(parents=True)
+    (p3_root / "mark_scheme" / "q01.png").parent.mkdir(parents=True)
+    (p3_root / "questions" / "q01.png").write_bytes(b"p3-question")
+    (p3_root / "mark_scheme" / "q01.png").write_bytes(b"p3-mark")
+    q1 = _base_spring21_record("31spring24_q01", "1", 4)
+    q1["paper"] = "31spring24"
+    q1["paper_family"] = "p3"
+    q1["canonical_question_artifact"] = "p3/31spring24/questions/q01.png"
+    q1["question_image_path"] = "p3/31spring24/questions/q01.png"
+    q1["question_image_paths"] = ["p3/31spring24/questions/q01.png"]
+    q1["mark_scheme_image_path"] = "p3/31spring24/mark_scheme/q01.png"
+    q1["mark_scheme_image_paths"] = ["p3/31spring24/mark_scheme/q01.png"]
+    q1["question_text"] = "1 Solve the equation. [4]"
+    q1["mark_scheme_text"] = "1 Correct work M1 M1 A1 A1"
+    q1["notes"]["question_crop_confidence"] = "high"
+    q1["notes"]["visual_curation_status"] = "ready"
+    q1["notes"]["text_only_status"] = "ready"
+    q1["notes"]["topic_confidence"] = "medium"
+    q1["notes"]["topic_uncertain"] = False
+    q1["visual_curation_status"] = "ready"
+
+    payload = build_asterion_export(
+        {
+            "schema_name": "exam_bank.question_bank",
+            "schema_version": 2,
+            "record_count": 1,
+            "questions": [q1],
+        },
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+    )
+
+    record = payload["questions"][0]
+    assert record["course_id"] == "p3"
+    assert record["component_name"] == "Pure Mathematics 3"
+    assert record["usage_roles"]["canonical_practice"] == "allow"
+    assert record["student_runtime_safe"] is True
+    assert record["review_status"] == "reviewed"
+    assert payload["courses"][1]["course_id"] == "p3"
+    assert payload["courses"][1]["student_runtime_safe_record_count"] == 1
 
 
 def test_asterion_export_loads_optional_skill_map_for_mark_events(tmp_path: Path) -> None:

@@ -9,6 +9,10 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from exam_bank.atomic_json import write_atomic_json
+from exam_bank.asterion_course_contract import (
+    component_name_for_course,
+    course_id_for_record,
+)
 from exam_bank.content_lab_auto_review import (
     AUTO_REVIEW_SOURCE,
     DEFAULT_CONFIDENCE_THRESHOLD,
@@ -145,7 +149,7 @@ def run_runtime_safe_audit(
 ) -> dict[str, Any]:
     candidates_payload = _read_json(candidates_path)
     candidates = [item for item in candidates_payload.get("candidates", []) if isinstance(item, dict)]
-    p3_candidates = [item for item in candidates if _text(item.get("paper_family")).lower() == "p3"]
+    p3_candidates = [item for item in candidates if course_id_for_record(item) == "p3"]
     asterion_questions = _questions_by_id(_read_json(asterion_bank_path))
     source_questions = _questions_by_id(_read_json(question_bank_path) if question_bank_path else {})
     topic_routing = _topic_routing_by_question(_read_json(topic_routing_path) if topic_routing_path else {})
@@ -951,6 +955,8 @@ def _write_student_runtime_safe_candidates(path: Path, rows: list[RuntimeSafetyR
         "candidates": [
             {
                 "candidate_id": row.candidate_id,
+                "course_id": "p3",
+                "component_name": component_name_for_course("p3"),
                 "question_id": row.question_id,
                 "subpart_id": row.subpart_id,
                 "region": row.region,

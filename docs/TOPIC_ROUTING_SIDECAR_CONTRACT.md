@@ -127,6 +127,8 @@ The active paper-family mapping is:
 - `p4` uses Mechanics component topics from `topic_filter_map_9709_m1_v1.json`
 - `p5` uses Statistics component topics from `topic_filter_map_9709_s1_v1.json`
 
+The Asterion static-site course contract exposes these as course IDs `p1`, `p3`, `m1`, and `s1`. The mapping is paper-family-to-course: `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`. Topic-routing labels remain advisory unless the sidecar-level strict-filter gate is true and the record itself is non-review-required.
+
 Allowed parent topics have IDs shaped like:
 
 ```text
@@ -201,3 +203,4 @@ Before using the sidecar for strict topic filtering:
 8. Reject distributions that do not total exactly `100`.
 9. Preserve failed and review-required records for QA/review queues, not strict filters.
 10. Do not merge sidecar topic output into `question_bank.json` canonical records.
+11. Do not use topic routing to promote P1, M1, or S1 records into static student runtime. Those courses need explicit reviewed/safe records in the course-aware Asterion contract.
