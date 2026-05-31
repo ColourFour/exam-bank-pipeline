@@ -10,11 +10,13 @@ from typing import Any
 from .asset_manifest import MARK_SCHEME_IMAGE_KIND, QUESTION_IMAGE_KIND, asset_id_for_record
 from .asterion_course_contract import (
     COURSE_IDS,
+    component_counts,
     course_counts,
     course_registry,
     component_name_for_course,
     course_id_for_record,
     review_status_for_record,
+    student_runtime_ready_for_record,
     student_runtime_safe_for_record,
     topic_id_for_record,
 )
@@ -30,6 +32,9 @@ from .p3_exact_skill.reviewed_mark_events import (
 ASTERION_SCHEMA_NAME = "asterion.question_bank"
 ASTERION_SCHEMA_VERSION = 1
 ASTERION_EXPORT_FILENAME = "asterion_question_bank_v1.json"
+ASTERION_CATALOG_SCHEMA_NAME = "asterion.exam_bank_catalog"
+ASTERION_CATALOG_SCHEMA_VERSION = 1
+ASTERION_CATALOG_FILENAME = "asterion_exam_bank_catalog_v1.json"
 CONTENT_LAB_SCHEMA_NAME = "asterion.content_lab_candidates"
 CONTENT_LAB_SCHEMA_VERSION = 1
 CONTENT_LAB_EXPORT_FILENAME = "asterion_content_lab_candidates_v1.json"
@@ -59,9 +64,39 @@ def export_asterion_question_bank(
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
+    catalog_output = output.parent / ASTERION_CATALOG_FILENAME
+    skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
+    catalog_payload = build_asterion_exam_bank_catalog(
+        payload,
+        artifact_root=root,
+        base_dir=base,
+        skill_mappings=skill_mappings,
+    )
+    write_atomic_json(catalog_payload, catalog_output)
+    write_atomic_json(
+        build_asterion_student_question_bank(catalog_payload),
+        output,
+    )
+    return output
+
+
+def export_asterion_exam_bank_catalog(
+    input_path: str | Path,
+    output_path: str | Path | None = None,
+    *,
+    artifact_root: str | Path | None = None,
+    base_dir: str | Path | None = None,
+    skill_map_path: str | Path | None = None,
+    allow_unusable_ai_sidecar: bool = False,
+) -> Path:
+    input_path = Path(input_path)
+    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
+    base = Path(base_dir) if base_dir is not None else Path.cwd()
+    output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_CATALOG_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
     write_atomic_json(
-        build_asterion_export(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings),
+        build_asterion_exam_bank_catalog(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings),
         output,
     )
     return output
@@ -111,6 +146,49 @@ def build_asterion_export(
     skill_mappings: dict[str, list[str]] | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
+    return build_asterion_records_payload(
+        question_bank,
+        schema_name=ASTERION_SCHEMA_NAME,
+        schema_version=ASTERION_SCHEMA_VERSION,
+        artifact_root=artifact_root,
+        base_dir=base_dir,
+        skill_mappings=skill_mappings,
+        generated_at=generated_at,
+        export_purpose="legacy_broad_projection",
+    )
+
+
+def build_asterion_exam_bank_catalog(
+    question_bank: dict[str, Any],
+    *,
+    artifact_root: str | Path | None = None,
+    base_dir: str | Path | None = None,
+    skill_mappings: dict[str, list[str]] | None = None,
+    generated_at: str | None = None,
+) -> dict[str, Any]:
+    return build_asterion_records_payload(
+        question_bank,
+        schema_name=ASTERION_CATALOG_SCHEMA_NAME,
+        schema_version=ASTERION_CATALOG_SCHEMA_VERSION,
+        artifact_root=artifact_root,
+        base_dir=base_dir,
+        skill_mappings=skill_mappings,
+        generated_at=generated_at,
+        export_purpose="all_course_static_site_catalog",
+    )
+
+
+def build_asterion_records_payload(
+    question_bank: dict[str, Any],
+    *,
+    schema_name: str,
+    schema_version: int,
+    artifact_root: str | Path | None = None,
+    base_dir: str | Path | None = None,
+    skill_mappings: dict[str, list[str]] | None = None,
+    generated_at: str | None = None,
+    export_purpose: str,
+) -> dict[str, Any]:
     if question_bank.get("schema_name") != "exam_bank.question_bank":
         raise ValueError("Asterion export requires exam_bank.question_bank input")
     if int(question_bank.get("schema_version") or 0) != 2:
@@ -125,25 +203,65 @@ def build_asterion_export(
     ]
     run_timestamp = generated_at or _utc_now_iso()
     return {
-        "schema_name": ASTERION_SCHEMA_NAME,
-        "schema_version": ASTERION_SCHEMA_VERSION,
+        "schema_name": schema_name,
+        "schema_version": schema_version,
         "generated_at": run_timestamp,
         "last_run_at": run_timestamp,
+        "export_purpose": export_purpose,
         "source_schema": {
             "schema_name": question_bank.get("schema_name"),
             "schema_version": question_bank.get("schema_version"),
             "record_count": question_bank.get("record_count"),
         },
-        "course_contract": {
-            "course_ids": list(COURSE_IDS),
-            "courses": course_registry(),
-            "student_runtime_default": "student_runtime_safe=true and review_status=reviewed",
-            "p3_legacy_runtime_preserved": True,
-            "content_lab_candidates_student_runtime": False,
-        },
+        "course_contract": _course_contract_metadata(),
         "courses": course_counts(records),
+        "components": component_counts(records),
         "record_count": len(records),
         "questions": records,
+    }
+
+
+def build_asterion_student_question_bank(
+    catalog_or_asterion_payload: dict[str, Any],
+    *,
+    generated_at: str | None = None,
+) -> dict[str, Any]:
+    schema_name = catalog_or_asterion_payload.get("schema_name")
+    if schema_name not in {ASTERION_CATALOG_SCHEMA_NAME, ASTERION_SCHEMA_NAME}:
+        raise ValueError("Asterion student question bank requires Asterion catalog or legacy Asterion payload input")
+    if int(catalog_or_asterion_payload.get("schema_version") or 0) != 1:
+        raise ValueError("Asterion student question bank requires schema_version 1 input")
+
+    source_records = [record for record in catalog_or_asterion_payload.get("questions", []) if isinstance(record, dict)]
+    runtime_records = [record for record in source_records if student_runtime_ready_for_record(record)]
+    run_timestamp = generated_at or catalog_or_asterion_payload.get("generated_at") or _utc_now_iso()
+    return {
+        "schema_name": ASTERION_SCHEMA_NAME,
+        "schema_version": ASTERION_SCHEMA_VERSION,
+        "generated_at": run_timestamp,
+        "last_run_at": run_timestamp,
+        "export_purpose": "student_runtime_reviewed_safe_question_bank",
+        "source_schema": {
+            "schema_name": catalog_or_asterion_payload.get("schema_name"),
+            "schema_version": catalog_or_asterion_payload.get("schema_version"),
+            "record_count": catalog_or_asterion_payload.get("record_count"),
+        },
+        "course_contract": catalog_or_asterion_payload.get("course_contract") or _course_contract_metadata(),
+        "courses": course_counts(runtime_records),
+        "components": component_counts(runtime_records),
+        "source_record_count": len(source_records),
+        "record_count": len(runtime_records),
+        "questions": runtime_records,
+    }
+
+
+def _course_contract_metadata() -> dict[str, Any]:
+    return {
+        "course_ids": list(COURSE_IDS),
+        "courses": course_registry(),
+        "student_runtime_default": "student_runtime_safe=true and review_status=reviewed",
+        "p3_legacy_runtime_preserved": True,
+        "content_lab_candidates_student_runtime": False,
     }
 
 
@@ -155,8 +273,8 @@ def build_content_lab_candidates(
     canonical_mark_event_ids_by_subpart: dict[str, list[str]] | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
-    if asterion_question_bank.get("schema_name") != ASTERION_SCHEMA_NAME:
-        raise ValueError("Content Lab candidates require asterion.question_bank input")
+    if asterion_question_bank.get("schema_name") not in {ASTERION_SCHEMA_NAME, ASTERION_CATALOG_SCHEMA_NAME}:
+        raise ValueError("Content Lab candidates require Asterion question bank or catalog input")
     if int(asterion_question_bank.get("schema_version") or 0) != ASTERION_SCHEMA_VERSION:
         raise ValueError("Content Lab candidates require asterion.question_bank schema_version 1")
 
@@ -426,10 +544,15 @@ def _ensure_asterion_payload(
     skill_mappings: dict[str, list[str]] | None,
 ) -> dict[str, Any]:
     schema_name = payload.get("schema_name")
-    if schema_name == ASTERION_SCHEMA_NAME:
+    if schema_name in {ASTERION_SCHEMA_NAME, ASTERION_CATALOG_SCHEMA_NAME}:
         return payload
     if schema_name == "exam_bank.question_bank":
-        return build_asterion_export(payload, artifact_root=artifact_root, base_dir=base_dir, skill_mappings=skill_mappings)
+        return build_asterion_exam_bank_catalog(
+            payload,
+            artifact_root=artifact_root,
+            base_dir=base_dir,
+            skill_mappings=skill_mappings,
+        )
     raise ValueError("Content Lab candidates require exam_bank.question_bank or asterion.question_bank input")
 
 

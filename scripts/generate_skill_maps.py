@@ -30,7 +30,7 @@ TAXONOMY_LOGS = TAXONOMY_ROOT / "logs"
 TAXONOMY_CHANGELOGS = TAXONOMY_LOGS / "changelogs"
 TAXONOMY_VALIDATION_REPORTS = TAXONOMY_LOGS / "validation_reports"
 QUESTION_BANK = ROOT / "output/json/question_bank.json"
-ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_question_bank_v1.json"
+ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"
 CONTENT_LAB = ROOT / "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json"
 OLD_P3_SKILL_MAP = CANONICAL_SKILL_MAPS / "skill_map_9709_p3_v1.json"
 

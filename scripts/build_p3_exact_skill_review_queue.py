@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--asterion-question-bank",
         type=Path,
-        default=Path("output/asterion/exports/latest/asterion_question_bank_v1.json"),
+        default=Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"),
     )
     parser.add_argument(
         "--content-lab-candidates",

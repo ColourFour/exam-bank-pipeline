@@ -16,7 +16,8 @@ source .venv/bin/activate
 - Mark-event sidecar: `output/json/question_bank.mark_events.v1.json`
 - Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
 - Difficulty index sidecar: `output/json/question_bank.difficulty_index.v1.json`
-- Asterion export: `output/asterion/exports/latest/asterion_question_bank_v1.json`
+- Asterion all-course catalog: `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`
+- Asterion student runtime question bank: `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - Content Lab candidates: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 - Validation report directory: `output/audits/current/`
 - Inventory reports: `output/output_inventory.md`, `output/output_inventory.json`
@@ -198,6 +199,7 @@ When producing the release export, regenerate both projections from the canonica
 
 Expected evidence:
 
+- `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`
 - `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 - Passing Asterion tests from the test step.
@@ -207,15 +209,16 @@ Blocking:
 
 - Command exits nonzero.
 - Missing expected export files.
-- Export `record_count` does not match the source question bank.
-- Any record with missing required canonical image integrity is marked student-facing `allow`.
+- Catalog `record_count` does not match the source question bank.
+- Student runtime export contains unsafe, candidate, blocked, or needs-review records.
+- Any runtime record with missing required canonical image integrity is marked student-facing `allow`.
 - Any `9709_2025_November_33` record is promoted to a role that requires mark-scheme availability before the missing mark scheme is resolved.
 - Content Lab candidate `generation_gate.status=allow` appears without reviewed/approved prerequisites required by `docs/ASTERION_EXPORT_CONTRACT.md`.
 - P1, M1, or S1 student runtime uses P3 records or treats scaffolded empty data as an error.
 
 Warning:
 
-- Limited student-facing eligibility is expected; role-blocked and `blocked_until_reviewed` records may remain in the export as long as downstream roles preserve those statuses.
+- Limited student-facing eligibility is expected; role-blocked and `blocked_until_reviewed` records may remain in the all-course catalog as long as downstream roles preserve those statuses.
 - Incomplete subpart marks remain warning-level only when full-question mark totals and rendered mark-scheme images remain available and role gates are conservative.
 - P1, M1, and S1 may legitimately show `No reviewed exam-bank records available yet.` until reviewed course records are added.
 

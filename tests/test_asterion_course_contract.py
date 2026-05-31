@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from exam_bank.asterion_course_contract import (
     COURSE_EMPTY_STATE_MESSAGE,
+    component_counts,
     course_counts,
     course_id_for_record,
     filter_records_by_course,
@@ -135,6 +136,26 @@ def test_course_counts_include_all_courses_even_when_empty() -> None:
     assert counts["p3"]["student_runtime_safe_record_count"] == 1
     assert counts["p1"]["record_count"] == 0
     assert counts["p1"]["empty_state_message"] == COURSE_EMPTY_STATE_MESSAGE
+
+
+def test_component_counts_include_course_components_and_papers() -> None:
+    counts = {
+        row["course_id"]: row
+        for row in component_counts(
+            [
+                _record("p3-q1", "p3", "31spring24", safe=True),
+                _record("p3-q2", "p3", "31spring24", safe=True),
+                _record("m1-q1", "p4", "42spring24", safe=True),
+            ]
+        )
+    }
+
+    assert counts["p3"]["component_name"] == "Pure Mathematics 3"
+    assert counts["p3"]["record_count"] == 2
+    assert counts["p3"]["papers"] == [{"paper": "31spring24", "record_count": 2}]
+    assert counts["m1"]["component_name"] == "Mechanics 1"
+    assert counts["m1"]["papers"] == [{"paper": "42spring24", "record_count": 1}]
+    assert counts["s1"]["record_count"] == 0
 
 
 def _record(question_id: str, paper_family: str, paper: str, *, safe: bool = False) -> dict:

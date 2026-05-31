@@ -10,6 +10,12 @@ from typing import Any, Sequence
 
 from openai import OpenAI
 
+from .asterion_course_contract import (
+    COURSE_IDS,
+    component_name_for_course,
+    course_id_for_record,
+    course_registry,
+)
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import (
     AI_FAILURE_INVALID_JSON,
@@ -415,6 +421,7 @@ def build_deterministic_review_record(
         "paper": record.get("paper"),
         "paper_family": str(record.get("paper_family") or "").lower(),
         "question_number": record.get("question_number"),
+        **_course_metadata_for_record(record),
     }
 
 
@@ -833,6 +840,7 @@ def build_topic_routing_success_record(
             "paper": source.get("paper"),
             "paper_family": str(source.get("paper_family") or "").lower(),
             "question_number": source.get("question_number"),
+            **_course_metadata_for_record(source),
         }
     )
     if parse_metadata.get("parse_recovered"):
@@ -866,6 +874,7 @@ def build_topic_routing_error_record(
         "paper": packet.get("paper"),
         "paper_family": packet.get("paper_family"),
         "question_number": packet.get("question_number"),
+        **_course_metadata_for_record(packet),
     }
 
 
@@ -888,8 +897,21 @@ def build_topic_routing_sidecar(
         "taxonomy_version": taxonomy_version_value,
         "model": model,
         "prompt_version": prompt_version,
+        "course_contract": {
+            "course_ids": list(COURSE_IDS),
+            "courses": course_registry(),
+            "routing_labels_are_advisory": True,
+        },
         "records": dict(sorted(records.items())),
         "metadata": metadata or {},
+    }
+
+
+def _course_metadata_for_record(record: dict[str, Any]) -> dict[str, str | None]:
+    course_id = course_id_for_record(record)
+    return {
+        "course_id": course_id,
+        "component_name": component_name_for_course(course_id),
     }
 
 

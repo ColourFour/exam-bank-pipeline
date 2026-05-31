@@ -18,6 +18,7 @@ The sidecar stores:
 - one record per `question_id`
 - a parent-topic `primary_topic_id`
 - a parent-topic `topic_distribution`
+- advisory `course_id` and `component_name` metadata for P1, P3, M1, and S1 consumers
 - confidence, review, evidence, provider, and routing-source metadata
 
 It does not store student-facing explanations, difficulty, subtopics, skills, Content Lab metadata, Asterion readiness, or generated learning content.
@@ -67,6 +68,7 @@ The sidecar top-level object contains:
 - `taxonomy_version`: taxonomy version when available.
 - `model`: provider model used for AI-routed records.
 - `prompt_version`: currently `topic_routing_v1`.
+- `course_contract`: static-site course IDs and component names; routing labels remain advisory.
 - `records`: object keyed by `question_id`.
 - `metadata`: run inputs, status manifest, selected count, and `run_summary`.
 
@@ -127,7 +129,7 @@ The active paper-family mapping is:
 - `p4` uses Mechanics component topics from `topic_filter_map_9709_m1_v1.json`
 - `p5` uses Statistics component topics from `topic_filter_map_9709_s1_v1.json`
 
-The Asterion static-site course contract exposes these as course IDs `p1`, `p3`, `m1`, and `s1`. The mapping is paper-family-to-course: `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`. Topic-routing labels remain advisory unless the sidecar-level strict-filter gate is true and the record itself is non-review-required.
+The Asterion static-site course contract exposes these as course IDs `p1`, `p3`, `m1`, and `s1`. The mapping is paper-family-to-course: `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`. Topic-routing records may include `course_id` and `component_name` for downstream catalog grouping, but those fields do not make the routing authoritative. Topic-routing labels remain advisory unless the sidecar-level strict-filter gate is true and the record itself is non-review-required.
 
 Allowed parent topics have IDs shaped like:
 

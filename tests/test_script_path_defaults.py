@@ -31,6 +31,7 @@ def test_taxonomy_audit_defaults_use_current_generated_layout() -> None:
     paths = normalize_paths(module.selected_reference_json_files(args))
 
     assert "output/json/question_bank.json" in paths
+    assert "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json" in paths
     assert "output/asterion/exports/latest/asterion_question_bank_v1.json" in paths
     assert "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json" in paths
     assert "output_ocr_candidate/json/question_bank.json" not in paths

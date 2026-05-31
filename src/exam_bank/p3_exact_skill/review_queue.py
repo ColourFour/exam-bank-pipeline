@@ -61,7 +61,7 @@ def build_p3_exact_skill_review_queue(
     *,
     question_bank_path: str | Path = "output/json/question_bank.json",
     topic_routing_path: str | Path | None = "output/json/question_bank.topic_routing.v1.json",
-    asterion_question_bank_path: str | Path | None = "output/asterion/exports/latest/asterion_question_bank_v1.json",
+    asterion_question_bank_path: str | Path | None = "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
     content_lab_candidates_path: str | Path | None = (
         "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json"
     ),

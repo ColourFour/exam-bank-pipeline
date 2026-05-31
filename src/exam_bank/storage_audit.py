@@ -21,6 +21,7 @@ DEFAULT_SCAN_ROOTS = (Path("output"), Path("reports"))
 DEFAULT_REFERENCE_JSON_FILES = (
     Path("output/json/question_bank.json"),
     Path("output/json/question_bank.topic_routing.v1.json"),
+    Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"),
     Path("output/asterion/exports/latest/asterion_question_bank_v1.json"),
     Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json"),
     Path("output/json/asset_manifest.v1.json"),

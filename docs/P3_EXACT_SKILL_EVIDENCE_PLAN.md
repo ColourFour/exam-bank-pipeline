@@ -253,7 +253,7 @@ Current inspected source run:
 - Question-bank generated at: `2026-05-18T23:59:46.928802+00:00`.
 - Question-bank run manifest git commit: `0a8dbf360408f3e6990c090e24be0147de8e0575`.
 - Current workspace `HEAD`: `0ac73426535d1cf6f38a48c069d797a8bb2ce79f`.
-- `output/asterion/exports/latest/asterion_question_bank_v1.json`: `1301` Asterion records, `396` P3 records, all P3 records have `quality_gate.canonical_assets_ok=true`.
+- `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`: the broad Asterion all-course catalog sidecar. Current generated counts should be read from the regenerated catalog; the pre-split Asterion projection had `1301` records and `396` P3 records.
 - P3 Asterion quality: `395` of `396` P3 records have both canonical assets and consistent marks according to current Asterion gates.
 - P3 Asterion roles: `57` P3 records have `guardian_candidate=allow`; `54` have `warmup_generator_source=allow`, but Content Lab candidates still block generation until review.
 - `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`: `2416` candidates, `702` P3 candidates, all current P3 candidate `generation_gate.status` values are `blocked_until_reviewed`.
@@ -267,7 +267,7 @@ Current inspected source run:
 
 `output/json/question_bank.json` is the canonical extraction input. It already provides stable question IDs, paper metadata, canonical question and mark-scheme image paths, source PDF metadata, page refs, question numbers, top-level marks, subpart labels, detected part structure, text trust, crop confidence, mapping status, validation status, visual flags, and review flags.
 
-`output/asterion/exports/latest/asterion_question_bank_v1.json` already projects the question bank into a conservative Asterion shape. It adds artifact integrity hashes, source PDF hashes, quality-gate summaries, subpart records, advisory mark-event candidates, and role gates. Its image integrity logic is the closest existing behavior to what the future sidecar needs for stable asset refs.
+`output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json` projects the question bank into a conservative all-course Asterion catalog. It adds artifact integrity hashes, source PDF hashes, quality-gate summaries, subpart records, advisory mark-event candidates, role gates, and course fields. Its image integrity logic is the closest existing behavior to what the future sidecar needs for stable asset refs.
 
 `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json` already expresses Content Lab role statuses, generation gates, source artifacts, source mark-event counts, source skill IDs when supplied, and block reasons. It is useful for blocker vocabulary and candidate prioritization, not for clean evidence promotion.
 
@@ -346,7 +346,7 @@ Top-level shape:
     "question_bank_sha256": "...",
     "question_bank_run_id": "...",
     "question_bank_git_commit": "...",
-    "asterion_question_bank_path": "output/asterion/exports/latest/asterion_question_bank_v1.json",
+    "asterion_question_bank_path": "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
     "reviewed_decisions_path": "...",
     "taxonomy_paths": []
   },

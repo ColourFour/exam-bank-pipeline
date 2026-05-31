@@ -29,8 +29,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--asterion-bank",
         type=Path,
-        default=Path("output/asterion/exports/latest/asterion_question_bank_v1.json"),
-        help="Asterion question-bank export used for artifact and quality-gate evidence.",
+        default=Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"),
+        help="Asterion all-course catalog export used for artifact and quality-gate evidence.",
     )
     parser.add_argument("--artifact-root", type=Path, default=Path("output"), help="Root for relative canonical artifacts.")
     parser.add_argument("--sample-size", type=int, default=100, help="Deterministic stratified P3 sample size.")

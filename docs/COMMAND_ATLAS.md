@@ -313,15 +313,18 @@ Contract: [Difficulty Index Contract](DIFFICULTY_INDEX_CONTRACT.md). `difficulty
 
 ### Asterion Export
 
-Purpose: write the conservative Asterion-safe question-bank projection.
+Purpose: write the course-aware Asterion static-site catalog and the reviewed/safe student-runtime question bank.
 
 Input: `output/json/question_bank.json`, artifacts under `output/`, optional skill-map sidecar
 
-Output: `output/asterion/exports/latest/asterion_question_bank_v1.json`
+Output:
+
+- `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`
+- `output/asterion/exports/latest/asterion_question_bank_v1.json`
 
 Category/runtime: standard projection, fast to medium
 
-Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component and to keep P1/M1/S1 empty states separate from P3 runtime records.
+Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component and to keep P1/M1/S1 empty states separate from P3 runtime records. The catalog preserves blocked and review states; the question-bank export is the student-facing reviewed/safe subset.
 
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-export \
@@ -333,7 +336,7 @@ Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, an
 
 Purpose: write Asterion Content Lab candidate metadata without generating student-facing content.
 
-Input: `output/json/question_bank.json` or the Asterion export, artifacts under `output/`
+Input: `output/json/question_bank.json`, `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`, or a legacy Asterion export; artifacts under `output/`
 
 Output: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 
@@ -574,7 +577,7 @@ These scripts rewrite canonical taxonomy files unless `--dry-run` is used. Use `
 
 Purpose: generate candidate CAIE 9709 skill maps, question-skill mappings, and coverage reports from the current bank and Asterion/Content Lab projections.
 
-Input: `output/json/question_bank.json`, `output/asterion/exports/latest/asterion_question_bank_v1.json`, `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
+Input: `output/json/question_bank.json`, `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`, `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 
 Output: canonical skill maps, mappings, coverage reports, indexes, logs
 
@@ -583,7 +586,7 @@ Category/runtime: standard generator, medium; mutating unless `--dry-run`
 ```bash
 .venv/bin/python scripts/generate_skill_maps.py \
   --question-bank output/json/question_bank.json \
-  --asterion-question-bank output/asterion/exports/latest/asterion_question_bank_v1.json \
+  --asterion-question-bank output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json \
   --content-lab-candidates output/asterion/exports/latest/asterion_content_lab_candidates_v1.json \
   --dry-run
 ```
@@ -592,7 +595,7 @@ Category/runtime: standard generator, medium; mutating unless `--dry-run`
 
 Purpose: generate strict topic filter maps from skill maps and question-skill mappings.
 
-Input: canonical skill-map index, Asterion export, current question bank
+Input: canonical skill-map index, Asterion all-course catalog, current question bank
 
 Output: canonical topic filter maps, topic assignments, strict filtering reports
 
@@ -601,7 +604,7 @@ Category/runtime: standard generator, medium; mutating unless `--dry-run`
 ```bash
 .venv/bin/python scripts/generate_topic_filter_maps.py \
   --skill-map-index exam_bank_taxonomy/canonical/indexes/skill_map_index_v1.json \
-  --asterion-question-bank output/asterion/exports/latest/asterion_question_bank_v1.json \
+  --asterion-question-bank output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json \
   --legacy-question-bank output/json/question_bank.json \
   --dry-run
 ```

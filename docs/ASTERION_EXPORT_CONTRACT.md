@@ -2,32 +2,37 @@
 
 This contract covers the current Asterion-facing exports:
 
+- `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`
 - `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 
-These files are role-gated projections from the image-first question bank. Asterion must not treat either export as a globally student-facing-safe corpus. A record is usable only for the specific role whose gate allows that use.
+These files are role-gated projections from the image-first question bank. Asterion must not treat the catalog or Content Lab queue as globally student-facing-safe corpora. A record is usable only for the specific role whose gate allows that use.
 
 Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Asterion must require `metadata.run_summary.safe_for_strict_filters=true` before using that sidecar for strict topic filtering.
 
-The question-bank projection is also course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. P3 remains the developed runtime path. P1, M1, and S1 are scaffolded and must fail closed to an empty reviewed-record state until reviewed records are intentionally promoted.
+The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. P3 remains the developed runtime path. P1, M1, and S1 are scaffolded and must fail closed to an empty reviewed-record state until reviewed records are intentionally promoted.
 
 ## Export Purposes
 
-`asterion_question_bank_v1.json` is the main Asterion projection. It carries stable identifiers, provenance, canonical image artifact references, asset IDs, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, and `usage_roles`. Its purpose is to give Asterion one conservative handoff file while preserving blocked and review states.
+`asterion_exam_bank_catalog_v1.json` is the broad all-course static-site catalog. It carries stable identifiers, provenance, canonical image artifact references, asset IDs, image integrity metadata, quality gate summaries, subpart records, advisory text snippets, machine mark-event candidates, course fields, `student_runtime_safe`, `review_status`, and `usage_roles`. Its purpose is to give Asterion one course-aware catalog while preserving reviewed, needs-review, blocked, and candidate states.
 
-`asterion_content_lab_candidates_v1.json` is a metadata-only candidate projection derived from the Asterion question-bank projection. It is for Content Lab review, planning, and future generation workflows. It does not contain generated student-facing content. Its `policy`, `role_statuses`, `generation_gate`, and `review_status` fields are part of the permission contract.
+`asterion_question_bank_v1.json` is the student-facing runtime subset. It is derived from the catalog and should contain only records where `student_runtime_safe=true` and `review_status=reviewed`. It does not carry unsafe, candidate, or blocked records for static student pages.
+
+`asterion_content_lab_candidates_v1.json` is a metadata-only candidate projection derived from the canonical bank, the catalog, or a legacy Asterion projection. It is for Content Lab review, planning, and future generation workflows. It does not contain generated student-facing content. Its `policy`, `role_statuses`, `generation_gate`, and `review_status` fields are part of the permission contract.
 
 `src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns empty arrays for scaffolded courses; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
+
+The catalog and runtime exports include top-level `courses` and `components` summaries. `courses` reports counts by static-site course ID. `components` reports the same course IDs with component names and paper-level counts when source paper metadata is available.
 
 ## Canonical And Advisory Fields
 
 Canonical fields for Asterion consumption:
 
-- `schema_name`, `schema_version`, `source_schema`, and `record_count` define the file contract and source export relationship.
+- `schema_name`, `schema_version`, `source_schema`, `export_purpose`, and `record_count` define the file contract and source export relationship.
 - `question_id`, `paper`, `paper_family`, and `question_number` are stable identity and routing fields.
 - `course_id`, `component_name`, `source_exam`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` are the course-aware static-site fields.
 - `canonical_question_artifact`, `canonical_mark_scheme_artifact`, `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, `artifact_integrity`, and `source_pdf` are the canonical provenance and artifact fields.
-- `usage_roles` is the canonical role permission surface for `asterion_question_bank_v1.json`.
+- `usage_roles` is the canonical role permission surface for the all-course catalog and legacy Asterion projections.
 - `quality_gate` booleans are canonical gate inputs and summaries. `quality_gate.reason_codes` are diagnostics, not a replacement for `usage_roles`.
 - In the Content Lab export, `policy`, `role_statuses`, `generation_gate`, and top-level `review_status` are canonical permission fields.
 
@@ -46,7 +51,7 @@ Consumers must honor role-specific `allow`, `block`, `block_until_reviewed`, `in
 
 `usage_roles.canonical_practice` controls student-facing canonical practice. It has `allow` or `block`. Only `allow` records may enter canonical practice. `block` records remain out of student-facing practice even if they have useful advisory text or metadata.
 
-For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. P3 preserves the legacy behavior where `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true`. P1, M1, and S1 do not inherit runtime safety from historical role gates; they require explicit reviewed/safe promotion before student display.
+For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. P3 preserves the legacy behavior where `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true`. P1, M1, and S1 do not inherit runtime safety from historical role gates; they require explicit reviewed/safe promotion before student display. The exported `asterion_question_bank_v1.json` file applies this gate; the exported catalog does not.
 
 `usage_roles.field_guide_source` controls field-guide source use. `allow` may be consumed for that role. `block_until_reviewed` may be shown only in review or teacher-controlled workflows that preserve the review state. `block` must not be used.
 
@@ -64,7 +69,7 @@ Content Lab candidate `role_statuses` are separate from question-bank `usage_rol
 
 Measured release evidence as of audit date `2026-05-14`, source run `20260513T070200Z-56d469c1dd52`:
 
-That dated `asterion_question_bank_v1.json` has `1301` records:
+That dated legacy broad `asterion_question_bank_v1.json` had `1301` records before the catalog/runtime split:
 
 - Canonical practice: `252 allow`, `1049 block`.
 - Field guide source: `252 allow`, `1021 block_until_reviewed`, `28 block`.
@@ -79,11 +84,11 @@ That dated `asterion_content_lab_candidates_v1.json` has `2416` candidates:
 - Candidate `generation_gate.status`: all current candidates are `blocked_until_reviewed`.
 - The dominant generation blocker is missing source skill IDs, followed by unreviewed mark events and unreviewed mappings or subparts.
 
-These counts are dated release evidence, not eligibility rules. Regenerated exports may change counts, but the role-gate semantics above must remain conservative unless the contract is intentionally revised.
+These counts are dated release evidence, not eligibility rules. Regenerated exports now put broad all-course counts in `asterion_exam_bank_catalog_v1.json` and reviewed/safe runtime counts in `asterion_question_bank_v1.json`. Counts may change, but the role-gate semantics above must remain conservative unless the contract is intentionally revised.
 
 ## Known Limitations
 
-Student-facing readiness is limited. The current export is useful for review and controlled downstream workflows, but only role-allowed subsets are eligible for student-facing practice, quick checks, Guardian candidate flows, or generation inputs.
+Student-facing readiness is limited. The all-course catalog is useful for review and controlled downstream workflows, but only the reviewed/safe subset is eligible for static student practice. Other product roles such as quick checks, Guardian candidate flows, or generation inputs still require their own role gates.
 
 Course readiness is uneven. P3 is the most developed exam-bank path. P1, M1, and S1 have course IDs and safe empty-state behavior, but they should show `No reviewed exam-bank records available yet.` until official course topic maps and reviewed records are added. Do not reuse P3 questions for these courses.
 
@@ -97,7 +102,7 @@ Content Lab candidates remain isolated review material. `asterion_content_lab_ca
 
 ## Asterion Consumer Checklist
 
-1. Verify `schema_name`, `schema_version`, `source_schema`, and `record_count` before loading.
+1. Verify `schema_name`, `schema_version`, `source_schema`, `export_purpose`, and `record_count` before loading.
 2. Verify `course_id` is one of `p1`, `p3`, `m1`, or `s1`; default to empty results for invalid or unsupported IDs.
 3. Resolve image paths against the artifact root and require expected integrity metadata for any student-visible image display.
 4. Gate static student runtime by `student_runtime_safe=true` and `review_status=reviewed`.

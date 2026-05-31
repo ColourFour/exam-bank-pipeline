@@ -33,7 +33,8 @@ Current important generated artifacts:
 - Mark-event evidence sidecar: `output/json/question_bank.mark_events.v1.json`
 - Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
 - Difficulty index sidecar: `output/json/question_bank.difficulty_index.v1.json`
-- Asterion projection: `output/asterion/exports/latest/asterion_question_bank_v1.json`
+- Asterion all-course catalog: `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`
+- Asterion student runtime question bank: `output/asterion/exports/latest/asterion_question_bank_v1.json`
 - Content Lab candidates: `output/asterion/exports/latest/asterion_content_lab_candidates_v1.json`
 - Topic packets: `output/topic_packets/`
 - Text-fidelity review state: `data/review/text_fidelity_review_state.json`
@@ -218,11 +219,13 @@ Do not delete frozen triage baselines such as `output*/triage/iteration_*/baseli
 
 ## Asterion And Sidecars
 
-Asterion export files are downstream projections, not a replacement for canonical images. Consumers must honor the role gates in [`docs/ASTERION_EXPORT_CONTRACT.md`](docs/ASTERION_EXPORT_CONTRACT.md) and must not treat the full projection as globally student-facing safe.
+Asterion export files are downstream projections, not a replacement for canonical images. Consumers must honor the role gates in [`docs/ASTERION_EXPORT_CONTRACT.md`](docs/ASTERION_EXPORT_CONTRACT.md) and must not treat the all-course catalog as globally student-facing safe.
 
-Course-aware consumers should use the centralized helpers in `src/exam_bank/asterion_course_contract.py`. The helpers map `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`; filter by course, paper, or component; return empty arrays for scaffolded courses; and exclude Content Lab candidate payloads from student runtime. The Asterion question-bank projection now includes `course_id`, `component_name`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` fields on each record, plus top-level course metadata for all four courses.
+Course-aware consumers should use the centralized helpers in `src/exam_bank/asterion_course_contract.py`. The helpers map `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`; filter by course, paper, or component; return empty arrays for scaffolded courses; and exclude Content Lab candidate payloads from student runtime. The Asterion catalog includes `course_id`, `component_name`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` fields on each record, plus top-level course and component metadata for all four courses.
 
-For the static student runtime, load only records where `student_runtime_safe=true` and `review_status=reviewed`. Legacy P3 canonical-practice behavior is preserved by mapping P3 `usage_roles.canonical_practice=allow` to `student_runtime_safe=true`. P1, M1, and S1 records do not become student runtime just because their historical Asterion role is `allow`; they need an explicit reviewed/safe promotion. If a course has no reviewed records, show `No reviewed exam-bank records available yet.` Do not backfill P1/M1/S1 with P3 questions.
+`asterion_exam_bank_catalog_v1.json` is the broad static-site catalog sidecar. It may include reviewed, needs-review, blocked, and candidate-state records for P1, P3, M1, and S1 when those records exist in the canonical question bank. It is the right input for review tools, catalog counts, and future course/component mapping work.
+
+`asterion_question_bank_v1.json` is the student-facing runtime subset. It is derived from the catalog and contains only records where `student_runtime_safe=true` and `review_status=reviewed`. Legacy P3 canonical-practice behavior is preserved by mapping P3 `usage_roles.canonical_practice=allow` to `student_runtime_safe=true`. P1, M1, and S1 records do not become student runtime just because their historical Asterion role is `allow`; they need an explicit reviewed/safe promotion. If a course has no reviewed records, show `No reviewed exam-bank records available yet.` Do not backfill P1/M1/S1 with P3 questions.
 
 Strict Asterion topic filters should use `output/json/question_bank.topic_routing.v1.json` only when `metadata.run_summary.safe_for_strict_filters=true` and only for records that are not review-required. See [`docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md).
 

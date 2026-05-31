@@ -6,9 +6,10 @@ This repository is an image-first CAIE 9709 exam-bank pipeline. Question crops a
 
 1. Source PDFs under `input/` are processed into `output/json/question_bank.json` plus canonical images under `output/p*/<paper>/questions/` and `output/p*/<paper>/mark_scheme/`.
 2. Sidecars add advisory evidence without mutating the canonical bank: topic routing, mark events, advisory examiner-report/grade-threshold links, difficulty indexes, and AI-assisted review/debug outputs.
-3. `src/exam_bank/asterion_export.py` builds `output/asterion/exports/latest/asterion_question_bank_v1.json`, a conservative Asterion projection with canonical image references, asset IDs, integrity metadata, quality gates, subparts, role gates, and course fields.
-4. `src/exam_bank/asterion_export.py` also builds `asterion_content_lab_candidates_v1.json`, which is review-only candidate metadata. It is not student runtime.
-5. `src/exam_bank/asterion_student_runtime_safe.py` audits P3 Content Lab candidates for an explicit student-runtime-safe candidate export. This remains P3-specific review infrastructure.
+3. `src/exam_bank/asterion_export.py` builds `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`, the broad all-course static-site catalog with canonical image references, asset IDs, integrity metadata, quality gates, subparts, role gates, course fields, and blocked/review states preserved.
+4. The same export path writes `output/asterion/exports/latest/asterion_question_bank_v1.json`, the reviewed/safe student-runtime subset derived from the catalog.
+5. `src/exam_bank/asterion_export.py` also builds `asterion_content_lab_candidates_v1.json`, which is review-only candidate metadata. It is not student runtime.
+6. `src/exam_bank/asterion_student_runtime_safe.py` audits P3 Content Lab candidates for an explicit student-runtime-safe candidate export. This remains P3-specific review infrastructure.
 
 ## Course Contract
 
@@ -21,7 +22,7 @@ Supported course IDs:
 - `m1`: Mechanics 1, sourced from paper family `p4`
 - `s1`: Probability & Statistics 1, sourced from paper family `p5`
 
-The Asterion question-bank projection adds these fields to each record:
+The Asterion all-course catalog adds these fields to each record:
 
 - `course_id`
 - `component_name`
@@ -33,6 +34,8 @@ The Asterion question-bank projection adds these fields to each record:
 - `review_status`
 
 The helper layer filters by `course_id`, paper, and component name; returns empty arrays for scaffolded courses; and fails closed for invalid course IDs. P3 legacy runtime behavior is preserved by treating `usage_roles.canonical_practice=allow` as `student_runtime_safe=true` for P3 records. P1, M1, and S1 require explicit reviewed/safe promotion before they can enter student runtime.
+
+`asterion_exam_bank_catalog_v1.json` may include reviewed, needs-review, blocked, and candidate-state records. Its metadata includes course and component counts for P1, P3, M1, and S1. `asterion_question_bank_v1.json` is the student-facing subset and should contain only reviewed/safe records.
 
 ## Student Runtime Boundary
 

@@ -9,7 +9,7 @@ from exam_bank.asset_manifest import (
     validate_asset_references,
     write_asset_manifest,
 )
-from exam_bank.asterion_export import build_asterion_export, build_content_lab_candidates
+from exam_bank.asterion_export import build_asterion_exam_bank_catalog, build_asterion_export, build_content_lab_candidates
 from exam_bank.storage_audit import (
     CACHE_ACTION,
     apply_delete_plan,
@@ -36,8 +36,10 @@ def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: P
     assert by_id[question_asset_id]["canonical_path"] == "p1/12spring21/questions/q01.png"
     assert by_id[mark_asset_id]["canonical_path"] == "p1/12spring21/mark_scheme/q01.png"
 
+    asterion_catalog = build_asterion_exam_bank_catalog(bank, artifact_root=output, base_dir=tmp_path)
     asterion = build_asterion_export(bank, artifact_root=output, base_dir=tmp_path)
-    content_lab = build_content_lab_candidates(asterion)
+    content_lab = build_content_lab_candidates(asterion_catalog)
+    _write_json(output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json", asterion_catalog)
     _write_json(output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json", asterion)
     _write_json(output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json", content_lab)
     _write_json(
@@ -53,6 +55,7 @@ def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: P
     report = validate_asset_references(
         question_bank_path=bank_path,
         asset_manifest_path=manifest_path,
+        asterion_catalog_path=output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json",
         asterion_path=output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
         content_lab_path=output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json",
         topic_routing_path=output / "json" / "question_bank.topic_routing.v1.json",

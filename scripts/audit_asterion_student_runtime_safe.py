@@ -29,8 +29,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--asterion-bank",
         type=Path,
-        default=Path("output/asterion/exports/latest/asterion_question_bank_v1.json"),
-        help="Asterion question-bank export used for runtime roles and canonical artifact evidence.",
+        default=Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"),
+        help="Asterion all-course catalog export used for runtime roles and canonical artifact evidence.",
     )
     parser.add_argument(
         "--mark-events",

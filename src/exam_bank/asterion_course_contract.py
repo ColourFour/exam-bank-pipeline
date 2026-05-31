@@ -315,6 +315,33 @@ def course_counts(records: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
     return result
 
 
+def component_counts(records: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows = list(records)
+    result = []
+    for course_id in COURSE_IDS:
+        course_rows = filter_records_by_course(rows, course_id)
+        safe_rows = [record for record in course_rows if student_runtime_ready_for_record(record)]
+        paper_counts: dict[str, int] = {}
+        for record in course_rows:
+            paper = _first_text(record, ("paper", "source_exam", "sourceExam"))
+            if paper:
+                paper_counts[paper] = paper_counts.get(paper, 0) + 1
+        result.append(
+            {
+                "component_name": COURSE_COMPONENT_NAMES[course_id],
+                "course_id": course_id,
+                "paper_families": list(COURSE_ID_TO_PAPER_FAMILIES[course_id]),
+                "record_count": len(course_rows),
+                "student_runtime_safe_record_count": len(safe_rows),
+                "papers": [
+                    {"paper": paper, "record_count": count}
+                    for paper, count in sorted(paper_counts.items())
+                ],
+            }
+        )
+    return result
+
+
 def _first_text(record: dict[str, Any], keys: tuple[str, ...]) -> str:
     for key in keys:
         value = record.get(key)

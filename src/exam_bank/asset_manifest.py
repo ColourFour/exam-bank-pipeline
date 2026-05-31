@@ -126,6 +126,7 @@ def validate_asset_references(
     *,
     question_bank_path: str | Path = "output/json/question_bank.json",
     asset_manifest_path: str | Path = "output/json/asset_manifest.v1.json",
+    asterion_catalog_path: str | Path = "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
     asterion_path: str | Path = "output/asterion/exports/latest/asterion_question_bank_v1.json",
     content_lab_path: str | Path = "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
     topic_routing_path: str | Path = "output/json/question_bank.topic_routing.v1.json",
@@ -139,6 +140,7 @@ def validate_asset_references(
 
     question_bank = _read_json_if_exists(Path(question_bank_path), errors, "question_bank")
     manifest = _read_json_if_exists(Path(asset_manifest_path), errors, "asset_manifest")
+    asterion_catalog = _read_json_if_exists(Path(asterion_catalog_path), errors, "asterion_exam_bank_catalog")
     asterion = _read_json_if_exists(Path(asterion_path), errors, "asterion_question_bank")
     content_lab = _read_json_if_exists(Path(content_lab_path), errors, "content_lab_candidates")
     topic_routing = _read_json_if_exists(Path(topic_routing_path), errors, "topic_routing")
@@ -181,31 +183,27 @@ def validate_asset_references(
                     detail={"question_id": question.get("question_id"), "field": field},
                 )
 
+    if asterion_catalog:
+        _check_asterion_asset_payload(
+            asterion_catalog,
+            expected_schema="asterion.exam_bank_catalog",
+            source_path=str(asterion_catalog_path),
+            root=root,
+            base=base,
+            manifest_ids=manifest_ids,
+            errors=errors,
+        )
+
     if asterion:
-        if asterion.get("schema_name") != "asterion.question_bank":
-            errors.append(_issue("asterion_schema", str(asterion_path), "Unexpected Asterion question-bank schema."))
-        questions = asterion.get("questions") if isinstance(asterion.get("questions"), list) else []
-        _check_record_count(asterion, questions, errors, str(asterion_path))
-        for question in questions:
-            if not isinstance(question, dict):
-                continue
-            for field in ["canonical_question_artifact", "canonical_mark_scheme_artifact"]:
-                _check_path_exists(
-                    question.get(field),
-                    root=root,
-                    base=base,
-                    errors=errors,
-                    code="missing_asterion_image_path",
-                    source=str(asterion_path),
-                    detail={"question_id": question.get("question_id"), "field": field},
-                )
-            for field in ["canonical_question_asset_id", "canonical_mark_scheme_asset_id"]:
-                _check_asset_id(question.get(field), manifest_ids, errors, str(asterion_path), question.get("question_id"), field)
-            for subpart in question.get("subparts", []):
-                if not isinstance(subpart, dict):
-                    continue
-                for field in ["question_asset_id", "mark_scheme_asset_id"]:
-                    _check_asset_id(subpart.get(field), manifest_ids, errors, str(asterion_path), subpart.get("subpart_id"), field)
+        _check_asterion_asset_payload(
+            asterion,
+            expected_schema="asterion.question_bank",
+            source_path=str(asterion_path),
+            root=root,
+            base=base,
+            manifest_ids=manifest_ids,
+            errors=errors,
+        )
 
     if content_lab:
         if content_lab.get("schema_name") != "asterion.content_lab_candidates":
@@ -269,11 +267,48 @@ def validate_asset_references(
         "summary": {
             "manifest_asset_count": len(manifest_ids),
             "question_bank_records": len(question_bank.get("questions", [])) if question_bank else 0,
+            "asterion_catalog_records": len(asterion_catalog.get("questions", [])) if asterion_catalog else 0,
             "asterion_records": len(asterion.get("questions", [])) if asterion else 0,
             "content_lab_candidates": len(content_lab.get("candidates", [])) if content_lab else 0,
             "topic_routing": topic_summary,
         },
     }
+
+
+def _check_asterion_asset_payload(
+    payload: dict[str, Any],
+    *,
+    expected_schema: str,
+    source_path: str,
+    root: Path,
+    base: Path,
+    manifest_ids: set[str],
+    errors: list[dict[str, Any]],
+) -> None:
+    if payload.get("schema_name") != expected_schema:
+        errors.append(_issue("asterion_schema", source_path, f"Unexpected Asterion schema, expected {expected_schema}."))
+    questions = payload.get("questions") if isinstance(payload.get("questions"), list) else []
+    _check_record_count(payload, questions, errors, source_path)
+    for question in questions:
+        if not isinstance(question, dict):
+            continue
+        for field in ["canonical_question_artifact", "canonical_mark_scheme_artifact"]:
+            _check_path_exists(
+                question.get(field),
+                root=root,
+                base=base,
+                errors=errors,
+                code="missing_asterion_image_path",
+                source=source_path,
+                detail={"question_id": question.get("question_id"), "field": field},
+            )
+        for field in ["canonical_question_asset_id", "canonical_mark_scheme_asset_id"]:
+            _check_asset_id(question.get(field), manifest_ids, errors, source_path, question.get("question_id"), field)
+        for subpart in question.get("subparts", []):
+            if not isinstance(subpart, dict):
+                continue
+            for field in ["question_asset_id", "mark_scheme_asset_id"]:
+                _check_asset_id(subpart.get(field), manifest_ids, errors, source_path, subpart.get("subpart_id"), field)
 
 
 def _asset_records_for_question(

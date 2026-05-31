@@ -7,6 +7,7 @@ from pathlib import Path
 from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
 from .audit import write_audit, write_current_output_integrity_audit
 from .asterion_export import (
+    ASTERION_CATALOG_FILENAME,
     ASTERION_EXPORT_FILENAME,
     CONTENT_LAB_EXPORT_FILENAME,
     export_asterion_content_lab_candidates,
@@ -92,13 +93,16 @@ def build_parser() -> argparse.ArgumentParser:
 
     asterion = subparsers.add_parser(
         "asterion-export",
-        help="Write the conservative Asterion-safe question-bank projection.",
+        help="Write the Asterion static-site catalog and reviewed/safe student question-bank projection.",
     )
     asterion.add_argument("--input", default="output/json/question_bank.json", help="Path to schema v2 question_bank.json.")
     asterion.add_argument(
         "--output",
         default="",
-        help=f"Output path. Defaults to output-root/asterion/exports/latest/{ASTERION_EXPORT_FILENAME}.",
+        help=(
+            f"Student-runtime output path. Defaults to output-root/asterion/exports/latest/{ASTERION_EXPORT_FILENAME}. "
+            f"The all-course catalog is written beside it as {ASTERION_CATALOG_FILENAME}."
+        ),
     )
     asterion.add_argument(
         "--artifact-root",
@@ -124,7 +128,7 @@ def build_parser() -> argparse.ArgumentParser:
     content_lab.add_argument(
         "--input",
         default="output/json/question_bank.json",
-        help="Path to schema v2 question_bank.json or asterion_question_bank_v1.json.",
+        help="Path to schema v2 question_bank.json, asterion_exam_bank_catalog_v1.json, or a legacy Asterion question-bank projection.",
     )
     content_lab.add_argument(
         "--output",
@@ -469,7 +473,13 @@ def cmd_asterion_export(args: argparse.Namespace) -> int:
         skill_map_path=skill_map_path,
         allow_unusable_ai_sidecar=bool(getattr(args, "allow_unusable_ai_sidecar", False)),
     )
-    print(json.dumps({"output": str(path)}, indent=2, ensure_ascii=False))
+    print(
+        json.dumps(
+            {"output": str(path), "catalog_output": str(path.parent / ASTERION_CATALOG_FILENAME)},
+            indent=2,
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

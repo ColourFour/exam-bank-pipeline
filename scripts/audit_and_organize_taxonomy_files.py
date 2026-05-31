@@ -83,6 +83,7 @@ CURRENT_REFERENCE_JSON_FILES = [
     "output/json/question_bank.deepseek.json",
     "output/json/audit.current.json",
     "output/json/status.current.json",
+    "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
     "output/asterion/exports/latest/asterion_question_bank_v1.json",
     "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
 ]
@@ -260,6 +261,8 @@ def detect_file_type(item: JsonFile) -> str:
         return "current_question_bank" if item.rel_path.startswith("output/json/") else "historical_ocr_candidate_question_bank"
     if name == "asterion_question_bank_v1.json":
         return "asterion_question_bank"
+    if name == "asterion_exam_bank_catalog_v1.json":
+        return "asterion_exam_bank_catalog"
     if name == "asterion_content_lab_candidates_v1.json":
         return "content_lab_candidates"
     if name == "question_bank.deepseek.json":

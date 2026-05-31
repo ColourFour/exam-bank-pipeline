@@ -27,7 +27,7 @@ CANONICAL_TOPIC_ASSIGNMENTS = CANONICAL_ROOT / "question_topic_assignments"
 CANONICAL_STRICT_REPORTS = CANONICAL_ROOT / "strict_filtering_reports"
 CANONICAL_INDEXES = CANONICAL_ROOT / "indexes"
 SKILL_MAP_INDEX = CANONICAL_INDEXES / "skill_map_index_v1.json"
-ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_question_bank_v1.json"
+ASTERION_QB = ROOT / "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"
 LEGACY_QB = ROOT / "output/json/question_bank.json"
 
 SCHEMA_VERSION = 1

@@ -186,6 +186,8 @@ def test_topic_route_weak_evidence_record_is_marked_review_required(tmp_path: Pa
 
     routed = records["12spring24_q01"]
     assert routed["review_required"] is True
+    assert routed["course_id"] == "p1"
+    assert routed["component_name"] == "Pure Mathematics 1"
     assert routed["review_reasons"] == [topic_routing.REVIEW_WEAK_EVIDENCE]
     assert routed["primary_topic_id"] is None
     assert getattr(client, "calls") == []
@@ -515,6 +517,8 @@ def test_topic_route_sidecar_contains_generated_at_and_schema_metadata() -> None
     assert payload["generated_at"] == "2026-05-13T00:00:00+00:00"
     assert payload["taxonomy_path"] == "exam_bank_taxonomy/canonical"
     assert payload["taxonomy_version"] == "test-version"
+    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1"]
+    assert payload["course_contract"]["routing_labels_are_advisory"] is True
 
 
 def test_topic_route_review_required_outputs_do_not_enter_strict_filters() -> None:

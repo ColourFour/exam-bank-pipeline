@@ -8,6 +8,9 @@ from pathlib import Path
 import pytest
 
 from exam_bank.asterion_export import (
+    ASTERION_CATALOG_FILENAME,
+    ASTERION_CATALOG_SCHEMA_NAME,
+    ASTERION_CATALOG_SCHEMA_VERSION,
     ASTERION_EXPORT_FILENAME,
     ASTERION_SCHEMA_NAME,
     ASTERION_SCHEMA_VERSION,
@@ -15,8 +18,11 @@ from exam_bank.asterion_export import (
     CONTENT_LAB_SCHEMA_NAME,
     CONTENT_LAB_SCHEMA_VERSION,
     MARK_EVENT_TOTAL_DISAGREEMENT,
+    build_asterion_exam_bank_catalog,
     build_asterion_export,
+    build_asterion_student_question_bank,
     build_content_lab_candidates,
+    export_asterion_exam_bank_catalog,
     export_asterion_content_lab_candidates,
     export_asterion_question_bank,
     load_skill_mappings,
@@ -42,6 +48,9 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert payload["last_run_at"] == generated_at
     assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1"]
     assert {course["course_id"] for course in payload["courses"]} == {"p1", "p3", "m1", "s1"}
+    assert {component["course_id"] for component in payload["components"]} == {"p1", "p3", "m1", "s1"}
+    assert payload["components"][0]["component_name"] == "Pure Mathematics 1"
+    assert payload["components"][0]["papers"] == [{"paper": "12spring21", "record_count": 2}]
     assert payload["record_count"] == 2
 
     by_id = {record["question_id"]: record for record in payload["questions"]}
@@ -191,11 +200,37 @@ def test_asterion_export_writes_sidecar_without_mutating_question_bank(tmp_path:
     output_path = export_asterion_question_bank(input_path, artifact_root=artifact_root, base_dir=tmp_path)
 
     assert output_path == tmp_path / "output_ocr_candidate" / "asterion" / "exports" / "latest" / ASTERION_EXPORT_FILENAME
+    catalog_path = output_path.parent / ASTERION_CATALOG_FILENAME
     assert input_path.read_text(encoding="utf-8") == original
     payload = json.loads(output_path.read_text(encoding="utf-8"))
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
     assert payload["schema_name"] == ASTERION_SCHEMA_NAME
+    assert payload["export_purpose"] == "student_runtime_reviewed_safe_question_bank"
+    assert payload["record_count"] == 0
+    assert payload["components"][0]["record_count"] == 0
+    assert payload["questions"] == []
+    assert catalog["schema_name"] == ASTERION_CATALOG_SCHEMA_NAME
+    assert catalog["record_count"] == 2
+    assert catalog["components"][0]["record_count"] == 2
+    assert [record["question_id"] for record in catalog["questions"]] == ["12spring21_q01", "12spring21_q02"]
+
+
+def test_asterion_catalog_export_writes_all_course_records(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    input_path = tmp_path / "output_ocr_candidate" / "json" / "question_bank.json"
+    input_path.parent.mkdir(parents=True)
+    input_path.write_text(json.dumps(_question_bank_fixture(), indent=2), encoding="utf-8")
+
+    output_path = export_asterion_exam_bank_catalog(input_path, artifact_root=artifact_root, base_dir=tmp_path)
+
+    assert output_path == tmp_path / "output_ocr_candidate" / "asterion" / "exports" / "latest" / ASTERION_CATALOG_FILENAME
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    assert payload["schema_name"] == ASTERION_CATALOG_SCHEMA_NAME
+    assert payload["schema_version"] == ASTERION_CATALOG_SCHEMA_VERSION
+    assert payload["export_purpose"] == "all_course_static_site_catalog"
     assert payload["record_count"] == 2
-    assert [record["question_id"] for record in payload["questions"]] == ["12spring21_q01", "12spring21_q02"]
+    assert payload["courses"][0]["course_id"] == "p1"
+    assert payload["courses"][0]["record_count"] == 2
 
 
 def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) -> None:
@@ -243,6 +278,47 @@ def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) ->
     assert payload["courses"][1]["student_runtime_safe_record_count"] == 1
 
 
+def test_student_question_bank_filters_catalog_to_reviewed_safe_records(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    p3_root = artifact_root / "p3" / "31spring24"
+    p3_root.joinpath("questions").mkdir(parents=True)
+    p3_root.joinpath("mark_scheme").mkdir(parents=True)
+    p3_root.joinpath("questions", "q01.png").write_bytes(b"p3-question")
+    p3_root.joinpath("mark_scheme", "q01.png").write_bytes(b"p3-mark")
+    p3 = _base_spring21_record("31spring24_q01", "1", 4)
+    p3.update(
+        {
+            "paper": "31spring24",
+            "paper_family": "p3",
+            "canonical_question_artifact": "p3/31spring24/questions/q01.png",
+            "question_image_path": "p3/31spring24/questions/q01.png",
+            "question_image_paths": ["p3/31spring24/questions/q01.png"],
+            "mark_scheme_image_path": "p3/31spring24/mark_scheme/q01.png",
+            "mark_scheme_image_paths": ["p3/31spring24/mark_scheme/q01.png"],
+            "question_text": "1 Solve the equation. [4]",
+            "mark_scheme_text": "1 Correct work M1 M1 A1 A1",
+            "visual_curation_status": "ready",
+        }
+    )
+    p3["notes"]["question_crop_confidence"] = "high"
+    p3["notes"]["visual_curation_status"] = "ready"
+    p3["notes"]["topic_confidence"] = "medium"
+    p3["notes"]["topic_uncertain"] = False
+    bank = _question_bank_fixture()
+    bank["questions"].append(p3)
+    bank["record_count"] = 3
+
+    catalog = build_asterion_exam_bank_catalog(bank, artifact_root=artifact_root, base_dir=tmp_path)
+    runtime = build_asterion_student_question_bank(catalog)
+
+    assert catalog["record_count"] == 3
+    assert runtime["schema_name"] == ASTERION_SCHEMA_NAME
+    assert runtime["record_count"] == 1
+    assert runtime["source_record_count"] == 3
+    assert runtime["questions"][0]["question_id"] == "31spring24_q01"
+    assert runtime["questions"][0]["course_id"] == "p3"
+
+
 def test_asterion_export_loads_optional_skill_map_for_mark_events(tmp_path: Path) -> None:
     skill_map_path = tmp_path / "skill_map.json"
     skill_map_path.write_text(
@@ -271,7 +347,7 @@ def test_asterion_export_loads_optional_skill_map_for_mark_events(tmp_path: Path
 
     export_asterion_question_bank(input_path, output_path, artifact_root=artifact_root, base_dir=tmp_path, skill_map_path=skill_map_path)
 
-    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    payload = json.loads((output_path.parent / ASTERION_CATALOG_FILENAME).read_text(encoding="utf-8"))
     q1 = payload["questions"][0]
     assert q1["subparts"][0]["mark_events"][0]["skill_ids"] == ["primary", "secondary", "prerequisite"]
 

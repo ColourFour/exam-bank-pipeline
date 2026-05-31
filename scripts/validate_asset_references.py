@@ -11,6 +11,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Validate canonical asset references across question-bank and Asterion exports.")
     parser.add_argument("--question-bank", default="output/json/question_bank.json")
     parser.add_argument("--asset-manifest", default="output/json/asset_manifest.v1.json")
+    parser.add_argument("--asterion-catalog", default="output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json")
     parser.add_argument("--asterion", default="output/asterion/exports/latest/asterion_question_bank_v1.json")
     parser.add_argument("--content-lab", default="output/asterion/exports/latest/asterion_content_lab_candidates_v1.json")
     parser.add_argument("--topic-routing", default="output/json/question_bank.topic_routing.v1.json")
@@ -24,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     report = validate_asset_references(
         question_bank_path=args.question_bank,
         asset_manifest_path=args.asset_manifest,
+        asterion_catalog_path=args.asterion_catalog,
         asterion_path=args.asterion,
         content_lab_path=args.content_lab,
         topic_routing_path=args.topic_routing,
