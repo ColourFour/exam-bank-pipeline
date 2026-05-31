@@ -205,4 +205,4 @@ Before using the sidecar for strict topic filtering:
 8. Reject distributions that do not total exactly `100`.
 9. Preserve failed and review-required records for QA/review queues, not strict filters.
 10. Do not merge sidecar topic output into `question_bank.json` canonical records.
-11. Do not use topic routing to promote P1, M1, or S1 records into static student runtime. Those courses need explicit reviewed/safe records in the course-aware Asterion contract.
+11. Do not use topic routing to promote records into static student runtime. Student runtime promotion comes only from the course-aware Asterion contract and its reviewed/safe readiness gate.

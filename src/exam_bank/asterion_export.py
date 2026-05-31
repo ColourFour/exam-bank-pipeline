@@ -261,6 +261,7 @@ def _course_contract_metadata() -> dict[str, Any]:
         "courses": course_registry(),
         "student_runtime_default": "student_runtime_safe=true and review_status=reviewed",
         "p3_legacy_runtime_preserved": True,
+        "all_course_canonical_practice_runtime_enabled": True,
         "content_lab_candidates_student_runtime": False,
     }
 

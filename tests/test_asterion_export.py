@@ -278,6 +278,42 @@ def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) ->
     assert payload["courses"][1]["student_runtime_safe_record_count"] == 1
 
 
+def test_asterion_projection_applies_runtime_gate_to_ready_records_for_all_courses(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    records = [
+        _ready_runtime_record(artifact_root, "12spring24_q01", "p1", "12spring24", "1"),
+        _ready_runtime_record(artifact_root, "31spring24_q01", "p3", "31spring24", "1"),
+        _ready_runtime_record(artifact_root, "42spring24_q01", "p4", "42spring24", "1"),
+        _ready_runtime_record(artifact_root, "52spring24_q01", "p5", "52spring24", "1"),
+    ]
+
+    catalog = build_asterion_exam_bank_catalog(
+        {
+            "schema_name": "exam_bank.question_bank",
+            "schema_version": 2,
+            "record_count": len(records),
+            "questions": records,
+        },
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+    )
+    runtime = build_asterion_student_question_bank(catalog)
+
+    assert {record["question_id"] for record in runtime["questions"]} == {
+        "12spring24_q01",
+        "31spring24_q01",
+        "42spring24_q01",
+        "52spring24_q01",
+    }
+    assert {record["course_id"] for record in runtime["questions"]} == {"p1", "p3", "m1", "s1"}
+    assert {row["course_id"]: row["student_runtime_safe_record_count"] for row in catalog["courses"]} == {
+        "p1": 1,
+        "p3": 1,
+        "m1": 1,
+        "s1": 1,
+    }
+
+
 def test_student_question_bank_filters_catalog_to_reviewed_safe_records(tmp_path: Path) -> None:
     artifact_root = _write_artifacts(tmp_path)
     p3_root = artifact_root / "p3" / "31spring24"
@@ -882,6 +918,47 @@ def _question_bank_fixture() -> dict:
         "record_count": 2,
         "questions": [q1, q2],
     }
+
+
+def _ready_runtime_record(
+    artifact_root: Path,
+    question_id: str,
+    paper_family: str,
+    paper: str,
+    question_number: str,
+) -> dict:
+    path_number = f"q{int(question_number):02d}.png"
+    question_path = artifact_root / paper_family / paper / "questions" / path_number
+    mark_scheme_path = artifact_root / paper_family / paper / "mark_scheme" / path_number
+    question_path.parent.mkdir(parents=True, exist_ok=True)
+    mark_scheme_path.parent.mkdir(parents=True, exist_ok=True)
+    question_path.write_bytes(f"{question_id}-question".encode("utf-8"))
+    mark_scheme_path.write_bytes(f"{question_id}-mark".encode("utf-8"))
+
+    record = _base_spring21_record(question_id, question_number, 4)
+    record.update(
+        {
+            "paper": paper,
+            "paper_family": paper_family,
+            "canonical_question_artifact": f"{paper_family}/{paper}/questions/{path_number}",
+            "question_image_path": f"{paper_family}/{paper}/questions/{path_number}",
+            "question_image_paths": [f"{paper_family}/{paper}/questions/{path_number}"],
+            "mark_scheme_image_path": f"{paper_family}/{paper}/mark_scheme/{path_number}",
+            "mark_scheme_image_paths": [f"{paper_family}/{paper}/mark_scheme/{path_number}"],
+            "question_text": "1 Solve the equation. [4]",
+            "mark_scheme_text": "1 Correct work M1 M1 A1 A1",
+            "visual_curation_status": "ready",
+        }
+    )
+    record["notes"].update(
+        {
+            "question_crop_confidence": "high",
+            "visual_curation_status": "ready",
+            "topic_confidence": "medium",
+            "topic_uncertain": False,
+        }
+    )
+    return record
 
 
 def _base_spring21_record(question_id: str, question_number: str, marks: int) -> dict:

@@ -150,7 +150,7 @@ def student_runtime_safe_for_record(record: dict[str, Any]) -> bool:
     if explicit is not None:
         return explicit is True
     roles = record.get("usage_roles") if isinstance(record.get("usage_roles"), dict) else {}
-    return course_id == "p3" and roles.get("canonical_practice") == "allow"
+    return roles.get("canonical_practice") == "allow"
 
 
 def student_runtime_ready_for_record(record: dict[str, Any]) -> bool:

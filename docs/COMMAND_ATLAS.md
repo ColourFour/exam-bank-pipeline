@@ -324,7 +324,7 @@ Output:
 
 Category/runtime: standard projection, fast to medium
 
-Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component and to keep P1/M1/S1 empty states separate from P3 runtime records. The catalog preserves blocked and review states; the question-bank export is the student-facing reviewed/safe subset.
+Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component. The catalog preserves blocked and review states; the question-bank export is the student-facing reviewed/safe subset across all supported courses.
 
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-export \

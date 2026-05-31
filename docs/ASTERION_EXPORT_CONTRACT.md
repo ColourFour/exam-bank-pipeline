@@ -10,7 +10,7 @@ These files are role-gated projections from the image-first question bank. Aster
 
 Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Asterion must require `metadata.run_summary.safe_for_strict_filters=true` before using that sidecar for strict topic filtering.
 
-The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. P3 remains the developed runtime path. P1, M1, and S1 are scaffolded and must fail closed to an empty reviewed-record state until reviewed records are intentionally promoted.
+The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. All supported courses fail closed for records that do not pass the deterministic readiness gate, and the student runtime export contains only reviewed/safe records.
 
 ## Export Purposes
 
@@ -20,7 +20,7 @@ The export layer is course-aware for the static 9709 study site. Supported `cour
 
 `asterion_content_lab_candidates_v1.json` is a metadata-only candidate projection derived from the canonical bank, the catalog, or a legacy Asterion projection. It is for Content Lab review, planning, and future generation workflows. It does not contain generated student-facing content. Its `policy`, `role_statuses`, `generation_gate`, and `review_status` fields are part of the permission contract.
 
-`src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns empty arrays for scaffolded courses; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
+`src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns only reviewed/safe records for student runtime requests; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
 
 The catalog and runtime exports include top-level `courses` and `components` summaries. `courses` reports counts by static-site course ID. `components` reports the same course IDs with component names and paper-level counts when source paper metadata is available.
 
@@ -51,7 +51,7 @@ Consumers must honor role-specific `allow`, `block`, `block_until_reviewed`, `in
 
 `usage_roles.canonical_practice` controls student-facing canonical practice. It has `allow` or `block`. Only `allow` records may enter canonical practice. `block` records remain out of student-facing practice even if they have useful advisory text or metadata.
 
-For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. P3 preserves the legacy behavior where `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true`. P1, M1, and S1 do not inherit runtime safety from historical role gates; they require explicit reviewed/safe promotion before student display. The exported `asterion_question_bank_v1.json` file applies this gate; the exported catalog does not.
+For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true` for every supported course. That role is allowed only when the source record passes the artifact, crop, mark consistency, paper-total, mapping, validation, and visual curation checks. The exported `asterion_question_bank_v1.json` file applies this gate; the exported catalog preserves both runtime-safe and review-only states.
 
 `usage_roles.field_guide_source` controls field-guide source use. `allow` may be consumed for that role. `block_until_reviewed` may be shown only in review or teacher-controlled workflows that preserve the review state. `block` must not be used.
 
@@ -90,7 +90,7 @@ These counts are dated release evidence, not eligibility rules. Regenerated expo
 
 Student-facing readiness is limited. The all-course catalog is useful for review and controlled downstream workflows, but only the reviewed/safe subset is eligible for static student practice. Other product roles such as quick checks, Guardian candidate flows, or generation inputs still require their own role gates.
 
-Course readiness is uneven. P3 is the most developed exam-bank path. P1, M1, and S1 have course IDs and safe empty-state behavior, but they should show `No reviewed exam-bank records available yet.` until official course topic maps and reviewed records are added. Do not reuse P3 questions for these courses.
+Course readiness is uneven. P3 is the most developed exam-bank path, while P1, M1, and S1 still need broader topic-map and review coverage. Student pages should still show `No reviewed exam-bank records available yet.` for any course or filter whose reviewed/safe runtime subset is empty. Do not reuse P3 questions for these courses.
 
 Subpart marks are incomplete. In the dated export evidence above, the Asterion projection has `968` records with labeled subparts, and `48` records have missing subpart marks. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
 

@@ -31,20 +31,20 @@ def test_course_ids_map_product_components_without_cross_loading_p3() -> None:
     assert [record["question_id"] for record in filter_records_by_course(records, "s1")] == ["s1-q1"]
 
 
-def test_p3_legacy_runtime_safe_is_preserved_but_other_courses_are_scaffolded() -> None:
+def test_canonical_practice_runtime_safe_applies_to_all_supported_courses() -> None:
     p3 = _record("p3-q1", "p3", "31spring24", safe=True)
     p1 = _record("p1-q1", "p1", "12spring24", safe=True)
     m1 = _record("m1-q1", "p4", "42spring24", safe=True)
     s1 = _record("s1-q1", "p5", "52spring24", safe=True)
 
     assert student_runtime_safe_for_record(p3) is True
-    assert student_runtime_safe_for_record(p1) is False
-    assert student_runtime_safe_for_record(m1) is False
-    assert student_runtime_safe_for_record(s1) is False
+    assert student_runtime_safe_for_record(p1) is True
+    assert student_runtime_safe_for_record(m1) is True
+    assert student_runtime_safe_for_record(s1) is True
     assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "p3", student_runtime_only=True)] == ["p3-q1"]
-    assert filter_records_by_course([p3, p1, m1, s1], "p1", student_runtime_only=True) == []
-    assert filter_records_by_course([p3, p1, m1, s1], "m1", student_runtime_only=True) == []
-    assert filter_records_by_course([p3, p1, m1, s1], "s1", student_runtime_only=True) == []
+    assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "p1", student_runtime_only=True)] == ["p1-q1"]
+    assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "m1", student_runtime_only=True)] == ["m1-q1"]
+    assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "s1", student_runtime_only=True)] == ["s1-q1"]
 
 
 def test_explicit_reviewed_non_p3_record_can_enter_future_runtime() -> None:

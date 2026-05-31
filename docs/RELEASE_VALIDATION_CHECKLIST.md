@@ -214,13 +214,13 @@ Blocking:
 - Any runtime record with missing required canonical image integrity is marked student-facing `allow`.
 - Any `9709_2025_November_33` record is promoted to a role that requires mark-scheme availability before the missing mark scheme is resolved.
 - Content Lab candidate `generation_gate.status=allow` appears without reviewed/approved prerequisites required by `docs/ASTERION_EXPORT_CONTRACT.md`.
-- P1, M1, or S1 student runtime uses P3 records or treats scaffolded empty data as an error.
+- P1, M1, or S1 student runtime uses P3 records or bypasses the reviewed/safe runtime gate.
 
 Warning:
 
 - Limited student-facing eligibility is expected; role-blocked and `blocked_until_reviewed` records may remain in the all-course catalog as long as downstream roles preserve those statuses.
 - Incomplete subpart marks remain warning-level only when full-question mark totals and rendered mark-scheme images remain available and role gates are conservative.
-- P1, M1, and S1 may legitimately show `No reviewed exam-bank records available yet.` until reviewed course records are added.
+- Any course or filter may legitimately show `No reviewed exam-bank records available yet.` when its reviewed/safe runtime subset is empty.
 
 ### 6. Validate Topic Sidecar Safety Metadata
 
