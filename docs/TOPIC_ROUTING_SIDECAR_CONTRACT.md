@@ -19,6 +19,7 @@ The sidecar stores:
 - a parent-topic `primary_topic_id`
 - a parent-topic `topic_distribution`
 - advisory `course_id` and `component_name` metadata for P1, P3, M1, and S1 consumers
+- deterministic `evidence_packet_hash` freshness metadata for resume safety
 - confidence, review, evidence, provider, and routing-source metadata
 
 It does not store student-facing explanations, difficulty, subtopics, skills, Content Lab metadata, Asterion readiness, or generated learning content.
@@ -118,6 +119,38 @@ Review-required records may come from:
 
 Review-required records may still be useful for teacher review, QA, or mixed practice planning, but they are not strict-filter truth.
 
+### Evidence Packet Freshness
+
+New topic-routing records include `evidence_packet_hash`, a SHA-256 hash of the deterministic packet content supplied to the router for that question. The hash is derived from the effective routing packet, including question identity, paper/component context, visual/text readiness fields, supplied evidence fields, and allowed topic context. It excludes provider timestamps, response IDs, generated output metadata, and local artifact paths that are not sent to the router.
+
+When `topic-route-ai --resume` is used, a previous record is preserved only when all freshness checks pass:
+
+- `llm_model` matches the requested model, except deterministic review-gate records may have `llm_model=null`
+- `llm_prompt_version` matches the requested prompt version
+- `evidence_packet_hash` exists on the previous record
+- `evidence_packet_hash` matches the freshly rebuilt packet hash for the current question record
+
+Legacy rows without `evidence_packet_hash` are treated as stale and rerouted on resume.
+
+### Evidence Metadata Repair
+
+The router treats the packet's supplied evidence fields as the source of truth for `evidence_used`. Model-returned `evidence_used` values are checked against the evidence fields actually sent in the packet.
+
+If a returned route is otherwise valid but includes unsupported evidence labels, the router repairs only the evidence metadata:
+
+- unsupported labels are dropped
+- supported labels are preserved
+- if all returned labels are unsupported but the packet has supplied evidence, the router uses a deterministic fallback of the supplied evidence fields
+- if no supplied evidence fallback exists, the record is written fail-closed as review-required/error
+
+Repaired records include:
+
+- `evidence_used_repaired=true`
+- `evidence_used_original`
+- `evidence_used_dropped`
+
+Evidence repair does not loosen validation for topic IDs, topic distributions, duplicate topics, confidence, primary-topic rules, malformed records, or any other routing contract field. Those failures remain per-record validation errors.
+
 ## Allowed Topic Structures
 
 Strict topic routing uses only canonical parent topic IDs from `exam_bank_taxonomy/canonical/topic_filter_maps/`.
@@ -205,4 +238,4 @@ Before using the sidecar for strict topic filtering:
 8. Reject distributions that do not total exactly `100`.
 9. Preserve failed and review-required records for QA/review queues, not strict filters.
 10. Do not merge sidecar topic output into `question_bank.json` canonical records.
-11. Do not use topic routing to promote records into static student runtime. Student runtime promotion comes only from the course-aware Asterion contract and its reviewed/safe readiness gate.
+11. Do not use raw sidecar records by themselves to promote records into static student learning runtime. Learning-runtime promotion comes from the course-aware Asterion contract. The Asterion export may use an individual topic route as one input to the advisory topic-filter gate only when that route is record-level filterable: no error, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and a non-empty, duplicate-free distribution totaling `100` that contains the primary topic. This can produce `advisory_topic_filter_ok`; it must not produce `reviewed_topic_filter_safe` or `learning_runtime_safe` without reviewed topic-alignment evidence.

@@ -50,8 +50,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Minimum reviewed student-runtime-safe share required for P1, M1, and S1.",
     )
     parser.add_argument(
+        "--student-runtime-topic-target-rate",
+        type=float,
+        default=0.35,
+        help="Report-only minimum reviewed learning-runtime-safe share for each named P1, M1, and S1 topic.",
+    )
+    parser.add_argument(
+        "--enforce-student-runtime-targets",
+        action="store_true",
+        help="Fail when P1/M1/S1 learning-runtime targets are not met. Defaults off because non-P3 advisory/image gates are not reviewed learning runtime.",
+    )
+    parser.add_argument(
         "--output",
-        default="output/asterion/exports/latest/asterion_all_course_export_validation_2026_05_31.json",
+        default="output/asterion/exports/latest/asterion_all_course_export_validation_2026_06_01.json",
     )
     return parser
 
@@ -202,6 +213,31 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         for candidate in candidates
         if (course_id := course_id_for_paper_family(candidate.get("paper_family")))
     )
+    catalog_visible_counts = Counter(
+        str(record.get("course_id", ""))
+        for record in catalog_questions
+        if record.get("catalog_visible") is True
+    )
+    image_practice_safe_counts = Counter(
+        str(record.get("course_id", ""))
+        for record in catalog_questions
+        if record.get("image_practice_safe") is True
+    )
+    advisory_topic_filter_ok_counts = Counter(
+        str(record.get("course_id", ""))
+        for record in catalog_questions
+        if record.get("advisory_topic_filter_ok") is True
+    )
+    reviewed_topic_filter_safe_counts = Counter(
+        str(record.get("course_id", ""))
+        for record in catalog_questions
+        if record.get("reviewed_topic_filter_safe") is True
+    )
+    learning_runtime_safe_counts = Counter(
+        str(record.get("course_id", ""))
+        for record in catalog_questions
+        if record.get("learning_runtime_safe") is True
+    )
 
     catalog_course_ids = set(catalog_course_counts)
     invalid_catalog_course_ids = sorted(catalog_course_ids - VALID_COURSE_IDS)
@@ -250,6 +286,26 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     if runtime_course_counts != catalog_reviewed_safe_counts:
         errors.append("Runtime course counts do not match reviewed student-runtime-safe catalog counts.")
 
+    unsafe_catalog_topic_routes = [
+        str(record.get("question_id", ""))
+        for record in catalog_questions
+        if record.get("topic_id")
+        and isinstance(record.get("topic_route"), dict)
+        and record["topic_route"].get("filter_ok") is not True
+    ]
+    if unsafe_catalog_topic_routes:
+        errors.append("Catalog has topic_id values backed by non-filterable topic routes.")
+
+    unsafe_runtime_topic_routes = [
+        str(record.get("question_id", ""))
+        for record in runtime_questions
+        if record.get("topic_id")
+        and isinstance(record.get("topic_route"), dict)
+        and record["topic_route"].get("filter_ok") is not True
+    ]
+    if unsafe_runtime_topic_routes:
+        errors.append("Runtime has topic_id values backed by non-filterable topic routes.")
+
     runtime_records_with_candidate_fields = [
         str(record.get("question_id", ""))
         for record in runtime_questions
@@ -295,11 +351,56 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "runtime_safe_rate": round(rate, 6),
             "target_met": target_met,
         }
-        if not target_met:
+        if not target_met and args.enforce_student_runtime_targets:
             errors.append(
                 f"{course_id} runtime-safe count is {runtime_safe_count}/{total} "
                 f"({rate:.2%}), below target {minimum}/{total} ({target_rate:.2%})."
             )
+
+    topic_target_rate = float(args.student_runtime_topic_target_rate)
+    topic_totals: Counter[str] = Counter()
+    topic_runtime_safe_counts: Counter[str] = Counter()
+    missing_topic_counts: Counter[str] = Counter()
+    missing_topic_runtime_safe_counts: Counter[str] = Counter()
+    for record in catalog_questions:
+        course_id = str(record.get("course_id", ""))
+        if course_id not in target_course_ids:
+            continue
+        topic_id = str(record.get("topic_id") or "").strip()
+        runtime_safe = record.get("student_runtime_safe") is True and record.get("review_status") == "reviewed"
+        if not topic_id:
+            missing_topic_counts[course_id] += 1
+            if runtime_safe:
+                missing_topic_runtime_safe_counts[course_id] += 1
+            continue
+        topic_totals[topic_id] += 1
+        if runtime_safe:
+            topic_runtime_safe_counts[topic_id] += 1
+
+    topic_target_report: dict[str, dict[str, Any]] = {}
+    for topic_id, total in sorted(topic_totals.items()):
+        runtime_safe_count = topic_runtime_safe_counts[topic_id]
+        minimum = math.ceil(total * topic_target_rate) if total else 0
+        rate = runtime_safe_count / total if total else 0.0
+        target_met = runtime_safe_count >= minimum
+        topic_target_report[topic_id] = {
+            "catalog_count": total,
+            "runtime_safe_count": runtime_safe_count,
+            "target_rate": topic_target_rate,
+            "minimum_runtime_safe_count": minimum,
+            "runtime_safe_rate": round(rate, 6),
+            "target_met": target_met,
+        }
+        if not target_met and args.enforce_student_runtime_targets:
+            errors.append(
+                f"{topic_id} runtime-safe count is {runtime_safe_count}/{total} "
+                f"({rate:.2%}), below topic target {minimum}/{total} ({topic_target_rate:.2%})."
+            )
+
+    if missing_topic_counts:
+        warnings.append("Catalog has P1/M1/S1 records without topic_id; see student_runtime_missing_topic_counts.")
+    if not args.enforce_student_runtime_targets:
+        warnings.append("P1/M1/S1 learning-runtime targets are report-only; non-P3 image/advisory records are not reviewed learning runtime.")
 
     catalog_image_report = missing_image_report(catalog_questions, artifact_root)
     runtime_image_report = missing_image_report(runtime_questions, artifact_root)
@@ -343,6 +444,13 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         "catalog_course_counts": dict(sorted(catalog_course_counts.items())),
         "catalog_runtime_safe_counts": dict(sorted(catalog_safe_counts.items())),
         "catalog_reviewed_runtime_safe_counts": dict(sorted(catalog_reviewed_safe_counts.items())),
+        "safety_level_counts": {
+            "catalog_visible": dict(sorted(catalog_visible_counts.items())),
+            "image_practice_safe": dict(sorted(image_practice_safe_counts.items())),
+            "advisory_topic_filter_ok": dict(sorted(advisory_topic_filter_ok_counts.items())),
+            "reviewed_topic_filter_safe": dict(sorted(reviewed_topic_filter_safe_counts.items())),
+            "learning_runtime_safe": dict(sorted(learning_runtime_safe_counts.items())),
+        },
         "runtime_course_counts": dict(sorted(runtime_course_counts.items())),
         "catalog_review_status_counts": count_by(catalog_questions, "review_status"),
         "runtime_review_status_counts": count_by(runtime_questions, "review_status"),
@@ -368,10 +476,20 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "appears_preserved": p3_runtime_count >= min_expected_p3,
         },
         "student_runtime_target": runtime_target_report,
+        "student_runtime_topic_target": topic_target_report,
+        "student_runtime_missing_topic_counts": {
+            course_id: {
+                "catalog_count": missing_topic_counts[course_id],
+                "runtime_safe_count": missing_topic_runtime_safe_counts[course_id],
+            }
+            for course_id in sorted(missing_topic_counts)
+        },
         "all_course_runtime_gate_check": {
             "target_course_ids": list(target_course_ids),
             "target_rate": target_rate,
             "target_met": all(row["target_met"] for row in runtime_target_report.values()),
+            "topic_target_rate": topic_target_rate,
+            "topic_target_met": all(row["target_met"] for row in topic_target_report.values()),
         },
         "image_reference_report": {
             "catalog": catalog_image_report,

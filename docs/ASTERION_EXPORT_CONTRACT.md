@@ -8,7 +8,7 @@ This contract covers the current Asterion-facing exports:
 
 These files are role-gated projections from the image-first question bank. Asterion must not treat the catalog or Content Lab queue as globally student-facing-safe corpora. A record is usable only for the specific role whose gate allows that use.
 
-Strict topic filters, when backed by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Asterion must require `metadata.run_summary.safe_for_strict_filters=true` before using that sidecar for strict topic filtering.
+Strict topic filters, when backed directly by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Direct raw-sidecar consumers must require `metadata.run_summary.safe_for_strict_filters=true`. The Asterion export may consume the sidecar more narrowly as record-level routing evidence: it can attach a top-level `topic_id` only when that individual route has no error, `review_required=false`, `confidence` of `high` or `medium`, and a non-empty, duplicate-free distribution that totals `100` and contains the primary topic. Failed or review-required routes stay out of student topic filters.
 
 The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. All supported courses fail closed for records that do not pass the deterministic readiness gate, and the student runtime export contains only reviewed/safe records.
 
@@ -30,7 +30,7 @@ Canonical fields for Asterion consumption:
 
 - `schema_name`, `schema_version`, `source_schema`, `export_purpose`, and `record_count` define the file contract and source export relationship.
 - `question_id`, `paper`, `paper_family`, and `question_number` are stable identity and routing fields.
-- `course_id`, `component_name`, `source_exam`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` are the course-aware static-site fields.
+- `course_id`, `component_name`, `source_exam`, `topic_id`, `topic_route`, `question_image_path`, `mark_scheme_image_path`, `student_runtime_safe`, and `review_status` are the course-aware static-site fields.
 - `canonical_question_artifact`, `canonical_mark_scheme_artifact`, `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, `artifact_integrity`, and `source_pdf` are the canonical provenance and artifact fields.
 - `usage_roles` is the canonical role permission surface for the all-course catalog and legacy Asterion projections.
 - `quality_gate` booleans are canonical gate inputs and summaries. `quality_gate.reason_codes` are diagnostics, not a replacement for `usage_roles`.
@@ -51,7 +51,7 @@ Consumers must honor role-specific `allow`, `block`, `block_until_reviewed`, `in
 
 `usage_roles.canonical_practice` controls student-facing canonical practice. It has `allow` or `block`. Only `allow` records may enter canonical practice. `block` records remain out of student-facing practice even if they have useful advisory text or metadata.
 
-For the static course-aware runtime, `student_runtime_safe=true` and `review_status=reviewed` are the default loading gates. `usage_roles.canonical_practice=allow` is projected to `student_runtime_safe=true` for every supported course. That role is allowed only when the source record passes the artifact, crop, mark consistency, paper-total, mapping, validation, and visual curation checks. The exported `asterion_question_bank_v1.json` file applies this gate; the exported catalog preserves both runtime-safe and review-only states.
+For the static course-aware learning runtime, `student_runtime_safe=true`, `learning_runtime_safe=true`, and `review_status=reviewed` are the loading gates. P3 legacy canonical-practice runtime is preserved. Non-P3 image and advisory topic-route records are not projected to `student_runtime_safe`; they are exposed separately as `image_practice_safe` and `advisory_topic_filter_ok`. `image_practice_safe` requires canonical assets, mark consistency, paper-total consistency, clean mapping/validation/scope status, and high or medium mark-scheme crop confidence. `advisory_topic_filter_ok` additionally requires a filterable route whose distribution totals `100`. These flags do not loosen text-only, field-guide, quick-check, warmup generation, Guardian, Content Lab, or learning-runtime gates. The exported `asterion_question_bank_v1.json` file applies the learning-runtime gate; the exported catalog preserves catalog, image-practice, advisory-topic, and review-only states.
 
 `usage_roles.field_guide_source` controls field-guide source use. `allow` may be consumed for that role. `block_until_reviewed` may be shown only in review or teacher-controlled workflows that preserve the review state. `block` must not be used.
 
@@ -112,5 +112,5 @@ Content Lab candidates remain isolated review material. `asterion_content_lab_ca
 8. Preserve blocked and review states in user interfaces, logs, and downstream queues.
 9. For Content Lab, require both candidate `role_statuses` and `generation_gate.status=allow` before any generated content is considered. Do not emit student-facing generated content from `blocked_until_reviewed` candidates.
 10. Keep `p3_readiness_metric` separate from product eligibility; it is a reporting inclusion flag, not a practice gate.
-11. For strict topic filters, require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the sidecar is missing, unsafe, or failed.
+11. For strict topic filters over the exported catalog/runtime, require `topic_id` plus `topic_route.filter_ok=true` on records already gated by `student_runtime_safe=true` and `review_status=reviewed`. Direct raw-sidecar filters still require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the required route evidence is missing, unsafe, or failed.
 12. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.

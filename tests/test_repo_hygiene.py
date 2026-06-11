@@ -1,9 +1,20 @@
+import subprocess
 from pathlib import Path
 
 
 README_PATH = Path("README.md")
 CONFIG_PATH = Path("config.yaml")
 PYPROJECT_PATH = Path("pyproject.toml")
+JUNK_PATHS = [
+    ".DS_Store",
+    "input/.DS_Store",
+    "__MACOSX/",
+    "input/__MACOSX/",
+    "__pycache__/",
+    "src/exam_bank/__pycache__/",
+    "module.pyc",
+    "src/exam_bank/module.pyc",
+]
 
 
 def test_readme_centers_supported_process_command() -> None:
@@ -48,3 +59,34 @@ def test_generated_inventory_files_are_ignored() -> None:
         "output_ocr_candidate/",
     ]:
         assert pattern in gitignore
+
+
+def test_os_and_python_cache_junk_is_absent_and_ignored() -> None:
+    visible_files = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+
+    visible_junk = [
+        path
+        for path in visible_files
+        if path.endswith("/.DS_Store")
+        or path == ".DS_Store"
+        or path.endswith(".pyc")
+        or "__pycache__/" in path
+        or path.startswith("__MACOSX/")
+        or "/__MACOSX/" in path
+    ]
+    assert visible_junk == []
+
+    check_ignore = subprocess.run(
+        ["git", "check-ignore", "--no-index", *JUNK_PATHS],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    ignored_paths = set(check_ignore.stdout.splitlines())
+
+    assert ignored_paths == set(JUNK_PATHS)

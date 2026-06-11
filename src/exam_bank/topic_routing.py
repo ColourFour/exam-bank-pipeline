@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 from typing import Any, Sequence
 
 from openai import OpenAI
@@ -19,18 +20,19 @@ from .asterion_course_contract import (
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import (
     AI_FAILURE_INVALID_JSON,
+    AI_FAILURE_EMPTY_CONTENT,
     AI_FAILURE_PROVIDER_API_ERROR,
+    AI_FAILURE_REASONING_CONTENT_ONLY,
     AI_FAILURE_SCHEMA_VALIDATION_ERROR,
     AI_FAILURE_TAXONOMY_VALIDATION_ERROR,
     ModelResponseError,
     StartupConfigurationError,
     _response_snapshot,
-    _strict_json_object,
     canonical_component_for_paper_family,
     create_client,
     load_canonical_taxonomy,
     load_question_bank,
-    parse_response_with_recovery,
+    response_text_candidates,
 )
 from .run_status import RunStatusTracker, default_status_root_for_output, resolve_run_id
 
@@ -171,12 +173,22 @@ def run_topic_routing_from_args(args: argparse.Namespace) -> int:
             return 0
 
         resume_records = load_topic_routing_sidecar_records(args.output) if args.resume and output_existed else {}
+        resume_packet_hashes = (
+            _evidence_packet_hashes_for_records(selected, taxonomy_root=args.taxonomy)
+            if args.resume and not args.force_rerun
+            else {}
+        )
         if args.resume and not args.force_rerun:
             preserved_records = {
                 question_id: value
                 for question_id, value in resume_records.items()
                 if question_id in {str(record.get("question_id", "")).strip() for record in selected}
-                and _resume_record_is_current(value, model=args.model, prompt_version=args.prompt_version)
+                and _resume_record_is_current(
+                    value,
+                    model=args.model,
+                    prompt_version=args.prompt_version,
+                    evidence_packet_hash=resume_packet_hashes.get(question_id),
+                )
             }
             records_to_route = [
                 record
@@ -185,11 +197,24 @@ def run_topic_routing_from_args(args: argparse.Namespace) -> int:
                     resume_records.get(str(record.get("question_id", ""))),
                     model=args.model,
                     prompt_version=args.prompt_version,
+                    evidence_packet_hash=resume_packet_hashes.get(str(record.get("question_id", "")).strip()),
                 )
             ]
+            stale_reasons = Counter(
+                _resume_record_staleness_reason(
+                    resume_records.get(str(record.get("question_id", ""))),
+                    model=args.model,
+                    prompt_version=args.prompt_version,
+                    evidence_packet_hash=resume_packet_hashes.get(str(record.get("question_id", "")).strip()),
+                )
+                for record in selected
+                if str(record.get("question_id", "")).strip() in resume_records
+                and str(record.get("question_id", "")).strip() not in preserved_records
+            )
         else:
             preserved_records = {}
             records_to_route = selected
+            stale_reasons = Counter()
 
         route_batches = batch_topic_routing_records(records_to_route, batch_by_paper=args.batch_by_paper)
         tracker.set_totals(
@@ -247,7 +272,12 @@ def run_topic_routing_from_args(args: argparse.Namespace) -> int:
                 question_id: value
                 for question_id, value in resume_records.items()
                 if question_id in selected_ids
-                and _resume_record_is_current(value, model=args.model, prompt_version=args.prompt_version)
+                and _resume_record_is_current(
+                    value,
+                    model=args.model,
+                    prompt_version=args.prompt_version,
+                    evidence_packet_hash=resume_packet_hashes.get(question_id),
+                )
             }
             if args.resume and not args.force_rerun
             else {}
@@ -265,6 +295,9 @@ def run_topic_routing_from_args(args: argparse.Namespace) -> int:
             "records_to_attempt_count": len(records_to_route),
             "resume": bool(args.resume),
             "force_rerun": bool(args.force_rerun),
+            "resume_preserved_count": len(preserved_records),
+            "resume_stale_count": sum(stale_reasons.values()),
+            "resume_stale_reasons": dict(sorted(stale_reasons.items())),
             "batch_by_paper": bool(args.batch_by_paper),
             "run_manifest": manifest,
         }
@@ -346,8 +379,15 @@ def batch_topic_routing_records(records: Sequence[dict[str, Any]], *, batch_by_p
 
 
 class TopicQuestionPacket:
-    def __init__(self, packet: dict[str, Any], review_record: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        packet: dict[str, Any],
+        *,
+        evidence_packet_hash: str,
+        review_record: dict[str, Any] | None = None,
+    ) -> None:
         self.packet = packet
+        self.evidence_packet_hash = evidence_packet_hash
         self.review_record = review_record
 
 
@@ -385,10 +425,25 @@ def build_topic_routing_question_packet(
             for topic_id, topic in sorted(taxonomy.topics.items())
         ],
     }
+    evidence_packet_hash = hash_topic_routing_evidence_packet(packet)
     review_reasons = deterministic_review_reasons(packet)
     if review_reasons:
-        return TopicQuestionPacket(packet, review_record=build_deterministic_review_record(record, packet, review_reasons=review_reasons))
-    return TopicQuestionPacket(packet)
+        return TopicQuestionPacket(
+            packet,
+            evidence_packet_hash=evidence_packet_hash,
+            review_record=build_deterministic_review_record(
+                record,
+                packet,
+                evidence_packet_hash=evidence_packet_hash,
+                review_reasons=review_reasons,
+            ),
+        )
+    return TopicQuestionPacket(packet, evidence_packet_hash=evidence_packet_hash)
+
+
+def hash_topic_routing_evidence_packet(packet: dict[str, Any]) -> str:
+    stable_payload = json.dumps(packet, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(stable_payload.encode("utf-8")).hexdigest()
 
 
 def deterministic_review_reasons(packet: dict[str, Any]) -> list[str]:
@@ -405,6 +460,7 @@ def build_deterministic_review_record(
     record: dict[str, Any],
     packet: dict[str, Any],
     *,
+    evidence_packet_hash: str | None = None,
     review_reasons: Sequence[str],
 ) -> dict[str, Any]:
     return {
@@ -421,6 +477,7 @@ def build_deterministic_review_record(
         "paper": record.get("paper"),
         "paper_family": str(record.get("paper_family") or "").lower(),
         "question_number": record.get("question_number"),
+        "evidence_packet_hash": evidence_packet_hash or hash_topic_routing_evidence_packet(packet),
         **_course_metadata_for_record(record),
     }
 
@@ -469,6 +526,7 @@ def route_topic_records(
 
         status = "success"
         failed = 0
+        batch_parse_metadata: dict[str, Any] = {}
         if packets:
             taxonomy = load_canonical_taxonomy(taxonomy_root, paper_family)
             payload = build_topic_routing_batch_payload(packets, taxonomy_path=taxonomy_root, prompt_version=prompt_version)
@@ -476,7 +534,7 @@ def route_topic_records(
             prompt_size = sum(len(message["content"]) for message in messages)
             prompt_chars.append(prompt_size)
             try:
-                outputs, parse_metadata, _raw_provider_output = request_topic_routing_batch(
+                outputs, record_errors, parse_metadata, _raw_provider_output = request_topic_routing_batch(
                     client,
                     model=model,
                     payload=payload,
@@ -485,17 +543,39 @@ def route_topic_records(
                     all_topic_ids=all_topic_ids,
                     prompt_version=prompt_version,
                 )
+                batch_parse_metadata = parse_metadata
                 for packet in packets:
                     question_id = str(packet["question_id"])
-                    routed[question_id] = build_topic_routing_success_record(
-                        batch_record=batch,
-                        question_id=question_id,
-                        output=outputs[question_id],
-                        model=model,
-                        prompt_version=prompt_version,
-                        run_timestamp=run_timestamp,
-                        parse_metadata=parse_metadata,
-                    )
+                    if question_id in outputs:
+                        routed[question_id] = build_topic_routing_success_record(
+                            batch_record=batch,
+                            question_id=question_id,
+                            output=outputs[question_id],
+                            model=model,
+                            prompt_version=prompt_version,
+                            run_timestamp=run_timestamp,
+                            parse_metadata=parse_metadata,
+                            packet=packet,
+                        )
+                    else:
+                        error = record_errors.get(
+                            question_id,
+                            {
+                                "type": AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+                                "message": f"records[{question_id}]: missing route record.",
+                            },
+                        )
+                        routed[question_id] = build_topic_routing_error_record(
+                            packet,
+                            model=model,
+                            prompt_version=prompt_version,
+                            run_timestamp=run_timestamp,
+                            error_type=str(error.get("type") or AI_FAILURE_SCHEMA_VALIDATION_ERROR),
+                            message=str(error.get("message") or "Invalid topic-routing record."),
+                        )
+                failed = len(record_errors)
+                if outputs and record_errors:
+                    status = "partial_salvage"
             except ModelResponseError as exc:
                 status = exc.error_type
                 failed = len(packets)
@@ -580,6 +660,12 @@ def route_topic_records(
                 "status": status,
                 "record_count": len(batch),
                 "provider_record_count": len(packets),
+                "valid_records": int(batch_parse_metadata.get("valid_records") or len(packets) - failed),
+                "invalid_records": int(batch_parse_metadata.get("invalid_records") or failed),
+                "missing_records": int(batch_parse_metadata.get("missing_records") or 0),
+                "duplicate_records": int(batch_parse_metadata.get("duplicate_records") or 0),
+                "unknown_returned_records": int(batch_parse_metadata.get("unknown_returned_records") or 0),
+                "batch_salvaged": bool(batch_parse_metadata.get("batch_salvaged") or (status == "partial_salvage")),
                 "prompt_chars": prompt_chars[-1] if packets else 0,
             }
         )
@@ -645,7 +731,7 @@ def request_topic_routing_batch(
     allowed_topic_ids: set[str],
     all_topic_ids: set[str],
     prompt_version: str = TOPIC_ROUTING_PROMPT_VERSION,
-) -> tuple[dict[str, dict[str, Any]], dict[str, Any], str]:
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, str]], dict[str, Any], str]:
     response = client.chat.completions.create(
         model=model,
         messages=build_topic_routing_messages(payload, prompt_version=prompt_version),
@@ -653,7 +739,7 @@ def request_topic_routing_batch(
         temperature=0,
     )
     try:
-        parsed, parse_metadata = parse_response_with_recovery(
+        parsed, parse_metadata = parse_topic_routing_response_with_recovery(
             response,
             lambda raw_text: parse_topic_routing_model_json(
                 raw_text,
@@ -669,7 +755,108 @@ def request_topic_routing_batch(
             raw_provider_output=raw_output or _response_snapshot(response),
             error_type=getattr(exc, "error_type", AI_FAILURE_SCHEMA_VALIDATION_ERROR),
         ) from exc
-    return parsed["records"], parse_metadata, _response_snapshot(response)
+    response_metadata = parsed.get("response_metadata") if isinstance(parsed.get("response_metadata"), dict) else {}
+    parse_metadata.update(response_metadata)
+    return parsed["records"], parsed.get("record_errors", {}), parse_metadata, _response_snapshot(response)
+
+
+def parse_topic_routing_response_with_recovery(
+    response: Any,
+    parser: Any,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    candidates = response_text_candidates(response)
+    final_content_sources = {"message.content", "output_text", "structured_response"}
+    has_final_content = any(source in final_content_sources for source, _text in candidates)
+    has_reasoning_content = any(source == "reasoning_content" for source, _text in candidates)
+    if not has_final_content:
+        error_type = AI_FAILURE_REASONING_CONTENT_ONLY if has_reasoning_content else AI_FAILURE_EMPTY_CONTENT
+        message = (
+            "Provider response only contained reasoning_content; final JSON content was empty."
+            if has_reasoning_content
+            else "Provider response did not contain final JSON content."
+        )
+        error = TopicRouteValidationError(message, error_type=error_type)
+        setattr(error, "raw_provider_output", _response_snapshot(response))
+        raise error
+
+    first_error: ValueError | None = None
+    first_text: str | None = None
+    first_source: str | None = None
+    for source, text in candidates:
+        if source == "reasoning_content":
+            continue
+        for candidate_text in _topic_routing_candidate_json_texts(text):
+            try:
+                parsed = parser(candidate_text)
+            except ValueError as exc:
+                if first_error is None:
+                    first_error = exc
+                    first_text = candidate_text
+                    first_source = source
+                continue
+            return parsed, {
+                "parse_recovered": source != "message.content" or candidate_text != text,
+                "parse_recovery_source": source,
+            }
+
+    if first_error is not None:
+        error = ValueError(str(first_error))
+        setattr(error, "raw_provider_output", first_text)
+        setattr(error, "parse_recovery_source", first_source)
+        setattr(error, "error_type", getattr(first_error, "error_type", AI_FAILURE_SCHEMA_VALIDATION_ERROR))
+        raise error
+    error = TopicRouteValidationError(
+        "Provider response did not contain parseable JSON content.",
+        error_type=AI_FAILURE_INVALID_JSON,
+    )
+    setattr(error, "raw_provider_output", _response_snapshot(response))
+    raise error
+
+
+def _topic_routing_candidate_json_texts(text: str) -> list[str]:
+    candidates = [text]
+    extracted = _extract_topic_routing_json_object(text)
+    if extracted and extracted != text:
+        candidates.append(extracted)
+    for escaped in re.findall(r'"(\{(?:[^"\\]|\\.)+\})"', text, flags=re.DOTALL):
+        try:
+            decoded = json.loads(f'"{escaped}"')
+        except json.JSONDecodeError:
+            continue
+        if isinstance(decoded, str) and decoded.strip():
+            candidates.append(decoded)
+            nested = _extract_topic_routing_json_object(decoded)
+            if nested and nested != decoded:
+                candidates.append(nested)
+    seen: set[str] = set()
+    unique: list[str] = []
+    for candidate in candidates:
+        cleaned = candidate.strip()
+        if cleaned and cleaned not in seen:
+            unique.append(cleaned)
+            seen.add(cleaned)
+    return unique
+
+
+def _extract_topic_routing_json_object(text: str) -> str | None:
+    decoder = json.JSONDecoder(object_pairs_hook=_json_object_pairs)
+    for match in re.finditer(r"\{", text):
+        start = match.start()
+        try:
+            value, end = decoder.raw_decode(text[start:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, _JsonObjectPairs):
+            return text[start : start + end]
+    return None
+
+
+class _JsonObjectPairs(list[tuple[str, Any]]):
+    pass
+
+
+def _json_object_pairs(pairs: list[tuple[str, Any]]) -> _JsonObjectPairs:
+    return _JsonObjectPairs(pairs)
 
 
 def parse_topic_routing_model_json(
@@ -678,20 +865,18 @@ def parse_topic_routing_model_json(
     expected_packets: Sequence[dict[str, Any]],
     allowed_topic_ids: set[str],
     all_topic_ids: set[str] | None = None,
-) -> dict[str, dict[str, dict[str, Any]]]:
+) -> dict[str, Any]:
     try:
-        payload = json.loads(raw_text, object_pairs_hook=_strict_json_object)
+        payload = json.loads(raw_text, object_pairs_hook=_json_object_pairs)
     except json.JSONDecodeError as exc:
         raise TopicRouteValidationError("Topic-routing model output was not valid JSON.", error_type=AI_FAILURE_INVALID_JSON) from exc
-    except ValueError as exc:
-        raise TopicRouteValidationError(str(exc), error_type=AI_FAILURE_SCHEMA_VALIDATION_ERROR) from exc
-    if not isinstance(payload, dict) or set(payload) != {"records"}:
+    if not isinstance(payload, _JsonObjectPairs) or [key for key, _value in payload] != ["records"]:
         raise TopicRouteValidationError(
             "Topic-routing model output must contain exactly one top-level key: records.",
             error_type=AI_FAILURE_SCHEMA_VALIDATION_ERROR,
         )
-    records = payload["records"]
-    if not isinstance(records, dict):
+    records = payload[0][1]
+    if not isinstance(records, _JsonObjectPairs):
         raise TopicRouteValidationError("records must be a JSON object.", error_type=AI_FAILURE_SCHEMA_VALIDATION_ERROR)
 
     expected_ids = {str(packet.get("question_id")) for packet in expected_packets}
@@ -699,14 +884,33 @@ def parse_topic_routing_model_json(
         str(packet.get("question_id")): set((packet.get("evidence") or {}).keys())
         for packet in expected_packets
     }
-    if set(records) != expected_ids:
-        raise TopicRouteValidationError(
-            f"records must contain exactly the expected question IDs: {sorted(expected_ids)}.",
-            error_type=AI_FAILURE_SCHEMA_VALIDATION_ERROR,
-        )
     validated: dict[str, dict[str, Any]] = {}
-    for question_id, item in records.items():
+    record_errors: dict[str, dict[str, str]] = {}
+    returned: dict[str, list[Any]] = defaultdict(list)
+    unknown_returned_ids: list[str] = []
+    for question_id, item in records:
+        question_id = str(question_id)
+        if question_id not in expected_ids:
+            unknown_returned_ids.append(question_id)
+            continue
+        returned[question_id].append(item)
+
+    for question_id in sorted(expected_ids):
+        items = returned.get(question_id, [])
+        if not items:
+            record_errors[question_id] = {
+                "type": AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+                "message": f"records[{question_id}]: missing route record.",
+            }
+            continue
+        if len(items) > 1:
+            record_errors[question_id] = {
+                "type": AI_FAILURE_SCHEMA_VALIDATION_ERROR,
+                "message": f"records[{question_id}]: duplicate route records returned.",
+            }
+            continue
         try:
+            item = _json_pairs_to_plain_strict(items[0], context=f"records[{question_id}]")
             validated[question_id] = validate_topic_route_record(
                 item,
                 allowed_topic_ids=allowed_topic_ids,
@@ -714,8 +918,38 @@ def parse_topic_routing_model_json(
                 supplied_evidence=supplied_evidence[question_id],
             )
         except TopicRouteValidationError as exc:
-            raise TopicRouteValidationError(f"records[{question_id}]: {exc}", error_type=exc.error_type) from exc
-    return {"records": validated}
+            record_errors[question_id] = {
+                "type": exc.error_type,
+                "message": f"records[{question_id}]: {exc}",
+            }
+    duplicate_count = sum(1 for items in returned.values() if len(items) > 1)
+    missing_count = sum(1 for question_id in expected_ids if not returned.get(question_id))
+    return {
+        "records": validated,
+        "record_errors": record_errors,
+        "response_metadata": {
+            "valid_records": len(validated),
+            "invalid_records": len(record_errors),
+            "missing_records": missing_count,
+            "duplicate_records": duplicate_count,
+            "unknown_returned_records": len(unknown_returned_ids),
+            "unknown_returned_question_ids": sorted(set(unknown_returned_ids)),
+            "batch_salvaged": bool(validated and record_errors),
+        },
+    }
+
+
+def _json_pairs_to_plain_strict(value: Any, *, context: str) -> Any:
+    if isinstance(value, _JsonObjectPairs):
+        payload: dict[str, Any] = {}
+        for key, item in value:
+            if key in payload:
+                raise TopicRouteValidationError(f"{context} contained a duplicate key: {key}.")
+            payload[key] = _json_pairs_to_plain_strict(item, context=f"{context}.{key}")
+        return payload
+    if isinstance(value, list):
+        return [_json_pairs_to_plain_strict(item, context=f"{context}[]") for item in value]
+    return value
 
 
 def validate_topic_route_record(
@@ -764,19 +998,46 @@ def validate_topic_route_record(
 
     review_reasons = _string_list(item["review_reasons"], "review_reasons")
     evidence_used = _string_list(item["evidence_used"], "evidence_used")
-    unsupported_evidence = [value for value in evidence_used if value not in EVIDENCE_FIELDS or value not in supplied_evidence]
-    if unsupported_evidence:
-        raise TopicRouteValidationError(f"evidence_used contains evidence that was not supplied: {unsupported_evidence}.")
-    if "image_reference" in evidence_used:
-        raise TopicRouteValidationError("image_reference cannot be listed as evidence because no image was sent.")
+    evidence_used, evidence_repair = repair_evidence_used(
+        evidence_used,
+        supplied_evidence=supplied_evidence,
+    )
 
-    return {
+    validated = {
         "primary_topic_id": primary_topic_id,
         "topic_distribution": distribution,
         "confidence": confidence,
         "review_required": review_required,
         "review_reasons": review_reasons,
         "evidence_used": evidence_used,
+    }
+    if evidence_repair:
+        validated.update(evidence_repair)
+    return validated
+
+
+def repair_evidence_used(
+    evidence_used: Sequence[str],
+    *,
+    supplied_evidence: set[str],
+) -> tuple[list[str], dict[str, Any]]:
+    available = sorted(value for value in supplied_evidence if value in EVIDENCE_FIELDS)
+    supported = [value for value in evidence_used if value in available]
+    dropped = [value for value in evidence_used if value not in available]
+    if not dropped:
+        return list(evidence_used), {}
+    if supported:
+        repaired = supported
+    elif available:
+        repaired = available
+    else:
+        raise TopicRouteValidationError(
+            f"evidence_used contains evidence that was not supplied and no supplied evidence fallback exists: {dropped}."
+        )
+    return repaired, {
+        "evidence_used_repaired": True,
+        "evidence_used_original": list(evidence_used),
+        "evidence_used_dropped": dropped,
     }
 
 
@@ -827,6 +1088,7 @@ def build_topic_routing_success_record(
     prompt_version: str,
     run_timestamp: str,
     parse_metadata: dict[str, Any],
+    packet: dict[str, Any],
 ) -> dict[str, Any]:
     source = next((record for record in batch_record if str(record.get("question_id")) == question_id), {})
     record = dict(output)
@@ -840,6 +1102,7 @@ def build_topic_routing_success_record(
             "paper": source.get("paper"),
             "paper_family": str(source.get("paper_family") or "").lower(),
             "question_number": source.get("question_number"),
+            "evidence_packet_hash": hash_topic_routing_evidence_packet(packet),
             **_course_metadata_for_record(source),
         }
     )
@@ -874,6 +1137,7 @@ def build_topic_routing_error_record(
         "paper": packet.get("paper"),
         "paper_family": packet.get("paper_family"),
         "question_number": packet.get("question_number"),
+        "evidence_packet_hash": hash_topic_routing_evidence_packet(packet),
         **_course_metadata_for_record(packet),
     }
 
@@ -1052,12 +1316,67 @@ def taxonomy_version(taxonomy_root: str | Path) -> str | None:
     return None
 
 
-def _resume_record_is_current(record: dict[str, Any] | None, *, model: str, prompt_version: str) -> bool:
-    if not isinstance(record, dict) or isinstance(record.get("error"), dict):
-        return False
-    if record.get("llm_model") in {None, model} and record.get("routing_source") == "deterministic_review_gate":
-        return record.get("llm_prompt_version") == prompt_version
-    return record.get("llm_model") == model and record.get("llm_prompt_version") == prompt_version
+def _evidence_packet_hashes_for_records(
+    records: Sequence[dict[str, Any]],
+    *,
+    taxonomy_root: str | Path,
+) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for record in records:
+        question_id = str(record.get("question_id") or "").strip()
+        if not question_id:
+            continue
+        hashes[question_id] = build_topic_routing_question_packet(
+            record,
+            taxonomy_root=taxonomy_root,
+        ).evidence_packet_hash
+    return hashes
+
+
+def _resume_record_is_current(
+    record: dict[str, Any] | None,
+    *,
+    model: str,
+    prompt_version: str,
+    evidence_packet_hash: str | None,
+) -> bool:
+    return (
+        _resume_record_staleness_reason(
+            record,
+            model=model,
+            prompt_version=prompt_version,
+            evidence_packet_hash=evidence_packet_hash,
+        )
+        == "current"
+    )
+
+
+def _resume_record_staleness_reason(
+    record: dict[str, Any] | None,
+    *,
+    model: str,
+    prompt_version: str,
+    evidence_packet_hash: str | None,
+) -> str:
+    if not isinstance(record, dict):
+        return "missing_record"
+    if isinstance(record.get("error"), dict):
+        return "error_record"
+    if record.get("routing_source") == "deterministic_review_gate":
+        if record.get("llm_model") not in {None, model}:
+            return "model_mismatch"
+    elif record.get("llm_model") != model:
+        return "model_mismatch"
+    if record.get("llm_prompt_version") != prompt_version:
+        return "prompt_version_mismatch"
+    if not evidence_packet_hash:
+        return "missing_expected_evidence_packet_hash"
+    stored_hash = record.get("evidence_packet_hash")
+    if not isinstance(stored_hash, str) or not stored_hash.strip():
+        return "missing_evidence_packet_hash"
+    if stored_hash != evidence_packet_hash:
+        return "evidence_packet_hash_mismatch"
+    return "current"
 
 
 def _parse_question_ids(raw_values: Sequence[str] | None) -> list[str] | None:

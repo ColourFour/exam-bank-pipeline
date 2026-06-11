@@ -278,7 +278,7 @@ def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) ->
     assert payload["courses"][1]["student_runtime_safe_record_count"] == 1
 
 
-def test_asterion_projection_applies_runtime_gate_to_ready_records_for_all_courses(tmp_path: Path) -> None:
+def test_asterion_projection_preserves_p3_learning_runtime_and_keeps_non_p3_image_practice_separate(tmp_path: Path) -> None:
     artifact_root = _write_artifacts(tmp_path)
     records = [
         _ready_runtime_record(artifact_root, "12spring24_q01", "p1", "12spring24", "1"),
@@ -299,19 +299,104 @@ def test_asterion_projection_applies_runtime_gate_to_ready_records_for_all_cours
     )
     runtime = build_asterion_student_question_bank(catalog)
 
-    assert {record["question_id"] for record in runtime["questions"]} == {
-        "12spring24_q01",
-        "31spring24_q01",
-        "42spring24_q01",
-        "52spring24_q01",
+    assert {record["question_id"] for record in runtime["questions"]} == {"31spring24_q01"}
+    assert {record["course_id"] for record in runtime["questions"]} == {"p3"}
+    assert {record["course_id"]: record["image_practice_safe"] for record in catalog["questions"]} == {
+        "p1": True,
+        "p3": True,
+        "m1": True,
+        "s1": True,
     }
-    assert {record["course_id"] for record in runtime["questions"]} == {"p1", "p3", "m1", "s1"}
     assert {row["course_id"]: row["student_runtime_safe_record_count"] for row in catalog["courses"]} == {
-        "p1": 1,
+        "p1": 0,
         "p3": 1,
-        "m1": 1,
-        "s1": 1,
+        "m1": 0,
+        "s1": 0,
     }
+
+
+def test_image_first_gate_marks_image_and_advisory_topic_safe_without_learning_runtime(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    record = _base_spring21_record("12spring21_q01", "1", 4)
+    record["question_text"] = "1 Solve the equation. [4]"
+    record["mark_scheme_text"] = "1 Correct work M1 M1 A1 A1"
+    record["notes"]["mark_scheme_crop_confidence"] = "medium"
+    topic_routes = {
+        "12spring21_q01": {
+            "primary_topic_id": "9709_p1_topic_quadratics",
+            "confidence": "high",
+            "review_required": False,
+            "review_reasons": [],
+            "routing_source": "test",
+            "topic_distribution": [{"topic_id": "9709_p1_topic_quadratics", "fit_percent": 100}],
+        }
+    }
+
+    catalog = build_asterion_exam_bank_catalog(
+        {
+            "schema_name": "exam_bank.question_bank",
+            "schema_version": 2,
+            "record_count": 1,
+            "questions": [record],
+        },
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        topic_routes=topic_routes,
+    )
+    output_record = catalog["questions"][0]
+
+    assert output_record["topic_id"] == "9709_p1_topic_quadratics"
+    assert output_record["topic_route"]["review_required"] is False
+    assert output_record["topic_route"]["filter_ok"] is True
+    assert output_record["quality_gate"]["student_runtime_image_ok"] is True
+    assert output_record["image_practice_safe"] is True
+    assert output_record["advisory_topic_filter_ok"] is True
+    assert output_record["reviewed_topic_filter_safe"] is False
+    assert output_record["learning_runtime_safe"] is False
+    assert output_record["quality_gate"]["question_crop_ok"] is False
+    assert output_record["quality_gate"]["mark_scheme_crop_ok"] is False
+    assert output_record["usage_roles"]["canonical_practice"] == "block"
+    assert output_record["usage_roles"]["field_guide_source"] == "block_until_reviewed"
+    assert output_record["student_runtime_safe"] is False
+    assert output_record["review_status"] == "needs_review"
+
+
+def test_image_first_runtime_gate_rejects_review_required_topic_route(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    record = _base_spring21_record("12spring21_q01", "1", 4)
+    record["question_text"] = "1 Solve the equation. [4]"
+    record["mark_scheme_text"] = "1 Correct work M1 M1 A1 A1"
+    record["notes"]["mark_scheme_crop_confidence"] = "medium"
+    topic_routes = {
+        "12spring21_q01": {
+            "primary_topic_id": "9709_p1_topic_quadratics",
+            "confidence": "high",
+            "review_required": True,
+            "review_reasons": ["ambiguous_fit"],
+            "routing_source": "test",
+            "topic_distribution": [{"topic_id": "9709_p1_topic_quadratics", "fit_percent": 100}],
+        }
+    }
+
+    catalog = build_asterion_exam_bank_catalog(
+        {
+            "schema_name": "exam_bank.question_bank",
+            "schema_version": 2,
+            "record_count": 1,
+            "questions": [record],
+        },
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+        topic_routes=topic_routes,
+    )
+    output_record = catalog["questions"][0]
+
+    assert output_record["topic_id"] is None
+    assert output_record["topic_route"]["filter_ok"] is False
+    assert output_record["quality_gate"]["student_runtime_image_ok"] is False
+    assert "student_runtime_topic_route_review_required" in output_record["quality_gate"]["reason_codes"]
+    assert output_record["usage_roles"]["canonical_practice"] == "block"
+    assert output_record["student_runtime_safe"] is False
 
 
 def test_student_question_bank_filters_catalog_to_reviewed_safe_records(tmp_path: Path) -> None:

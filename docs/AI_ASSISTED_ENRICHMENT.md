@@ -37,7 +37,7 @@ Asterion region or skill routing from the broad v2 sidecar should consume only `
 
 Content Lab may use `ai_assisted_items[].worked_example_seed` and `ai_assisted_items[].warmup_seed` as lesson-planning seeds. They are not generated lessons and should still be paired with visual evidence and mark-scheme review.
 
-The static Asterion student runtime must not use AI labels, topic-routing labels, or Content Lab candidates to promote records. Course-aware runtime loading is limited to `p1`, `p3`, `m1`, and `s1` records that are explicitly `student_runtime_safe=true` and `review_status=reviewed` in the Asterion course contract. The all-course runtime gate uses the deterministic `canonical_practice=allow` projection, so P1, P3, M1, and S1 records can enter the student export only after the same artifact, crop, mark-total, validation, and mapping checks pass.
+The static Asterion learning runtime must not use broad AI labels or Content Lab candidates to promote records. Course-aware learning-runtime loading is limited to records explicitly exported with `learning_runtime_safe=true`, `student_runtime_safe=true`, and `review_status=reviewed` in the Asterion course contract. P3 legacy runtime is preserved. For P1, M1, and S1, the Asterion export may use the narrow topic-routing sidecar only as record-level route evidence for catalog/image practice: the individual route must have no error, `review_required=false`, high or medium confidence, and a non-empty, duplicate-free distribution totaling `100` that contains the primary topic. That route evidence can satisfy `advisory_topic_filter_ok`, but it does not allow text-only display, generated content, quick checks, field guides, Guardian use, Content Lab generation, or learning runtime.
 
 ## Review-Only Fields
 

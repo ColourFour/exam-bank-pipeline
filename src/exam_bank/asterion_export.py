@@ -57,6 +57,7 @@ def export_asterion_question_bank(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_map_path: str | Path | None = None,
+    topic_routing_path: str | Path | None = None,
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
@@ -66,11 +67,13 @@ def export_asterion_question_bank(
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
     catalog_output = output.parent / ASTERION_CATALOG_FILENAME
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
+    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
     catalog_payload = build_asterion_exam_bank_catalog(
         payload,
         artifact_root=root,
         base_dir=base,
         skill_mappings=skill_mappings,
+        topic_routes=topic_routes,
     )
     write_atomic_json(catalog_payload, catalog_output)
     write_atomic_json(
@@ -87,6 +90,7 @@ def export_asterion_exam_bank_catalog(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_map_path: str | Path | None = None,
+    topic_routing_path: str | Path | None = None,
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
@@ -95,8 +99,15 @@ def export_asterion_exam_bank_catalog(
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_CATALOG_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
+    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
     write_atomic_json(
-        build_asterion_exam_bank_catalog(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings),
+        build_asterion_exam_bank_catalog(
+            payload,
+            artifact_root=root,
+            base_dir=base,
+            skill_mappings=skill_mappings,
+            topic_routes=topic_routes,
+        ),
         output,
     )
     return output
@@ -112,6 +123,7 @@ def export_asterion_content_lab_candidates(
     reviewed_source_skills_path: str | Path | None = DEFAULT_REVIEWED_DECISIONS_PATH,
     reviewed_mark_events_path: str | Path | None = DEFAULT_REVIEWED_MARK_EVENTS_PATH,
     mark_events_path: str | Path | None = None,
+    topic_routing_path: str | Path | None = None,
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
@@ -125,7 +137,14 @@ def export_asterion_content_lab_candidates(
     canonical_mark_events = load_canonical_mark_event_ids_by_subpart(
         mark_events_path if mark_events_path is not None else _default_mark_events_path(input_path)
     )
-    asterion_payload = _ensure_asterion_payload(payload, artifact_root=root, base_dir=base, skill_mappings=skill_mappings)
+    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
+    asterion_payload = _ensure_asterion_payload(
+        payload,
+        artifact_root=root,
+        base_dir=base,
+        skill_mappings=skill_mappings,
+        topic_routes=topic_routes,
+    )
     write_atomic_json(
         build_content_lab_candidates(
             asterion_payload,
@@ -144,6 +163,7 @@ def build_asterion_export(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_mappings: dict[str, list[str]] | None = None,
+    topic_routes: dict[str, dict[str, Any]] | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     return build_asterion_records_payload(
@@ -153,6 +173,7 @@ def build_asterion_export(
         artifact_root=artifact_root,
         base_dir=base_dir,
         skill_mappings=skill_mappings,
+        topic_routes=topic_routes,
         generated_at=generated_at,
         export_purpose="legacy_broad_projection",
     )
@@ -164,6 +185,7 @@ def build_asterion_exam_bank_catalog(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_mappings: dict[str, list[str]] | None = None,
+    topic_routes: dict[str, dict[str, Any]] | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     return build_asterion_records_payload(
@@ -173,6 +195,7 @@ def build_asterion_exam_bank_catalog(
         artifact_root=artifact_root,
         base_dir=base_dir,
         skill_mappings=skill_mappings,
+        topic_routes=topic_routes,
         generated_at=generated_at,
         export_purpose="all_course_static_site_catalog",
     )
@@ -186,6 +209,7 @@ def build_asterion_records_payload(
     artifact_root: str | Path | None = None,
     base_dir: str | Path | None = None,
     skill_mappings: dict[str, list[str]] | None = None,
+    topic_routes: dict[str, dict[str, Any]] | None = None,
     generated_at: str | None = None,
     export_purpose: str,
 ) -> dict[str, Any]:
@@ -197,8 +221,9 @@ def build_asterion_records_payload(
     root = Path(artifact_root) if artifact_root is not None else None
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     skills = skill_mappings or {}
+    routes = topic_routes or {}
     records = [
-        build_asterion_record(record, artifact_root=root, base_dir=base, skill_mappings=skills)
+        build_asterion_record(record, artifact_root=root, base_dir=base, skill_mappings=skills, topic_routes=routes)
         for record in question_bank.get("questions", [])
     ]
     run_timestamp = generated_at or _utc_now_iso()
@@ -259,9 +284,17 @@ def _course_contract_metadata() -> dict[str, Any]:
     return {
         "course_ids": list(COURSE_IDS),
         "courses": course_registry(),
-        "student_runtime_default": "student_runtime_safe=true and review_status=reviewed",
+        "student_runtime_default": "learning_runtime_safe=true and review_status=reviewed",
+        "safety_levels": [
+            "catalog_visible",
+            "image_practice_safe",
+            "advisory_topic_filter_ok",
+            "reviewed_topic_filter_safe",
+            "learning_runtime_safe",
+        ],
         "p3_legacy_runtime_preserved": True,
-        "all_course_canonical_practice_runtime_enabled": True,
+        "all_course_canonical_practice_runtime_enabled": False,
+        "non_p3_image_practice_runtime_enabled": False,
         "content_lab_candidates_student_runtime": False,
     }
 
@@ -342,7 +375,21 @@ def build_asterion_record(
     artifact_root: Path | None,
     base_dir: Path,
     skill_mappings: dict[str, list[str]] | None = None,
+    topic_routes: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    question_id = str(_get(record, "question_id") or "")
+    topic_route = (topic_routes or {}).get(question_id, {})
+    topic_route_filter_ok = _topic_route_filter_ok(record, topic_route)
+    topic_id = _topic_id_for_output(record, topic_route, topic_route_filter_ok=topic_route_filter_ok)
+    effective_record = dict(record)
+    if topic_id:
+        effective_record["topic_id"] = topic_id
+    if topic_route:
+        effective_record["topic_route_confidence"] = topic_route.get("confidence")
+        effective_record["topic_route_review_required"] = topic_route.get("review_required")
+        effective_record["topic_route_filter_ok"] = topic_route_filter_ok
+        effective_record["topic_route_error"] = topic_route.get("error")
+
     question_images = _image_integrity(_question_image_paths(record), artifact_root=artifact_root, base_dir=base_dir)
     mark_scheme_images = _image_integrity(_mark_scheme_image_paths(record), artifact_root=artifact_root, base_dir=base_dir)
     canonical_question = _first_path(question_images)
@@ -352,9 +399,8 @@ def build_asterion_record(
         asset_id_for_record(MARK_SCHEME_IMAGE_KIND, record, canonical_mark_scheme) if canonical_mark_scheme else None
     )
     source_pdf = _source_pdf_metadata(record, base_dir=base_dir)
-    quality_gate = _quality_gate(record, question_images, mark_scheme_images)
+    quality_gate = _quality_gate(effective_record, question_images, mark_scheme_images)
     total_marks = _total_marks(record)
-    question_id = str(_get(record, "question_id") or "")
     subparts = _subpart_records(
         record,
         question_id=question_id,
@@ -386,21 +432,29 @@ def build_asterion_record(
         },
         "quality_gate": quality_gate,
         "subparts": subparts,
-        "usage_roles": _usage_roles(record, quality_gate),
+        "usage_roles": _usage_roles(effective_record, quality_gate),
     }
     course_id = course_id_for_record(output_record)
     output_record.update(
         {
             "course_id": course_id,
             "component_name": component_name_for_course(course_id),
-            "topic_id": topic_id_for_record(record),
+            "topic_id": topic_id,
+            "topic_route": _topic_route_metadata(topic_route, filter_ok=topic_route_filter_ok),
             "source_exam": _get(record, "paper"),
             "question_image_path": canonical_question,
             "mark_scheme_image_path": canonical_mark_scheme,
         }
     )
-    output_record["student_runtime_safe"] = student_runtime_safe_for_record(output_record)
-    output_record["review_status"] = review_status_for_record(output_record)
+    safety_levels = _safety_levels(output_record)
+    output_record["safety_levels"] = safety_levels
+    output_record["catalog_visible"] = safety_levels["catalog_visible"]
+    output_record["image_practice_safe"] = safety_levels["image_practice_safe"]
+    output_record["advisory_topic_filter_ok"] = safety_levels["advisory_topic_filter_ok"]
+    output_record["reviewed_topic_filter_safe"] = safety_levels["reviewed_topic_filter_safe"]
+    output_record["learning_runtime_safe"] = safety_levels["learning_runtime_safe"]
+    output_record["student_runtime_safe"] = safety_levels["learning_runtime_safe"]
+    output_record["review_status"] = "reviewed" if safety_levels["learning_runtime_safe"] else _non_runtime_review_status(output_record)
     return output_record
 
 
@@ -507,6 +561,93 @@ def _default_mark_events_path(input_path: Path) -> Path | None:
     return sibling if sibling.exists() else None
 
 
+def load_topic_routes(path: str | Path | None) -> dict[str, dict[str, Any]]:
+    if path is None:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    records = payload.get("records") if isinstance(payload, dict) else {}
+    if not isinstance(records, dict):
+        return {}
+    return {
+        str(question_id): record
+        for question_id, record in records.items()
+        if isinstance(record, dict)
+    }
+
+
+def _default_topic_routing_path(input_path: Path) -> Path | None:
+    sibling = input_path.parent / "question_bank.topic_routing.v1.json"
+    return sibling if sibling.exists() else None
+
+
+def _topic_id_for_output(
+    record: dict[str, Any],
+    topic_route: dict[str, Any],
+    *,
+    topic_route_filter_ok: bool,
+) -> str | None:
+    route_topic = str(topic_route.get("primary_topic_id") or "").strip()
+    if route_topic and topic_route_filter_ok:
+        return route_topic
+    return topic_id_for_record(record) or None
+
+
+def _topic_route_filter_ok(record: dict[str, Any], topic_route: dict[str, Any]) -> bool:
+    if not topic_route:
+        return False
+    if topic_route.get("error"):
+        return False
+    if topic_route.get("review_required") is not False:
+        return False
+    if str(topic_route.get("confidence") or "").lower() not in {"high", "medium"}:
+        return False
+    route_family = str(topic_route.get("paper_family") or "").strip().lower()
+    record_family = str(_get(record, "paper_family") or "").strip().lower()
+    if route_family and record_family and route_family != record_family:
+        return False
+    primary_topic_id = str(topic_route.get("primary_topic_id") or "").strip()
+    distribution = topic_route.get("topic_distribution")
+    if not primary_topic_id or not isinstance(distribution, list) or not distribution:
+        return False
+    seen_topic_ids: set[str] = set()
+    fit_total = 0.0
+    found_primary = False
+    for item in distribution:
+        if not isinstance(item, dict):
+            return False
+        topic_id = str(item.get("topic_id") or "").strip()
+        fit_percent = item.get("fit_percent")
+        if not topic_id or topic_id in seen_topic_ids:
+            return False
+        if isinstance(fit_percent, bool) or not isinstance(fit_percent, (int, float)):
+            return False
+        seen_topic_ids.add(topic_id)
+        fit_total += fit_percent
+        found_primary = found_primary or topic_id == primary_topic_id
+    return found_primary and abs(fit_total - 100.0) < 0.000001
+
+
+def _topic_route_metadata(topic_route: dict[str, Any], *, filter_ok: bool = False) -> dict[str, Any] | None:
+    if not topic_route:
+        return None
+    result = {
+        "primary_topic_id": topic_route.get("primary_topic_id"),
+        "confidence": topic_route.get("confidence"),
+        "review_required": topic_route.get("review_required"),
+        "review_reasons": topic_route.get("review_reasons", []),
+        "routing_source": topic_route.get("routing_source"),
+        "filter_ok": filter_ok,
+    }
+    if topic_route.get("error"):
+        result["error"] = topic_route.get("error")
+    if "topic_distribution" in topic_route:
+        result["topic_distribution"] = topic_route.get("topic_distribution")
+    return result
+
+
 def load_ai_assisted_strict_filter_mappings(
     payload: dict[str, Any],
     *,
@@ -543,6 +684,7 @@ def _ensure_asterion_payload(
     artifact_root: Path | None,
     base_dir: Path,
     skill_mappings: dict[str, list[str]] | None,
+    topic_routes: dict[str, dict[str, Any]] | None,
 ) -> dict[str, Any]:
     schema_name = payload.get("schema_name")
     if schema_name in {ASTERION_SCHEMA_NAME, ASTERION_CATALOG_SCHEMA_NAME}:
@@ -553,6 +695,7 @@ def _ensure_asterion_payload(
             artifact_root=artifact_root,
             base_dir=base_dir,
             skill_mappings=skill_mappings,
+            topic_routes=topic_routes,
         )
     raise ValueError("Content Lab candidates require exam_bank.question_bank or asterion.question_bank input")
 
@@ -578,6 +721,18 @@ def _quality_gate(
         canonical_assets_ok=canonical_assets_ok,
         marks_consistent=marks_consistent,
     )
+    student_runtime_image_ok = _student_runtime_image_ok(
+        record,
+        canonical_assets_ok=canonical_assets_ok,
+        marks_consistent=marks_consistent,
+        paper_total_consistent=paper_total_consistent,
+    )
+    image_practice_safe = _image_practice_safe(
+        record,
+        canonical_assets_ok=canonical_assets_ok,
+        marks_consistent=marks_consistent,
+        paper_total_consistent=paper_total_consistent,
+    )
     reason_codes = _reason_codes(
         record,
         canonical_assets_ok=canonical_assets_ok,
@@ -589,6 +744,7 @@ def _quality_gate(
         paper_total_consistent=paper_total_consistent,
         text_only_display_allowed=text_only_display_allowed,
         content_lab_generation_allowed=content_lab_generation_allowed,
+        student_runtime_image_ok=student_runtime_image_ok,
     )
     return {
         "canonical_assets_ok": canonical_assets_ok,
@@ -599,6 +755,8 @@ def _quality_gate(
         "text_only_display_allowed": text_only_display_allowed,
         "visual_required": visual_required,
         "content_lab_generation_allowed": content_lab_generation_allowed,
+        "image_practice_safe": image_practice_safe,
+        "student_runtime_image_ok": student_runtime_image_ok,
         "reason_codes": reason_codes,
     }
 
@@ -607,12 +765,17 @@ def _usage_roles(record: dict[str, Any], gate: dict[str, Any]) -> dict[str, str]
     hard_blocked = _hard_blocked(record, gate)
     review_needed = _review_needed(record, gate)
     content_review_needed = review_needed or not gate["content_lab_generation_allowed"]
+    p3_legacy_runtime_ok = str(_get(record, "paper_family") or "").lower() == "p3" and (
+        not review_needed or gate["student_runtime_image_ok"]
+    )
     return {
-        "canonical_practice": "allow" if not hard_blocked and not review_needed else "block",
+        "canonical_practice": "allow"
+        if not hard_blocked and p3_legacy_runtime_ok
+        else "block",
         "field_guide_source": _tri_state_role(hard_blocked=hard_blocked, review_needed=review_needed),
         "quick_check_source": _tri_state_role(hard_blocked=hard_blocked, review_needed=review_needed or not gate["text_only_display_allowed"]),
         "warmup_generator_source": _tri_state_role(hard_blocked=hard_blocked, review_needed=content_review_needed),
-        "guardian_candidate": "allow" if not hard_blocked and not review_needed else "block",
+        "guardian_candidate": "allow" if not hard_blocked and p3_legacy_runtime_ok else "block",
         "p3_readiness_metric": "include" if str(_get(record, "paper_family") or "").lower() == "p3" else "exclude",
     }
 
@@ -636,6 +799,90 @@ def _review_needed(record: dict[str, Any], gate: dict[str, Any]) -> bool:
         or str(_get(record, "mapping_status") or "").lower() != "pass"
         or str(_get(record, "validation_status") or "").lower() != "pass"
     )
+
+
+def _student_runtime_image_ok(
+    record: dict[str, Any],
+    *,
+    canonical_assets_ok: bool,
+    marks_consistent: bool,
+    paper_total_consistent: bool,
+) -> bool:
+    topic_id = str(topic_id_for_record(record) or "").strip()
+    mark_scheme_confidence = str(_get(record, "mark_scheme_crop_confidence") or "").lower()
+    return (
+        canonical_assets_ok
+        and marks_consistent
+        and paper_total_consistent
+        and bool(topic_id)
+        and _get(record, "topic_route_filter_ok") is True
+        and str(_get(record, "mapping_status") or "").lower() == "pass"
+        and str(_get(record, "validation_status") or "").lower() == "pass"
+        and str(_get(record, "scope_quality_status") or "").lower() == "clean"
+        and mark_scheme_confidence in {"high", "medium"}
+    )
+
+
+def _image_practice_safe(
+    record: dict[str, Any],
+    *,
+    canonical_assets_ok: bool,
+    marks_consistent: bool,
+    paper_total_consistent: bool,
+) -> bool:
+    mark_scheme_confidence = str(_get(record, "mark_scheme_crop_confidence") or "").lower()
+    return (
+        canonical_assets_ok
+        and marks_consistent
+        and paper_total_consistent
+        and str(_get(record, "mapping_status") or "").lower() == "pass"
+        and str(_get(record, "validation_status") or "").lower() == "pass"
+        and str(_get(record, "scope_quality_status") or "").lower() == "clean"
+        and mark_scheme_confidence in {"high", "medium"}
+    )
+
+
+def _safety_levels(record: dict[str, Any]) -> dict[str, Any]:
+    quality_gate = record.get("quality_gate") if isinstance(record.get("quality_gate"), dict) else {}
+    topic_route = record.get("topic_route") if isinstance(record.get("topic_route"), dict) else {}
+    usage_roles = record.get("usage_roles") if isinstance(record.get("usage_roles"), dict) else {}
+    course_id = course_id_for_record(record)
+    catalog_visible = course_id in COURSE_IDS
+    image_practice_safe = catalog_visible and quality_gate.get("image_practice_safe") is True
+    advisory_topic_filter_ok = image_practice_safe and topic_route.get("filter_ok") is True
+    reviewed_topic_filter_safe = record.get("reviewed_topic_filter_safe") is True
+    p3_legacy_learning_runtime_safe = course_id == "p3" and usage_roles.get("canonical_practice") == "allow"
+    learning_runtime_safe = reviewed_topic_filter_safe or p3_legacy_learning_runtime_safe
+    return {
+        "catalog_visible": catalog_visible,
+        "image_practice_safe": image_practice_safe,
+        "advisory_topic_filter_ok": advisory_topic_filter_ok,
+        "reviewed_topic_filter_safe": reviewed_topic_filter_safe,
+        "learning_runtime_safe": learning_runtime_safe,
+        "p3_legacy_learning_runtime_safe": p3_legacy_learning_runtime_safe,
+        "evidence": {
+            "image_practice": "canonical assets, mark totals, mapping, validation, scope, and mark-scheme crop confidence",
+            "topic_filter": "record-level advisory topic route" if advisory_topic_filter_ok else None,
+            "learning_runtime": "P3 legacy canonical-practice gate" if p3_legacy_learning_runtime_safe else None,
+        },
+    }
+
+
+def _non_runtime_review_status(record: dict[str, Any]) -> str:
+    quality_gate = record.get("quality_gate") if isinstance(record.get("quality_gate"), dict) else {}
+    reason_codes = quality_gate.get("reason_codes") if isinstance(quality_gate.get("reason_codes"), list) else []
+    hard_block_reasons = {
+        "canonical_assets_missing_or_unhashed",
+        "missing_question_image_path",
+        "missing_question_image_file",
+        "missing_mark_scheme_image_path",
+        "missing_mark_scheme_image_file",
+        "marks_inconsistent",
+        "scope_quality_status_fail",
+    }
+    if quality_gate.get("canonical_assets_ok") is False or set(reason_codes).intersection(hard_block_reasons):
+        return "blocked"
+    return "needs_review"
 
 
 def _tri_state_role(*, hard_blocked: bool, review_needed: bool) -> str:
@@ -684,6 +931,7 @@ def _reason_codes(
     paper_total_consistent: bool,
     text_only_display_allowed: bool,
     content_lab_generation_allowed: bool,
+    student_runtime_image_ok: bool,
 ) -> list[str]:
     reasons: set[str] = set()
     if not canonical_assets_ok:
@@ -734,6 +982,21 @@ def _reason_codes(
             reasons.add("content_lab_blocked_topic_confidence_low")
         if _as_bool(_get(record, "topic_uncertain")):
             reasons.add("content_lab_blocked_topic_uncertain")
+    if not student_runtime_image_ok:
+        if not topic_id_for_record(record):
+            reasons.add("student_runtime_missing_topic_route")
+        if _get(record, "topic_route_filter_ok") is False:
+            reasons.add("student_runtime_topic_route_not_filter_ok")
+        if _get(record, "topic_route_error"):
+            reasons.add("student_runtime_topic_route_error")
+        topic_confidence = str(_get(record, "topic_route_confidence") or "").lower()
+        if topic_confidence and topic_confidence not in {"high", "medium"}:
+            reasons.add(f"student_runtime_topic_confidence_{topic_confidence}")
+        if _get(record, "topic_route_review_required") is True:
+            reasons.add("student_runtime_topic_route_review_required")
+        mark_scheme_confidence = str(_get(record, "mark_scheme_crop_confidence") or "").lower()
+        if mark_scheme_confidence and mark_scheme_confidence not in {"high", "medium"}:
+            reasons.add(f"student_runtime_mark_scheme_crop_confidence_{mark_scheme_confidence}")
 
     if _subpart_marks_missing(record):
         reasons.add("subpart_marks_missing")

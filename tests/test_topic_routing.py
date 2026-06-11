@@ -65,6 +65,10 @@ def _route_payload(question_id: str, item: dict[str, object] | None = None) -> s
     return json.dumps({"records": {question_id: item or _route_record()}})
 
 
+def _route_records_payload(records: dict[str, dict[str, object]]) -> str:
+    return json.dumps({"records": records})
+
+
 def _chat_response(content: str) -> SimpleNamespace:
     return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=content))])
 
@@ -94,6 +98,10 @@ def _fake_client(*responses: object) -> object:
 
 
 def _parse(raw: str, question_id: str = "12spring24_q01") -> dict[str, object]:
+    return _parse_result(raw, question_id)["records"][question_id]
+
+
+def _parse_result(raw: str, question_id: str = "12spring24_q01") -> dict[str, object]:
     packet = topic_routing.build_topic_routing_question_packet(
         _record(question_id),
         taxonomy_root="exam_bank_taxonomy/canonical",
@@ -104,7 +112,14 @@ def _parse(raw: str, question_id: str = "12spring24_q01") -> dict[str, object]:
         expected_packets=[packet],
         allowed_topic_ids={topic["topic_id"] for topic in packet["allowed_topics"]},
         all_topic_ids=all_ids,
-    )["records"][question_id]
+    )
+
+
+def _evidence_hash(record: dict[str, object] | None = None) -> str:
+    return topic_routing.build_topic_routing_question_packet(
+        record or _record(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    ).evidence_packet_hash
 
 
 def test_topic_route_single_topic_100_percent_classification() -> None:
@@ -133,33 +148,35 @@ def test_topic_route_multi_topic_classification_sums_to_100() -> None:
 
 
 def test_topic_route_rejects_percentages_over_100() -> None:
-    with pytest.raises(topic_routing.TopicRouteValidationError, match="total exactly 100"):
-        _parse(
-            _route_payload(
-                "12spring24_q01",
-                _route_record(
-                    P1_SERIES,
-                    distribution=[
-                        {"topic_id": P1_SERIES, "fit_percent": 80},
-                        {"topic_id": P1_DIFFERENTIATION, "fit_percent": 30},
-                    ],
-                ),
-            )
+    parsed = _parse_result(
+        _route_payload(
+            "12spring24_q01",
+            _route_record(
+                P1_SERIES,
+                distribution=[
+                    {"topic_id": P1_SERIES, "fit_percent": 80},
+                    {"topic_id": P1_DIFFERENTIATION, "fit_percent": 30},
+                ],
+            ),
         )
+    )
+
+    assert parsed["records"] == {}
+    assert "total exactly 100" in parsed["record_errors"]["12spring24_q01"]["message"]
 
 
 def test_topic_route_rejects_invented_topic_ids() -> None:
-    with pytest.raises(topic_routing.TopicRouteValidationError) as excinfo:
-        _parse(_route_payload("12spring24_q01", _route_record("invented_topic")))
+    parsed = _parse_result(_route_payload("12spring24_q01", _route_record("invented_topic")))
 
-    assert getattr(excinfo.value, "error_type") == topic_routing.AI_FAILURE_TAXONOMY_VALIDATION_ERROR
+    assert parsed["records"] == {}
+    assert parsed["record_errors"]["12spring24_q01"]["type"] == topic_routing.AI_FAILURE_TAXONOMY_VALIDATION_ERROR
 
 
 def test_topic_route_rejects_topic_ids_outside_paper_family() -> None:
-    with pytest.raises(topic_routing.TopicRouteValidationError) as excinfo:
-        _parse(_route_payload("12spring24_q01", _route_record(P3_COMPLEX)))
+    parsed = _parse_result(_route_payload("12spring24_q01", _route_record(P3_COMPLEX)))
 
-    assert getattr(excinfo.value, "error_type") == "topic_outside_allowed_paper_family"
+    assert parsed["records"] == {}
+    assert parsed["record_errors"]["12spring24_q01"]["type"] == "topic_outside_allowed_paper_family"
 
 
 def test_topic_route_accepts_low_confidence_review_required_output() -> None:
@@ -190,6 +207,7 @@ def test_topic_route_weak_evidence_record_is_marked_review_required(tmp_path: Pa
     assert routed["component_name"] == "Pure Mathematics 1"
     assert routed["review_reasons"] == [topic_routing.REVIEW_WEAK_EVIDENCE]
     assert routed["primary_topic_id"] is None
+    assert routed["evidence_packet_hash"] == _evidence_hash(_record(question_text="", mark_scheme_text="", text_only_status="fail"))
     assert getattr(client, "calls") == []
     assert manifest["provider_batch_count"] == 0
 
@@ -214,6 +232,399 @@ def test_topic_route_visual_required_with_insufficient_text_is_marked_review_req
     assert routed["review_required"] is True
     assert routed["review_reasons"] == [topic_routing.REVIEW_VISUAL_INSUFFICIENT]
     assert getattr(client, "calls") == []
+
+
+def test_topic_route_evidence_packet_hash_is_deterministic() -> None:
+    first = topic_routing.build_topic_routing_question_packet(
+        _record(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    second = topic_routing.build_topic_routing_question_packet(
+        _record(),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    assert first.evidence_packet_hash == second.evidence_packet_hash
+    assert first.evidence_packet_hash == topic_routing.hash_topic_routing_evidence_packet(first.packet)
+
+
+def test_topic_route_evidence_packet_hash_changes_with_evidence_text() -> None:
+    first = topic_routing.build_topic_routing_question_packet(
+        _record(question_text="Differentiate x^2."),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    second = topic_routing.build_topic_routing_question_packet(
+        _record(question_text="Integrate x^2."),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    assert first.evidence_packet_hash != second.evidence_packet_hash
+
+
+def test_topic_route_evidence_packet_hash_changes_with_available_evidence_fields() -> None:
+    with_ocr = topic_routing.build_topic_routing_question_packet(
+        _record(ocr_text="OCR evidence", ocr_text_trust="high", ocr_text_role="readable_text"),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    without_ocr = topic_routing.build_topic_routing_question_packet(
+        _record(ocr_text="", ocr_text_trust="", ocr_text_role=""),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    assert with_ocr.evidence_packet_hash != without_ocr.evidence_packet_hash
+
+
+def test_topic_route_resume_preserves_current_hashed_row() -> None:
+    evidence_hash = _evidence_hash()
+    record = {
+        **_route_record(),
+        "llm_model": "deepseek-v4-flash",
+        "llm_prompt_version": topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        "routing_source": "deepseek_topic_routing",
+        "evidence_packet_hash": evidence_hash,
+    }
+
+    assert topic_routing._resume_record_is_current(
+        record,
+        model="deepseek-v4-flash",
+        prompt_version=topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        evidence_packet_hash=evidence_hash,
+    )
+
+
+def test_topic_route_resume_rejects_legacy_row_without_evidence_packet_hash() -> None:
+    record = {
+        **_route_record(),
+        "llm_model": "deepseek-v4-flash",
+        "llm_prompt_version": topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        "routing_source": "deepseek_topic_routing",
+    }
+
+    assert not topic_routing._resume_record_is_current(
+        record,
+        model="deepseek-v4-flash",
+        prompt_version=topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        evidence_packet_hash=_evidence_hash(),
+    )
+
+
+def test_topic_route_resume_rejects_stale_hash_row() -> None:
+    record = {
+        **_route_record(),
+        "llm_model": "deepseek-v4-flash",
+        "llm_prompt_version": topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        "routing_source": "deepseek_topic_routing",
+        "evidence_packet_hash": "0" * 64,
+    }
+
+    assert not topic_routing._resume_record_is_current(
+        record,
+        model="deepseek-v4-flash",
+        prompt_version=topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
+        evidence_packet_hash=_evidence_hash(),
+    )
+
+
+def test_topic_route_provider_error_record_includes_evidence_packet_hash(tmp_path: Path) -> None:
+    client = _fake_client(RuntimeError("provider unavailable"))
+
+    records, _manifest = topic_routing.route_topic_records(
+        [_record()],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    routed = records["12spring24_q01"]
+    assert routed["routing_source"] == "deepseek_topic_routing_error"
+    assert routed["evidence_packet_hash"] == _evidence_hash()
+
+
+def test_topic_route_repairs_unsupported_evidence_used_without_failing_route(tmp_path: Path) -> None:
+    record = _record(question_text="", question_text_trust="", question_text_role="", mark_scheme_text="Use the binomial expansion.")
+    client = _fake_client(
+        _chat_response(
+            _route_records_payload(
+                {
+                    "12spring24_q01": _route_record(evidence_used=["ocr_text", "mark_scheme_text"]),
+                }
+            )
+        )
+    )
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [record],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deepseek_topic_routing"
+    assert route["evidence_used"] == ["mark_scheme_text"]
+    assert route["evidence_used_repaired"] is True
+    assert route["evidence_used_original"] == ["ocr_text", "mark_scheme_text"]
+    assert route["evidence_used_dropped"] == ["ocr_text"]
+    assert "error" not in route
+
+
+def test_topic_route_repairs_all_unsupported_evidence_used_with_available_fallback(tmp_path: Path) -> None:
+    record = _record(mark_scheme_text="")
+    client = _fake_client(
+        _chat_response(
+            _route_records_payload(
+                {
+                    "12spring24_q01": _route_record(evidence_used=["ocr_text"]),
+                }
+            )
+        )
+    )
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [record],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deepseek_topic_routing"
+    assert route["evidence_used"] == ["question_text"]
+    assert route["evidence_used_repaired"] is True
+    assert route["evidence_used_original"] == ["ocr_text"]
+    assert route["evidence_used_dropped"] == ["ocr_text"]
+
+
+def test_topic_route_no_available_evidence_does_not_silently_pass(tmp_path: Path) -> None:
+    record = _record(
+        question_text="",
+        question_text_trust="",
+        question_text_role="",
+        ocr_text="",
+        ocr_text_trust="",
+        ocr_text_role="",
+        mark_scheme_text="",
+        text_only_status="ready",
+    )
+    client = _fake_client()
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [record],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deterministic_review_gate"
+    assert route["review_required"] is True
+    assert route["review_reasons"] == [topic_routing.REVIEW_WEAK_EVIDENCE]
+    assert getattr(client, "calls") == []
+
+
+def test_topic_route_evidence_repair_without_available_fallback_is_record_error() -> None:
+    packet = topic_routing.build_topic_routing_question_packet(
+        _record(
+            question_text="",
+            question_text_trust="",
+            question_text_role="",
+            ocr_text="",
+            ocr_text_trust="",
+            ocr_text_role="",
+            mark_scheme_text="",
+            text_only_status="ready",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    ).packet
+    parsed = topic_routing.parse_topic_routing_model_json(
+        _route_payload("12spring24_q01", _route_record(evidence_used=["ocr_text"])),
+        expected_packets=[packet],
+        allowed_topic_ids={topic["topic_id"] for topic in packet["allowed_topics"]},
+        all_topic_ids=topic_routing.load_all_topic_ids("exam_bank_taxonomy/canonical"),
+    )
+
+    assert parsed["records"] == {}
+    assert "no supplied evidence fallback exists" in parsed["record_errors"]["12spring24_q01"]["message"]
+
+
+def test_topic_route_invalid_topic_id_still_fails_with_repairable_evidence_used(tmp_path: Path) -> None:
+    client = _fake_client(
+        _chat_response(
+            _route_records_payload(
+                {
+                    "12spring24_q01": _route_record("invented_topic", evidence_used=["ocr_text", "question_text"]),
+                }
+            )
+        )
+    )
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [_record()],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deepseek_topic_routing_error"
+    assert route["error"]["type"] == topic_routing.AI_FAILURE_TAXONOMY_VALIDATION_ERROR
+
+
+def test_topic_route_invalid_distribution_still_fails_with_repairable_evidence_used(tmp_path: Path) -> None:
+    client = _fake_client(
+        _chat_response(
+            _route_records_payload(
+                {
+                    "12spring24_q01": _route_record(
+                        P1_SERIES,
+                        distribution=[
+                            {"topic_id": P1_SERIES, "fit_percent": 80},
+                            {"topic_id": P1_DIFFERENTIATION, "fit_percent": 30},
+                        ],
+                        evidence_used=["ocr_text", "question_text"],
+                    ),
+                }
+            )
+        )
+    )
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [_record()],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deepseek_topic_routing_error"
+    assert "total exactly 100" in route["error"]["message"]
+
+
+def test_topic_route_salvages_valid_and_repaired_siblings_when_one_returned_record_is_invalid(tmp_path: Path) -> None:
+    question_ids = [f"12spring24_q{index:02d}" for index in range(1, 8)]
+    records = [_record(question_id) for question_id in question_ids]
+    response_records = {question_id: _route_record() for question_id in question_ids}
+    response_records["12spring24_q04"] = _route_record(evidence_used=["ocr_text"])
+    response_records["12spring24_q05"] = _route_record(
+        P1_SERIES,
+        distribution=[
+            {"topic_id": P1_SERIES, "fit_percent": 80},
+            {"topic_id": P1_DIFFERENTIATION, "fit_percent": 30},
+        ],
+    )
+    client = _fake_client(_chat_response(_route_records_payload(response_records)))
+
+    routed, manifest = topic_routing.route_topic_records(
+        records,
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    assert len(routed) == 7
+    assert sum(record["routing_source"] == "deepseek_topic_routing" for record in routed.values()) == 6
+    assert routed["12spring24_q04"]["routing_source"] == "deepseek_topic_routing"
+    assert routed["12spring24_q04"]["evidence_used_repaired"] is True
+    assert routed["12spring24_q05"]["routing_source"] == "deepseek_topic_routing_error"
+    assert routed["12spring24_q05"]["review_required"] is True
+    assert "total exactly 100" in routed["12spring24_q05"]["error"]["message"]
+    assert all(record.get("evidence_packet_hash") for record in routed.values())
+    assert manifest["batches"][0]["batch_salvaged"] is True
+    assert manifest["batches"][0]["valid_records"] == 6
+    assert manifest["batches"][0]["invalid_records"] == 1
+
+
+def test_topic_route_malformed_top_level_json_still_fails_whole_batch(tmp_path: Path) -> None:
+    records = [_record("12spring24_q01"), _record("12spring24_q02")]
+    client = _fake_client(_chat_response("{not valid json"))
+
+    routed, manifest = topic_routing.route_topic_records(
+        records,
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    assert set(routed) == {"12spring24_q01", "12spring24_q02"}
+    assert all(record["routing_source"] == "deepseek_topic_routing_error" for record in routed.values())
+    assert all(record["review_required"] is True for record in routed.values())
+    assert manifest["batches"][0]["status"] == topic_routing.AI_FAILURE_INVALID_JSON
+
+
+def test_topic_route_missing_returned_record_only_fails_missing_question(tmp_path: Path) -> None:
+    records = [_record("12spring24_q01"), _record("12spring24_q02")]
+    client = _fake_client(_chat_response(_route_records_payload({"12spring24_q01": _route_record()})))
+
+    routed, manifest = topic_routing.route_topic_records(
+        records,
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    assert routed["12spring24_q01"]["routing_source"] == "deepseek_topic_routing"
+    assert routed["12spring24_q02"]["routing_source"] == "deepseek_topic_routing_error"
+    assert "missing route record" in routed["12spring24_q02"]["error"]["message"]
+    assert manifest["batches"][0]["missing_records"] == 1
+    assert manifest["batches"][0]["batch_salvaged"] is True
+
+
+def test_topic_route_duplicate_returned_question_id_only_fails_duplicate_question(tmp_path: Path) -> None:
+    duplicate_payload = (
+        '{"records":{'
+        f'"12spring24_q01":{json.dumps(_route_record())},'
+        f'"12spring24_q01":{json.dumps(_route_record(P1_DIFFERENTIATION))},'
+        f'"12spring24_q02":{json.dumps(_route_record())}'
+        "}}"
+    )
+    records = [_record("12spring24_q01"), _record("12spring24_q02")]
+    client = _fake_client(_chat_response(duplicate_payload))
+
+    routed, manifest = topic_routing.route_topic_records(
+        records,
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    assert routed["12spring24_q01"]["routing_source"] == "deepseek_topic_routing_error"
+    assert "duplicate route records returned" in routed["12spring24_q01"]["error"]["message"]
+    assert routed["12spring24_q02"]["routing_source"] == "deepseek_topic_routing"
+    assert manifest["batches"][0]["duplicate_records"] == 1
+    assert manifest["batches"][0]["batch_salvaged"] is True
+
+
+def test_topic_route_unknown_extra_returned_question_id_does_not_fail_requested_records(tmp_path: Path) -> None:
+    records = [_record("12spring24_q01"), _record("12spring24_q02")]
+    response = {
+        "12spring24_q01": _route_record(),
+        "12spring24_q02": _route_record(),
+        "unknown_q99": _route_record(evidence_used=["not_requested_evidence"]),
+    }
+    client = _fake_client(_chat_response(_route_records_payload(response)))
+
+    routed, manifest = topic_routing.route_topic_records(
+        records,
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    assert set(routed) == {"12spring24_q01", "12spring24_q02"}
+    assert all(record["routing_source"] == "deepseek_topic_routing" for record in routed.values())
+    assert manifest["batches"][0]["unknown_returned_records"] == 1
+    assert manifest["batches"][0]["batch_salvaged"] is False
 
 
 def test_topic_route_provider_payload_does_not_send_full_question_bank_record(tmp_path: Path) -> None:
@@ -241,11 +652,16 @@ def test_topic_route_provider_payload_does_not_send_full_question_bank_record(tm
     assert "notes" not in json.dumps(request_payload)
     assert "question_image_path" not in json.dumps(request_payload)
     assert "old_ai_field" not in json.dumps(request_payload)
+    assert "evidence_packet_hash" not in json.dumps(request_payload)
 
 
 def test_topic_route_rejects_image_reference_evidence_when_no_image_was_sent() -> None:
-    with pytest.raises(topic_routing.TopicRouteValidationError, match="not supplied"):
-        _parse(_route_payload("12spring24_q01", _route_record(evidence_used=["question_text", "image_reference"])))
+    parsed = _parse_result(_route_payload("12spring24_q01", _route_record(evidence_used=["question_text", "image_reference"])))
+
+    route = parsed["records"]["12spring24_q01"]
+    assert route["evidence_used"] == ["question_text"]
+    assert route["evidence_used_repaired"] is True
+    assert route["evidence_used_dropped"] == ["image_reference"]
 
 
 def test_topic_route_limit_10_writes_exactly_10_records(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -284,6 +700,7 @@ def test_topic_route_limit_10_writes_exactly_10_records(monkeypatch: pytest.Monk
     assert exit_code == 0
     assert payload["record_count"] == 10
     assert len(payload["records"]) == 10
+    assert all(record.get("evidence_packet_hash") for record in payload["records"].values())
 
 
 def test_topic_route_cli_defaults_to_progress_enabled() -> None:
@@ -458,6 +875,7 @@ def test_topic_route_resume_preserves_progress_and_status_behavior(
                 "llm_model": "deepseek-v4-flash",
                 "llm_prompt_version": topic_routing.TOPIC_ROUTING_PROMPT_VERSION,
                 "routing_source": "deepseek_topic_routing",
+                "evidence_packet_hash": _evidence_hash(),
             }
         },
         taxonomy_path="exam_bank_taxonomy/canonical",

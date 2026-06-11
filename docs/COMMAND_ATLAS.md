@@ -315,7 +315,7 @@ Contract: [Difficulty Index Contract](DIFFICULTY_INDEX_CONTRACT.md). `difficulty
 
 Purpose: write the course-aware Asterion static-site catalog and the reviewed/safe student-runtime question bank.
 
-Input: `output/json/question_bank.json`, artifacts under `output/`, optional skill-map sidecar
+Input: `output/json/question_bank.json`, artifacts under `output/`, optional skill-map and topic-routing sidecars
 
 Output:
 
@@ -324,12 +324,13 @@ Output:
 
 Category/runtime: standard projection, fast to medium
 
-Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component. The catalog preserves blocked and review states; the question-bank export is the student-facing reviewed/safe subset across all supported courses.
+Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, and `s1`. Use `src/exam_bank/asterion_course_contract.py` to filter by course/paper/component. The catalog preserves blocked and review states and separates `catalog_visible`, `image_practice_safe`, `advisory_topic_filter_ok`, `reviewed_topic_filter_safe`, and `learning_runtime_safe`. The question-bank export is the reviewed learning-runtime subset; P3 legacy runtime is preserved, while non-P3 image/advisory records remain catalog records until reviewed topic alignment exists. When `--topic-routing` is supplied, only record-level filterable topic routes are lifted into top-level `topic_id` for advisory topic filters.
 
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-export \
   --input output/json/question_bank.json \
-  --artifact-root output
+  --artifact-root output \
+  --topic-routing output/json/question_bank.topic_routing.v1.json
 ```
 
 ### Content Lab Candidates
@@ -347,7 +348,9 @@ Content Lab candidates are review material only and are not accepted by the cour
 ```bash
 .venv/bin/python -m exam_bank.cli asterion-content-lab-candidates \
   --input output/json/question_bank.json \
-  --artifact-root output
+  --artifact-root output \
+  --mark-events output/json/question_bank.mark_events.v1.json \
+  --topic-routing output/json/question_bank.topic_routing.v1.json
 ```
 
 ### Topic Packets
