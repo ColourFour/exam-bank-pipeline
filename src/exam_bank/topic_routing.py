@@ -399,17 +399,30 @@ def build_topic_routing_question_packet(
     taxonomy = load_canonical_taxonomy(taxonomy_root, record.get("paper_family"))
     notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
     evidence: dict[str, str] = {}
+    evidence_sources: dict[str, str] = {}
     question_text = _trusted_question_text(record, notes)
     if question_text:
         evidence["question_text"] = _truncate(question_text, 1600)
+        evidence_sources["question_text"] = "trusted"
     ocr_text = _trusted_ocr_text(record, notes, question_text=question_text)
     if ocr_text:
         evidence["ocr_text"] = _truncate(ocr_text, 1000)
+        evidence_sources["ocr_text"] = "trusted"
+    visual_required = bool(record.get("visual_required") or notes.get("visual_required"))
+    if visual_required and not question_text:
+        ocr_fallback = _ocr_fallback_text(record)
+        if ocr_fallback:
+            evidence["ocr_text"] = _truncate(ocr_fallback, 1000)
+            evidence_sources["ocr_text"] = "ocr_fallback"
+        search_hint = _search_hint_text(record, notes)
+        if search_hint:
+            evidence["question_text"] = _truncate(search_hint, 1600)
+            evidence_sources["question_text"] = "search_hint_fallback"
     mark_scheme_text = _clean_text(record.get("mark_scheme_text"))
     if mark_scheme_text:
         evidence["mark_scheme_text"] = _truncate(mark_scheme_text, 1600)
+        evidence_sources["mark_scheme_text"] = "mark_scheme"
 
-    visual_required = bool(record.get("visual_required") or notes.get("visual_required"))
     packet = {
         "question_id": str(record.get("question_id")),
         "paper_family": str(record.get("paper_family") or "").lower(),
@@ -417,6 +430,10 @@ def build_topic_routing_question_packet(
         "question_number": record.get("question_number"),
         "visual_required": visual_required,
         "evidence": evidence,
+        "available_evidence_fields": sorted(evidence),
+        "evidence_sources": dict(sorted(evidence_sources.items())),
+        "question_text_source": evidence_sources.get("question_text", "none"),
+        "ocr_text_source": evidence_sources.get("ocr_text", "none"),
         "allowed_topics": [
             {
                 "topic_id": topic_id,
@@ -1406,7 +1423,7 @@ def _trusted_question_text(record: dict[str, Any], notes: dict[str, Any]) -> str
     text_only_status = str(record.get("text_only_status") or notes.get("text_only_status") or "").strip().lower()
     trust = str(record.get("question_text_trust") or notes.get("question_text_trust") or "").strip().lower()
     role = str(record.get("question_text_role") or notes.get("question_text_role") or "").strip().lower()
-    if text_only_status == "ready" and trust in {"high", "medium"} and role != "untrusted_math_text":
+    if text_only_status == "ready" and trust in {"high", "medium"} and role not in {"untrusted_math_text", "search_hint"}:
         return _clean_text(record.get("question_text"))
     return ""
 
@@ -1420,6 +1437,17 @@ def _trusted_ocr_text(record: dict[str, Any], notes: dict[str, Any], *, question
     if question_text and _normalize_for_compare(text) == _normalize_for_compare(question_text):
         return ""
     return text
+
+
+def _ocr_fallback_text(record: dict[str, Any]) -> str:
+    return _clean_text(record.get("ocr_text"))
+
+
+def _search_hint_text(record: dict[str, Any], notes: dict[str, Any]) -> str:
+    role = str(record.get("question_text_role") or notes.get("question_text_role") or "").strip().lower()
+    if role != "search_hint":
+        return ""
+    return _clean_text(record.get("question_text"))
 
 
 def _visual_evidence_insufficient(evidence: dict[str, Any]) -> bool:

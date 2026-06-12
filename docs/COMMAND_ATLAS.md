@@ -333,6 +333,26 @@ Course-aware fields are included for static-site consumers: `p1`, `p3`, `m1`, an
   --topic-routing output/json/question_bank.topic_routing.v1.json
 ```
 
+Before running this command against the production topic-routing sidecar path, restore or verify the ignored local sidecar from the durable artifact:
+
+```bash
+.venv/bin/python -m exam_bank.topic_routing_artifact restore
+.venv/bin/python -m exam_bank.topic_routing_artifact verify
+```
+
+The durable source is `data/topic_routing/question_bank.topic_routing.v1.json`; the expected checksum is tracked in `data/topic_routing/question_bank.topic_routing.v1.sha256`. The exporter and all-course validator fail if `output/json/question_bank.topic_routing.v1.json` does not match that durable source.
+
+Package the release handoff manifest after validation:
+
+```bash
+.venv/bin/python scripts/package_asterion_export_release.py \
+  --validation-report /tmp/asterion_export_release_provenance_pr15_validation.json \
+  --expected-provenance reports/asterion_export_release_provenance_pr15_2026_06_11.json \
+  --output reports/asterion_export_release_manifest_pr16_2026_06_11.json
+```
+
+The manifest is tracked evidence. The export JSON files under `output/asterion/exports/latest/` remain ignored/generated and must be handed to deployment only when their SHA-256 values match the manifest. Packaging does not change Asterion runtime behavior, student-runtime promotion, or auto-grade eligibility.
+
 ### Content Lab Candidates
 
 Purpose: write Asterion Content Lab candidate metadata without generating student-facing content.

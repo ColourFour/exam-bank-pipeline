@@ -274,6 +274,145 @@ def test_topic_route_evidence_packet_hash_changes_with_available_evidence_fields
     assert with_ocr.evidence_packet_hash != without_ocr.evidence_packet_hash
 
 
+def test_topic_route_visual_required_supplies_ocr_fallback_when_question_text_untrusted() -> None:
+    result = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="",
+            question_text_trust="",
+            question_text_role="",
+            text_only_status="review",
+            ocr_text="The diagram shows a curve y = x^2.",
+            ocr_text_trust="low",
+            ocr_text_role="untrusted_math_text",
+            mark_scheme_text="Differentiate the curve.",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    packet = result.packet
+    assert packet["evidence"]["ocr_text"] == "The diagram shows a curve y = x^2."
+    assert packet["available_evidence_fields"] == ["mark_scheme_text", "ocr_text"]
+    assert packet["evidence_sources"]["ocr_text"] == "ocr_fallback"
+    assert packet["ocr_text_source"] == "ocr_fallback"
+    assert result.evidence_packet_hash
+
+
+def test_topic_route_visual_required_supplies_search_hint_fallback_when_question_text_untrusted() -> None:
+    result = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="Search hint: trigonometric equation from graph.",
+            question_text_trust="medium",
+            question_text_role="search_hint",
+            text_only_status="ready",
+            ocr_text="",
+            ocr_text_trust="",
+            mark_scheme_text="Solve using graph intersections.",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    packet = result.packet
+    assert packet["evidence"]["question_text"] == "Search hint: trigonometric equation from graph."
+    assert packet["available_evidence_fields"] == ["mark_scheme_text", "question_text"]
+    assert packet["evidence_sources"]["question_text"] == "search_hint_fallback"
+    assert packet["question_text_source"] == "search_hint_fallback"
+
+
+def test_topic_route_trusted_question_text_is_preferred_over_fallback_text() -> None:
+    result = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="Trusted text: differentiate x^3.",
+            question_text_trust="high",
+            question_text_role="readable_text",
+            text_only_status="ready",
+            ocr_text="OCR fallback should not replace this.",
+            ocr_text_trust="low",
+            ocr_text_role="untrusted_math_text",
+            mark_scheme_text="3x^2",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    packet = result.packet
+    assert packet["evidence"]["question_text"] == "Trusted text: differentiate x^3."
+    assert "ocr_text" not in packet["evidence"]
+    assert packet["evidence_sources"]["question_text"] == "trusted"
+    assert packet["question_text_source"] == "trusted"
+
+
+def test_topic_route_visual_required_without_fallback_does_not_invent_evidence() -> None:
+    result = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="",
+            question_text_trust="",
+            question_text_role="",
+            text_only_status="fail",
+            ocr_text="",
+            ocr_text_trust="",
+            mark_scheme_text="Use integration.",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    packet = result.packet
+    assert packet["evidence"] == {"mark_scheme_text": "Use integration."}
+    assert packet["available_evidence_fields"] == ["mark_scheme_text"]
+    assert packet["question_text_source"] == "none"
+    assert packet["ocr_text_source"] == "none"
+
+
+def test_topic_route_visual_fallback_hash_changes_with_fallback_text() -> None:
+    with_ocr = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="",
+            question_text_trust="",
+            text_only_status="review",
+            ocr_text="Integrate x squared.",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    without_ocr = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="",
+            question_text_trust="",
+            text_only_status="review",
+            ocr_text="",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    with_search_hint = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="Search hint: integration",
+            question_text_trust="medium",
+            question_text_role="search_hint",
+            text_only_status="ready",
+            ocr_text="",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+    changed_search_hint = topic_routing.build_topic_routing_question_packet(
+        _record(
+            visual_required=True,
+            question_text="Search hint: differentiation",
+            question_text_trust="medium",
+            question_text_role="search_hint",
+            text_only_status="ready",
+            ocr_text="",
+        ),
+        taxonomy_root="exam_bank_taxonomy/canonical",
+    )
+
+    assert with_ocr.evidence_packet_hash != without_ocr.evidence_packet_hash
+    assert with_search_hint.evidence_packet_hash != changed_search_hint.evidence_packet_hash
+
+
 def test_topic_route_resume_preserves_current_hashed_row() -> None:
     evidence_hash = _evidence_hash()
     record = {
@@ -368,6 +507,42 @@ def test_topic_route_repairs_unsupported_evidence_used_without_failing_route(tmp
     assert route["evidence_used_original"] == ["ocr_text", "mark_scheme_text"]
     assert route["evidence_used_dropped"] == ["ocr_text"]
     assert "error" not in route
+
+
+def test_topic_route_evidence_repair_recognizes_visual_ocr_fallback(tmp_path: Path) -> None:
+    record = _record(
+        visual_required=True,
+        question_text="",
+        question_text_trust="",
+        question_text_role="",
+        text_only_status="review",
+        ocr_text="Integrate x^2 from 0 to 1.",
+        ocr_text_trust="low",
+        ocr_text_role="untrusted_math_text",
+        mark_scheme_text="Use integration.",
+    )
+    client = _fake_client(
+        _chat_response(
+            _route_records_payload(
+                {
+                    "12spring24_q01": _route_record(evidence_used=["ocr_text"]),
+                }
+            )
+        )
+    )
+
+    routed, _manifest = topic_routing.route_topic_records(
+        [record],
+        client=client,
+        taxonomy_root="exam_bank_taxonomy/canonical",
+        output_path=tmp_path / "sidecar.json",
+        model="deepseek-v4-flash",
+    )
+
+    route = routed["12spring24_q01"]
+    assert route["routing_source"] == "deepseek_topic_routing"
+    assert route["evidence_used"] == ["ocr_text"]
+    assert "evidence_used_repaired" not in route
 
 
 def test_topic_route_repairs_all_unsupported_evidence_used_with_available_fallback(tmp_path: Path) -> None:
@@ -647,6 +822,10 @@ def test_topic_route_provider_payload_does_not_send_full_question_bank_record(tm
         "question_number",
         "visual_required",
         "evidence",
+        "available_evidence_fields",
+        "evidence_sources",
+        "question_text_source",
+        "ocr_text_source",
         "allowed_topics",
     }
     assert "notes" not in json.dumps(request_payload)

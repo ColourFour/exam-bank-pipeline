@@ -13,11 +13,19 @@ These paths are stable relative asset references. JSON exports should store thes
 
 `output/json/question_bank.json` is the canonical metadata index for the current run. `output/json/asset_manifest.v1.json` is an index over canonical image files. The manifest is not a replacement source of truth; it records asset IDs, paths, SHA-256 hashes, sizes, and image dimensions for validation and lookup.
 
+`output/json/question_bank.topic_routing.v1.json` is an ignored generated/local working copy. The durable reviewed refreshed source is `data/topic_routing/question_bank.topic_routing.v1.json`, with `data/topic_routing/question_bank.topic_routing.v1.sha256` as the checksum guard. Restore or verify the local working copy before Asterion export regeneration:
+
+```bash
+.venv/bin/python -m exam_bank.topic_routing_artifact restore
+.venv/bin/python -m exam_bank.topic_routing_artifact verify
+```
+
 ## Generated And Rebuildable Locations
 
 The following locations are generated outputs, caches, review aids, or historical evidence:
 
 - `output/asterion/exports/latest/*.json`
+- `output/releases/`
 - `output/topic_packets/`
 - `output/candidates/ocr/`
 - `output/codex_text_extraction_candidate*/`
@@ -28,6 +36,8 @@ The following locations are generated outputs, caches, review aids, or historica
 - `reports/`
 
 Do not promote files from these locations to canonical evidence without regenerating or validating against canonical images.
+
+Asterion export release handoff is represented by a tracked manifest under `reports/`, not by committing the large generated JSON files. The manifest records the exact ignored export paths, SHA-256 values, byte sizes, validation status, and durable topic-sidecar provenance. Deployment or Asterion handoff must consume export files matching the manifest hashes.
 
 ## App Export And Reference Policy
 
@@ -85,4 +95,6 @@ Validation must confirm:
 - no copied image appears in non-canonical export folders unless explicitly allowlisted
 - canonical image files remain present
 - topic-routing and Content Lab sidecars still have valid counts and schema names
+- the production topic-routing sidecar matches the durable artifact checksum when it is used for Asterion export regeneration
 - course-aware Asterion filters do not expose Content Lab candidates or invalid course IDs to student runtime
+- Asterion release manifests match the ignored export artifact hashes before handoff

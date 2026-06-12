@@ -42,6 +42,22 @@ def build_parser() -> argparse.ArgumentParser:
     delta.add_argument("--sample-ids", type=Path, default=Path("/tmp/topic_routing_sample_refresh_pr6_ids.txt"))
     delta.add_argument("--json-out", type=Path, default=Path("/tmp/topic_routing_sample_refresh_delta_pr6.json"))
     delta.add_argument("--markdown-out", type=Path, default=Path("/tmp/topic_routing_sample_refresh_delta_pr6.md"))
+
+    triage = subparsers.add_parser("triage", help="Triage review-required rows in a refreshed sample sidecar.")
+    triage.add_argument("--sidecar", type=Path, default=Path("/tmp/question_bank.topic_routing.sample_refresh.pr6.json"))
+    triage.add_argument("--sample-ids", type=Path, default=Path("/tmp/topic_routing_sample_refresh_pr6_ids.txt"))
+    triage.add_argument("--question-bank", type=Path, default=Path("output/json/question_bank.json"))
+    triage.add_argument("--json-out", type=Path, default=Path("/tmp/topic_routing_sample_refresh_triage_pr7.json"))
+    triage.add_argument("--markdown-out", type=Path, default=Path("/tmp/topic_routing_sample_refresh_triage_pr7.md"))
+
+    visual = subparsers.add_parser("visual-evidence", help="Audit visual-required topic-routing evidence gaps.")
+    visual.add_argument("--question-bank", type=Path, default=Path("output/json/question_bank.json"))
+    visual.add_argument("--production-sidecar", type=Path, default=DEFAULT_PRODUCTION_SIDECAR)
+    visual.add_argument("--sample-sidecar", type=Path, default=Path("/tmp/question_bank.topic_routing.sample_refresh.pr6.json"))
+    visual.add_argument("--triage", type=Path, default=Path("/tmp/topic_routing_sample_refresh_triage_pr7.json"))
+    visual.add_argument("--taxonomy", type=Path, default=Path("exam_bank_taxonomy/canonical"))
+    visual.add_argument("--json-out", type=Path, default=Path("/tmp/topic_routing_visual_evidence_audit_pr8.json"))
+    visual.add_argument("--markdown-out", type=Path, default=Path("/tmp/topic_routing_visual_evidence_audit_pr8.md"))
     return parser
 
 
@@ -66,6 +82,31 @@ def main(argv: list[str] | None = None) -> int:
         write_json(args.json_out, report)
         args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
         args.markdown_out.write_text(render_delta_markdown(report), encoding="utf-8")
+        print(json.dumps(report["summary"], indent=2, sort_keys=True))
+        return 0
+    if args.command == "triage":
+        sample_ids = read_id_file(args.sample_ids)
+        report = build_topic_routing_sample_triage(
+            sidecar_path=args.sidecar,
+            sample_ids=sample_ids,
+            question_bank_path=args.question_bank,
+        )
+        write_json(args.json_out, report)
+        args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
+        args.markdown_out.write_text(render_triage_markdown(report), encoding="utf-8")
+        print(json.dumps(report["summary"], indent=2, sort_keys=True))
+        return 0
+    if args.command == "visual-evidence":
+        report = build_visual_required_evidence_audit(
+            question_bank_path=args.question_bank,
+            production_sidecar_path=args.production_sidecar,
+            sample_sidecar_path=args.sample_sidecar,
+            triage_path=args.triage,
+            taxonomy_root=args.taxonomy,
+        )
+        write_json(args.json_out, report)
+        args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
+        args.markdown_out.write_text(render_visual_evidence_markdown(report), encoding="utf-8")
         print(json.dumps(report["summary"], indent=2, sort_keys=True))
         return 0
     raise AssertionError(f"Unhandled command: {args.command}")
@@ -178,6 +219,405 @@ def build_topic_routing_sample_delta(
         "after_batch_metadata": batch_summary,
         "sample_ids": sample_ids,
     }
+
+
+def build_topic_routing_sample_triage(
+    *,
+    sidecar_path: Path,
+    sample_ids: list[str],
+    question_bank_path: Path,
+) -> dict[str, Any]:
+    sidecar_payload = read_json(sidecar_path)
+    qbank_payload = read_json(question_bank_path)
+    routes = _records_dict(sidecar_payload)
+    qbank = {
+        str(record.get("question_id")): record
+        for record in _question_bank_records(qbank_payload)
+        if str(record.get("question_id") or "").strip()
+    }
+    sample_rows = [routes[question_id] for question_id in sample_ids if question_id in routes]
+    row_summary = summarize_rows(sample_rows)
+    review_rows = [
+        build_review_triage_row(question_id, routes[question_id], qbank.get(question_id, {}))
+        for question_id in sample_ids
+        if question_id in routes and routes[question_id].get("review_required") is True
+    ]
+    bucket_counts = Counter(str(row["inferred_bucket"]) for row in review_rows)
+    reason_counts = Counter(reason for row in review_rows for reason in row["review_reasons"])
+    recommendation = recommend_next_step(bucket_counts)
+    return {
+        "schema_name": "exam_bank.topic_routing_sample_refresh_triage",
+        "schema_version": 1,
+        "generated_at": now_iso(),
+        "inputs": {
+            "sidecar": {"path": str(sidecar_path), "exists": sidecar_path.exists()},
+            "sample_ids": {"count": len(sample_ids)},
+            "question_bank": {"path": str(question_bank_path), "exists": question_bank_path.exists()},
+        },
+        "summary": {
+            "sample_size": len(sample_ids),
+            "matched_route_count": len(sample_rows),
+            "failed_count": row_summary["failed_count"],
+            "review_required_count": row_summary["review_required_count"],
+            "strict_filter_candidate_count": row_summary["strict_filter_candidate_count"],
+            "missing_evidence_packet_hash_count": row_summary["missing_evidence_packet_hash_count"],
+            "evidence_used_repaired_count": row_summary["evidence_used_repaired_count"],
+            "top_dropped_evidence_fields": row_summary["top_dropped_evidence_fields"],
+            "review_required_bucket_counts": dict(sorted(bucket_counts.items())),
+            "recommended_next_step": recommendation,
+        },
+        "review_required_reason_counts": dict(sorted(reason_counts.items())),
+        "review_required_records": review_rows,
+    }
+
+
+def build_review_triage_row(question_id: str, route: dict[str, Any], qbank_record: dict[str, Any]) -> dict[str, Any]:
+    review_reasons = [str(reason) for reason in route.get("review_reasons") or []]
+    bucket = infer_review_triage_bucket(review_reasons, route=route, qbank_record=qbank_record)
+    return {
+        "question_id": question_id,
+        "course_id": route.get("course_id") or qbank_record.get("course_id"),
+        "component_name": route.get("component_name") or qbank_record.get("component_name"),
+        "paper_family": route.get("paper_family") or qbank_record.get("paper_family"),
+        "text_only_status": qbank_record.get("text_only_status"),
+        "visual_required": bool(qbank_record.get("visual_required")),
+        "question_crop_confidence": _field_with_notes(qbank_record, "question_crop_confidence"),
+        "available_evidence_fields": available_evidence_fields(qbank_record),
+        "primary_topic_id": route.get("primary_topic_id"),
+        "confidence": route.get("confidence"),
+        "review_reasons": review_reasons,
+        "inferred_bucket": bucket,
+        "recommended_next_step": recommended_step_for_bucket(bucket),
+    }
+
+
+def build_visual_required_evidence_audit(
+    *,
+    question_bank_path: Path,
+    production_sidecar_path: Path,
+    sample_sidecar_path: Path,
+    triage_path: Path,
+    taxonomy_root: Path,
+) -> dict[str, Any]:
+    qbank_payload = read_json(question_bank_path)
+    records = _question_bank_records(qbank_payload)
+    qbank_by_id = {
+        str(record.get("question_id")): record
+        for record in records
+        if str(record.get("question_id") or "").strip()
+    }
+    production_routes = _records_dict(read_json(production_sidecar_path))
+    sample_payload = read_optional_json(sample_sidecar_path)
+    sample_routes = _records_dict(sample_payload) if sample_payload else {}
+    triage_payload = read_optional_json(triage_path)
+
+    visual_records = [record for record in records if record.get("visual_required") is True]
+    visual_rows = [
+        build_visual_evidence_row(
+            record,
+            production_routes.get(str(record.get("question_id") or ""), {}),
+            sample_routes.get(str(record.get("question_id") or ""), {}),
+            taxonomy_root=taxonomy_root,
+        )
+        for record in visual_records
+    ]
+    candidate_counts = Counter(row["fix_category"] for row in visual_rows)
+    examples = representative_visual_examples(visual_rows)
+    production_overlap = review_overlap_summary(production_routes, qbank_by_id)
+    sample_overlap = triage_overlap_summary(triage_payload, qbank_by_id) if triage_payload else unavailable_overlap_summary()
+    return {
+        "schema_name": "exam_bank.topic_routing_visual_evidence_audit",
+        "schema_version": 1,
+        "generated_at": now_iso(),
+        "inputs": {
+            "question_bank": {"path": str(question_bank_path), "exists": question_bank_path.exists()},
+            "production_sidecar": {"path": str(production_sidecar_path), "exists": production_sidecar_path.exists()},
+            "sample_sidecar": {"path": str(sample_sidecar_path), "exists": sample_sidecar_path.exists()},
+            "triage": {"path": str(triage_path), "exists": triage_path.exists()},
+        },
+        "summary": {
+            "total_question_bank_records": len(records),
+            "visual_required_count": len(visual_records),
+            "visual_text_only_status_counts": dict(sorted(Counter(str(record.get("text_only_status") or "<missing>") for record in visual_records).items())),
+            "visual_question_crop_confidence_counts": dict(sorted(Counter(str(_field_with_notes(record, "question_crop_confidence") or "<missing>") for record in visual_records).items())),
+            "visual_question_crop_ref_count": sum(1 for record in visual_records if has_question_crop_ref(record)),
+            "visual_mark_scheme_crop_ref_count": sum(1 for record in visual_records if has_mark_scheme_crop_ref(record)),
+            "visual_ocr_text_available_count": sum(1 for record in visual_records if text_present(record.get("ocr_text"))),
+            "visual_trusted_question_text_available_count": sum(1 for record in visual_records if trusted_question_text_available(record)),
+            "visual_mark_scheme_text_available_count": sum(1 for record in visual_records if text_present(record.get("mark_scheme_text"))),
+            "visual_search_hint_only_count": sum(1 for row in visual_rows if row["raw_evidence_fields"] == ["search_hint"]),
+        },
+        "packet_evidence_gap": {
+            "evidence_exists_but_withheld_count": sum(1 for row in visual_rows if row["withheld_evidence_fields"]),
+            "packet_no_meaningful_text_evidence_count": sum(1 for row in visual_rows if not row["packet_supplied_evidence_fields"]),
+            "packet_only_mark_scheme_text_count": sum(1 for row in visual_rows if row["packet_supplied_evidence_fields"] == ["mark_scheme_text"]),
+            "packet_only_search_hint_count": sum(1 for row in visual_rows if row["packet_supplied_evidence_fields"] == ["question_text"] and row["raw_evidence_fields"] == ["search_hint"]),
+            "ocr_fallback_supplied_count": sum(1 for row in visual_rows if row["ocr_fallback_supplied"]),
+            "search_hint_fallback_supplied_count": sum(1 for row in visual_rows if row["search_hint_fallback_supplied"]),
+            "crop_refs_exist_but_no_usable_text_count": sum(
+                1
+                for row in visual_rows
+                if row["has_question_crop_ref"] and row["has_mark_scheme_crop_ref"] and not row["packet_supplied_evidence_fields"]
+            ),
+        },
+        "review_required_overlap": {
+            "production_sidecar": production_overlap,
+            "sample_triage": sample_overlap,
+        },
+        "candidate_fix_categories": [
+            {"category": category, "impact_count": count}
+            for category, count in sorted(candidate_counts.items(), key=lambda item: (-item[1], item[0]))
+        ],
+        "representative_examples": examples,
+    }
+
+
+def build_visual_evidence_row(
+    record: dict[str, Any],
+    production_route: dict[str, Any],
+    sample_route: dict[str, Any],
+    *,
+    taxonomy_root: Path,
+) -> dict[str, Any]:
+    question_id = str(record.get("question_id") or "")
+    raw_fields = raw_visual_evidence_fields(record)
+    packet_snapshot = packet_evidence_snapshot(record, taxonomy_root=taxonomy_root)
+    packet_fields = packet_snapshot["fields"]
+    packet_sources = packet_snapshot["sources"]
+    withheld = [field for field in raw_fields if packet_field_name(field) not in packet_fields]
+    route = sample_route or production_route
+    category = infer_visual_fix_category(record, route, raw_fields, packet_fields, withheld)
+    return {
+        "question_id": question_id,
+        "course_id": route.get("course_id") or record.get("course_id"),
+        "component_name": route.get("component_name") or record.get("component_name"),
+        "text_only_status": record.get("text_only_status"),
+        "visual_required": bool(record.get("visual_required")),
+        "question_crop_confidence": _field_with_notes(record, "question_crop_confidence"),
+        "raw_evidence_fields": raw_fields,
+        "packet_supplied_evidence_fields": packet_fields,
+        "packet_evidence_sources": packet_sources,
+        "ocr_fallback_supplied": packet_sources.get("ocr_text") == "ocr_fallback",
+        "search_hint_fallback_supplied": packet_sources.get("question_text") == "search_hint_fallback",
+        "withheld_evidence_fields": withheld,
+        "has_question_crop_ref": has_question_crop_ref(record),
+        "has_mark_scheme_crop_ref": has_mark_scheme_crop_ref(record),
+        "current_route_review_required": route.get("review_required"),
+        "current_route_status": "review_required" if route.get("review_required") is True else ("failed" if is_failed_route(route) else "strict_or_accepted"),
+        "primary_topic_id": route.get("primary_topic_id"),
+        "confidence": route.get("confidence"),
+        "review_reasons": route.get("review_reasons") or [],
+        "fix_category": category,
+    }
+
+
+def raw_visual_evidence_fields(record: dict[str, Any]) -> list[str]:
+    fields: list[str] = []
+    role = str(record.get("question_text_role") or _field_with_notes(record, "question_text_role") or "").lower()
+    if text_present(record.get("question_text")):
+        fields.append("search_hint" if role == "search_hint" else "question_text")
+    if text_present(record.get("ocr_text")):
+        fields.append("ocr_text")
+    if text_present(record.get("mark_scheme_text")):
+        fields.append("mark_scheme_text")
+    return fields
+
+
+def packet_evidence_fields(record: dict[str, Any], *, taxonomy_root: Path) -> list[str]:
+    return packet_evidence_snapshot(record, taxonomy_root=taxonomy_root)["fields"]
+
+
+def packet_evidence_snapshot(record: dict[str, Any], *, taxonomy_root: Path) -> dict[str, Any]:
+    from .topic_routing import build_topic_routing_question_packet
+
+    try:
+        packet = build_topic_routing_question_packet(record, taxonomy_root=taxonomy_root).packet
+    except Exception:
+        return {"fields": [], "sources": {}}
+    evidence = packet.get("evidence") if isinstance(packet.get("evidence"), dict) else {}
+    available = packet.get("available_evidence_fields")
+    fields = [str(field) for field in available] if isinstance(available, list) else sorted(str(field) for field in evidence)
+    sources = packet.get("evidence_sources") if isinstance(packet.get("evidence_sources"), dict) else {}
+    return {
+        "fields": sorted(fields),
+        "sources": {str(field): str(source) for field, source in sources.items()},
+    }
+
+
+def packet_field_name(raw_field: str) -> str:
+    return "question_text" if raw_field == "search_hint" else raw_field
+
+
+def infer_visual_fix_category(
+    record: dict[str, Any],
+    route: dict[str, Any],
+    raw_fields: list[str],
+    packet_fields: list[str],
+    withheld: list[str],
+) -> str:
+    reasons = " ".join(str(reason) for reason in route.get("review_reasons") or []).lower()
+    if "taxonomy" in reasons or "multiple topic" in reasons or "multi-topic" in reasons or "ambiguous" in reasons:
+        return "taxonomy/topic ambiguity, not evidence quality"
+    if withheld and any(field in withheld for field in ["question_text", "mark_scheme_text"]):
+        return "packet can include existing safe text currently withheld"
+    if withheld and any(field in withheld for field in ["ocr_text", "search_hint"]):
+        return "packet can include existing OCR/search hint safely"
+    if has_question_crop_ref(record) and not raw_fields:
+        return "crop exists but OCR/text is missing"
+    if _field_with_notes(record, "question_crop_confidence") == "low":
+        return "crop confidence is low and likely needs recrop/re-extraction"
+    if route.get("review_required") is True and bool(record.get("visual_required")):
+        return "genuinely visual/math-diagram dependent and should remain review-required"
+    return "no immediate visual evidence fix indicated"
+
+
+def review_overlap_summary(routes: dict[str, dict[str, Any]], qbank_by_id: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    review_ids = [question_id for question_id, route in routes.items() if route.get("review_required") is True]
+    return overlap_counts(review_ids, qbank_by_id)
+
+
+def triage_overlap_summary(payload: dict[str, Any], qbank_by_id: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    rows = payload.get("review_required_records") if isinstance(payload, dict) else []
+    ids = [str(row.get("question_id")) for row in rows if isinstance(row, dict) and row.get("question_id")]
+    return overlap_counts(ids, qbank_by_id)
+
+
+def overlap_counts(question_ids: list[str], qbank_by_id: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    records = [qbank_by_id.get(question_id, {}) for question_id in question_ids]
+    return {
+        "review_required_count": len(question_ids),
+        "visual_required_count": sum(1 for record in records if record.get("visual_required") is True),
+        "text_only_review_or_fail_count": sum(1 for record in records if record.get("text_only_status") in {"review", "fail"}),
+        "low_crop_confidence_count": sum(1 for record in records if _field_with_notes(record, "question_crop_confidence") == "low"),
+        "missing_trusted_question_text_count": sum(1 for record in records if not trusted_question_text_available(record)),
+        "missing_ocr_text_count": sum(1 for record in records if not text_present(record.get("ocr_text"))),
+        "missing_mark_scheme_text_count": sum(1 for record in records if not text_present(record.get("mark_scheme_text"))),
+    }
+
+
+def unavailable_overlap_summary() -> dict[str, Any]:
+    return {
+        "review_required_count": None,
+        "visual_required_count": None,
+        "text_only_review_or_fail_count": None,
+        "low_crop_confidence_count": None,
+        "missing_trusted_question_text_count": None,
+        "missing_ocr_text_count": None,
+        "missing_mark_scheme_text_count": None,
+    }
+
+
+def representative_visual_examples(rows: list[dict[str, Any]], *, limit: int = 20) -> list[dict[str, Any]]:
+    examples: list[dict[str, Any]] = []
+    seen_categories: set[str] = set()
+    for row in sorted(rows, key=lambda item: (item["fix_category"], item["question_id"])):
+        if row["fix_category"] not in seen_categories:
+            examples.append(row)
+            seen_categories.add(row["fix_category"])
+        if len(examples) >= limit:
+            return examples
+    for row in sorted(rows, key=lambda item: item["question_id"]):
+        if row not in examples:
+            examples.append(row)
+        if len(examples) >= limit:
+            break
+    return examples
+
+
+def infer_review_triage_bucket(
+    review_reasons: list[str],
+    *,
+    route: dict[str, Any],
+    qbank_record: dict[str, Any],
+) -> str:
+    text = " ".join(review_reasons).lower()
+    if "weak" in text or "missing text" in text or "no text" in text:
+        return "weak_or_missing_text_evidence"
+    if "visual" in text or bool(qbank_record.get("visual_required")):
+        if "insufficient" in text or "without image" in text or "no image" in text or "not provided" in text:
+            return "visual_required_without_sufficient_text_evidence"
+    if "ambiguous" in text or "multi-topic" in text or "multiple topic" in text or "spans" in text:
+        return "ambiguous_multi_topic_fit"
+    if "context" in text or "insufficient" in text or "unable to determine" in text or "cannot confirm" in text:
+        return "insufficient_question_context"
+    if (
+        "taxonomy" in text
+        or "topic" in text
+        or route.get("primary_topic_id") is None
+        or route.get("confidence") == "low"
+    ):
+        return "taxonomy_or_topic_fit_unclear"
+    return "unknown"
+
+
+def available_evidence_fields(record: dict[str, Any]) -> list[str]:
+    fields = []
+    for field in ["question_text", "ocr_text", "mark_scheme_text"]:
+        value = record.get(field)
+        if isinstance(value, str) and value.strip():
+            fields.append(field)
+    return fields
+
+
+def text_present(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def trusted_question_text_available(record: dict[str, Any]) -> bool:
+    status = str(record.get("text_only_status") or _field_with_notes(record, "text_only_status") or "").lower()
+    trust = str(record.get("question_text_trust") or _field_with_notes(record, "question_text_trust") or "").lower()
+    role = str(record.get("question_text_role") or _field_with_notes(record, "question_text_role") or "").lower()
+    return (
+        text_present(record.get("question_text"))
+        and status == "ready"
+        and trust in {"high", "medium"}
+        and role not in {"untrusted_math_text", "search_hint"}
+    )
+
+
+def has_question_crop_ref(record: dict[str, Any]) -> bool:
+    return any(
+        [
+            text_present(record.get("question_image_path")),
+            text_present(record.get("canonical_question_artifact")),
+            any(text_present(path) for path in record.get("question_image_paths") or []),
+        ]
+    )
+
+
+def has_mark_scheme_crop_ref(record: dict[str, Any]) -> bool:
+    return any(
+        [
+            text_present(record.get("mark_scheme_image_path")),
+            text_present(record.get("canonical_mark_scheme_artifact")),
+            any(text_present(path) for path in record.get("mark_scheme_image_paths") or []),
+        ]
+    )
+
+
+def recommend_next_step(bucket_counts: Counter[str]) -> str:
+    if not bucket_counts:
+        return "no change needed / honest review-required"
+    if bucket_counts.get("weak_or_missing_text_evidence") or bucket_counts.get("insufficient_question_context"):
+        return "packet/text improvement"
+    if bucket_counts.get("visual_required_without_sufficient_text_evidence"):
+        return "crop/OCR improvement"
+    if bucket_counts.get("taxonomy_or_topic_fit_unclear"):
+        return "taxonomy review"
+    if bucket_counts.get("ambiguous_multi_topic_fit"):
+        return "prompt v2"
+    return "no change needed / honest review-required"
+
+
+def recommended_step_for_bucket(bucket: str) -> str:
+    return {
+        "weak_or_missing_text_evidence": "packet/text improvement",
+        "visual_required_without_sufficient_text_evidence": "crop/OCR improvement",
+        "ambiguous_multi_topic_fit": "prompt v2",
+        "insufficient_question_context": "packet/text improvement",
+        "taxonomy_or_topic_fit_unclear": "taxonomy review",
+        "unknown": "no change needed / honest review-required",
+    }.get(bucket, "no change needed / honest review-required")
 
 
 def summarize_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -315,11 +755,98 @@ def render_delta_markdown(report: dict[str, Any]) -> str:
     )
 
 
+def render_triage_markdown(report: dict[str, Any]) -> str:
+    summary = report["summary"]
+    lines = [
+        "# Topic Routing Sample Refresh Triage",
+        "",
+        f"- Sample size: `{summary['sample_size']}`",
+        f"- Failed records: `{summary['failed_count']}`",
+        f"- Review-required records: `{summary['review_required_count']}`",
+        f"- Strict-filter candidates: `{summary['strict_filter_candidate_count']}`",
+        f"- Missing evidence packet hash: `{summary['missing_evidence_packet_hash_count']}`",
+        f"- Evidence-used repaired: `{summary['evidence_used_repaired_count']}`",
+        f"- Top dropped evidence fields: `{summary['top_dropped_evidence_fields']}`",
+        f"- Recommended next step: `{summary['recommended_next_step']}`",
+        "",
+        "## Review Buckets",
+        "",
+    ]
+    for bucket, count in summary["review_required_bucket_counts"].items():
+        lines.append(f"- `{bucket}`: `{count}`")
+    lines.extend(["", "## Review-Required Records", ""])
+    for row in report["review_required_records"]:
+        reasons = "; ".join(row["review_reasons"]) or "<missing>"
+        lines.append(
+            f"- `{row['question_id']}`: `{row['inferred_bucket']}`; "
+            f"confidence `{row['confidence']}`; topic `{row['primary_topic_id']}`; reasons: {reasons}"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_visual_evidence_markdown(report: dict[str, Any]) -> str:
+    summary = report["summary"]
+    gap = report["packet_evidence_gap"]
+    lines = [
+        "# Topic Routing Visual Evidence Audit",
+        "",
+        f"- Total question-bank records: `{summary['total_question_bank_records']}`",
+        f"- Visual-required records: `{summary['visual_required_count']}`",
+        f"- Visual text-only statuses: `{summary['visual_text_only_status_counts']}`",
+        f"- Visual crop confidence: `{summary['visual_question_crop_confidence_counts']}`",
+        f"- OCR text available: `{summary['visual_ocr_text_available_count']}`",
+        f"- Trusted question text available: `{summary['visual_trusted_question_text_available_count']}`",
+        f"- Mark-scheme text available: `{summary['visual_mark_scheme_text_available_count']}`",
+        "",
+        "## Packet Evidence Gap",
+        "",
+        f"- Evidence exists but withheld: `{gap['evidence_exists_but_withheld_count']}`",
+        f"- Packet has no meaningful text evidence: `{gap['packet_no_meaningful_text_evidence_count']}`",
+        f"- Packet only mark-scheme text: `{gap['packet_only_mark_scheme_text_count']}`",
+        f"- Packet only search hint: `{gap['packet_only_search_hint_count']}`",
+        f"- OCR fallback supplied: `{gap['ocr_fallback_supplied_count']}`",
+        f"- Search-hint fallback supplied: `{gap['search_hint_fallback_supplied_count']}`",
+        f"- Crop refs exist but no usable packet text: `{gap['crop_refs_exist_but_no_usable_text_count']}`",
+        "",
+        "## Candidate Fix Categories",
+        "",
+    ]
+    for item in report["candidate_fix_categories"]:
+        lines.append(f"- `{item['category']}`: `{item['impact_count']}`")
+    lines.extend(["", "## Representative Examples", ""])
+    for row in report["representative_examples"]:
+        lines.append(
+            f"- `{row['question_id']}`: `{row['fix_category']}`; raw `{row['raw_evidence_fields']}`; "
+            f"packet `{row['packet_supplied_evidence_fields']}`; route `{row['current_route_status']}`"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _records_dict(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
     records = payload.get("records") if isinstance(payload, dict) else {}
     if isinstance(records, dict):
         return {str(question_id): row for question_id, row in records.items() if isinstance(row, dict)}
     return {str(row.get("question_id")): row for row in route_records_from_payload(payload) if row.get("question_id")}
+
+
+def _question_bank_records(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    records = payload.get("questions") if isinstance(payload, dict) else []
+    if isinstance(records, list):
+        return [record for record in records if isinstance(record, dict)]
+    if isinstance(records, dict):
+        return [record for record in records.values() if isinstance(record, dict)]
+    return []
+
+
+def _field_with_notes(record: dict[str, Any], field: str) -> Any:
+    if field in record:
+        return record.get(field)
+    notes = record.get("notes")
+    if isinstance(notes, dict):
+        return notes.get(field)
+    return None
 
 
 def read_json(path: Path) -> dict[str, Any]:

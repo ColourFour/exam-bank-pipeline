@@ -29,7 +29,8 @@ Current important generated artifacts:
 - Canonical question bank: `output/json/question_bank.json`
 - Canonical image trees: `output/p*/<paper>/questions/*.png` and `output/p*/<paper>/mark_scheme/*.png`
 - Canonical asset index: `output/json/asset_manifest.v1.json`
-- Strict topic-routing sidecar: `output/json/question_bank.topic_routing.v1.json`
+- Strict topic-routing sidecar working copy: `output/json/question_bank.topic_routing.v1.json`
+- Durable refreshed topic-routing sidecar source: `data/topic_routing/question_bank.topic_routing.v1.json`
 - Mark-event evidence sidecar: `output/json/question_bank.mark_events.v1.json`
 - Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`
 - Difficulty index sidecar: `output/json/question_bank.difficulty_index.v1.json`
@@ -227,7 +228,9 @@ Course-aware consumers should use the centralized helpers in `src/exam_bank/aste
 
 `asterion_question_bank_v1.json` is the student-facing runtime subset. It is derived from the catalog and contains only records where `student_runtime_safe=true` and `review_status=reviewed`. Legacy P3 canonical-practice behavior is preserved by mapping P3 `usage_roles.canonical_practice=allow` to `student_runtime_safe=true`. P1, M1, and S1 records do not become student runtime just because their historical Asterion role is `allow`; they need an explicit reviewed/safe promotion. If a course has no reviewed records, show `No reviewed exam-bank records available yet.` Do not backfill P1/M1/S1 with P3 questions.
 
-Strict Asterion topic filters should use `output/json/question_bank.topic_routing.v1.json` only when `metadata.run_summary.safe_for_strict_filters=true` and only for records that are not review-required. See [`docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md).
+Strict Asterion topic filters should use `output/json/question_bank.topic_routing.v1.json` only when it has been restored or verified from `data/topic_routing/question_bank.topic_routing.v1.json`, matches `data/topic_routing/question_bank.topic_routing.v1.sha256`, `metadata.run_summary.safe_for_strict_filters=true`, and the individual record is not review-required. The `output/json/` sidecar path is ignored/local; run `.venv/bin/python -m exam_bank.topic_routing_artifact restore` or `.venv/bin/python -m exam_bank.topic_routing_artifact verify` before regenerating Asterion exports. See [`docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md`](docs/TOPIC_ROUTING_SIDECAR_CONTRACT.md).
+
+`output/asterion/exports/latest/*.json` files are ignored/generated release payloads. The tracked handoff evidence is a release manifest under `reports/`, created with `scripts/package_asterion_export_release.py`. The release packaging workflow is: restore/verify the durable topic sidecar, regenerate exports, validate exports, package the release manifest, then hand deployment the generated export files whose SHA-256 values match the manifest. Packaging does not change runtime behavior, runtime promotion, or auto-grade eligibility.
 
 Mark-event evidence (`question_bank.mark_events.v1.json`) and advisory evidence (`output/advisory_evidence/question_bank.advisory_evidence.v1.json`) are deterministic support sidecars. They can support review, filtering, and difficulty evidence, but they must not replace canonical images, official mark-scheme crops, strict topic routing, or Asterion role gates. See [`docs/MARK_EVENTS_CONTRACT.md`](docs/MARK_EVENTS_CONTRACT.md) and [`docs/ADVISORY_EVIDENCE_CONTRACT.md`](docs/ADVISORY_EVIDENCE_CONTRACT.md).
 

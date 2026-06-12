@@ -22,6 +22,8 @@ The export layer is course-aware for the static 9709 study site. Supported `cour
 
 `src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns only reviewed/safe records for student runtime requests; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
 
+`output/asterion/exports/latest/*.json` is ignored/generated. Release handoff must use a tracked manifest under `reports/` that records SHA-256 values, byte sizes, validator status, and durable topic-sidecar provenance for the exact generated files. A packaging manifest is evidence for which files deployment should consume; it does not change role gates, runtime behavior, student-runtime promotion, or auto-grade eligibility.
+
 The catalog and runtime exports include top-level `courses` and `components` summaries. `courses` reports counts by static-site course ID. `components` reports the same course IDs with component names and paper-level counts when source paper metadata is available.
 
 ## Canonical And Advisory Fields

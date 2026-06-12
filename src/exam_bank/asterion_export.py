@@ -27,6 +27,10 @@ from .p3_exact_skill.reviewed_mark_events import (
     mark_event_status_satisfies_generation,
     reviewed_mark_event_status_by_id,
 )
+from .topic_routing_artifact import (
+    should_enforce_production_topic_routing_provenance,
+    verify_topic_routing_artifact,
+)
 
 
 ASTERION_SCHEMA_NAME = "asterion.question_bank"
@@ -67,7 +71,10 @@ def export_asterion_question_bank(
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
     catalog_output = output.parent / ASTERION_CATALOG_FILENAME
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
-    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
+    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
+    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
+        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    topic_routes = load_topic_routes(effective_topic_routing_path)
     catalog_payload = build_asterion_exam_bank_catalog(
         payload,
         artifact_root=root,
@@ -99,7 +106,10 @@ def export_asterion_exam_bank_catalog(
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_CATALOG_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
-    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
+    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
+    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
+        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    topic_routes = load_topic_routes(effective_topic_routing_path)
     write_atomic_json(
         build_asterion_exam_bank_catalog(
             payload,
@@ -137,7 +147,10 @@ def export_asterion_content_lab_candidates(
     canonical_mark_events = load_canonical_mark_event_ids_by_subpart(
         mark_events_path if mark_events_path is not None else _default_mark_events_path(input_path)
     )
-    topic_routes = load_topic_routes(topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path))
+    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
+    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
+        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    topic_routes = load_topic_routes(effective_topic_routing_path)
     asterion_payload = _ensure_asterion_payload(
         payload,
         artifact_root=root,

@@ -3,6 +3,8 @@
 This contract covers:
 
 - `output/json/question_bank.topic_routing.v1.json`
+- `data/topic_routing/question_bank.topic_routing.v1.json`
+- `data/topic_routing/question_bank.topic_routing.v1.sha256`
 - strict topic routing behavior
 - allowed topic structures for topic filtering consumers
 
@@ -24,6 +26,26 @@ The sidecar stores:
 
 It does not store student-facing explanations, difficulty, subtopics, skills, Content Lab metadata, Asterion readiness, or generated learning content.
 
+## Durable Artifact And Local Working Copy
+
+`output/json/question_bank.topic_routing.v1.json` is an ignored generated/local working copy. It may be absent in a fresh checkout and must not be treated as durable Git state.
+
+The reviewed durable refreshed sidecar source lives at:
+
+```text
+data/topic_routing/question_bank.topic_routing.v1.json
+data/topic_routing/question_bank.topic_routing.v1.sha256
+```
+
+Before regenerating Asterion exports from the production sidecar path, restore and verify the local working copy:
+
+```bash
+.venv/bin/python -m exam_bank.topic_routing_artifact restore
+.venv/bin/python -m exam_bank.topic_routing_artifact verify
+```
+
+The Asterion export code and all-course export validator verify that `output/json/question_bank.topic_routing.v1.json` matches the durable artifact SHA-256 when the production sidecar path is consumed. This prevents export regeneration from silently depending on a stale or local-only sidecar.
+
 ## Advisory Until Validated
 
 The sidecar is advisory unless validation passes. Consumers must treat the sidecar as review evidence unless both conditions are true:
@@ -41,21 +63,21 @@ If this field is missing, false, or unreadable, consumers must default to not us
 
 ## Current Known State
 
-The current `output/json/question_bank.topic_routing.v1.json` is not safe for strict filters.
-
-Current audited sidecar state as of `2026-05-14`, generated from source run `20260513T070200Z-56d469c1dd52`:
+Current reviewed durable sidecar state as of `2026-06-11`:
 
 - `schema_name=exam_bank.topic_routing_sidecar`
 - `schema_version=1`
 - `record_count=1301`
-- `successful_records=1148`
-- `failed_records=153`
-- `review_required_records=221`
-- `strict_filter_records=1080`
-- `failures_by_reason.schema_validation_error=153`
-- `safe_for_strict_filters=false`
+- `successful_records=1301`
+- `failed_records=0`
+- `review_required_records=42`
+- `strict_filter_records=1259`
+- `provider_failure_records=0`
+- `missing_evidence_packet_hash=0`
+- `safe_for_strict_filters=true` by audit computation
+- durable SHA-256: `e73559581b9cd5970d38496b1f6b334050a17789cc25f082eb5ccb94b1142e4e`
 
-Even though the current sidecar contains individual records that look like strict-filter candidates, downstream strict filters must not use them while `safe_for_strict_filters=false`.
+PR 13 Asterion export regeneration was valid locally but depended on the ignored `output/json/` sidecar before the durable artifact and provenance guard were added. Future export workflows must restore or verify the production sidecar path from the durable artifact before export.
 
 ## Top-Level Contract
 
@@ -122,6 +144,8 @@ Review-required records may still be useful for teacher review, QA, or mixed pra
 ### Evidence Packet Freshness
 
 New topic-routing records include `evidence_packet_hash`, a SHA-256 hash of the deterministic packet content supplied to the router for that question. The hash is derived from the effective routing packet, including question identity, paper/component context, visual/text readiness fields, supplied evidence fields, and allowed topic context. It excludes provider timestamps, response IDs, generated output metadata, and local artifact paths that are not sent to the router.
+
+Visual-required records may include controlled fallback evidence when reviewed/trusted question text is unavailable. Existing OCR text is supplied as `ocr_text` with source metadata `ocr_fallback`; existing search-hint text is supplied as `question_text` with source metadata `search_hint_fallback`. Trusted question text remains `question_text` with source metadata `trusted`. The packet also includes deterministic `available_evidence_fields` and `evidence_sources` metadata so fallback evidence is distinguishable from trusted text and so `evidence_used` repair can use the exact fields sent to the router.
 
 When `topic-route-ai --resume` is used, a previous record is preserved only when all freshness checks pass:
 
@@ -231,11 +255,12 @@ Before using the sidecar for strict topic filtering:
 1. Verify `schema_name=exam_bank.topic_routing_sidecar` and `schema_version=1`.
 2. Verify `record_count` matches the number of `records`.
 3. Verify `taxonomy_path` points to the expected canonical taxonomy root.
-4. Require `metadata.run_summary.safe_for_strict_filters=true`; default deny if missing or false.
-5. Require `metadata.run_summary.failed_records=0`.
-6. Use only records with no `error`, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and non-empty `topic_distribution`.
-7. Reject any `topic_id` not allowed for that record's `paper_family`.
-8. Reject distributions that do not total exactly `100`.
-9. Preserve failed and review-required records for QA/review queues, not strict filters.
-10. Do not merge sidecar topic output into `question_bank.json` canonical records.
-11. Do not use raw sidecar records by themselves to promote records into static student learning runtime. Learning-runtime promotion comes from the course-aware Asterion contract. The Asterion export may use an individual topic route as one input to the advisory topic-filter gate only when that route is record-level filterable: no error, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and a non-empty, duplicate-free distribution totaling `100` that contains the primary topic. This can produce `advisory_topic_filter_ok`; it must not produce `reviewed_topic_filter_safe` or `learning_runtime_safe` without reviewed topic-alignment evidence.
+4. When consuming `output/json/question_bank.topic_routing.v1.json`, verify it matches `data/topic_routing/question_bank.topic_routing.v1.json` and `data/topic_routing/question_bank.topic_routing.v1.sha256`.
+5. Require `metadata.run_summary.safe_for_strict_filters=true`; default deny if missing or false.
+6. Require `metadata.run_summary.failed_records=0`.
+7. Use only records with no `error`, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and non-empty `topic_distribution`.
+8. Reject any `topic_id` not allowed for that record's `paper_family`.
+9. Reject distributions that do not total exactly `100`.
+10. Preserve failed and review-required records for QA/review queues, not strict filters.
+11. Do not merge sidecar topic output into `question_bank.json` canonical records.
+12. Do not use raw sidecar records by themselves to promote records into static student learning runtime. Learning-runtime promotion comes from the course-aware Asterion contract. The Asterion export may use an individual topic route as one input to the advisory topic-filter gate only when that route is record-level filterable: no error, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and a non-empty, duplicate-free distribution totaling `100` that contains the primary topic. This can produce `advisory_topic_filter_ok`; it must not produce `reviewed_topic_filter_safe` or `learning_runtime_safe` without reviewed topic-alignment evidence.

@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any
 
 from exam_bank.atomic_json import write_atomic_json
+from exam_bank.topic_routing_artifact import (
+    build_topic_routing_artifact_report,
+    should_enforce_production_topic_routing_provenance,
+)
 
 
 VALID_COURSE_IDS = {"p1", "p3", "m1", "s1"}
@@ -164,6 +168,17 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     runtime = load_json(paths["runtime"])
     content_lab = load_json(paths["content_lab"])
     topic_routing = load_json(paths["topic_routing"])
+    topic_routing_artifact_provenance: dict[str, Any] | None = None
+    if should_enforce_production_topic_routing_provenance(paths["topic_routing"]):
+        topic_routing_artifact_provenance = build_topic_routing_artifact_report(
+            question_bank_path=paths["question_bank"],
+            local_sidecar_path=paths["topic_routing"],
+        )
+        if not topic_routing_artifact_provenance["ok"]:
+            errors.extend(
+                f"Topic-routing artifact provenance: {error}"
+                for error in topic_routing_artifact_provenance["errors"]
+            )
 
     catalog_questions = catalog.get("questions", [])
     runtime_questions = runtime.get("questions", [])
@@ -500,6 +515,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "model": topic_routing.get("model"),
             "run_summary": topic_routing.get("metadata", {}).get("run_summary", {}),
         },
+        "topic_routing_artifact_provenance": topic_routing_artifact_provenance,
         "json_format": format_reports,
     }
     return report
