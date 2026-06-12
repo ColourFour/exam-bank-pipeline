@@ -250,6 +250,7 @@ The normal packet workflow generates broad CAIE 9709 major-topic packets by pape
 .venv/bin/python -m exam_bank.cli topic-packets \
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
   --artifact-root output \
   --strict-syllabus
 ```
@@ -260,6 +261,7 @@ Preview the full pass without writing PDFs or manifests:
 .venv/bin/python -m exam_bank.cli topic-packets \
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
   --artifact-root output \
   --strict-syllabus \
   --dry-run

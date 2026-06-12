@@ -161,6 +161,264 @@ def test_general_subtopic_record_included_when_major_topic_valid(tmp_path: Path)
     assert not any(item["question_id"] == "q3" for item in summary["skipped_records"])
 
 
+def test_reviewed_keep_preserves_existing_topic_label(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "keep",
+                "reviewed_topic": "",
+                "reviewed_subtopic": "",
+                "reason": "Confirmed generated topic.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    q2 = manifest["included_records"][1]
+    assert summary["reviewed_decisions_loaded"] == 1
+    assert summary["reviewed_decision_counts"]["keep"] == 1
+    assert manifest["topic_id"] == "integration"
+    assert q2["question_id"] == "q2"
+    assert q2["review_status_marker"] == "Reviewed"
+    assert q2["review_decision_action"] == "keep"
+
+
+def test_reviewed_relabel_changes_topic_used_in_output(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "relabel",
+                "reviewed_topic": "vectors",
+                "reviewed_subtopic": "vector_lines",
+                "reason": "Synthetic relabel fixture.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    integration_manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    vectors_manifest = json.loads((paths["output"] / "p3" / "vectors" / "manifest.json").read_text(encoding="utf-8"))
+    assert summary["reviewed_decision_counts"]["relabel"] == 1
+    assert integration_manifest["included_question_ids"] == ["q1"]
+    assert vectors_manifest["included_question_ids"] == ["q2"]
+    assert vectors_manifest["included_records"][0]["review_status_marker"] == "Relabeled"
+    assert vectors_manifest["topic_assignment_source"]["reviewed_topic_bank_decision"] == 1
+
+
+def test_reviewed_exclude_removes_question_from_student_facing_output(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "exclude",
+                "reviewed_topic": "",
+                "reviewed_subtopic": "",
+                "reason": "Not suitable for student-facing topic bank.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    release_manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    review_manifest = json.loads(
+        (paths["output"] / "review_required" / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert summary["total_included_in_release_packets"] == 1
+    assert summary["total_included_in_review_packets"] == 1
+    assert release_manifest["included_question_ids"] == ["q1"]
+    assert review_manifest["included_question_ids"] == ["q2"]
+    assert review_manifest["included_records"][0]["review_status_marker"] == "Excluded from student version"
+
+
+def test_reviewed_decision_unknown_question_id_fails(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "unknown_q99",
+                "action": "keep",
+                "reviewed_topic": "",
+                "reviewed_subtopic": "",
+                "reason": "Bad fixture.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    with pytest.raises(TopicPacketError, match="unknown question_id"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=paths["output"],
+            artifact_root=paths["artifact_root"],
+            reviewed_decisions_path=decisions,
+        )
+
+
+def test_reviewed_relabel_unknown_topic_fails(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "relabel",
+                "reviewed_topic": "invented",
+                "reviewed_subtopic": "",
+                "reason": "Bad fixture.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    with pytest.raises(TopicPacketError, match="unknown topic"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=paths["output"],
+            artifact_root=paths["artifact_root"],
+            reviewed_decisions_path=decisions,
+        )
+
+
+def test_generation_works_with_empty_reviewed_decisions_file(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    decisions = _write_reviewed_decisions(tmp_path, [])
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert summary["reviewed_decisions_loaded"] == 0
+    assert summary["total_included_in_release_packets"] == 2
+    assert manifest["included_question_ids"] == ["q1", "q2"]
+
+
+def test_reviewed_keep_overrides_release_quality_downgrade(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path, record_overrides={"q2": {"notes": {"visual_curation_status": "review"}}})
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "keep",
+                "reviewed_topic": "integration",
+                "reviewed_subtopic": "",
+                "reason": "Correctly labeled after manual review.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    release_manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert summary["total_included_in_release_packets"] == 2
+    assert summary["total_included_in_review_packets"] == 0
+    assert release_manifest["included_question_ids"] == ["q1", "q2"]
+    assert release_manifest["included_records"][1]["review_status_marker"] == "Reviewed"
+
+
+def test_reviewed_keep_overrides_mapping_and_validation_failures(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={"q2": {"notes": {"mapping_status": "fail", "validation_status": "fail"}}},
+    )
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "keep",
+                "reviewed_topic": "integration",
+                "reviewed_subtopic": "",
+                "reason": "Correctly labeled after manual review.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    assert summary["skipped_by_reason"].get("mapping_status_fail", 0) == 0
+    assert summary["skipped_by_reason"].get("validation_status_fail", 0) == 0
+    assert manifest["included_question_ids"] == ["q1", "q2"]
+
+
 def test_mapping_status_fail_excluded_by_default(tmp_path: Path) -> None:
     paths = _fixture(tmp_path, record_overrides={"q2": {"notes": {"mapping_status": "fail"}}})
 
@@ -636,10 +894,38 @@ def _write_taxonomy(tmp_path: Path) -> Path:
                                         "packet_eligible": True,
                                     },
                                 ],
+                            },
+                            {
+                                "topic_id": "vectors",
+                                "topic_label": "Vectors",
+                                "canonical_topic_id": "9709_p3_topic_vectors",
+                                "subtopics": [
+                                    {
+                                        "subtopic_id": "vector_lines",
+                                        "subtopic_label": "Vector lines",
+                                        "canonical_subtopic_id": "9709_p3_subtopic_vector_lines",
+                                        "packet_eligible": True,
+                                    }
+                                ],
                             }
                         ],
                     }
                 ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def _write_reviewed_decisions(tmp_path: Path, records: list[dict[str, object]]) -> Path:
+    path = tmp_path / "topic_bank_reviewed_decisions.v1.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+                "schema_version": 1,
+                "records": records,
             }
         ),
         encoding="utf-8",

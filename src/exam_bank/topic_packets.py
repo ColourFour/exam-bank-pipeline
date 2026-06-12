@@ -27,6 +27,12 @@ DEFAULT_CANONICAL_TAXONOMY_ROOT = Path("exam_bank_taxonomy/canonical")
 DEFAULT_OUTPUT_ROOT = Path("output/topic_packets")
 STRICT_REVIEW_STATUSES = {"reviewed", "high-confidence machine_candidate"}
 STRICT_ASSIGNMENT_TYPES = {"primary_assessed", "secondary_assessed"}
+REVIEWED_DECISION_ACTIONS = {"keep", "relabel", "exclude"}
+REVIEWED_DECISION_MARKERS = {
+    "keep": "Reviewed",
+    "relabel": "Relabeled",
+    "exclude": "Excluded from student version",
+}
 PDF_PROFILE_DEFAULTS: dict[str, dict[str, int | None]] = {
     "screen": {"image_dpi": 144, "jpeg_quality": 82, "max_image_width": 1600, "max_image_height": 2400},
     "print": {"image_dpi": 200, "jpeg_quality": 88, "max_image_width": 2200, "max_image_height": 3200},
@@ -64,6 +70,24 @@ class Assignment:
     trust_status: str
     strict_release_safe: bool
     review_reasons: tuple[str, ...]
+    review_decision_action: str = ""
+    review_status_marker: str = ""
+    reviewed_topic: str = ""
+    reviewed_subtopic: str = ""
+    reviewed_skill: str = ""
+
+
+@dataclass(frozen=True)
+class TopicBankReviewDecision:
+    question_id: str
+    action: str
+    reviewed_topic: str
+    reviewed_subtopic: str
+    reviewed_skill: str
+    reason: str
+    reviewer: str
+    reviewed_at: str
+    source: str
 
 
 @dataclass(frozen=True)
@@ -144,6 +168,12 @@ def add_topic_packet_cli_arguments(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT, help="Folder for generated packets.")
     parser.add_argument("--artifact-root", type=Path, default=None, help="Root used to resolve relative image paths.")
+    parser.add_argument(
+        "--reviewed-decisions",
+        type=Path,
+        default=None,
+        help="Optional reviewed topic-bank keep/relabel/exclude decision JSON.",
+    )
     parser.add_argument("--paper-family", choices=["p1", "p3", "p4", "p5"], default=None)
     parser.add_argument("--topic", default=None, help="Packet taxonomy topic ID, e.g. integration.")
     parser.add_argument(
@@ -208,6 +238,7 @@ def run_topic_packets_from_args(args: argparse.Namespace) -> dict[str, Any]:
         canonical_taxonomy_root=args.canonical_taxonomy_root,
         output_root=args.output_root,
         artifact_root=args.artifact_root,
+        reviewed_decisions_path=args.reviewed_decisions,
         paper_family=args.paper_family,
         topic=args.topic,
         subtopic=args.subtopic,
@@ -240,6 +271,7 @@ def generate_topic_packets(
     canonical_taxonomy_root: str | Path = DEFAULT_CANONICAL_TAXONOMY_ROOT,
     output_root: str | Path = DEFAULT_OUTPUT_ROOT,
     artifact_root: str | Path | None = None,
+    reviewed_decisions_path: str | Path | None = None,
     paper_family: str | None = None,
     topic: str | None = None,
     subtopic: str | None = None,
@@ -267,6 +299,13 @@ def generate_topic_packets(
     taxonomy_path = Path(taxonomy_path)
     output_root = Path(output_root)
     records = load_question_bank(question_bank_path)
+    all_records = list(records)
+    taxonomy = load_packet_taxonomy(taxonomy_path)
+    reviewed_decisions = load_topic_bank_reviewed_decisions(
+        reviewed_decisions_path,
+        records=all_records,
+        taxonomy=taxonomy,
+    )
     if paper_family:
         records = [r for r in records if _paper_family(r) == paper_family]
     if limit is not None:
@@ -286,7 +325,6 @@ def generate_topic_packets(
         answer_placement=answer_placement,
     )
 
-    taxonomy = load_packet_taxonomy(taxonomy_path)
     topic = _resolve_topic_filter(topic, paper_family, taxonomy)
     subtopic = _resolve_subtopic_filter(subtopic, paper_family, topic, taxonomy)
     if major_topics_only:
@@ -301,6 +339,15 @@ def generate_topic_packets(
         limit=limit,
     ):
         shutil.rmtree(output_root, ignore_errors=True)
+    elif _should_clean_paper_family_output(
+        dry_run=dry_run,
+        paper_family=paper_family,
+        topic=topic,
+        subtopic=subtopic,
+        limit=limit,
+    ):
+        shutil.rmtree(output_root / str(paper_family), ignore_errors=True)
+        shutil.rmtree(output_root / "review_required" / str(paper_family), ignore_errors=True)
 
     packets: dict[PacketKey, list[tuple[dict[str, Any], Assignment]]] = defaultdict(list)
     skipped: list[dict[str, Any]] = []
@@ -314,22 +361,25 @@ def generate_topic_packets(
     quality_downgrades: list[dict[str, Any]] = []
     quality_downgrade_reason_counts: Counter[str] = Counter()
     warning_counts: Counter[str] = Counter()
+    applied_decision_counts: Counter[str] = Counter()
 
     for record in records:
         question_id = str(record.get("question_id", "")).strip()
+        decision = reviewed_decisions.get(question_id)
         record_family = _paper_family(record)
         if record_family not in {"p1", "p3", "p4", "p5"}:
             skipped.append(_skip(record, "invalid_paper_family"))
             continue
+        reviewed_release_override = decision is not None and decision.action in {"keep", "relabel"}
 
         mapping_status = _status_value(record, "mapping_status")
-        if mapping_status == "fail" and not include_mapping_failures:
+        if mapping_status == "fail" and not include_mapping_failures and not reviewed_release_override:
             skipped.append(_skip(record, "mapping_status_fail"))
             mapping_failures.append(question_id)
             continue
 
         validation_status = _status_value(record, "validation_status")
-        if validation_status == "fail" and not include_validation_failures:
+        if validation_status == "fail" and not include_validation_failures and not reviewed_release_override:
             skipped.append(_skip(record, "validation_status_fail"))
             validation_failures.append(question_id)
             continue
@@ -363,6 +413,15 @@ def generate_topic_packets(
                 needs_precise_subtopic_review.append(question_id)
             continue
 
+        if decision is not None:
+            assignment = apply_topic_bank_review_decision(
+                assignment,
+                decision,
+                taxonomy=taxonomy,
+                major_topics_only=major_topics_only,
+            )
+            applied_decision_counts.update([decision.action])
+
         if topic and assignment.topic_id != topic:
             skipped.append(
                 _skip(
@@ -390,7 +449,7 @@ def generate_topic_packets(
             continue
 
         release_quality_reasons = _release_quality_reasons(record)
-        if assignment.strict_release_safe and release_quality_reasons:
+        if assignment.strict_release_safe and release_quality_reasons and not reviewed_release_override:
             assignment = _as_review_assignment(assignment, release_quality_reasons)
             quality_downgrades.append(
                 _skip(
@@ -545,6 +604,9 @@ def generate_topic_packets(
         quality_downgrades=quality_downgrades,
         quality_downgrade_reason_counts=quality_downgrade_reason_counts,
         warning_counts=warning_counts,
+        reviewed_decision_counts=Counter(decision.action for decision in reviewed_decisions.values()),
+        applied_reviewed_decision_counts=applied_decision_counts,
+        reviewed_decisions_path=Path(reviewed_decisions_path) if reviewed_decisions_path is not None else None,
         generated_pdfs=generated_pdfs,
         empty_packets_skipped=empty_packets_skipped,
         dry_run=dry_run,
@@ -657,6 +719,130 @@ def load_assignment_index(canonical_root: str | Path, taxonomy: dict[str, Any]) 
     return by_question
 
 
+def load_topic_bank_reviewed_decisions(
+    path: str | Path | None,
+    *,
+    records: Sequence[dict[str, Any]],
+    taxonomy: dict[str, Any],
+) -> dict[str, TopicBankReviewDecision]:
+    if path is None:
+        return {}
+    decision_path = Path(path)
+    payload = json.loads(decision_path.read_text(encoding="utf-8"))
+    raw_records = payload.get("records") if isinstance(payload, dict) else payload
+    if not isinstance(raw_records, list):
+        raise TopicPacketError("Reviewed topic-bank decisions must be a JSON object with records[] or a records array.")
+
+    records_by_question = {str(record.get("question_id", "")).strip(): record for record in records}
+    decisions: dict[str, TopicBankReviewDecision] = {}
+    for index, raw in enumerate(raw_records, start=1):
+        if not isinstance(raw, dict):
+            raise TopicPacketError(f"Reviewed topic-bank decision #{index} must be an object.")
+        question_id = str(raw.get("question_id", "")).strip()
+        action = str(raw.get("action", "")).strip().lower()
+        if not question_id:
+            raise TopicPacketError(f"Reviewed topic-bank decision #{index} is missing question_id.")
+        if question_id not in records_by_question:
+            raise TopicPacketError(f"Reviewed topic-bank decision references unknown question_id: {question_id}")
+        if question_id in decisions:
+            raise TopicPacketError(f"Duplicate reviewed topic-bank decision for question_id: {question_id}")
+        if action not in REVIEWED_DECISION_ACTIONS:
+            raise TopicPacketError(f"Reviewed topic-bank decision for {question_id} has invalid action: {action}")
+        source = str(raw.get("source", "")).strip()
+        if source != "manual_review":
+            raise TopicPacketError(f"Reviewed topic-bank decision for {question_id} must use source=manual_review.")
+
+        reviewed_topic = str(raw.get("reviewed_topic", "")).strip()
+        reviewed_subtopic = str(raw.get("reviewed_subtopic", "")).strip()
+        if action == "relabel":
+            if not reviewed_topic:
+                raise TopicPacketError(f"Relabel decision for {question_id} is missing reviewed_topic.")
+            family = _paper_family(records_by_question[question_id])
+            topic_id = _resolve_reviewed_topic(reviewed_topic, family, taxonomy)
+            if topic_id is None:
+                raise TopicPacketError(f"Relabel decision for {question_id} uses unknown topic: {reviewed_topic}")
+            if reviewed_subtopic and _resolve_reviewed_subtopic(reviewed_subtopic, family, topic_id, taxonomy) is None:
+                raise TopicPacketError(
+                    f"Relabel decision for {question_id} uses unknown subtopic for {topic_id}: {reviewed_subtopic}"
+                )
+
+        decisions[question_id] = TopicBankReviewDecision(
+            question_id=question_id,
+            action=action,
+            reviewed_topic=reviewed_topic,
+            reviewed_subtopic=str(raw.get("reviewed_subtopic", "")).strip(),
+            reviewed_skill=str(raw.get("reviewed_skill", "")).strip(),
+            reason=str(raw.get("reason", "")).strip(),
+            reviewer=str(raw.get("reviewer", "")).strip(),
+            reviewed_at=str(raw.get("reviewed_at", "")).strip(),
+            source=source,
+        )
+    return decisions
+
+
+def apply_topic_bank_review_decision(
+    assignment: Assignment,
+    decision: TopicBankReviewDecision,
+    *,
+    taxonomy: dict[str, Any],
+    major_topics_only: bool = True,
+) -> Assignment:
+    marker = REVIEWED_DECISION_MARKERS[decision.action]
+    if decision.action == "keep":
+        return _with_review_decision(assignment, decision, marker)
+    if decision.action == "exclude":
+        return _with_review_decision(
+            _as_review_assignment(assignment, ["topic_bank_reviewed_exclude"]),
+            decision,
+            marker,
+        )
+
+    topic_id = _resolve_reviewed_topic(decision.reviewed_topic, assignment.paper_family, taxonomy)
+    if topic_id is None:
+        raise TopicPacketError(f"Relabel decision for {decision.question_id} uses unknown topic: {decision.reviewed_topic}")
+    topic_ref = taxonomy["topics"].get((assignment.paper_family, topic_id))
+    if topic_ref is None:
+        raise TopicPacketError(f"Relabel decision for {decision.question_id} uses unknown topic: {decision.reviewed_topic}")
+
+    subtopic_id = ""
+    subtopic_label = ""
+    reviewed_subtopic = decision.reviewed_subtopic
+    if reviewed_subtopic:
+        subtopic_id = _resolve_reviewed_subtopic(reviewed_subtopic, assignment.paper_family, topic_id, taxonomy) or ""
+        if not subtopic_id:
+            raise TopicPacketError(
+                f"Relabel decision for {decision.question_id} uses unknown subtopic for {topic_id}: {reviewed_subtopic}"
+            )
+        ref = taxonomy["subtopics"].get((assignment.paper_family, topic_id, subtopic_id))
+        if ref is None:
+            raise TopicPacketError(
+                f"Relabel decision for {decision.question_id} uses unknown subtopic for {topic_id}: {reviewed_subtopic}"
+            )
+        subtopic_label = ref.subtopic_label
+    if major_topics_only:
+        subtopic_id = ""
+        subtopic_label = ""
+
+    return Assignment(
+        question_id=assignment.question_id,
+        paper_family=assignment.paper_family,
+        topic_id=topic_id,
+        topic_label=str(topic_ref["topic_label"]),
+        subtopic_id=subtopic_id,
+        subtopic_label=subtopic_label,
+        source="reviewed_topic_bank_decision",
+        confidence=1.0,
+        trust_status="reviewed",
+        strict_release_safe=True,
+        review_reasons=tuple(reason for reason in assignment.review_reasons if reason not in {"needs_topic_review"}),
+        review_decision_action=decision.action,
+        review_status_marker=marker,
+        reviewed_topic=decision.reviewed_topic,
+        reviewed_subtopic=decision.reviewed_subtopic,
+        reviewed_skill=decision.reviewed_skill,
+    )
+
+
 def choose_assignment(
     record: dict[str, Any],
     assignments: Sequence[Assignment],
@@ -739,6 +925,37 @@ def _resolve_topic_filter(value: str | None, paper_family: str | None, taxonomy:
 def _resolve_topic_for_family(value: str, paper_family: str, taxonomy: dict[str, Any]) -> str:
     slug = _slug(value)
     return taxonomy["topic_aliases"].get((paper_family, slug), slug)
+
+
+def _resolve_reviewed_topic(value: str, paper_family: str, taxonomy: dict[str, Any]) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    canonical = taxonomy["canonical_topic_to_topic"].get(text)
+    if canonical and canonical[0] == paper_family:
+        return canonical[1]
+    topic_id = _resolve_topic_for_family(text, paper_family, taxonomy)
+    if (paper_family, topic_id) in taxonomy["topics"]:
+        return topic_id
+    return None
+
+
+def _resolve_reviewed_subtopic(
+    value: str,
+    paper_family: str,
+    topic_id: str,
+    taxonomy: dict[str, Any],
+) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    ref = taxonomy["canonical_subtopic_to_ref"].get(text)
+    if ref and ref.paper_family == paper_family and ref.topic_id == topic_id:
+        return ref.subtopic_id
+    subtopic_id = _resolve_subtopic_filter(text, paper_family, topic_id, taxonomy)
+    if (paper_family, topic_id, subtopic_id) in taxonomy["subtopics"]:
+        return subtopic_id
+    return None
 
 
 def _resolve_subtopic_filter(
@@ -881,6 +1098,11 @@ def _included_record_manifest(
         "answer_available": answer_available,
         "warnings": warnings,
         "review_reasons": list(assignment.review_reasons),
+        "review_status_marker": assignment.review_status_marker,
+        "review_decision_action": assignment.review_decision_action,
+        "reviewed_topic": assignment.reviewed_topic,
+        "reviewed_subtopic": assignment.reviewed_subtopic,
+        "reviewed_skill": assignment.reviewed_skill,
     }
 
 
@@ -1048,7 +1270,7 @@ def _write_flow_topic_packet_pdf(
                 "problem_number": problem_number,
                 "record": record,
                 "assignment": assignment,
-                "header": f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}",
+                "header": _problem_header(problem_number, source_label, mark_text, assignment),
                 "image_values": _question_image_paths(record),
                 "note": "",
             }
@@ -1469,6 +1691,11 @@ def _packet_title(packet_records: Sequence[tuple[dict[str, Any], Assignment]]) -
     return f"{assignment.paper_family.upper()} {assignment.topic_label}"
 
 
+def _problem_header(problem_number: int, source_label: str, mark_text: str, assignment: Assignment) -> str:
+    marker = f" - {assignment.review_status_marker}" if assignment.review_status_marker else ""
+    return f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}{marker}"
+
+
 def _rounded_average(values: Iterable[int]) -> float:
     values_list = list(values)
     if not values_list:
@@ -1645,6 +1872,9 @@ def build_summary(
     quality_downgrades: Sequence[dict[str, Any]],
     quality_downgrade_reason_counts: Counter[str],
     warning_counts: Counter[str],
+    reviewed_decision_counts: Counter[str],
+    applied_reviewed_decision_counts: Counter[str],
+    reviewed_decisions_path: Path | None,
     generated_pdfs: Sequence[str],
     empty_packets_skipped: Sequence[dict[str, str]],
     dry_run: bool,
@@ -1722,6 +1952,17 @@ def build_summary(
         "records_downgraded_to_review": list(quality_downgrades),
         "release_quality_downgrade_count": len(quality_downgrades),
         "release_quality_downgrade_reason_counts": dict(sorted(quality_downgrade_reason_counts.items())),
+        "reviewed_decisions_path": str(reviewed_decisions_path) if reviewed_decisions_path else "",
+        "reviewed_decisions_loaded": sum(reviewed_decision_counts.values()),
+        "reviewed_decision_counts": {
+            action: int(reviewed_decision_counts.get(action, 0))
+            for action in sorted(REVIEWED_DECISION_ACTIONS)
+        },
+        "reviewed_decisions_applied": sum(applied_reviewed_decision_counts.values()),
+        "applied_reviewed_decision_counts": {
+            action: int(applied_reviewed_decision_counts.get(action, 0))
+            for action in sorted(REVIEWED_DECISION_ACTIONS)
+        },
         "per_paper_family_counts": _counts(p["paper_family"] for p in packets for _ in range(int(p["question_count"]))),
         "per_topic_counts": _counts(p["topic_id"] for p in packets for _ in range(int(p["question_count"]))),
         "per_subtopic_counts": _counts(p["subtopic_id"] or "broad_topic" for p in packets for _ in range(int(p["question_count"]))),
@@ -1796,6 +2037,17 @@ def _should_clean_output_root(
     return not dry_run and paper_family is None and topic is None and subtopic is None and limit is None
 
 
+def _should_clean_paper_family_output(
+    *,
+    dry_run: bool,
+    paper_family: str | None,
+    topic: str | None,
+    subtopic: str | None,
+    limit: int | None,
+) -> bool:
+    return not dry_run and paper_family is not None and topic is None and subtopic is None and limit is None
+
+
 def _as_review_assignment(assignment: Assignment, review_reasons: Sequence[str] | None = None) -> Assignment:
     reasons = list(assignment.review_reasons)
     for reason in review_reasons or ("review_required",):
@@ -1813,6 +2065,36 @@ def _as_review_assignment(assignment: Assignment, review_reasons: Sequence[str] 
         trust_status=assignment.trust_status,
         strict_release_safe=False,
         review_reasons=tuple(reasons),
+        review_decision_action=assignment.review_decision_action,
+        review_status_marker=assignment.review_status_marker,
+        reviewed_topic=assignment.reviewed_topic,
+        reviewed_subtopic=assignment.reviewed_subtopic,
+        reviewed_skill=assignment.reviewed_skill,
+    )
+
+
+def _with_review_decision(
+    assignment: Assignment,
+    decision: TopicBankReviewDecision,
+    marker: str,
+) -> Assignment:
+    return Assignment(
+        question_id=assignment.question_id,
+        paper_family=assignment.paper_family,
+        topic_id=assignment.topic_id,
+        topic_label=assignment.topic_label,
+        subtopic_id=assignment.subtopic_id,
+        subtopic_label=assignment.subtopic_label,
+        source=assignment.source,
+        confidence=assignment.confidence,
+        trust_status=assignment.trust_status,
+        strict_release_safe=assignment.strict_release_safe,
+        review_reasons=assignment.review_reasons,
+        review_decision_action=decision.action,
+        review_status_marker=marker,
+        reviewed_topic=decision.reviewed_topic,
+        reviewed_subtopic=decision.reviewed_subtopic,
+        reviewed_skill=decision.reviewed_skill,
     )
 
 
@@ -1908,9 +2190,10 @@ def _page_header(record: dict[str, Any], assignment: Assignment) -> str:
     topic = f"{assignment.paper_family.upper()} / {assignment.topic_label}"
     if assignment.subtopic_label:
         topic = f"{topic} / {assignment.subtopic_label}"
+    marker = f" | {assignment.review_status_marker}" if assignment.review_status_marker else ""
     return (
         f"{record.get('question_id', '')} | {source} | Q{qno} | "
-        f"{marks} marks | {topic}"
+        f"{marks} marks | {topic}{marker}"
     )
 
 
