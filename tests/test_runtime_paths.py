@@ -67,6 +67,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
 
     assert set(action.choices) == {
         "process",
+        "ingress",
         "audit",
         "output-integrity-audit",
         "asterion-export",

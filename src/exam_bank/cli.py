@@ -40,6 +40,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    ingress = subparsers.add_parser(
+        "ingress",
+        help="Run external source ingestion commands.",
+    )
+    ingress_subparsers = ingress.add_subparsers(dest="ingress_command", required=True)
+    pastpapers_co = ingress_subparsers.add_parser(
+        "pastpapers-co",
+        help="Scrape CAIE 9709 Mathematics papers from PastPapers.co into exam-bank input records.",
+    )
+    pastpapers_co.add_argument("--input", type=Path, help="Existing exam-bank input JSON/JSONL to merge into.")
+    pastpapers_co.add_argument(
+        "--output",
+        type=Path,
+        default=Path("exam_bank_input.jsonl"),
+        help="Output JSON/JSONL path. Defaults to exam_bank_input.jsonl.",
+    )
+    pastpapers_co.add_argument("--min-year", type=int, default=2008)
+    pastpapers_co.add_argument("--max-year", type=int, default=2025)
+    pastpapers_co.set_defaults(func=cmd_ingress_pastpapers_co)
+
     process = subparsers.add_parser(
         "process",
         help="Process a folder of question paper PDFs and mark scheme PDFs.",
@@ -538,6 +558,24 @@ def cmd_ai_sidecar_audit(args: argparse.Namespace) -> int:
     report = deepseek_enrich.audit_ai_assisted_sidecar(args.input)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
+
+
+def cmd_ingress_pastpapers_co(args: argparse.Namespace) -> int:
+    from .ingress import pastpapers_co
+
+    argv = [
+        "--url",
+        pastpapers_co.BASE_URL,
+        "--output",
+        str(args.output),
+        "--min-year",
+        str(args.min_year),
+        "--max-year",
+        str(args.max_year),
+    ]
+    if args.input:
+        argv.extend(["--input", str(args.input)])
+    return pastpapers_co.main(argv)
 
 
 def cmd_triage_sample(args: argparse.Namespace) -> int:

@@ -403,6 +403,8 @@ def generate_topic_packets(
                 taxonomy=taxonomy,
                 include_review_required=include_review_required,
             )
+        if assignment is None and decision is not None and decision.action == "relabel":
+            assignment = _reviewed_relabel_seed_assignment(record, reasons)
         if assignment is None:
             skipped.append(_skip(record, reasons[0], reasons=reasons))
             if "invalid_major_topic" in reasons or "missing_topic" in reasons:
@@ -897,6 +899,22 @@ def choose_major_topic_assignment(record: dict[str, Any], taxonomy: dict[str, An
             review_reasons=tuple(_record_warnings(record)),
         ),
         [],
+    )
+
+
+def _reviewed_relabel_seed_assignment(record: dict[str, Any], reasons: Sequence[str]) -> Assignment:
+    return Assignment(
+        question_id=str(record.get("question_id", "")).strip(),
+        paper_family=_paper_family(record),
+        topic_id="",
+        topic_label="",
+        subtopic_id="",
+        subtopic_label="",
+        source="reviewed_topic_bank_decision_seed",
+        confidence=_topic_confidence_score(record),
+        trust_status="reviewed",
+        strict_release_safe=True,
+        review_reasons=tuple(reason for reason in reasons if reason != "needs_topic_review"),
     )
 
 

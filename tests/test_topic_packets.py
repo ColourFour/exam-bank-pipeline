@@ -234,6 +234,42 @@ def test_reviewed_relabel_changes_topic_used_in_output(tmp_path: Path) -> None:
     assert vectors_manifest["topic_assignment_source"]["reviewed_topic_bank_decision"] == 1
 
 
+def test_reviewed_relabel_overrides_invalid_generated_major_topic(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path, record_overrides={"q2": {"topic": "invented"}})
+    decisions = _write_reviewed_decisions(
+        tmp_path,
+        [
+            {
+                "question_id": "q2",
+                "action": "relabel",
+                "reviewed_topic": "vectors",
+                "reviewed_subtopic": "vector_lines",
+                "reason": "Question belongs to Vectors, not the invalid generated topic.",
+                "reviewer": "test",
+                "reviewed_at": "2026-06-12T00:00:00Z",
+                "source": "manual_review",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=decisions,
+        strict_syllabus=True,
+    )
+
+    vectors_manifest = json.loads((paths["output"] / "p3" / "vectors" / "manifest.json").read_text(encoding="utf-8"))
+    assert summary["total_included"] == 2
+    assert summary["skipped_by_reason"] == {}
+    assert summary["reviewed_decision_counts"]["relabel"] == 1
+    assert vectors_manifest["included_question_ids"] == ["q2"]
+    assert vectors_manifest["included_records"][0]["review_status_marker"] == "Relabeled"
+
+
 def test_reviewed_exclude_removes_question_from_student_facing_output(tmp_path: Path) -> None:
     paths = _fixture(tmp_path)
     decisions = _write_reviewed_decisions(
