@@ -27,19 +27,58 @@ import json
 import re
 import sys
 import time
-from collections import defaultdict, deque
+from collections import Counter, deque
 from dataclasses import asdict, dataclass
 from html import unescape
 from html.parser import HTMLParser
+from http.client import IncompleteRead
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator
 from urllib.error import HTTPError, URLError
 from urllib.parse import unquote, urldefrag, urljoin, urlparse
 from urllib.request import Request, urlopen
 
+try:
+    import requests
+except ModuleNotFoundError:
+    class _UrllibResponse:
+        def __init__(self, response: Any, status_code: int) -> None:
+            self._response = response
+            self.status_code = status_code
+
+        def iter_content(self, chunk_size: int) -> Iterator[bytes]:
+            while True:
+                chunk = self._response.read(chunk_size)
+                if not chunk:
+                    break
+                yield chunk
+
+        def close(self) -> None:
+            self._response.close()
+
+    class _RequestsShim:
+        RequestException = URLError
+        Response = _UrllibResponse
+
+        @staticmethod
+        def get(url: str, *, headers: dict[str, str], stream: bool, timeout: float) -> _UrllibResponse:
+            del stream
+            req = Request(url, headers=headers)
+            try:
+                response = urlopen(req, timeout=timeout)  # nosec: target URL is fixed by caller filters
+                return _UrllibResponse(response, int(response.status))
+            except HTTPError as exc:
+                return _UrllibResponse(exc, exc.code)
+
+    requests = _RequestsShim()
+
 BASE_URL = "https://pastpapers.co/caie/a-level/mathematics-9709"
 SOURCE_NAME = "pastpapers.co"
 SYLLABUS = "9709"
+PDF_STORAGE_ROOT = Path("input/pastpapers")
+PDF_DOWNLOAD_RETRIES = 2
+PDF_DOWNLOAD_TIMEOUT = 30.0
+PDF_DOWNLOAD_CHUNK_SIZE = 1024 * 256
 
 # Cambridge file names look like:
 #   9709_w08_qp_1.pdf
@@ -80,6 +119,10 @@ PAPER_ORDER = {
 }
 
 SESSION_ORDER = {"m": 0, "s": 1, "w": 2}
+ASSET_TYPE_DIRS = {
+    "question_paper": "question_papers",
+    "mark_scheme": "mark_schemes",
+}
 
 
 @dataclass(frozen=True)
@@ -96,6 +139,50 @@ class PaperResource:
     paper_name: str
     url: str
     source_page: str | None = None
+
+
+@dataclass
+class CrawlSummary:
+    """Operational accounting for one PastPapers.co crawl."""
+
+    min_year: int
+    max_year: int
+    total_pages_discovered: int = 0
+    total_papers_ingested: int = 0
+    skipped_by_reason: Counter[str] | None = None
+    per_year_counts: dict[str, int] | None = None
+    parsing_failures: list[str] | None = None
+    pdf_downloaded_count: int = 0
+    pdf_skipped_duplicates: int = 0
+    pdf_failed_downloads: int = 0
+    asset_type_counts: Counter[str] | None = None
+
+    def __post_init__(self) -> None:
+        if self.skipped_by_reason is None:
+            self.skipped_by_reason = Counter()
+        if self.per_year_counts is None:
+            self.per_year_counts = {}
+        if self.parsing_failures is None:
+            self.parsing_failures = []
+        if self.asset_type_counts is None:
+            self.asset_type_counts = Counter()
+
+    def to_json(self) -> dict[str, Any]:
+        skipped = dict(sorted((self.skipped_by_reason or Counter()).items()))
+        return {
+            "min_year": self.min_year,
+            "max_year": self.max_year,
+            "total_pages_discovered": self.total_pages_discovered,
+            "total_papers_ingested": self.total_papers_ingested,
+            "total_skipped": sum(skipped.values()),
+            "skipped_by_reason": skipped,
+            "per_year_counts": dict(sorted((self.per_year_counts or {}).items())),
+            "parsing_failures": list(self.parsing_failures or []),
+            "pdf_downloaded_count": self.pdf_downloaded_count,
+            "pdf_skipped_duplicates": self.pdf_skipped_duplicates,
+            "pdf_failed_downloads": self.pdf_failed_downloads,
+            "asset_type_counts": dict(sorted((self.asset_type_counts or Counter()).items())),
+        }
 
 
 class LinkExtractor(HTMLParser):
@@ -144,6 +231,49 @@ def fetch_text(url: str, *, timeout: float = 20.0, retries: int = 2) -> str | No
             time.sleep(0.5 * (attempt + 1))
     print(f"warning: failed to fetch {url}: {last_error}", file=sys.stderr)
     return None
+
+
+def download_pdf(url: str, destination_path: Path) -> bool:
+    """Download one PDF to disk with retries and streaming writes."""
+
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 compatible; exam-bank-ingress/1.0; "
+            "+https://pastpapers.co/caie/a-level/mathematics-9709"
+        ),
+        "Accept": "application/pdf,*/*;q=0.8",
+    }
+    destination_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = destination_path.with_name(f".{destination_path.name}.part")
+    last_error: Exception | None = None
+
+    for attempt in range(PDF_DOWNLOAD_RETRIES + 1):
+        response: requests.Response | None = None
+        try:
+            response = requests.get(url, headers=headers, stream=True, timeout=PDF_DOWNLOAD_TIMEOUT)
+            if response.status_code != 200:
+                last_error = RuntimeError(f"HTTP {response.status_code}")
+                continue
+
+            with temp_path.open("wb") as handle:
+                for chunk in response.iter_content(chunk_size=PDF_DOWNLOAD_CHUNK_SIZE):
+                    if chunk:
+                        handle.write(chunk)
+            temp_path.replace(destination_path)
+            return True
+        except (requests.RequestException, IncompleteRead, OSError) as exc:
+            last_error = exc
+        finally:
+            if response is not None:
+                response.close()
+            if temp_path.exists() and not destination_path.exists():
+                temp_path.unlink(missing_ok=True)
+
+        if attempt < PDF_DOWNLOAD_RETRIES:
+            time.sleep(0.5 * (attempt + 1))
+
+    print(f"warning: failed to download {url}: {last_error}", file=sys.stderr)
+    return False
 
 
 def normalize_link(current_url: str, href: str) -> str | None:
@@ -222,15 +352,22 @@ def classify_component(component: str, year: int) -> str | None:
     return None
 
 
-def parse_pdf_resource(url: str, *, source_page: str | None = None) -> PaperResource | None:
+def parse_pdf_resource(url: str, *, source_page: str | None = None, strict: bool = False) -> PaperResource | None:
     """Parse and filter a PastPapers.co PDF URL."""
 
     filename = unquote(urlparse(url).path.split("/")[-1]).lower()
     match = PDF_RE.search(filename)
     if not match:
+        if strict and filename.endswith(".pdf") and filename.startswith(f"{SYLLABUS}_"):
+            raise ValueError(f"unknown PastPapers.co 9709 PDF filename format: {url}")
         return None
 
-    year = parse_two_digit_year(match.group("yy"))
+    try:
+        year = parse_two_digit_year(match.group("yy"))
+    except ValueError as exc:
+        if strict:
+            raise ValueError(f"year extraction failed for PastPapers.co PDF: {url}") from exc
+        return None
     component = match.group("component").lstrip("0") or "0"
     paper = classify_component(component, year)
     if paper is None:
@@ -248,6 +385,16 @@ def parse_pdf_resource(url: str, *, source_page: str | None = None) -> PaperReso
         paper_name=PAPER_LABELS[paper],
         url=url,
         source_page=source_page,
+    )
+
+
+def resource_identity(resource: PaperResource) -> tuple[int, str, str, str | None, str]:
+    return (
+        resource.year,
+        resource.series_code,
+        resource.paper,
+        variant_from_component(resource.component),
+        resource.doc_type,
     )
 
 
@@ -283,6 +430,30 @@ def discover_resources(
 ) -> list[PaperResource]:
     """Crawl the source page and return filtered paper resources."""
 
+    resources, _summary = discover_resources_with_summary(
+        base_url=base_url,
+        min_year=min_year,
+        max_year=max_year,
+        max_depth=max_depth,
+        delay_seconds=delay_seconds,
+        fetcher=fetcher,
+        include_session_candidates=include_session_candidates,
+    )
+    return resources
+
+
+def discover_resources_with_summary(
+    *,
+    base_url: str = BASE_URL,
+    min_year: int = 2008,
+    max_year: int = 2025,
+    max_depth: int = 2,
+    delay_seconds: float = 0.2,
+    fetcher: Callable[[str], str | None] | None = None,
+    include_session_candidates: bool = True,
+) -> tuple[list[PaperResource], CrawlSummary]:
+    """Crawl the source page and return filtered paper resources plus run accounting."""
+
     fetcher = fetcher or fetch_text
     seeds = [base_url]
     if include_session_candidates:
@@ -290,7 +461,8 @@ def discover_resources(
 
     queue: deque[tuple[str, int]] = deque((url, 0) for url in dict.fromkeys(seeds))
     visited: set[str] = set()
-    resources: dict[tuple[str, str], PaperResource] = {}
+    resources: dict[tuple[int, str, str, str | None, str], PaperResource] = {}
+    summary = CrawlSummary(min_year=min_year, max_year=max_year)
 
     while queue:
         url, depth = queue.popleft()
@@ -298,9 +470,16 @@ def discover_resources(
             continue
         visited.add(url)
 
-        parsed = parse_pdf_resource(url, source_page=None)
+        parsed = parse_pdf_resource(url, source_page=None, strict=True)
         if parsed and min_year <= parsed.year <= max_year:
-            resources[(parsed.doc_type, parsed.url)] = parsed
+            identity = resource_identity(parsed)
+            if identity in resources:
+                summary.skipped_by_reason["duplicate_resource"] += 1
+            else:
+                resources[identity] = parsed
+            continue
+        if parsed:
+            summary.skipped_by_reason["outside_year_range"] += 1
             continue
 
         if urlparse(url).path.lower().endswith(".pdf") or depth > max_depth:
@@ -308,20 +487,32 @@ def discover_resources(
 
         html = fetcher(url)
         if html is None:
+            summary.skipped_by_reason["page_fetch_unavailable"] += 1
             continue
+        summary.total_pages_discovered += 1
         if delay_seconds:
             time.sleep(delay_seconds)
 
         for link in extract_links(url, html):
-            pdf_resource = parse_pdf_resource(link, source_page=url)
+            pdf_resource = parse_pdf_resource(link, source_page=url, strict=True)
             if pdf_resource:
                 if min_year <= pdf_resource.year <= max_year:
-                    resources[(pdf_resource.doc_type, pdf_resource.url)] = pdf_resource
+                    identity = resource_identity(pdf_resource)
+                    if identity in resources:
+                        summary.skipped_by_reason["duplicate_resource"] += 1
+                    else:
+                        resources[identity] = pdf_resource
+                else:
+                    summary.skipped_by_reason["outside_year_range"] += 1
+                continue
+            if urlparse(link).path.lower().endswith(".pdf"):
+                summary.skipped_by_reason["unsupported_pdf"] += 1
                 continue
             if depth < max_depth and link not in visited:
                 queue.append((link, depth + 1))
 
-    return sorted(resources.values(), key=resource_sort_key)
+    sorted_resources = sorted(resources.values(), key=resource_sort_key)
+    return sorted_resources, summary
 
 
 def resource_sort_key(resource: PaperResource) -> tuple[int, int, int, int, int, str]:
@@ -335,10 +526,98 @@ def resource_sort_key(resource: PaperResource) -> tuple[int, int, int, int, int,
     )
 
 
-def build_exam_records(resources: Iterable[PaperResource]) -> list[dict[str, Any]]:
+def classify_asset_type(resource: PaperResource) -> str | None:
+    """Map PastPapers.co resource types into local exam asset types."""
+
+    if resource.doc_type == "qp":
+        return "question_paper"
+    if resource.doc_type == "ms":
+        return "mark_scheme"
+    return None
+
+
+def pdf_destination_path(resource: PaperResource, *, storage_root: Path = PDF_STORAGE_ROOT) -> Path:
+    asset_type = classify_asset_type(resource)
+    if asset_type is None:
+        raise ValueError(f"cannot classify PDF asset type for {resource.url}")
+    filename = unquote(urlparse(resource.url).path.split("/")[-1])
+    session_slug = resource.session.lower().replace("/", "-")
+    return storage_root / ASSET_TYPE_DIRS[asset_type] / str(resource.year) / session_slug / filename
+
+
+def download_resource_pdfs(
+    resources: Iterable[PaperResource],
+    summary: CrawlSummary,
+    *,
+    storage_root: Path = PDF_STORAGE_ROOT,
+    downloader: Callable[[str, Path], bool] = download_pdf,
+) -> dict[str, str]:
+    """Download discovered PDFs and return URL-to-local-path references."""
+
+    local_paths: dict[str, str] = {}
+    domain_attempts: Counter[str] = Counter()
+    domain_failures: Counter[str] = Counter()
+    classified_count = 0
+    unclassified_count = 0
+
+    for resource in resources:
+        asset_type = classify_asset_type(resource)
+        if asset_type is None:
+            unclassified_count += 1
+            summary.skipped_by_reason["unclassified_pdf"] += 1
+            continue
+
+        classified_count += 1
+        assert summary.asset_type_counts is not None
+        summary.asset_type_counts[asset_type] += 1
+        destination = pdf_destination_path(resource, storage_root=storage_root)
+
+        if destination.exists():
+            summary.pdf_skipped_duplicates += 1
+            summary.skipped_by_reason["skipped_duplicate"] += 1
+            local_paths[resource.url] = str(destination)
+            print(f"skipped_duplicate: {destination}", file=sys.stderr)
+            continue
+
+        domain = urlparse(resource.url).netloc.lower()
+        domain_attempts[domain] += 1
+        try:
+            ok = downloader(resource.url, destination)
+        except OSError as exc:
+            raise RuntimeError(f"filesystem write failed for {destination}: {exc}") from exc
+
+        if ok:
+            summary.pdf_downloaded_count += 1
+            local_paths[resource.url] = str(destination)
+            continue
+
+        summary.pdf_failed_downloads += 1
+        summary.skipped_by_reason["failed_download"] += 1
+        domain_failures[domain] += 1
+
+    total_classification_attempts = classified_count + unclassified_count
+    if total_classification_attempts and unclassified_count / total_classification_attempts > 0.30:
+        raise RuntimeError(
+            "asset classification could not be determined for "
+            f"{unclassified_count}/{total_classification_attempts} PDFs"
+        )
+
+    for domain, attempts in domain_attempts.items():
+        if attempts >= 3 and domain_failures[domain] == attempts:
+            raise RuntimeError(f"PDF downloads failed consistently for domain batch: {domain}")
+
+    return local_paths
+
+
+def build_exam_records(
+    resources: Iterable[PaperResource],
+    *,
+    asset_local_paths: dict[str, str] | None = None,
+) -> list[dict[str, Any]]:
     """Pair question papers and mark schemes into exam-bank input records."""
 
     grouped: dict[tuple[int, str, str, str], dict[str, Any]] = {}
+    asset_local_paths = asset_local_paths or {}
 
     for resource in resources:
         key = (resource.year, resource.series_code, resource.paper, resource.component)
@@ -361,18 +640,32 @@ def build_exam_records(resources: Iterable[PaperResource]) -> list[dict[str, Any
                 "source_page": resource.source_page,
                 "question_paper_url": None,
                 "mark_scheme_url": None,
+                "asset_paths": {"question_paper_local_path": None},
             },
         )
         if resource.source_page and not record.get("source_page"):
             record["source_page"] = resource.source_page
         if resource.doc_type == "qp":
             record["question_paper_url"] = resource.url
+            record["asset_paths"]["question_paper_local_path"] = asset_local_paths.get(resource.url)
         elif resource.doc_type == "ms":
             record["mark_scheme_url"] = resource.url
+            record["asset_paths"]["mark_scheme_local_path"] = asset_local_paths.get(resource.url)
 
     records = list(grouped.values())
     records.sort(key=record_sort_key)
     return records
+
+
+def populate_record_summary(summary: CrawlSummary, records: Iterable[dict[str, Any]]) -> None:
+    per_year: Counter[str] = Counter()
+    total = 0
+    for record in records:
+        year = str(record.get("year"))
+        per_year[year] += 1
+        total += 1
+    summary.total_papers_ingested = total
+    summary.per_year_counts = dict(per_year)
 
 
 def make_record_id(resource: PaperResource) -> str:
@@ -454,6 +747,13 @@ def merge_records(existing: Iterable[dict[str, Any]], scraped: Iterable[dict[str
         # Do not clobber existing values; fill missing URL/metadata fields only.
         target = merged[key]
         for field, value in record.items():
+            if field == "asset_paths" and isinstance(value, dict):
+                target_paths = target.setdefault("asset_paths", {})
+                if isinstance(target_paths, dict):
+                    for path_field, path_value in value.items():
+                        if target_paths.get(path_field) in (None, "", []):
+                            target_paths[path_field] = path_value
+                continue
             if target.get(field) in (None, "", []):
                 target[field] = value
 
@@ -490,6 +790,11 @@ def write_output(
     raise ValueError(f"Unsupported output format: {format_name}")
 
 
+def write_summary(path: Path, summary: CrawlSummary) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(summary.to_json(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default=BASE_URL, help="PastPapers.co CAIE 9709 root page")
@@ -497,6 +802,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--output", type=Path, required=True, help="Output JSON/JSONL path")
     parser.add_argument("--min-year", type=int, default=2008)
     parser.add_argument("--max-year", type=int, default=2025)
+    parser.add_argument(
+        "--summary-output",
+        type=Path,
+        default=Path("output/ingestion/backfill_2008_2020_summary.json"),
+        help="Path for crawl summary JSON. Defaults to output/ingestion/backfill_2008_2020_summary.json.",
+    )
     parser.add_argument("--max-depth", type=int, default=2)
     parser.add_argument("--delay", type=float, default=0.2, help="Delay between HTTP page fetches")
     parser.add_argument(
@@ -519,7 +830,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_year < args.min_year:
         raise SystemExit("--max-year must be >= --min-year")
 
-    resources = discover_resources(
+    resources, summary = discover_resources_with_summary(
         base_url=args.url,
         min_year=args.min_year,
         max_year=args.max_year,
@@ -527,7 +838,14 @@ def main(argv: list[str] | None = None) -> int:
         delay_seconds=args.delay,
         include_session_candidates=not args.no_session_candidates,
     )
-    scraped_records = build_exam_records(resources)
+    try:
+        asset_local_paths = download_resource_pdfs(resources, summary)
+    except RuntimeError as exc:
+        write_summary(args.summary_output, summary)
+        raise SystemExit(str(exc)) from exc
+
+    scraped_records = build_exam_records(resources, asset_local_paths=asset_local_paths)
+    populate_record_summary(summary, scraped_records)
 
     if args.input and not args.scraped_only:
         existing_records, format_name, original_object, list_key = load_input(args.input)
@@ -543,10 +861,11 @@ def main(argv: list[str] | None = None) -> int:
         original_object=original_object,
         list_key=list_key,
     )
+    write_summary(args.summary_output, summary)
 
     print(
         f"discovered {len(resources)} resources; wrote {len(scraped_records)} scraped records "
-        f"to {args.output}",
+        f"to {args.output}; wrote summary to {args.summary_output}",
         file=sys.stderr,
     )
     return 0
