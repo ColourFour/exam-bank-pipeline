@@ -1,0 +1,25 @@
+{
+  "plan_under_test": "Make the default asset-reference gate usable when generated companion outputs are absent by deriving manifest coverage from question_bank.json in memory and downgrading absent downstream exports to warnings.",
+  "test_files_changed": [
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Added test_asset_reference_validation_derives_missing_manifest_and_warns_on_optional_inputs. The fixture writes only question_bank.json plus canonical question and mark-scheme PNG files, then asserts validation succeeds with no errors, manifest_source derived_from_question_bank, two manifest assets, and five missing_optional_validation_input warnings."
+  ],
+  "expected_initial_failure": "Before implementation, validate_asset_references should report missing_validation_input errors for the absent asset manifest, Asterion exports, and topic-routing sidecar, so the new test should fail.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q",
+    ".venv/bin/python scripts/validate_asset_references.py"
+  ],
+  "what_passing_proves": [
+    "The validator can perform question-bank and canonical-path checks without writing generated companion outputs.",
+    "A missing persisted manifest is visible as a warning and summary source rather than hidden.",
+    "Provided stale manifests still fail through the iteration-1 regression test."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove missing Asterion exports are acceptable for release promotion.",
+    "It does not validate semantic PNG/question alignment.",
+    "It does not persist or repair output/json/asset_manifest.v1.json."
+  ],
+  "risk_of_bad_tests": "Moderate. The test intentionally changes missing generated sidecars from hard errors to warnings, so the implementation must keep question_bank.json required and keep malformed provided files as errors."
+}

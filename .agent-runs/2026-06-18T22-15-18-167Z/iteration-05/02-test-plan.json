@@ -1,0 +1,25 @@
+{
+  "plan_under_test": "Infer source companion keys from canonical paper IDs in output-integrity audits when source PDF metadata is absent.",
+  "test_files_changed": [
+    "tests/test_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Added test_current_output_integrity_infers_missing_mark_scheme_group_companion_from_paper_id. The fixture creates a missing mark-scheme record with paper=42summer19 and no source_pdf metadata, then expects source_companion=9709_2019_June_42 in unexpected_missing_mark_scheme_groups."
+  ],
+  "expected_initial_failure": "Before implementation, the group source_companion should be missing rather than 9709_2019_June_42.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-18T22-15-18-167Z/iteration-05/audit.current.integrity.json"
+  ],
+  "what_passing_proves": [
+    "Output-integrity audits can infer companion identity from canonical paper IDs when source PDF fields are absent.",
+    "Missing mark-scheme groups become actionable for records that lack source metadata.",
+    "Existing PDF-derived source companion behavior remains covered by prior tests."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove the inferred companion PDF exists.",
+    "It does not mark any missing mark schemes as allowed.",
+    "It does not repair output records or images."
+  ],
+  "risk_of_bad_tests": "Low. The test uses one record, one parseable paper ID, and asserts the exact group produced by the public audit function."
+}

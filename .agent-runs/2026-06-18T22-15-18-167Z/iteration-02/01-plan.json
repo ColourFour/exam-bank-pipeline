@@ -1,0 +1,45 @@
+{
+  "selected_goal": "Make the default asset-reference gate usable when generated companion outputs are absent by deriving manifest coverage from question_bank.json in memory and downgrading absent downstream exports to warnings.",
+  "why_this_now": "Iteration 1 tightened manifest coverage, but the live project gate failed because output/json/asset_manifest.v1.json, Asterion exports, and topic-routing sidecar were absent while output/json/question_bank.json was present. The repair should let the gate validate the current question bank and canonical PNG paths without writing generated output files outside .agent-runs.",
+  "repo_evidence": [
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-01/04-audit-report.json recommends repairing or documenting the generated-output validation input set.",
+    "scripts/validate_asset_references.py currently exits non-zero solely because several companion JSON files are missing.",
+    "src/exam_bank/asset_manifest.py already has enough question-bank path and deterministic asset-id logic to derive manifest coverage in memory.",
+    "output/json/question_bank.json exists in the workspace, while output/json/asset_manifest.v1.json and output/asterion/exports/latest do not."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/asset_manifest.py",
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/json/asset_manifest.v1.json",
+    "output/asterion/exports/latest/**",
+    "output/** canonical PNG assets"
+  ],
+  "acceptance_criteria": [
+    "validate_asset_references still errors when question_bank.json is missing or invalid.",
+    "When asset_manifest.v1.json is absent but question_bank.json is valid, validate_asset_references derives manifest asset IDs and canonical paths in memory and reports a warning rather than a hard missing-input error.",
+    "When optional downstream export files are absent, validate_asset_references reports warnings rather than hard missing-input errors.",
+    "The default scripts/validate_asset_references.py gate can run against the current workspace without failing solely due to absent companion outputs."
+  ],
+  "test_expectations": [
+    "Add a fixture test where only question_bank.json and canonical image files exist; validation should be ok and should include warnings for derived manifest and missing optional inputs.",
+    "Keep the iteration-1 stale-manifest regression test passing when a manifest file is present but incomplete.",
+    "Run the asset-manifest test file and the default scripts/validate_asset_references.py gate."
+  ],
+  "implementation_boundaries": [
+    "Do not write or regenerate output/json/asset_manifest.v1.json or Asterion exports.",
+    "Do not weaken validation when a provided manifest or provided export file is malformed or inconsistent.",
+    "Do not add dependencies or broad CLI modes.",
+    "Keep the change inside the existing asset-reference validator surface."
+  ],
+  "repo_hygiene_risk": "The main risk is hiding a missing generated manifest. Mitigate by adding explicit warnings and summary source metadata instead of silently treating the manifest as present.",
+  "rollback_plan": "Remove the missing-input warning behavior and in-memory manifest derivation from src/exam_bank/asset_manifest.py, then remove the new question-bank-only test.",
+  "done_when": [
+    "Iteration 2 artifacts exist under .agent-runs/2026-06-18T22-15-18-167Z/iteration-02/.",
+    "The new question-bank-only validation test fails before implementation and passes after implementation.",
+    "scripts/validate_asset_references.py no longer fails solely because generated companion outputs are absent.",
+    "Agent 4 records any remaining live-output integrity failures as evidence for iteration 3."
+  ]
+}

@@ -50,6 +50,13 @@ _SOURCE_COMPANION_RE = re.compile(
     r"(?P<year>20\d{2}).*?(?P<component>\d{2})(?!.*\d)",
     re.IGNORECASE,
 )
+_PAPER_ID_RE = re.compile(r"^(?P<component>\d{2})(?P<season>spring|summer|autumn|winter)(?P<year>\d{2})$", re.IGNORECASE)
+_PAPER_SEASON_TO_SESSION = {
+    "spring": "March",
+    "summer": "June",
+    "autumn": "November",
+    "winter": "November",
+}
 
 
 def load_question_records(path: str | Path) -> list[dict[str, Any]]:
@@ -339,6 +346,7 @@ def audit_current_output_integrity_records(
             }
             for key, details in sorted(KNOWN_MISSING_MARK_SCHEME_COMPANIONS.items())
         ],
+        "unexpected_missing_mark_scheme_groups": _missing_mark_scheme_groups(missing_mark_scheme_paths),
         "failures": failures,
     }
     return report
@@ -547,6 +555,28 @@ def _failure(code: str, message: str, items: list[dict[str, Any]], *, example_li
     }
 
 
+def _missing_mark_scheme_groups(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for item in items:
+        key = (_clean_text(item.get("paper")) or "missing", _clean_text(item.get("source_companion")) or "missing")
+        grouped.setdefault(key, []).append(item)
+    result: list[dict[str, Any]] = []
+    for (paper, companion), records in sorted(grouped.items()):
+        result.append(
+            {
+                "paper": paper,
+                "source_companion": companion,
+                "count": len(records),
+                "question_ids": sorted(_clean_text(record.get("question_id")) for record in records if _clean_text(record.get("question_id"))),
+                "question_numbers": sorted(
+                    (_clean_text(record.get("question_number")) for record in records if _clean_text(record.get("question_number"))),
+                    key=_natural_sort_key,
+                ),
+            }
+        )
+    return result
+
+
 def _source_companion_key(record: dict[str, Any]) -> str:
     for field in ["mark_scheme_source_pdf", "source_pdf"]:
         value = _clean_text(_note_or_top(record, field))
@@ -566,7 +596,29 @@ def _source_companion_key(record: dict[str, Any]) -> str:
     for key, details in KNOWN_MISSING_MARK_SCHEME_COMPANIONS.items():
         if paper and paper == details.get("paper"):
             return key
+    inferred = _source_companion_key_from_paper(paper)
+    if inferred:
+        return inferred
     return ""
+
+
+def _source_companion_key_from_paper(paper: str) -> str:
+    match = _PAPER_ID_RE.fullmatch(paper)
+    if not match:
+        return ""
+    session = _PAPER_SEASON_TO_SESSION.get(match.group("season").lower())
+    if not session:
+        return ""
+    return f"9709_20{match.group('year')}_{session}_{match.group('component')}"
+
+
+def _natural_sort_key(value: str) -> list[int | str]:
+    parts: list[int | str] = []
+    for part in re.split(r"(\d+)", value):
+        if not part:
+            continue
+        parts.append(int(part) if part.isdigit() else part)
+    return parts
 
 
 def _clean_text(value: Any) -> str:

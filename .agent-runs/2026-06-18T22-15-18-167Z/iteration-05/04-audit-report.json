@@ -1,0 +1,28 @@
+{
+  "verdict": "pass_with_risks",
+  "acceptance_criteria_review": [
+    "Pass: parseable paper IDs now produce source companion keys when source PDF metadata is absent.",
+    "Pass: the live report now shows actionable companion keys for the 74 missing mark-scheme records.",
+    "Pass: pass/fail logic was not weakened; the live output-integrity audit still fails.",
+    "Pass with risk: inferred companion keys are identity hints, not evidence that the matching mark-scheme source PDF exists."
+  ],
+  "test_quality_review": "The new test isolates the missing-source-metadata case and verifies the public audit output. Existing tests still cover PDF-derived companion keys and known missing companion allowance.",
+  "repo_hygiene_review": "Changes are limited to audit reporting and tests. Generated live audit output is contained in .agent-runs/2026-06-18T22-15-18-167Z/iteration-05/.",
+  "scope_creep_review": "No output records, images, extraction behavior, or allow-list entries were changed.",
+  "regression_risks": [
+    "Unparseable paper IDs still return missing source companion.",
+    "The mapping of summer to June and winter/autumn to November should remain aligned with the repo's canonical paper naming contract."
+  ],
+  "commands_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q (before implementation; failed as expected)",
+    ".venv/bin/python -m pytest tests/test_audit.py -q (10 passed, 5 warnings)",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-18T22-15-18-167Z/iteration-05/audit.current.integrity.json (exit 1 as expected)",
+    ".venv/bin/python -m pytest tests/test_audit.py tests/test_output_contract.py tests/test_asterion_export.py tests/test_output_management.py tests/test_question_bank_readiness_audit.py tests/test_asset_manifest_storage_audit.py -q (62 passed, 5 warnings)"
+  ],
+  "evidence": [
+    "The live audit groups now include inferred source companions including 9709_2009_June_06, 9709_2016_November_12, 9709_2011_November_33, 9709_2019_June_42, and 9709_2017_June_63.",
+    "The live gate still reports unexpected_missing_mark_scheme_image_path_count=74, so the data issue remains visible."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Use the grouped companion evidence to decide whether missing mark schemes are caused by absent source PDFs, failed mark-scheme extraction, or stale output records; repair one high-count paper group first."
+}

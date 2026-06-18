@@ -1,0 +1,26 @@
+{
+  "plan_under_test": "Add a strict companion-input mode to asset-reference validation so release-style checks can hard-fail when persisted manifest/export sidecars are missing.",
+  "test_files_changed": [
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Added test_asset_reference_validation_strict_companion_inputs_fail_when_sidecars_are_missing. The fixture writes only question_bank.json plus canonical images, then calls validate_asset_references(strict_companion_inputs=True) and expects ok=false, no warnings, and five missing_validation_input errors."
+  ],
+  "expected_initial_failure": "Before implementation, validate_asset_references does not accept strict_companion_inputs, so the new test should fail with an unexpected keyword argument.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q",
+    ".venv/bin/python scripts/validate_asset_references.py",
+    ".venv/bin/python scripts/validate_asset_references.py --strict-companion-inputs"
+  ],
+  "what_passing_proves": [
+    "Local/default validation can still pass with warnings when generated companion outputs are absent.",
+    "Strict validation can be used as a hard release gate for persisted companion outputs.",
+    "The strictness choice is explicit rather than inferred from output state."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not generate the missing sidecars.",
+    "It does not prove the sidecars are semantically correct when present.",
+    "It does not validate PNG visual content."
+  ],
+  "risk_of_bad_tests": "Low. The test exercises the public validator directly and checks exact error labels for the missing companion inputs."
+}

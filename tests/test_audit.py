@@ -466,6 +466,13 @@ def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_
             question_image_path="",
             mark_scheme_image_path="",
         ),
+        _integrity_record(
+            "12spring24_q04",
+            paper="12spring24",
+            question_number="4",
+            question_image_path=good_question_path,
+            mark_scheme_image_path="",
+        ),
     ]
     input_path = artifact_root / "json" / "question_bank.json"
     _write_integrity_bank(input_path, records, artifact_root=artifact_root)
@@ -490,8 +497,47 @@ def test_current_output_integrity_fails_on_new_missing_paths_and_duplicates(tmp_
     assert report["checks"]["declared_record_count_matches"] is False
     assert report["counts"]["duplicate_question_id_value_count"] == 1
     assert report["counts"]["duplicate_paper_question_pair_count"] == 1
-    assert report["counts"]["unexpected_missing_mark_scheme_image_path_count"] == 1
+    assert report["counts"]["unexpected_missing_mark_scheme_image_path_count"] == 2
+    assert report["unexpected_missing_mark_scheme_groups"] == [
+        {
+            "paper": "12spring24",
+            "source_companion": "9709_2024_March_12",
+            "count": 2,
+            "question_ids": ["12spring24_q03", "12spring24_q04"],
+            "question_numbers": ["3", "4"],
+        }
+    ]
     assert cli_main(["output-integrity-audit", "--input", str(input_path)]) == 1
+
+
+def test_current_output_integrity_infers_missing_mark_scheme_group_companion_from_paper_id(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    question_path = "statistics_s1/statistics_s1_2019_s19_42_qp_q01_question.png"
+    _write_file(artifact_root / question_path)
+    records = [
+        _integrity_record(
+            "42summer19_q01",
+            paper="42summer19",
+            question_number="1",
+            question_image_path=question_path,
+            mark_scheme_image_path="",
+            source_pdf="",
+        )
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["unexpected_missing_mark_scheme_groups"] == [
+        {
+            "paper": "42summer19",
+            "source_companion": "9709_2019_June_42",
+            "count": 1,
+            "question_ids": ["42summer19_q01"],
+            "question_numbers": ["1"],
+        }
+    ]
 
 
 def _integrity_record(

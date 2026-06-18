@@ -1,0 +1,33 @@
+{
+  "verdict": "pass",
+  "acceptance_criteria_review": [
+    "Pass: default validate_asset_references remains useful for local/live question-bank validation and exits zero.",
+    "Pass: strict mode hard-fails missing companion inputs and is exposed through the CLI.",
+    "Pass: tests prove both default warning behavior and strict error behavior.",
+    "Pass: no generated artifacts were written outside .agent-runs."
+  ],
+  "test_quality_review": "The strict-mode test directly exercises the validator with the same missing-companion fixture used by iteration 2, proving the strictness switch changes only the missing-input severity. CLI behavior was verified manually with default and strict commands.",
+  "repo_hygiene_review": "Scope stayed within the validator, CLI wrapper, one test file, and iteration artifacts. The exploratory output-integrity report was written under .agent-runs as required.",
+  "scope_creep_review": "No extraction, rendering, canonical output, or dependency changes were introduced.",
+  "regression_risks": [
+    "Callers must choose the correct strictness mode for their workflow.",
+    "The CLI flag name is new and should be documented in command references if this becomes a standard release gate."
+  ],
+  "commands_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (before implementation; failed as expected)",
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (6 passed)",
+    ".venv/bin/python scripts/validate_asset_references.py (exit 0)",
+    ".venv/bin/python scripts/validate_asset_references.py --strict-companion-inputs (exit 1 as expected)",
+    ".venv/bin/python -m pytest tests/test_audit.py tests/test_output_contract.py tests/test_asterion_export.py tests/test_output_management.py tests/test_question_bank_readiness_audit.py tests/test_asset_manifest_storage_audit.py -q (61 passed, 5 warnings)",
+    ".venv/bin/python -m exam_bank.cli output-normalize-structure --root output --validate-only (ok=true)",
+    ".venv/bin/python scripts/audit_output_storage.py --dry-run (ok=true)",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-18T22-15-18-167Z/iteration-03/audit.current.integrity.json (exit 1)"
+  ],
+  "evidence": [
+    "Strict CLI output reports five missing_validation_input errors for absent companion inputs.",
+    "Default CLI output reports the same missing companions as warnings and derives manifest_source=derived_from_question_bank.",
+    "output-integrity-audit reports 74 unexpected missing mark-scheme image paths, which should drive iteration 4."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Make the output-integrity missing mark-scheme failure actionable by grouping unexpected missing mark-scheme paths by paper/source companion and surfacing complete affected question IDs."
+}

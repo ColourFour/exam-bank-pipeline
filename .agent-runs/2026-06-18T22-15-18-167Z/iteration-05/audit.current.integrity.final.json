@@ -1,0 +1,428 @@
+{
+  "schema_name": "exam_bank.current_output_integrity_audit",
+  "schema_version": 1,
+  "input": "output/json/question_bank.json",
+  "artifact_root": "output",
+  "ok": false,
+  "record_count": 3558,
+  "checks": {
+    "declared_record_count_matches": true,
+    "question_id_present_and_unique": true,
+    "paper_question_pairs_present_and_unique": true,
+    "question_image_paths_relative_and_exist": true,
+    "nonblank_mark_scheme_image_paths_relative_and_exist": true,
+    "missing_mark_scheme_paths_only_known_companions": false
+  },
+  "counts": {
+    "declared_record_count": 3558,
+    "unique_question_id_count": 3558,
+    "missing_question_id_count": 0,
+    "duplicate_question_id_value_count": 0,
+    "duplicate_question_id_record_count": 0,
+    "missing_paper_or_question_number_count": 0,
+    "duplicate_paper_question_pair_count": 0,
+    "duplicate_paper_question_record_count": 0,
+    "question_image_path_entry_count": 10674,
+    "missing_question_image_path_count": 0,
+    "absolute_question_image_path_count": 0,
+    "missing_question_image_file_count": 0,
+    "nonblank_mark_scheme_image_record_count": 3484,
+    "mark_scheme_image_path_entry_count": 6968,
+    "missing_mark_scheme_image_path_count": 74,
+    "allowed_missing_mark_scheme_image_path_count": 0,
+    "unexpected_missing_mark_scheme_image_path_count": 74,
+    "absolute_mark_scheme_image_path_count": 0,
+    "missing_mark_scheme_image_file_count": 0
+  },
+  "known_missing_mark_scheme_companions": [
+    {
+      "source_companion": "9709_2025_November_33",
+      "paper": "33autumn25",
+      "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
+      "observed_missing_count": 0,
+      "observed_question_ids": []
+    }
+  ],
+  "unexpected_missing_mark_scheme_groups": [
+    {
+      "paper": "06summer09",
+      "source_companion": "9709_2009_June_06",
+      "count": 1,
+      "question_ids": [
+        "06summer09_q10"
+      ],
+      "question_numbers": [
+        "10"
+      ]
+    },
+    {
+      "paper": "12winter09",
+      "source_companion": "9709_2009_November_12",
+      "count": 1,
+      "question_ids": [
+        "12winter09_q04"
+      ],
+      "question_numbers": [
+        "4"
+      ]
+    },
+    {
+      "paper": "12winter13",
+      "source_companion": "9709_2013_November_12",
+      "count": 1,
+      "question_ids": [
+        "12winter13_q06"
+      ],
+      "question_numbers": [
+        "6"
+      ]
+    },
+    {
+      "paper": "12winter16",
+      "source_companion": "9709_2016_November_12",
+      "count": 10,
+      "question_ids": [
+        "12winter16_q01",
+        "12winter16_q02",
+        "12winter16_q03",
+        "12winter16_q04",
+        "12winter16_q05",
+        "12winter16_q06",
+        "12winter16_q07",
+        "12winter16_q08",
+        "12winter16_q09",
+        "12winter16_q10"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "paper": "12winter17",
+      "source_companion": "9709_2017_November_12",
+      "count": 1,
+      "question_ids": [
+        "12winter17_q06"
+      ],
+      "question_numbers": [
+        "6"
+      ]
+    },
+    {
+      "paper": "13summer13",
+      "source_companion": "9709_2013_June_13",
+      "count": 1,
+      "question_ids": [
+        "13summer13_q11"
+      ],
+      "question_numbers": [
+        "11"
+      ]
+    },
+    {
+      "paper": "13winter12",
+      "source_companion": "9709_2012_November_13",
+      "count": 11,
+      "question_ids": [
+        "13winter12_q01",
+        "13winter12_q02",
+        "13winter12_q03",
+        "13winter12_q04",
+        "13winter12_q05",
+        "13winter12_q06",
+        "13winter12_q07",
+        "13winter12_q08",
+        "13winter12_q09",
+        "13winter12_q10",
+        "13winter12_q11"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11"
+      ]
+    },
+    {
+      "paper": "33winter11",
+      "source_companion": "9709_2011_November_33",
+      "count": 10,
+      "question_ids": [
+        "33winter11_q01",
+        "33winter11_q02",
+        "33winter11_q03",
+        "33winter11_q04",
+        "33winter11_q05",
+        "33winter11_q06",
+        "33winter11_q07",
+        "33winter11_q08",
+        "33winter11_q09",
+        "33winter11_q10"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "paper": "33winter17",
+      "source_companion": "9709_2017_November_33",
+      "count": 10,
+      "question_ids": [
+        "33winter17_q01",
+        "33winter17_q02",
+        "33winter17_q03",
+        "33winter17_q04",
+        "33winter17_q05",
+        "33winter17_q06",
+        "33winter17_q07",
+        "33winter17_q08",
+        "33winter17_q09",
+        "33winter17_q10"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    {
+      "paper": "42summer19",
+      "source_companion": "9709_2019_June_42",
+      "count": 8,
+      "question_ids": [
+        "42summer19_q01",
+        "42summer19_q02",
+        "42summer19_q03",
+        "42summer19_q04",
+        "42summer19_q05",
+        "42summer19_q06",
+        "42summer19_q07",
+        "42summer19_q08"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "paper": "42winter19",
+      "source_companion": "9709_2019_November_42",
+      "count": 2,
+      "question_ids": [
+        "42winter19_q01",
+        "42winter19_q03"
+      ],
+      "question_numbers": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "paper": "43winter19",
+      "source_companion": "9709_2019_November_43",
+      "count": 1,
+      "question_ids": [
+        "43winter19_q06"
+      ],
+      "question_numbers": [
+        "6"
+      ]
+    },
+    {
+      "paper": "62winter18",
+      "source_companion": "9709_2018_November_62",
+      "count": 1,
+      "question_ids": [
+        "62winter18_q02"
+      ],
+      "question_numbers": [
+        "2"
+      ]
+    },
+    {
+      "paper": "63summer10",
+      "source_companion": "9709_2010_June_63",
+      "count": 1,
+      "question_ids": [
+        "63summer10_q08"
+      ],
+      "question_numbers": [
+        "8"
+      ]
+    },
+    {
+      "paper": "63summer15",
+      "source_companion": "9709_2015_June_63",
+      "count": 7,
+      "question_ids": [
+        "63summer15_q01",
+        "63summer15_q02",
+        "63summer15_q03",
+        "63summer15_q04",
+        "63summer15_q05",
+        "63summer15_q06",
+        "63summer15_q07"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "paper": "63summer17",
+      "source_companion": "9709_2017_June_63",
+      "count": 7,
+      "question_ids": [
+        "63summer17_q01",
+        "63summer17_q02",
+        "63summer17_q03",
+        "63summer17_q04",
+        "63summer17_q05",
+        "63summer17_q06",
+        "63summer17_q07"
+      ],
+      "question_numbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "paper": "63winter13",
+      "source_companion": "9709_2013_November_63",
+      "count": 1,
+      "question_ids": [
+        "63winter13_q02"
+      ],
+      "question_numbers": [
+        "2"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "code": "missing_mark_scheme_image_path",
+      "message": "Missing mark-scheme image paths are only allowed for documented source companions.",
+      "count": 74,
+      "examples": [
+        {
+          "index": 103,
+          "question_id": "06summer09_q10",
+          "paper": "06summer09",
+          "question_number": "10",
+          "source_companion": "9709_2009_June_06"
+        },
+        {
+          "index": 117,
+          "question_id": "12winter09_q04",
+          "paper": "12winter09",
+          "question_number": "4",
+          "source_companion": "9709_2009_November_12"
+        },
+        {
+          "index": 263,
+          "question_id": "63summer10_q08",
+          "paper": "63summer10",
+          "question_number": "8",
+          "source_companion": "9709_2010_June_63"
+        },
+        {
+          "index": 516,
+          "question_id": "33winter11_q01",
+          "paper": "33winter11",
+          "question_number": "1",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 517,
+          "question_id": "33winter11_q02",
+          "paper": "33winter11",
+          "question_number": "2",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 518,
+          "question_id": "33winter11_q03",
+          "paper": "33winter11",
+          "question_number": "3",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 519,
+          "question_id": "33winter11_q04",
+          "paper": "33winter11",
+          "question_number": "4",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 520,
+          "question_id": "33winter11_q05",
+          "paper": "33winter11",
+          "question_number": "5",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 521,
+          "question_id": "33winter11_q06",
+          "paper": "33winter11",
+          "question_number": "6",
+          "source_companion": "9709_2011_November_33"
+        },
+        {
+          "index": 522,
+          "question_id": "33winter11_q07",
+          "paper": "33winter11",
+          "question_number": "7",
+          "source_companion": "9709_2011_November_33"
+        }
+      ]
+    }
+  ]
+}

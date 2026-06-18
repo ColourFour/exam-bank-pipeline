@@ -17,6 +17,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--topic-routing", default="output/json/question_bank.topic_routing.v1.json")
     parser.add_argument("--artifact-root", default="output")
     parser.add_argument("--output", default="", help="Optional JSON validation report path.")
+    parser.add_argument(
+        "--strict-companion-inputs",
+        action="store_true",
+        help="Fail when asset manifest, export, or sidecar companion inputs are missing instead of warning and deriving available coverage.",
+    )
     return parser
 
 
@@ -30,6 +35,7 @@ def main(argv: list[str] | None = None) -> int:
         content_lab_path=args.content_lab,
         topic_routing_path=args.topic_routing,
         artifact_root=args.artifact_root,
+        strict_companion_inputs=args.strict_companion_inputs,
     )
     if args.output:
         output = Path(args.output)

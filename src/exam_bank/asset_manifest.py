@@ -142,22 +142,68 @@ def validate_asset_references(
     topic_routing_path: str | Path = "output/json/question_bank.topic_routing.v1.json",
     artifact_root: str | Path = "output",
     project_root: str | Path | None = None,
+    strict_companion_inputs: bool = False,
 ) -> dict[str, Any]:
     base = Path(project_root) if project_root is not None else Path.cwd()
     root = Path(artifact_root)
     errors: list[dict[str, Any]] = []
     warnings: list[dict[str, Any]] = []
 
-    question_bank = _read_json_if_exists(Path(question_bank_path), errors, "question_bank")
-    manifest = _read_json_if_exists(Path(asset_manifest_path), errors, "asset_manifest")
-    asterion_catalog = _read_json_if_exists(Path(asterion_catalog_path), errors, "asterion_exam_bank_catalog")
-    asterion = _read_json_if_exists(Path(asterion_path), errors, "asterion_question_bank")
-    content_lab = _read_json_if_exists(Path(content_lab_path), errors, "content_lab_candidates")
-    topic_routing = _read_json_if_exists(Path(topic_routing_path), errors, "topic_routing")
+    question_bank_input_path = Path(question_bank_path)
+    asset_manifest_input_path = Path(asset_manifest_path)
+    question_bank = _read_json_if_exists(question_bank_input_path, errors, "question_bank")
+    manifest = _read_json_if_exists(
+        asset_manifest_input_path,
+        errors,
+        "asset_manifest",
+        missing_issues=None if strict_companion_inputs else warnings,
+        missing_detail={"label": "asset_manifest", "fallback": "derived_from_question_bank"},
+    )
+    asterion_catalog = _read_json_if_exists(
+        Path(asterion_catalog_path),
+        errors,
+        "asterion_exam_bank_catalog",
+        missing_issues=None if strict_companion_inputs else warnings,
+        missing_detail={"label": "asterion_exam_bank_catalog"},
+    )
+    asterion = _read_json_if_exists(
+        Path(asterion_path),
+        errors,
+        "asterion_question_bank",
+        missing_issues=None if strict_companion_inputs else warnings,
+        missing_detail={"label": "asterion_question_bank"},
+    )
+    content_lab = _read_json_if_exists(
+        Path(content_lab_path),
+        errors,
+        "content_lab_candidates",
+        missing_issues=None if strict_companion_inputs else warnings,
+        missing_detail={"label": "content_lab_candidates"},
+    )
+    topic_routing = _read_json_if_exists(
+        Path(topic_routing_path),
+        errors,
+        "topic_routing",
+        missing_issues=None if strict_companion_inputs else warnings,
+        missing_detail={"label": "topic_routing"},
+    )
 
     manifest_ids: set[str] = set()
     manifest_paths: set[str] = set()
     manifest_sha_by_path: dict[str, str] = {}
+    manifest_source = "file" if manifest else "missing"
+    manifest_id_values: list[str] = []
+    if not strict_companion_inputs and not manifest and question_bank:
+        try:
+            manifest = _derived_manifest_index(
+                question_bank,
+                artifact_root=root,
+                base_dir=base,
+                question_bank_path=question_bank_input_path,
+            )
+            manifest_source = "derived_from_question_bank"
+        except ValueError as exc:
+            errors.append(_issue("asset_manifest_derivation_failed", str(asset_manifest_input_path), str(exc)))
     if manifest:
         if manifest.get("schema_name") != ASSET_MANIFEST_SCHEMA_NAME:
             errors.append(_issue("asset_manifest_schema", str(asset_manifest_path), "Unexpected asset manifest schema."))
@@ -284,6 +330,7 @@ def validate_asset_references(
         "warnings": warnings,
         "summary": {
             "manifest_asset_count": len(manifest_ids),
+            "manifest_source": manifest_source,
             "question_bank_records": len(question_bank.get("questions", [])) if question_bank else 0,
             "asterion_catalog_records": len(asterion_catalog.get("questions", [])) if asterion_catalog else 0,
             "asterion_records": len(asterion.get("questions", [])) if asterion else 0,
@@ -467,14 +514,70 @@ def _note_or_top(record: dict[str, Any], field: str) -> Any:
     return None
 
 
+def _derived_manifest_index(
+    question_bank: dict[str, Any],
+    *,
+    artifact_root: Path,
+    base_dir: Path,
+    question_bank_path: Path,
+) -> dict[str, Any]:
+    if question_bank.get("schema_name") != "exam_bank.question_bank":
+        raise ValueError("Cannot derive asset manifest from non question-bank input.")
+    records: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    source_path = _display_path(question_bank_path, base_dir)
+    for question in question_bank.get("questions", []):
+        if not isinstance(question, dict):
+            continue
+        records.extend(
+            _asset_records_for_question(
+                question,
+                kind=QUESTION_IMAGE_KIND,
+                paths=_question_image_paths(question),
+                artifact_root=artifact_root,
+                base_dir=base_dir,
+                source_path=source_path,
+                source_fields=["canonical_question_artifact", "question_image_path", "question_image_paths"],
+                seen_ids=seen_ids,
+            )
+        )
+        records.extend(
+            _asset_records_for_question(
+                question,
+                kind=MARK_SCHEME_IMAGE_KIND,
+                paths=_mark_scheme_image_paths(question),
+                artifact_root=artifact_root,
+                base_dir=base_dir,
+                source_path=source_path,
+                source_fields=["canonical_mark_scheme_artifact", "mark_scheme_image_path", "mark_scheme_image_paths"],
+                seen_ids=seen_ids,
+            )
+        )
+    return {
+        "schema_name": ASSET_MANIFEST_SCHEMA_NAME,
+        "schema_version": ASSET_MANIFEST_SCHEMA_VERSION,
+        "asset_count": len(records),
+        "assets": records,
+    }
+
+
 def _slug(value: str) -> str:
     slug = re.sub(r"[^A-Za-z0-9_.-]+", "_", value.strip()).strip("_")
     return slug or "unknown"
 
 
-def _read_json_if_exists(path: Path, errors: list[dict[str, Any]], label: str) -> dict[str, Any]:
+def _read_json_if_exists(
+    path: Path,
+    errors: list[dict[str, Any]],
+    label: str,
+    *,
+    missing_issues: list[dict[str, Any]] | None = None,
+    missing_detail: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if not path.is_file():
-        errors.append(_issue("missing_validation_input", str(path), f"Missing {label} input."))
+        target = missing_issues if missing_issues is not None else errors
+        code = "missing_optional_validation_input" if missing_issues is not None else "missing_validation_input"
+        target.append(_issue(code, str(path), f"Missing {label} input.", missing_detail))
         return {}
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))

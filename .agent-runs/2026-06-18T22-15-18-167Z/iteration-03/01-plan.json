@@ -1,0 +1,45 @@
+{
+  "selected_goal": "Add a strict companion-input mode to asset-reference validation so release-style checks can hard-fail when persisted manifest/export sidecars are missing.",
+  "why_this_now": "Iteration 2 repaired the default live gate by warning on absent companion outputs, but its audit identified a release-risk: ok=true can be misread as release-ready even when persisted asset_manifest and downstream sidecars are absent. A bounded strict mode keeps local validation usable while preserving a hard gate for workflows that require generated companions.",
+  "repo_evidence": [
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-02/04-audit-report.json lists permissive missing companion outputs as the main regression risk.",
+    "scripts/validate_asset_references.py exposes the validator as a project gate but has no strictness control.",
+    "src/exam_bank/asset_manifest.py already centralizes missing-input handling, so this can be implemented without touching output generation or canonical assets."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/asset_manifest.py",
+    "scripts/validate_asset_references.py",
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/json/asset_manifest.v1.json",
+    "output/asterion/exports/latest/**",
+    "output/** canonical PNG assets"
+  ],
+  "acceptance_criteria": [
+    "The default validator behavior from iteration 2 remains ok with warnings when companion inputs are absent.",
+    "A strict companion-input option makes absent asset manifest, Asterion exports, Content Lab export, and topic-routing sidecar hard validation errors.",
+    "The CLI exposes the strict mode without changing default command behavior.",
+    "No generated output files are written."
+  ],
+  "test_expectations": [
+    "Add a test that calls validate_asset_references with strict companion inputs and asserts absent companion files produce missing_validation_input errors and ok=false.",
+    "Keep the iteration-2 default warning test passing.",
+    "Run the asset-manifest test file and both default and strict CLI commands against the current workspace."
+  ],
+  "implementation_boundaries": [
+    "Do not generate or delete output files.",
+    "Do not change the meaning of malformed present companion files.",
+    "Do not change extraction, export generation, or image rendering behavior.",
+    "Keep the strict option opt-in."
+  ],
+  "repo_hygiene_risk": "Low. The change is a parameter and CLI flag, but it must avoid broad command semantics churn.",
+  "rollback_plan": "Remove the strict parameter, CLI flag, and strict-mode test.",
+  "done_when": [
+    "Iteration 3 artifacts exist under .agent-runs/2026-06-18T22-15-18-167Z/iteration-03/.",
+    "The new strict-mode test fails before implementation and passes after implementation.",
+    "Default scripts/validate_asset_references.py still exits zero on the current workspace.",
+    "Strict scripts/validate_asset_references.py --strict-companion-inputs exits non-zero on the current workspace with missing_validation_input errors."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "selected_goal": "Infer source companion keys from canonical paper IDs in output-integrity audits when source PDF metadata is absent.",
+  "why_this_now": "Iteration 4 grouped missing mark-scheme records by paper/source companion, but the live report still showed source_companion=missing for all groups. The paper IDs contain enough canonical identity to infer syllabus/year/session/component companion keys, making the missing-mark-scheme groups actionable without editing output records.",
+  "repo_evidence": [
+    "Iteration 4 live audit grouped 74 unexpected missing mark-scheme records, but every group had source_companion=missing.",
+    "src/exam_bank/audit.py currently derives source companion from mark_scheme_source_pdf/source_pdf and known missing companion paper matches only.",
+    "The live paper IDs use parseable forms such as 33winter11, 12winter16, 42summer19, and 63summer17."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/audit.py",
+    "tests/test_audit.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/** canonical PNG assets"
+  ],
+  "acceptance_criteria": [
+    "When source_pdf and mark_scheme_source_pdf are absent, _source_companion_key can infer a key from paper IDs like 12spring24, 42summer19, and 33winter11.",
+    "The inferred key uses the same format as PDF-derived keys: 9709_<year>_<March|June|November>_<component>.",
+    "Existing source-PDF-derived companion behavior remains unchanged.",
+    "The live output-integrity audit's missing mark-scheme groups no longer all have source_companion=missing."
+  ],
+  "test_expectations": [
+    "Add a fixture with missing source_pdf metadata and paper=42summer19; assert the missing mark-scheme group source_companion is 9709_2019_June_42.",
+    "Run tests/test_audit.py.",
+    "Run the live output-integrity audit with output under iteration-05."
+  ],
+  "implementation_boundaries": [
+    "Do not alter question IDs, paper IDs, output JSON, or known missing companion allow-list behavior.",
+    "Do not change missing mark-scheme pass/fail logic.",
+    "Do not infer companions for unparseable paper IDs; leave those as missing.",
+    "No generated output writes outside .agent-runs."
+  ],
+  "repo_hygiene_risk": "Low. This is a deterministic audit inference helper and test.",
+  "rollback_plan": "Remove the paper-ID companion inference helper and the associated test.",
+  "done_when": [
+    "Iteration 5 artifacts exist under .agent-runs/2026-06-18T22-15-18-167Z/iteration-05/.",
+    "The new paper-inference test fails before implementation and passes after implementation.",
+    "The live output-integrity audit still fails on missing mark schemes but reports inferred source companion keys for parseable paper groups.",
+    "The targeted test bundle passes."
+  ]
+}

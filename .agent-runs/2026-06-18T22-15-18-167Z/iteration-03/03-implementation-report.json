@@ -1,0 +1,38 @@
+{
+  "summary": "Added an opt-in strict companion-input mode to validate_asset_references and exposed it in scripts/validate_asset_references.py as --strict-companion-inputs.",
+  "files_changed": [
+    "src/exam_bank/asset_manifest.py",
+    "scripts/validate_asset_references.py",
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "files_created": [
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-03/01-plan.json",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-03/02-test-plan.json",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-03/03-implementation-report.json",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-03/audit.current.integrity.json"
+  ],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (before implementation; expected failure)",
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (after implementation)",
+    ".venv/bin/python scripts/validate_asset_references.py",
+    ".venv/bin/python scripts/validate_asset_references.py --strict-companion-inputs",
+    ".venv/bin/python -m pytest tests/test_audit.py tests/test_output_contract.py tests/test_asterion_export.py tests/test_output_management.py tests/test_question_bank_readiness_audit.py tests/test_asset_manifest_storage_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-normalize-structure --root output --validate-only",
+    ".venv/bin/python scripts/audit_output_storage.py --dry-run",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-18T22-15-18-167Z/iteration-03/audit.current.integrity.json"
+  ],
+  "test_results": "The new strict-mode test failed before implementation with unexpected keyword argument. After implementation, tests/test_asset_manifest_storage_audit.py passed: 6 passed. Default validate_asset_references passed with ok=true and five warnings. Strict validate_asset_references failed as expected with five missing_validation_input errors. Targeted pytest bundle passed: 61 passed, 5 warnings. output-normalize-structure and audit_output_storage passed. output-integrity-audit failed on 74 unexpected missing mark-scheme image paths.",
+  "acceptance_criteria_status": [
+    "Satisfied: default validator behavior still exits zero with warnings on missing companion inputs.",
+    "Satisfied: strict companion mode returns ok=false with hard missing_validation_input errors for missing companions.",
+    "Satisfied: CLI exposes --strict-companion-inputs.",
+    "Satisfied: no generated output files were written outside .agent-runs."
+  ],
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": "The only generated report from the exploratory project gate was written under the iteration-03 .agent-runs directory.",
+  "known_risks": [
+    "Strict mode intentionally fails on the current workspace until persisted companion outputs are generated.",
+    "The live output-integrity audit still fails on missing mark-scheme image paths; this is a separate output data issue."
+  ]
+}

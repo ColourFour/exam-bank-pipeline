@@ -1,0 +1,25 @@
+{
+  "plan_under_test": "Make output-integrity missing mark-scheme failures actionable by grouping unexpected missing mark-scheme image paths by paper and source companion.",
+  "test_files_changed": [
+    "tests/test_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Updated test_current_output_integrity_fails_on_new_missing_paths_and_duplicates to include two unexpected missing mark-scheme records for the same paper and assert unexpected_missing_mark_scheme_groups contains paper, source_companion, count, question_ids, and question_numbers."
+  ],
+  "expected_initial_failure": "Before implementation, the test should fail because audit_current_output_integrity does not include unexpected_missing_mark_scheme_groups.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-18T22-15-18-167Z/iteration-04/audit.current.integrity.json"
+  ],
+  "what_passing_proves": [
+    "Unexpected missing mark-scheme records are grouped deterministically by paper and source companion.",
+    "The report exposes complete affected question IDs/numbers for the group instead of relying only on truncated examples.",
+    "Existing failure status and counts remain active."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not repair the missing mark-scheme image paths in output/json/question_bank.json.",
+    "It does not prove which source PDFs are actually unavailable.",
+    "It does not validate visual content of any mark-scheme PNG."
+  ],
+  "risk_of_bad_tests": "Low. The test extends an existing output-integrity fixture and asserts deterministic report fields from real records."
+}

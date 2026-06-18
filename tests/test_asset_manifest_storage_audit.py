@@ -130,6 +130,70 @@ def test_asset_reference_validation_fails_when_question_bank_path_missing_from_m
     } in report["errors"]
 
 
+def test_asset_reference_validation_derives_missing_manifest_and_warns_on_optional_inputs(tmp_path: Path) -> None:
+    output = tmp_path / "output"
+    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
+    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    bank_path = output / "json" / "question_bank.json"
+    _write_json(bank_path, _question_bank())
+
+    report = validate_asset_references(
+        question_bank_path=bank_path,
+        asset_manifest_path=output / "json" / "asset_manifest.v1.json",
+        asterion_catalog_path=output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json",
+        asterion_path=output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
+        content_lab_path=output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json",
+        topic_routing_path=output / "json" / "question_bank.topic_routing.v1.json",
+        artifact_root=output,
+        project_root=tmp_path,
+    )
+
+    assert report["ok"] is True
+    assert report["errors"] == []
+    assert report["summary"]["manifest_source"] == "derived_from_question_bank"
+    assert report["summary"]["manifest_asset_count"] == 2
+    warning_codes = [warning["code"] for warning in report["warnings"]]
+    assert warning_codes.count("missing_optional_validation_input") == 5
+    assert any(
+        warning["detail"] == {
+            "label": "asset_manifest",
+            "fallback": "derived_from_question_bank",
+        }
+        for warning in report["warnings"]
+    )
+
+
+def test_asset_reference_validation_strict_companion_inputs_fail_when_sidecars_are_missing(tmp_path: Path) -> None:
+    output = tmp_path / "output"
+    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
+    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    bank_path = output / "json" / "question_bank.json"
+    _write_json(bank_path, _question_bank())
+
+    report = validate_asset_references(
+        question_bank_path=bank_path,
+        asset_manifest_path=output / "json" / "asset_manifest.v1.json",
+        asterion_catalog_path=output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json",
+        asterion_path=output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
+        content_lab_path=output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json",
+        topic_routing_path=output / "json" / "question_bank.topic_routing.v1.json",
+        artifact_root=output,
+        project_root=tmp_path,
+        strict_companion_inputs=True,
+    )
+
+    assert report["ok"] is False
+    assert report["warnings"] == []
+    assert [error["code"] for error in report["errors"]] == ["missing_validation_input"] * 5
+    assert {error["detail"]["label"] for error in report["errors"]} == {
+        "asset_manifest",
+        "asterion_exam_bank_catalog",
+        "asterion_question_bank",
+        "content_lab_candidates",
+        "topic_routing",
+    }
+
+
 def test_storage_audit_is_deterministic_and_quarantines_noncanonical_duplicates(tmp_path: Path) -> None:
     canonical = tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png"
     duplicate = tmp_path / "output" / "candidates" / "ocr" / "run1" / "p1" / "12spring21" / "questions" / "q01.png"
