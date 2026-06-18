@@ -38,6 +38,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import unquote, urldefrag, urljoin, urlparse
 from urllib.request import Request, urlopen
 
+from exam_bank.core.paper_identity import build_paper_id, parse_session
+
 try:
     import requests
 except ModuleNotFoundError:
@@ -98,12 +100,6 @@ RELATIVE_PDF_RE = re.compile(
     re.IGNORECASE,
 )
 
-SERIES_NAMES = {
-    "m": "March",
-    "s": "May/June",
-    "w": "Oct/Nov",
-}
-
 PAPER_LABELS = {
     "pure_math_1": "Pure Mathematics 1",
     "pure_math_3": "Pure Mathematics 3",
@@ -133,6 +129,9 @@ class PaperResource:
     year: int
     series_code: str
     session: str
+    canonical_session: str
+    canonical_year_folder: str
+    component_year_key: str
     doc_type: str  # qp or ms
     component: str
     paper: str
@@ -322,14 +321,6 @@ def extract_links(current_url: str, html: str) -> set[str]:
             normalized.add(link)
     return normalized
 
-
-def parse_two_digit_year(yy: str) -> int:
-    # All target years are 2008+. Treat 00-79 as 2000s to avoid surprises when the
-    # site eventually adds future sessions; 80-99 would be legacy 1900s and filtered.
-    value = int(yy)
-    return 2000 + value if value <= 79 else 1900 + value
-
-
 def classify_component(component: str, year: int) -> str | None:
     """Map a CAIE 9709 component number to the requested paper bucket."""
 
@@ -362,8 +353,10 @@ def parse_pdf_resource(url: str, *, source_page: str | None = None, strict: bool
             raise ValueError(f"unknown PastPapers.co 9709 PDF filename format: {url}")
         return None
 
+    series_code = match.group("series_code").lower()
     try:
-        year = parse_two_digit_year(match.group("yy"))
+        parsed_session = parse_session(f"{series_code}{match.group('yy')}")
+        year = parsed_session.year
     except ValueError as exc:
         if strict:
             raise ValueError(f"year extraction failed for PastPapers.co PDF: {url}") from exc
@@ -373,12 +366,14 @@ def parse_pdf_resource(url: str, *, source_page: str | None = None, strict: bool
     if paper is None:
         return None
 
-    series_code = match.group("series_code").lower()
     return PaperResource(
         syllabus=match.group("syllabus"),
         year=year,
         series_code=series_code,
-        session=SERIES_NAMES[series_code],
+        session=parsed_session.canonical_session,
+        canonical_session=parsed_session.canonical_session,
+        canonical_year_folder=parsed_session.canonical_year_folder,
+        component_year_key=parsed_session.session_code,
         doc_type=match.group("doc_type").lower(),
         component=component,
         paper=paper,
@@ -541,7 +536,11 @@ def pdf_destination_path(resource: PaperResource, *, storage_root: Path = PDF_ST
     if asset_type is None:
         raise ValueError(f"cannot classify PDF asset type for {resource.url}")
     filename = unquote(urlparse(resource.url).path.split("/")[-1])
-    session_slug = resource.session.lower().replace("/", "-")
+    session_slug = {
+        "m": "march",
+        "s": "may-june",
+        "w": "oct-nov",
+    }[resource.component_year_key[0]]
     return storage_root / ASSET_TYPE_DIRS[asset_type] / str(resource.year) / session_slug / filename
 
 
@@ -636,6 +635,9 @@ def build_exam_records(
                 "year": resource.year,
                 "session": resource.session,
                 "session_code": resource.series_code,
+                "canonical_session": resource.canonical_session,
+                "canonical_year_folder": resource.canonical_year_folder,
+                "canonical_paper_id": build_paper_id(resource.syllabus, resource.canonical_session, resource.component),
                 "source": SOURCE_NAME,
                 "source_page": resource.source_page,
                 "question_paper_url": None,
@@ -669,7 +671,7 @@ def populate_record_summary(summary: CrawlSummary, records: Iterable[dict[str, A
 
 
 def make_record_id(resource: PaperResource) -> str:
-    return f"caie-9709-{resource.paper}-{resource.series_code}{str(resource.year)[-2:]}-{resource.component}"
+    return f"caie-9709-{resource.paper}-{resource.component_year_key}-{resource.component}"
 
 
 def variant_from_component(component: str) -> str | None:

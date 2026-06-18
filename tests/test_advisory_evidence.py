@@ -38,7 +38,7 @@ def test_metadata_classifies_grade_thresholds() -> None:
     assert metadata.document_type == "grade_thresholds"
     assert metadata.syllabus == "9709"
     assert metadata.year == "2024"
-    assert metadata.session == "MayJune"
+    assert metadata.session == "summer24"
 
 
 def test_inventory_flags_duplicate_identities_and_dry_run_does_not_write(tmp_path: Path) -> None:

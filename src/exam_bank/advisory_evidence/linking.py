@@ -15,6 +15,7 @@ from exam_bank.advisory_evidence.constants import (
     GRADE_THRESHOLD_PARSED_DIR,
 )
 from exam_bank.atomic_json import write_atomic_json
+from exam_bank.core.paper_identity import IdentityError, parse_session_from_parts
 from exam_bank.document_metadata import parse_filename_metadata
 
 
@@ -92,10 +93,12 @@ def build_examiner_report_links(
             component_code = str(component.get("component") or "")
             for question in component.get("questions", []):
                 question_number = int(question.get("question_number"))
+                year = str(parsed.get("year") or "")
+                session = _canonical_session(str(parsed.get("canonical_session") or parsed.get("session") or ""), year)
                 key = (
                     str(parsed.get("syllabus") or ""),
-                    str(parsed.get("year") or ""),
-                    str(parsed.get("session") or ""),
+                    year,
+                    session,
                     component_code,
                     question_number,
                 )
@@ -107,7 +110,7 @@ def build_examiner_report_links(
                         "syllabus": key[0],
                         "year": key[1],
                         "session": key[2],
-                        "session_key": parsed.get("session_key", ""),
+                        "session_key": normalized_session_key(key[0], key[1], key[2]),
                         "component": component_code,
                         "question_number": question_number,
                         "candidate_question_ids": candidates,
@@ -140,10 +143,12 @@ def build_grade_threshold_links(
         parsed = load_json(path)
         for component in parsed.get("components", []):
             component_code = str(component.get("component") or "")
+            year = str(parsed.get("year") or "")
+            session = _canonical_session(str(parsed.get("canonical_session") or parsed.get("session") or ""), year)
             key = (
                 str(parsed.get("syllabus") or ""),
-                str(parsed.get("year") or ""),
-                str(parsed.get("session") or ""),
+                year,
+                session,
                 component_code,
             )
             candidates = list(component_index.get(key, []))
@@ -154,7 +159,7 @@ def build_grade_threshold_links(
                     "syllabus": key[0],
                     "year": key[1],
                     "session": key[2],
-                    "session_key": parsed.get("session_key", ""),
+                    "session_key": normalized_component_key(*key),
                     "component": component_code,
                     "candidate_question_ids": candidates,
                     "match_status": "linked" if candidates else "unlinked",
@@ -182,6 +187,17 @@ def normalized_component_key(syllabus: str, year: str, session: str, component: 
     return f"{syllabus}_{year}_{session}_{component}"
 
 
+def normalized_session_key(syllabus: str, year: str, session: str) -> str:
+    return f"{syllabus}_{year}_{session}"
+
+
+def _canonical_session(session: str, year: str) -> str:
+    try:
+        return parse_session_from_parts(session, year).canonical_session
+    except IdentityError:
+        return session
+
+
 def _question_number_int(value: Any) -> int | None:
     if isinstance(value, int):
         return value
@@ -205,4 +221,3 @@ def _link_summary(links: list[dict[str, Any]]) -> dict[str, int]:
             counts[status] += 1
     counts["total"] = len(links)
     return counts
-

@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from pathlib import Path
 import re
 
+from .core.paper_identity import IdentityError, parse_session, parse_session_from_parts
 from .models import PageLayout
-from .runtime_profile import COMPACT_DOCUMENT_TYPES, DOCUMENT_TYPE_ALIASES, SESSION_ALIASES
+from .runtime_profile import COMPACT_DOCUMENT_TYPES, DOCUMENT_TYPE_ALIASES
 
 
 @dataclass(frozen=True)
@@ -76,8 +77,8 @@ def parse_filename_metadata(path: str | Path) -> DocumentMetadata:
         year_match = re.search(r"\b(20\d{2}|\d{2})\b", stem)
         if year_match:
             year = _normalize_year(year_match.group(1))
-    if not session:
-        session = _session_from_text(stem)
+    if not session and year:
+        session = _session_from_text(stem, year=year)
     if syllabus and syllabus == year:
         syllabus = ""
 
@@ -123,7 +124,6 @@ def parse_internal_document_metadata(layouts: list[PageLayout]) -> DocumentMetad
     elif re.search(r"\bquestion paper\b", cover_text, re.IGNORECASE):
         document_type = "question_paper"
 
-    session = _session_from_text(cover_text)
     year = ""
     year_match = re.search(r"\b(20\d{2})\b", cover_text)
     if year_match:
@@ -132,6 +132,7 @@ def parse_internal_document_metadata(layouts: list[PageLayout]) -> DocumentMetad
         compact_match = re.search(r"\b(?:m|s|w)(\d{2})\b", normalized)
         if compact_match:
             year = _normalize_year(compact_match.group(1))
+    session = _session_from_text(cover_text, year=year, allow_lone_month=False) if year else ""
 
     return DocumentMetadata(
         syllabus=syllabus,
@@ -187,11 +188,17 @@ def _metadata_values_equivalent(field: str, filename_value: str, internal_value:
 
 
 def _session_compare_key(value: str) -> str:
-    if value in {"October", "November", "OctNov"}:
-        return "OctNov"
-    if value in {"May", "June", "MayJune"}:
-        return "MayJune"
-    return value
+    try:
+        return parse_session(value).canonical_session
+    except IdentityError:
+        normalized = _normalize_name(value).replace("_", "")
+        if normalized in {"october", "november", "oct", "nov", "octnov", "octobernovember"}:
+            return "w"
+        if normalized in {"may", "june", "mayjune", "summer"}:
+            return "s"
+        if normalized in {"march", "mar", "febmarch", "februarymarch"}:
+            return "m"
+        return value
 
 
 def companion_candidates(document: DocumentMetadata, directory: str | Path, document_type: str) -> list[Path]:
@@ -251,37 +258,37 @@ def _component_from_tokens(tokens: list[str], document_type: str) -> str:
     if tokens and re.fullmatch(r"[1-6][0-9]", tokens[-1]):
         return tokens[-1]
     for token in reversed(tokens):
-        if re.fullmatch(r"[1-6][0-9]", token):
-            return token
         paper_family = re.fullmatch(r"p([1-6])", token)
         if paper_family:
             return paper_family.group(1)
+    for token in reversed(tokens):
+        if re.fullmatch(r"[1-6][0-9]?", token):
+            return token
     return ""
 
 
 def _session_year_from_tokens(tokens: list[str]) -> tuple[str, str]:
     joined = "_".join(tokens)
-    phrase_session = _session_from_text(joined)
-    if phrase_session:
-        year = ""
-        for token in tokens:
-            if re.fullmatch(r"20\d{2}|\d{2}", token):
-                year = _normalize_year(token)
-                break
-        return phrase_session, year
-
     for token in tokens:
-        compact = re.fullmatch(r"([msw])(\d{2})", token)
-        if compact:
-            return SESSION_ALIASES[compact.group(1)], _normalize_year(compact.group(2))
-    session = ""
+        if re.fullmatch(r"[msw]\d{2}", token):
+            parsed = parse_session(token)
+            return parsed.canonical_session, str(parsed.year)
+
     year = ""
     for token in tokens:
-        if not session:
-            session = SESSION_ALIASES.get(token, "")
         if not year and re.fullmatch(r"20\d{2}|\d{2}", token):
             year = _normalize_year(token)
-    return session, year
+
+    if year:
+        session = _session_from_text(joined, year=year)
+        if session:
+            return session, year
+
+    try:
+        parsed = parse_session(joined)
+        return parsed.canonical_session, str(parsed.year)
+    except IdentityError:
+        return "", year
 
 
 def _normalize_year(value: str) -> str:
@@ -291,17 +298,30 @@ def _normalize_year(value: str) -> str:
     return str(2000 + year if year < 80 else 1900 + year)
 
 
-def _session_from_text(value: str) -> str:
+def _session_from_text(value: str, *, year: str = "", allow_lone_month: bool = True) -> str:
     normalized = _normalize_name(value)
-    if re.search(r"february_?march|feb_?march", normalized):
-        return "March"
-    if re.search(r"may_?june", normalized):
-        return "MayJune"
-    if re.search(r"october_?november|oct_?nov", normalized):
-        return "OctNov"
-    for token, session in SESSION_ALIASES.items():
-        if re.search(rf"(?:^|_){re.escape(token)}(?:_|$)", normalized):
-            return session
+    aliases = [
+        "february_march",
+        "feb_march",
+        "may_june",
+        "mayjune",
+        "summer",
+        "october_november",
+        "oct_nov",
+        "octnov",
+        "winter",
+        "autumn",
+    ]
+    if allow_lone_month:
+        aliases.extend(["march", "mar", "may", "june", "october", "november", "oct", "nov"])
+    for alias in aliases:
+        if re.search(rf"(?:^|_){re.escape(alias)}(?:_|$)", normalized):
+            if not year:
+                return alias
+            try:
+                return parse_session_from_parts(alias, year).canonical_session
+            except IdentityError:
+                return ""
     return ""
 
 

@@ -8,7 +8,7 @@ from exam_bank.output_management import build_cleanup_plan, build_output_invento
 def test_output_inventory_finds_contract_paths(tmp_path: Path, capsys) -> None:
     root = tmp_path / "output"
     _write(root / "json" / "question_bank.json", {"questions": []})
-    _write(root / "p1" / "12spring21" / "questions" / "q01.png", "png")
+    _write(root / "pm1" / "pm1_2021_m21_qp_q01_question.png", "png")
     _write(root / "triage" / "iteration_001" / "baseline_question_bank.json", {"questions": []})
     _write(root / "triage" / "iteration_001" / "comparisons" / "comparison.auto-iteration-001.json", {"ok": True})
     _write(
@@ -23,7 +23,7 @@ def test_output_inventory_finds_contract_paths(tmp_path: Path, capsys) -> None:
     assert report["output_roots_found"] == [str(root)]
     assert report["run_ids_found"] == ["run-1"]
     assert [item["path"] for item in report["question_bank_files"]] == [str(root / "json" / "question_bank.json")]
-    assert [item["path"] for item in report["artifact_trees"]] == [str(root / "p1")]
+    assert [item["path"] for item in report["artifact_trees"]] == [str(root / "pm1")]
     assert [item["path"] for item in report["frozen_baselines"]] == [
         str(root / "triage" / "iteration_001" / "baseline_question_bank.json")
     ]

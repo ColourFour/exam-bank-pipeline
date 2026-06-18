@@ -132,12 +132,16 @@ class ClassificationResult:
 
 @dataclass
 class RenderResult:
-    screenshot_path: Path
+    screenshot_path: Path | None
     review_flags: list[str] = field(default_factory=list)
     crop_uncertain: bool = False
     debug_paths: list[str] = field(default_factory=list)
     extracted_text: str = ""
     crop_diagnostics: dict[str, Any] = field(default_factory=dict)
+    question_id: str = ""
+    paper_id: str = ""
+    component: str = ""
+    canonical_path: str = ""
     ocr_ran: bool = False
     ocr_engine: str = ""
     ocr_text: str = ""

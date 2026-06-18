@@ -16,12 +16,12 @@ def test_filename_metadata_parser_handles_long_cambridge_names() -> None:
 
     assert metadata.syllabus == "9709"
     assert metadata.subject == "Mathematics"
-    assert metadata.session == "November"
-    assert metadata.normalized_session_key == "November"
+    assert metadata.session == "winter25"
+    assert metadata.normalized_session_key == "winter25"
     assert metadata.year == "2025"
     assert metadata.document_type == "question_paper"
     assert metadata.component == "12"
-    assert metadata.canonical_key == "9709_2025_November_12"
+    assert metadata.canonical_key == "9709_2025_winter25_12"
 
 
 def test_examiner_report_without_component_is_session_level() -> None:
@@ -29,7 +29,7 @@ def test_examiner_report_without_component_is_session_level() -> None:
 
     assert metadata.document_type == "examiner_report"
     assert metadata.component == ""
-    assert metadata.session_key == "9709_2025_November"
+    assert metadata.session_key == "9709_2025_winter25"
     assert metadata.canonical_key == ""
 
 
@@ -37,10 +37,10 @@ def test_filename_metadata_normalizes_compact_and_phrase_sessions() -> None:
     compact = parse_filename_metadata("9709_s21_qp_12.pdf")
     phrase = parse_filename_metadata("9709 Mathematics October November 2025 Question Paper 12.pdf")
 
-    assert compact.normalized_session_key == "MayJune"
-    assert compact.canonical_key == "9709_2021_MayJune_12"
-    assert phrase.normalized_session_key == "OctNov"
-    assert phrase.canonical_key == "9709_2025_OctNov_12"
+    assert compact.normalized_session_key == "summer21"
+    assert compact.canonical_key == "9709_2021_summer21_12"
+    assert phrase.normalized_session_key == "winter25"
+    assert phrase.canonical_key == "9709_2025_winter25_12"
 
 
 def test_filename_metadata_handles_loose_exam_paper_p_family_names() -> None:
@@ -49,11 +49,11 @@ def test_filename_metadata_handles_loose_exam_paper_p_family_names() -> None:
 
     assert question.syllabus == ""
     assert question.year == "2019"
-    assert question.session == "March"
+    assert question.session == "summer19"
     assert question.document_type == "question_paper"
     assert question.component == "1"
     assert question.paper_family == "P1"
-    assert question.canonical_key == "unknown_2019_March_1"
+    assert question.canonical_key == "unknown_2019_summer19_1"
     assert mark_scheme.document_type == "mark_scheme"
     assert mark_scheme.component == "1"
     assert mark_scheme.canonical_key == question.canonical_key
@@ -121,12 +121,12 @@ def test_folder_registry_classifies_and_pairs_companion_files(tmp_path: Path) ->
 
     registry = build_document_registry(tmp_path)
 
-    entry = registry.entries["9709_2025_November_12"]
+    entry = registry.entries["9709_2025_winter25_12"]
     assert entry.question_paper == qp12
     assert entry.mark_scheme == ms12
     assert entry.mark_scheme != ms13
     assert entry.examiner_reports == [er]
-    assert registry.session_reports["9709_2025_November"] == [er]
+    assert registry.session_reports["9709_2025_winter25"] == [er]
 
 
 def test_missing_companion_files_do_not_remove_question_paper_entry(tmp_path: Path) -> None:
@@ -134,7 +134,7 @@ def test_missing_companion_files_do_not_remove_question_paper_entry(tmp_path: Pa
 
     registry = build_document_registry(tmp_path)
 
-    entry = registry.entries["9709_2022_March_42"]
+    entry = registry.entries["9709_2022_summer22_42"]
     assert entry.question_paper == qp
     assert entry.mark_scheme is None
     assert entry.examiner_reports == []
@@ -171,7 +171,7 @@ def test_process_registry_routes_only_question_papers_to_question_extraction(tmp
             "question_pdf": "9709 Mathematics November 2025 Question Paper 12.pdf",
             "mark_scheme_pdf": "9709 Mathematics November 2025 Mark Scheme 12.pdf",
             "examiner_report_paths": ["9709 Mathematics November 2025 Examiner Report.pdf"],
-            "metadata": registry.entries["9709_2025_November_12"].metadata_by_path[
+                "metadata": registry.entries["9709_2025_winter25_12"].metadata_by_path[
                 str(tmp_path / "9709 Mathematics November 2025 Question Paper 12.pdf")
             ],
         }

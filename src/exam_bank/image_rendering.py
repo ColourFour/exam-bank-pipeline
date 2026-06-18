@@ -7,11 +7,13 @@ import json
 import re
 
 from .config import AppConfig
+from .core.asset_paths import AssetPath, AssetPathResolver
+from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
+from .document_metadata import parse_filename_metadata
 from .image_limits import cap_image_pixels, render_pdf_area
 from .models import BoundingBox, PageLayout, QuestionSpan, RenderResult, TextBlock
 from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
-from .output_layout import question_image_output_path
 from .question_detection_layout import looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text
 from .question_detection import detect_question_anchor_candidates, extract_text_from_blocks, parse_question_start
 
@@ -37,12 +39,17 @@ def render_question_image(
     span: QuestionSpan,
     layouts: list[PageLayout],
     config: AppConfig,
+    *,
+    identity: PaperIdentity | None = None,
 ) -> RenderResult:
     """Render original PDF pixels cropped tightly to prompt content."""
 
+    identity = identity or _question_identity_from_span(span)
+    if identity is None:
+        return _missing_identity_render_result(span)
     if config.detection.output_mode == "full_region":
-        return _render_full_region_image(pdf_path, span, layouts, config)
-    return _render_prompt_crop_image(pdf_path, span, layouts, config)
+        return _render_full_region_image(pdf_path, span, layouts, config, identity=identity)
+    return _render_prompt_crop_image(pdf_path, span, layouts, config, identity=identity)
 
 
 def _render_prompt_crop_image(
@@ -50,6 +57,8 @@ def _render_prompt_crop_image(
     span: QuestionSpan,
     layouts: list[PageLayout],
     config: AppConfig,
+    *,
+    identity: PaperIdentity,
 ) -> RenderResult:
     try:
         import fitz
@@ -58,7 +67,8 @@ def _render_prompt_crop_image(
         raise RuntimeError("PyMuPDF and Pillow are required for rendering screenshots.") from exc
     quiet_mupdf(fitz)
 
-    output_path = _image_output_path(span, config)
+    asset = AssetPathResolver(config.output.root_dir()).question_image(identity)
+    output_path = asset.absolute_path
     output_path.parent.mkdir(parents=True, exist_ok=True)
     regions, flags = _detect_prompt_regions(span, layouts, config)
     union_regions, union_flags = _single_page_union_regions(regions, span, layouts, config)
@@ -142,7 +152,7 @@ def _render_prompt_crop_image(
     crop_uncertain = crop_uncertain or "crop_uncertain" in flags
     extracted_text = _text_from_regions(regions) or span.combined_text
     flags = sorted(set(flags))
-    crop_diagnostics = _crop_diagnostics(pdf_path, span, regions, flags)
+    crop_diagnostics = _crop_diagnostics(pdf_path, span, regions, flags, identity=identity, asset=asset)
     return RenderResult(
         screenshot_path=output_path,
         review_flags=flags,
@@ -150,6 +160,10 @@ def _render_prompt_crop_image(
         debug_paths=debug_paths,
         extracted_text=extracted_text,
         crop_diagnostics=crop_diagnostics,
+        question_id=identity.question_id,
+        paper_id=identity.paper_id,
+        component=identity.component,
+        canonical_path=asset.canonical_path,
         ocr_ran=ocr_result.ocr_ran,
         ocr_engine=ocr_result.ocr_engine,
         ocr_text=ocr_result.ocr_text,
@@ -1042,6 +1056,8 @@ def _render_full_region_image(
     span: QuestionSpan,
     layouts: list[PageLayout],
     config: AppConfig,
+    *,
+    identity: PaperIdentity,
 ) -> RenderResult:
     """Render the full exam question region for debugging."""
 
@@ -1052,7 +1068,8 @@ def _render_full_region_image(
         raise RuntimeError("PyMuPDF and Pillow are required for rendering screenshots.") from exc
     quiet_mupdf(fitz)
 
-    output_path = _image_output_path(span, config)
+    asset = AssetPathResolver(config.output.root_dir()).question_image(identity)
+    output_path = asset.absolute_path
     output_path.parent.mkdir(parents=True, exist_ok=True)
     images: list[Image.Image] = []
     regions: list[CropRegion] = []
@@ -1095,7 +1112,12 @@ def _render_full_region_image(
             debug_paths.extend(_write_debug_overlays(rendered_pages, span, layouts, regions, config))
 
     if not images:
-        return RenderResult(output_path, ["crop_fallback_failed", "crop_uncertain"], crop_uncertain=True)
+        return RenderResult(
+            None,
+            ["crop_fallback_failed", "crop_uncertain"],
+            crop_uncertain=True,
+            crop_diagnostics=_crop_diagnostics(pdf_path, span, regions, ["crop_fallback_failed", "crop_uncertain"], identity=identity, asset=asset),
+        )
 
     stitched = cap_image_pixels(
         _stitch_images(images, config.detection.stitch_gap_px),
@@ -1114,6 +1136,11 @@ def _render_full_region_image(
         review_flags=flags,
         debug_paths=debug_paths,
         extracted_text=span.combined_text,
+        crop_diagnostics=_crop_diagnostics(pdf_path, span, regions, flags, identity=identity, asset=asset),
+        question_id=identity.question_id,
+        paper_id=identity.paper_id,
+        component=identity.component,
+        canonical_path=asset.canonical_path,
         ocr_ran=ocr_result.ocr_ran,
         ocr_engine=ocr_result.ocr_engine,
         ocr_text=ocr_result.ocr_text,
@@ -1508,8 +1535,38 @@ def _stitch_images(images: list["Image.Image"], gap_px: int) -> "Image.Image":
     return stitched
 
 
-def _image_output_path(span: QuestionSpan, config: AppConfig) -> Path:
-    return question_image_output_path(span.source_pdf, span.question_number, config)
+def _question_identity_from_span(span: QuestionSpan) -> PaperIdentity | None:
+    try:
+        metadata = parse_filename_metadata(span.source_pdf)
+        return paper_identity_from_parts(
+            syllabus=metadata.syllabus or "9709",
+            subject_family=metadata.paper_family,
+            year=metadata.year,
+            session=session_for_source_path(
+                span.source_pdf,
+                year=metadata.year,
+                fallback_session=metadata.normalized_session_key or metadata.session,
+            ),
+            component=metadata.component,
+            question_number=span.question_number,
+        )
+    except IdentityError:
+        return None
+
+
+def _missing_identity_render_result(span: QuestionSpan) -> RenderResult:
+    return RenderResult(
+        screenshot_path=None,
+        review_flags=["identity_unresolved", "question_asset_not_emitted"],
+        crop_uncertain=True,
+        extracted_text=span.combined_text,
+        crop_diagnostics={
+            "source_file": str(span.source_pdf),
+            "question_number": span.question_number,
+            "flags": ["identity_unresolved", "question_asset_not_emitted"],
+            "regions": [],
+        },
+    )
 
 
 def _crop_diagnostics(
@@ -1517,10 +1574,17 @@ def _crop_diagnostics(
     span: QuestionSpan,
     regions: list[CropRegion],
     flags: list[str],
+    *,
+    identity: PaperIdentity,
+    asset: AssetPath,
 ) -> dict[str, object]:
     return {
         "source_file": str(pdf_path),
-        "question_id": span.question_number,
+        "question_number": span.question_number,
+        "question_id": identity.question_id,
+        "paper_id": identity.paper_id,
+        "component": identity.component,
+        "canonical_path": asset.canonical_path,
         "flags": sorted(set(flags)),
         "merged_blocks": sum(len(region.text_blocks) for region in regions),
         "duplicate_visual_blocks_removed": sum(region.duplicate_graphics_removed for region in regions),

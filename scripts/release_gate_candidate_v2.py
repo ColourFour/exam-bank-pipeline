@@ -376,10 +376,10 @@ def decide(blockers: list[dict[str, Any]]) -> str:
 
 def promotion_commands() -> list[str]:
     return [
-        "rsync -a output/codex_text_extraction_candidate_v2/p1/ output/p1/",
-        "rsync -a output/codex_text_extraction_candidate_v2/p3/ output/p3/",
-        "rsync -a output/codex_text_extraction_candidate_v2/p4/ output/p4/",
-        "rsync -a output/codex_text_extraction_candidate_v2/p5/ output/p5/",
+        "rsync -a output/codex_text_extraction_candidate_v2/pm1/ output/pm1/",
+        "rsync -a output/codex_text_extraction_candidate_v2/pm3/ output/pm3/",
+        "rsync -a output/codex_text_extraction_candidate_v2/stats/ output/stats/",
+        "rsync -a output/codex_text_extraction_candidate_v2/mechanics/ output/mechanics/",
         "cp output/codex_text_extraction_candidate_v2/json/question_bank.json output/json/question_bank.json",
         ".venv/bin/python -m exam_bank.cli audit --input output/json/question_bank.json --output output/json/audit.current.json",
         ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output output/json/audit.current.integrity.json",

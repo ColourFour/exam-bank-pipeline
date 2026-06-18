@@ -9,6 +9,7 @@ from typing import Any
 
 from .classification import classify_question, classify_question_parts, infer_source_paper_code, _explicit_primary_topic_from_text
 from .config import AppConfig
+from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import DocumentMetadata, parse_filename_metadata, parse_internal_document_metadata, reconcile_document_metadata
 from .document_registry import DocumentRegistry, build_document_registry, build_document_registry_from_paths
 from .examiner_reports import examiner_report_topic_evidence
@@ -414,15 +415,25 @@ def _build_records_from_spans(
     }
     expected_subparts = {span.question_number: _question_subparts_from_span(span) for span in spans if span.question_number.isdigit()}
     expected_validation_flags = {span.question_number: list(span.validation_flags) for span in spans if span.question_number.isdigit()}
+    paper_identity, paper_identity_flags = _paper_identity_for_metadata(question_pdf, document_metadata, source_paper_code)
+    question_identities, question_identity_flags = _question_identities_for_spans(spans, question_pdf, document_metadata, source_paper_code)
 
-    matched_mark_scheme = Path(mark_scheme_pdf) if mark_scheme_pdf else find_mark_scheme(
-        question_pdf,
-        config.input.mark_schemes_dir,
-        config.input.mappings_dir,
-    )
+    matched_mark_scheme = Path(mark_scheme_pdf) if mark_scheme_pdf else None
+    explicit_mark_scheme_identity_mismatch = False
+    if matched_mark_scheme is not None and paper_identity is not None and not _mark_scheme_matches_identity(matched_mark_scheme, paper_identity):
+        matched_mark_scheme = None
+        explicit_mark_scheme_identity_mismatch = True
+    if matched_mark_scheme is None and mark_scheme_pdf is None:
+        matched_mark_scheme = find_mark_scheme(
+            question_pdf,
+            config.input.mark_schemes_dir,
+            config.input.mappings_dir,
+        )
     answers: dict[str, str] = {}
     mark_scheme_images: dict[str, MarkSchemeImageResult] = {}
-    mark_scheme_flags: list[str] = []
+    mark_scheme_flags: list[str] = list(paper_identity_flags)
+    if explicit_mark_scheme_identity_mismatch:
+        mark_scheme_flags.append("mark_scheme_identity_mismatch")
     if matched_mark_scheme and matched_mark_scheme.exists():
         try:
             if progress:
@@ -454,6 +465,7 @@ def _build_records_from_spans(
                 question_marks=expected_marks,
                 question_subparts=expected_subparts,
                 question_validation_flags=expected_validation_flags,
+                question_identities=question_identities,
             )
         except Exception as exc:
             mark_scheme_flags.append(f"markscheme_image_export_failed:{exc.__class__.__name__}")
@@ -462,6 +474,8 @@ def _build_records_from_spans(
 
     records: list[QuestionRecord] = []
     for record_index, span in enumerate(spans, start=1):
+        if span.question_number not in question_identities:
+            continue
         question_subparts = _question_subparts_from_span(span)
         if progress:
             progress.update_phase(
@@ -474,7 +488,13 @@ def _build_records_from_spans(
                 current_record_index=record_index,
                 total_current_records=len(spans),
             )
-        render_result = render_question_image(question_pdf, span, layouts, config)
+        render_result = render_question_image(
+            question_pdf,
+            span,
+            layouts,
+            config,
+            identity=question_identities.get(span.question_number),
+        )
         if progress:
             progress.update_phase(
                 "extracting_text",
@@ -513,6 +533,7 @@ def _build_records_from_spans(
                 question_subparts=question_subparts,
                 mark_scheme_image=mark_scheme_image,
                 mark_scheme_flags=mark_scheme_flags,
+                identity_flags=question_identity_flags.get(span.question_number, []),
                 matched_mark_scheme=matched_mark_scheme,
                 document_metadata=document_metadata,
                 registry_warnings=registry_warnings or [],
@@ -523,6 +544,76 @@ def _build_records_from_spans(
             )
         )
     return records
+
+
+def _paper_identity_for_metadata(
+    source_pdf: Path,
+    document_metadata: DocumentMetadata,
+    source_paper_code: str,
+) -> tuple[PaperIdentity | None, list[str]]:
+    try:
+        return (
+            paper_identity_from_parts(
+                syllabus=document_metadata.syllabus or "9709",
+                subject_family=document_metadata.paper_family,
+                year=document_metadata.year,
+                session=session_for_source_path(
+                    source_pdf,
+                    year=document_metadata.year,
+                    fallback_session=document_metadata.normalized_session_key or document_metadata.session,
+                ),
+                component=document_metadata.component or source_paper_code,
+            ),
+            [],
+        )
+    except IdentityError as exc:
+        return None, [f"paper_identity_unresolved:{exc}"]
+
+
+def _question_identities_for_spans(
+    spans: list[QuestionSpan],
+    source_pdf: Path,
+    document_metadata: DocumentMetadata,
+    source_paper_code: str,
+) -> tuple[dict[str, PaperIdentity], dict[str, list[str]]]:
+    identities: dict[str, PaperIdentity] = {}
+    flags: dict[str, list[str]] = {}
+    for span in spans:
+        try:
+            identities[span.question_number] = paper_identity_from_parts(
+                syllabus=document_metadata.syllabus or "9709",
+                subject_family=document_metadata.paper_family,
+                year=document_metadata.year,
+                session=session_for_source_path(
+                    source_pdf,
+                    year=document_metadata.year,
+                    fallback_session=document_metadata.normalized_session_key or document_metadata.session,
+                ),
+                component=document_metadata.component or source_paper_code,
+                question_number=span.question_number,
+            )
+        except IdentityError as exc:
+            flags[span.question_number] = [f"question_identity_unresolved:{exc}", "question_asset_not_emitted"]
+    return identities, flags
+
+
+def _mark_scheme_matches_identity(mark_scheme_pdf: Path, paper_identity: PaperIdentity) -> bool:
+    metadata = parse_filename_metadata(mark_scheme_pdf)
+    try:
+        mark_scheme_identity = paper_identity_from_parts(
+            syllabus=metadata.syllabus or "9709",
+            subject_family=metadata.paper_family,
+            year=metadata.year,
+            session=session_for_source_path(
+                mark_scheme_pdf,
+                year=metadata.year,
+                fallback_session=metadata.normalized_session_key or metadata.session,
+            ),
+            component=metadata.component,
+        )
+    except IdentityError:
+        return False
+    return mark_scheme_identity.paper_id == paper_identity.paper_id
 
 
 def _build_question_record(
@@ -537,6 +628,7 @@ def _build_question_record(
     question_subparts: list[str],
     mark_scheme_image: MarkSchemeImageResult | None,
     mark_scheme_flags: list[str],
+    identity_flags: list[str],
     matched_mark_scheme: Path | None,
     document_metadata: DocumentMetadata,
     registry_warnings: list[str],
@@ -547,6 +639,7 @@ def _build_question_record(
 ) -> QuestionRecord:
         flags = list(span.review_flags)
         flags.extend(mark_scheme_flags)
+        flags.extend(identity_flags)
         flags.extend(document_metadata.warnings)
         flags.extend(registry_warnings)
         if matched_mark_scheme and matched_mark_scheme.exists() and not answer_text:
@@ -693,7 +786,7 @@ def _build_question_record(
                 paper_name=span.paper_name,
                 question_number=span.question_number,
                 full_question_label=span.full_question_label,
-                screenshot_path=_display_path(render_result.screenshot_path),
+                screenshot_path=_display_path(render_result.screenshot_path) if render_result.screenshot_path else "",
                 combined_question_text=question_text,
                 body_text_raw=structured_text.body_text_raw,
                 body_text_normalized=structured_text.body_text_normalized,
@@ -803,6 +896,12 @@ def _build_question_record(
                     "question_subparts": mark_scheme_image.question_subparts if mark_scheme_image else [],
                     "question_total_detected": mark_scheme_image.question_marks_total if mark_scheme_image else None,
                     "mark_scheme_total_detected": mark_scheme_image.markscheme_marks_total if mark_scheme_image else None,
+                    "asset_identity": {
+                        "question_id": mark_scheme_image.question_id if mark_scheme_image else "",
+                        "paper_id": mark_scheme_image.paper_id if mark_scheme_image else "",
+                        "component": mark_scheme_image.component if mark_scheme_image else "",
+                        "canonical_path": mark_scheme_image.canonical_path if mark_scheme_image else "",
+                    },
                 },
                 question_total_detected=span.question_total_detected,
                 mark_scheme_total_detected=mark_scheme_image.markscheme_marks_total if mark_scheme_image else None,

@@ -5,6 +5,9 @@ import re
 from pathlib import Path
 
 from .config import AppConfig
+from .core.asset_paths import AssetPath, AssetPathResolver
+from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
+from .document_metadata import parse_filename_metadata
 from .image_limits import cap_image_pixels, render_pdf_area
 from .identifiers import normalize_question_id, parent_question_id
 from .mark_scheme_models import (
@@ -19,7 +22,6 @@ from .mark_scheme_models import (
 from .mark_scheme_pairing import find_mark_scheme
 from .models import BoundingBox, PageLayout, QuestionStart, TextBlock
 from .mupdf_tools import quiet_mupdf
-from .output_layout import mark_scheme_image_output_path
 from .pdf_extract import _visual_box_from_rect
 from .pdf_extract import extract_pdf_layout
 from .question_detection import parse_question_start
@@ -63,6 +65,7 @@ def render_mark_scheme_images(
     question_marks: dict[str, int | None] | None = None,
     question_subparts: dict[str, list[str]] | None = None,
     question_validation_flags: dict[str, list[str]] | None = None,
+    question_identities: dict[str, PaperIdentity] | None = None,
 ) -> dict[str, MarkSchemeImageResult]:
     """Crop rendered mark-scheme answer regions by top-level question number.
 
@@ -76,6 +79,7 @@ def render_mark_scheme_images(
     question_marks = question_marks or {}
     question_subparts = question_subparts or {}
     question_validation_flags = question_validation_flags or {}
+    identities = _mark_scheme_question_identities(mark_scheme_pdf, expected_numbers, question_identities)
 
     try:
         import fitz
@@ -93,6 +97,7 @@ def render_mark_scheme_images(
         return {
             number: MarkSchemeImageResult(
                 question_number=number,
+                **_mark_scheme_identity_fields(identities.get(normalize_question_id(number)), config),
                 crop_confidence=CropConfidence.LOW,
                 mapping_method="table_row_block",
                 table_detected=False,
@@ -108,12 +113,27 @@ def render_mark_scheme_images(
         }
 
     output: dict[str, MarkSchemeImageResult] = {}
-    _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config)
+    _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
     with fitz.open(mark_scheme_pdf) as doc:
         rendered_pages = {}
         ordered_anchors = sorted(anchors, key=lambda item: (item.page_number, item.y0))
         for number in expected_numbers:
             canonical_number = normalize_question_id(number)
+            identity = identities.get(canonical_number)
+            identity_fields = _mark_scheme_identity_fields(identity, config)
+            if identity is None:
+                output[number] = MarkSchemeImageResult(
+                    question_number=number,
+                    crop_confidence=CropConfidence.LOW,
+                    mapping_method="table_row_block",
+                    table_detected=bool(tables),
+                    question_subparts=question_subparts.get(canonical_number, []),
+                    question_marks_total=question_marks.get(canonical_number),
+                    mapping_status=MappingStatus.FAIL,
+                    failure_reason="identity_unresolved",
+                    review_flags=["markscheme_image_missing", "identity_unresolved", "markscheme_asset_not_emitted"],
+                )
+                continue
             anchor_index, anchor = _anchor_for_question(ordered_anchors, canonical_number)
             if anchor is not None:
                 next_anchor = _next_boundary_anchor(ordered_anchors, anchor_index, canonical_number)
@@ -126,6 +146,7 @@ def render_mark_scheme_images(
             else:
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
+                    **identity_fields,
                     crop_confidence=CropConfidence.LOW,
                     mapping_method="table_row_block",
                     table_detected=bool(tables),
@@ -169,6 +190,7 @@ def render_mark_scheme_images(
             if not regions:
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
+                    **identity_fields,
                     markscheme_question_number=canonical_number if anchor else "",
                     crop_confidence=CropConfidence.LOW,
                     mapping_method=mapping_method,
@@ -191,6 +213,7 @@ def render_mark_scheme_images(
                 fitz,
                 mark_scheme_pdf,
                 number,
+                identity,
                 regions,
                 flags,
                 rendered_pages,
@@ -202,6 +225,7 @@ def render_mark_scheme_images(
             if output_path is None:
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
+                    **identity_fields,
                     markscheme_question_number=anchor.question_number if anchor else "",
                     crop_confidence=CropConfidence.LOW,
                     mapping_method=mapping_method,
@@ -224,6 +248,7 @@ def render_mark_scheme_images(
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     image_path=output_path,
+                    **identity_fields,
                     page_numbers=[region.page_number for region in regions],
                     markscheme_question_number=canonical_number if anchor else "",
                     crop_confidence=confidence,
@@ -248,6 +273,7 @@ def render_mark_scheme_images(
             output[number] = MarkSchemeImageResult(
                 question_number=number,
                 image_path=output_path,
+                **identity_fields,
                 page_numbers=[region.page_number for region in regions],
                 markscheme_question_number=canonical_number if anchor else "",
                 crop_confidence=confidence,
@@ -272,6 +298,7 @@ def render_mark_scheme_images(
         if number not in found:
             output[number] = MarkSchemeImageResult(
                 question_number=number,
+                **_mark_scheme_identity_fields(identities.get(normalize_question_id(number)), config),
                 crop_confidence=CropConfidence.LOW,
                 mapping_method="table_row_block",
                 table_detected=bool(tables),
@@ -289,6 +316,7 @@ def _render_mark_scheme_crops(
     fitz,
     mark_scheme_pdf: Path,
     question_number: str,
+    identity: PaperIdentity,
     regions: list[MarkSchemeCropRegion],
     flags: list[str],
     rendered_pages: dict[int, tuple["Image.Image", float]],
@@ -341,7 +369,7 @@ def _render_mark_scheme_crops(
         )
         debug_paths.append(_write_mark_scheme_debug_metadata(mark_scheme_pdf, question_number, tables, ordered_anchors, regions, config))
 
-    output_path = _mark_scheme_image_path(mark_scheme_pdf, question_number, config)
+    output_path = AssetPathResolver(config.output.root_dir()).mark_scheme_image(identity).absolute_path
     output_path.parent.mkdir(parents=True, exist_ok=True)
     stitched = cap_image_pixels(
         _stitch_images(crops, config.detection.stitch_gap_px),
@@ -1601,16 +1629,75 @@ def _mark_scheme_crop_confidence(
     return CropConfidence.HIGH
 
 
-def _mark_scheme_image_path(mark_scheme_pdf: Path, question_number: str, config: AppConfig) -> Path:
-    return mark_scheme_image_output_path(mark_scheme_pdf, question_number, config)
+def _mark_scheme_question_identities(
+    mark_scheme_pdf: str | Path,
+    expected_numbers: list[str],
+    question_identities: dict[str, PaperIdentity] | None,
+) -> dict[str, PaperIdentity]:
+    supplied = {
+        normalize_question_id(key): value
+        for key, value in (question_identities or {}).items()
+        if normalize_question_id(key)
+    }
+    identities: dict[str, PaperIdentity] = {}
+    metadata = parse_filename_metadata(mark_scheme_pdf)
+    for number in expected_numbers:
+        canonical_number = normalize_question_id(number)
+        if not canonical_number:
+            continue
+        if canonical_number in supplied:
+            identities[canonical_number] = supplied[canonical_number]
+            continue
+        try:
+            identities[canonical_number] = paper_identity_from_parts(
+                syllabus=metadata.syllabus or "9709",
+                subject_family=metadata.paper_family,
+                year=metadata.year,
+                session=session_for_source_path(
+                    mark_scheme_pdf,
+                    year=metadata.year,
+                    fallback_session=metadata.normalized_session_key or metadata.session,
+                ),
+                component=metadata.component,
+                question_number=canonical_number,
+            )
+        except IdentityError:
+            continue
+    return identities
 
 
-def _clear_stale_mark_scheme_images(mark_scheme_pdf: Path, expected_numbers: list[str], config: AppConfig) -> None:
-    expected_paths = {_mark_scheme_image_path(mark_scheme_pdf, number, config) for number in expected_numbers}
-    mark_scheme_dir = _mark_scheme_image_path(mark_scheme_pdf, expected_numbers[0], config).parent if expected_numbers else None
+def _mark_scheme_identity_fields(identity: PaperIdentity | None, config: AppConfig) -> dict[str, str]:
+    if identity is None:
+        return {}
+    try:
+        asset = AssetPathResolver(config.output.root_dir()).mark_scheme_image(identity)
+    except IdentityError:
+        return {}
+    return {
+        "question_id": asset.question_id,
+        "paper_id": asset.paper_id,
+        "component": asset.component,
+        "canonical_path": asset.canonical_path,
+    }
+
+
+def _clear_stale_mark_scheme_images(
+    mark_scheme_pdf: Path,
+    expected_numbers: list[str],
+    config: AppConfig,
+    identities: dict[str, PaperIdentity],
+) -> None:
+    del mark_scheme_pdf
+    resolver = AssetPathResolver(config.output.root_dir())
+    expected_paths = {
+        resolver.mark_scheme_image(identity).absolute_path
+        for key, identity in identities.items()
+        if key in {normalize_question_id(number) for number in expected_numbers}
+    }
+    mark_scheme_dir = next(iter(expected_paths)).parent if expected_paths else None
     if mark_scheme_dir is None or not mark_scheme_dir.exists():
         return
-    for path in mark_scheme_dir.glob("q*.png"):
+    for path in mark_scheme_dir.glob("*_ms_q*_markscheme*.png"):
         if path not in expected_paths:
             path.unlink(missing_ok=True)
 

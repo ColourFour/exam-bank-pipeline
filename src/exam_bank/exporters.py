@@ -5,22 +5,23 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 from typing import Any
 
 from . import __version__
 from .atomic_json import write_atomic_json
 from .config import AppConfig
+from .core.paper_identity import paper_identity_from_parts
 from .models import QuestionRecord
 from .ocr import OCR_ENGINE
 from .output_layout import (
+    CANONICAL_SUBJECTS,
     component_code_from_values,
     OUTPUT_LAYOUT_VERSION,
     output_profile_for_root,
-    paper_family_dir_name,
-    paper_instance_id,
-    question_id,
 )
+from .output_structure_normalization import legacy_image_path_to_canonical
 from .trust import CropConfidence
 
 
@@ -298,12 +299,19 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
     metadata = record.paper_metadata
     paper_total = record.paper_total
 
-    paper = paper_instance_id(
-        metadata.component or metadata.source_paper_code,
-        metadata.session,
-        metadata.year,
+    identity = paper_identity_from_parts(
+        syllabus=metadata.syllabus_code or "9709",
+        subject_family=classification.paper_family or classification.question_level_paper_family,
+        year=metadata.year,
+        session=metadata.session,
+        component=metadata.component or metadata.source_paper_code,
+        question_number=extraction.question_number,
     )
-    family = paper_family_dir_name(classification.paper_family or classification.question_level_paper_family)
+    paper = identity.paper_id
+    canonical_session = identity.canonical_session
+    canonical_year_folder = str(identity.year)
+    canonical_paper_id = identity.paper_id
+    family = identity.subject_family
     subparts = list(extraction.question_subparts or mark_scheme.markscheme_subparts)
     question_image_paths = _path_list(images.screenshot_path, output_root)
     mark_scheme_image_paths = _path_list(mark_scheme.image_path, output_root)
@@ -311,9 +319,20 @@ def _record_to_output_dict(record: QuestionRecord, output_root: Path | None) -> 
     mark_scheme_image_path = mark_scheme_image_paths[0] if mark_scheme_image_paths else ""
     question_solution_marks = _question_solution_marks(record)
 
+    _validate_canonical_artifact_contract(
+        paper=canonical_paper_id,
+        canonical_session=canonical_session,
+        canonical_year_folder=canonical_year_folder,
+        canonical_subject=family,
+        artifact_paths=[question_image_path, mark_scheme_image_path, *question_image_paths, *mark_scheme_image_paths],
+    )
+
     return {
-        "question_id": question_id(paper, extraction.question_number),
+        "question_id": identity.question_id,
         "paper": paper,
+        "canonical_paper_id": canonical_paper_id,
+        "canonical_session": canonical_session,
+        "canonical_year_folder": canonical_year_folder,
         "paper_family": family,
         "question_number": extraction.question_number,
         "canonical_question_artifact": question_image_path,
@@ -436,8 +455,74 @@ def _path_list(path_value: str, output_root: Path | None) -> list[str]:
 def _relative_output_path(path_value: str, output_root: Path | None) -> str:
     path = Path(path_value)
     if output_root is None:
-        return str(path)
+        return legacy_image_path_to_canonical(str(path)) or str(path)
     try:
-        return str(path.relative_to(output_root))
+        relative = str(path.relative_to(output_root))
     except ValueError:
-        return str(path)
+        relative = str(path)
+    return legacy_image_path_to_canonical(relative) or relative
+
+
+def _validate_canonical_artifact_contract(
+    *,
+    paper: str,
+    canonical_session: str,
+    canonical_year_folder: str,
+    canonical_subject: str,
+    artifact_paths: list[str],
+) -> None:
+    expected_year_suffix = canonical_year_folder[-2:]
+    if not paper.endswith(canonical_session):
+        raise ValueError(f"canonical paper/session mismatch: paper={paper} canonical_session={canonical_session}")
+    if not canonical_session.endswith(expected_year_suffix):
+        raise ValueError(
+            "canonical session/year mismatch: "
+            f"canonical_session={canonical_session} canonical_year_folder={canonical_year_folder}"
+        )
+    for artifact_path in sorted({path for path in artifact_paths if path}):
+        subject, year, session = _artifact_subject_year_session(artifact_path)
+        if subject != canonical_subject:
+            raise ValueError(f"artifact path subject mismatch: subject={canonical_subject} artifact_path={artifact_path}")
+        if year != canonical_year_folder:
+            raise ValueError(f"artifact path year mismatch: year={canonical_year_folder} artifact_path={artifact_path}")
+        if session not in _allowed_compact_session_codes(canonical_session, canonical_year_folder):
+            raise ValueError(
+                "artifact path session mismatch: "
+                f"canonical_session={canonical_session} artifact_path={artifact_path}"
+            )
+
+
+def _artifact_subject_year_session(artifact_path: str) -> tuple[str, str, str]:
+    parts = Path(artifact_path).parts
+    for index, part in enumerate(parts):
+        if part in CANONICAL_SUBJECTS:
+            if index != len(parts) - 2:
+                raise ValueError(f"artifact path must be directly under a canonical subject folder: {artifact_path}")
+            match = re.fullmatch(
+                rf"(?P<subject>{part})_(?P<year>\d{{4}})_(?P<session>[msw]\d{{2}})_(?:qp|ms)_q\d{{2}}_(?:question|markscheme)(?:_v\d+)?\.png",
+                parts[-1],
+            )
+            if not match:
+                raise ValueError(f"artifact path filename does not match canonical schema: {artifact_path}")
+            return match.group("subject"), match.group("year"), match.group("session")
+    raise ValueError(f"artifact path is not under a canonical subject folder: {artifact_path}")
+
+
+def _compact_session_code(canonical_session: str, canonical_year_folder: str) -> str:
+    yy = canonical_year_folder[-2:]
+    session = canonical_session.lower()
+    if session.startswith(("spring", "march", "m")):
+        return f"m{yy}"
+    if session.startswith(("summer", "june", "s")):
+        return f"s{yy}"
+    if session.startswith(("autumn", "winter", "nov", "w")):
+        return f"w{yy}"
+    return f"{session[:1] or 'x'}{yy}"
+
+
+def _allowed_compact_session_codes(canonical_session: str, canonical_year_folder: str) -> set[str]:
+    code = _compact_session_code(canonical_session, canonical_year_folder)
+    yy = canonical_year_folder[-2:]
+    if code == f"s{yy}":
+        return {code, f"m{yy}"}
+    return {code}

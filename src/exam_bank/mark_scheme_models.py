@@ -11,6 +11,10 @@ from .trust import CropConfidence, MappingStatus
 class MarkSchemeImageResult:
     question_number: str
     image_path: Path | None = None
+    question_id: str = ""
+    paper_id: str = ""
+    component: str = ""
+    canonical_path: str = ""
     page_numbers: list[int] = field(default_factory=list)
     markscheme_question_number: str = ""
     crop_confidence: str = CropConfidence.LOW

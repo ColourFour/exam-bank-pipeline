@@ -1896,7 +1896,7 @@ def test_record_json_schema_matches_paper_first_output_contract(tmp_path: Path) 
         paper_name="paper",
         question_number="1",
         full_question_label="1(a)-(b)",
-        screenshot_path="output/p1/12spring21/questions/q01.png",
+        screenshot_path="output/p1/12summer21/questions/q01.png",
         combined_question_text="Find x.",
         body_text_raw="Find x.",
         body_text_normalized="Find x.",
@@ -1925,11 +1925,11 @@ def test_record_json_schema_matches_paper_first_output_contract(tmp_path: Path) 
         page_numbers=[1],
         review_flags=[],
         confidence=0.8,
-        session="March",
+        session="summer21",
         year="2021",
         component="12",
         source_paper_code="12",
-        markscheme_image="output/p1/12spring21/mark_scheme/q01.png",
+        markscheme_image="output/p1/12summer21/mark_scheme/q01.png",
         markscheme_pages=[5],
         markscheme_marks_total=3,
         question_marks_total=3,
@@ -1957,11 +1957,11 @@ def test_record_json_schema_matches_paper_first_output_contract(tmp_path: Path) 
     ]:
         assert f'"{key}"' in data
 
-    assert '"paper": "12spring21"' in data
-    assert '"question_id": "12spring21_q01"' in data
+    assert '"paper": "12summer21"' in data
+    assert '"question_id": "12summer21_q01"' in data
     assert '"question_image_paths": [' in data
-    assert '"p1/12spring21/questions/q01.png"' in data
-    assert '"p1/12spring21/mark_scheme/q01.png"' in data
+    assert '"pm1/pm1_2021_s21_qp_q01_question.png"' in data
+    assert '"pm1/pm1_2021_s21_ms_q01_markscheme.png"' in data
 
 
 def test_prompt_crop_regions_split_large_answer_space_and_skip_next_question() -> None:

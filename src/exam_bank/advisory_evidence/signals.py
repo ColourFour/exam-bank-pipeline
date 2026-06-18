@@ -21,6 +21,7 @@ from exam_bank.advisory_evidence.constants import (
 from exam_bank.advisory_evidence.linking import normalized_question_key
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.config import AppConfig
+from exam_bank.core.paper_identity import IdentityError, parse_session_from_parts
 
 
 TOPIC_RULES: list[tuple[str, str, str]] = [
@@ -180,7 +181,7 @@ def build_grade_threshold_context(
                 {
                     "syllabus": parsed.get("syllabus", ""),
                     "year": parsed.get("year", ""),
-                    "session": parsed.get("session", ""),
+                    "session": _canonical_session(str(parsed.get("canonical_session") or parsed.get("session") or ""), str(parsed.get("year") or "")),
                     "session_key": parsed.get("session_key", ""),
                     "component": component.get("component", ""),
                     "component_family": _family_for_component(str(component.get("component") or "")),
@@ -214,7 +215,7 @@ def _examiner_comments_by_key(parsed_dir: str | Path) -> dict[str, str]:
                 key = normalized_question_key(
                     str(parsed.get("syllabus") or ""),
                     str(parsed.get("year") or ""),
-                    str(parsed.get("session") or ""),
+                    _canonical_session(str(parsed.get("canonical_session") or parsed.get("session") or ""), str(parsed.get("year") or "")),
                     component_code,
                     int(question.get("question_number")),
                 )
@@ -231,7 +232,7 @@ def _examiner_levels_by_key(parsed_dir: str | Path) -> dict[str, str]:
                 key = normalized_question_key(
                     str(parsed.get("syllabus") or ""),
                     str(parsed.get("year") or ""),
-                    str(parsed.get("session") or ""),
+                    _canonical_session(str(parsed.get("canonical_session") or parsed.get("session") or ""), str(parsed.get("year") or "")),
                     component_code,
                     int(question.get("question_number")),
                 )
@@ -242,6 +243,13 @@ def _examiner_levels_by_key(parsed_dir: str | Path) -> dict[str, str]:
 def _examiner_parsed_payloads(parsed_dir: str | Path) -> list[dict[str, Any]]:
     path = Path(parsed_dir)
     return [load_json(item) for item in sorted(path.glob("*.json"))] if path.exists() else []
+
+
+def _canonical_session(session: str, year: str) -> str:
+    try:
+        return parse_session_from_parts(session, year).canonical_session
+    except IdentityError:
+        return session
 
 
 def _allowed_topics_by_family(config: AppConfig) -> dict[str, set[str]]:

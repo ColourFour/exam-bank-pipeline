@@ -1,8 +1,0 @@
-{
-  "triage_sample": ".venv/bin/python -m exam_bank.cli triage-sample --input output_ocr_candidate/json/question_bank.json --output-root /Users/sbrooker/repos/exam-bank-pipeline/output_ocr_candidate/triage --iteration iteration_001 --issue-set hard-failures --target paper_total_mismatch --sample-size 30 --seed 1",
-  "triage_serve": ".venv/bin/python -m exam_bank.cli triage-serve --iteration /Users/sbrooker/repos/exam-bank-pipeline/output_ocr_candidate/triage/iteration_001",
-  "full_ocr_rerun": ".venv/bin/python -m exam_bank.cli process --input input --output output_ocr_candidate --enable-ocr",
-  "ocr_verification": ".venv/bin/python -m exam_bank.cli auto-triage-status --input output_ocr_candidate/json/question_bank.json",
-  "full_tests": ".venv/bin/python -m pytest",
-  "triage_comparison": ".venv/bin/python -m exam_bank.cli auto-triage-compare --iteration agent_handoffs/auto_triage/iteration_001 --baseline-triage /Users/sbrooker/repos/exam-bank-pipeline/output_ocr_candidate/triage/iteration_001 --current output_ocr_candidate/json/question_bank.json --output /Users/sbrooker/repos/exam-bank-pipeline/output_ocr_candidate/triage/iteration_001/comparison.auto-iteration-001.json --test-status pass"
-}

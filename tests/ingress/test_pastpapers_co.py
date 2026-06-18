@@ -15,7 +15,10 @@ class PastPapersCoIngressTests(unittest.TestCase):
         self.assertEqual(resource.year, 2008)
         self.assertEqual(resource.paper, "pure_math_1")
         self.assertEqual(resource.component, "1")
-        self.assertEqual(resource.session, "Oct/Nov")
+        self.assertEqual(resource.session, "winter08")
+        self.assertEqual(resource.canonical_session, "winter08")
+        self.assertEqual(resource.canonical_year_folder, "2008")
+        self.assertEqual(resource.component_year_key, "w08")
         self.assertEqual(resource.doc_type, "qp")
 
     def test_parse_modern_pure_math_1_variant(self):
@@ -79,6 +82,10 @@ class PastPapersCoIngressTests(unittest.TestCase):
         self.assertEqual(len(records), 1)
         record = records[0]
         self.assertEqual(record["id"], "caie-9709-pure_math_1-w08-1")
+        self.assertEqual(record["session"], "winter08")
+        self.assertEqual(record["canonical_session"], "winter08")
+        self.assertEqual(record["canonical_year_folder"], "2008")
+        self.assertEqual(record["canonical_paper_id"], "01winter08")
         self.assertTrue(record["question_paper_url"].endswith("9709_w08_qp_1.pdf"))
         self.assertTrue(record["mark_scheme_url"].endswith("9709_w08_ms_1.pdf"))
         self.assertIsNone(record["variant"])

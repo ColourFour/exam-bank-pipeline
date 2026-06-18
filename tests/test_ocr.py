@@ -21,7 +21,7 @@ def _record(tmp_path: Path, *, ocr_ran: bool = False, ocr_text: str = "", ocr_te
         paper_name="9709_Mathematics_March_2021_Question_paper_12",
         question_number="1",
         full_question_label="1",
-        screenshot_path=str(output_root / "p1" / "12spring21" / "questions" / "q01.png"),
+        screenshot_path=str(output_root / "p1" / "12summer21" / "questions" / "q01.png"),
         combined_question_text="Solve the inequality 5 3 x x - - 1 3 6.",
         body_text_raw="Solve the inequality 5 3 x x - - 1 3 6.",
         body_text_normalized="Solve the inequality 5 3 x x - - 1 3 6.",
@@ -50,11 +50,11 @@ def _record(tmp_path: Path, *, ocr_ran: bool = False, ocr_text: str = "", ocr_te
         page_numbers=[1],
         review_flags=[],
         confidence=0.7,
-        session="March",
+        session="summer21",
         year="2021",
         component="12",
         source_paper_code="12",
-        markscheme_image=str(output_root / "p1" / "12spring21" / "mark_scheme" / "q01.png"),
+        markscheme_image=str(output_root / "p1" / "12summer21" / "mark_scheme" / "q01.png"),
         markscheme_mapping_status="pass",
         question_text_role="untrusted_math_text",
         question_text_trust="low",
@@ -174,8 +174,8 @@ def test_exported_ocr_fields_do_not_override_canonical_question_artifact(tmp_pat
     json_path = export_records([record], config)
     question = json.loads(json_path.read_text(encoding="utf-8"))["questions"][0]
 
-    assert question["canonical_question_artifact"] == "p1/12spring21/questions/q01.png"
-    assert question["question_image_path"] == "p1/12spring21/questions/q01.png"
+    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_qp_q01_question.png"
+    assert question["question_image_path"] == "pm1/pm1_2021_s21_qp_q01_question.png"
     assert question["question_text"] == record.combined_question_text
     assert question["ocr_ran"] is True
     assert question["ocr_engine"] == "tesseract"

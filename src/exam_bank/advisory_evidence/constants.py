@@ -55,10 +55,9 @@ PROTECTED_PATHS = [
     Path("output/json/question_bank.json"),
     Path("output/json/question_bank.topic_routing.v1.json"),
     Path("output/asterion/exports/latest"),
-    Path("output/p1"),
-    Path("output/p3"),
-    Path("output/p4"),
-    Path("output/p5"),
+    Path("output/pm1"),
+    Path("output/pm3"),
+    Path("output/stats"),
+    Path("output/mechanics"),
     Path("exam_bank_taxonomy"),
 ]
-

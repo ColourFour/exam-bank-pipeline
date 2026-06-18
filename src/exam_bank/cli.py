@@ -30,6 +30,7 @@ from .output_management import (
     write_cleanup_plan_outputs,
     write_inventory_outputs,
 )
+from .output_structure_normalization import normalize_output_structure, validate_normalized_output
 from .pipeline import PipelineResult, process_inputs
 from .triage import ISSUE_SET_ALL_NON_READY, ISSUE_SET_HARD_FAILURES, compare_iteration, create_triage_iteration, serve_iteration
 
@@ -386,6 +387,15 @@ def build_parser() -> argparse.ArgumentParser:
     cleanup.add_argument("--max-depth", type=int, default=6, help="Maximum scan depth below each root.")
     cleanup.set_defaults(func=cmd_output_cleanup_plan)
 
+    normalize = subparsers.add_parser(
+        "output-normalize-structure",
+        help="Normalize generated output image folders and filenames to canonical subject names.",
+    )
+    normalize.add_argument("--root", default="output", help="Generated output root to normalize.")
+    normalize.add_argument("--dry-run", action="store_true", help="Only report planned changes.")
+    normalize.add_argument("--validate-only", action="store_true", help="Only validate the current output structure.")
+    normalize.set_defaults(func=cmd_output_normalize_structure)
+
     summary_diff = subparsers.add_parser(
         "export-summary-diff",
         help="Print a concise before/after summary diff for comparable generated exports.",
@@ -686,6 +696,16 @@ def cmd_output_cleanup_plan(args: argparse.Namespace) -> int:
         print(f"Wrote output cleanup plan to {args.write}")
     else:
         print(render_cleanup_plan_markdown(plan), end="")
+    return 0
+
+
+def cmd_output_normalize_structure(args: argparse.Namespace) -> int:
+    if args.validate_only:
+        report = validate_normalized_output(args.root)
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0 if report["ok"] else 1
+    report = normalize_output_structure(args.root, dry_run=args.dry_run)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0
 
 

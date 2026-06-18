@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 import re
 
+import pytest
+
 from exam_bank import __version__
 from exam_bank.config import AppConfig
 from exam_bank.exporters import QUESTION_BANK_SCHEMA_NAME, QUESTION_BANK_SCHEMA_VERSION, export_records
@@ -24,7 +26,7 @@ def _record() -> QuestionRecord:
         paper_name="9709_Mathematics_March_2021_Question_paper_12",
         question_number="1",
         full_question_label="1(a)-(b)",
-        screenshot_path="output/p1/12spring21/questions/q01.png",
+        screenshot_path="output/p1/12summer21/questions/q01.png",
         combined_question_text="Find x.",
         body_text_raw="Find x.",
         body_text_normalized="Find x.",
@@ -60,11 +62,11 @@ def _record() -> QuestionRecord:
         page_numbers=[3, 4],
         review_flags=["markscheme_parent_label_match"],
         confidence=0.8,
-        session="March",
+        session="summer21",
         year="2021",
         component="12",
         source_paper_code="12",
-        markscheme_image="output/p1/12spring21/mark_scheme/q01.png",
+        markscheme_image="output/p1/12summer21/mark_scheme/q01.png",
         markscheme_pages=[6],
         markscheme_mapping_status="pass",
         question_marks_total=3,
@@ -100,17 +102,17 @@ def test_paper_first_image_paths_follow_family_paper_questions_and_mark_scheme_l
         config,
     )
 
-    assert paper_instance_id("12", "March", "2021") == "12spring21"
-    assert qp_path == tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png"
-    assert ms_path == tmp_path / "output" / "p1" / "12spring21" / "mark_scheme" / "q01.png"
+    assert paper_instance_id("12", "March", "2021") == "12summer21"
+    assert qp_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_qp_q01_question.png"
+    assert ms_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_ms_q01_markscheme.png"
 
 
 def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> None:
     config = AppConfig()
     config.output.apply_root(tmp_path / "output")
     record = _record()
-    record.screenshot_path = str(tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png")
-    record.markscheme_image = str(tmp_path / "output" / "p1" / "12spring21" / "mark_scheme" / "q01.png")
+    record.screenshot_path = str(tmp_path / "output" / "p1" / "12summer21" / "questions" / "q01.png")
+    record.markscheme_image = str(tmp_path / "output" / "p1" / "12summer21" / "mark_scheme" / "q01.png")
 
     json_path = export_records([record], config)
     payload = json.loads(json_path.read_text(encoding="utf-8"))
@@ -121,11 +123,15 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert payload["schema_version"] == QUESTION_BANK_SCHEMA_VERSION
     assert payload["record_count"] == 1
     question = payload["questions"][0]
-    assert question["question_image_paths"] == ["p1/12spring21/questions/q01.png"]
-    assert question["mark_scheme_image_paths"] == ["p1/12spring21/mark_scheme/q01.png"]
-    assert question["canonical_question_artifact"] == "p1/12spring21/questions/q01.png"
-    assert question["question_image_path"] == "p1/12spring21/questions/q01.png"
-    assert question["mark_scheme_image_path"] == "p1/12spring21/mark_scheme/q01.png"
+    assert question["paper"] == "12summer21"
+    assert question["canonical_paper_id"] == "12summer21"
+    assert question["canonical_session"] == "summer21"
+    assert question["canonical_year_folder"] == "2021"
+    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_qp_q01_question.png"]
+    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_ms_q01_markscheme.png"]
+    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_qp_q01_question.png"
+    assert question["question_image_path"] == "pm1/pm1_2021_s21_qp_q01_question.png"
+    assert question["mark_scheme_image_path"] == "pm1/pm1_2021_s21_ms_q01_markscheme.png"
     assert question["question_text_role"] == "readable_text"
     assert question["question_text_trust"] == "high"
     assert question["difficulty"] == "easy"
@@ -158,6 +164,19 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert not (tmp_path / "output" / "review").exists()
 
 
+def test_export_records_fails_when_artifact_path_session_disagrees_with_metadata(tmp_path: Path) -> None:
+    config = AppConfig()
+    config.output.apply_root(tmp_path / "output")
+    record = _record()
+    record.session = "summer21"
+    record.year = "2021"
+    record.screenshot_path = str(tmp_path / "output" / "pm1" / "pm1_2021_w21_qp_q01_question.png")
+    record.markscheme_image = str(tmp_path / "output" / "pm1" / "pm1_2021_s21_ms_q01_markscheme.png")
+
+    with pytest.raises(ValueError, match="artifact path session mismatch"):
+        export_records([record], config)
+
+
 def test_question_record_exposes_grouped_internal_state_without_changing_flat_fields() -> None:
     record = _record()
 
@@ -178,8 +197,8 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     config = AppConfig()
     config.output.apply_root(tmp_path / "output")
     record = _record()
-    record.screenshot_path = str(tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png")
-    record.markscheme_image = str(tmp_path / "output" / "p1" / "12spring21" / "mark_scheme" / "q01.png")
+    record.screenshot_path = str(tmp_path / "output" / "p1" / "12summer21" / "questions" / "q01.png")
+    record.markscheme_image = str(tmp_path / "output" / "p1" / "12summer21" / "mark_scheme" / "q01.png")
 
     json_path = export_records([record], config)
     payload = json.loads(json_path.read_text(encoding="utf-8"))
@@ -217,7 +236,7 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     assert manifest["artifact_root"] == str(tmp_path / "output")
     assert manifest["output_layout"] == {"version": 1, "profile": CANONICAL_LAYOUT_PROFILE}
     assert manifest["qa_summary"]["record_count"] == 1
-    assert manifest["qa_summary"]["paper_family_counts"] == {"p1": 1}
+    assert manifest["qa_summary"]["paper_family_counts"] == {"pm1": 1}
     assert manifest["qa_summary"]["validation_status_counts"] == {"pass": 1}
     assert manifest["qa_summary"]["mapping_status_counts"] == {"pass": 1}
     assert manifest["qa_summary"]["scope_quality_status_counts"] == {"clean": 1}
@@ -239,6 +258,9 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     assert {
         "question_id",
         "paper",
+        "canonical_paper_id",
+        "canonical_session",
+        "canonical_year_folder",
         "paper_family",
         "question_number",
         "canonical_question_artifact",
@@ -269,11 +291,14 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "topic",
         "notes",
     }.issubset(question)
-    assert question["question_id"] == "12spring21_q01"
-    assert question["paper"] == "12spring21"
-    assert question["paper_family"] == "p1"
-    assert question["question_image_paths"] == ["p1/12spring21/questions/q01.png"]
-    assert question["mark_scheme_image_paths"] == ["p1/12spring21/mark_scheme/q01.png"]
+    assert question["question_id"] == "12summer21_q01"
+    assert question["paper"] == "12summer21"
+    assert question["canonical_paper_id"] == "12summer21"
+    assert question["canonical_session"] == "summer21"
+    assert question["canonical_year_folder"] == "2021"
+    assert question["paper_family"] == "pm1"
+    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_qp_q01_question.png"]
+    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_ms_q01_markscheme.png"]
     assert set(question["page_refs"]) == {"question", "mark_scheme"}
 
     assert {

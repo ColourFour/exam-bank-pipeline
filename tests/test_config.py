@@ -78,7 +78,7 @@ def test_document_registry_can_filter_archived_document_types(tmp_path: Path) ->
         allowed_document_types={"question_paper", "mark_scheme"},
     )
 
-    entry = registry.entries["9709_2025_November_12"]
+    entry = registry.entries["9709_2025_winter25_12"]
     assert entry.question_paper == qp
     assert entry.mark_scheme == ms
     assert entry.examiner_reports == []

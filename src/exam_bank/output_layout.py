@@ -5,18 +5,15 @@ from pathlib import Path
 import re
 
 from .config import AppConfig
+from .core.asset_paths import AssetPathResolver
+from .core.paper_identity import (
+    IdentityError,
+    build_question_id,
+    canonical_subject_family,
+    paper_identity_from_parts,
+)
 from .document_metadata import DocumentMetadata, parse_filename_metadata
 
-
-_SESSION_FOLDER_LABELS = {
-    "March": "spring",
-    "May": "summer",
-    "June": "summer",
-    "MayJune": "summer",
-    "November": "autumn",
-    "October": "autumn",
-    "OctNov": "autumn",
-}
 
 LEGACY_LAYOUT_PROFILE = "legacy"
 CANONICAL_LAYOUT_PROFILE = "canonical"
@@ -27,7 +24,16 @@ QUESTION_BANK_FILENAME = "question_bank.json"
 TRIAGE_BASELINE_FILENAME = "baseline_question_bank.json"
 TRIAGE_COMPARISONS_DIRNAME = "comparisons"
 
-PAPER_ARTIFACT_DIR_RE = re.compile(r"^p[1-6]$")
+LEGACY_SUBJECT_DIRS: dict[str, str] = {
+    "p1": "pm1",
+    "p3": "pm3",
+    "p4": "stats",
+    "p5": "mechanics",
+    "p6": "stats",
+}
+CANONICAL_SUBJECTS: tuple[str, ...] = ("pm1", "pm3", "stats", "mechanics")
+
+PAPER_ARTIFACT_DIR_RE = re.compile(r"^(?:pm1|pm3|stats|mechanics)$")
 ITERATION_DIR_RE = re.compile(r"^iteration_\d{3}$")
 
 
@@ -131,8 +137,15 @@ def question_image_output_path(
     config: AppConfig,
 ) -> Path:
     metadata = parse_filename_metadata(question_pdf)
-    paper_dir = paper_output_dir(config, metadata)
-    return paper_dir / "questions" / _question_png_name(question_number)
+    identity = paper_identity_from_parts(
+        syllabus=metadata.syllabus or "9709",
+        subject_family=metadata.paper_family,
+        year=metadata.year,
+        session=_asset_session_from_path(question_pdf, metadata),
+        component=metadata.component,
+        question_number=question_number,
+    )
+    return AssetPathResolver(config.output.root_dir()).question_image(identity).absolute_path
 
 
 def mark_scheme_image_output_path(
@@ -141,34 +154,117 @@ def mark_scheme_image_output_path(
     config: AppConfig,
 ) -> Path:
     metadata = parse_filename_metadata(mark_scheme_pdf)
-    paper_dir = paper_output_dir(config, metadata)
-    return paper_dir / "mark_scheme" / _question_png_name(question_number)
+    identity = paper_identity_from_parts(
+        syllabus=metadata.syllabus or "9709",
+        subject_family=metadata.paper_family,
+        year=metadata.year,
+        session=_asset_session_from_path(mark_scheme_pdf, metadata),
+        component=metadata.component,
+        question_number=question_number,
+    )
+    return AssetPathResolver(config.output.root_dir()).mark_scheme_image(identity).absolute_path
 
 
 def paper_output_dir(config: AppConfig, metadata: DocumentMetadata) -> Path:
-    return config.output.root_dir() / paper_family_dir_name(metadata.paper_family) / paper_instance_id(
-        metadata.component,
-        metadata.normalized_session_key or metadata.session,
-        metadata.year,
+    identity = paper_identity_from_parts(
+        syllabus=metadata.syllabus or "9709",
+        subject_family=metadata.paper_family,
+        year=metadata.year,
+        session=metadata.normalized_session_key or metadata.session,
+        component=metadata.component,
     )
+    return config.output.root_dir() / identity.subject_family / identity.paper_id
 
 
 def paper_instance_id(component: str, session: str, year: str) -> str:
-    component_code = component_code_from_values(component)
-    session_code = _SESSION_FOLDER_LABELS.get(session, _safe_segment(session.lower()) or "session")
-    year_code = year[-2:] if len(year) >= 2 else "xx"
-    return f"{component_code}{session_code}{year_code}"
+    return paper_identity_from_parts(
+        syllabus="9709",
+        year=year,
+        session=session,
+        component=component,
+    ).paper_id
 
 
 def question_id(paper: str, question_number: str) -> str:
-    return f"{paper}_{_question_id_suffix(question_number)}"
+    return build_question_id(paper, question_number)
 
 
 def paper_family_dir_name(paper_family: str) -> str:
-    normalized = paper_family.strip().lower()
-    if re.fullmatch(r"p[1-6]", normalized):
-        return normalized
-    return "unknown"
+    return canonical_subject(paper_family)
+
+
+def canonical_subject(paper_family: str) -> str:
+    try:
+        return canonical_subject_family(paper_family)
+    except IdentityError:
+        return "unknown"
+
+
+def canonical_asset_filename(
+    *,
+    subject: str,
+    year: str,
+    session: str,
+    paper_type: str,
+    question_number: str,
+    asset_type: str,
+) -> str:
+    identity = paper_identity_from_parts(
+        syllabus="9709",
+        subject_family=subject,
+        year=year,
+        session=session,
+        component=_component_from_subject(subject),
+        question_number=question_number,
+    )
+    resolver = AssetPathResolver(Path("."))
+    if paper_type == "qp" and asset_type == "question":
+        return Path(resolver.question_image(identity).canonical_path).name
+    if paper_type == "ms" and asset_type == "markscheme":
+        return Path(resolver.mark_scheme_image(identity).canonical_path).name
+    raise IdentityError(f"unsupported asset type: paper_type={paper_type!r} asset_type={asset_type!r}")
+
+
+def compact_session_code(session: str, year: str) -> str:
+    identity = paper_identity_from_parts(
+        syllabus="9709",
+        subject_family="pm1",
+        year=year,
+        session=session,
+        component="11",
+    )
+    return identity.session_code
+
+
+def _component_from_subject(subject: str) -> str:
+    family = canonical_subject(subject)
+    return {
+        "pm1": "11",
+        "pm3": "31",
+        "stats": "41",
+        "mechanics": "51",
+    }.get(family, "11")
+
+
+def _canonical_year(year: str) -> str:
+    digits = "".join(char for char in str(year) if char.isdigit())
+    if len(digits) == 2:
+        return f"20{digits}"
+    if len(digits) >= 4:
+        return digits[-4:]
+    return "0000"
+
+
+def _asset_session_from_path(path: str | Path, metadata: DocumentMetadata) -> str:
+    stem = Path(path).stem.lower()
+    yy = _canonical_year(metadata.year)[-2:]
+    if re.search(r"\b(?:march|mar)\b|(?:^|_)m\d{2}(?:_|$)", stem):
+        return f"m{yy}"
+    if re.search(r"\b(?:may|june|jun|summer)\b|(?:^|_)s\d{2}(?:_|$)", stem):
+        return f"s{yy}"
+    if re.search(r"\b(?:october|november|oct|nov|winter|autumn)\b|(?:^|_)w\d{2}(?:_|$)", stem):
+        return f"w{yy}"
+    return metadata.normalized_session_key or metadata.session
 
 
 def component_code_from_values(component: str, source_paper_code: str = "") -> str:
@@ -194,10 +290,17 @@ def _question_png_name(question_number: str) -> str:
 
 
 def _question_id_suffix(question_number: str) -> str:
+    digits = _question_number_digits(question_number)
+    if digits != "00":
+        return f"q{digits}"
+    return f"q{_safe_segment(question_number)}"
+
+
+def _question_number_digits(question_number: str) -> str:
     digits = "".join(char for char in question_number if char.isdigit())
     if digits:
-        return f"q{int(digits):02d}"
-    return f"q{_safe_segment(question_number)}"
+        return f"{int(digits):02d}"
+    return "00"
 
 
 def _safe_segment(value: str) -> str:
