@@ -31,14 +31,14 @@ def test_normalizes_legacy_output_folders_filenames_and_metadata_refs(tmp_path: 
     assert report["files_renamed"] == 4
     assert report["conflicts_resolved"] == 0
     assert {Path(item["new_path"]).name for item in report["folders_renamed"]} == {"pm1", "pm3", "stats", "mechanics"}
-    assert (root / "pm1" / "pm1_2021_m21_qp_q01_question.png").read_bytes() == b"question"
-    assert (root / "pm3" / "pm3_2008_s08_ms_q04_markscheme.png").read_bytes() == b"mark"
-    assert (root / "stats" / "stats_2023_w23_qp_q12_question.png").read_bytes() == b"stats"
-    assert (root / "mechanics" / "mechanics_2025_s25_ms_q02_markscheme.png").read_bytes() == b"mechanics"
+    assert (root / "pm1" / "pm1_2021_m21_12_qp_q01_question.png").read_bytes() == b"question"
+    assert (root / "pm3" / "pm3_2008_s08_31_ms_q04_markscheme.png").read_bytes() == b"mark"
+    assert (root / "stats" / "stats_2023_w23_42_qp_q12_question.png").read_bytes() == b"stats"
+    assert (root / "mechanics" / "mechanics_2025_s25_51_ms_q02_markscheme.png").read_bytes() == b"mechanics"
     assert not (root / "p1").exists()
     payload = json.loads((root / "json" / "question_bank.json").read_text(encoding="utf-8"))
-    assert payload["questions"][0]["question_image_path"] == "pm1/pm1_2021_m21_qp_q01_question.png"
-    assert payload["questions"][0]["mark_scheme_image_path"] == "pm3/pm3_2008_s08_ms_q04_markscheme.png"
+    assert payload["questions"][0]["question_image_path"] == "pm1/pm1_2021_m21_12_qp_q01_question.png"
+    assert payload["questions"][0]["mark_scheme_image_path"] == "pm3/pm3_2008_s08_31_ms_q04_markscheme.png"
     assert json.loads((root / "migration" / "output_structure_normalization.json").read_text(encoding="utf-8"))[
         "files_renamed"
     ] == 4
@@ -48,15 +48,15 @@ def test_normalizes_legacy_output_folders_filenames_and_metadata_refs(tmp_path: 
 def test_normalization_conflict_uses_v2_suffix_and_second_run_is_idempotent(tmp_path: Path) -> None:
     root = tmp_path / "output"
     _write(root / "p1" / "12spring21" / "questions" / "q01.png", b"legacy")
-    _write(root / "pm1" / "pm1_2021_m21_qp_q01_question.png", b"existing")
+    _write(root / "pm1" / "pm1_2021_m21_12_qp_q01_question.png", b"existing")
 
     report = normalize_output_structure(root)
     second = normalize_output_structure(root, dry_run=True)
 
     assert report["files_renamed"] == 1
     assert report["conflicts_resolved"] == 1
-    assert (root / "pm1" / "pm1_2021_m21_qp_q01_question_v2.png").read_bytes() == b"legacy"
-    assert (root / "pm1" / "pm1_2021_m21_qp_q01_question.png").read_bytes() == b"existing"
+    assert (root / "pm1" / "pm1_2021_m21_12_qp_q01_question_v2.png").read_bytes() == b"legacy"
+    assert (root / "pm1" / "pm1_2021_m21_12_qp_q01_question.png").read_bytes() == b"existing"
     assert build_normalization_plan(root) == []
     assert second["files_renamed"] == 0
     assert second["validation"]["ok"] is True
@@ -66,7 +66,7 @@ def test_validation_flags_legacy_and_schema_violations(tmp_path: Path) -> None:
     root = tmp_path / "output"
     _write(root / "p1" / "12spring21" / "questions" / "q01.png", b"legacy")
     _write(root / "pm1" / "bad.png", b"bad")
-    _write(root / "pm3" / "pm1_2021_m21_qp_q01_question.png", b"mixed")
+    _write(root / "pm3" / "pm1_2021_m21_12_qp_q01_question.png", b"mixed")
 
     report = validate_normalized_output(root)
 

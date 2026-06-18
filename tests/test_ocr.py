@@ -174,8 +174,8 @@ def test_exported_ocr_fields_do_not_override_canonical_question_artifact(tmp_pat
     json_path = export_records([record], config)
     question = json.loads(json_path.read_text(encoding="utf-8"))["questions"][0]
 
-    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_qp_q01_question.png"
-    assert question["question_image_path"] == "pm1/pm1_2021_s21_qp_q01_question.png"
+    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_12_qp_q01_question.png"
+    assert question["question_image_path"] == "pm1/pm1_2021_s21_12_qp_q01_question.png"
     assert question["question_text"] == record.combined_question_text
     assert question["ocr_ran"] is True
     assert question["ocr_engine"] == "tesseract"

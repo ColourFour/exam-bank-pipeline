@@ -480,7 +480,7 @@ def _validate_canonical_artifact_contract(
             f"canonical_session={canonical_session} canonical_year_folder={canonical_year_folder}"
         )
     for artifact_path in sorted({path for path in artifact_paths if path}):
-        subject, year, session = _artifact_subject_year_session(artifact_path)
+        subject, year, session, component = _artifact_subject_year_session(artifact_path)
         if subject != canonical_subject:
             raise ValueError(f"artifact path subject mismatch: subject={canonical_subject} artifact_path={artifact_path}")
         if year != canonical_year_folder:
@@ -490,21 +490,23 @@ def _validate_canonical_artifact_contract(
                 "artifact path session mismatch: "
                 f"canonical_session={canonical_session} artifact_path={artifact_path}"
             )
+        if not paper.startswith(component):
+            raise ValueError(f"artifact path component mismatch: paper={paper} artifact_path={artifact_path}")
 
 
-def _artifact_subject_year_session(artifact_path: str) -> tuple[str, str, str]:
+def _artifact_subject_year_session(artifact_path: str) -> tuple[str, str, str, str]:
     parts = Path(artifact_path).parts
     for index, part in enumerate(parts):
         if part in CANONICAL_SUBJECTS:
             if index != len(parts) - 2:
                 raise ValueError(f"artifact path must be directly under a canonical subject folder: {artifact_path}")
             match = re.fullmatch(
-                rf"(?P<subject>{part})_(?P<year>\d{{4}})_(?P<session>[msw]\d{{2}})_(?:qp|ms)_q\d{{2}}_(?:question|markscheme)(?:_v\d+)?\.png",
+                rf"(?P<subject>{part})_(?P<year>\d{{4}})_(?P<session>[msw]\d{{2}})_(?P<component>\d{{2}})_(?:qp|ms)_q\d{{2}}_(?:question|markscheme)(?:_v\d+)?\.png",
                 parts[-1],
             )
             if not match:
                 raise ValueError(f"artifact path filename does not match canonical schema: {artifact_path}")
-            return match.group("subject"), match.group("year"), match.group("session")
+            return match.group("subject"), match.group("year"), match.group("session"), match.group("component")
     raise ValueError(f"artifact path is not under a canonical subject folder: {artifact_path}")
 
 

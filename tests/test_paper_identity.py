@@ -131,8 +131,8 @@ def test_asset_path_resolver_binds_paths_to_identity(tmp_path) -> None:
     assert question_asset.question_id == "01summer08_q01"
     assert question_asset.paper_id == "01summer08"
     assert question_asset.component == "01"
-    assert question_asset.canonical_path == "pm1/pm1_2008_s08_qp_q01_question.png"
-    assert mark_asset.canonical_path == "pm1/pm1_2008_s08_ms_q01_markscheme.png"
+    assert question_asset.canonical_path == "pm1/pm1_2008_s08_01_qp_q01_question.png"
+    assert mark_asset.canonical_path == "pm1/pm1_2008_s08_01_ms_q01_markscheme.png"
     assert "unknown" not in question_asset.canonical_path
     assert question_asset.absolute_path == tmp_path / "output" / question_asset.canonical_path
 
@@ -144,8 +144,8 @@ def test_output_layout_uses_identity_resolver_without_unknown_paths(tmp_path) ->
     qp_path = question_image_output_path("input/pastpapers/9709/2008/question_papers/9709_s08_qp_1.pdf", "1", config)
     ms_path = mark_scheme_image_output_path("input/pastpapers/9709/2008/mark_schemes/9709_s08_ms_1.pdf", "1", config)
 
-    assert qp_path == tmp_path / "output" / "pm1" / "pm1_2008_s08_qp_q01_question.png"
-    assert ms_path == tmp_path / "output" / "pm1" / "pm1_2008_s08_ms_q01_markscheme.png"
+    assert qp_path == tmp_path / "output" / "pm1" / "pm1_2008_s08_01_qp_q01_question.png"
+    assert ms_path == tmp_path / "output" / "pm1" / "pm1_2008_s08_01_ms_q01_markscheme.png"
     assert "unknown" not in str(qp_path)
     assert "unknown" not in str(ms_path)
 

@@ -15,15 +15,15 @@ from .output_layout import (
 
 
 LEGACY_IMAGE_RE = re.compile(
-    r"^(?P<family>p1|p3|p4|p5)/(?P<paper>(?P<component>\d{1,2})(?P<session>[a-z]+)(?P<yy>\d{2}))/"
+    r"^(?P<family>p1|p3|p4|p5|p6)/(?P<paper>(?P<component>\d{1,2})(?P<session>[a-z]+)(?P<yy>\d{2}))/"
     r"(?P<role>questions|mark_scheme)/q(?P<question>\d+)\.png$"
 )
 CANONICAL_IMAGE_RE = re.compile(
     r"^(?P<subject>pm1|pm3|stats|mechanics)/"
-    r"(?P=subject)_(?P<year>\d{4})_(?P<session>[msw]\d{2})_(?P<paper_type>qp|ms)_q\d{2}_"
+    r"(?P=subject)_(?P<year>\d{4})_(?P<session>[msw]\d{2})_(?P<component>\d{2})_(?P<paper_type>qp|ms)_q\d{2}_"
     r"(?P<asset_type>question|markscheme)(?:_v\d+)?\.png$"
 )
-LEGACY_PATH_PARTS = {"p1", "p3", "p4", "p5"}
+LEGACY_PATH_PARTS = {"p1", "p3", "p4", "p5", "p6"}
 MIGRATION_LOG_PATH = Path("output/migration/output_structure_normalization.json")
 
 
@@ -137,6 +137,7 @@ def legacy_image_path_to_canonical(path_value: str) -> str | None:
             paper_type=paper_type,
             question_number=match.group("question"),
             asset_type=asset_type,
+            component=match.group("component"),
         )
         return f"{subject}/{filename}"
     return None

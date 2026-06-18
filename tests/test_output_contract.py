@@ -103,8 +103,8 @@ def test_paper_first_image_paths_follow_family_paper_questions_and_mark_scheme_l
     )
 
     assert paper_instance_id("12", "March", "2021") == "12summer21"
-    assert qp_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_qp_q01_question.png"
-    assert ms_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_ms_q01_markscheme.png"
+    assert qp_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_12_qp_q01_question.png"
+    assert ms_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png"
 
 
 def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> None:
@@ -127,11 +127,11 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert question["canonical_paper_id"] == "12summer21"
     assert question["canonical_session"] == "summer21"
     assert question["canonical_year_folder"] == "2021"
-    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_qp_q01_question.png"]
-    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_ms_q01_markscheme.png"]
-    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_qp_q01_question.png"
-    assert question["question_image_path"] == "pm1/pm1_2021_s21_qp_q01_question.png"
-    assert question["mark_scheme_image_path"] == "pm1/pm1_2021_s21_ms_q01_markscheme.png"
+    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_12_qp_q01_question.png"]
+    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_12_ms_q01_markscheme.png"]
+    assert question["canonical_question_artifact"] == "pm1/pm1_2021_s21_12_qp_q01_question.png"
+    assert question["question_image_path"] == "pm1/pm1_2021_s21_12_qp_q01_question.png"
+    assert question["mark_scheme_image_path"] == "pm1/pm1_2021_s21_12_ms_q01_markscheme.png"
     assert question["question_text_role"] == "readable_text"
     assert question["question_text_trust"] == "high"
     assert question["difficulty"] == "easy"
@@ -170,8 +170,8 @@ def test_export_records_fails_when_artifact_path_session_disagrees_with_metadata
     record = _record()
     record.session = "summer21"
     record.year = "2021"
-    record.screenshot_path = str(tmp_path / "output" / "pm1" / "pm1_2021_w21_qp_q01_question.png")
-    record.markscheme_image = str(tmp_path / "output" / "pm1" / "pm1_2021_s21_ms_q01_markscheme.png")
+    record.screenshot_path = str(tmp_path / "output" / "pm1" / "pm1_2021_w21_12_qp_q01_question.png")
+    record.markscheme_image = str(tmp_path / "output" / "pm1" / "pm1_2021_s21_12_ms_q01_markscheme.png")
 
     with pytest.raises(ValueError, match="artifact path session mismatch"):
         export_records([record], config)
@@ -297,8 +297,8 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     assert question["canonical_session"] == "summer21"
     assert question["canonical_year_folder"] == "2021"
     assert question["paper_family"] == "pm1"
-    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_qp_q01_question.png"]
-    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_ms_q01_markscheme.png"]
+    assert question["question_image_paths"] == ["pm1/pm1_2021_s21_12_qp_q01_question.png"]
+    assert question["mark_scheme_image_paths"] == ["pm1/pm1_2021_s21_12_ms_q01_markscheme.png"]
     assert set(question["page_refs"]) == {"question", "mark_scheme"}
 
     assert {

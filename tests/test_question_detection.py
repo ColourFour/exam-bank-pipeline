@@ -1960,8 +1960,8 @@ def test_record_json_schema_matches_paper_first_output_contract(tmp_path: Path) 
     assert '"paper": "12summer21"' in data
     assert '"question_id": "12summer21_q01"' in data
     assert '"question_image_paths": [' in data
-    assert '"pm1/pm1_2021_s21_qp_q01_question.png"' in data
-    assert '"pm1/pm1_2021_s21_ms_q01_markscheme.png"' in data
+    assert '"pm1/pm1_2021_s21_12_qp_q01_question.png"' in data
+    assert '"pm1/pm1_2021_s21_12_ms_q01_markscheme.png"' in data
 
 
 def test_prompt_crop_regions_split_large_answer_space_and_skip_next_question() -> None:

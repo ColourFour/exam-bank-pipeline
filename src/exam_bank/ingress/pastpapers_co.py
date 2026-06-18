@@ -28,25 +28,31 @@ import re
 import sys
 import time
 from collections import Counter, deque
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from html import unescape
 from html.parser import HTMLParser
 from http.client import IncompleteRead
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator
 from urllib.error import HTTPError, URLError
-from urllib.parse import unquote, urldefrag, urljoin, urlparse
-from urllib.request import Request, urlopen
+from urllib.parse import quote, unquote, urldefrag, urljoin, urlparse, urlunparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 
 from exam_bank.core.paper_identity import build_paper_id, parse_session
 
 try:
     import requests
 except ModuleNotFoundError:
+    class _NoRedirectHandler(HTTPRedirectHandler):
+        def redirect_request(self, req: Any, fp: Any, code: int, msg: str, headers: Any, newurl: str) -> None:
+            return None
+
     class _UrllibResponse:
         def __init__(self, response: Any, status_code: int) -> None:
             self._response = response
             self.status_code = status_code
+            self.headers = response.headers
+            self.url = response.geturl()
 
         def iter_content(self, chunk_size: int) -> Iterator[bytes]:
             while True:
@@ -61,13 +67,22 @@ except ModuleNotFoundError:
     class _RequestsShim:
         RequestException = URLError
         Response = _UrllibResponse
+        _no_redirect_opener = build_opener(_NoRedirectHandler)
 
         @staticmethod
-        def get(url: str, *, headers: dict[str, str], stream: bool, timeout: float) -> _UrllibResponse:
+        def get(
+            url: str,
+            *,
+            headers: dict[str, str],
+            stream: bool,
+            timeout: float,
+            allow_redirects: bool = True,
+        ) -> _UrllibResponse:
             del stream
             req = Request(url, headers=headers)
             try:
-                response = urlopen(req, timeout=timeout)  # nosec: target URL is fixed by caller filters
+                opener = urlopen if allow_redirects else _RequestsShim._no_redirect_opener.open
+                response = opener(req, timeout=timeout)  # nosec: target URL is fixed by caller filters
                 return _UrllibResponse(response, int(response.status))
             except HTTPError as exc:
                 return _UrllibResponse(exc, exc.code)
@@ -81,6 +96,12 @@ PDF_STORAGE_ROOT = Path("input/pastpapers")
 PDF_DOWNLOAD_RETRIES = 2
 PDF_DOWNLOAD_TIMEOUT = 30.0
 PDF_DOWNLOAD_CHUNK_SIZE = 1024 * 256
+PDF_PROBE_TIMEOUT = 20.0
+PDF_PROBE_BYTES = 16
+PDF_PROBE_RETRIES = 2
+PDF_VALIDATION_REDIRECT_LIMIT = 4
+PDF_VALIDATION_FAILURE_RATE_LIMIT = 0.10
+PDF_MAGIC = b"%PDF"
 
 # Cambridge file names look like:
 #   9709_w08_qp_1.pdf
@@ -93,6 +114,14 @@ PDF_RE = re.compile(
 # Secondary extraction for links serialized inside JS/JSON instead of normal <a href> tags.
 PATH_LINK_RE = re.compile(
     r"(?P<href>(?:https?://pastpapers\.co)?/caie/a-level/mathematics-9709/[^\"'<>\\\s]+)",
+    re.IGNORECASE,
+)
+API_FILE_LINK_RE = re.compile(
+    r"(?P<href>(?:https?://pastpapers\.co)?/api/file/[^\"'<>\\]+?\.pdf)",
+    re.IGNORECASE,
+)
+PDF_URL_VALUE_RE = re.compile(
+    r'"(?:downloadUrl|pdfUrl)"\s*:\s*"(?P<href>(?:https?://pastpapers\.co)?/api/file/[^"]+?\.pdf)"',
     re.IGNORECASE,
 )
 RELATIVE_PDF_RE = re.compile(
@@ -140,6 +169,24 @@ class PaperResource:
     source_page: str | None = None
 
 
+@dataclass(frozen=True)
+class PdfValidationResult:
+    """HTTP-level proof that a candidate URL is a direct PDF payload."""
+
+    candidate_url: str
+    resolved_final_url: str
+    content_type: str
+    content_length: int | None
+    accepted: bool
+    reason: str
+
+
+class IngressResolutionFailure(RuntimeError):
+    def __init__(self, message: str, summary: "CrawlSummary") -> None:
+        super().__init__(message)
+        self.summary = summary
+
+
 @dataclass
 class CrawlSummary:
     """Operational accounting for one PastPapers.co crawl."""
@@ -154,6 +201,9 @@ class CrawlSummary:
     pdf_downloaded_count: int = 0
     pdf_skipped_duplicates: int = 0
     pdf_failed_downloads: int = 0
+    pdf_candidate_accepted_count: int = 0
+    pdf_candidate_rejected_count: int = 0
+    pdf_resolution_failed_count: int = 0
     asset_type_counts: Counter[str] | None = None
 
     def __post_init__(self) -> None:
@@ -180,6 +230,9 @@ class CrawlSummary:
             "pdf_downloaded_count": self.pdf_downloaded_count,
             "pdf_skipped_duplicates": self.pdf_skipped_duplicates,
             "pdf_failed_downloads": self.pdf_failed_downloads,
+            "pdf_candidate_accepted_count": self.pdf_candidate_accepted_count,
+            "pdf_candidate_rejected_count": self.pdf_candidate_rejected_count,
+            "pdf_resolution_failed_count": self.pdf_resolution_failed_count,
             "asset_type_counts": dict(sorted((self.asset_type_counts or Counter()).items())),
         }
 
@@ -195,6 +248,271 @@ class LinkExtractor(HTMLParser):
         for key, value in attrs:
             if key.lower() in {"href", "src"} and value:
                 self.links.append(value)
+
+
+def requote_url(url: str) -> str:
+    """Percent-encode path spaces while preserving an already parsed URL shape."""
+
+    parsed = urlparse(url)
+    path = quote(unquote(parsed.path), safe="/:@!$&'()*+,;=-._~")
+    return urlunparse((parsed.scheme, parsed.netloc, path, parsed.params, parsed.query, parsed.fragment))
+
+
+def response_header(response: Any, name: str) -> str:
+    headers = getattr(response, "headers", {}) or {}
+    value = headers.get(name)
+    if value is None:
+        value = headers.get(name.lower())
+    return str(value or "")
+
+
+def response_content_length(response: Any) -> int | None:
+    value = response_header(response, "content-length")
+    if not value:
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        return None
+
+
+def is_pdf_content_type(content_type: str) -> bool:
+    return content_type.split(";", 1)[0].strip().lower() == "application/pdf"
+
+
+def is_pdf_url_shape(url: str) -> bool:
+    path = unquote(urlparse(url).path).lower()
+    return path.endswith(".pdf") or "/api/file/" in path
+
+
+def local_file_has_pdf_magic(path: Path) -> bool:
+    try:
+        with path.open("rb") as handle:
+            return handle.read(len(PDF_MAGIC)) == PDF_MAGIC
+    except OSError:
+        return False
+
+
+def title_hyphen_segment(segment: str) -> str:
+    return "-".join(part.capitalize() for part in segment.split("-"))
+
+
+def display_space_segment(segment: str) -> str:
+    if re.fullmatch(r"\d{4}-(?:mar|march|jun|nov|may-june|oct-nov)", segment, re.IGNORECASE):
+        year, rest = segment.split("-", 1)
+        return f"{year} {title_hyphen_segment(rest)}"
+    return title_hyphen_segment(segment)
+
+
+def build_pastpapers_url(path_parts: Iterable[str]) -> str:
+    encoded_path = "/".join(quote(part, safe="-_.~") for part in path_parts)
+    return f"https://pastpapers.co/{encoded_path}"
+
+
+def candidate_pdf_endpoint_urls(url: str) -> list[str]:
+    """Return direct-file endpoint candidates for a discovered PDF-looking route."""
+
+    parsed = urlparse(requote_url(url))
+    candidates: list[str] = [requote_url(url)]
+    parts = [unquote(part) for part in parsed.path.strip("/").split("/") if part]
+    if len(parts) < 4:
+        return list(dict.fromkeys(candidates))
+
+    lower_parts = [part.lower() for part in parts]
+    if lower_parts[:3] != ["caie", "a-level", "mathematics-9709"]:
+        return list(dict.fromkeys(candidates))
+
+    tail = parts[3:]
+    title_tail = [title_hyphen_segment(part) for part in tail]
+    display_tail = [display_space_segment(part) for part in tail]
+    static_prefix = ["caie", "A-Level", "Mathematics-9709"]
+    api_prefix = ["api", "file", "caie", "A-Level", "Mathematics-9709"]
+
+    candidates.append(build_pastpapers_url([*static_prefix, *title_tail]))
+    candidates.append(build_pastpapers_url([*static_prefix, *display_tail]))
+    candidates.append(build_pastpapers_url([*api_prefix, *display_tail]))
+    candidates.append(build_pastpapers_url([*api_prefix, *title_tail]))
+    return list(dict.fromkeys(candidates))
+
+
+def pdf_validation_result(
+    candidate_url: str,
+    *,
+    resolved_final_url: str | None = None,
+    content_type: str = "",
+    content_length: int | None = None,
+    accepted: bool = False,
+    reason: str,
+) -> PdfValidationResult:
+    return PdfValidationResult(
+        candidate_url=requote_url(candidate_url),
+        resolved_final_url=requote_url(resolved_final_url or candidate_url),
+        content_type=content_type,
+        content_length=content_length,
+        accepted=accepted,
+        reason=reason,
+    )
+
+
+def log_pdf_candidate_resolution(result: PdfValidationResult) -> None:
+    print(
+        "pdf_candidate_resolution "
+        + json.dumps(
+            {
+                "candidate_url": result.candidate_url,
+                "resolved_final_url": result.resolved_final_url,
+                "content_type": result.content_type,
+                "accepted": result.accepted,
+                "reason": result.reason,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+        file=sys.stderr,
+    )
+
+
+def validate_pdf_url(
+    url: str,
+    *,
+    requester: Callable[..., Any] | None = None,
+    timeout: float = PDF_PROBE_TIMEOUT,
+) -> PdfValidationResult:
+    """Validate that a URL resolves to a streamable PDF payload, not a page wrapper."""
+
+    if not is_pdf_url_shape(url):
+        return pdf_validation_result(url, reason="url_shape_not_pdf")
+
+    requester = requester or requests.get
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 compatible; exam-bank-ingress/1.0; "
+            "+https://pastpapers.co/caie/a-level/mathematics-9709"
+        ),
+        "Accept": "application/pdf",
+        "Range": f"bytes=0-{PDF_PROBE_BYTES - 1}",
+    }
+    original_url = requote_url(url)
+    current_url = original_url
+
+    for _redirect in range(PDF_VALIDATION_REDIRECT_LIMIT + 1):
+        response: Any | None = None
+        last_request_error: Exception | None = None
+        for attempt in range(PDF_PROBE_RETRIES + 1):
+            try:
+                response = requester(
+                    current_url,
+                    headers=headers,
+                    stream=True,
+                    timeout=timeout,
+                    allow_redirects=False,
+                )
+                break
+            except TypeError:
+                response = requester(current_url, headers=headers, stream=True, timeout=timeout)
+                break
+            except (requests.RequestException, IncompleteRead, OSError) as exc:
+                last_request_error = exc
+                if attempt < PDF_PROBE_RETRIES:
+                    time.sleep(0.25 * (attempt + 1))
+        if response is None:
+            reason = (
+                f"request_failed:{last_request_error.__class__.__name__}"
+                if last_request_error is not None
+                else "request_failed"
+            )
+            return pdf_validation_result(original_url, resolved_final_url=current_url, reason=reason)
+
+        try:
+            status_code = int(getattr(response, "status_code", 0) or 0)
+            content_type = response_header(response, "content-type")
+            content_length = response_content_length(response)
+            response_url = requote_url(str(getattr(response, "url", current_url) or current_url))
+
+            if 300 <= status_code < 400:
+                location = response_header(response, "location")
+                if not location:
+                    return pdf_validation_result(
+                        original_url,
+                        resolved_final_url=response_url,
+                        content_type=content_type,
+                        content_length=content_length,
+                        reason="redirect_without_location",
+                    )
+                next_url = requote_url(urljoin(current_url, location))
+                next_parsed = urlparse(next_url)
+                if next_parsed.netloc.lower() != "pastpapers.co":
+                    return pdf_validation_result(
+                        original_url,
+                        resolved_final_url=next_url,
+                        content_type=content_type,
+                        content_length=content_length,
+                        reason="redirect_offsite",
+                    )
+                current_url = next_url
+                continue
+
+            if status_code not in {200, 206}:
+                return pdf_validation_result(
+                    original_url,
+                    resolved_final_url=response_url,
+                    content_type=content_type,
+                    content_length=content_length,
+                    reason=f"http_{status_code}",
+                )
+            if not is_pdf_content_type(content_type):
+                return pdf_validation_result(
+                    original_url,
+                    resolved_final_url=response_url,
+                    content_type=content_type,
+                    content_length=content_length,
+                    reason="content_type_not_pdf",
+                )
+            if content_length == 0:
+                return pdf_validation_result(
+                    original_url,
+                    resolved_final_url=response_url,
+                    content_type=content_type,
+                    content_length=content_length,
+                    reason="empty_content_length",
+                )
+
+            first_chunk = b""
+            for chunk in response.iter_content(chunk_size=PDF_PROBE_BYTES):
+                if chunk:
+                    first_chunk = chunk
+                    break
+            if not first_chunk:
+                return pdf_validation_result(
+                    original_url,
+                    resolved_final_url=response_url,
+                    content_type=content_type,
+                    content_length=content_length,
+                    reason="empty_response",
+                )
+            if not first_chunk.startswith(PDF_MAGIC):
+                return pdf_validation_result(
+                    original_url,
+                    resolved_final_url=response_url,
+                    content_type=content_type,
+                    content_length=content_length,
+                    reason="bad_magic_bytes",
+                )
+            return pdf_validation_result(
+                original_url,
+                resolved_final_url=response_url,
+                content_type=content_type,
+                content_length=content_length,
+                accepted=True,
+                reason="accepted",
+            )
+        finally:
+            if response is not None:
+                close = getattr(response, "close", None)
+                if callable(close):
+                    close()
+
+    return pdf_validation_result(original_url, resolved_final_url=current_url, reason="redirect_limit_exceeded")
 
 
 def fetch_text(url: str, *, timeout: float = 20.0, retries: int = 2) -> str | None:
@@ -214,7 +532,7 @@ def fetch_text(url: str, *, timeout: float = 20.0, retries: int = 2) -> str | No
             with urlopen(req, timeout=timeout) as response:  # nosec: target URL is fixed by caller filters
                 content_type = response.headers.get("content-type", "")
                 raw = response.read()
-                if "pdf" in content_type.lower() or urlparse(url).path.lower().endswith(".pdf"):
+                if "pdf" in content_type.lower():
                     # We only need PDF URLs, not binary content.
                     return ""
                 charset_match = re.search(r"charset=([^;]+)", content_type, re.IGNORECASE)
@@ -253,11 +571,32 @@ def download_pdf(url: str, destination_path: Path) -> bool:
             if response.status_code != 200:
                 last_error = RuntimeError(f"HTTP {response.status_code}")
                 continue
+            last_error = None
+            content_type = response_header(response, "content-type")
+            if content_type and not is_pdf_content_type(content_type):
+                last_error = RuntimeError(f"unexpected content-type {content_type!r}")
+                continue
+            if response_content_length(response) == 0:
+                last_error = RuntimeError("empty PDF response")
+                continue
 
+            saw_pdf_magic = False
             with temp_path.open("wb") as handle:
                 for chunk in response.iter_content(chunk_size=PDF_DOWNLOAD_CHUNK_SIZE):
-                    if chunk:
-                        handle.write(chunk)
+                    if not chunk:
+                        continue
+                    if not saw_pdf_magic:
+                        if not chunk.startswith(PDF_MAGIC):
+                            last_error = RuntimeError("response did not start with PDF magic bytes")
+                            break
+                        saw_pdf_magic = True
+                    handle.write(chunk)
+            if not saw_pdf_magic:
+                if last_error is None:
+                    last_error = RuntimeError("empty PDF response")
+                continue
+            if last_error is not None:
+                continue
             temp_path.replace(destination_path)
             return True
         except (requests.RequestException, IncompleteRead, OSError) as exc:
@@ -265,7 +604,7 @@ def download_pdf(url: str, destination_path: Path) -> bool:
         finally:
             if response is not None:
                 response.close()
-            if temp_path.exists() and not destination_path.exists():
+            if temp_path.exists():
                 temp_path.unlink(missing_ok=True)
 
         if attempt < PDF_DOWNLOAD_RETRIES:
@@ -293,16 +632,22 @@ def normalize_link(current_url: str, href: str) -> str | None:
     if parsed.netloc.lower() != "pastpapers.co":
         return None
     path = parsed.path.rstrip("/")
+    path_lower = unquote(path).lower()
+    if path_lower.startswith("/api/file/"):
+        if "/caie/" not in path_lower or "/mathematics-9709/" not in path_lower:
+            return None
+        return requote_url(absolute).rstrip("/")
     base_path = urlparse(BASE_URL).path.rstrip("/")
-    if not path.startswith(base_path):
+    if not path_lower.startswith(base_path):
         return None
-    return absolute.rstrip("/")
+    return requote_url(absolute).rstrip("/")
 
 
 def extract_links(current_url: str, html: str) -> set[str]:
     """Extract normal href links plus links embedded in serialized JS/JSON."""
 
     html = html.replace("\\/", "/")
+    html_values = html.replace('\\"', '"')
     extractor = LinkExtractor()
     try:
         extractor.feed(html)
@@ -312,6 +657,8 @@ def extract_links(current_url: str, html: str) -> set[str]:
 
     raw_links = set(extractor.links)
     raw_links.update(match.group("href") for match in PATH_LINK_RE.finditer(html))
+    raw_links.update(match.group("href") for match in API_FILE_LINK_RE.finditer(html))
+    raw_links.update(match.group("href") for match in PDF_URL_VALUE_RE.finditer(html_values))
     raw_links.update(match.group("href") for match in RELATIVE_PDF_RE.finditer(html))
 
     normalized: set[str] = set()
@@ -393,6 +740,49 @@ def resource_identity(resource: PaperResource) -> tuple[int, str, str, str | Non
     )
 
 
+def resolve_pdf_resource(
+    resource: PaperResource,
+    summary: CrawlSummary,
+    *,
+    validator: Callable[[str], PdfValidationResult] | None,
+) -> PaperResource | None:
+    if validator is None:
+        return resource
+
+    for candidate_url in candidate_pdf_endpoint_urls(resource.url):
+        result = validator(candidate_url)
+        log_pdf_candidate_resolution(result)
+        if result.accepted:
+            summary.pdf_candidate_accepted_count += 1
+            return replace(resource, url=result.resolved_final_url)
+        summary.pdf_candidate_rejected_count += 1
+        assert summary.skipped_by_reason is not None
+        summary.skipped_by_reason[f"pdf_validation_rejected:{result.reason}"] += 1
+
+    summary.pdf_resolution_failed_count += 1
+    assert summary.skipped_by_reason is not None
+    summary.skipped_by_reason["pdf_resolution_failed"] += 1
+    return None
+
+
+def enforce_resolution_failure_limit(summary: CrawlSummary) -> None:
+    resolved_total = summary.pdf_candidate_accepted_count + summary.pdf_resolution_failed_count
+    if not resolved_total:
+        return
+    failure_rate = summary.pdf_resolution_failed_count / resolved_total
+    if failure_rate <= PDF_VALIDATION_FAILURE_RATE_LIMIT:
+        return
+
+    assert summary.skipped_by_reason is not None
+    summary.skipped_by_reason["ingress_resolution_failure"] += summary.pdf_resolution_failed_count
+    message = (
+        "ingress_resolution_failure: "
+        f"{summary.pdf_resolution_failed_count}/{resolved_total} resolved PDFs failed validation "
+        f"({failure_rate:.1%})"
+    )
+    raise IngressResolutionFailure(message, summary)
+
+
 def session_page_candidates(min_year: int, max_year: int) -> Iterator[str]:
     """Known PastPapers.co session-route shapes.
 
@@ -421,6 +811,7 @@ def discover_resources(
     max_depth: int = 2,
     delay_seconds: float = 0.2,
     fetcher: Callable[[str], str | None] | None = None,
+    pdf_validator: Callable[[str], PdfValidationResult] | None = None,
     include_session_candidates: bool = True,
 ) -> list[PaperResource]:
     """Crawl the source page and return filtered paper resources."""
@@ -432,6 +823,7 @@ def discover_resources(
         max_depth=max_depth,
         delay_seconds=delay_seconds,
         fetcher=fetcher,
+        pdf_validator=pdf_validator,
         include_session_candidates=include_session_candidates,
     )
     return resources
@@ -445,11 +837,15 @@ def discover_resources_with_summary(
     max_depth: int = 2,
     delay_seconds: float = 0.2,
     fetcher: Callable[[str], str | None] | None = None,
+    pdf_validator: Callable[[str], PdfValidationResult] | None = None,
     include_session_candidates: bool = True,
 ) -> tuple[list[PaperResource], CrawlSummary]:
     """Crawl the source page and return filtered paper resources plus run accounting."""
 
+    custom_fetcher = fetcher is not None
     fetcher = fetcher or fetch_text
+    if pdf_validator is None and not custom_fetcher:
+        pdf_validator = validate_pdf_url
     seeds = [base_url]
     if include_session_candidates:
         seeds.extend(session_page_candidates(min_year, max_year))
@@ -459,6 +855,19 @@ def discover_resources_with_summary(
     resources: dict[tuple[int, str, str, str | None, str], PaperResource] = {}
     summary = CrawlSummary(min_year=min_year, max_year=max_year)
 
+    def add_resource(candidate: PaperResource) -> None:
+        if not (min_year <= candidate.year <= max_year):
+            summary.skipped_by_reason["outside_year_range"] += 1
+            return
+        resolved = resolve_pdf_resource(candidate, summary, validator=pdf_validator)
+        if resolved is None:
+            return
+        identity = resource_identity(resolved)
+        if identity in resources:
+            summary.skipped_by_reason["duplicate_resource"] += 1
+        else:
+            resources[identity] = resolved
+
     while queue:
         url, depth = queue.popleft()
         if url in visited:
@@ -466,15 +875,8 @@ def discover_resources_with_summary(
         visited.add(url)
 
         parsed = parse_pdf_resource(url, source_page=None, strict=True)
-        if parsed and min_year <= parsed.year <= max_year:
-            identity = resource_identity(parsed)
-            if identity in resources:
-                summary.skipped_by_reason["duplicate_resource"] += 1
-            else:
-                resources[identity] = parsed
-            continue
         if parsed:
-            summary.skipped_by_reason["outside_year_range"] += 1
+            add_resource(parsed)
             continue
 
         if urlparse(url).path.lower().endswith(".pdf") or depth > max_depth:
@@ -491,14 +893,7 @@ def discover_resources_with_summary(
         for link in extract_links(url, html):
             pdf_resource = parse_pdf_resource(link, source_page=url, strict=True)
             if pdf_resource:
-                if min_year <= pdf_resource.year <= max_year:
-                    identity = resource_identity(pdf_resource)
-                    if identity in resources:
-                        summary.skipped_by_reason["duplicate_resource"] += 1
-                    else:
-                        resources[identity] = pdf_resource
-                else:
-                    summary.skipped_by_reason["outside_year_range"] += 1
+                add_resource(pdf_resource)
                 continue
             if urlparse(link).path.lower().endswith(".pdf"):
                 summary.skipped_by_reason["unsupported_pdf"] += 1
@@ -506,6 +901,7 @@ def discover_resources_with_summary(
             if depth < max_depth and link not in visited:
                 queue.append((link, depth + 1))
 
+    enforce_resolution_failure_limit(summary)
     sorted_resources = sorted(resources.values(), key=resource_sort_key)
     return sorted_resources, summary
 
@@ -558,6 +954,7 @@ def download_resource_pdfs(
     domain_failures: Counter[str] = Counter()
     classified_count = 0
     unclassified_count = 0
+    validate_existing_files = downloader is download_pdf
 
     for resource in resources:
         asset_type = classify_asset_type(resource)
@@ -572,11 +969,15 @@ def download_resource_pdfs(
         destination = pdf_destination_path(resource, storage_root=storage_root)
 
         if destination.exists():
-            summary.pdf_skipped_duplicates += 1
-            summary.skipped_by_reason["skipped_duplicate"] += 1
-            local_paths[resource.url] = str(destination)
-            print(f"skipped_duplicate: {destination}", file=sys.stderr)
-            continue
+            if validate_existing_files and not local_file_has_pdf_magic(destination):
+                summary.skipped_by_reason["invalid_existing_pdf"] += 1
+                destination.unlink(missing_ok=True)
+            else:
+                summary.pdf_skipped_duplicates += 1
+                summary.skipped_by_reason["skipped_duplicate"] += 1
+                local_paths[resource.url] = str(destination)
+                print(f"skipped_duplicate: {destination}", file=sys.stderr)
+                continue
 
         domain = urlparse(resource.url).netloc.lower()
         domain_attempts[domain] += 1
@@ -832,14 +1233,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.max_year < args.min_year:
         raise SystemExit("--max-year must be >= --min-year")
 
-    resources, summary = discover_resources_with_summary(
-        base_url=args.url,
-        min_year=args.min_year,
-        max_year=args.max_year,
-        max_depth=args.max_depth,
-        delay_seconds=args.delay,
-        include_session_candidates=not args.no_session_candidates,
-    )
+    try:
+        resources, summary = discover_resources_with_summary(
+            base_url=args.url,
+            min_year=args.min_year,
+            max_year=args.max_year,
+            max_depth=args.max_depth,
+            delay_seconds=args.delay,
+            include_session_candidates=not args.no_session_candidates,
+        )
+    except IngressResolutionFailure as exc:
+        write_summary(args.summary_output, exc.summary)
+        raise SystemExit(str(exc)) from exc
     try:
         asset_local_paths = download_resource_pdfs(resources, summary)
     except RuntimeError as exc:

@@ -1,32 +1,23 @@
 # Roadmap
 
-This roadmap reflects the current project state as of the local export generated on `2026-05-18`. Historical audit and handoff docs remain useful evidence, but this file is the active planning view.
+This roadmap reflects the current unified historical + modern pipeline architecture. Historical audit and handoff docs remain useful evidence, but this file is the active planning view.
 
 The project remains image-first. Rendered question PNGs and rendered mark-scheme PNGs are the source of truth. Native PDF text, OCR text, normalized text, AI output, topic routing, advisory evidence, mark-event evidence, difficulty scores, readiness tiers, and Asterion projections are support metadata unless a documented consumer role gate explicitly permits use.
 
 ## Current Baseline
 
-Current canonical export:
+Current canonical export contract:
 
 - Path: `output/json/question_bank.json`
 - Schema: `exam_bank.question_bank` version 2
-- Run: `20260518T235946Z-4e93c881aa77`
-- Generated at: `2026-05-18T23:59:46.928802+00:00`
-- Records: `1301`
-- Paper families: `p1: 401`, `p3: 396`, `p4: 258`, `p5: 246`
-- OCR: ran for all records with Tesseract `5.5.2`; selected over native text for `33` records
-- Mapping status: `1291 pass`, `10 fail`
-- Validation status: `917 pass`, `369 review`, `15 fail`
-- Scope quality: `923 clean`, `378 review`
-- Text fidelity: `1259 clean`, `42 degraded`
-- Visual curation: `213 ready`, `1073 review`, `15 fail`
-- Text-only status: `201 ready`, `1049 review`, `51 fail`
-- Question crop confidence: `337 high`, `964 low`
-- Mark-scheme crop confidence: `746 high`, `555 medium`
-- Missing question image paths: `0`
-- Missing mark-scheme image paths: `0`
+- Dataset coverage target: CAIE 9709 `2008-2025`
+- Legacy source era: `2008-2020`
+- Modern source era: `2021-2025`
+- Input tree: `input/pastpapers/9709/<year>/`
+- Canonical asset folders: `output/pm1/`, `output/pm3/`, `output/stats/`, `output/mechanics/`
+- Run evidence: `output/run_status/<run_id>/run_manifest.json`
 
-The dated audit baseline remains [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Treat it as the May 14 cleanup/audit baseline, not the live count source. Refresh current evidence with:
+Run-specific record counts, QA rollups, OCR counts, mapping status, validation status, and missing-asset counts must come from the current export `run_manifest`, not from this roadmap. The dated audit baseline remains [Project Audit and Optimization Review](docs/PROJECT_AUDIT_AND_OPTIMIZATION_REVIEW.md). Treat it as the May 14 cleanup/audit baseline, not the live count source. Refresh current evidence with:
 
 ```bash
 .venv/bin/python -m exam_bank.cli audit \
@@ -48,7 +39,11 @@ The dated audit baseline remains [Project Audit and Optimization Review](docs/PR
 
 The following work is implemented and should be treated as current infrastructure, not future scope:
 
-- Image-first extraction to paper-family image trees and `question_bank.json`.
+- Modern pipeline-only phase for `2021-2025` extraction. This is complete and superseded by the unified historical + modern pipeline.
+- Image-first extraction to canonical `pm1`, `pm3`, `stats`, and `mechanics` image trees plus `question_bank.json`.
+- Unified historical + modern source scanning through the recursive `process` command.
+- Legacy ingestion support for `2008-2020` via the PastPapers.co ingress path.
+- `PaperIdentity`-based canonical paper IDs, question IDs, mark-scheme pairing, and asset paths.
 - OCR-enabled production-style export with run manifest, QA rollups, artifact root, and output-layout metadata.
 - Standard CLI commands for extraction, audit, output integrity, Asterion export, Content Lab candidates, topic packets, AI sidecars, triage, auto-triage, output inventory, cleanup planning, and export summary diffs.
 - Generator safety for taxonomy scripts: `--help` is safe and `--dry-run` reports planned writes.
@@ -63,6 +58,24 @@ The following work is implemented and should be treated as current infrastructur
 - Image-first topic packet generation under `output/topic_packets/`.
 - Auto-triage planning, runbook, comparison, and decision files.
 - Text-extraction failure audit, bad-text fixture manifest, crop/context signal audit, OCR profile experiments, normalized text candidate contract, and text-fidelity review queue.
+
+## Phase: Unified Historical Extraction
+
+Status: implemented.
+
+Completed:
+
+- Legacy ingestion integrated for the `2008-2020` source era.
+- Modern extraction retained for the `2021-2025` source era.
+- Full pipeline execution enabled through one recursive extraction command over `input/pastpapers/9709`.
+- Question crop and mark-scheme crop asset extraction unified under the canonical `pm1`, `pm3`, `stats`, and `mechanics` folder schema.
+- `PaperIdentity` dependency wired into paper identity, mark-scheme matching, export normalization, and asset-path generation.
+
+Next:
+
+- Identity stabilization for edge cases in the `PaperIdentity` system, especially ambiguous legacy sessions, component aliases, and cross-source filename variants.
+- Extraction reliability improvements for low-confidence crop, mapping, scope, and validation cases across the wider 2008-2025 corpus.
+- Image extraction hardening for historical layouts, missing companion documents, mark-scheme crop boundaries, and canonical asset-manifest validation.
 
 ## Current Constraints
 
@@ -79,7 +92,61 @@ These constraints should drive near-term work:
 
 ## Active Priorities
 
-### 1. Release Validation Pass
+### 1. Identity Stabilization
+
+Goal: harden `PaperIdentity` as the shared dependency for historical and modern extraction.
+
+Work:
+
+- Audit ambiguous legacy session labels, compact session codes, and filename variants.
+- Verify component aliases and subject-family mapping for `pm1`, `pm3`, `stats`, and `mechanics`.
+- Keep mark-scheme pairing, asset paths, question IDs, and export normalization on the same identity contract.
+- Add focused fixtures for edge cases discovered in the 2008-2025 input tree.
+
+Acceptance:
+
+- Identity failures are explicit and reviewable.
+- Question assets and mark-scheme assets derive from the same canonical identity.
+- Legacy and modern files with equivalent metadata produce equivalent IDs.
+- Focused identity and output-contract tests pass.
+
+### 2. Extraction Reliability Improvements
+
+Goal: reduce mapping, validation, scope, and visual-curation failures without loosening trust gates.
+
+Work:
+
+- Use `audit_question_bank_readiness.py` and `auto-triage-status` to identify dominant failure clusters.
+- Use `auto-triage-plan` for bounded implementation handoffs.
+- Prioritize records where crop confidence, mapping status, validation status, or scope quality contradict each other.
+- Preserve OCR-enabled comparisons when claiming production improvement.
+
+Acceptance:
+
+- Hard-failure counts decrease in an OCR-enabled comparison.
+- No broad trust-gate loosening.
+- Worsened records are explained or fixed.
+- Focused tests and full tests pass.
+
+### 3. Image Extraction Hardening
+
+Goal: make canonical question and mark-scheme crops more reliable across historical and modern layouts.
+
+Work:
+
+- Harden question crop boundaries for historical layouts and 2024-2025 format variants.
+- Harden mark-scheme crop boundaries and missing-companion handling.
+- Validate canonical asset manifests after unified runs.
+- Keep image evidence authoritative over native/OCR/AI text.
+
+Acceptance:
+
+- Missing or mismatched image references remain zero in accepted exports.
+- Low-confidence crop clusters are reduced or clearly queued for review.
+- Asset-manifest validation passes.
+- Normalization reports no active legacy output paths.
+
+### 4. Release Validation Pass
 
 Goal: make the current export reproducibly releasable.
 
@@ -97,25 +164,7 @@ Acceptance:
 - Sidecar validations pass or only emit documented warnings.
 - Release notes identify which downstream roles are allowed, blocked, or review-only.
 
-### 2. Hard-Failure Reduction
-
-Goal: reduce the remaining mapping, validation, and visual-curation failures without loosening trust gates.
-
-Work:
-
-- Use `audit_question_bank_readiness.py` and `auto-triage-status` to identify dominant failure clusters.
-- Use `auto-triage-plan` for bounded implementation handoffs.
-- Prioritize mapping failures, validation failures, visual curation failures, and records where status fields contradict each other.
-- Preserve OCR-enabled comparisons when claiming production improvement.
-
-Acceptance:
-
-- Hard-failure counts decrease in an OCR-enabled comparison.
-- No broad trust-gate loosening.
-- Worsened records are explained or fixed.
-- Focused tests and full tests pass.
-
-### 3. Text-Fidelity Review Workflow
+### 5. Text-Fidelity Review Workflow
 
 Goal: turn text-fidelity evidence into a practical review loop while keeping text advisory.
 
@@ -133,7 +182,7 @@ Acceptance:
 - New candidate text fields include provenance and warnings.
 - Asterion and student-facing projections do not consume advisory candidates without a contract update.
 
-### 4. Topic Routing Recovery
+### 6. Topic Routing Recovery
 
 Goal: make strict topic filters usable by reducing current topic-routing sidecar failures.
 
@@ -149,7 +198,7 @@ Acceptance:
 - `safe_for_strict_filters=true` is only set when the sidecar actually qualifies.
 - Downstream consumers can fail closed from sidecar metadata.
 
-### 5. Output Hygiene
+### 7. Output Hygiene
 
 Goal: keep generated outputs understandable and safe to clean.
 

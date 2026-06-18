@@ -1697,7 +1697,13 @@ def _clear_stale_mark_scheme_images(
     mark_scheme_dir = next(iter(expected_paths)).parent if expected_paths else None
     if mark_scheme_dir is None or not mark_scheme_dir.exists():
         return
+    prefixes = {
+        f"{identity.subject_family}_{identity.year}_{identity.session_code}_{identity.component}_ms_q"
+        for identity in identities.values()
+    }
     for path in mark_scheme_dir.glob("*_ms_q*_markscheme*.png"):
+        if not any(path.name.startswith(prefix) for prefix in prefixes):
+            continue
         if path not in expected_paths:
             path.unlink(missing_ok=True)
 

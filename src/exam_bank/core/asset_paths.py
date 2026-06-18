@@ -34,7 +34,7 @@ class AssetPathResolver:
         _require_question_identity(identity)
         filename = (
             f"{identity.subject_family}_{identity.year}_{identity.session_code}_"
-            f"{paper_type}_{identity.question_id.rsplit('_', 1)[-1]}_{asset_type}.png"
+            f"{identity.component}_{paper_type}_{identity.question_id.rsplit('_', 1)[-1]}_{asset_type}.png"
         )
         canonical_path = str(Path(identity.subject_family) / filename)
         return AssetPath(

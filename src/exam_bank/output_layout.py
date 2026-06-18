@@ -208,13 +208,14 @@ def canonical_asset_filename(
     paper_type: str,
     question_number: str,
     asset_type: str,
+    component: str = "",
 ) -> str:
     identity = paper_identity_from_parts(
         syllabus="9709",
         subject_family=subject,
         year=year,
         session=session,
-        component=_component_from_subject(subject),
+        component=component or _component_from_subject(subject),
         question_number=question_number,
     )
     resolver = AssetPathResolver(Path("."))
