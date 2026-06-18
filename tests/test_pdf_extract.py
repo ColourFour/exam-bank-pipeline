@@ -1,5 +1,13 @@
 from exam_bank.config import AppConfig
-from exam_bank.pdf_extract import _extract_text_blocks, _group_spans_into_visual_lines, _line_text_from_spans
+from exam_bank.models import BoundingBox, TextBlock
+from exam_bank.pdf_extract import (
+    _dense_non_text_cluster,
+    _extract_text_blocks,
+    _group_spans_into_visual_lines,
+    _is_legacy_pdf,
+    _line_text_from_spans,
+    _ocr_hint_graphics,
+)
 
 
 def span(text: str, x0: float, y0: float, x1: float, y1: float, size: float = 10) -> dict:
@@ -67,6 +75,38 @@ def test_encoded_digit_normalization_uses_page_number_glyphs() -> None:
 
     assert normalized[3].blocks[1].text == "1 First question prompt"
     assert normalized[3].blocks[2].text == "2 Second question prompt"
+
+
+def test_legacy_pdf_detection_switches_on_pre_2017_names() -> None:
+    from pathlib import Path
+
+    assert _is_legacy_pdf(Path("9709_s16_qp_12.pdf")) is True
+    assert _is_legacy_pdf(Path("9709_s17_qp_12.pdf")) is False
+
+
+def test_legacy_dense_non_text_cluster_recovers_fragmented_figure() -> None:
+    boxes = [
+        BoundingBox(100, 120, 108, 128),
+        BoundingBox(112, 130, 126, 144),
+        BoundingBox(130, 122, 150, 142),
+        BoundingBox(160, 135, 175, 155),
+    ]
+
+    cluster = _dense_non_text_cluster(boxes, page_width=595, page_height=842)
+
+    assert cluster == BoundingBox(100, 120, 175, 155)
+
+
+def test_ocr_hint_signals_expand_nearby_graphics_deterministically() -> None:
+    hint = TextBlock(page_number=1, text="The diagram shows a sector.", bbox=BoundingBox(80, 220, 250, 238))
+    graphic = BoundingBox(120, 250, 300, 360)
+
+    first = _ocr_hint_graphics([hint], [graphic], page_width=595, page_height=842, legacy_fallback=False)
+    second = _ocr_hint_graphics([hint], [graphic], page_width=595, page_height=842, legacy_fallback=False)
+
+    assert first == second
+    assert first[0].y0 <= hint.bbox.y0
+    assert first[0].y1 >= graphic.y1
 
 
 from exam_bank.pdf_extract import _group_spans_into_visual_lines, _line_text_from_spans

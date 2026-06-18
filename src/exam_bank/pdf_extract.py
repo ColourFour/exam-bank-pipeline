@@ -28,12 +28,13 @@ def extract_pdf_layout(pdf_path: str | Path, config: AppConfig, use_ocr: bool | 
     pdf_path = Path(pdf_path)
     layouts: list[PageLayout] = []
     ocr_enabled = config.ocr.enabled if use_ocr is None else use_ocr
+    legacy_fallback = _is_legacy_pdf(pdf_path)
 
     with fitz.open(pdf_path) as doc:
         for page_index, page in enumerate(doc):
             page_number = page_index + 1
             blocks = _extract_text_blocks(page, page_number, config)
-            graphics = _extract_graphics(page)
+            graphics = _extract_graphics(page, legacy_fallback=legacy_fallback)
             text_len = len(" ".join(block.text for block in blocks).strip())
             warning: str | None = None
             source = "pdf"
@@ -71,6 +72,11 @@ def extract_pdf_layout(pdf_path: str | Path, config: AppConfig, use_ocr: bool | 
                         source = "pdf+ocr"
                         warning = "ocr_merged_sparse_lower_region"
 
+            ocr_hint_graphics = _ocr_hint_graphics(blocks, graphics, page_width=float(page.rect.width), page_height=float(page.rect.height), legacy_fallback=legacy_fallback)
+            if ocr_hint_graphics:
+                graphics = _dedupe_boxes([*graphics, *ocr_hint_graphics])
+                warning = _append_warning(warning, "ocr_hint_figure_regions")
+
             layouts.append(
                 PageLayout(
                     page_number=page_number,
@@ -84,6 +90,13 @@ def extract_pdf_layout(pdf_path: str | Path, config: AppConfig, use_ocr: bool | 
             )
 
     return _normalize_encoded_digit_text(layouts)
+
+
+def _is_legacy_pdf(pdf_path: Path) -> bool:
+    match = re.search(r"_(?P<season>[msw])(?P<yy>\d{2})_", pdf_path.name.lower())
+    if not match:
+        return False
+    return int(match.group("yy")) < 17
 
 
 def _normalize_encoded_digit_text(layouts: list[PageLayout]) -> list[PageLayout]:
@@ -666,8 +679,8 @@ def _vertical_overlap_ratio(span: dict[str, Any], line: list[dict[str, Any]]) ->
     return overlap / span_height
 
 
-def _extract_graphics(page: Any) -> list[BoundingBox]:
-    boxes: list[BoundingBox] = []
+def _extract_graphics(page: Any, *, legacy_fallback: bool = False) -> list[BoundingBox]:
+    candidates: list[tuple[BoundingBox, str]] = []
     page_width = float(page.rect.width)
     page_height = float(page.rect.height)
 
@@ -676,7 +689,14 @@ def _extract_graphics(page: Any) -> list[BoundingBox]:
         if rect and rect.is_valid and not rect.is_empty:
             box = _visual_box_from_rect(page, rect)
             if _is_meaningful_graphic_box(box, page_width, page_height):
-                boxes.append(box)
+                candidates.append((box, "vector_graphic"))
+            elif legacy_fallback and _is_low_confidence_legacy_graphic_box(box, page_width, page_height):
+                candidates.append((box, "legacy_low_confidence_vector"))
+        if legacy_fallback:
+            item_boxes = _drawing_item_boxes(page, drawing)
+            cluster = _dense_non_text_cluster(item_boxes, page_width=page_width, page_height=page_height)
+            if cluster is not None:
+                candidates.append((cluster, "legacy_dense_non_text_cluster"))
 
     try:
         image_infos = page.get_image_info(xrefs=True)
@@ -687,8 +707,10 @@ def _extract_graphics(page: Any) -> list[BoundingBox]:
         if bbox:
             box = _visual_box_from_rect(page, bbox)
             if _is_meaningful_graphic_box(box, page_width, page_height):
-                boxes.append(box)
-    return boxes
+                candidates.append((box, "embedded_image"))
+            elif legacy_fallback and _is_low_confidence_legacy_graphic_box(box, page_width, page_height):
+                candidates.append((box, "legacy_low_confidence_embedded_image"))
+    return _dedupe_boxes([box for box, _method in candidates])
 
 
 def _is_meaningful_graphic_box(box: BoundingBox, page_width: float, page_height: float) -> bool:
@@ -713,6 +735,136 @@ def _is_meaningful_graphic_box(box: BoundingBox, page_width: float, page_height:
         return False
 
     return True
+
+
+def _is_low_confidence_legacy_graphic_box(box: BoundingBox, page_width: float, page_height: float) -> bool:
+    width = max(0.0, box.x1 - box.x0)
+    height = max(0.0, box.y1 - box.y0)
+    area = width * height
+    if area < 12:
+        return False
+    page_area = max(1.0, page_width * page_height)
+    if area >= page_area * 0.92:
+        return False
+    if box.y1 < 35 or box.y0 > page_height - 35:
+        return False
+    if box.x1 < 18 or box.x0 > page_width - 18:
+        return False
+    return width >= 4 and height >= 4
+
+
+def _drawing_item_boxes(page: Any, drawing: dict[str, Any]) -> list[BoundingBox]:
+    boxes: list[BoundingBox] = []
+    for item in drawing.get("items", []) or []:
+        for value in item:
+            box = _rectlike_to_box(page, value)
+            if box is not None:
+                boxes.append(box)
+    return boxes
+
+
+def _rectlike_to_box(page: Any, value: Any) -> BoundingBox | None:
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return None
+    for attr in ("x0", "y0", "x1", "y1"):
+        if not hasattr(value, attr):
+            break
+    else:
+        return _visual_box_from_rect(page, value)
+    if isinstance(value, (list, tuple)) and len(value) >= 4 and all(isinstance(item, (int, float)) for item in value[:4]):
+        return _visual_box_from_rect(page, value[:4])
+    return None
+
+
+def _dense_non_text_cluster(
+    boxes: list[BoundingBox],
+    *,
+    page_width: float,
+    page_height: float,
+) -> BoundingBox | None:
+    meaningful = [
+        box
+        for box in boxes
+        if _is_low_confidence_legacy_graphic_box(box, page_width, page_height)
+    ]
+    if len(meaningful) < 3:
+        return None
+    union = _union_boxes(meaningful)
+    width = max(0.0, union.x1 - union.x0)
+    height = max(0.0, union.y1 - union.y0)
+    if width < 18 or height < 18:
+        return None
+    union_area = max(1.0, width * height)
+    source_area = sum(max(0.0, box.x1 - box.x0) * max(0.0, box.y1 - box.y0) for box in meaningful)
+    if source_area / union_area < 0.015:
+        return None
+    return union
+
+
+def _ocr_hint_graphics(
+    blocks: list[TextBlock],
+    existing_graphics: list[BoundingBox],
+    *,
+    page_width: float,
+    page_height: float,
+    legacy_fallback: bool,
+) -> list[BoundingBox]:
+    hints: list[BoundingBox] = []
+    radius = 110.0 if legacy_fallback else 70.0
+    for block in blocks:
+        if not _is_figure_hint_text(block.text):
+            continue
+        near = [
+            graphic
+            for graphic in existing_graphics
+            if _distance_between_boxes(block.bbox, graphic) <= radius
+        ]
+        if near:
+            hints.append(_union_boxes([block.bbox, *near]).padded(8, page_width, page_height))
+        elif legacy_fallback:
+            hints.append(block.bbox.padded(radius * 0.5, page_width, page_height))
+    return hints
+
+
+def _is_figure_hint_text(text: str) -> bool:
+    cleaned = _normalized_ocr_text(text).lower()
+    return bool(
+        re.search(r"\b(?:figure|fig\.?|diagram|graph|curve|sketch|sector|circle|histogram|box plot|scatter diagram)\b", cleaned)
+        or re.fullmatch(r"(?:[A-Z]|\d{1,2}|[()+\-−=])(?:\s+(?:[A-Z]|\d{1,2}|[()+\-−=])){1,5}", str(text).strip())
+    )
+
+
+def _distance_between_boxes(a: BoundingBox, b: BoundingBox) -> float:
+    horizontal_gap = max(0.0, max(a.x0, b.x0) - min(a.x1, b.x1))
+    vertical_gap = max(0.0, max(a.y0, b.y0) - min(a.y1, b.y1))
+    return (horizontal_gap**2 + vertical_gap**2) ** 0.5
+
+
+def _dedupe_boxes(boxes: list[BoundingBox]) -> list[BoundingBox]:
+    kept: list[BoundingBox] = []
+    for box in sorted(boxes, key=lambda item: (item.y0, item.x0, item.y1, item.x1)):
+        if any(_boxes_overlap_ratio(box, existing) >= 0.92 for existing in kept):
+            continue
+        kept.append(box)
+    return kept
+
+
+def _union_boxes(boxes: list[BoundingBox]) -> BoundingBox:
+    return BoundingBox(
+        min(box.x0 for box in boxes),
+        min(box.y0 for box in boxes),
+        max(box.x1 for box in boxes),
+        max(box.y1 for box in boxes),
+    )
+
+
+def _append_warning(current: str | None, value: str) -> str:
+    if not current:
+        return value
+    parts = [part for part in current.split(";") if part]
+    if value not in parts:
+        parts.append(value)
+    return ";".join(parts)
 
 
 def _merge_pdf_and_ocr_blocks(pdf_blocks: list[TextBlock], ocr_blocks: list[TextBlock]) -> list[TextBlock]:

@@ -8,6 +8,7 @@ import re
 from typing import Any
 
 from .classification import classify_question, classify_question_parts, infer_source_paper_code, _explicit_primary_topic_from_text
+from .atomic_json import write_atomic_json
 from .config import AppConfig
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import DocumentMetadata, parse_filename_metadata, parse_internal_document_metadata, reconcile_document_metadata
@@ -181,6 +182,7 @@ def _process_registry_entries(
         )
     else:
         json_path = export_records(records, config)
+    _write_missing_image_repair_report(records, config)
     if config.debug.enabled:
         _write_batch_diagnostic(records, config)
     if progress:
@@ -197,6 +199,7 @@ def process_sample(question_pdf: str | Path, config: AppConfig, mark_scheme_pdf:
     records = build_records_for_pdf(question_pdf, config, mark_scheme_pdf=mark_scheme_pdf)
     basename = _safe_basename(Path(question_pdf).stem)
     json_path = export_records(records, config, basename=f"{basename}_sample")
+    _write_missing_image_repair_report(records, config)
     if config.debug.enabled:
         _write_batch_diagnostic(records, config, basename=f"{basename}_sample")
     return PipelineResult(records, json_path, config.output.root_dir())
@@ -754,9 +757,32 @@ def _build_question_record(
             text_fidelity_status=text_fidelity_status,
             visual_reason_flags=visual_reason_flags,
         )
+        missing_image_reason = _missing_question_image_reason(
+            visual_required=visual_required,
+            visual_reason_flags=visual_reason_flags,
+            crop_diagnostics=render_result.crop_diagnostics,
+        )
+        if missing_image_reason:
+            validation_status = ValidationStatus.FAIL
+            validation_flags = sorted(set(validation_flags) | {"missing_image_detection_failure"})
+            flags = sorted(set(flags) | {"missing_image_detection_failure"})
+            render_result.crop_diagnostics["missing_image_reason"] = missing_image_reason
+            render_result.crop_diagnostics["missing_image_failure_metadata"] = {
+                **dict(render_result.crop_diagnostics.get("missing_image_failure_metadata") or {}),
+                "reason": missing_image_reason,
+                "hard_failure": True,
+                "visual_reason_flags": list(visual_reason_flags),
+            }
         question_crop_confidence = CropConfidence.LOW if render_result.crop_uncertain else CropConfidence.HIGH
         mark_scheme_image_path = _display_path(mark_scheme_image.image_path) if mark_scheme_image and mark_scheme_image.image_path else ""
         mark_scheme_crop_confidence = mark_scheme_image.crop_confidence if mark_scheme_image else ""
+        missing_mark_scheme_reason = ""
+        if mark_scheme_image and mark_scheme_image.missing_mark_scheme_reason:
+            missing_mark_scheme_reason = mark_scheme_image.missing_mark_scheme_reason
+        elif matched_mark_scheme and matched_mark_scheme.exists() and not mark_scheme_image_path:
+            missing_mark_scheme_reason = "segmentation_failure"
+        elif not matched_mark_scheme:
+            missing_mark_scheme_reason = "unmatched_mark_scheme"
         visual_curation_status = _derive_visual_curation_status(
             validation_status=validation_status,
             scope_quality_status=scope_quality_status,
@@ -860,7 +886,10 @@ def _build_question_record(
                 question_marks_total=mark_scheme_image.question_marks_total if mark_scheme_image else marks,
                 markscheme_marks_total=mark_scheme_image.markscheme_marks_total if mark_scheme_image else None,
                 markscheme_mapping_status=mark_scheme_image.mapping_status if mark_scheme_image else MappingStatus.FAIL,
-                markscheme_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "partial_question_block",
+                markscheme_failure_reason=mark_scheme_image.failure_reason if mark_scheme_image else "segmentation_failure",
+                markscheme_block_ids=mark_scheme_image.block_ids if mark_scheme_image else [],
+                markscheme_confidence_score=mark_scheme_image.confidence_score if mark_scheme_image else 0.0,
+                missing_mark_scheme_reason=missing_mark_scheme_reason,
                 validation_status=validation_status,
                 validation_flags=validation_flags,
                 scope_quality_status=scope_quality_status,
@@ -896,6 +925,9 @@ def _build_question_record(
                     "question_subparts": mark_scheme_image.question_subparts if mark_scheme_image else [],
                     "question_total_detected": mark_scheme_image.question_marks_total if mark_scheme_image else None,
                     "mark_scheme_total_detected": mark_scheme_image.markscheme_marks_total if mark_scheme_image else None,
+                    "mark_scheme_block_ids": mark_scheme_image.block_ids if mark_scheme_image else [],
+                    "mark_scheme_confidence_score": mark_scheme_image.confidence_score if mark_scheme_image else 0.0,
+                    "missing_mark_scheme_reason": missing_mark_scheme_reason,
                     "asset_identity": {
                         "question_id": mark_scheme_image.question_id if mark_scheme_image else "",
                         "paper_id": mark_scheme_image.paper_id if mark_scheme_image else "",
@@ -1305,6 +1337,120 @@ def _paper_total_focus(records: list[QuestionRecord]) -> dict[str, object]:
         "pages": pages,
         "reasons_by_question": reasons_by_question,
     }
+
+
+def _missing_question_image_reason(
+    *,
+    visual_required: bool,
+    visual_reason_flags: list[str],
+    crop_diagnostics: dict[str, Any],
+) -> str:
+    if not visual_required:
+        return ""
+    figure_like_flags = {
+        "contains_graph_or_diagram_prompt",
+        "contains_table_or_data_prompt",
+        "contains_inequality_or_region_prompt",
+    }
+    if not (set(visual_reason_flags) & figure_like_flags):
+        return ""
+    if int(crop_diagnostics.get("detected_figure_count") or 0) > 0:
+        return ""
+    return "detection_failure"
+
+
+def _write_missing_image_repair_report(records: list[QuestionRecord], config: AppConfig) -> Path:
+    report = build_missing_image_repair_report(records)
+    output_path = config.output.root_dir() / "audits" / "missing_image_repair_report.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    return write_atomic_json(report, output_path, sort_keys=True)
+
+
+def build_missing_image_repair_report(records: list[QuestionRecord]) -> dict[str, Any]:
+    initial_missing = sum(1 for record in records if _record_expected_figure(record) and not _record_has_detected_figure(record))
+    fallback_records = [
+        record
+        for record in records
+        if _record_has_detected_figure(record)
+        and (
+            "question_context_figure_inference_used" in set(record.review_flags)
+            or "ocr_hint_figure_regions" in _layout_warning_text(record)
+            or _diagnostic_flag(record, "question_context_figure_inference_used")
+        )
+    ]
+    remaining_missing = sum(1 for record in records if _record_missing_image_reason(record) == "detection_failure")
+    method_breakdown: dict[str, int] = {
+        "embedded_or_vector_graphic_regions": sum(1 for record in records if _record_has_detected_figure(record)),
+        "question_context_inference": sum(1 for record in records if _diagnostic_flag(record, "question_context_figure_inference_used")),
+        "ocr_hint_signals": sum(1 for record in records if _diagnostic_flag(record, "ocr_hint_figure_regions")),
+        "legacy_fallback": sum(1 for record in fallback_records if _is_legacy_record(record)),
+    }
+    legacy_records = [record for record in records if _is_legacy_record(record)]
+    modern_records = [record for record in records if not _is_legacy_record(record)]
+    return {
+        "schema_name": "exam_bank.missing_image_repair_report",
+        "schema_version": 1,
+        "initial_missing_images": initial_missing + len(fallback_records),
+        "final_missing_images": remaining_missing,
+        "detected_images_added_via_fallback": len(fallback_records),
+        "detection_success_rate_improvement": round(len(fallback_records) / max(1, initial_missing + len(fallback_records)), 6),
+        "detection_method_breakdown": method_breakdown,
+        "legacy_vs_modern_breakdown": {
+            "legacy": _missing_image_breakdown(legacy_records),
+            "modern": _missing_image_breakdown(modern_records),
+        },
+        "visual_coverage_acceptable": remaining_missing == 0,
+        "remaining_missing_images": [
+            {
+                "paper": record.paper_name,
+                "question_number": record.question_number,
+                "reason": _record_missing_image_reason(record),
+            }
+            for record in records
+            if _record_missing_image_reason(record)
+        ],
+    }
+
+
+def _missing_image_breakdown(records: list[QuestionRecord]) -> dict[str, int]:
+    expected = sum(1 for record in records if _record_expected_figure(record))
+    detected = sum(1 for record in records if _record_expected_figure(record) and _record_has_detected_figure(record))
+    missing = sum(1 for record in records if _record_missing_image_reason(record) == "detection_failure")
+    fallback = sum(1 for record in records if _diagnostic_flag(record, "question_context_figure_inference_used"))
+    return {
+        "expected_figure_questions": expected,
+        "detected_figure_questions": detected,
+        "fallback_detected_questions": fallback,
+        "remaining_missing_images": missing,
+        "improvement": fallback,
+    }
+
+
+def _record_expected_figure(record: QuestionRecord) -> bool:
+    return bool(record.visual_required and set(record.visual_reason_flags) & {"contains_graph_or_diagram_prompt", "contains_table_or_data_prompt", "contains_inequality_or_region_prompt"})
+
+
+def _record_has_detected_figure(record: QuestionRecord) -> bool:
+    return int(record.question_crop_diagnostics.get("detected_figure_count") or 0) > 0
+
+
+def _record_missing_image_reason(record: QuestionRecord) -> str:
+    return str(record.question_crop_diagnostics.get("missing_image_reason") or "")
+
+
+def _diagnostic_flag(record: QuestionRecord, flag: str) -> bool:
+    return flag in set(record.review_flags) or flag in set(record.question_crop_diagnostics.get("flags") or [])
+
+
+def _layout_warning_text(record: QuestionRecord) -> str:
+    return " ".join(str(flag) for flag in record.question_crop_diagnostics.get("flags") or [])
+
+
+def _is_legacy_record(record: QuestionRecord) -> bool:
+    try:
+        return int(str(record.year)[-2:]) < 17
+    except (TypeError, ValueError):
+        return bool(re.search(r"_(?:[msw])(?:0\d|1[0-6])_", str(record.source_pdf).lower()))
 
 
 def _record_confidence(classification_confidence: float, flags: list[str]) -> float:

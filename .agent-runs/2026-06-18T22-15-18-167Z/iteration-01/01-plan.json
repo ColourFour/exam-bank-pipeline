@@ -1,0 +1,45 @@
+{
+  "selected_goal": "Make asset-reference validation fail when question-bank canonical image references are absent from the asset manifest.",
+  "why_this_now": "The project objective prioritizes trustworthy canonical question and mark-scheme PNGs. The repo already has a reusable validate_asset_references gate, but it currently verifies that question-bank image paths resolve on disk without proving those same paths are indexed by asset_manifest.v1.json. A stale or incomplete manifest can therefore pass while downstream asset-id based consumers cannot reliably trace canonical images.",
+  "repo_evidence": [
+    ".agent-loop/BACKLOG.md lists manifest/schema validation and missing/broken image-reference detection as preferred bounded improvements.",
+    "scripts/validate_asset_references.py delegates to exam_bank.asset_manifest.validate_asset_references and is listed in .agent-loop/project-gates.md.",
+    "src/exam_bank/asset_manifest.py validates missing question-bank image files and missing manifest files, but does not compare question-bank image fields against manifest canonical_path values.",
+    "tests/test_asset_manifest_storage_audit.py already contains fixture coverage for successful asset manifest generation and validation."
+  ],
+  "files_likely_to_change": [
+    "tests/test_asset_manifest_storage_audit.py",
+    "src/exam_bank/asset_manifest.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/json/asset_manifest.v1.json",
+    "output/** canonical PNG assets",
+    "input/** source PDFs and canonical raw inputs"
+  ],
+  "acceptance_criteria": [
+    "validate_asset_references reports a deterministic error when any non-empty question-bank image field references a path that exists on disk but is missing from asset_manifest.v1.json.",
+    "The error includes the question_id, source field, and missing path so the stale manifest can be repaired without visual guessing.",
+    "Existing valid manifest/question-bank fixtures still pass.",
+    "No generated output under output/, data/, or input/ is modified."
+  ],
+  "test_expectations": [
+    "Add a fixture test that creates valid canonical question and mark-scheme PNG files, writes a deliberately incomplete asset manifest, and asserts validate_asset_references fails with missing_question_bank_manifest_path.",
+    "Run the targeted test file before implementation and expect the new test to fail.",
+    "Run the targeted test file after implementation and expect all tests in it to pass."
+  ],
+  "implementation_boundaries": [
+    "Do not change extraction, rendering, mark-scheme mapping, image alignment, or export generation behavior.",
+    "Do not add dependencies.",
+    "Do not relax existing missing-file, duplicate-id, or export asset-id validation.",
+    "Only add the minimal manifest path comparison needed by validate_asset_references."
+  ],
+  "repo_hygiene_risk": "The repo started dirty, including src/exam_bank/asset_manifest.py. This iteration is safe only if edits remain narrowly scoped and the final report distinguishes pre-existing changes from iteration changes.",
+  "rollback_plan": "Remove the new test from tests/test_asset_manifest_storage_audit.py and remove the manifest-path comparison helper/call from src/exam_bank/asset_manifest.py.",
+  "done_when": [
+    "01-plan.json, 02-test-plan.json, 03-implementation-report.json, and 04-audit-report.json exist under .agent-runs/2026-06-18T22-15-18-167Z/iteration-01/.",
+    "The new missing-manifest-path test fails before implementation and passes after implementation.",
+    "The relevant project gate for asset-reference validation passes or any failure is explicitly audited.",
+    "git status --short and git diff --stat have been run after the audit."
+  ]
+}

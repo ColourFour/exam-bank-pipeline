@@ -33,6 +33,9 @@ class MarkSchemeImageResult:
     markscheme_marks_total: int | None = None
     mapping_status: str = MappingStatus.FAIL
     failure_reason: str = ""
+    block_ids: list[str] = field(default_factory=list)
+    confidence_score: float = 0.0
+    missing_mark_scheme_reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -82,6 +85,21 @@ class MarkSchemeRow:
     mark_values: tuple[int, ...]
     standalone_total: int | None
     question_label: str | None
+
+
+@dataclass(frozen=True)
+class MarkSchemeBlock:
+    question_number: str
+    block_id: str
+    anchor: MarkSchemeAnchor
+    next_anchor: MarkSchemeAnchor | None
+    text: str
+    regions: list[MarkSchemeCropRegion]
+    mark_total: int | None
+    subparts: list[str] = field(default_factory=list)
+    confidence_score: float = 0.0
+    method: str = "legacy_question_block"
+    review_flags: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

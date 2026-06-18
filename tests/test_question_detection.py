@@ -10,6 +10,7 @@ from exam_bank.mark_schemes import (
     MarkSchemeRow,
     MarkSchemeTable,
     MarkSchemeWord,
+    _build_legacy_mark_scheme_blocks,
     _blocks_for_table_anchor_bounds,
     _detect_mark_scheme_tables,
     _detect_table_question_anchors,
@@ -1003,6 +1004,78 @@ def test_mark_scheme_header_requires_exact_marks_column() -> None:
     )
 
     assert _detect_mark_scheme_tables([layout], config) == {}
+
+
+def test_legacy_mark_scheme_blocks_segment_without_answer_table_header() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=1,
+            width=595,
+            height=842,
+            blocks=[
+                block(1, "Mark Scheme Notes", 80),
+                block(1, "9.8 or 9.81 instead of 10.", 160, x=72),
+            ],
+        ),
+        PageLayout(
+            page_number=2,
+            width=595,
+            height=842,
+            blocks=[
+                block(2, "Page 2 Mark Scheme Syllabus Paper", 38),
+                block(2, "1 Use the sine rule M1", 92, x=50),
+                block(2, "Obtain exact value A1 [3]", 128, x=85),
+                cell(2, "2", 146, x=116, width=12),
+                block(2, "2 (i) Substitute identity M1 [2]", 210, x=50),
+                block(2, "(ii) Solve the equation M1 A1 [3]", 250, x=70),
+                block(2, "3 (i) Expand expression B1 [1]", 330, x=50),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s08_ms_1.pdf",
+        layouts,
+        config,
+        ["1", "2", "3"],
+        question_marks={"1": 3, "2": 5, "3": 1},
+        question_subparts={"2": ["i", "ii"]},
+    )
+
+    assert sorted(blocks) == ["1", "2", "3"]
+    assert blocks["1"].block_id == "9709_s08_ms_1:q01"
+    assert "Use the sine rule" in blocks["1"].text
+    assert "Substitute identity" not in blocks["1"].text
+    assert blocks["2"].mark_total == 5
+    assert blocks["2"].subparts == ["i", "ii"]
+    assert blocks["2"].confidence_score > 0.7
+    assert all(block.regions for block in blocks.values())
+
+
+def test_legacy_mark_scheme_blocks_make_missing_questions_explicit() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "1 Differentiate correctly M1 A1 [2]", 100, x=50),
+            block(4, "3 Integrate correctly M1 A1 [2]", 200, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s10_ms_11.pdf",
+        [layout],
+        config,
+        ["1", "2", "3"],
+        question_marks={"1": 2, "2": 4, "3": 2},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "3"]
+    assert "2" not in blocks
 
 
 def test_mark_scheme_subpart_matching_keeps_3a_and_3b_separate() -> None:

@@ -6,12 +6,14 @@ from exam_bank.pipeline import (
     _derive_scope_quality_status,
     _derive_topic_trust_status,
     _expected_paper_total,
+    _missing_question_image_reason,
     _paper_total_check,
     _polluted_pass_signal_groups,
     _reconcile_paper_topics,
     _reconcile_question_mark_total_mismatches,
     _refine_validation_status,
     _should_trigger_paper_total_rescan,
+    build_missing_image_repair_report,
 )
 from exam_bank.trust import MappingStatus, PaperTotalStatus, RescanResult, ValidationStatus
 
@@ -76,6 +78,36 @@ def _record(
         question_level_subtopic="general",
         part_level_topics=[],
     )
+
+
+def test_visual_required_figure_without_detected_image_is_hard_failure_reason() -> None:
+    reason = _missing_question_image_reason(
+        visual_required=True,
+        visual_reason_flags=["contains_graph_or_diagram_prompt"],
+        crop_diagnostics={"detected_figure_count": 0},
+    )
+
+    assert reason == "detection_failure"
+
+
+def test_missing_image_repair_report_splits_legacy_and_modern_records() -> None:
+    legacy = _record(question_number="1", paper_family="pm1", topic="algebra", topic_confidence="high", combined_question_text="The diagram shows a sector.")
+    legacy.year = "2016"
+    legacy.visual_required = True
+    legacy.visual_reason_flags = ["contains_graph_or_diagram_prompt"]
+    legacy.question_crop_diagnostics = {"detected_figure_count": 1, "flags": ["question_context_figure_inference_used"]}
+    modern = _record(question_number="2", paper_family="pm1", topic="algebra", topic_confidence="high", combined_question_text="The diagram shows a sector.")
+    modern.year = "2019"
+    modern.visual_required = True
+    modern.visual_reason_flags = ["contains_graph_or_diagram_prompt"]
+    modern.question_crop_diagnostics = {"detected_figure_count": 0, "missing_image_reason": "detection_failure"}
+
+    report = build_missing_image_repair_report([legacy, modern])
+
+    assert report["detected_images_added_via_fallback"] == 1
+    assert report["final_missing_images"] == 1
+    assert report["legacy_vs_modern_breakdown"]["legacy"]["fallback_detected_questions"] == 1
+    assert report["legacy_vs_modern_breakdown"]["modern"]["remaining_missing_images"] == 1
 
 
 def test_reconciliation_reranks_weak_label_to_missing_supported_topic() -> None:

@@ -252,6 +252,9 @@ class MarkSchemeState:
     failure_reason: str
     structure_detected: dict[str, Any]
     total_detected: int | None
+    block_ids: list[str] = field(default_factory=list)
+    confidence_score: float = 0.0
+    missing_mark_scheme_reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -376,6 +379,9 @@ class QuestionRecord:
     markscheme_marks_total: int | None = None
     markscheme_mapping_status: str = ""
     markscheme_failure_reason: str = ""
+    markscheme_block_ids: list[str] = field(default_factory=list)
+    markscheme_confidence_score: float = 0.0
+    missing_mark_scheme_reason: str = ""
     validation_status: str = ""
     validation_flags: list[str] = field(default_factory=list)
     scope_quality_status: str = ""
@@ -539,6 +545,9 @@ class QuestionRecord:
             failure_reason=self.markscheme_failure_reason,
             structure_detected=dict(self.mark_scheme_structure_detected),
             total_detected=self.mark_scheme_total_detected,
+            block_ids=list(self.markscheme_block_ids),
+            confidence_score=self.markscheme_confidence_score,
+            missing_mark_scheme_reason=self.missing_mark_scheme_reason,
         )
 
     @property

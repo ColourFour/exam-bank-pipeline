@@ -1,0 +1,24 @@
+{
+  "plan_under_test": "Make asset-reference validation fail when question-bank canonical image references are absent from the asset manifest.",
+  "test_files_changed": [
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Added test_asset_reference_validation_fails_when_question_bank_path_missing_from_manifest. The fixture writes canonical question and mark-scheme PNG files, builds a manifest, removes the mark-scheme canonical_path from the manifest, then asserts validate_asset_references emits missing_question_bank_manifest_path with question_id, field, and path details."
+  ],
+  "expected_initial_failure": "Before implementation, the new test should fail because validate_asset_references only checks that question-bank image paths resolve on disk; it does not require those paths to be present in manifest canonical_path entries.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q"
+  ],
+  "what_passing_proves": [
+    "A question-bank image reference that exists on disk but is missing from asset_manifest.v1.json is treated as a validation failure.",
+    "The failure is actionable because it reports question_id, source field, and canonical path.",
+    "The existing happy-path asset manifest validation fixture still passes."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove the visible PNG content belongs to the correct question.",
+    "It does not prove mark-scheme crops are semantically paired with the question record.",
+    "It does not validate the full repository output dataset unless the project gate is also run against output/json/question_bank.json."
+  ],
+  "risk_of_bad_tests": "Low. The test uses real fixture files and the public validate_asset_references function, not mocks. It intentionally avoids generated output roots and only exercises a stale-manifest shape."
+}

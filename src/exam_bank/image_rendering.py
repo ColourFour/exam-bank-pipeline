@@ -243,13 +243,114 @@ def _detect_prompt_regions(
                 )
             )
 
+    context_regions, context_flags = _question_context_figure_regions(regions, span, layouts, config)
+    if context_regions:
+        regions.extend(context_regions)
+        flags.extend(context_flags)
+
     regions, overlap_flags = _remove_meaningful_region_overlaps(regions, config)
     regions, dedupe_flags = _dedupe_crop_regions(regions)
     regions, furniture_flags = _trim_vertical_furniture_from_regions(regions, layouts, config)
     flags.extend(overlap_flags)
     flags.extend(dedupe_flags)
     flags.extend(furniture_flags)
+    if _span_has_figure_prompt(span) and not any(region.graphics for region in regions):
+        flags.extend(["missing_image_detection_failure", "crop_uncertain"])
     return regions, sorted(set(flags))
+
+
+def _question_context_figure_regions(
+    regions: list[CropRegion],
+    span: QuestionSpan,
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> tuple[list[CropRegion], list[str]]:
+    if any(region.graphics for region in regions):
+        return [], []
+    if not _span_has_figure_prompt(span):
+        return [], []
+
+    inferred: list[CropRegion] = []
+    flags: list[str] = []
+    for page_number in span.page_numbers:
+        layout = _layout_by_number(layouts, page_number)
+        span_blocks = [block for block in span.blocks if block.page_number == page_number]
+        text_box = _union_boxes([block.bbox for block in span_blocks]) if span_blocks else None
+        candidates = _context_graphics_for_question(text_box, span, layout, config)
+        if not candidates:
+            continue
+        figure_box = _trim_crop_furniture_edges(
+            _clamp_crop_to_prompt_area(
+                _union_boxes(candidates).padded(config.detection.crop_padding, layout.width, layout.height),
+                layout,
+                config,
+            ),
+            layout,
+            config,
+        )
+        inferred.append(
+            CropRegion(
+                page_number=page_number,
+                bbox=figure_box,
+                text_blocks=[
+                    block
+                    for block in span_blocks
+                    if _block_belongs_to_figure(block, figure_box, config) or _is_diagram_label_only_block(block, span, config)
+                ],
+                graphics=candidates,
+                original_bbox=_union_boxes(candidates),
+                region_kind="context_inferred_figure",
+                figure_bbox=figure_box,
+                text_bbox=text_box,
+            )
+        )
+        flags.append("question_context_figure_inference_used")
+    return inferred, sorted(set(flags))
+
+
+def _context_graphics_for_question(
+    text_box: BoundingBox | None,
+    span: QuestionSpan,
+    layout: PageLayout,
+    config: AppConfig,
+) -> list[BoundingBox]:
+    answer_rule_bands = _answer_rule_y_bands(layout)
+    top = span.start_y if layout.page_number == span.start_page else config.detection.crop_top_margin
+    bottom = span.end_y if layout.page_number == span.end_page else layout.height - config.detection.crop_bottom_margin
+    search_radius = max(config.detection.prompt_graphic_lookahead * 1.35, 240.0)
+    if text_box is not None:
+        top = max(config.detection.crop_top_margin, min(top, text_box.y0 - search_radius))
+        bottom = min(layout.height - config.detection.crop_bottom_margin, max(bottom, text_box.y1 + search_radius))
+        left = max(config.detection.crop_left_margin, text_box.x0 - search_radius * 0.6)
+        right = min(layout.width - config.detection.crop_right_margin, text_box.x1 + search_radius * 0.6)
+    else:
+        left = config.detection.crop_left_margin
+        right = layout.width - config.detection.crop_right_margin
+
+    candidates: list[BoundingBox] = []
+    for graphic in layout.graphics:
+        furniture_label = _page_furniture_box_label(graphic, layout, config, answer_rule_bands)
+        if furniture_label:
+            continue
+        if _is_formula_rule_box(graphic, layout):
+            continue
+        center_y = (graphic.y0 + graphic.y1) / 2
+        center_x = (graphic.x0 + graphic.x1) / 2
+        in_vertical_search = top <= center_y <= bottom
+        adjacent_margin = text_box is not None and graphic.y1 >= text_box.y0 - search_radius and graphic.y0 <= text_box.y1 + search_radius
+        in_horizontal_search = left <= center_x <= right or adjacent_margin
+        if in_vertical_search and in_horizontal_search:
+            candidates.append(graphic)
+    return _dominant_graphic_cluster(candidates)
+
+
+def _span_has_figure_prompt(span: QuestionSpan) -> bool:
+    text = _clean_text_line(span.combined_text).lower()
+    if not text:
+        return False
+    return bool(
+        re.search(r"\b(?:figure|fig\.?|diagram|graph|curve|sketch|draw|shown|sector|circle|histogram|scatter diagram|box plot|table)\b", text)
+    )
 
 
 def _single_page_union_regions(
@@ -1578,6 +1679,8 @@ def _crop_diagnostics(
     identity: PaperIdentity,
     asset: AssetPath,
 ) -> dict[str, object]:
+    detected_figure_regions = [region for region in regions if region.graphics or region.figure_bbox is not None or "figure" in region.region_kind]
+    missing_image_reason = "detection_failure" if _span_has_figure_prompt(span) and not detected_figure_regions else ""
     return {
         "source_file": str(pdf_path),
         "question_number": span.question_number,
@@ -1588,6 +1691,23 @@ def _crop_diagnostics(
         "flags": sorted(set(flags)),
         "merged_blocks": sum(len(region.text_blocks) for region in regions),
         "duplicate_visual_blocks_removed": sum(region.duplicate_graphics_removed for region in regions),
+        "detected_figure_count": len(detected_figure_regions),
+        "missing_image_reason": missing_image_reason,
+        "missing_image_failure_metadata": (
+            {
+                "reason": missing_image_reason,
+                "question_pages": list(span.page_numbers),
+                "detection_methods_attempted": [
+                    "embedded_image_objects",
+                    "vector_graphic_regions",
+                    "bbox_detected_diagrams",
+                    "ocr_hint_signals",
+                    "question_context_inference",
+                ],
+            }
+            if missing_image_reason
+            else {}
+        ),
         "excluded_boilerplate_reasons": sorted(flag.replace("excluded_boilerplate_", "") for flag in flags if flag.startswith("excluded_boilerplate_")),
         "regions": [
             {

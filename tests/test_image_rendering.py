@@ -5,12 +5,16 @@ import pytest
 from exam_bank.config import AppConfig
 from exam_bank.image_rendering import (
     CropRegion,
+    _crop_diagnostics,
     _dedupe_crop_regions,
+    _detect_prompt_regions,
     _graphics_for_segment,
     _same_page_diagram_union_regions,
     _single_page_union_regions,
     _trim_vertical_furniture_from_regions,
 )
+from exam_bank.core.asset_paths import AssetPath
+from exam_bank.core.paper_identity import PaperIdentity
 from exam_bank.models import BoundingBox, PageLayout, QuestionSpan, TextBlock
 
 
@@ -307,3 +311,72 @@ def test_diagram_union_keeps_graph_labels_with_figure_and_removes_stale_fragment
     assert len([region for region in merged if region.region_kind == "page_diagram_union"]) == 1
     assert "page_diagram_union_used" in flags
     assert any("8 y = a cos" in block.text for region in merged for block in region.text_blocks)
+
+
+def test_question_context_infers_figure_below_diagram_prompt() -> None:
+    config = AppConfig()
+    prompt = text_block("3 The diagram shows a sector. [5]", 180, x=60, width=250)
+    diagram = BoundingBox(120, 90, 430, 150)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s16_qp_12.pdf"),
+        paper_name="9709_s16_qp_12",
+        question_number="3",
+        start_page=1,
+        start_y=170,
+        end_page=1,
+        end_y=380,
+        page_numbers=[1],
+        blocks=[prompt],
+        full_question_label="3",
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[diagram])
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert any(region.region_kind == "context_inferred_figure" for region in regions)
+    assert "question_context_figure_inference_used" in flags
+
+
+def test_missing_figure_prompt_is_marked_detection_failure() -> None:
+    config = AppConfig()
+    prompt = text_block("4 The diagram shows a sector. [5]", 110, x=60, width=250)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s16_qp_12.pdf"),
+        paper_name="9709_s16_qp_12",
+        question_number="4",
+        start_page=1,
+        start_y=100,
+        end_page=1,
+        end_y=240,
+        page_numbers=[1],
+        blocks=[prompt],
+        full_question_label="4",
+    )
+    identity = PaperIdentity(
+        syllabus="9709",
+        subject_family="pm1",
+        year=2016,
+        session_code="s16",
+        canonical_session="summer16",
+        component="12",
+        paper_id="12summer16",
+        question_id="12summer16_q04",
+    )
+    asset = AssetPath(
+        kind="question_image",
+        paper_id="12summer16",
+        question_id="12summer16_q04",
+        component="12",
+        canonical_path="pm1/pm1_2016_s16_12_qp_q04_question.png",
+        absolute_path=Path("/tmp/12summer16_q04.png"),
+    )
+    regions, flags = _detect_prompt_regions(
+        test_span,
+        [PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[])],
+        config,
+    )
+
+    diagnostics = _crop_diagnostics(Path("9709_s16_qp_12.pdf"), test_span, regions, flags, identity=identity, asset=asset)
+
+    assert diagnostics["detected_figure_count"] == 0
+    assert diagnostics["missing_image_reason"] == "detection_failure"

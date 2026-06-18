@@ -1,0 +1,36 @@
+{
+  "summary": "Added a stale-manifest guard to validate_asset_references so non-empty question-bank image fields must also appear in asset_manifest.v1.json canonical_path entries when a manifest is loaded.",
+  "files_changed": [
+    "src/exam_bank/asset_manifest.py",
+    "tests/test_asset_manifest_storage_audit.py"
+  ],
+  "files_created": [
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-01/run-notes.md",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-01/01-plan.json",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-01/02-test-plan.json",
+    ".agent-runs/2026-06-18T22-15-18-167Z/iteration-01/03-implementation-report.json"
+  ],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (before implementation; expected failure)",
+    ".venv/bin/python -m pytest tests/test_asset_manifest_storage_audit.py -q (after implementation)",
+    ".venv/bin/python scripts/validate_asset_references.py",
+    ".venv/bin/python -m pytest tests/test_audit.py tests/test_output_contract.py tests/test_asterion_export.py tests/test_output_management.py tests/test_question_bank_readiness_audit.py tests/test_asset_manifest_storage_audit.py -q"
+  ],
+  "test_results": "The new targeted test failed before implementation with report['ok'] still true. After implementation, tests/test_asset_manifest_storage_audit.py passed: 4 passed. The targeted output-contract/readiness/audit pytest gate passed: 59 passed, 5 warnings. The live scripts/validate_asset_references.py gate failed because output/json/asset_manifest.v1.json and several output/asterion/topic-routing validation inputs are missing in the current workspace.",
+  "acceptance_criteria_status": [
+    "Satisfied: validate_asset_references emits missing_question_bank_manifest_path when a question-bank image path exists on disk but is absent from the loaded manifest canonical_path set.",
+    "Satisfied: the new error includes question_id, field, and path details.",
+    "Satisfied: existing valid manifest/question-bank fixture still passes.",
+    "Satisfied: no output/, data/, or input/ generated artifacts were modified by this iteration."
+  ],
+  "deviations_from_plan": [
+    "The live asset-reference project gate could not pass because required generated validation inputs are absent from the repo workspace.",
+    "src/exam_bank/asset_manifest.py already had pre-existing dirty changes before this iteration; the iteration worked in that file without reverting them."
+  ],
+  "repo_hygiene_notes": "Loop artifacts were written only under .agent-runs/2026-06-18T22-15-18-167Z/iteration-01/. The new-run script also created .agent-runs/latest, run-state.json, and empty iteration directories as part of the configured loop setup. No dependency or generated output changes were added.",
+  "known_risks": [
+    "The validator now emits one missing_question_bank_manifest_path error per missing question-bank field occurrence; the same missing path can appear through canonical and legacy/list fields.",
+    "The full generated-output validation gate remains blocked until the expected asset manifest and Asterion/topic-routing output files are present or intentionally made optional."
+  ]
+}

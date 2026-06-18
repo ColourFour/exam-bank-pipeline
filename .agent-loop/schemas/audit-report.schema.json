@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "required": [
+    "verdict",
+    "acceptance_criteria_review",
+    "test_quality_review",
+    "repo_hygiene_review",
+    "scope_creep_review",
+    "regression_risks",
+    "commands_run",
+    "evidence",
+    "required_fixes",
+    "recommended_next_planner_focus"
+  ],
+  "properties": {
+    "verdict": {
+      "enum": [
+        "pass",
+        "pass_with_risks",
+        "fail"
+      ]
+    },
+    "acceptance_criteria_review": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_quality_review": {
+      "type": "string"
+    },
+    "repo_hygiene_review": {
+      "type": "string"
+    },
+    "scope_creep_review": {
+      "type": "string"
+    },
+    "regression_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commands_run": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_fixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_next_planner_focus": {
+      "type": "string"
+    }
+  }
+}

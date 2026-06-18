@@ -23,12 +23,22 @@ IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"}
 
 def asset_id_for_record(kind: str, record: dict[str, Any], path: str, *, occurrence: int = 0) -> str:
     paper = _slug(str(record.get("paper") or "unknown_paper"))
-    question_id = _slug(str(record.get("question_id") or "unknown_question"))
-    base = f"{kind}:{paper}:{question_id}"
+    question_id_value = str(record.get("question_id") or "").strip()
+    if path and not question_id_value:
+        raise ValueError("Image assets cannot be persisted without PaperIdentity.question_id binding.")
+    question_id = _slug(question_id_value or "unknown_question")
+    base = deterministic_asset_id(kind, paper, question_id, occurrence=0)
     if occurrence:
-        return f"{base}:{occurrence + 1}"
+        return deterministic_asset_id(kind, paper, question_id, occurrence=occurrence)
     if paper == "unknown_paper" or question_id == "unknown_question":
         return f"{base}:{hashlib.sha256(path.encode('utf-8')).hexdigest()[:12]}"
+    return base
+
+
+def deterministic_asset_id(kind: str, paper_id: str, question_id: str, *, occurrence: int = 0) -> str:
+    base = f"{kind}:{_slug(str(paper_id or 'unknown_paper'))}:{_slug(str(question_id or 'unknown_question'))}"
+    if occurrence:
+        return f"{base}:{occurrence + 1}"
     return base
 
 
@@ -182,6 +192,14 @@ def validate_asset_references(
                     source=str(question_bank_path),
                     detail={"question_id": question.get("question_id"), "field": field},
                 )
+                if manifest:
+                    _check_manifest_path(
+                        value,
+                        manifest_paths,
+                        errors,
+                        str(question_bank_path),
+                        {"question_id": question.get("question_id"), "field": field},
+                    )
 
     if asterion_catalog:
         _check_asterion_asset_payload(
@@ -500,6 +518,21 @@ def _check_asset_id(value: Any, manifest_ids: set[str], errors: list[dict[str, A
         return
     if asset_id not in manifest_ids:
         errors.append(_issue("unresolved_export_asset_id", source, "Export asset_id does not resolve through asset manifest.", {"owner_id": owner_id, "field": field, "asset_id": asset_id}))
+
+
+def _check_manifest_path(
+    value: Any,
+    manifest_paths: set[str],
+    errors: list[dict[str, Any]],
+    source: str,
+    detail: dict[str, Any],
+) -> None:
+    path = str(value or "").strip()
+    if not path or path in manifest_paths:
+        return
+    payload = dict(detail)
+    payload["path"] = path
+    errors.append(_issue("missing_question_bank_manifest_path", source, "Question-bank image path is not indexed by asset manifest.", payload))
 
 
 def _noncanonical_export_image_duplicates(*, root: Path, base: Path, canonical_sha_by_path: dict[str, str]) -> list[dict[str, Any]]:

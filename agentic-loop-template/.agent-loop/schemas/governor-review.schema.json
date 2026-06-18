@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "required": [
+    "cycle_verdict",
+    "actual_improvements",
+    "fake_progress",
+    "bloat_introduced",
+    "cleanup_required",
+    "agent_failure_patterns",
+    "planner_policy_updates",
+    "backlog_updates",
+    "next_cycle_focus"
+  ],
+  "properties": {
+    "cycle_verdict": {
+      "enum": [
+        "continue",
+        "continue_after_cleanup",
+        "pause_and_repair"
+      ]
+    },
+    "actual_improvements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fake_progress": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bloat_introduced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cleanup_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "agent_failure_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "planner_policy_updates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "backlog_updates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_cycle_focus": {
+      "type": "string"
+    }
+  }
+}

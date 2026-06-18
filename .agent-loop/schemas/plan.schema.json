@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "required": [
+    "selected_goal",
+    "why_this_now",
+    "repo_evidence",
+    "files_likely_to_change",
+    "files_protected",
+    "acceptance_criteria",
+    "test_expectations",
+    "implementation_boundaries",
+    "repo_hygiene_risk",
+    "rollback_plan",
+    "done_when"
+  ],
+  "properties": {
+    "selected_goal": {
+      "type": "string"
+    },
+    "why_this_now": {
+      "type": "string"
+    },
+    "repo_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_likely_to_change": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_protected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_expectations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "implementation_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repo_hygiene_risk": {
+      "type": "string"
+    },
+    "rollback_plan": {
+      "type": "string"
+    },
+    "done_when": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "iterations_per_governor_review": 5,
+  "max_files_changed_per_iteration": 8,
+  "max_new_files_per_iteration": 4,
+  "allow_dependency_changes": false,
+  "require_clean_git_status_before_iteration": true,
+  "require_tests_fail_before_coder": true,
+  "require_auditor_pass_before_next_iteration": false,
+  "artifact_dir": ".agent-runs",
+  "agent_prompt_dir": ".agent-loop/agents",
+  "planner_policy": ".agent-loop/config/planner-purpose.md"
+}

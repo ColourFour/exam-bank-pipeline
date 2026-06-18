@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "required": [
+    "plan_under_test",
+    "test_files_changed",
+    "tests_added_or_changed",
+    "expected_initial_failure",
+    "commands_to_run",
+    "what_passing_proves",
+    "what_passing_does_not_prove",
+    "risk_of_bad_tests"
+  ],
+  "properties": {
+    "plan_under_test": {
+      "type": "string"
+    },
+    "test_files_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests_added_or_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_initial_failure": {
+      "type": "string"
+    },
+    "commands_to_run": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "what_passing_proves": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "what_passing_does_not_prove": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risk_of_bad_tests": {
+      "type": "string"
+    }
+  }
+}

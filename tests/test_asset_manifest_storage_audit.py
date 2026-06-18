@@ -66,6 +66,70 @@ def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: P
     assert report["ok"] is True
 
 
+def test_asset_reference_validation_fails_when_question_bank_path_missing_from_manifest(tmp_path: Path) -> None:
+    output = tmp_path / "output"
+    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
+    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    bank_path = output / "json" / "question_bank.json"
+    bank = _question_bank()
+    _write_json(bank_path, bank)
+
+    manifest_path = write_asset_manifest(bank_path, artifact_root=output, base_dir=tmp_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["assets"] = [
+        asset
+        for asset in manifest["assets"]
+        if asset["canonical_path"] != "p1/12spring21/mark_scheme/q01.png"
+    ]
+    manifest["asset_count"] = len(manifest["assets"])
+    _write_json(manifest_path, manifest)
+
+    _write_json(
+        output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json",
+        {"schema_name": "asterion.exam_bank_catalog", "record_count": 0, "questions": []},
+    )
+    _write_json(
+        output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
+        {"schema_name": "asterion.question_bank", "record_count": 0, "questions": []},
+    )
+    _write_json(
+        output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json",
+        {"schema_name": "asterion.content_lab_candidates", "record_count": 0, "candidates": []},
+    )
+    _write_json(
+        output / "json" / "question_bank.topic_routing.v1.json",
+        {
+            "schema_name": "exam_bank.topic_routing_sidecar",
+            "schema_version": 1,
+            "record_count": 1,
+            "records": {"12spring21_q01": {"review_required": True}},
+        },
+    )
+
+    report = validate_asset_references(
+        question_bank_path=bank_path,
+        asset_manifest_path=manifest_path,
+        asterion_catalog_path=output / "asterion" / "exports" / "latest" / "asterion_exam_bank_catalog_v1.json",
+        asterion_path=output / "asterion" / "exports" / "latest" / "asterion_question_bank_v1.json",
+        content_lab_path=output / "asterion" / "exports" / "latest" / "asterion_content_lab_candidates_v1.json",
+        topic_routing_path=output / "json" / "question_bank.topic_routing.v1.json",
+        artifact_root=output,
+        project_root=tmp_path,
+    )
+
+    assert report["ok"] is False
+    assert {
+        "code": "missing_question_bank_manifest_path",
+        "source": str(bank_path),
+        "message": "Question-bank image path is not indexed by asset manifest.",
+        "detail": {
+            "question_id": "12spring21_q01",
+            "field": "canonical_mark_scheme_artifact",
+            "path": "p1/12spring21/mark_scheme/q01.png",
+        },
+    } in report["errors"]
+
+
 def test_storage_audit_is_deterministic_and_quarantines_noncanonical_duplicates(tmp_path: Path) -> None:
     canonical = tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png"
     duplicate = tmp_path / "output" / "candidates" / "ocr" / "run1" / "p1" / "12spring21" / "questions" / "q01.png"

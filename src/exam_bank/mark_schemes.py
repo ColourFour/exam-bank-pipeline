@@ -13,6 +13,7 @@ from .identifiers import normalize_question_id, parent_question_id
 from .mark_scheme_models import (
     HeaderGeometry,
     MarkSchemeAnchor,
+    MarkSchemeBlock,
     MarkSchemeCropRegion,
     MarkSchemeImageResult,
     MarkSchemeRow,
@@ -39,7 +40,18 @@ def extract_mark_scheme_answers(
     tables = _detect_mark_scheme_tables(layouts, config, words)
     anchors = _detect_table_question_anchors(layouts, tables, config, expected_numbers, words)
     if not anchors:
-        return {}
+        return {
+            number: block.text
+            for number, block in _build_legacy_mark_scheme_blocks(
+                mark_scheme_pdf,
+                layouts,
+                config,
+                expected_numbers,
+                question_marks={},
+                question_subparts={},
+            ).items()
+            if block.text
+        }
     answers: dict[str, str] = {}
     ordered = sorted(anchors, key=lambda item: (item.page_number, item.y0))
     for number in expected_numbers or [anchor.question_number for anchor in ordered]:
@@ -94,23 +106,15 @@ def render_mark_scheme_images(
     tables = _detect_mark_scheme_tables(layouts, config, words)
     anchors = _detect_table_question_anchors(layouts, tables, config, expected_numbers, words)
     if not tables or not anchors:
-        return {
-            number: MarkSchemeImageResult(
-                question_number=number,
-                **_mark_scheme_identity_fields(identities.get(normalize_question_id(number)), config),
-                crop_confidence=CropConfidence.LOW,
-                mapping_method="table_row_block",
-                table_detected=False,
-                mapping_status=MappingStatus.FAIL,
-                failure_reason="invalid_table_header",
-                review_flags=[
-                    "markscheme_image_missing",
-                    "markscheme_no_valid_answer_table",
-                    "markscheme_answer_table_header_missing",
-                ],
-            )
-            for number in expected_numbers
-        }
+        return _render_legacy_mark_scheme_images(
+            mark_scheme_pdf,
+            config,
+            expected_numbers,
+            question_marks=question_marks,
+            question_subparts=question_subparts,
+            identities=identities,
+            no_blocks_failure_reason="segmentation_failure",
+        )
 
     output: dict[str, MarkSchemeImageResult] = {}
     _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
@@ -131,6 +135,7 @@ def render_mark_scheme_images(
                     question_marks_total=question_marks.get(canonical_number),
                     mapping_status=MappingStatus.FAIL,
                     failure_reason="identity_unresolved",
+                    missing_mark_scheme_reason="identity_unresolved",
                     review_flags=["markscheme_image_missing", "identity_unresolved", "markscheme_asset_not_emitted"],
                 )
                 continue
@@ -153,7 +158,8 @@ def render_mark_scheme_images(
                     question_subparts=question_subparts.get(canonical_number, []),
                     question_marks_total=question_marks.get(canonical_number),
                     mapping_status=MappingStatus.FAIL,
-                    failure_reason="partial_question_block",
+                    failure_reason="segmentation_failure",
+                    missing_mark_scheme_reason="segmentation_failure",
                     review_flags=["markscheme_image_missing", "markscheme_no_row_for_question"],
                     nearby_anchors=[item.question_number for item in ordered_anchors[:8]],
                 )
@@ -205,6 +211,9 @@ def render_mark_scheme_images(
                     markscheme_marks_total=markscheme_marks_total,
                     mapping_status=MappingStatus.FAIL,
                     failure_reason=failure_reason or "partial_question_block",
+                    block_ids=[_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number)] if anchor else [],
+                    confidence_score=0.35,
+                    missing_mark_scheme_reason="segmentation_failure",
                 )
                 continue
 
@@ -240,6 +249,9 @@ def render_mark_scheme_images(
                     markscheme_marks_total=markscheme_marks_total,
                     mapping_status=MappingStatus.FAIL,
                     failure_reason=failure_reason or "partial_question_block",
+                    block_ids=[_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number)] if anchor else [],
+                    confidence_score=0.45,
+                    missing_mark_scheme_reason="segmentation_failure",
                 )
                 continue
 
@@ -267,6 +279,8 @@ def render_mark_scheme_images(
                     markscheme_marks_total=markscheme_marks_total,
                     mapping_status=MappingStatus.FAIL,
                     failure_reason=failure_reason,
+                    block_ids=[_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number)],
+                    confidence_score=_table_mark_scheme_confidence_score(confidence, failure_reason),
                 )
                 continue
 
@@ -291,6 +305,8 @@ def render_mark_scheme_images(
                 question_marks_total=question_marks_total,
                 markscheme_marks_total=markscheme_marks_total,
                 mapping_status=MappingStatus.PASS,
+                block_ids=[_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number)],
+                confidence_score=_table_mark_scheme_confidence_score(confidence, ""),
             )
 
     found = set(output)
@@ -305,7 +321,8 @@ def render_mark_scheme_images(
                 question_subparts=question_subparts.get(number, []),
                 question_marks_total=question_marks.get(number),
                 mapping_status=MappingStatus.FAIL,
-                failure_reason="partial_question_block",
+                failure_reason="segmentation_failure",
+                missing_mark_scheme_reason="segmentation_failure",
                 review_flags=["markscheme_image_missing"],
             )
     return output
@@ -411,6 +428,396 @@ def _detect_mark_scheme_starts(
                     seen.add(number)
             index += 1
     return starts
+
+
+def _render_legacy_mark_scheme_images(
+    mark_scheme_pdf: str | Path,
+    config: AppConfig,
+    expected_numbers: list[str],
+    *,
+    question_marks: dict[str, int | None],
+    question_subparts: dict[str, list[str]],
+    identities: dict[str, PaperIdentity],
+    no_blocks_failure_reason: str,
+) -> dict[str, MarkSchemeImageResult]:
+    try:
+        import fitz
+    except ImportError as exc:
+        raise RuntimeError("PyMuPDF is required for legacy mark-scheme image export.") from exc
+    quiet_mupdf(fitz)
+
+    mark_scheme_pdf = Path(mark_scheme_pdf)
+    layouts = extract_pdf_layout(mark_scheme_pdf, config)
+    blocks = _build_legacy_mark_scheme_blocks(
+        mark_scheme_pdf,
+        layouts,
+        config,
+        expected_numbers,
+        question_marks=question_marks,
+        question_subparts=question_subparts,
+    )
+    if blocks:
+        _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
+
+    ordered_anchors = [block.anchor for block in sorted(blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))]
+    output: dict[str, MarkSchemeImageResult] = {}
+    with fitz.open(mark_scheme_pdf) as doc:
+        rendered_pages = {}
+        for number in expected_numbers:
+            canonical_number = normalize_question_id(number)
+            identity = identities.get(canonical_number)
+            identity_fields = _mark_scheme_identity_fields(identity, config)
+            question_subpart_values = question_subparts.get(canonical_number, [])
+            question_marks_total = question_marks.get(canonical_number)
+            block = blocks.get(canonical_number)
+            if identity is None:
+                output[number] = MarkSchemeImageResult(
+                    question_number=number,
+                    crop_confidence=CropConfidence.LOW,
+                    mapping_method="legacy_question_block",
+                    table_detected=False,
+                    question_subparts=question_subpart_values,
+                    question_marks_total=question_marks_total,
+                    mapping_status=MappingStatus.FAIL,
+                    failure_reason="identity_unresolved",
+                    missing_mark_scheme_reason="identity_unresolved",
+                    review_flags=["markscheme_image_missing", "identity_unresolved", "markscheme_asset_not_emitted"],
+                )
+                continue
+            if block is None:
+                output[number] = MarkSchemeImageResult(
+                    question_number=number,
+                    **identity_fields,
+                    crop_confidence=CropConfidence.LOW,
+                    mapping_method="legacy_question_block",
+                    table_detected=False,
+                    question_subparts=question_subpart_values,
+                    question_marks_total=question_marks_total,
+                    mapping_status=MappingStatus.FAIL,
+                    failure_reason=no_blocks_failure_reason,
+                    missing_mark_scheme_reason="segmentation_failure",
+                    review_flags=[
+                        "markscheme_image_missing",
+                        "markscheme_no_legacy_question_block",
+                        "markscheme_segmentation_failure",
+                    ],
+                )
+                continue
+
+            flags = list(block.review_flags)
+            output_path, debug_paths = _render_mark_scheme_crops(
+                doc,
+                fitz,
+                mark_scheme_pdf,
+                canonical_number,
+                identity,
+                block.regions,
+                flags,
+                rendered_pages,
+                layouts,
+                {},
+                ordered_anchors,
+                config,
+            )
+            if output_path is None:
+                output[number] = MarkSchemeImageResult(
+                    question_number=number,
+                    **identity_fields,
+                    markscheme_question_number=canonical_number,
+                    crop_confidence=CropConfidence.LOW,
+                    mapping_method=block.method,
+                    table_detected=False,
+                    detected_anchor_pages=[block.anchor.page_number],
+                    nearby_anchors=_nearby_anchor_labels(ordered_anchors, block.anchor),
+                    debug_paths=debug_paths,
+                    review_flags=sorted(set(flags + ["markscheme_image_missing"])),
+                    question_subparts=question_subpart_values,
+                    markscheme_subparts=block.subparts,
+                    question_marks_total=question_marks_total,
+                    markscheme_marks_total=block.mark_total,
+                    mapping_status=MappingStatus.FAIL,
+                    failure_reason=no_blocks_failure_reason,
+                    block_ids=[block.block_id],
+                    confidence_score=block.confidence_score,
+                    missing_mark_scheme_reason="segmentation_failure",
+                )
+                continue
+
+            output[number] = MarkSchemeImageResult(
+                question_number=number,
+                image_path=output_path,
+                **identity_fields,
+                page_numbers=[region.page_number for region in block.regions],
+                markscheme_question_number=canonical_number,
+                crop_confidence=_mark_scheme_crop_confidence(block.regions, layouts, flags),
+                mapping_method=block.method,
+                table_detected=False,
+                detected_anchor_pages=[block.anchor.page_number],
+                nearby_anchors=_nearby_anchor_labels(ordered_anchors, block.anchor),
+                debug_paths=debug_paths,
+                review_flags=sorted(set(flags)),
+                table_header_ok=False,
+                continuation_rows_included=any(region.continuation_rows_included for region in block.regions),
+                question_subparts=question_subpart_values,
+                markscheme_subparts=block.subparts,
+                question_marks_total=question_marks_total,
+                markscheme_marks_total=block.mark_total,
+                mapping_status=MappingStatus.PASS,
+                block_ids=[block.block_id],
+                confidence_score=block.confidence_score,
+            )
+    return output
+
+
+def _build_legacy_mark_scheme_blocks(
+    mark_scheme_pdf: str | Path,
+    layouts: list[PageLayout],
+    config: AppConfig,
+    expected_numbers: list[str] | None,
+    *,
+    question_marks: dict[str, int | None],
+    question_subparts: dict[str, list[str]],
+) -> dict[str, MarkSchemeBlock]:
+    expected = [normalize_question_id(number) for number in (expected_numbers or []) if normalize_question_id(number)]
+    anchors = _detect_legacy_mark_scheme_anchors(layouts, config, expected)
+    blocks: dict[str, MarkSchemeBlock] = {}
+    for index, anchor in enumerate(anchors):
+        canonical_number = parent_question_id(anchor.question_number)
+        if expected and canonical_number not in expected:
+            continue
+        next_anchor = anchors[index + 1] if index + 1 < len(anchors) else None
+        start = _question_start_from_mark_scheme_anchor(anchor, index)
+        next_start = _question_start_from_mark_scheme_anchor(next_anchor, index + 1) if next_anchor else None
+        regions, flags = _mark_scheme_regions_for_start(layouts, start, next_start, config)
+        text_blocks = _blocks_for_legacy_anchor_bounds(layouts, anchor, next_anchor, config)
+        text = "\n".join(block.text for block in text_blocks if block.text.strip()).strip()
+        mark_total = _legacy_mark_total_from_text(text, question_marks.get(canonical_number))
+        subparts = _legacy_subparts_from_text(text)
+        if question_marks.get(canonical_number) is not None and mark_total is not None and mark_total != question_marks.get(canonical_number):
+            flags.append("legacy_mark_total_mismatch_review")
+        if question_subparts.get(canonical_number) and subparts and any(
+            part not in subparts for part in question_subparts.get(canonical_number, [])
+        ):
+            flags.append("legacy_subpart_mismatch_review")
+        if not regions:
+            flags.append("markscheme_image_missing")
+        blocks[canonical_number] = MarkSchemeBlock(
+            question_number=canonical_number,
+            block_id=_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number),
+            anchor=anchor,
+            next_anchor=next_anchor,
+            text=text,
+            regions=regions,
+            mark_total=mark_total,
+            subparts=subparts,
+            confidence_score=_legacy_confidence_score(
+                regions=regions,
+                text=text,
+                mark_total=mark_total,
+                expected_total=question_marks.get(canonical_number),
+                subparts=subparts,
+                expected_subparts=question_subparts.get(canonical_number, []),
+                flags=flags,
+            ),
+            review_flags=sorted(set(["legacy_markscheme_segmentation", "markscheme_relaxed_anchor_detection", *flags])),
+        )
+    return blocks
+
+
+def _question_start_from_mark_scheme_anchor(anchor: MarkSchemeAnchor | None, index: int) -> QuestionStart | None:
+    if anchor is None:
+        return None
+    return QuestionStart(
+        question_number=parent_question_id(anchor.question_number),
+        page_number=anchor.page_number,
+        y0=anchor.y0,
+        x0=anchor.x0,
+        label=anchor.text,
+        block_index=index,
+        bbox=None,
+        confidence=0.75,
+        reasons=["legacy_markscheme_anchor"],
+    )
+
+
+def _detect_legacy_mark_scheme_anchors(
+    layouts: list[PageLayout],
+    config: AppConfig,
+    expected_numbers: list[str],
+) -> list[MarkSchemeAnchor]:
+    expected = {normalize_question_id(number) for number in expected_numbers if normalize_question_id(number)}
+    candidates: list[MarkSchemeAnchor] = []
+    seen: set[tuple[str, int, int]] = set()
+    for layout in layouts:
+        for block in sorted(layout.blocks, key=lambda item: (item.bbox.y0, item.bbox.x0)):
+            number = _legacy_question_anchor_number(block, layout, config, expected)
+            if not number:
+                continue
+            key = (number, layout.page_number, round(block.bbox.y0))
+            if key in seen:
+                continue
+            seen.add(key)
+            candidates.append(
+                MarkSchemeAnchor(
+                    question_number=number,
+                    page_number=layout.page_number,
+                    y0=block.bbox.y0,
+                    y1=block.bbox.y1,
+                    x0=block.bbox.x0,
+                    text=block.first_line.strip(),
+                    table=None,
+                )
+            )
+    return _filter_legacy_mark_scheme_anchor_sequence(candidates, expected_numbers)
+
+
+def _legacy_question_anchor_number(
+    block: TextBlock,
+    layout: PageLayout,
+    config: AppConfig,
+    expected: set[str],
+) -> str | None:
+    if block.bbox.x0 > min(config.detection.question_start_max_x, 95):
+        return None
+    if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
+        return None
+    line = " ".join(block.first_line.replace("\u00a0", " ").split())
+    if not line:
+        return None
+    if re.match(r"^\d{1,2}(?:\.\d|/\d)", line):
+        return None
+    if re.fullmatch(r"\d{1,2}", line):
+        return None
+    match = re.match(r"^(?P<number>\d{1,2})(?P<rest>.*)$", line, re.IGNORECASE)
+    if not match:
+        return None
+    rest = match.group("rest").strip()
+    if not rest or rest.startswith((".", "/")):
+        return None
+    if re.fullmatch(r"\d{1,2}(?:\s+\d{1,2})?", rest):
+        return None
+    number = normalize_question_id(match.group("number"))
+    if expected and number not in expected:
+        return None
+    return number
+
+
+def _filter_legacy_mark_scheme_anchor_sequence(
+    candidates: list[MarkSchemeAnchor],
+    expected_numbers: list[str],
+) -> list[MarkSchemeAnchor]:
+    ordered_candidates = sorted(candidates, key=lambda item: (item.page_number, item.y0, item.x0))
+    expected = [normalize_question_id(number) for number in expected_numbers if normalize_question_id(number)]
+    if not expected:
+        return _filter_out_of_sequence_mark_scheme_anchors(ordered_candidates)
+    accepted: list[MarkSchemeAnchor] = []
+    last_position: tuple[int, float, float] = (0, -1.0, -1.0)
+    for expected_number in expected:
+        for candidate in ordered_candidates:
+            position = (candidate.page_number, candidate.y0, candidate.x0)
+            if position <= last_position:
+                continue
+            if parent_question_id(candidate.question_number) != expected_number:
+                continue
+            accepted.append(candidate)
+            last_position = position
+            break
+    return accepted
+
+
+def _blocks_for_legacy_anchor_bounds(
+    layouts: list[PageLayout],
+    anchor: MarkSchemeAnchor,
+    next_anchor: MarkSchemeAnchor | None,
+    config: AppConfig,
+) -> list[TextBlock]:
+    blocks: list[TextBlock] = []
+    end_page = next_anchor.page_number if next_anchor else layouts[-1].page_number
+    for layout in layouts:
+        if not anchor.page_number <= layout.page_number <= end_page:
+            continue
+        top = anchor.y0 if layout.page_number == anchor.page_number else config.detection.crop_top_margin
+        bottom = next_anchor.y0 if next_anchor and layout.page_number == next_anchor.page_number else layout.height - config.detection.bottom_margin
+        for block in layout.blocks:
+            if block.bbox.y1 < top or block.bbox.y0 >= bottom:
+                continue
+            if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
+                continue
+            blocks.append(block)
+    return sorted(blocks, key=lambda block: (block.page_number, block.bbox.y0, block.bbox.x0))
+
+
+def _legacy_mark_total_from_text(text: str, expected_total: int | None) -> int | None:
+    values = [int(value) for value in re.findall(r"\[(\d{1,2})\]", text) if 0 < int(value) <= 20]
+    if not values:
+        return None
+    total = sum(values)
+    if expected_total is not None and total == expected_total:
+        return expected_total
+    if expected_total is not None and expected_total in values and len(values) == 1:
+        return expected_total
+    return total
+
+
+def _legacy_subparts_from_text(text: str) -> list[str]:
+    labels: list[str] = []
+    label_order = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+    for line in text.splitlines():
+        match = re.match(
+            r"^\s*(?:\d{1,2}\s*)?\((a|b|c|d|e|f|g|h|viii|vii|vi|iv|ix|iii|ii|i|v|x)\)",
+            line,
+            re.IGNORECASE,
+        )
+        if match:
+            label = match.group(1).lower()
+            if label not in labels:
+                labels.append(label)
+    return sorted(labels, key=lambda label: label_order.index(label) if label in label_order else 999)
+
+
+def _legacy_confidence_score(
+    *,
+    regions: list[MarkSchemeCropRegion],
+    text: str,
+    mark_total: int | None,
+    expected_total: int | None,
+    subparts: list[str],
+    expected_subparts: list[str],
+    flags: list[str],
+) -> float:
+    score = 0.62
+    if regions:
+        score += 0.12
+    if len(text) >= 40:
+        score += 0.08
+    if mark_total is not None:
+        score += 0.06
+    if expected_total is not None and mark_total == expected_total:
+        score += 0.08
+    elif expected_total is not None and mark_total is not None:
+        score -= 0.04
+    if expected_subparts:
+        score += 0.05 if subparts and all(part in subparts for part in expected_subparts) else -0.03
+    if any(flag in flags for flag in {"markscheme_image_uncertain", "legacy_mark_total_mismatch_review", "legacy_subpart_mismatch_review"}):
+        score -= 0.04
+    if len(regions) > 2:
+        score -= 0.03
+    return round(max(0.45, min(0.92, score)), 3)
+
+
+def _table_mark_scheme_confidence_score(crop_confidence: str, failure_reason: str) -> float:
+    if failure_reason:
+        return 0.55 if crop_confidence == CropConfidence.HIGH else 0.45
+    if crop_confidence == CropConfidence.HIGH:
+        return 0.95
+    if crop_confidence == CropConfidence.MEDIUM:
+        return 0.8
+    return 0.65
+
+
+def _legacy_mark_scheme_block_id(mark_scheme_pdf: str | Path, question_number: str) -> str:
+    qid = f"q{int(question_number):02d}" if str(question_number).isdigit() else f"q{_safe_basename(str(question_number))}"
+    return f"{Path(mark_scheme_pdf).stem}:{qid}"
 
 
 def _extract_mark_scheme_words(mark_scheme_pdf: Path) -> dict[int, list[MarkSchemeWord]]:
@@ -1749,10 +2156,13 @@ def _is_mark_scheme_boilerplate(text: str) -> bool:
         r"^©\s*UCLES\b",
         r"^UCLES\b",
         r"^Cambridge International",
+        r"^Cambridge International AS/A Level",
         r"^This document consists of",
         r"^BLANK PAGE$",
         r"^Mark Scheme$",
         r"^Question Paper$",
+        r"^GCE A/?AS LEVEL\b",
+        r"^GCE AS/?A LEVEL\b",
         r"^9709[/_ -]",
         r"^Page\s+\d+",
     ]
