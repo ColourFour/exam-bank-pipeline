@@ -1,0 +1,48 @@
+{
+  "schema_name": "exam_bank.current_output_integrity_audit",
+  "schema_version": 1,
+  "input": "output/json/question_bank.json",
+  "artifact_root": "output",
+  "ok": true,
+  "record_count": 3555,
+  "checks": {
+    "declared_record_count_matches": true,
+    "question_id_present_and_unique": true,
+    "paper_question_pairs_present_and_unique": true,
+    "question_image_paths_relative_and_exist": true,
+    "nonblank_mark_scheme_image_paths_relative_and_exist": true,
+    "missing_mark_scheme_paths_only_known_companions": true
+  },
+  "counts": {
+    "declared_record_count": 3555,
+    "unique_question_id_count": 3555,
+    "missing_question_id_count": 0,
+    "duplicate_question_id_value_count": 0,
+    "duplicate_question_id_record_count": 0,
+    "missing_paper_or_question_number_count": 0,
+    "duplicate_paper_question_pair_count": 0,
+    "duplicate_paper_question_record_count": 0,
+    "question_image_path_entry_count": 10665,
+    "missing_question_image_path_count": 0,
+    "absolute_question_image_path_count": 0,
+    "missing_question_image_file_count": 0,
+    "nonblank_mark_scheme_image_record_count": 3555,
+    "mark_scheme_image_path_entry_count": 7110,
+    "missing_mark_scheme_image_path_count": 0,
+    "allowed_missing_mark_scheme_image_path_count": 0,
+    "unexpected_missing_mark_scheme_image_path_count": 0,
+    "absolute_mark_scheme_image_path_count": 0,
+    "missing_mark_scheme_image_file_count": 0
+  },
+  "known_missing_mark_scheme_companions": [
+    {
+      "source_companion": "9709_2025_November_33",
+      "paper": "33autumn25",
+      "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
+      "observed_missing_count": 0,
+      "observed_question_ids": []
+    }
+  ],
+  "unexpected_missing_mark_scheme_groups": [],
+  "failures": []
+}

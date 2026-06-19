@@ -118,6 +118,18 @@ def render_mark_scheme_images(
 
     output: dict[str, MarkSchemeImageResult] = {}
     _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
+    legacy_fallback_blocks = _build_legacy_mark_scheme_blocks(
+        mark_scheme_pdf,
+        layouts,
+        config,
+        expected_numbers,
+        question_marks=question_marks,
+        question_subparts=question_subparts,
+    )
+    legacy_fallback_anchors = [
+        block.anchor
+        for block in sorted(legacy_fallback_blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))
+    ]
     with fitz.open(mark_scheme_pdf) as doc:
         rendered_pages = {}
         ordered_anchors = sorted(anchors, key=lambda item: (item.page_number, item.y0))
@@ -125,14 +137,16 @@ def render_mark_scheme_images(
             canonical_number = normalize_question_id(number)
             identity = identities.get(canonical_number)
             identity_fields = _mark_scheme_identity_fields(identity, config)
+            question_subpart_values = question_subparts.get(canonical_number, [])
+            question_marks_total = question_marks.get(canonical_number)
             if identity is None:
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     crop_confidence=CropConfidence.LOW,
                     mapping_method="table_row_block",
                     table_detected=bool(tables),
-                    question_subparts=question_subparts.get(canonical_number, []),
-                    question_marks_total=question_marks.get(canonical_number),
+                    question_subparts=question_subpart_values,
+                    question_marks_total=question_marks_total,
                     mapping_status=MappingStatus.FAIL,
                     failure_reason="identity_unresolved",
                     missing_mark_scheme_reason="identity_unresolved",
@@ -149,14 +163,81 @@ def render_mark_scheme_images(
                 table_detected = True
                 nearby_anchors = _nearby_anchor_labels(ordered_anchors, anchor)
             else:
+                legacy_block = legacy_fallback_blocks.get(canonical_number)
+                if legacy_block is not None:
+                    flags = list(legacy_block.review_flags)
+                    flags.append("markscheme_table_anchor_missing_legacy_fallback")
+                    output_path, debug_paths = _render_mark_scheme_crops(
+                        doc,
+                        fitz,
+                        mark_scheme_pdf,
+                        canonical_number,
+                        identity,
+                        legacy_block.regions,
+                        flags,
+                        rendered_pages,
+                        layouts,
+                        {},
+                        legacy_fallback_anchors,
+                        config,
+                    )
+                    if output_path is None:
+                        output[number] = MarkSchemeImageResult(
+                            question_number=number,
+                            **identity_fields,
+                            markscheme_question_number=canonical_number,
+                            crop_confidence=CropConfidence.LOW,
+                            mapping_method=legacy_block.method,
+                            table_detected=bool(tables),
+                            detected_anchor_pages=[legacy_block.anchor.page_number],
+                            nearby_anchors=_nearby_anchor_labels(legacy_fallback_anchors, legacy_block.anchor),
+                            debug_paths=debug_paths,
+                            review_flags=sorted(set(flags + ["markscheme_image_missing"])),
+                            question_subparts=question_subpart_values,
+                            markscheme_subparts=legacy_block.subparts,
+                            question_marks_total=question_marks_total,
+                            markscheme_marks_total=legacy_block.mark_total,
+                            mapping_status=MappingStatus.FAIL,
+                            failure_reason="segmentation_failure",
+                            block_ids=[legacy_block.block_id],
+                            confidence_score=legacy_block.confidence_score,
+                            missing_mark_scheme_reason="segmentation_failure",
+                        )
+                        continue
+
+                    output[number] = MarkSchemeImageResult(
+                        question_number=number,
+                        image_path=output_path,
+                        **identity_fields,
+                        page_numbers=[region.page_number for region in legacy_block.regions],
+                        markscheme_question_number=canonical_number,
+                        crop_confidence=_mark_scheme_crop_confidence(legacy_block.regions, layouts, flags),
+                        mapping_method=legacy_block.method,
+                        table_detected=bool(tables),
+                        detected_anchor_pages=[legacy_block.anchor.page_number],
+                        nearby_anchors=_nearby_anchor_labels(legacy_fallback_anchors, legacy_block.anchor),
+                        debug_paths=debug_paths,
+                        review_flags=sorted(set(flags)),
+                        table_header_ok=False,
+                        continuation_rows_included=any(region.continuation_rows_included for region in legacy_block.regions),
+                        question_subparts=question_subpart_values,
+                        markscheme_subparts=legacy_block.subparts,
+                        question_marks_total=question_marks_total,
+                        markscheme_marks_total=legacy_block.mark_total,
+                        mapping_status=MappingStatus.PASS,
+                        block_ids=[legacy_block.block_id],
+                        confidence_score=legacy_block.confidence_score,
+                    )
+                    continue
+
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
                     crop_confidence=CropConfidence.LOW,
                     mapping_method="table_row_block",
                     table_detected=bool(tables),
-                    question_subparts=question_subparts.get(canonical_number, []),
-                    question_marks_total=question_marks.get(canonical_number),
+                    question_subparts=question_subpart_values,
+                    question_marks_total=question_marks_total,
                     mapping_status=MappingStatus.FAIL,
                     failure_reason="segmentation_failure",
                     missing_mark_scheme_reason="segmentation_failure",
@@ -165,8 +246,6 @@ def render_mark_scheme_images(
                 )
                 continue
 
-            question_subpart_values = question_subparts.get(canonical_number, [])
-            question_marks_total = question_marks.get(canonical_number)
             markscheme_subpart_values = (
                 _detected_subparts_for_question(ordered_anchors, anchor_index, canonical_number)
                 if anchor_index is not None
@@ -677,7 +756,7 @@ def _legacy_question_anchor_number(
     config: AppConfig,
     expected: set[str],
 ) -> str | None:
-    if block.bbox.x0 > min(config.detection.question_start_max_x, 95):
+    if block.bbox.x0 > min(config.detection.question_start_max_x, 105):
         return None
     if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
         return None
@@ -686,20 +765,51 @@ def _legacy_question_anchor_number(
         return None
     if re.match(r"^\d{1,2}(?:\.\d|/\d)", line):
         return None
-    if re.fullmatch(r"\d{1,2}", line):
-        return None
-    match = re.match(r"^(?P<number>\d{1,2})(?P<rest>.*)$", line, re.IGNORECASE)
+    standalone_match = re.fullmatch(r"(?:Q\s*)?(?P<number>\d{1,2})", line, re.IGNORECASE)
+    if standalone_match:
+        number = normalize_question_id(standalone_match.group("number"))
+        return number if _legacy_standalone_question_anchor(block, layout, number, expected) else None
+    match = re.match(r"^(?:Q\s*)?(?P<number>\d{1,2})(?P<rest>.*)$", line, re.IGNORECASE)
     if not match:
         return None
-    rest = match.group("rest").strip()
+    raw_rest = match.group("rest")
+    if raw_rest and not (raw_rest[0].isspace() or raw_rest[0] in "(["):
+        return None
+    rest = raw_rest.strip()
     if not rest or rest.startswith((".", "/")):
         return None
-    if re.fullmatch(r"\d{1,2}(?:\s+\d{1,2})?", rest):
-        return None
     number = normalize_question_id(match.group("number"))
+    if re.fullmatch(r"\d{1,2}(?:\s+\d{1,2})?", rest) and not _legacy_terminal_mark_total_anchor(block, layout, number, rest, expected):
+        return None
     if expected and number not in expected:
         return None
     return number
+
+
+def _legacy_standalone_question_anchor(
+    block: TextBlock,
+    layout: PageLayout,
+    number: str,
+    expected: set[str],
+) -> bool:
+    if not expected or number not in expected:
+        return False
+    return block.bbox.x0 <= min(70, layout.width * 0.15)
+
+
+def _legacy_terminal_mark_total_anchor(
+    block: TextBlock,
+    layout: PageLayout,
+    number: str,
+    rest: str,
+    expected: set[str],
+) -> bool:
+    if not expected or number not in expected:
+        return False
+    if block.bbox.x0 > min(70, layout.width * 0.15):
+        return False
+    values = [int(value) for value in re.findall(r"\d{1,2}", rest)]
+    return len(values) == 1 and 1 <= values[0] <= 20
 
 
 def _filter_legacy_mark_scheme_anchor_sequence(
@@ -712,17 +822,53 @@ def _filter_legacy_mark_scheme_anchor_sequence(
         return _filter_out_of_sequence_mark_scheme_anchors(ordered_candidates)
     accepted: list[MarkSchemeAnchor] = []
     last_position: tuple[int, float, float] = (0, -1.0, -1.0)
-    for expected_number in expected:
+    for expected_index, expected_number in enumerate(expected):
+        matched: MarkSchemeAnchor | None = None
+        matched_position: tuple[int, float, float] | None = None
         for candidate in ordered_candidates:
-            position = (candidate.page_number, candidate.y0, candidate.x0)
+            position = _legacy_anchor_position(candidate)
             if position <= last_position:
                 continue
             if parent_question_id(candidate.question_number) != expected_number:
                 continue
-            accepted.append(candidate)
-            last_position = position
+            matched = candidate
+            matched_position = position
             break
+        if matched is None or matched_position is None:
+            continue
+        later_expected = set(expected[expected_index + 1 :])
+        if _has_earlier_later_expected_legacy_anchor(
+            ordered_candidates,
+            after_position=last_position,
+            before_position=matched_position,
+            later_expected=later_expected,
+        ):
+            continue
+        accepted.append(matched)
+        last_position = matched_position
     return accepted
+
+
+def _legacy_anchor_position(anchor: MarkSchemeAnchor) -> tuple[int, float, float]:
+    return (anchor.page_number, anchor.y0, anchor.x0)
+
+
+def _has_earlier_later_expected_legacy_anchor(
+    candidates: list[MarkSchemeAnchor],
+    *,
+    after_position: tuple[int, float, float],
+    before_position: tuple[int, float, float],
+    later_expected: set[str],
+) -> bool:
+    if not later_expected:
+        return False
+    for candidate in candidates:
+        position = _legacy_anchor_position(candidate)
+        if not after_position < position < before_position:
+            continue
+        if parent_question_id(candidate.question_number) in later_expected:
+            return True
+    return False
 
 
 def _blocks_for_legacy_anchor_bounds(
@@ -1201,6 +1347,7 @@ def _clean_question_label_candidate(text: str) -> str:
     cleaned = _clean_cell_text(text)
     cleaned = cleaned.replace("^{", "").replace("_{", "").replace("}", "")
     cleaned = re.sub(r"[^0-9a-z()]+", "", cleaned)
+    cleaned = re.sub(r"^q(?=\d)", "", cleaned, flags=re.IGNORECASE)
     return cleaned
 
 

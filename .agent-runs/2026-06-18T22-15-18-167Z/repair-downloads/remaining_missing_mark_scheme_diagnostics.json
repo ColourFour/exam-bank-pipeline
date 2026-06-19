@@ -1,0 +1,915 @@
+[
+  {
+    "paper": "input/pastpapers/9709/2009/question_papers/9709_s09_qp_6.pdf",
+    "mark_scheme": "input/pastpapers/9709/2009/mark_schemes/9709_s09_ms_6.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "10"
+    ],
+    "question_marks": {
+      "1": 5,
+      "2": 6,
+      "3": 8,
+      "4": 8,
+      "5": 9,
+      "6": 2,
+      "10": 12
+    },
+    "tables": 0,
+    "table_anchors": [],
+    "legacy_blocks": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  (i)  z = 0.674  B1  \u00b1 0.674 or rounding to, seen, e.g. 0.6743",
+      "2": "2 (i) P(X = 2) = 1/4 \u00d7 1/4 + 1/4 = 5/16 AG  M1  Considering cases (1, 1) and (2)",
+      "3": "3 4  2  6  4  A1  [2] Correct given answer legitimately obtained",
+      "4": "4 5  2  7  4  (1/16 + 4/16 needs some justification but 1/16 + 1/4",
+      "5": "5  (i)  P(E) = \u00bc, P(C) = \u00bc, P(JT) = \u00bd  B1  \u00bc, \u00bc, and \u00bd seen oe",
+      "6": "6  (i) a = 494  B1"
+    },
+    "missing": [
+      {
+        "question_number": "10",
+        "marks": 12,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "excluded_boilerplate_blank_page",
+          "excluded_boilerplate_copyright_footer",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_legacy_question_block",
+          "markscheme_segmentation_failure",
+          "ocr_hint_figure_regions",
+          "paper_total_focus_candidate",
+          "question_text_figure_overlap_prevented",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [],
+        "question_text_head": "10 minutes on the horizontal axis and 2 cm for 50 people on the vertical axis. [4] (iii) Use your graph to estimate the median time after opening that people entered the store. [2] (iv) Calculate estimates of the mean, m minutes, and standard deviation, s minutes, of the time after opening that people entered the store. [4] (v) Use your graph to estimate the number of people entering the store bet"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_12.pdf",
+    "mark_scheme": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_12.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "question_marks": {
+      "1": 4,
+      "2": 5,
+      "3": 6,
+      "4": 6,
+      "5": 6,
+      "6": 7,
+      "7": 8,
+      "8": 9,
+      "9": 11,
+      "10": 13
+    },
+    "tables": 0,
+    "table_anchors": [],
+    "legacy_blocks": [
+      "1",
+      "10",
+      "2",
+      "3",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  ddyx = 3x \u2212x",
+      "2": "2 (x + k)^{8}",
+      "3": "3 (i) a + d = 96 and a + 3d = 54  B1  For both expressions.",
+      "5": "5 ((sin x + cos x)(1 \u2013 sin x cos x)/(= sin x + cos x \u2013 sin x cos x \u2013 cos x sin x)(i) 2 2) M1  Needs 4 terms from the product.",
+      "6": "6 (i) OQ  = 3i + 3j + 6k B1  co",
+      "7": "7  (i) 2r + r\u03b8 = 50  M1  Must use s = r\u03b8 and link with perimeter",
+      "8": "8 xa 3",
+      "9": "9  (i) y-coordinate same as the   B1  co",
+      "10": "10   (i) (a) Sim equations \u2192 2 2y = x + 5, y = xx_{2}^{2} \u2013 9 \u2013 4xx + 9 = 0  + 7   M1  Complete elimination of x or y"
+    },
+    "missing": [
+      {
+        "question_number": "4",
+        "marks": 6,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "duplicate_visual_fragment_excluded",
+          "duplicate_visual_regions_removed",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_legacy_question_block",
+          "markscheme_segmentation_failure",
+          "ocr_hint_figure_regions",
+          "paper_total_mismatch",
+          "paper_total_rescan_triggered",
+          "question_text_figure_overlap_prevented",
+          "same_page_secondary_anchor_detected",
+          "same_page_split_performed",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [
+          "paper_total_mismatch"
+        ],
+        "question_text_head": "4 The function f is defined by f : x \u21925 -3 sin 2x for 0 \u2264 x \u2264 \u03c0. (i) Find the range of f. [2] (ii) Sketch the graph of y = f(x). [3] (iii) State, with a reason, whether f has an inverse. [1]"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2013/question_papers/9709_w13_qp_12.pdf",
+    "mark_scheme": "input/pastpapers/9709/2013/mark_schemes/9709_w13_ms_12.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "question_marks": {
+      "1": 3,
+      "2": 6,
+      "3": 7,
+      "4": 7,
+      "5": 7,
+      "6": 7,
+      "7": 8,
+      "8": 10,
+      "9": 10,
+      "10": 10
+    },
+    "tables": 0,
+    "table_anchors": [],
+    "legacy_blocks": [
+      "1",
+      "10",
+      "2",
+      "3",
+      "4",
+      "5",
+      "7",
+      "8",
+      "9"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  (i) sin x = \u221a(1 \u2212 p\u00b2)  B1  Allow 1 \u2013 p if following \u221a(1 \u2212 p\u00b2)",
+      "2": "2  (i)  slant length = 10 cm.  B1",
+      "3": "3  y =",
+      "4": "4  OA = i + 2j and OB = 4i + pk ,",
+      "5": "5  A (0, 8)  B (4, 0) 8y + x= 33",
+      "7": "7  (a)  (i) a = 300, d = 12",
+      "8": "8  f : _{x} a_{3}cos_{x} \u22122 for 0 Y x Y 2_{\u03c0. }",
+      "9": "9  y = + 2x",
+      "10": "10  f : _{x} a 2_{x}^{2} \u22123_{x} , g : _{x} a_{3}x + k ,"
+    },
+    "missing": [
+      {
+        "question_number": "6",
+        "marks": 7,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "duplicate_visual_fragment_excluded",
+          "duplicate_visual_regions_removed",
+          "figure_label_edge_safety_applied",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_legacy_question_block",
+          "markscheme_segmentation_failure",
+          "ocr_hint_figure_regions",
+          "page_diagram_union_skipped_neighbor_question",
+          "paper_total_mismatch",
+          "paper_total_rescan_triggered",
+          "question_text_figure_overlap_prevented",
+          "same_page_secondary_anchor_detected",
+          "same_page_split_performed",
+          "text_crop_edge_safety_applied",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [
+          "paper_total_mismatch"
+        ],
+        "question_text_head": "6 andIn the diagram,OPQR T, is a rectangle.andhas S coordinates is the point(x,(0,y).12The) andpoints T is the point Pand Rlie(16,on0the). The point x-axisand Q y lies on-axis respectively ST,between and S (i) Show that the area, A, of the rectangle OPQR is given by A = 12x - 3_{4}x^{2}. [3] (ii) Given that x can vary, find the stationary value of A and determine its nature. [4]"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2017/question_papers/9709_w17_qp_12.pdf",
+    "mark_scheme": "input/pastpapers/9709/2017/mark_schemes/9709_w17_ms_12.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "question_marks": {
+      "1": 4,
+      "2": 6,
+      "3": 6,
+      "4": 7,
+      "5": 7,
+      "6": 8,
+      "7": 8,
+      "8": 9,
+      "9": 9,
+      "10": 11
+    },
+    "tables": 11,
+    "table_anchors": [
+      [
+        "1",
+        4,
+        80.6,
+        82.3,
+        "1"
+      ],
+      [
+        "2(i)",
+        5,
+        80.6,
+        77.2,
+        "2(i)"
+      ],
+      [
+        "2(ii)",
+        5,
+        202.0,
+        75.6,
+        "2(ii)"
+      ],
+      [
+        "3(a)",
+        5,
+        433.3,
+        76.3,
+        "3(a)"
+      ],
+      [
+        "3(b)",
+        6,
+        80.6,
+        76.0,
+        "3(b)"
+      ],
+      [
+        "4(i)",
+        7,
+        80.6,
+        77.2,
+        "4(i)"
+      ],
+      [
+        "4(ii)",
+        7,
+        205.6,
+        75.6,
+        "4(ii)"
+      ],
+      [
+        "5(i)",
+        8,
+        80.6,
+        77.2,
+        "5(i)"
+      ],
+      [
+        "5(ii)",
+        8,
+        331.7,
+        75.6,
+        "5(ii)"
+      ],
+      [
+        "7(i)",
+        10,
+        80.6,
+        77.2,
+        "7(i)"
+      ],
+      [
+        "7(ii)",
+        10,
+        237.7,
+        75.6,
+        "7(ii)"
+      ],
+      [
+        "8(i)",
+        10,
+        407.8,
+        77.2,
+        "8(i)"
+      ],
+      [
+        "8(ii)",
+        11,
+        80.6,
+        75.6,
+        "8(ii)"
+      ],
+      [
+        "8(iii)",
+        11,
+        210.7,
+        74.1,
+        "8(iii)"
+      ],
+      [
+        "9(i)",
+        12,
+        80.6,
+        77.2,
+        "9(i)"
+      ],
+      [
+        "9(ii)",
+        12,
+        283.7,
+        75.6,
+        "9(ii)"
+      ],
+      [
+        "9(iii)",
+        13,
+        80.6,
+        74.1,
+        "9(iii)"
+      ],
+      [
+        "10(i)",
+        13,
+        268.3,
+        74.4,
+        "10(i)"
+      ],
+      [
+        "10(ii)",
+        14,
+        80.6,
+        72.9,
+        "10(ii)"
+      ]
+    ],
+    "legacy_blocks": [
+      "1",
+      "10",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  EITHER:  (B1, B1, B1)  OE",
+      "2": "2(i)  4\u2212x B1  OE",
+      "3": "3(a)  Uses r = (1.05 or 105%)9, 10 or 11 B1  Used to multiply repeatedly or in any GP formula.",
+      "4": "4(i)  Pythagoras \u2192 r =  72  OE   M1  Correct method leading to r =",
+      "5": "5(i)  EITHER: Uses tan^{2}2x = cos sin^{2}_{2}22xx (M1  Replaces tan\u00b22x by cos sin^{2}_{2}22xx  not cos sin^{2}_{2}2x",
+      "6": "6((a)(ii)  ff(x) == a + b sin(a + bsinnx)  M1  Valid meethod for ff. Couldd be f(0) = N folloowed by f(N) = MM.",
+      "7": "7(i)  dy = 2x\u22124 = 0 Can use completing the square.",
+      "8": "8(i)  ddyx = 0 M1  Sets ddyx  to 0 and attempts to solve leading to two values for x.",
+      "9": "9(i)  JJJGAB  =  \uf8eb\uf8f6\uf8ec\uf8f7\uf8ec\uf8f7\uf8ec\uf8f7\uf8ed\uf8f8432  or JJJGBA = \uf8eb\uf8ec\uf8ec\uf8ec\uf8ed\u2212\u2212\u2212423\uf8f6\uf8f7\uf8f7\uf8f7\uf8f8 M1  Use of b \u2013 a or a \u2013 b",
+      "10": "10(i)  ddyx = 12\u00d7(5x\u22121)^{\u2212}1_{2} \u00d7 5   ( = 56 )  B1 B1 B1 Without\u00d7 5  B1 \u00d7 5 of an attempt at differentiation"
+    },
+    "missing": [
+      {
+        "question_number": "6",
+        "marks": 8,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "centered_page_number_trimmed",
+          "crop_header_footer_trimmed",
+          "crop_split_prompt_regions",
+          "excluded_boilerplate_copyright_footer",
+          "markscheme_image_missing",
+          "markscheme_no_row_for_question",
+          "missing_image_detection_failure",
+          "unmatched_answer",
+          "weak_markscheme_signal"
+        ],
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "question_text_head": "6 (a) The function f, defined by f : x \u2192a + b sin x for x \u2208 >, is such that f(1_{6}0) = 4 and f(1_{2}0) = 3. (i) Find the values of the constants a and b. [3] (ii) Evaluate ff(0). [2] (b) The function g is defined by g : x \u2192c + d sin x for x \u2208 >. The range of g is given by -4 \u2264 g(x) \u2264 10. Find the values of the constants c and d. [3]"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_43.pdf",
+    "mark_scheme": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_43.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "question_marks": {
+      "1": 3,
+      "2": 5,
+      "3": 6,
+      "4": 6,
+      "5": 8,
+      "6": 9,
+      "7": 13
+    },
+    "tables": 7,
+    "table_anchors": [
+      [
+        "1",
+        5,
+        80.6,
+        92.2,
+        "1"
+      ],
+      [
+        "2",
+        5,
+        215.8,
+        92.2,
+        "2"
+      ],
+      [
+        "3",
+        6,
+        80.6,
+        92.2,
+        "3"
+      ],
+      [
+        "4(i)",
+        7,
+        80.6,
+        87.0,
+        "4(i)"
+      ],
+      [
+        "4(ii)",
+        7,
+        208.4,
+        85.4,
+        "4(ii)"
+      ],
+      [
+        "5(i)",
+        8,
+        80.6,
+        87.0,
+        "5(i)"
+      ],
+      [
+        "5(ii)",
+        8,
+        196.6,
+        85.4,
+        "5(ii)"
+      ],
+      [
+        "5(iii)",
+        8,
+        290.4,
+        83.9,
+        "5(iii)"
+      ],
+      [
+        "7(i)",
+        10,
+        80.6,
+        87.0,
+        "7(i)"
+      ],
+      [
+        "7(ii)",
+        10,
+        378.5,
+        85.4,
+        "7(ii)"
+      ],
+      [
+        "7(iii)",
+        11,
+        80.6,
+        83.9,
+        "7(iii)"
+      ]
+    ],
+    "legacy_blocks": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "7"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  F=\u00b5\u00d7500g B1 Use of F=\u00b5R",
+      "2": "2  PE gain =150000g \u00d7 500sin\u03b1                                                       (=75000000gsin\u03b1)  B1 Correct expression for PE gain",
+      "3": "3  Resolving horizontally or vertically  M1",
+      "4": "4(i)  s_{PQ} = 20\u00d710\u22120.5a\u00d710^{2} or s_{QR} = 20\u00d710 + 0.5a\u00d710^{2} M1 For use of s = vt\u22121at^{2}  or  s = ut + 1at^{2}  OE",
+      "5": "5(i)  Driving force = 240(= 40N)  B1 Use of power = force \u00d7 velocity",
+      "7": "7(i)  \uf8ee\uf8ef\uf8f00.81 = 0 + 12\u00d7a\u00d70.9^{2}\uf8f9\uf8fa\uf8fb M1 For use of s = ut + 12at^{2}"
+    },
+    "missing": [
+      {
+        "question_number": "6",
+        "marks": 9,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "impossible_question_number_anchor_excluded",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_row_for_question",
+          "ocr_hint_figure_regions",
+          "topic_close_score",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [],
+        "question_text_head": "6 (Particle P)/(by v m s 1)_{-} travels in a straight line from, where A to B. The velocity of P at time t s after leaving A is denoted v = 0.04t^{3} + ct^{2} + kt. P takes 5 s to travel from A to B and it reaches B with speed 10 m s^{-}1. The distance AB is 25 m. (i) Find the values of the constants c and k. [6] (ii) Show that the acceleration of P is a minimum when t = 2.5. [3]"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_62.pdf",
+    "mark_scheme": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_62.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "question_marks": {
+      "1": 5,
+      "2": 6,
+      "3": 6,
+      "4": 6,
+      "5": 6,
+      "6": 9,
+      "7": 12
+    },
+    "tables": 8,
+    "table_anchors": [
+      [
+        "1(i)",
+        6,
+        80.6,
+        76.4,
+        "1(i)"
+      ],
+      [
+        "1(ii)",
+        6,
+        170.3,
+        74.8,
+        "1(ii)"
+      ],
+      [
+        "3(i)",
+        8,
+        80.6,
+        76.4,
+        "3(i)"
+      ],
+      [
+        "3(ii)",
+        9,
+        80.6,
+        74.8,
+        "3(ii)"
+      ],
+      [
+        "4(i)",
+        9,
+        354.7,
+        76.4,
+        "4(i)"
+      ],
+      [
+        "4(ii)",
+        10,
+        80.6,
+        74.8,
+        "4(ii)"
+      ],
+      [
+        "5(i)",
+        10,
+        232.7,
+        76.4,
+        "5(i)"
+      ],
+      [
+        "5(ii)",
+        10,
+        322.4,
+        74.8,
+        "5(ii)"
+      ],
+      [
+        "6(i)",
+        11,
+        80.6,
+        76.4,
+        "6(i)"
+      ],
+      [
+        "6(ii)",
+        11,
+        232.6,
+        74.8,
+        "6(ii)"
+      ],
+      [
+        "6(iii)",
+        12,
+        80.6,
+        73.3,
+        "6(iii)"
+      ],
+      [
+        "7(a)(i)",
+        13,
+        80.6,
+        70.3,
+        "7(a)(i)"
+      ],
+      [
+        "7(a)(ii)",
+        13,
+        235.7,
+        68.8,
+        "7(a)(ii)"
+      ],
+      [
+        "7(a)(iii)",
+        13,
+        378.8,
+        67.2,
+        "7(a)(iii)"
+      ],
+      [
+        "7(b)",
+        14,
+        80.6,
+        75.2,
+        "7(b)"
+      ]
+    ],
+    "legacy_blocks": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "legacy_anchor_text": {
+      "1": "1(i)  4!4!2!11! M1  4!11!\u00d7kor2!11!\u00d7k , k a positive integer",
+      "2": "2(i)  mediann = 0.225;   B1  Correct meddian (Q_{2})",
+      "3": "3(i)  Method 1",
+      "4": "4(i)  5! \u00d7 6! \u00d72  B1  k\u00d75! or m\u00d76! (k,m integer, k,m\u2a7e 1), no inappropriate addition",
+      "5": "5(i)  15.5\u00d712 + 910 M1  Unsimplified total age divided by their  total members (not 12, 20",
+      "6": "6(i)  x  \u20132  \u20131  0  1  2  3  B1  \u20132, \u20131, 0, 1, 2, 3 seen as top line of a pdf table with at least 1 probability OR attempting to evaluate P(\u20132), P(\u20131), P(0), P(1), P(2),",
+      "7": "7(a)(i)  P(X < 4) = P\uf8eb\uf8ec\uf8edZ < (4\u22123.24)/(0.96)\uf8f6\uf8f7\uf8f8 M1  \u00b1Standardisation formula, no cc, no sq rt, no square"
+    },
+    "missing": [
+      {
+        "question_number": "2",
+        "marks": 6,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_split_prompt_regions",
+          "excluded_boilerplate_copyright_footer",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "markscheme_image_missing",
+          "markscheme_no_row_for_question",
+          "page_diagram_union_fragments:2",
+          "page_diagram_union_used",
+          "paper_total_focus_candidate",
+          "topic_forced_low_confidence",
+          "topic_forced_no_rule_match",
+          "topic_uncertain",
+          "unmatched_answer",
+          "weak_markscheme_signal"
+        ],
+        "validation_flags": [],
+        "question_text_head": "2 The following back-to-back stem-and-leaf diagram shows the reaction times in seconds in an experiment involving two groups of people, A and B. (4) 4 2 0 0 20 5 6 7 (3) (5) 9 8 5 0 0 21 1 2 2 3 7 7 (6) (8) 9 8 7 5 3 2 2 2 22 1 3 5 6 6 8 9 (7) (6) 8 7 6 5 2 1 23 4 5 7 8 8 9 9 9 (8) (3) 8 6 3 24 2 4 5 6 7 8 8 (7) (1) 0 25 0 2 7 8 (4) Key: 5 22 6 means a reaction time of 0.225 seconds for A and 0.22"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2010/question_papers/9709_s10_qp_63.pdf",
+    "mark_scheme": "input/pastpapers/9709/2010/mark_schemes/9709_s10_ms_63.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "question_marks": {
+      "1": 3,
+      "2": 4,
+      "3": 5,
+      "4": 8,
+      "5": 9,
+      "6": 10,
+      "7": null,
+      "8": 11
+    },
+    "tables": 0,
+    "table_anchors": [],
+    "legacy_blocks": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  (13C 39C)/(C_{7})_{52}^{3}\u00d7 4 M1  Using combinations with attempt to evaluate product of 2 in num and only 1 in denom",
+      "2": "2  (i) x = 130 \u2212287/82 M1  287/82 seen added or subt to 130",
+      "3": "3  (i) P(> 5) = ^{7}C_{6}(0.6)^{6}(0.4) + (0.6)^{7} M1  Summing 2 or 3 binomial probs of the form",
+      "4": "4  (i) ends cola, 5!/2!2! = 30  M1  Considering all three options",
+      "5": "5 \u00d7 !7 =  50 ways A1 Correct answer",
+      "6": "6  (i) for X: Median = 0.825 cm  B1  Correct median",
+      "7": "7  (i) 0.431 = 135\u2212\u00b5 B1 One \u00b1z-value correct, accept 0.430"
+    },
+    "missing": [
+      {
+        "question_number": "8",
+        "marks": 11,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "excluded_boilerplate_blank_page",
+          "excluded_boilerplate_copyright_footer",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_legacy_question_block",
+          "markscheme_segmentation_failure",
+          "ocr_hint_figure_regions",
+          "paper_total_focus_candidate",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [],
+        "question_text_head": "8 children out of 10 can jump a height of more than 127 cm, and 1 child out of 3 can jump a height of more than 135 cm. (i) Find the mean and standard deviation of the heights the children can jump. [5] (ii) Find the probability that a randomly chosen child will not be able to jump a height of 145 cm. [3] (iii) Find the probability that, of 8 randomly chosen children, at least 2 will be able to ju"
+      }
+    ]
+  },
+  {
+    "paper": "input/pastpapers/9709/2013/question_papers/9709_w13_qp_63.pdf",
+    "mark_scheme": "input/pastpapers/9709/2013/mark_schemes/9709_w13_ms_63.pdf",
+    "expected": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "question_marks": {
+      "1": 2,
+      "2": 5,
+      "3": 6,
+      "4": 7,
+      "5": 7,
+      "6": 10,
+      "7": 13
+    },
+    "tables": 0,
+    "table_anchors": [],
+    "legacy_blocks": [
+      "1",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "legacy_anchor_text": {
+      "1": "1  bars are not touching oe  B1  Sensible reason involving not touching, no",
+      "3": "3  (i) (p = )0.85  B1  (p = )0.85 oe seen anywhere",
+      "4": "4  (i)  (220\u00d720 + 118\u00d725)/45  M1  Mult by 20 and 25 and dividing their sum by 45",
+      "5": "5  (a)  P( X < q+ 82) = 0.72",
+      "6": "6  (i)  M1  8! Divided by at least one of  3!2!2! oe",
+      "7": "7  (i) P(same) = P(1, 1)+ P(3, 3) + P(5, 5)  M1  Summing 3 two-factor options"
+    },
+    "missing": [
+      {
+        "question_number": "2",
+        "marks": 5,
+        "failure_reason": "segmentation_failure",
+        "mapping_status": "fail",
+        "review_flags": [
+          "crop_uncertain",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_image_missing",
+          "markscheme_no_legacy_question_block",
+          "markscheme_segmentation_failure",
+          "ocr_hint_figure_regions",
+          "same_page_secondary_anchor_detected",
+          "same_page_split_performed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "unmatched_answer",
+          "weak_markscheme_signal",
+          "weak_question_text"
+        ],
+        "validation_flags": [],
+        "question_text_head": "2 A factory produces flower pots. The base diameters have a normal distribution with mean 14 cm andstandarddeviation0.52 cm. Find theprobabilitythatthebasediametersofexactly8outof10 randomly chosen flower pots are between 13.6 cm and 14.8 cm. [5]"
+      }
+    ]
+  }
+]

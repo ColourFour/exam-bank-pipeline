@@ -327,7 +327,12 @@ def _blocks_within_span(
             if block.bbox.y0 < top - top_tolerance or block.bbox.y0 >= bottom:
                 continue
             parsed = parse_question_start(block.first_line, config)
-            if parsed and max_question_number is not None and int(parsed[0]) > max_question_number:
+            if (
+                parsed
+                and max_question_number is not None
+                and int(parsed[0]) > max_question_number
+                and not _parsed_anchor_is_inline_quantity_continuation(block.first_line, parsed[0], config)
+            ):
                 flags.append("impossible_question_number_anchor_excluded")
                 continue
             if _is_question_content_block(block, page, config, answer_rule_bands=answer_rule_bands):
@@ -477,7 +482,9 @@ def _max_question_number_for_source(source_pdf: str | Path | None, config: AppCo
     if source_pdf is None:
         return config.detection.max_question_number
     stem = Path(source_pdf).stem
-    matches = re.findall(r"(?<!\d)([1-6][1-9])(?!\d)", stem)
+    matches = re.findall(r"(?:^|_)([1-6][1-9]?)(?=_|$)", stem)
+    if not matches:
+        matches = re.findall(r"(?<!\d)([1-6][1-9])(?!\d)", stem)
     if not matches:
         return config.detection.max_question_number
     component = matches[-1]
@@ -549,6 +556,8 @@ def _score_anchor(
     score = 0.0
     reasons: list[str] = []
     text = _clean_text_line(block.text)
+    parsed = parse_question_start(text, config)
+    inline_quantity_continuation = bool(parsed and _parsed_anchor_is_inline_quantity_continuation(text, parsed[0], config))
 
     if block.bbox.x0 <= config.detection.question_start_max_x:
         score += 0.32
@@ -591,7 +600,11 @@ def _score_anchor(
         score += 0.04
         reasons.append("bold_anchor")
 
-    return min(1.0, score), reasons
+    if inline_quantity_continuation and previous_block is not None:
+        score -= 0.35
+        reasons.append("inline_quantity_continuation")
+
+    return max(0.0, min(1.0, score)), reasons
 
 
 def _median_font_size(blocks: list[TextBlock]) -> float:
@@ -1664,7 +1677,7 @@ def _parsed_anchor_is_inline_quantity_continuation(line: str, question_number: s
     if not first_word_match:
         return False
     first_word = first_word_match.group(0).lower()
-    if first_word in {"x", "y", "z", "r"}:
+    if first_word in {"x", "y", "z", "r", "t", "u", "v"}:
         return False
     if re.match(
         r"(?i)^(?:find|show|solve|given|the|a|an|in|on|use|state|calculate|determine|prove|verify|sketch|draw|describe)\b",

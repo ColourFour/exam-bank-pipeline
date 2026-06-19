@@ -88,6 +88,71 @@ def test_detect_question_spans_groups_subparts_under_top_level_question() -> Non
     assert "2 Differentiate" not in spans[0].combined_text
 
 
+def test_detect_question_spans_ignores_inline_numeric_quantity_continuation() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "1 A survey records the heights of a group of children. [3]", 100),
+            block(1, "8 children out of 10 can jump a height of more than 127 cm.", 150),
+            block(1, "Find the mean and standard deviation. [5]", 180),
+        ],
+    )
+
+    spans = detect_question_spans([layout], Path("9709_s10_qp_63.pdf"), config)
+
+    assert [span.question_number for span in spans] == ["1"]
+    assert "8 children out of 10" in spans[0].combined_text
+
+
+def test_detect_question_spans_keeps_top_of_page_lowercase_prompt_start() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=1,
+            width=595,
+            height=842,
+            blocks=[block(1, "1 A crate moves along rough ground. [3]", 100)],
+        ),
+        PageLayout(
+            page_number=2,
+            width=595,
+            height=842,
+            blocks=[block(2, "2 driving force of 16 000 N acts on a train. [5]", 65)],
+        ),
+        PageLayout(
+            page_number=3,
+            width=595,
+            height=842,
+            blocks=[block(3, "3 Resolve the forces horizontally and vertically. [6]", 65)],
+        ),
+    ]
+
+    spans = detect_question_spans(layouts, Path("9709_w19_qp_43.pdf"), config)
+
+    assert [span.question_number for span in spans] == ["1", "2", "3"]
+
+
+def test_detect_question_spans_applies_single_digit_component_question_limit() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[
+            block(1, "1 Draw a cumulative frequency graph. [4]", 100),
+            block(1, "10 minutes on the horizontal axis and 2 cm for 50 people.", 150),
+        ],
+    )
+
+    spans = detect_question_spans([layout], Path("9709_s09_qp_6.pdf"), config)
+
+    assert [span.question_number for span in spans] == ["1"]
+    assert "10 minutes on the horizontal axis" in spans[0].combined_text
+
+
 def test_detect_question_spans_splits_same_page_secondary_question_anchor() -> None:
     config = AppConfig()
     layout = PageLayout(
@@ -1078,6 +1143,136 @@ def test_legacy_mark_scheme_blocks_make_missing_questions_explicit() -> None:
     assert "2" not in blocks
 
 
+def test_legacy_mark_scheme_blocks_accept_near_margin_answer_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=5,
+        width=595,
+        height=842,
+        blocks=[
+            block(5, "1 (v =) 3t^{2} - 12t + 4 *M1", 96, x=95.7),
+            block(5, "Set v = 0 and solve A1 [4]", 128, x=136),
+            block(5, "2 (i) Use gradient of graph M1", 210, x=90),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_w19_ms_42.pdf",
+        [layout],
+        config,
+        ["1", "2"],
+        question_marks={"1": 4, "2": 5},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2"]
+    assert "3t" in blocks["1"].text
+
+
+def test_legacy_mark_scheme_blocks_accept_terminal_question_mark_total_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=7,
+        width=595,
+        height=842,
+        blocks=[
+            block(7, "10 f : x -> 2^x + k M1", 120, x=55),
+            block(7, "Solve equation A1 [9]", 160, x=98),
+            block(7, "11 8", 240, x=55),
+            block(7, "Equation of tangent M1", 280, x=98),
+            block(7, "Area under curve A1 [9]", 320, x=98),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s13_ms_13.pdf",
+        [layout],
+        config,
+        ["10", "11"],
+        question_marks={"10": 9, "11": 9},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["10", "11"]
+    assert "Equation of tangent" in blocks["11"].text
+    assert "Solve equation" not in blocks["11"].text
+
+
+def test_legacy_mark_scheme_blocks_accept_standalone_left_margin_anchor() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "1 Differentiate correctly M1 A1 [2]", 100, x=50),
+            block(4, "2", 170, x=50),
+            block(4, "Use a normal distribution B1 M1 [5]", 205, x=72),
+            block(4, "3 Integrate correctly M1 A1 [2]", 280, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_w13_ms_63.pdf",
+        [layout],
+        config,
+        ["1", "2", "3"],
+        question_marks={"1": 2, "2": 5, "3": 2},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2", "3"]
+    assert "normal distribution" in blocks["2"].text
+
+
+def test_legacy_mark_scheme_blocks_skip_late_false_anchor_after_later_questions() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=4,
+            width=595,
+            height=842,
+            blocks=[
+                block(4, "1 Differentiate correctly M1 A1 [2]", 100, x=50),
+                block(4, "3 Substitute the endpoints M1 [3]", 150, x=50),
+                block(4, "4 Use the normal distribution B1 [4]", 210, x=50),
+            ],
+        ),
+        PageLayout(
+            page_number=5,
+            width=595,
+            height=842,
+            blocks=[
+                block(5, "5 State the value of k B1 [5]", 100, x=50),
+                block(5, "6 Solve for the interval M1 [6]", 165, x=50),
+            ],
+        ),
+        PageLayout(
+            page_number=6,
+            width=595,
+            height=842,
+            blocks=[
+                block(6, "7 Complete the final integration A1 [7]", 100, x=50),
+                block(6, "2 1 4 3 3 2", 210, x=104),
+                block(6, "3 6 6 3 36", 240, x=103.5),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_w13_ms_63.pdf",
+        layouts,
+        config,
+        ["1", "2", "3", "4", "5", "6", "7"],
+        question_marks={"1": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "3", "4", "5", "6", "7"]
+    assert "Substitute the endpoints" in blocks["3"].text
+    assert "2" not in blocks
+
+
 def test_mark_scheme_subpart_matching_keeps_3a_and_3b_separate() -> None:
     config = AppConfig()
     layout = PageLayout(
@@ -1111,6 +1306,10 @@ def test_mark_scheme_subpart_matching_keeps_3a_and_3b_separate() -> None:
     assert region_a[0].bbox.y1 <= anchors[1].y0
     assert region_b[0].bbox.y0 < anchors[1].y0
     assert region_b[0].bbox.y1 <= anchors[2].y0
+
+
+def test_mark_scheme_question_cell_accepts_q_prefixed_labels() -> None:
+    assert _parse_mark_scheme_question_cell("Q6(i)", {"6"}) == "6(i)"
 
 
 def test_mark_scheme_full_parent_block_includes_all_subparts_and_marks() -> None:
