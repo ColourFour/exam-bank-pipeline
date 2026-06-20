@@ -556,8 +556,9 @@ def _validate_mark_scheme_crop_before_save(
     if not regions:
         return _CropValidation(False, [], "empty_crop")
 
-    labels = _left_column_labels_in_regions(regions, words_by_page)
-    labels = _ordered_unique(labels + _left_column_anchor_labels_in_regions(regions, anchors or []))
+    word_labels = _left_column_labels_in_regions(regions, words_by_page)
+    anchor_labels = _left_column_anchor_labels_in_regions(regions, anchors or [])
+    labels = _ordered_unique(anchor_labels or word_labels)
     parent_labels = [parent_question_id(label) for label in labels if parent_question_id(label)]
     unique_parents = _ordered_unique(parent_labels)
     if canonical_number not in unique_parents:
@@ -615,7 +616,7 @@ def _left_column_anchor_labels_in_regions(
         for anchor in anchors:
             if anchor.page_number != region.page_number:
                 continue
-            if anchor.y0 < region.bbox.y0 - 2 or anchor.y0 > region.bbox.y1 + 2:
+            if anchor.y0 < region.bbox.y0 - 2 or anchor.y0 >= region.bbox.y1 - 2:
                 continue
             if anchor.x0 < region.bbox.x0 - 12 or anchor.x0 > left_zone_right:
                 continue
@@ -923,7 +924,13 @@ def _build_legacy_mark_scheme_blocks(
         start = _question_start_from_mark_scheme_anchor(anchor, index)
         next_start = _question_start_from_mark_scheme_anchor(next_anchor, index + 1) if next_anchor else None
         method = "fallback"
-        regions, flags = _legacy_table_grid_regions_for_question(row_bands, canonical_number, layouts, config)
+        regions, flags = _legacy_table_grid_regions_for_question(
+            row_bands,
+            canonical_number,
+            layouts,
+            config,
+            anchors=anchors,
+        )
         if regions:
             method = "table_grid"
         else:
@@ -1184,13 +1191,16 @@ def _legacy_table_grid_regions_for_question(
     canonical_number: str,
     layouts: list[PageLayout],
     config: AppConfig,
+    anchors: list[MarkSchemeAnchor] | None = None,
 ) -> tuple[list[MarkSchemeCropRegion], list[str]]:
     del config
+    anchors = anchors or []
     start_index = next(
         (
             index
             for index, band in enumerate(row_bands)
-            if band.question_label and parent_question_id(band.question_label) == canonical_number
+            if _legacy_row_band_question_label(band, anchors)
+            and parent_question_id(_legacy_row_band_question_label(band, anchors) or "") == canonical_number
         ),
         None,
     )
@@ -1199,7 +1209,8 @@ def _legacy_table_grid_regions_for_question(
 
     selected: list[_LegacyRowBand] = []
     for band in row_bands[start_index:]:
-        if band.question_label and parent_question_id(band.question_label) != canonical_number:
+        label = _legacy_row_band_question_label(band, anchors)
+        if label and parent_question_id(label) != canonical_number:
             break
         selected.append(band)
     if not selected:
@@ -1225,13 +1236,31 @@ def _legacy_table_grid_regions_for_question(
         )
         if box.y1 <= box.y0 + 4:
             continue
-        continuation_rows_included = any(not band.question_label for band in page_bands[1:])
+        continuation_rows_included = any(not _legacy_row_band_question_label(band, anchors) for band in page_bands[1:])
         regions.append(MarkSchemeCropRegion(int(page_number), box, table_detected=True, continuation_rows_included=continuation_rows_included))
 
     flags = ["legacy_markscheme_table_grid_crop"]
     if len(regions) > 1:
         flags.append("markscheme_image_stitched")
     return regions, flags
+
+
+def _legacy_row_band_question_label(band: _LegacyRowBand, anchors: list[MarkSchemeAnchor]) -> str | None:
+    anchor = _legacy_anchor_for_row_band(band, anchors)
+    if anchor is not None:
+        return anchor.question_number
+    return band.question_label
+
+
+def _legacy_anchor_for_row_band(band: _LegacyRowBand, anchors: list[MarkSchemeAnchor]) -> MarkSchemeAnchor | None:
+    candidates = [
+        anchor
+        for anchor in anchors
+        if anchor.page_number == band.page_number
+        and band.y0 - 2 <= anchor.y0 < band.y1 - 2
+        and anchor.x0 <= band.question_col_right + 12
+    ]
+    return min(candidates, key=lambda item: (item.y0, item.x0), default=None)
 
 
 def _legacy_left_column_regions_for_question(

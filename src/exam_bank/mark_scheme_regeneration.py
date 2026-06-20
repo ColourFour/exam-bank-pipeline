@@ -4,6 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 import json
 from pathlib import Path
+import re
 from typing import Any, Iterable
 
 from .config import AppConfig
@@ -139,12 +140,13 @@ def _selected_record(row: dict[str, Any]) -> _SelectedRecord:
     question_number = normalize_question_id(str(row.get("question_number") or ""))
     if not question_number:
         raise ValueError("missing question_number")
+    artifact_parts = _identity_parts_from_mark_scheme_artifact(row)
     identity = paper_identity_from_parts(
         syllabus="9709",
         subject_family=str(row.get("paper_family") or ""),
-        year=str(row.get("canonical_year_folder") or ""),
-        session=str(row.get("canonical_session") or ""),
-        component=str(notes.get("source_paper_code") or ""),
+        year=artifact_parts.get("year") or str(row.get("canonical_year_folder") or ""),
+        session=artifact_parts.get("session") or str(row.get("canonical_session") or ""),
+        component=artifact_parts.get("component") or str(notes.get("source_paper_code") or ""),
         question_number=question_number,
         expected_question_id=str(row.get("question_id") or ""),
     )
@@ -154,6 +156,21 @@ def _selected_record(row: dict[str, Any]) -> _SelectedRecord:
         identity=identity,
         mark_scheme_pdf=Path(mark_scheme_source),
     )
+
+
+def _identity_parts_from_mark_scheme_artifact(row: dict[str, Any]) -> dict[str, str]:
+    for field in ("canonical_mark_scheme_artifact", "mark_scheme_image_path"):
+        value = str(row.get(field) or "")
+        if not value:
+            continue
+        match = re.search(
+            r"_(?P<year>\d{4})_(?P<session>[msw]\d{2})_(?P<component>\d{2})_ms_q\d{2}_markscheme(?:_v\d+)?\.png$",
+            Path(value).name,
+            re.IGNORECASE,
+        )
+        if match:
+            return {key: match.group(key) for key in ("year", "session", "component")}
+    return {}
 
 
 def _normalize_requested_ids(values: Iterable[str]) -> set[str]:

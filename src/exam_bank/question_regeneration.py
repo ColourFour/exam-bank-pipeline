@@ -7,9 +7,14 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .config import AppConfig
+from .core.asset_paths import AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts
 from .identifiers import normalize_question_id
+from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
 from .image_rendering import render_question_image
+from .models import BoundingBox, RenderResult
+from .mupdf_tools import quiet_mupdf
+from .ocr import run_question_crop_ocr
 from .pdf_extract import extract_pdf_layout
 from .question_detection import detect_question_spans
 
@@ -64,23 +69,14 @@ def regenerate_question_pngs_from_question_bank(
         for record in records:
             span = spans.get(record.question_number)
             if span is None:
-                outputs.append(_failed_output(record, "span_not_found"))
+                rendered = _render_from_saved_crop_diagnostics(record, config)
+                if rendered is None:
+                    outputs.append(_failed_output(record, "span_not_found"))
+                    continue
+                outputs.append(_rendered_output(record, rendered, question_pdf, record.question_number))
                 continue
             rendered = render_question_image(question_pdf, span, layouts, config, identity=record.identity)
-            outputs.append(
-                {
-                    "question_id": record.row.get("question_id"),
-                    "canonical_question_artifact": record.row.get("canonical_question_artifact"),
-                    "source_pdf": str(question_pdf),
-                    "question_number": record.question_number,
-                    "status": "pass" if rendered.screenshot_path else "fail",
-                    "failure_reason": "" if rendered.screenshot_path else "render_failed",
-                    "image_path": str(rendered.screenshot_path) if rendered.screenshot_path else "",
-                    "review_flags": rendered.review_flags,
-                    "crop_uncertain": rendered.crop_uncertain,
-                    "crop_regions": rendered.crop_diagnostics.get("regions") if isinstance(rendered.crop_diagnostics, dict) else [],
-                }
-            )
+            outputs.append(_rendered_output(record, rendered, question_pdf, record.question_number))
 
     selected_keys: set[str] = set()
     for row in selected:
@@ -97,6 +93,21 @@ def regenerate_question_pngs_from_question_bank(
     }
 
 
+def _rendered_output(record: _SelectedRecord, rendered: RenderResult, question_pdf: Path, question_number: str) -> dict[str, Any]:
+    return {
+        "question_id": record.row.get("question_id"),
+        "canonical_question_artifact": record.row.get("canonical_question_artifact"),
+        "source_pdf": str(question_pdf),
+        "question_number": question_number,
+        "status": "pass" if rendered.screenshot_path else "fail",
+        "failure_reason": "" if rendered.screenshot_path else "render_failed",
+        "image_path": str(rendered.screenshot_path) if rendered.screenshot_path else "",
+        "review_flags": rendered.review_flags,
+        "crop_uncertain": rendered.crop_uncertain,
+        "crop_regions": rendered.crop_diagnostics.get("regions") if isinstance(rendered.crop_diagnostics, dict) else [],
+    }
+
+
 def _failed_output(record: _SelectedRecord, reason: str) -> dict[str, Any]:
     return {
         "question_id": record.row.get("question_id"),
@@ -110,6 +121,129 @@ def _failed_output(record: _SelectedRecord, reason: str) -> dict[str, Any]:
         "crop_uncertain": True,
         "crop_regions": [],
     }
+
+
+def _render_from_saved_crop_diagnostics(record: _SelectedRecord, config: AppConfig) -> RenderResult | None:
+    diagnostics = record.row.get("notes", {}).get("question_crop_diagnostics")
+    if not isinstance(diagnostics, dict):
+        return None
+    regions = diagnostics.get("regions")
+    if not isinstance(regions, list) or not regions:
+        return None
+
+    try:
+        import fitz
+    except ImportError as exc:
+        raise RuntimeError("PyMuPDF is required for rendering screenshots.") from exc
+    quiet_mupdf(fitz)
+
+    asset = AssetPathResolver(config.output.root_dir()).question_image(record.identity)
+    output_path = asset.absolute_path
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    images = []
+    rendered_regions: list[dict[str, Any]] = []
+    with fitz.open(record.question_pdf) as doc:
+        for item in regions:
+            if not isinstance(item, dict):
+                continue
+            page_number = int(item.get("page_number") or 0)
+            bbox = _bbox_from_mapping(item.get("final_crop_bbox") or item.get("original_crop_bbox"))
+            if page_number < 1 or page_number > len(doc) or bbox is None or bbox.x1 <= bbox.x0 or bbox.y1 <= bbox.y0:
+                continue
+            page = doc[page_number - 1]
+            rect = fitz.Rect(bbox.x0, bbox.y0, bbox.x1, bbox.y1)
+            image, _used_zoom = render_pdf_area(
+                page,
+                fitz,
+                dpi=config.detection.render_dpi,
+                source_file=record.question_pdf,
+                page_number=page_number,
+                context=f"question_saved_crop:{record.question_number}",
+                clip=rect,
+            )
+            images.append(image)
+            rendered_regions.append(
+                {
+                    "page_number": page_number,
+                    "region_kind": item.get("region_kind") or "saved_crop",
+                    "original_crop_bbox": item.get("original_crop_bbox") or item.get("final_crop_bbox"),
+                    "final_crop_bbox": {"x0": bbox.x0, "y0": bbox.y0, "x1": bbox.x1, "y1": bbox.y1},
+                    "text_bbox": item.get("text_bbox"),
+                    "figure_bbox": item.get("figure_bbox"),
+                    "text_figure_overlap_area": item.get("text_figure_overlap_area", 0.0),
+                    "text_trimmed_for_figure": item.get("text_trimmed_for_figure", False),
+                    "merged_blocks": item.get("merged_blocks", 0),
+                    "graphics_count": item.get("graphics_count", 0),
+                    "duplicate_visual_blocks_removed": item.get("duplicate_visual_blocks_removed", 0),
+                    "excluded_regions": item.get("excluded_regions", []),
+                }
+            )
+
+    if not images:
+        return None
+
+    stitched = cap_image_pixels(
+        _stitch_images(images, config.detection.stitch_gap_px),
+        source_file=record.question_pdf,
+        context=f"question_saved_crop_output:{record.question_number}",
+    )
+    stitched = clean_rendered_crop_image(stitched)
+    stitched.save(output_path)
+    ocr_result = run_question_crop_ocr(output_path, config)
+
+    flags = sorted(set([*(diagnostics.get("flags") or []), "saved_crop_diagnostics_fallback", "crop_uncertain"]))
+    if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
+        flags.append("ocr_question_crop_failed")
+    return RenderResult(
+        screenshot_path=output_path,
+        review_flags=flags,
+        crop_uncertain=True,
+        extracted_text=str(record.row.get("question_text") or ""),
+        crop_diagnostics={
+            "source_file": str(record.question_pdf),
+            "question_number": record.question_number,
+            "question_id": record.identity.question_id,
+            "paper_id": record.identity.paper_id,
+            "component": record.identity.component,
+            "canonical_path": asset.canonical_path,
+            "flags": flags,
+            "fallback_reason": "span_not_found",
+            "regions": rendered_regions,
+        },
+        question_id=record.identity.question_id,
+        paper_id=record.identity.paper_id,
+        component=record.identity.component,
+        canonical_path=asset.canonical_path,
+        ocr_ran=ocr_result.ocr_ran,
+        ocr_engine=ocr_result.ocr_engine,
+        ocr_text=ocr_result.ocr_text,
+        ocr_text_trust=ocr_result.ocr_text_trust,
+        ocr_failure_reason=ocr_result.ocr_failure_reason,
+        ocr_text_role=ocr_result.ocr_text_role,
+    )
+
+
+def _bbox_from_mapping(value: Any) -> BoundingBox | None:
+    if not isinstance(value, dict):
+        return None
+    try:
+        return BoundingBox(float(value["x0"]), float(value["y0"]), float(value["x1"]), float(value["y1"]))
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _stitch_images(images: list[Any], gap_px: int) -> Any:
+    from PIL import Image
+
+    width = max(image.width for image in images)
+    height = sum(image.height for image in images) + gap_px * max(0, len(images) - 1)
+    stitched = Image.new("RGB", (width, height), "white")
+    y = 0
+    for image in images:
+        stitched.paste(image, (0, y))
+        y += image.height + gap_px
+    return stitched
 
 
 def _load_question_rows(question_bank_path: str | Path) -> list[dict[str, Any]]:
