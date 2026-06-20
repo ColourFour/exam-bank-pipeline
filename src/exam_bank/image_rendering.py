@@ -10,8 +10,8 @@ from .config import AppConfig
 from .core.asset_paths import AssetPath, AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import parse_filename_metadata
-from .image_limits import cap_image_pixels, render_pdf_area
-from .models import BoundingBox, PageLayout, QuestionSpan, RenderResult, TextBlock
+from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
+from .models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, RenderResult, TextBlock
 from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
 from .question_detection_layout import looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text
@@ -141,6 +141,7 @@ def _render_prompt_crop_image(
         source_file=pdf_path,
         context=f"question_output:{span.question_number}",
     )
+    stitched = clean_rendered_crop_image(stitched)
     stitched.save(output_path)
     ocr_result = run_question_crop_ocr(output_path, config)
     if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
@@ -256,6 +257,8 @@ def _detect_prompt_regions(
     flags.extend(furniture_flags)
     if _span_has_figure_prompt(span) and not any(region.graphics for region in regions):
         flags.extend(["missing_image_detection_failure", "crop_uncertain"])
+    regions, foreign_flags = _trim_regions_at_foreign_question_boundaries(regions, span, layouts, config)
+    flags.extend(foreign_flags)
     return regions, sorted(set(flags))
 
 
@@ -319,7 +322,12 @@ def _context_graphics_for_question(
     bottom = span.end_y if layout.page_number == span.end_page else layout.height - config.detection.crop_bottom_margin
     search_radius = max(config.detection.prompt_graphic_lookahead * 1.35, 240.0)
     if text_box is not None:
-        top = max(config.detection.crop_top_margin, min(top, text_box.y0 - search_radius))
+        start_page_floor = (
+            max(config.detection.crop_top_margin, span.start_y - max(90.0, config.detection.crop_padding * 6.0))
+            if layout.page_number == span.start_page
+            else config.detection.crop_top_margin
+        )
+        top = max(start_page_floor, min(top, text_box.y0 - search_radius))
         bottom = min(layout.height - config.detection.crop_bottom_margin, max(bottom, text_box.y1 + search_radius))
         left = max(config.detection.crop_left_margin, text_box.x0 - search_radius * 0.6)
         right = min(layout.width - config.detection.crop_right_margin, text_box.x1 + search_radius * 0.6)
@@ -348,9 +356,9 @@ def _span_has_figure_prompt(span: QuestionSpan) -> bool:
     text = _clean_text_line(span.combined_text).lower()
     if not text:
         return False
-    return bool(
-        re.search(r"\b(?:figure|fig\.?|diagram|graph|curve|sketch|draw|shown|sector|circle|histogram|scatter diagram|box plot|table)\b", text)
-    )
+    if re.search(r"\b(?:figure|fig\.?|diagram|graph|sketch|draw|shown|sector|circle|histogram|scatter diagram|box plot|table|shaded)\b", text):
+        return True
+    return bool(re.search(r"\bcurve\b", text) and re.search(r"\b(?:shown|sketch|diagram|graph|shaded|area under|bounded)\b", text))
 
 
 def _single_page_union_regions(
@@ -585,6 +593,10 @@ def _distance_between_boxes(a: BoundingBox, b: BoundingBox) -> float:
 
 
 def _contains_other_question_start(box: BoundingBox, span: QuestionSpan, layout: PageLayout, config: AppConfig) -> bool:
+    for anchor in _foreign_question_anchors_for_span_page(span, layout, config):
+        if anchor.bbox is not None and _boxes_intersect(box, anchor.bbox):
+            return True
+
     for block in layout.blocks:
         if block.bbox.y0 < box.y0 or block.bbox.y0 > box.y1:
             continue
@@ -594,6 +606,86 @@ def _contains_other_question_start(box: BoundingBox, span: QuestionSpan, layout:
         if parsed and parsed[0] != span.question_number:
             return True
     return False
+
+
+def _trim_regions_at_foreign_question_boundaries(
+    regions: list[CropRegion],
+    span: QuestionSpan,
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> tuple[list[CropRegion], list[str]]:
+    if not regions:
+        return regions, []
+
+    boundary_by_page: dict[int, float] = {}
+    for page_number in {region.page_number for region in regions}:
+        layout = _layout_by_number(layouts, page_number)
+        anchors = _foreign_question_anchors_for_span_page(span, layout, config)
+        if anchors:
+            boundary_by_page[page_number] = min(anchor.y0 for anchor in anchors)
+    if not boundary_by_page:
+        return regions, []
+
+    trimmed: list[CropRegion] = []
+    flags: list[str] = []
+    for region in regions:
+        boundary_y = boundary_by_page.get(region.page_number)
+        if boundary_y is None or region.bbox.y1 < boundary_y:
+            trimmed.append(region)
+            continue
+
+        safe_bottom = boundary_y - 1.0
+        if region.bbox.y0 >= safe_bottom or safe_bottom <= region.bbox.y0 + config.detection.min_crop_height * 0.5:
+            flags.append("foreign_question_region_removed")
+            continue
+
+        kept_text = [block for block in region.text_blocks if block.bbox.y1 <= safe_bottom]
+        kept_graphics = [graphic for graphic in region.graphics if graphic.y1 <= safe_bottom]
+        if not kept_text and not kept_graphics:
+            flags.append("foreign_question_region_removed")
+            continue
+
+        flags.append("foreign_question_boundary_trimmed")
+        trimmed.append(
+            replace(
+                region,
+                bbox=BoundingBox(region.bbox.x0, region.bbox.y0, region.bbox.x1, safe_bottom),
+                text_blocks=kept_text,
+                graphics=kept_graphics,
+                original_bbox=region.original_bbox or region.bbox,
+                text_bbox=_union_boxes([block.bbox for block in kept_text]) if kept_text else None,
+                figure_bbox=_union_boxes(kept_graphics) if kept_graphics else None,
+            )
+        )
+    return trimmed, sorted(set(flags))
+
+
+def _foreign_question_anchors_for_span_page(
+    span: QuestionSpan,
+    layout: PageLayout,
+    config: AppConfig,
+) -> list[QuestionStart]:
+    anchors: list[QuestionStart] = []
+    for anchor in detect_question_anchor_candidates([layout], config):
+        if anchor.bbox is None:
+            continue
+        if not _anchor_is_later_foreign_question(anchor.question_number, span.question_number):
+            continue
+        if layout.page_number == span.start_page and anchor.y0 <= span.start_y + config.detection.anchor_y_tolerance:
+            continue
+        if layout.page_number == span.end_page and anchor.y0 >= span.end_y + config.detection.anchor_y_tolerance:
+            continue
+        if anchor.confidence < max(0.52, config.detection.anchor_min_confidence - 0.08):
+            continue
+        anchors.append(anchor)
+    return anchors
+
+
+def _anchor_is_later_foreign_question(candidate_number: str, current_number: str) -> bool:
+    try:
+        return int(candidate_number) > int(current_number)
+    except ValueError:
+        return candidate_number != current_number
 
 
 def _split_prompt_segments(blocks: list[TextBlock], config: AppConfig) -> list[list[TextBlock]]:
@@ -1225,6 +1317,7 @@ def _render_full_region_image(
         source_file=pdf_path,
         context=f"question_full_region_output:{span.question_number}",
     )
+    stitched = clean_rendered_crop_image(stitched)
     stitched.save(output_path)
     ocr_result = run_question_crop_ocr(output_path, config)
     flags = ["full_region_mode"]
@@ -1493,6 +1586,8 @@ def _page_furniture_box_label(
     config: AppConfig,
     answer_rule_bands: list[float],
 ) -> str | None:
+    if _is_watermark_like_box(box, layout):
+        return "watermark"
     if _is_footer_or_header_box(box, layout, config):
         return "header_footer"
     if _is_answer_rule_like(box, layout) or _is_in_answer_rule_band(box, answer_rule_bands):
@@ -1525,6 +1620,18 @@ def _is_scan_edge_box(box: BoundingBox, layout: PageLayout) -> bool:
     height = max(0.0, box.y1 - box.y0)
     near_edge = box.x0 <= 4 or box.x1 >= layout.width - 4 or box.y0 <= 4 or box.y1 >= layout.height - 4
     return near_edge and (width <= 8 or height <= 8)
+
+
+def _is_watermark_like_box(box: BoundingBox, layout: PageLayout) -> bool:
+    width = max(0.0, box.x1 - box.x0)
+    height = max(0.0, box.y1 - box.y0)
+    if width < layout.width * 0.82 or height < layout.height * 0.12:
+        return False
+    touches_page_edge = box.x0 <= 4 or box.x1 >= layout.width - 4 or box.y0 <= 4 or box.y1 >= layout.height - 4
+    if not touches_page_edge:
+        return False
+    near_top_or_bottom = box.y0 <= layout.height * 0.18 or box.y1 >= layout.height * 0.82
+    return near_top_or_bottom
 
 
 def _is_answer_rule_like(box: BoundingBox, layout: PageLayout) -> bool:

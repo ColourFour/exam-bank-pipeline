@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_audit.py::test_current_output_integrity_flags_excessive_blank_png_margins",
+      "result": "passed"
+    },
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_audit.py",
+      "result": "passed"
+    }
+  ],
+  "current_output_integrity": "failed as expected on newly detected whitespace artifacts; see current-output-integrity.json"
+}

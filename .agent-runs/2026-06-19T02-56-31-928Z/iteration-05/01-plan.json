@@ -1,0 +1,41 @@
+{
+  "selected_goal": "Add a real-PDF regression guard for the S20 P51 q6 mark-scheme contamination and run final focused verification.",
+  "why_this_now": "The user reported remaining issues especially in 2008-2021 papers. S20 P51 q6 reproduced the exact failure mode with a real paper and mark scheme, so it should become a test guard instead of only a manual probe.",
+  "repo_evidence": [
+    "input/pastpapers/9709/2020/question_papers/9709_s20_qp_51.pdf exists in the repository.",
+    "input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_51.pdf exists in the repository.",
+    "tests/test_sample_pipeline.py already exercises process_sample on real or fixture PDFs."
+  ],
+  "files_likely_to_change": [
+    "tests/test_sample_pipeline.py"
+  ],
+  "files_protected": [
+    "input/",
+    "output/",
+    "exam_bank_taxonomy/",
+    "data/review/"
+  ],
+  "acceptance_criteria": [
+    "A real S20 P51 pipeline test confirms question 6 answer text excludes Mark Scheme Notes, Specific Marking Principles, and question 7.",
+    "The q6 mark-scheme image is not a tall multi-question crop.",
+    "Focused rendering, question-detection, and regression tests pass."
+  ],
+  "test_expectations": [
+    "Add a real-PDF test with OCR disabled for deterministic local execution.",
+    "Run the new test by itself.",
+    "Run the focused combined suite.",
+    "Attempt a broader non-integration run and report unrelated blockers if present."
+  ],
+  "implementation_boundaries": [
+    "Do not regenerate canonical output.",
+    "Do not require OCR for the regression.",
+    "Do not mask existing unrelated repository test failures."
+  ],
+  "repo_hygiene_risk": "Low: test-only change using repository PDFs and pytest temporary output.",
+  "rollback_plan": "Remove the S20 P51 constants and real-PDF regression test from tests/test_sample_pipeline.py.",
+  "done_when": [
+    "The S20 P51 real-PDF regression passes.",
+    "Focused rendering, question-detection, and regression gates pass.",
+    "Any broad-suite failures are reported as unrelated rather than hidden."
+  ]
+}

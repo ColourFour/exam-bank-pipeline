@@ -25,10 +25,11 @@ from exam_bank.mark_schemes import (
     _validate_mark_scheme_mapping,
     find_mark_scheme,
 )
-from exam_bank.models import BoundingBox, PageLayout, QuestionRecord, TextBlock
+from exam_bank.models import BoundingBox, PageLayout, QuestionRecord, QuestionStart, TextBlock
 from exam_bank.pipeline import _question_subparts_from_span, _question_subparts_from_text
 from exam_bank.question_detection import (
     _foreign_question_anchor,
+    _question_validation_flags,
     detect_question_spans,
     extract_marks_from_text,
     extract_question_total_from_text,
@@ -425,6 +426,38 @@ def test_detect_question_spans_flags_weak_nearly_empty_anchor() -> None:
 
     assert "weak_question_anchor" in span.validation_flags
     assert "likely_truncated_question_crop" in span.validation_flags
+
+
+def test_complete_single_part_prompt_is_not_weak_anchor_from_uncertain_start() -> None:
+    config = AppConfig()
+    start = QuestionStart(
+        question_number="2",
+        page_number=1,
+        y0=100,
+        x0=50,
+        label="2",
+        block_index=0,
+        confidence=0.55,
+        reasons=["number_then_prompt"],
+    )
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[block(1, "2 Solve the equation 2ln(2x + 3) - ln(2x + 5) = ln(3x). [4]", 100)],
+    )
+
+    validation_flags, structure = _question_validation_flags(
+        start=start,
+        blocks=layout.blocks,
+        layouts=[layout],
+        config=config,
+        format_profile="caie_2024_2025",
+        review_flags=["question_start_uncertain"],
+    )
+
+    assert "weak_question_anchor" not in validation_flags
+    assert structure["weak_anchor"] is False
 
 
 def test_detect_question_spans_recovers_nearby_missing_continuation_block() -> None:
@@ -1118,6 +1151,122 @@ def test_legacy_mark_scheme_blocks_segment_without_answer_table_header() -> None
     assert all(block.regions for block in blocks.values())
 
 
+def test_legacy_mark_scheme_blocks_ignore_numbered_notes_page() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=1,
+            width=595,
+            height=842,
+            blocks=[
+                block(1, "Mark Scheme Notes", 80),
+                block(1, "1 Unless a method has been specified, award equivalent methods.", 120, x=68),
+                block(1, "2 Unless specified, answers may be given as decimals.", 155, x=68),
+                block(1, "Types of mark", 205, x=68),
+            ],
+        ),
+        PageLayout(
+            page_number=2,
+            width=595,
+            height=842,
+            blocks=[
+                block(2, "1 Use the sine rule M1", 92, x=50),
+                block(2, "Obtain exact value A1 [2]", 128, x=85),
+                block(2, "2 Substitute identity M1 [3]", 210, x=50),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s20_ms_51.pdf",
+        layouts,
+        config,
+        ["1", "2"],
+        question_marks={"1": 2, "2": 3},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2"]
+    assert blocks["1"].anchor.page_number == 2
+    assert blocks["2"].anchor.page_number == 2
+    assert "Unless a method" not in blocks["1"].text
+
+
+def test_legacy_mark_scheme_blocks_ignore_specific_marking_principles_page() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=3,
+            width=595,
+            height=842,
+            blocks=[
+                block(3, "Mathematics Specific Marking Principles", 56, x=68),
+                block(3, "1 Unless a method has been specified, award equivalent methods.", 82, x=68),
+                block(3, "2 Unless specified, answers may be given as decimals.", 120, x=68),
+            ],
+        ),
+        PageLayout(
+            page_number=6,
+            width=595,
+            height=842,
+            blocks=[
+                cell(6, "Question", 56, x=50, width=55),
+                cell(6, "Answer", 56, x=180, width=50),
+                cell(6, "Marks", 56, x=500, width=45),
+                block(6, "1 Use the sine rule M1", 92, x=50),
+                block(6, "Obtain exact value A1 [2]", 128, x=85),
+                block(6, "2 Substitute identity M1 [3]", 210, x=50),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s20_ms_51.pdf",
+        layouts,
+        config,
+        ["1", "2"],
+        question_marks={"1": 2, "2": 3},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2"]
+    assert blocks["1"].anchor.page_number == 6
+    assert "Unless a method" not in blocks["1"].text
+
+
+def test_legacy_mark_scheme_blocks_ignore_numbered_notes_before_same_page_answer_table() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=3,
+        width=595,
+        height=842,
+        blocks=[
+            block(3, "Mark Scheme Notes", 80),
+            block(3, "1 Unless a method has been specified, award equivalent methods.", 120, x=68),
+            block(3, "2 Unless specified, answers may be given as decimals.", 155, x=68),
+            cell(3, "Question", 245, x=50, width=55),
+            cell(3, "Answer", 245, x=180, width=50),
+            cell(3, "Marks", 245, x=500, width=45),
+            block(3, "1 Use the sine rule M1", 282, x=50),
+            block(3, "Obtain exact value A1 [2]", 318, x=85),
+            block(3, "2 Substitute identity M1 [3]", 390, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s20_ms_51.pdf",
+        [layout],
+        config,
+        ["1", "2"],
+        question_marks={"1": 2, "2": 3},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2"]
+    assert blocks["1"].anchor.y0 == 282
+    assert "Unless a method" not in blocks["1"].text
+
+
 def test_legacy_mark_scheme_blocks_make_missing_questions_explicit() -> None:
     config = AppConfig()
     layout = PageLayout(
@@ -1225,6 +1374,74 @@ def test_legacy_mark_scheme_blocks_accept_standalone_left_margin_anchor() -> Non
     assert "normal distribution" in blocks["2"].text
 
 
+def test_legacy_mark_scheme_block_stops_before_missed_neighbor_question() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "1 Differentiate correctly M1", 100, x=50),
+            block(4, "Obtain the answer A1 [2]", 135, x=86),
+            block(4, "2 Next question method M1", 235, x=118),
+            block(4, "Complete the next question A1 [3]", 270, x=132),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s20_ms_11.pdf",
+        [layout],
+        config,
+        ["1", "2"],
+        question_marks={"1": 2, "2": 3},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1"]
+    assert "Next question" not in blocks["1"].text
+    assert blocks["1"].regions[0].bbox.y1 < 235
+
+
+def test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=10,
+            width=595,
+            height=842,
+            blocks=[
+                block(10, "6(a) Correct probability M1", 470, x=50),
+                block(10, "6(b) Correct standardisation A1 [5]", 510, x=50),
+            ],
+        ),
+        PageLayout(
+            page_number=11,
+            width=595,
+            height=842,
+            blocks=[
+                cell(11, "Question", 56, x=50, width=55),
+                cell(11, "Answer", 56, x=180, width=50),
+                cell(11, "Marks", 56, x=500, width=45),
+                block(11, "7(a) Class widths M1", 80, x=50),
+                block(11, "Frequency density A1 [5]", 120, x=85),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s20_ms_51.pdf",
+        layouts,
+        config,
+        ["6", "7"],
+        question_marks={"6": 5, "7": 5},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["6", "7"]
+    assert [region.page_number for region in blocks["6"].regions] == [10]
+    assert "Class widths" not in blocks["6"].text
+
+
 def test_legacy_mark_scheme_blocks_skip_late_false_anchor_after_later_questions() -> None:
     config = AppConfig()
     layouts = [
@@ -1271,6 +1488,160 @@ def test_legacy_mark_scheme_blocks_skip_late_false_anchor_after_later_questions(
     assert sorted(blocks) == ["1", "3", "4", "5", "6", "7"]
     assert "Substitute the endpoints" in blocks["3"].text
     assert "2" not in blocks
+
+
+def test_legacy_mark_scheme_blocks_ignore_compact_formula_that_starts_with_later_question_number() -> None:
+    config = AppConfig()
+    layouts = [
+        PageLayout(
+            page_number=4,
+            width=595,
+            height=842,
+            blocks=[
+                block(4, "5 a = sin theta - 3 cos theta", 100, x=50),
+                block(4, "10(sc^2 + 10 + 9c^2s^2 = 10 - 6sc) M1 A1 [3]", 135, x=92),
+            ],
+        ),
+        PageLayout(
+            page_number=5,
+            width=595,
+            height=842,
+            blocks=[
+                block(5, "6 OA = i - 2j + 2k B1 [7]", 90, x=50),
+                block(5, "7 3y + 2x = 33 M1 [7]", 220, x=50),
+            ],
+        ),
+        PageLayout(
+            page_number=6,
+            width=595,
+            height=842,
+            blocks=[
+                block(6, "10 (a) Use arithmetic progression M1 [6]", 80, x=50),
+            ],
+        ),
+    ]
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s13_ms_12.pdf",
+        layouts,
+        config,
+        ["5", "6", "7", "10"],
+        question_marks={"5": 3, "6": 7, "7": 7, "10": 6},
+        question_subparts={},
+    )
+
+    assert set(blocks) == {"5", "6", "7", "10"}
+    assert blocks["6"].anchor.page_number == 5
+    assert "10(sc" in blocks["5"].text
+
+
+def test_legacy_mark_scheme_blocks_ignore_offset_numeric_data_row_before_missing_questions() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "1 (i) Draw stem and leaf diagram B1 [4]", 80, x=50),
+            block(4, "7 4 3 3 2 1 6 1 2 7 8", 133, x=103.8),
+            block(4, "2 (i) np = 252 x 1/7 = 36 B1 [6]", 305, x=50),
+            block(4, "3 (i) P(2) = 6C3 x 3C2 / 9C5 M1 [6]", 506, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s14_ms_63.pdf",
+        [layout],
+        config,
+        ["1", "2", "3", "7"],
+        question_marks={"1": 4, "2": 6, "3": 6, "7": 8},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["1", "2", "3"]
+    assert "np = 252" in blocks["2"].text
+
+
+def test_legacy_mark_scheme_blocks_ignore_left_margin_stem_leaf_numeric_row() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=5,
+        width=595,
+        height=842,
+        blocks=[
+            block(5, "4 (i) Draw comparative stem and leaf B1 [6]", 100, x=50),
+            block(5, "7 197 7", 150, x=50),
+            block(5, "5 (i) z = 0.2176 M1 [7]", 240, x=50),
+            block(5, "6 (i) constant probability B1 [10]", 390, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_w10_ms_62.pdf",
+        [layout],
+        config,
+        ["4", "5", "6", "7"],
+        question_marks={"4": 6, "5": 7, "6": 10, "7": 8},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["4", "5", "6"]
+    assert "z = 0.2176" in blocks["5"].text
+
+
+def test_legacy_mark_scheme_blocks_ignore_offset_operator_continuation_before_missing_questions() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "3 (i) Area calculation B1 [4]", 100, x=50),
+            block(4, "8 + 5pi B1 [1]", 150, x=93.5),
+            block(4, "4 (i) ar^2 = -108 B1 [5]", 205, x=50),
+            block(4, "5 (i) Use the trig identity M1 [6]", 320, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s13_ms_11.pdf",
+        [layout],
+        config,
+        ["3", "4", "5", "8"],
+        question_marks={"3": 4, "4": 5, "5": 6, "8": 8},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["3", "4", "5"]
+    assert "ar^2" in blocks["4"].text
+
+
+def test_legacy_mark_scheme_blocks_false_later_mark_row_does_not_block_expected_sequence() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=4,
+        width=595,
+        height=842,
+        blocks=[
+            block(4, "3 Expansion coefficient B1 [3]", 100, x=50),
+            block(4, "7 B1 Identified as answer", 135, x=62),
+            block(4, "4 Differentiate the expression B1 [5]", 205, x=50),
+            block(4, "5 Use the progression formula M1 [6]", 320, x=50),
+            block(4, "6 Area of triangle B1 [6]", 460, x=50),
+        ],
+    )
+
+    blocks = _build_legacy_mark_scheme_blocks(
+        "9709_s14_ms_11.pdf",
+        [layout],
+        config,
+        ["3", "4", "5", "6", "7"],
+        question_marks={"3": 3, "4": 5, "5": 6, "6": 6, "7": 7},
+        question_subparts={},
+    )
+
+    assert sorted(blocks) == ["3", "4", "5", "6"]
+    assert "Differentiate" in blocks["4"].text
 
 
 def test_mark_scheme_subpart_matching_keeps_3a_and_3b_separate() -> None:

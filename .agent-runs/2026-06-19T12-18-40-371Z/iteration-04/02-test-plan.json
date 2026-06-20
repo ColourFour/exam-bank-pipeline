@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_triage.py::test_create_suspicious_crop_review_pack_from_integrity_audit_candidates",
+      "purpose": "Focused merged artifact review-pack test"
+    },
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_triage.py",
+      "purpose": "Full triage regression"
+    }
+  ]
+}

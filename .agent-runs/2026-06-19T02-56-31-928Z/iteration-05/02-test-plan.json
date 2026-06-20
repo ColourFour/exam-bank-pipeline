@@ -1,0 +1,45 @@
+{
+  "plan_under_test": "Add a real-PDF regression guard for the S20 P51 q6 mark-scheme contamination and run final focused verification.",
+  "test_files_changed": [
+    "tests/test_sample_pipeline.py"
+  ],
+  "tests_added_or_changed": [
+    "test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7"
+  ],
+  "expected_initial_failure": "Before the production fixes, the real-PDF regression fails because S20 P51 q6 answer text or rendered mark-scheme image includes notes and/or q7 content.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering",
+    ".venv/bin/python -m pytest -q -m \"not integration\""
+  ],
+  "what_passing_proves": [
+    "The real S20 P51 q6 regression excludes Mark Scheme Notes, Specific Marking Principles, and q7 text.",
+    "The q6 mark-scheme image is not a tall multi-question crop.",
+    "The focused rendering and question-detection gates still pass."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove a regenerated canonical output set is clean.",
+    "It does not resolve unrelated broad-suite failures from generated artifacts or fixtures."
+  ],
+  "risk_of_bad_tests": "The real-PDF test is high value but narrow; future work still needs corpus-level suspicious-crop detection.",
+  "new_tests": [
+    {
+      "file": "tests/test_sample_pipeline.py",
+      "test": "test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7",
+      "purpose": "Guards the real historical paper that previously rendered q6 with notes and later-question contamination."
+    }
+  ],
+  "commands": [
+    ".venv/bin/python -m pytest tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering",
+    ".venv/bin/python -m pytest -q -m \"not integration\""
+  ],
+  "success_criteria": [
+    "The real S20 P51 regression passes.",
+    "Focused rendering/question-detection/regression suite passes.",
+    "Rendering marker suite passes.",
+    "Any broad-suite failures are identified as unrelated if they are caused by existing generated-artifact or fixture debt."
+  ]
+}

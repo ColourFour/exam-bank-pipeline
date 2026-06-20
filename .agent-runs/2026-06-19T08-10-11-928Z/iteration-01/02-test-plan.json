@@ -1,0 +1,24 @@
+{
+  "plan_under_test": "Suspicious rendered crop dimensions are reported by the current output-integrity audit.",
+  "test_files_changed": [
+    "tests/test_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Add a current-output-integrity regression test that writes valid PNG artifacts with normal and suspicious dimensions, then asserts the suspicious crop failure, counts, and evidence fields."
+  ],
+  "expected_initial_failure": "Before implementation, the new test should fail because audit_current_output_integrity does not inspect PNG dimensions or emit suspicious_rendered_crop_dimensions.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q"
+  ],
+  "what_passing_proves": [
+    "The audit can open valid PNG artifact paths and identify extreme height/aspect-ratio crops.",
+    "Suspicious crop evidence is tied back to the affected record and image field.",
+    "Existing integrity checks still tolerate fake placeholder files used by older tests."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove visible question-number contamination inside the image.",
+    "It does not regenerate or repair current canonical output images.",
+    "It does not inspect non-PNG artifacts beyond existing path existence checks."
+  ],
+  "risk_of_bad_tests": "The test uses synthetic dimensions, so it proves the audit gate mechanics but not historical semantic crop correctness."
+}

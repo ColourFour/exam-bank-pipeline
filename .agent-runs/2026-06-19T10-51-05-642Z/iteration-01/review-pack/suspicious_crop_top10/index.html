@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extraction Triage - suspicious_rendered_crop_dimensions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --border: #cfd6df;
+      --ink: #17202a;
+      --muted: #5f6c7a;
+      --panel: #f7f9fb;
+      --accent: #0b6bcb;
+      --danger: #b42318;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: white;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    main {
+      display: grid;
+      gap: 24px;
+      padding: 24px;
+    }
+    article {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+    .issue {
+      color: var(--danger);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+    }
+    .body {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr) 360px;
+      gap: 16px;
+      padding: 16px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+    }
+    figcaption {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    img {
+      display: block;
+      width: 100%;
+      max-height: 680px;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      background: white;
+    }
+    .missing {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      background: var(--panel);
+    }
+    dl {
+      display: grid;
+      grid-template-columns: 125px minmax(0, 1fr);
+      gap: 6px 10px;
+      margin: 0 0 14px;
+      font-size: 13px;
+    }
+    dt {
+      color: var(--muted);
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+    .flags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 14px;
+    }
+    .flag {
+      padding: 3px 6px;
+      border-radius: 4px;
+      background: #eef2f6;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+    }
+    textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 5px 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font: inherit;
+      font-size: 13px;
+      background: white;
+    }
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .save-status {
+      min-height: 18px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 180px;
+      overflow: auto;
+      background: var(--panel);
+      font-size: 12px;
+    }
+    @media (max-width: 1100px) {
+      .body {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Extraction Triage</h1>
+    <div class="summary">
+      <span>Issue set: output-integrity</span>
+      <span>Target: suspicious_rendered_crop_dimensions</span>
+      <span>Seed: </span>
+      <span>Sample: 10</span>
+    </div>
+  </header>
+  <main>
+    <article data-question-id="13winter11_q10">
+  <div class="card-head">
+    <div>
+      <h2>13winter11_q10 / Q10</h2>
+      <div>pm1 13winter11</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/pm1/pm1_2011_w11_13_qp_q10_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/pm1/pm1_2011_w11_13_ms_q10_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>review</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>12</dd><dt>MS total</dt><dd>50</dd><dt>Paper total</dt><dd>105</dd><dt>Question image</dt><dd>pm1/pm1_2011_w11_13_qp_q10_question.png</dd><dt>Mark image</dt><dd>pm1/pm1_2011_w11_13_ms_q10_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>pm1/pm1_2011_w11_13_ms_q10_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>1606x9174 aspect 5.712</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop, extreme_aspect_ratio</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2011/question_papers/9709_w11_qp_13.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_equation_layout</span><span class="flag">contains_graph_or_diagram_prompt</span><span class="flag">contains_inequality_or_region_prompt</span><span class="flag">contains_page_furniture</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">crop_furniture_trim_skipped_protected_content</span><span class="flag">crop_split_prompt_regions</span><span class="flag">crop_uncertain</span><span class="flag">duplicate_visual_fragment_excluded</span><span class="flag">duplicate_visual_regions_removed</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">figure_region_separated</span><span class="flag">legacy_mark_total_mismatch_review</span><span class="flag">legacy_markscheme_segmentation</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">markscheme_relaxed_anchor_detection</span><span class="flag">ocr_hint_figure_regions</span><span class="flag">page_diagram_union_fragments:2</span><span class="flag">page_diagram_union_used</span><span class="flag">paper_total_mismatch</span><span class="flag">paper_total_rescan_triggered</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">text_crop_edge_safety_applied</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>10 The diagram shows the line y = x + 1 and the curve y = √(x + 1), meeting at (-1,0) and (0,1). (i) Find the area of the shaded region. [5] (ii) Find the volume obtained when the shaded region is rotated through 360◦about the y-axis. [7] Permission to reproduce items where third-party owned material protected by copyright is included has been sought and cleared where possible. Every reasonable effort has been made by the publisher (UCLES)totrace copyright holders, butifany itemsrequiringclearancehave unwittingly beenincluded,thepublisherwill be pleased to make amends at the earliest possible opportunity. University of Cambridge International Examinations is part of the Cambridge Assessment Group. Cambridge Assessment is the brand name of University of Cambridge Local Examinations Syndicat</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="51summer24_q07">
+  <div class="card-head">
+    <div>
+      <h2>51summer24_q07 / Q7</h2>
+      <div>mechanics 51summer24</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/mechanics/mechanics_2024_m24_51_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/mechanics/mechanics_2024_m24_51_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>pass</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>ready</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>10</dd><dt>MS total</dt><dd>10</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>mechanics/mechanics_2024_m24_51_qp_q07_question.png</dd><dt>Mark image</dt><dd>mechanics/mechanics_2024_m24_51_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>mechanics/mechanics_2024_m24_51_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2218x9077 aspect 4.092</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2024/question_papers/9709_m24_qp_51.pdf</dd></dl>
+      
+      
+      <div>Review flags</div><div class="flags"><span class="flag">crop_split_prompt_regions</span><span class="flag">crop_uncertain</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">excluded_boilerplate_blank_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">object_cue_resisted_override</span><span class="flag">ocr_merged_sparse_lower_region</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 The eight digits 1, 2, 2, 3, 4, 4, 4, 5 are arranged in a line. (a) How many different arrangements are there of these 8 digits? [1] (b) Find the number of different arrangements of the 8 digits in which there is a 2 at the beginning, a 2 at the end and the three 4s are not all together. [4] Three digits are selected at random from the eight digits 1, 2, 2, 3, 4, 4, 4, 5. (c) Find the probability that the three digits are all different. [5]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="42summer24_q07">
+  <div class="card-head">
+    <div>
+      <h2>42summer24_q07 / Q7</h2>
+      <div>stats 42summer24</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_m24_42_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_m24_42_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>pass</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>10</dd><dt>MS total</dt><dd>10</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2024_m24_42_qp_q07_question.png</dd><dt>Mark image</dt><dd>stats/stats_2024_m24_42_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2024_m24_42_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2218x9077 aspect 4.092</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2024/question_papers/9709_m24_qp_42.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_graph_or_diagram_prompt</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">crop_uncertain</span><span class="flag">duplicate_mark_scheme:9709_s24_ms_42.pdf</span><span class="flag">duplicate_question_paper:9709_s24_qp_42.pdf</span><span class="flag">duplicate_visual_fragment_excluded</span><span class="flag">duplicate_visual_regions_removed</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">figure_label_edge_safety_applied</span><span class="flag">figure_region_separated</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">ocr_hint_figure_regions</span><span class="flag">page_diagram_union_skipped_neighbor_question</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">text_crop_edge_safety_applied</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 Two particles P and Q of masses 2.5 kg and 0.5 kg respectively are connected by a light inextensible string that passes over a small smooth pulley fixed at the top of a plane inclined at an angle of 30° to the horizontal. Particle P is on the plane and Q hangs below the pulley such that the level of Q is 2 m below the level of P (see diagram). Particle P is released from rest with the string taut and slides down the plane. The plane is rough with coefficient of friction 0.2 between the plane and P. (a) Find the acceleration of P. [5] (b) Use an energy method to find the speed of the particles at the instant when they are at the same vertical height. [5]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="43summer24_q07">
+  <div class="card-head">
+    <div>
+      <h2>43summer24_q07 / Q7</h2>
+      <div>stats 43summer24</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_m24_43_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_m24_43_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>pass</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>9</dd><dt>MS total</dt><dd>9</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2024_m24_43_qp_q07_question.png</dd><dt>Mark image</dt><dd>stats/stats_2024_m24_43_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2024_m24_43_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2242x9077 aspect 4.049</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2024/question_papers/9709_m24_qp_43.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_graph_or_diagram_prompt</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">crop_furniture_trim_skipped_protected_content</span><span class="flag">crop_reaches_page_margin</span><span class="flag">crop_split_prompt_regions</span><span class="flag">crop_uncertain</span><span class="flag">duplicate_visual_fragment_excluded</span><span class="flag">duplicate_visual_regions_removed</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">figure_label_edge_safety_applied</span><span class="flag">figure_region_separated</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">ocr_hint_figure_regions</span><span class="flag">ocr_merged_sparse_lower_region</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">side_panel_excluded</span><span class="flag">stale_crop_fragment_removed</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">text_figure_overlap_unresolved</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 The diagram shows a track ABCD which lies in a vertical plane. The section AB is a straight line inclined at an angle of 30° to the horizontal and is smooth. The section BC is a horizontal straight line and is rough. The section CD is a straight line inclined at an angle of 30° to the horizontal and is rough. The lengths AB, BC and CD are each 2 m. A particle is released from rest at A. The coefficient of friction between the particle and both BC and CD is n. There is no change in the speed of the particle when it passes through either of the points B or C. (a) It is given that n = .0 1 . Find the distance which the particle has moved up the section CD when its speed is m1 s ^{-}1. [5] (b) It is given instead that with a different value of n the particle travels 1 m up the track from C b</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="42winter24_q04">
+  <div class="card-head">
+    <div>
+      <h2>42winter24_q04 / Q4</h2>
+      <div>stats 42winter24</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_w24_42_qp_q04_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_w24_42_ms_q04_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>review</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>6</dd><dt>MS total</dt><dd>6</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2024_w24_42_qp_q04_question.png</dd><dt>Mark image</dt><dd>stats/stats_2024_w24_42_ms_q04_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2024_w24_42_ms_q04_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2218x7555 aspect 3.406</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2024/question_papers/9709_w24_qp_42.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_equation_layout</span><span class="flag">contains_graph_or_diagram_prompt</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">centered_page_number_trimmed</span><span class="flag">crop_header_footer_trimmed</span><span class="flag">crop_uncertain</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">figure_region_separated</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">object_cue_resisted_override</span><span class="flag">ocr_merged_sparse_lower_region</span><span class="flag">ocr_merged_sparse_lower_region;ocr_hint_figure_regions</span><span class="flag">page_diagram_union_fragments:3</span><span class="flag">page_diagram_union_used</span><span class="flag">question_start_uncertain</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">side_panel_excluded</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>4 The diagram shows two particles, A and B, of masses 0.2 kg and 0.1 kg respectively. The particles are suspended below a horizontal ceiling by two strings, AP and BQ, attached to fixed points P and Q on the ceiling. The particles are connected by a horizontal string, AB. Angle APQ = 45° and BQP = θ°. Each string is light and inextensible. The particles are in equilibrium. (a) Find the value of the tension in the string AB. [2] (b) Find the value of i and the tension in the string BQ. [4]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="45summer25_q07">
+  <div class="card-head">
+    <div>
+      <h2>45summer25_q07 / Q7</h2>
+      <div>stats 45summer25</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2025_m25_45_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2025_m25_45_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>review</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>12</dd><dt>MS total</dt><dd>12</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2025_m25_45_qp_q07_question.png</dd><dt>Mark image</dt><dd>stats/stats_2025_m25_45_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2025_m25_45_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2219x7555 aspect 3.405</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2025/question_papers/9709_m25_qp_45.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_equation_layout</span><span class="flag">contains_graph_or_diagram_prompt</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">crop_uncertain</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">excluded_boilerplate_blank_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">figure_label_edge_safety_applied</span><span class="flag">figure_region_separated</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">ocr_merged_sparse_lower_region</span><span class="flag">ocr_merged_sparse_lower_region;ocr_hint_figure_regions</span><span class="flag">question_start_uncertain</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">side_panel_excluded</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 Two particles A and B of masses 6.5 kg and m kg respectively are connected by a light inextensible string that passes over a smooth pulley. The pulley is fixed at the top of a rough slope which is at an angle of a to the horizontal ground, where tana = 12^{5}. A is on the rough slope and B hangs below the pulley (see diagram). The coefficient of friction between the slope and A is 0.4. (a) Given that the system is in equilibrium, find the set of possible values of m. [7] (b) It is given instead that m = 12 and the particles are released from rest with the string taut. Use an energy method to find the speed of the particles when each particle has moved 0.6 m. You may assume that this occurs before A reaches the pulley or B reaches the ground. [5]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="43winter24_q07">
+  <div class="card-head">
+    <div>
+      <h2>43winter24_q07 / Q7</h2>
+      <div>stats 43winter24</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_w24_43_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2024_w24_43_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>review</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>10</dd><dt>MS total</dt><dd>10</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2024_w24_43_qp_q07_question.png</dd><dt>Mark image</dt><dd>stats/stats_2024_w24_43_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2024_w24_43_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2242x7555 aspect 3.37</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2024/question_papers/9709_w24_qp_43.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_graph_or_diagram_prompt</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">barcode_excluded</span><span class="flag">crop_split_prompt_regions</span><span class="flag">crop_uncertain</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">figure_region_separated</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">ocr_merged_sparse_lower_region</span><span class="flag">ocr_merged_sparse_lower_region;ocr_hint_figure_regions</span><span class="flag">page_diagram_union_fragments:2</span><span class="flag">page_diagram_union_used</span><span class="flag">question_start_uncertain</span><span class="flag">question_text_figure_overlap_prevented</span><span class="flag">side_panel_excluded</span><span class="flag">text_figure_overlap_trimmed</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 Two particles, A and B, of masses 3 kg and 5 kg respectively, are connected by a light inextensible string that passes over a fixed smooth pulley. The particles are held with the string taut and its straight parts vertical. Particle A is 1 m above a horizontal plane, and particle B is 2 m above the plane (see diagram). The particles are released from rest. In the subsequent motion, A does not reach the pulley, and after B reaches the plane it remains in contact with the plane. (a) Find the tension in the string and the time taken for B to reach the plane. [6] (b) Find the time for which A is at least 3.25 m above the plane. [4]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="32summer17_q06">
+  <div class="card-head">
+    <div>
+      <h2>32summer17_q06 / Q6</h2>
+      <div>pm3 32summer17</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/pm3/pm3_2017_m17_32_qp_q06_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/pm3/pm3_2017_m17_32_ms_q06_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>pass</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>review</dd><dt>Question crop</dt><dd>low</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>8</dd><dt>Paper total</dt><dd>75</dd><dt>Question image</dt><dd>pm3/pm3_2017_m17_32_qp_q06_question.png</dd><dt>Mark image</dt><dd>pm3/pm3_2017_m17_32_ms_q06_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>pm3/pm3_2017_m17_32_ms_q06_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>1606x6884 aspect 4.286</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2017/question_papers/9709_m17_qp_32.pdf</dd></dl>
+      
+      <div>Visual flags</div><div class="flags"><span class="flag">contains_equation_layout</span><span class="flag">contains_vector_notation</span><span class="flag">ocr_large_margin_structural_rejection</span></div>
+      <div>Review flags</div><div class="flags"><span class="flag">centered_page_number_trimmed</span><span class="flag">crop_header_footer_trimmed</span><span class="flag">crop_uncertain</span><span class="flag">duplicate_mark_scheme:9709_s17_ms_32.pdf</span><span class="flag">duplicate_question_paper:9709_s17_qp_32.pdf</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">legacy_markscheme_segmentation</span><span class="flag">low_classification_confidence</span><span class="flag">low_confidence_question_crop</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">markscheme_relaxed_anchor_detection</span><span class="flag">ocr_hint_figure_regions</span><span class="flag">ocr_large_margin_blocked_by_structural_rejection</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>6 The line l has equation r = i + 2j -3k + ,(2i -j + k). The plane p has equation 3x + y -5z = 20. (i) Show that the line l lies in the plane p. [3] (ii) Asecondplaneisparalleltol, perpendiculartopandcontainsthepointwithpositionvector 3i -j + 2k. Find the equation of this plane, giving your answer in the form ax + by + cz = d. [5]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="63summer14_q07">
+  <div class="card-head">
+    <div>
+      <h2>63summer14_q07 / Q7</h2>
+      <div>stats 63summer14</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/stats/stats_2014_s14_63_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/stats/stats_2014_s14_63_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>fail</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>fail</dd><dt>Text only</dt><dd>fail</dd><dt>Question crop</dt><dd>high</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>11</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>stats/stats_2014_s14_63_qp_q07_question.png</dd><dt>Mark image</dt><dd>stats/stats_2014_s14_63_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>stats/stats_2014_s14_63_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>1606x6881 aspect 4.285</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2014/question_papers/9709_s14_qp_63.pdf</dd></dl>
+      <div>Validation flags</div><div class="flags"><span class="flag">question_scope_contaminated</span></div>
+      
+      <div>Review flags</div><div class="flags"><span class="flag">excluded_boilerplate_blank_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">legacy_markscheme_segmentation</span><span class="flag">legacy_subpart_mismatch_review</span><span class="flag">low_classification_confidence</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">markscheme_relaxed_anchor_detection</span><span class="flag">ocr_question_text</span><span class="flag">ocr_selected_for_question_text</span><span class="flag">paper_total_focus_candidate</span><span class="flag">question_scope_contaminated</span><span class="flag">topic_uncertain</span><span class="flag">topic_uncertain_low_quality_text</span><span class="flag">weak_question_text</span></div>
+      <pre>7 ~~ Nine cards are numbered 1, 2, 2, 3, 3, 4, 6, 6, 6. (i) All nine cards are placed in a line, making a 9-digit number. Find how many different 9-digit numbers can be made in this way (a) if the even digits are all together, [4] (b) if the first and last digits are both odd. [3] (ii) Three of the nine cards are chosen and placed in a line, making a 3-digit number. Find how many different numbers can be made in this way (a) if there are no repeated digits, [2] (b) if the number is between 200 and 300. [2]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+<article data-question-id="52summer22_q07">
+  <div class="card-head">
+    <div>
+      <h2>52summer22_q07 / Q7</h2>
+      <div>mechanics 52summer22</div>
+    </div>
+    <div class="issue">suspicious_rendered_crop_dimensions</div>
+  </div>
+  <div class="body">
+    <figure>
+      <figcaption>Question crop</figcaption>
+      <img src="../../../../../output/mechanics/mechanics_2022_m22_52_qp_q07_question.png" alt="Question crop" loading="lazy">
+    </figure>
+    <figure>
+      <figcaption>Mark-scheme crop</figcaption>
+      <img src="../../../../../output/mechanics/mechanics_2022_m22_52_ms_q07_markscheme.png" alt="Mark-scheme crop" loading="lazy">
+    </figure>
+    <section>
+      <dl><dt>Validation</dt><dd>pass</dd><dt>Mapping</dt><dd>pass</dd><dt>Visual</dt><dd>review</dd><dt>Text only</dt><dd>ready</dd><dt>Question crop</dt><dd>high</dd><dt>Mark crop</dt><dd>medium</dd><dt>Q total</dt><dd>9</dd><dt>MS total</dt><dd>9</dd><dt>Paper total</dt><dd>50</dd><dt>Question image</dt><dd>mechanics/mechanics_2022_m22_52_qp_q07_question.png</dd><dt>Mark image</dt><dd>mechanics/mechanics_2022_m22_52_ms_q07_markscheme.png</dd><dt>Suspicious crop kind</dt><dd>mark_scheme</dd><dt>Suspicious crop path</dt><dd>mechanics/mechanics_2022_m22_52_ms_q07_markscheme.png</dd><dt>Suspicious dimensions</dt><dd>2219x6840 aspect 3.082</dd><dt>Suspicious reasons</dt><dd>very_tall_rendered_crop</dd><dt>Source PDF</dt><dd>input/pastpapers/9709/2022/question_papers/9709_m22_qp_52.pdf</dd></dl>
+      
+      
+      <div>Review flags</div><div class="flags"><span class="flag">crop_split_prompt_regions</span><span class="flag">duplicate_mark_scheme:9709_s22_ms_52.pdf</span><span class="flag">duplicate_question_paper:9709_s22_qp_52.pdf</span><span class="flag">excluded_boilerplate_additional_page</span><span class="flag">excluded_boilerplate_blank_page</span><span class="flag">excluded_boilerplate_copyright_footer</span><span class="flag">impossible_question_number_anchor_excluded</span><span class="flag">markscheme_image_stitched</span><span class="flag">markscheme_image_uncertain</span><span class="flag">object_cue_conflict_with_method_scoring</span><span class="flag">paper_level_topic_reconciled</span></div>
+      <pre>7 Hanna buys 12 hollow chocolate eggs that each contain a sweet. The eggs look identical but Hanna knows that 3 contain a red sweet, 4 contain an orange sweet and 5 contain a yellow sweet. Each of Hanna’s three children inturn randomly chooses and eats one of the eggs, keeping the sweet it contained. (a) Find the probability that all 3 eggs chosen contain the same colour sweet. [4] (b) Find the probability thatall 3eggs chosen contain ayellowsweet,given thatall threechildren have the same colour sweet. [2] (c) Find the probability that atleastoneof Hanna’sthreechildren choosesaneggthatcontainsan orange sweet. [3]</pre>
+      <label>Root cause<select data-root-cause></select></label>
+      <label>Confidence<select data-confidence>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="low">Low</option>
+      </select></label>
+      <label>Notes<textarea placeholder="What is wrong, and what code path likely owns it?"></textarea></label>
+      <button type="button" data-save>Save review</button>
+      <div class="save-status"></div>
+    </section>
+  </div>
+</article>
+  </main>
+  <template id="root-cause-options"><option value="question_crop_boundary">Question crop/boundary</option>
+<option value="mark_scheme_mapping">Mark-scheme mapping</option>
+<option value="paper_total_detection">Paper-total detection</option>
+<option value="false_positive_validation_gate">False-positive validation gate</option>
+<option value="text_ocr_quality">Text/OCR quality</option>
+<option value="classification_only">Classification-only</option>
+<option value="source_pdf_issue">Source PDF issue</option>
+<option value="unknown">Unknown</option></template>
+  <script>
+    document.querySelectorAll("select[data-root-cause]").forEach((select) => {
+      select.innerHTML = document.getElementById("root-cause-options").innerHTML;
+    });
+    document.querySelectorAll("button[data-save]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const card = button.closest("article");
+        const payload = {
+          question_id: card.dataset.questionId,
+          root_cause: card.querySelector("select[data-root-cause]").value,
+          confidence: card.querySelector("select[data-confidence]").value,
+          notes: card.querySelector("textarea").value,
+          saved_at: new Date().toISOString()
+        };
+        const status = card.querySelector(".save-status");
+        status.textContent = "Saving...";
+        try {
+          const response = await fetch("review", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error(await response.text());
+          status.textContent = "Saved";
+        } catch (error) {
+          status.textContent = "Save failed: " + error.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

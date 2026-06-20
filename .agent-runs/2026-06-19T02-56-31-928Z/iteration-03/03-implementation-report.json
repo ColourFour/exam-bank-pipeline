@@ -1,0 +1,36 @@
+{
+  "summary": "Added preliminary mark-scheme front-matter detection so numbered notes and marking-principles text are not treated as legacy question anchors.",
+  "files_changed": [
+    "src/exam_bank/mark_schemes.py",
+    "tests/test_question_detection.py"
+  ],
+  "files_created": [],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_specific_marking_principles_page tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_numbered_notes_page tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_numbered_notes_before_same_page_answer_table -q",
+    ".venv/bin/python -m pytest tests/test_question_detection.py -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering"
+  ],
+  "test_results": "Focused loop verification passed in the final session: 111 focused tests passed and 12 rendering-marker tests passed.",
+  "acceptance_criteria_status": [
+    "Satisfied: notes-only pages are ignored.",
+    "Satisfied: specific marking principles pages are ignored.",
+    "Satisfied: numbered notes before a same-page answer table are ignored while real answer rows remain detectable."
+  ],
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": "No generated outputs or canonical inputs were changed.",
+  "known_risks": [
+    "The front-matter marker list may need expansion if future papers use different headings."
+  ],
+  "implementation_summary": [
+    "Added _is_preliminary_mark_scheme_notes_page and _layout_has_mark_scheme_notes.",
+    "Added _legacy_answer_table_header_y to detect split Question / Answer / Marks table headers.",
+    "Added _is_preliminary_notes_block_before_answer_header.",
+    "Skipped preliminary notes pages in _detect_legacy_mark_scheme_anchors.",
+    "Returned None from _legacy_question_anchor_number for numbered notes before the answer header.",
+    "Added three regression tests covering notes-only pages, specific marking principles pages, and same-page notes before the answer table."
+  ],
+  "behavior_change": "Legacy mark-scheme anchor detection now distinguishes numbered front-matter notes from real answer-table question rows.",
+  "scope_control": "No filename-specific handling or generated output changes were introduced."
+}

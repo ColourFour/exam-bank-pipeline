@@ -1,0 +1,15 @@
+{
+  "iteration": 1,
+  "focus": "Detect generated PNG whitespace artifacts deterministically",
+  "hypothesis": "Many generated PNGs contain large blank top or bottom margins even when dimensions are not extreme; an integrity audit using the rendered non-white bounding box will expose those artifacts before/after repair.",
+  "planned_changes": [
+    "Add rendered-crop whitespace finding collection to output integrity audit",
+    "Compute conservative non-white bounding boxes for PNGs and flag extreme blank margins",
+    "Add synthetic regression coverage for bottom-blank PNG artifacts"
+  ],
+  "acceptance": [
+    "Synthetic blank-margin PNG fails with suspicious_rendered_crop_whitespace",
+    "Normal content and all-white placeholder PNGs do not create false positives",
+    "Audit report includes counts, checks, summary, and review candidates"
+  ]
+}

@@ -1,8 +1,11 @@
 import json
 from pathlib import Path
 
+from PIL import Image, ImageDraw
+
 from exam_bank.triage import (
     compare_iteration,
+    create_suspicious_crop_review_pack,
     create_triage_iteration,
     is_hard_failure,
     issue_counts,
@@ -80,6 +83,79 @@ def test_create_triage_iteration_writes_baseline_sample_and_escaped_gallery(tmp_
     assert "<pre>Bad <img" not in html
 
 
+def test_create_suspicious_crop_review_pack_from_integrity_audit_candidates(tmp_path: Path) -> None:
+    output_root = tmp_path / "output"
+    input_path = output_root / "json" / "question_bank.json"
+    artifact_root = output_root
+    normal_question_path = "p1/sample/questions/q01.png"
+    normal_mark_scheme_path = "p1/sample/mark_scheme/q01.png"
+    tall_question_path = "p1/sample/questions/q02.png"
+    taller_mark_scheme_path = "p1/sample/mark_scheme/q02.png"
+    whitespace_question_path = "p1/sample/questions/q03.png"
+    whitespace_mark_scheme_path = "p1/sample/mark_scheme/q03.png"
+    _write_png(artifact_root / normal_question_path, size=(420, 360))
+    _write_png(artifact_root / normal_mark_scheme_path, size=(420, 520))
+    _write_png(artifact_root / tall_question_path, size=(220, 1400))
+    _write_png(artifact_root / taller_mark_scheme_path, size=(260, 1800))
+    _write_content_png(artifact_root / whitespace_question_path, size=(400, 900), content_box=(40, 40, 360, 90))
+    _write_content_png(artifact_root / whitespace_mark_scheme_path, size=(400, 400), content_box=(40, 60, 360, 340))
+    records = [
+        _record(
+            "q1",
+            question_image_path=normal_question_path,
+            mark_scheme_image_path=normal_mark_scheme_path,
+        ),
+        _record(
+            "q2",
+            question_text="Tall <b>crop</b>",
+            question_image_path=tall_question_path,
+            mark_scheme_image_path=taller_mark_scheme_path,
+        ),
+        _record(
+            "q3",
+            question_text="Blank bottom crop",
+            question_image_path=whitespace_question_path,
+            mark_scheme_image_path=whitespace_mark_scheme_path,
+        ),
+    ]
+    input_path.parent.mkdir(parents=True)
+    input_path.write_text(
+        json.dumps({"record_count": len(records), "run_manifest": {"artifact_root": str(artifact_root)}, "questions": records}),
+        encoding="utf-8",
+    )
+
+    summary = create_suspicious_crop_review_pack(
+        input_path,
+        artifact_root=artifact_root,
+        review_root=output_root / "triage",
+        iteration="suspicious_crop_001",
+        sample_size=3,
+    )
+    iteration_dir = Path(summary["iteration_dir"])
+
+    assert summary["candidate_count"] == 3
+    assert summary["dimension_candidate_count"] == 2
+    assert summary["whitespace_candidate_count"] == 1
+    assert summary["sampled_count"] == 3
+    assert summary["sample_question_ids"] == ["q2", "q2", "q3"]
+    sample = json.loads((iteration_dir / "sample.json").read_text(encoding="utf-8"))
+    assert [item["suspicious_crop"]["path"] for item in sample["questions"]] == [
+        taller_mark_scheme_path,
+        tall_question_path,
+        whitespace_question_path,
+    ]
+    assert sample["questions"][0]["primary_issue"] == "suspicious_rendered_crop_dimensions"
+    assert sample["questions"][2]["primary_issue"] == "suspicious_rendered_crop_whitespace"
+    assert sample["questions"][2]["suspicious_crop"]["blank_bottom_ratio"] >= 0.75
+    assert (iteration_dir / "review.jsonl").exists()
+    html = (iteration_dir / "index.html").read_text(encoding="utf-8")
+    assert "../../p1/sample/mark_scheme/q02.png" in html
+    assert "../../p1/sample/questions/q03.png" in html
+    assert "Suspicious whitespace" in html
+    assert "Tall &lt;b&gt;crop&lt;/b&gt;" in html
+    assert "<pre>Tall <b>" not in html
+
+
 def test_compare_iteration_reports_target_movement_and_status_changes(tmp_path: Path) -> None:
     iteration_dir = tmp_path / "output" / "triage" / "iteration_001"
     iteration_dir.mkdir(parents=True)
@@ -155,3 +231,16 @@ def _record(
             "mapping_failure_reason": mapping_failure_reason,
         },
     }
+
+
+def _write_png(path: Path, *, size: tuple[int, int]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    Image.new("RGB", size, "white").save(path)
+
+
+def _write_content_png(path: Path, *, size: tuple[int, int], content_box: tuple[int, int, int, int]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image = Image.new("RGB", size, "white")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle(content_box, fill="black")
+    image.save(path)

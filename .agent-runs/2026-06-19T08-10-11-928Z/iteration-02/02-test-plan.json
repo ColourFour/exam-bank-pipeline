@@ -1,0 +1,23 @@
+{
+  "plan_under_test": "The output-integrity audit detects duplicate image-path mappings across records while ignoring repeated aliases inside one record.",
+  "test_files_changed": [
+    "tests/test_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Add a targeted current-output-integrity test with two records sharing one question image path and one mark-scheme image path.",
+    "Assert duplicate_question_image_path and duplicate_mark_scheme_image_path failure groups, counts, and duplicate_key evidence."
+  ],
+  "expected_initial_failure": "Before implementation, the new duplicate-path assertions should fail because only duplicate question_id and paper/question pairs are checked.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q"
+  ],
+  "what_passing_proves": [
+    "Cross-record shared canonical image paths are surfaced as integrity failures.",
+    "The audit deduplicates repeated image fields inside a single record before counting path mappings."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove that every duplicate path is semantically wrong; auditors still need to inspect candidates.",
+    "It does not detect byte-identical duplicate files at different paths; storage_audit owns exact content duplicates."
+  ],
+  "risk_of_bad_tests": "Low. The fixture uses real per-record path fields and existing integrity-bank helpers."
+}

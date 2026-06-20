@@ -1,0 +1,370 @@
+{
+  "schema_name": "exam_bank.current_output_integrity_audit",
+  "schema_version": 1,
+  "input": "output/json/question_bank.json",
+  "artifact_root": "output",
+  "ok": false,
+  "record_count": 3547,
+  "checks": {
+    "declared_record_count_matches": true,
+    "question_id_present_and_unique": true,
+    "paper_question_pairs_present_and_unique": true,
+    "image_paths_unique_across_records": true,
+    "image_path_roles_match_fields": true,
+    "question_image_paths_relative_and_exist": true,
+    "nonblank_mark_scheme_image_paths_relative_and_exist": true,
+    "missing_mark_scheme_paths_only_known_companions": true,
+    "mark_scheme_text_has_no_foreign_question_labels": true,
+    "rendered_crop_dimensions_not_suspicious": true,
+    "rendered_crop_whitespace_not_suspicious": false
+  },
+  "counts": {
+    "declared_record_count": 3547,
+    "unique_question_id_count": 3547,
+    "missing_question_id_count": 0,
+    "duplicate_question_id_value_count": 0,
+    "duplicate_question_id_record_count": 0,
+    "missing_paper_or_question_number_count": 0,
+    "duplicate_paper_question_pair_count": 0,
+    "duplicate_paper_question_record_count": 0,
+    "duplicate_question_image_path_value_count": 0,
+    "duplicate_question_image_path_record_count": 0,
+    "duplicate_mark_scheme_image_path_value_count": 0,
+    "duplicate_mark_scheme_image_path_record_count": 0,
+    "question_image_path_kind_mismatch_count": 0,
+    "mark_scheme_image_path_kind_mismatch_count": 0,
+    "question_image_path_entry_count": 10641,
+    "missing_question_image_path_count": 0,
+    "absolute_question_image_path_count": 0,
+    "missing_question_image_file_count": 0,
+    "nonblank_mark_scheme_image_record_count": 3547,
+    "mark_scheme_image_path_entry_count": 7094,
+    "missing_mark_scheme_image_path_count": 0,
+    "allowed_missing_mark_scheme_image_path_count": 0,
+    "unexpected_missing_mark_scheme_image_path_count": 0,
+    "absolute_mark_scheme_image_path_count": 0,
+    "missing_mark_scheme_image_file_count": 0,
+    "mark_scheme_text_foreign_question_label_record_count": 0,
+    "suspicious_rendered_crop_dimension_count": 0,
+    "suspicious_rendered_crop_whitespace_count": 4
+  },
+  "known_missing_mark_scheme_companions": [
+    {
+      "source_companion": "9709_2025_November_33",
+      "paper": "33autumn25",
+      "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
+      "observed_missing_count": 0,
+      "observed_question_ids": []
+    }
+  ],
+  "unexpected_missing_mark_scheme_groups": [],
+  "mark_scheme_text_foreign_label_summary": {
+    "by_foreign_label": {},
+    "top_papers": []
+  },
+  "mark_scheme_text_foreign_label_review_candidates": [],
+  "suspicious_rendered_crop_dimension_summary": {
+    "by_image_kind": {},
+    "by_reason": {},
+    "top_papers": [],
+    "max_height_candidate": null,
+    "max_aspect_ratio_candidate": null
+  },
+  "suspicious_rendered_crop_review_candidates": [],
+  "suspicious_rendered_crop_whitespace_summary": {
+    "by_image_kind": {
+      "mark_scheme": 2,
+      "question": 2
+    },
+    "by_reason": {
+      "excessive_blank_bottom_margin": 4
+    },
+    "top_papers": [
+      {
+        "paper": "04winter08",
+        "count": 1,
+        "question_ids": [
+          "04winter08_q04"
+        ],
+        "image_kind_counts": {
+          "question": 1
+        }
+      },
+      {
+        "paper": "13summer23",
+        "count": 1,
+        "question_ids": [
+          "13summer23_q01"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      },
+      {
+        "paper": "31winter12",
+        "count": 1,
+        "question_ids": [
+          "31winter12_q04"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      },
+      {
+        "paper": "62winter16",
+        "count": 1,
+        "question_ids": [
+          "62winter16_q06"
+        ],
+        "image_kind_counts": {
+          "question": 1
+        }
+      }
+    ],
+    "max_bottom_margin_candidate": {
+      "question_id": "62winter16_q06",
+      "paper": "62winter16",
+      "question_number": "6",
+      "image_kind": "question",
+      "path": "stats/stats_2016_w16_62_qp_q06_question.png",
+      "width_px": 1606,
+      "height_px": 2267,
+      "content_bbox": [
+        45,
+        36,
+        1559,
+        392
+      ],
+      "blank_top_ratio": 0.016,
+      "blank_bottom_ratio": 0.827,
+      "content_area_ratio": 0.148,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    },
+    "min_content_area_candidate": {
+      "question_id": "04winter08_q04",
+      "paper": "04winter08",
+      "question_number": "4",
+      "image_kind": "question",
+      "path": "stats/stats_2008_w08_04_qp_q04_question.png",
+      "width_px": 1606,
+      "height_px": 769,
+      "content_bbox": [
+        45,
+        65,
+        1561,
+        178
+      ],
+      "blank_top_ratio": 0.085,
+      "blank_bottom_ratio": 0.769,
+      "content_area_ratio": 0.139,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    }
+  },
+  "suspicious_rendered_crop_whitespace_review_candidates": [
+    {
+      "question_id": "62winter16_q06",
+      "paper": "62winter16",
+      "question_number": "6",
+      "image_kind": "question",
+      "path": "stats/stats_2016_w16_62_qp_q06_question.png",
+      "width_px": 1606,
+      "height_px": 2267,
+      "content_bbox": [
+        45,
+        36,
+        1559,
+        392
+      ],
+      "blank_top_ratio": 0.016,
+      "blank_bottom_ratio": 0.827,
+      "content_area_ratio": 0.148,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    },
+    {
+      "question_id": "13summer23_q01",
+      "paper": "13summer23",
+      "question_number": "1",
+      "image_kind": "mark_scheme",
+      "path": "pm1/pm1_2023_m23_13_ms_q01_markscheme.png",
+      "width_px": 2573,
+      "height_px": 1467,
+      "content_bbox": [
+        188,
+        0,
+        2383,
+        310
+      ],
+      "blank_top_ratio": 0.0,
+      "blank_bottom_ratio": 0.789,
+      "content_area_ratio": 0.18,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    },
+    {
+      "question_id": "04winter08_q04",
+      "paper": "04winter08",
+      "question_number": "4",
+      "image_kind": "question",
+      "path": "stats/stats_2008_w08_04_qp_q04_question.png",
+      "width_px": 1606,
+      "height_px": 769,
+      "content_bbox": [
+        45,
+        65,
+        1561,
+        178
+      ],
+      "blank_top_ratio": 0.085,
+      "blank_bottom_ratio": 0.769,
+      "content_area_ratio": 0.139,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    },
+    {
+      "question_id": "31winter12_q04",
+      "paper": "31winter12",
+      "question_number": "4",
+      "image_kind": "mark_scheme",
+      "path": "pm3/pm3_2012_w12_31_ms_q04_markscheme.png",
+      "width_px": 1606,
+      "height_px": 2299,
+      "content_bbox": [
+        44,
+        0,
+        1606,
+        531
+      ],
+      "blank_top_ratio": 0.0,
+      "blank_bottom_ratio": 0.769,
+      "content_area_ratio": 0.225,
+      "reasons": [
+        "excessive_blank_bottom_margin"
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "code": "suspicious_rendered_crop_whitespace",
+      "message": "Rendered question and mark-scheme crops must not contain excessive blank margins.",
+      "count": 4,
+      "examples": [
+        {
+          "index": 3389,
+          "question_id": "62winter16_q06",
+          "paper": "62winter16",
+          "question_number": "6",
+          "source_companion": "9709_2016_November_62",
+          "field": "question_image_path",
+          "path": "stats/stats_2016_w16_62_qp_q06_question.png",
+          "resolved_path": "output/stats/stats_2016_w16_62_qp_q06_question.png",
+          "image_kind": "question",
+          "width_px": 1606,
+          "height_px": 2267,
+          "content_bbox": [
+            45,
+            36,
+            1559,
+            392
+          ],
+          "blank_top_ratio": 0.016,
+          "blank_bottom_ratio": 0.827,
+          "blank_left_ratio": 0.028,
+          "blank_right_ratio": 0.029,
+          "content_area_ratio": 0.148,
+          "reasons": [
+            "excessive_blank_bottom_margin"
+          ]
+        },
+        {
+          "index": 937,
+          "question_id": "13summer23_q01",
+          "paper": "13summer23",
+          "question_number": "1",
+          "source_companion": "9709_2023_June_13",
+          "field": "mark_scheme_image_path",
+          "path": "pm1/pm1_2023_m23_13_ms_q01_markscheme.png",
+          "resolved_path": "output/pm1/pm1_2023_m23_13_ms_q01_markscheme.png",
+          "image_kind": "mark_scheme",
+          "width_px": 2573,
+          "height_px": 1467,
+          "content_bbox": [
+            188,
+            0,
+            2383,
+            310
+          ],
+          "blank_top_ratio": 0.0,
+          "blank_bottom_ratio": 0.789,
+          "blank_left_ratio": 0.073,
+          "blank_right_ratio": 0.074,
+          "content_area_ratio": 0.18,
+          "reasons": [
+            "excessive_blank_bottom_margin"
+          ]
+        },
+        {
+          "index": 78,
+          "question_id": "04winter08_q04",
+          "paper": "04winter08",
+          "question_number": "4",
+          "source_companion": "9709_2008_November_04",
+          "field": "question_image_path",
+          "path": "stats/stats_2008_w08_04_qp_q04_question.png",
+          "resolved_path": "output/stats/stats_2008_w08_04_qp_q04_question.png",
+          "image_kind": "question",
+          "width_px": 1606,
+          "height_px": 769,
+          "content_bbox": [
+            45,
+            65,
+            1561,
+            178
+          ],
+          "blank_top_ratio": 0.085,
+          "blank_bottom_ratio": 0.769,
+          "blank_left_ratio": 0.028,
+          "blank_right_ratio": 0.028,
+          "content_area_ratio": 0.139,
+          "reasons": [
+            "excessive_blank_bottom_margin"
+          ]
+        },
+        {
+          "index": 1355,
+          "question_id": "31winter12_q04",
+          "paper": "31winter12",
+          "question_number": "4",
+          "source_companion": "9709_2012_November_31",
+          "field": "mark_scheme_image_path",
+          "path": "pm3/pm3_2012_w12_31_ms_q04_markscheme.png",
+          "resolved_path": "output/pm3/pm3_2012_w12_31_ms_q04_markscheme.png",
+          "image_kind": "mark_scheme",
+          "width_px": 1606,
+          "height_px": 2299,
+          "content_bbox": [
+            44,
+            0,
+            1606,
+            531
+          ],
+          "blank_top_ratio": 0.0,
+          "blank_bottom_ratio": 0.769,
+          "blank_left_ratio": 0.027,
+          "blank_right_ratio": 0.0,
+          "content_area_ratio": 0.225,
+          "reasons": [
+            "excessive_blank_bottom_margin"
+          ]
+        }
+      ]
+    }
+  ]
+}

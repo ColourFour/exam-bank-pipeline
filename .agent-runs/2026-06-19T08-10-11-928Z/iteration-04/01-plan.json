@@ -1,0 +1,36 @@
+{
+  "selected_goal": "Add summary buckets for suspicious rendered-crop dimension findings in the output-integrity audit.",
+  "why_this_now": "Iterations 1-3 added stronger gates. The live audit now consistently reports 31 suspicious dimension candidates, but reviewers need deterministic buckets by image kind, reason, and paper to prioritize inspection.",
+  "repo_evidence": [
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-03/audit.current.integrity.json shows 31 suspicious_rendered_crop_dimensions and no duplicate/path-role failures.",
+    ".agent-loop/project-gates.md requires sampled visual evidence for crop-related work; summaries help choose the right samples.",
+    "src/exam_bank/audit.py already has the candidate evidence list needed to build summaries without another scan."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/audit.py",
+    "tests/test_audit.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/json/asset_manifest.v1.json",
+    "output/<subject_family>/*.png",
+    "input/pastpapers/**"
+  ],
+  "acceptance_criteria": [
+    "The audit report includes suspicious_rendered_crop_dimension_summary.",
+    "The summary includes counts by image kind and reason.",
+    "The summary includes deterministic top paper buckets and max height/aspect-ratio examples for prioritization."
+  ],
+  "test_expectations": [
+    "Extend the suspicious dimension test to assert summary buckets and max examples.",
+    "Run tests/test_audit.py."
+  ],
+  "implementation_boundaries": [
+    "Do not create a new review-pack command in this iteration.",
+    "Do not inspect image contents beyond the dimensions already collected.",
+    "Do not change failure thresholds."
+  ],
+  "repo_hygiene_risk": "Low. This only enriches an existing audit report.",
+  "rollback_plan": "Remove the summary helper, report field, and added assertions.",
+  "done_when": "Targeted tests pass and the live audit report includes prioritization summary for suspicious dimensions."
+}

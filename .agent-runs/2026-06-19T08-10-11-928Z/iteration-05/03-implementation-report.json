@@ -1,0 +1,41 @@
+{
+  "summary": "Added severity ranking for suspicious rendered-crop dimension findings and a compact review-candidate list to the current output-integrity audit.",
+  "files_changed": [
+    {
+      "path": "src/exam_bank/audit.py",
+      "why": "Sorted suspicious dimension findings before failure examples are limited, and added suspicious_rendered_crop_review_candidates."
+    },
+    {
+      "path": "tests/test_audit.py",
+      "why": "Extended the suspicious-dimension regression test to assert severity ordering and review candidates."
+    }
+  ],
+  "files_created": [
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-05/01-plan.json",
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-05/02-test-plan.json",
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-05/audit.current.integrity.json"
+  ],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T08-10-11-928Z/iteration-05/audit.current.integrity.json --example-limit 10"
+  ],
+  "test_results": [
+    "Initial targeted pytest run failed as expected because examples were record-ordered and review candidates were absent.",
+    "Final targeted pytest run passed: 13 passed.",
+    "Live output-integrity audit exited 1 due to 31 suspicious dimension candidates, now severity-ranked."
+  ],
+  "acceptance_criteria_status": {
+    "failure_examples_severity_ranked": "met",
+    "review_candidates_present": "met",
+    "deterministic_ranking": "met"
+  },
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": [
+    "No images, canonical JSON, or manifests were rewritten.",
+    "The ranked live audit report was written under this run's iteration folder."
+  ],
+  "known_risks": [
+    "The ranking favors multiple reasons, then height, then aspect ratio. A visually worse but shorter crop could rank lower and still requires human review."
+  ]
+}

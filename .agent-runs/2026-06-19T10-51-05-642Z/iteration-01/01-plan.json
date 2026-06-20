@@ -1,0 +1,38 @@
+{
+  "selected_goal": "Create a small review pack from output-integrity suspicious rendered-crop candidates.",
+  "why_this_now": "The previous cycle ended with 31 ranked suspicious crop candidates and explicitly recommended visual review before adding more generic audit metadata.",
+  "repo_evidence": [
+    ".agent-runs/2026-06-19T08-10-11-928Z/governor-review.json recommends visually inspecting and repairing the ranked suspicious crops.",
+    "src/exam_bank/triage.py already writes HTML review galleries and review.jsonl placeholders.",
+    ".agent-loop/BACKLOG.md includes generating small review packs for suspicious output samples."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/triage.py",
+    "src/exam_bank/cli.py",
+    "tests/test_triage.py",
+    "tests/test_runtime_paths.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/<subject_family>/*.png",
+    "output/json/asset_manifest.v1.json",
+    "input/pastpapers/**"
+  ],
+  "acceptance_criteria": [
+    "A reusable function creates a review iteration from output-integrity suspicious rendered-crop candidates.",
+    "The review pack contains summary.json, sample.json, index.html, and review.jsonl without copying or rewriting canonical images.",
+    "A CLI command exposes the review-pack creation with input, artifact root, output root, iteration, and sample-size options."
+  ],
+  "test_expectations": [
+    "Add a test that writes valid PNGs, creates a suspicious-crop review pack, and verifies ranked sample content and escaped gallery output.",
+    "Update CLI surface tests to include the new command."
+  ],
+  "implementation_boundaries": [
+    "Reuse the existing triage gallery where practical.",
+    "Do not add dependencies.",
+    "Do not visually classify or repair crops in this iteration."
+  ],
+  "repo_hygiene_risk": "Low. Generated review packs go under the caller-supplied output root; tests use tmp_path.",
+  "rollback_plan": "Remove the new triage function, CLI command, and tests.",
+  "done_when": "Targeted triage/runtime tests pass and a live run-local review pack can be generated from current output."
+}

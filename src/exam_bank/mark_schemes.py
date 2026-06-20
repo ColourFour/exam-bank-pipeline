@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import re
 from pathlib import Path
@@ -8,7 +9,7 @@ from .config import AppConfig
 from .core.asset_paths import AssetPath, AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import parse_filename_metadata
-from .image_limits import cap_image_pixels, render_pdf_area
+from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
 from .identifiers import normalize_question_id, parent_question_id
 from .mark_scheme_models import (
     HeaderGeometry,
@@ -29,6 +30,33 @@ from .question_detection import parse_question_start
 from .trust import CropConfidence, MappingStatus
 
 
+@dataclass(frozen=True)
+class _LegacyTableGrid:
+    page_number: int
+    bbox: BoundingBox
+    question_col_right: float
+    horizontal_rules: list[float]
+    vertical_rules: list[float]
+
+
+@dataclass(frozen=True)
+class _LegacyRowBand:
+    page_number: int
+    y0: float
+    y1: float
+    x0: float
+    x1: float
+    question_col_right: float
+    question_label: str | None
+
+
+@dataclass(frozen=True)
+class _CropValidation:
+    passed: bool
+    detected_labels: list[str]
+    rejected_reason: str = ""
+
+
 def extract_mark_scheme_answers(
     mark_scheme_pdf: str | Path,
     config: AppConfig,
@@ -38,7 +66,7 @@ def extract_mark_scheme_answers(
     layouts = extract_pdf_layout(mark_scheme_pdf, config)
     words = _extract_mark_scheme_words(mark_scheme_pdf)
     tables = _detect_mark_scheme_tables(layouts, config, words)
-    anchors = _detect_table_question_anchors(layouts, tables, config, expected_numbers, words)
+    anchors = _detect_table_question_anchors(layouts, tables, config, None, words)
     if not anchors:
         return {
             number: block.text
@@ -78,6 +106,7 @@ def render_mark_scheme_images(
     question_subparts: dict[str, list[str]] | None = None,
     question_validation_flags: dict[str, list[str]] | None = None,
     question_identities: dict[str, PaperIdentity] | None = None,
+    clear_stale: bool = True,
 ) -> dict[str, MarkSchemeImageResult]:
     """Crop rendered mark-scheme answer regions by top-level question number.
 
@@ -104,7 +133,7 @@ def render_mark_scheme_images(
     words = _extract_mark_scheme_words(mark_scheme_pdf)
     layouts = extract_pdf_layout(mark_scheme_pdf, config)
     tables = _detect_mark_scheme_tables(layouts, config, words)
-    anchors = _detect_table_question_anchors(layouts, tables, config, expected_numbers, words)
+    anchors = _detect_table_question_anchors(layouts, tables, config, None, words)
     if not tables or not anchors:
         return _render_legacy_mark_scheme_images(
             mark_scheme_pdf,
@@ -114,10 +143,12 @@ def render_mark_scheme_images(
             question_subparts=question_subparts,
             identities=identities,
             no_blocks_failure_reason="segmentation_failure",
+            clear_stale=clear_stale,
         )
 
     output: dict[str, MarkSchemeImageResult] = {}
-    _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
+    if clear_stale:
+        _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
     legacy_fallback_blocks = _build_legacy_mark_scheme_blocks(
         mark_scheme_pdf,
         layouts,
@@ -180,6 +211,8 @@ def render_mark_scheme_images(
                         {},
                         legacy_fallback_anchors,
                         config,
+                        words_by_page=words,
+                        crop_method=legacy_block.method,
                     )
                     if output_path is None:
                         output[number] = MarkSchemeImageResult(
@@ -309,6 +342,8 @@ def render_mark_scheme_images(
                 tables,
                 ordered_anchors,
                 config,
+                words_by_page=words,
+                crop_method="table_grid",
             )
             if output_path is None:
                 output[number] = MarkSchemeImageResult(
@@ -420,9 +455,38 @@ def _render_mark_scheme_crops(
     tables: dict[int, MarkSchemeTable],
     ordered_anchors: list[MarkSchemeAnchor],
     config: AppConfig,
+    *,
+    words_by_page: dict[int, list[MarkSchemeWord]] | None = None,
+    crop_method: str = "fallback",
 ) -> tuple[Path | None, list[str]]:
     crops = []
     debug_paths: list[str] = []
+    validation = _validate_mark_scheme_crop_before_save(
+        question_number,
+        mark_scheme_pdf,
+        identity,
+        regions,
+        layouts,
+        config,
+        words_by_page or {},
+        ordered_anchors,
+    )
+    debug_paths.append(
+        _write_mark_scheme_crop_debug_record(
+            question_number=question_number,
+            identity=identity,
+            mark_scheme_pdf=mark_scheme_pdf,
+            regions=regions,
+            crop_method=crop_method,
+            validation=validation,
+            config=config,
+        )
+    )
+    if not validation.passed:
+        flags.append("markscheme_validation_failed")
+        flags.append(f"markscheme_validation_failed:{validation.rejected_reason}")
+        return None, debug_paths
+
     for region in regions:
         page_number = region.page_number
         box = region.bbox
@@ -472,8 +536,188 @@ def _render_mark_scheme_crops(
         source_file=mark_scheme_pdf,
         context=f"markscheme_output:{question_number}",
     )
+    stitched = clean_rendered_crop_image(stitched)
     stitched.save(output_path)
     return output_path, debug_paths
+
+
+def _validate_mark_scheme_crop_before_save(
+    question_number: str,
+    mark_scheme_pdf: Path,
+    identity: PaperIdentity,
+    regions: list[MarkSchemeCropRegion],
+    layouts: list[PageLayout],
+    config: AppConfig,
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    anchors: list[MarkSchemeAnchor] | None = None,
+) -> _CropValidation:
+    del mark_scheme_pdf, identity
+    canonical_number = parent_question_id(question_number)
+    if not regions:
+        return _CropValidation(False, [], "empty_crop")
+
+    labels = _left_column_labels_in_regions(regions, words_by_page)
+    labels = _ordered_unique(labels + _left_column_anchor_labels_in_regions(regions, anchors or []))
+    parent_labels = [parent_question_id(label) for label in labels if parent_question_id(label)]
+    unique_parents = _ordered_unique(parent_labels)
+    if canonical_number not in unique_parents:
+        return _CropValidation(False, labels, "target_question_missing")
+    if any(label != canonical_number for label in unique_parents):
+        return _CropValidation(False, labels, "adjacent_primary_question_in_left_column")
+
+    for region in regions:
+        layout = _layout_by_number(layouts, region.page_number)
+        if region.bbox.y1 <= region.bbox.y0 + 4 or region.bbox.x1 <= region.bbox.x0 + 4:
+            return _CropValidation(False, labels, "empty_crop_box")
+        if region.bbox.y0 < config.detection.crop_top_margin - 1:
+            return _CropValidation(False, labels, "crop_starts_above_body")
+        if _crop_contains_page_header_or_footer(region, layout, config):
+            return _CropValidation(False, labels, "page_header_footer_text")
+        if _crop_cuts_through_text_line(region, layout):
+            return _CropValidation(False, labels, "cuts_through_text_line")
+        if len(regions) == 1 and len(labels) <= 1 and region.bbox.y1 - region.bbox.y0 > layout.height * 0.78:
+            return _CropValidation(False, labels, "suspicious_full_page_crop")
+        if len(regions) == 1 and region.bbox.y1 - region.bbox.y0 > layout.height * 0.92:
+            return _CropValidation(False, labels, "suspicious_full_page_crop")
+
+    return _CropValidation(True, labels, "")
+
+
+def _left_column_labels_in_regions(
+    regions: list[MarkSchemeCropRegion],
+    words_by_page: dict[int, list[MarkSchemeWord]],
+) -> list[str]:
+    labels: list[str] = []
+    for region in regions:
+        left_zone_right = min(_left_question_column_right(region.bbox), region.bbox.x0 + 38.0)
+        words = [
+            word
+            for word in words_by_page.get(region.page_number, [])
+            if word.bbox.y0 >= region.bbox.y0 - 2
+            and word.bbox.y1 <= region.bbox.y1 + 2
+            and word.bbox.x0 >= region.bbox.x0 - 2
+            and word.bbox.x0 <= left_zone_right
+        ]
+        for row in _group_words_by_row(words, tolerance=5.0):
+            label = _row_question_label_from_words(row)
+            if label and label not in labels:
+                labels.append(label)
+    return labels
+
+
+def _left_column_anchor_labels_in_regions(
+    regions: list[MarkSchemeCropRegion],
+    anchors: list[MarkSchemeAnchor],
+) -> list[str]:
+    labels: list[str] = []
+    for region in regions:
+        left_zone_right = _left_question_column_right(region.bbox)
+        for anchor in anchors:
+            if anchor.page_number != region.page_number:
+                continue
+            if anchor.y0 < region.bbox.y0 - 2 or anchor.y0 > region.bbox.y1 + 2:
+                continue
+            if anchor.x0 < region.bbox.x0 - 12 or anchor.x0 > left_zone_right:
+                continue
+            label = anchor.question_number
+            if label and label not in labels:
+                labels.append(label)
+    return labels
+
+
+def _left_question_column_right(box: BoundingBox) -> float:
+    width = max(1.0, box.x1 - box.x0)
+    return min(box.x1, box.x0 + max(72.0, width * 0.18))
+
+
+def _crop_contains_page_header_or_footer(
+    region: MarkSchemeCropRegion,
+    layout: PageLayout,
+    config: AppConfig,
+) -> bool:
+    for block in layout.blocks:
+        if not _boxes_overlap(region.bbox, block.bbox):
+            continue
+        if _is_footer_or_header_box(block.bbox, layout, config):
+            return True
+        if _is_mark_scheme_boilerplate(block.text):
+            return True
+        if _is_mark_scheme_page_header_text(block.text):
+            return True
+    return False
+
+
+def _is_mark_scheme_page_header_text(text: str) -> bool:
+    cleaned = " ".join(text.replace("\u00a0", " ").split())
+    if not cleaned:
+        return False
+    header_terms = [
+        r"\bPage\s+\d+\b",
+        r"\bMark Scheme\b",
+        r"\bSyllabus\b",
+        r"\bPaper\b",
+        r"\bGCE\s+A/?AS\s+LEVEL\b",
+        r"\bGCE\s+AS/?A\s+LEVEL\b",
+        r"\bMay/June\s+\d{4}\b",
+        r"\b9709\b",
+    ]
+    hits = sum(1 for pattern in header_terms if re.search(pattern, cleaned, re.IGNORECASE))
+    return hits >= 2
+
+
+def _crop_cuts_through_text_line(region: MarkSchemeCropRegion, layout: PageLayout) -> bool:
+    tolerance = 1.5
+    for block in layout.blocks:
+        if block.bbox.x1 < region.bbox.x0 or block.bbox.x0 > region.bbox.x1:
+            continue
+        top_inside = block.bbox.y0 + tolerance < region.bbox.y0 < block.bbox.y1 - tolerance
+        bottom_inside = block.bbox.y0 + tolerance < region.bbox.y1 < block.bbox.y1 - tolerance
+        if top_inside or bottom_inside:
+            return True
+    return False
+
+
+def _write_mark_scheme_crop_debug_record(
+    *,
+    question_number: str,
+    identity: PaperIdentity,
+    mark_scheme_pdf: Path,
+    regions: list[MarkSchemeCropRegion],
+    crop_method: str,
+    validation: _CropValidation,
+    config: AppConfig,
+) -> str:
+    config.output.debug_dir.mkdir(parents=True, exist_ok=True)
+    path = config.output.debug_dir / "mark_scheme_crop_debug.jsonl"
+    payload = {
+        "question_id": identity.question_id or question_number,
+        "source_pdf": str(mark_scheme_pdf),
+        "page_number": regions[0].page_number if regions else None,
+        "page_numbers": [region.page_number for region in regions],
+        "crop_box": [_box_payload(region.bbox) for region in regions],
+        "crop_method": crop_method,
+        "detected_primary_questions_in_left_column": validation.detected_labels,
+        "rejected_reason": validation.rejected_reason,
+        "validation_passed": validation.passed,
+    }
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n")
+    return _display_path(path)
+
+
+def _boxes_overlap(a: BoundingBox, b: BoundingBox) -> bool:
+    return a.x0 < b.x1 and a.x1 > b.x0 and a.y0 < b.y1 and a.y1 > b.y0
+
+
+def _ordered_unique(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    output: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        output.append(value)
+    return output
 
 
 def _detect_mark_scheme_starts(
@@ -518,6 +762,7 @@ def _render_legacy_mark_scheme_images(
     question_subparts: dict[str, list[str]],
     identities: dict[str, PaperIdentity],
     no_blocks_failure_reason: str,
+    clear_stale: bool = True,
 ) -> dict[str, MarkSchemeImageResult]:
     try:
         import fitz
@@ -527,6 +772,7 @@ def _render_legacy_mark_scheme_images(
 
     mark_scheme_pdf = Path(mark_scheme_pdf)
     layouts = extract_pdf_layout(mark_scheme_pdf, config)
+    words = _extract_mark_scheme_words(mark_scheme_pdf)
     blocks = _build_legacy_mark_scheme_blocks(
         mark_scheme_pdf,
         layouts,
@@ -535,7 +781,7 @@ def _render_legacy_mark_scheme_images(
         question_marks=question_marks,
         question_subparts=question_subparts,
     )
-    if blocks:
+    if blocks and clear_stale:
         _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
 
     ordered_anchors = [block.anchor for block in sorted(blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))]
@@ -597,6 +843,8 @@ def _render_legacy_mark_scheme_images(
                 {},
                 ordered_anchors,
                 config,
+                words_by_page=words,
+                crop_method=block.method,
             )
             if output_path is None:
                 output[number] = MarkSchemeImageResult(
@@ -658,6 +906,13 @@ def _build_legacy_mark_scheme_blocks(
     question_subparts: dict[str, list[str]],
 ) -> dict[str, MarkSchemeBlock]:
     expected = [normalize_question_id(number) for number in (expected_numbers or []) if normalize_question_id(number)]
+    mark_scheme_pdf = Path(mark_scheme_pdf)
+    if mark_scheme_pdf.exists():
+        words_by_page = _extract_mark_scheme_words(mark_scheme_pdf)
+        row_bands = _legacy_table_grid_row_bands(mark_scheme_pdf, layouts, config, words_by_page)
+    else:
+        words_by_page = {}
+        row_bands = []
     anchors = _detect_legacy_mark_scheme_anchors(layouts, config, expected)
     blocks: dict[str, MarkSchemeBlock] = {}
     for index, anchor in enumerate(anchors):
@@ -667,8 +922,26 @@ def _build_legacy_mark_scheme_blocks(
         next_anchor = anchors[index + 1] if index + 1 < len(anchors) else None
         start = _question_start_from_mark_scheme_anchor(anchor, index)
         next_start = _question_start_from_mark_scheme_anchor(next_anchor, index + 1) if next_anchor else None
-        regions, flags = _mark_scheme_regions_for_start(layouts, start, next_start, config)
-        text_blocks = _blocks_for_legacy_anchor_bounds(layouts, anchor, next_anchor, config)
+        method = "fallback"
+        regions, flags = _legacy_table_grid_regions_for_question(row_bands, canonical_number, layouts, config)
+        if regions:
+            method = "table_grid"
+        else:
+            regions, flags = _legacy_left_column_regions_for_question(
+                layouts,
+                words_by_page,
+                canonical_number,
+                config,
+            )
+            if regions:
+                method = "ocr_left_column"
+            else:
+                regions, flags = _mark_scheme_regions_for_start(layouts, start, next_start, config)
+        text_blocks = (
+            _blocks_for_crop_regions(layouts, regions, config)
+            if regions
+            else _blocks_for_legacy_anchor_bounds(layouts, anchor, next_anchor, config)
+        )
         text = "\n".join(block.text for block in text_blocks if block.text.strip()).strip()
         mark_total = _legacy_mark_total_from_text(text, question_marks.get(canonical_number))
         subparts = _legacy_subparts_from_text(text)
@@ -698,9 +971,358 @@ def _build_legacy_mark_scheme_blocks(
                 expected_subparts=question_subparts.get(canonical_number, []),
                 flags=flags,
             ),
+            method=method,
             review_flags=sorted(set(["legacy_markscheme_segmentation", "markscheme_relaxed_anchor_detection", *flags])),
         )
     return blocks
+
+
+def _legacy_table_grid_row_bands(
+    mark_scheme_pdf: Path,
+    layouts: list[PageLayout],
+    config: AppConfig,
+    words_by_page: dict[int, list[MarkSchemeWord]],
+) -> list[_LegacyRowBand]:
+    grids = _legacy_table_grids_from_drawings(mark_scheme_pdf, layouts, config)
+    bands: list[_LegacyRowBand] = []
+    for layout in layouts:
+        grid = grids.get(layout.page_number)
+        if grid is None:
+            continue
+        for top, bottom in zip(grid.horizontal_rules, grid.horizontal_rules[1:]):
+            if bottom <= top + max(18.0, config.detection.min_crop_height * 0.7):
+                continue
+            band_words = [
+                word
+                for word in words_by_page.get(layout.page_number, [])
+                if word.bbox.y1 >= top - 2
+                and word.bbox.y0 <= bottom + 2
+                and grid.bbox.x0 - 3 <= word.bbox.x0 <= grid.bbox.x1 + 3
+            ]
+            if not band_words:
+                continue
+            label_zone_right = min(grid.question_col_right, grid.bbox.x0 + 38.0)
+            label_words = [word for word in band_words if word.bbox.x0 <= label_zone_right]
+            label = None
+            for row in _group_words_by_row(label_words, tolerance=5.0):
+                label = _row_question_label_from_words(row)
+                if label:
+                    break
+            bands.append(
+                _LegacyRowBand(
+                    page_number=layout.page_number,
+                    y0=top,
+                    y1=bottom,
+                    x0=grid.bbox.x0,
+                    x1=grid.bbox.x1,
+                    question_col_right=grid.question_col_right,
+                    question_label=label,
+                )
+            )
+    return sorted(bands, key=lambda item: (item.page_number, item.y0))
+
+
+def _legacy_table_grids_from_drawings(
+    mark_scheme_pdf: Path,
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> dict[int, _LegacyTableGrid]:
+    try:
+        import fitz
+    except ImportError:
+        return {}
+    quiet_mupdf(fitz)
+
+    by_page_layout = {layout.page_number: layout for layout in layouts}
+    grids: dict[int, _LegacyTableGrid] = {}
+    with fitz.open(mark_scheme_pdf) as doc:
+        for page_index, page in enumerate(doc):
+            page_number = page_index + 1
+            layout = by_page_layout.get(page_number)
+            if layout is None:
+                continue
+            horizontal: list[BoundingBox] = []
+            vertical: list[BoundingBox] = []
+            for drawing in page.get_drawings():
+                rect = drawing.get("rect")
+                if rect is None or not rect.is_valid or rect.is_empty:
+                    continue
+                box = _visual_box_from_rect(page, rect)
+                width = box.x1 - box.x0
+                height = box.y1 - box.y0
+                if _is_candidate_table_horizontal_rule(box, width, height, layout, config):
+                    horizontal.append(box)
+                if _is_candidate_table_vertical_rule(box, width, height, layout, config):
+                    vertical.append(box)
+            grid = _legacy_table_grid_from_rule_boxes(layout, horizontal, vertical)
+            if grid is not None:
+                grids[page_number] = grid
+    return grids
+
+
+def _is_candidate_table_horizontal_rule(
+    box: BoundingBox,
+    width: float,
+    height: float,
+    layout: PageLayout,
+    config: AppConfig,
+) -> bool:
+    return (
+        height <= 2.5
+        and width >= max(100.0, layout.width * 0.18)
+        and box.y0 >= max(config.detection.min_question_start_y, config.detection.crop_top_margin + 15)
+        and box.y1 <= layout.height - config.detection.bottom_margin
+    )
+
+
+def _is_candidate_table_vertical_rule(
+    box: BoundingBox,
+    width: float,
+    height: float,
+    layout: PageLayout,
+    config: AppConfig,
+) -> bool:
+    return (
+        width <= 2.5
+        and height >= max(35.0, config.detection.min_crop_height)
+        and box.y0 >= max(config.detection.min_question_start_y, config.detection.crop_top_margin + 15)
+        and box.y0 <= layout.height - config.detection.bottom_margin
+    )
+
+
+def _legacy_table_grid_from_rule_boxes(
+    layout: PageLayout,
+    horizontal: list[BoundingBox],
+    vertical: list[BoundingBox],
+) -> _LegacyTableGrid | None:
+    if len(horizontal) < 2:
+        return None
+    vertical_groups = _group_rule_boxes_by_position(vertical, axis="x", tolerance=2.0)
+    xs = [
+        position
+        for position, boxes in vertical_groups
+        if len(boxes) >= 2 or sum(box.y1 - box.y0 for box in boxes) >= 80
+    ]
+    if len(xs) >= 2:
+        left = min(xs)
+        right = max(xs)
+    else:
+        left = min(box.x0 for box in horizontal)
+        right = max(box.x1 for box in horizontal)
+    if right <= left + layout.width * 0.45:
+        return None
+
+    horizontal_groups = _group_rule_boxes_by_position(horizontal, axis="y", tolerance=2.0)
+    rules: list[float] = []
+    for y, boxes in horizontal_groups:
+        intervals = [(max(left, box.x0), min(right, box.x1)) for box in boxes if box.x1 > left and box.x0 < right]
+        coverage = _interval_coverage(intervals)
+        if coverage >= (right - left) * 0.55:
+            rules.append(y)
+    rules = _dedupe_positions(rules, tolerance=2.0)
+    if len(rules) < 2:
+        return None
+
+    top = min(rules)
+    bottom = max(rules)
+    if bottom <= top + 40:
+        return None
+    bbox = BoundingBox(left, top, right, bottom)
+    return _LegacyTableGrid(
+        page_number=layout.page_number,
+        bbox=bbox,
+        question_col_right=_left_question_column_right(bbox),
+        horizontal_rules=rules,
+        vertical_rules=xs,
+    )
+
+
+def _group_rule_boxes_by_position(
+    boxes: list[BoundingBox],
+    *,
+    axis: str,
+    tolerance: float,
+) -> list[tuple[float, list[BoundingBox]]]:
+    if not boxes:
+        return []
+    if axis == "x":
+        ordered = sorted(boxes, key=lambda box: ((box.x0 + box.x1) / 2, box.y0))
+        center = lambda box: (box.x0 + box.x1) / 2
+    else:
+        ordered = sorted(boxes, key=lambda box: ((box.y0 + box.y1) / 2, box.x0))
+        center = lambda box: (box.y0 + box.y1) / 2
+    groups: list[list[BoundingBox]] = []
+    for box in ordered:
+        value = center(box)
+        if not groups:
+            groups.append([box])
+            continue
+        group_value = sum(center(item) for item in groups[-1]) / len(groups[-1])
+        if abs(value - group_value) <= tolerance:
+            groups[-1].append(box)
+        else:
+            groups.append([box])
+    return [(sum(center(item) for item in group) / len(group), group) for group in groups]
+
+
+def _interval_coverage(intervals: list[tuple[float, float]]) -> float:
+    valid = sorted((start, end) for start, end in intervals if end > start)
+    if not valid:
+        return 0.0
+    merged: list[tuple[float, float]] = [valid[0]]
+    for start, end in valid[1:]:
+        last_start, last_end = merged[-1]
+        if start <= last_end + 3:
+            merged[-1] = (last_start, max(last_end, end))
+        else:
+            merged.append((start, end))
+    return sum(end - start for start, end in merged)
+
+
+def _legacy_table_grid_regions_for_question(
+    row_bands: list[_LegacyRowBand],
+    canonical_number: str,
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> tuple[list[MarkSchemeCropRegion], list[str]]:
+    del config
+    start_index = next(
+        (
+            index
+            for index, band in enumerate(row_bands)
+            if band.question_label and parent_question_id(band.question_label) == canonical_number
+        ),
+        None,
+    )
+    if start_index is None:
+        return [], ["legacy_table_grid_target_missing"]
+
+    selected: list[_LegacyRowBand] = []
+    for band in row_bands[start_index:]:
+        if band.question_label and parent_question_id(band.question_label) != canonical_number:
+            break
+        selected.append(band)
+    if not selected:
+        return [], ["legacy_table_grid_target_missing"]
+
+    regions: list[MarkSchemeCropRegion] = []
+    for page_number in _ordered_unique([str(band.page_number) for band in selected]):
+        page_bands = [band for band in selected if str(band.page_number) == page_number]
+        if not page_bands:
+            continue
+        layout = _layout_by_number(layouts, int(page_number))
+        box = BoundingBox(
+            min(band.x0 for band in page_bands),
+            min(band.y0 for band in page_bands),
+            max(band.x1 for band in page_bands),
+            max(band.y1 for band in page_bands),
+        )
+        box = BoundingBox(
+            max(0, box.x0),
+            max(0, box.y0),
+            min(layout.width, box.x1),
+            min(layout.height, box.y1),
+        )
+        if box.y1 <= box.y0 + 4:
+            continue
+        continuation_rows_included = any(not band.question_label for band in page_bands[1:])
+        regions.append(MarkSchemeCropRegion(int(page_number), box, table_detected=True, continuation_rows_included=continuation_rows_included))
+
+    flags = ["legacy_markscheme_table_grid_crop"]
+    if len(regions) > 1:
+        flags.append("markscheme_image_stitched")
+    return regions, flags
+
+
+def _legacy_left_column_regions_for_question(
+    layouts: list[PageLayout],
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    canonical_number: str,
+    config: AppConfig,
+) -> tuple[list[MarkSchemeCropRegion], list[str]]:
+    rows: list[tuple[int, float, float, BoundingBox, str | None]] = []
+    for layout in layouts:
+        body_words = [
+            word
+            for word in words_by_page.get(layout.page_number, [])
+            if config.detection.crop_top_margin <= word.bbox.y0 <= layout.height - config.detection.bottom_margin
+            and not _is_mark_scheme_boilerplate(word.text)
+        ]
+        if not body_words:
+            continue
+        body_box = _union_boxes([word.bbox for word in body_words])
+        left_zone_right = min(body_box.x1, body_box.x0 + 38.0)
+        for row in _group_words_by_row(body_words, tolerance=5.0):
+            row_box = _union_boxes([word.bbox for word in row])
+            if row_box.x1 < body_box.x0 or row_box.x0 > body_box.x1:
+                continue
+            label_words = [word for word in row if word.bbox.x0 <= left_zone_right]
+            label = _row_question_label_from_words(label_words) if label_words else None
+            rows.append((layout.page_number, row_box.y0, row_box.y1, body_box, label))
+    rows.sort(key=lambda item: (item[0], item[1]))
+    start_index = next(
+        (
+            index
+            for index, (_page, _y0, _y1, _box, label) in enumerate(rows)
+            if label and parent_question_id(label) == canonical_number
+        ),
+        None,
+    )
+    if start_index is None:
+        return [], ["legacy_left_column_target_missing"]
+
+    selected: list[tuple[int, float, float, BoundingBox, str | None]] = []
+    for row in rows[start_index:]:
+        label = row[4]
+        if label and parent_question_id(label) != canonical_number:
+            break
+        selected.append(row)
+    if not selected:
+        return [], ["legacy_left_column_target_missing"]
+
+    regions: list[MarkSchemeCropRegion] = []
+    for page_number in _ordered_unique([str(row[0]) for row in selected]):
+        page_rows = [row for row in selected if str(row[0]) == page_number]
+        layout = _layout_by_number(layouts, int(page_number))
+        body_box = _union_boxes([row[3] for row in page_rows])
+        top = max(config.detection.crop_top_margin, min(row[1] for row in page_rows) - 4)
+        bottom = min(layout.height - config.detection.bottom_margin, max(row[2] for row in page_rows) + 4)
+        box = BoundingBox(
+            max(config.detection.crop_left_margin, body_box.x0 - 4),
+            top,
+            min(layout.width - config.detection.crop_right_margin, body_box.x1 + 4),
+            bottom,
+        )
+        if box.y1 > box.y0 + 4:
+            regions.append(MarkSchemeCropRegion(int(page_number), box, table_detected=False))
+    flags = ["legacy_markscheme_left_column_crop"]
+    if len(regions) > 1:
+        flags.append("markscheme_image_stitched")
+    return regions, flags
+
+
+def _blocks_for_crop_regions(
+    layouts: list[PageLayout],
+    regions: list[MarkSchemeCropRegion],
+    config: AppConfig,
+) -> list[TextBlock]:
+    blocks: list[TextBlock] = []
+    for region in regions:
+        layout = _layout_by_number(layouts, region.page_number)
+        for block in layout.blocks:
+            if not _boxes_overlap(region.bbox, block.bbox):
+                continue
+            if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
+                continue
+            blocks.append(block)
+    return sorted(blocks, key=lambda block: (block.page_number, block.bbox.y0, block.bbox.x0))
+
+
+def _layout_by_number(layouts: list[PageLayout], page_number: int) -> PageLayout:
+    for layout in layouts:
+        if layout.page_number == page_number:
+            return layout
+    raise ValueError(f"Page {page_number} not present in extracted layout.")
 
 
 def _question_start_from_mark_scheme_anchor(anchor: MarkSchemeAnchor | None, index: int) -> QuestionStart | None:
@@ -728,6 +1350,8 @@ def _detect_legacy_mark_scheme_anchors(
     candidates: list[MarkSchemeAnchor] = []
     seen: set[tuple[str, int, int]] = set()
     for layout in layouts:
+        if _is_preliminary_mark_scheme_notes_page(layout):
+            continue
         for block in sorted(layout.blocks, key=lambda item: (item.bbox.y0, item.bbox.x0)):
             number = _legacy_question_anchor_number(block, layout, config, expected)
             if not number:
@@ -750,15 +1374,23 @@ def _detect_legacy_mark_scheme_anchors(
     return _filter_legacy_mark_scheme_anchor_sequence(candidates, expected_numbers)
 
 
+def _is_preliminary_mark_scheme_notes_page(layout: PageLayout) -> bool:
+    if not _layout_has_mark_scheme_notes(layout):
+        return False
+    return _legacy_answer_table_header_y(layout) is None
+
+
 def _legacy_question_anchor_number(
     block: TextBlock,
     layout: PageLayout,
     config: AppConfig,
     expected: set[str],
 ) -> str | None:
-    if block.bbox.x0 > min(config.detection.question_start_max_x, 105):
+    if block.bbox.x0 > min(config.detection.question_start_max_x, 100):
         return None
     if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
+        return None
+    if _is_preliminary_notes_block_before_answer_header(block, layout):
         return None
     line = " ".join(block.first_line.replace("\u00a0", " ").split())
     if not line:
@@ -773,17 +1405,81 @@ def _legacy_question_anchor_number(
     if not match:
         return None
     raw_rest = match.group("rest")
-    if raw_rest and not (raw_rest[0].isspace() or raw_rest[0] in "(["):
+    if raw_rest and not raw_rest[0].isspace() and not _legacy_compact_part_label_rest(raw_rest):
         return None
     rest = raw_rest.strip()
     if not rest or rest.startswith((".", "/")):
         return None
     number = normalize_question_id(match.group("number"))
+    if block.bbox.x0 > min(80.0, layout.width * 0.15) and _legacy_offset_continuation_rest(rest):
+        return None
+    if _legacy_numeric_data_row_rest(rest):
+        return None
     if re.fullmatch(r"\d{1,2}(?:\s+\d{1,2})?", rest) and not _legacy_terminal_mark_total_anchor(block, layout, number, rest, expected):
         return None
     if expected and number not in expected:
         return None
     return number
+
+
+def _legacy_compact_part_label_rest(rest: str) -> bool:
+    return bool(
+        re.match(
+            r"^\((?:a|b|c|d|e|f|g|h|viii|vii|vi|iv|ix|iii|ii|i|v|x)\)",
+            rest,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _legacy_numeric_data_row_rest(rest: str) -> bool:
+    values = re.findall(r"\d{1,3}", rest)
+    if len(values) < 3 and not any(int(value) >= 100 for value in values):
+        return False
+    return not bool(re.search(r"[A-Za-z=+\-−*/^()πθ]", rest))
+
+
+def _legacy_offset_continuation_rest(rest: str) -> bool:
+    return bool(re.match(r"^[=+\-−*/×÷]", rest))
+
+
+def _is_preliminary_notes_block_before_answer_header(block: TextBlock, layout: PageLayout) -> bool:
+    if not _layout_has_mark_scheme_notes(layout):
+        return False
+    header_y = _legacy_answer_table_header_y(layout)
+    if header_y is None:
+        return True
+    return block.bbox.y0 < header_y
+
+
+def _layout_has_mark_scheme_notes(layout: PageLayout) -> bool:
+    text = "\n".join(" ".join(block.text.replace("\u00a0", " ").split()) for block in layout.blocks)
+    lowered = text.lower()
+    return any(
+        marker in lowered
+        for marker in (
+            "mark scheme notes",
+            "specific marking principles",
+            "types of mark",
+            "abbreviations",
+            "general marking principles",
+        )
+    )
+
+
+def _legacy_answer_table_header_y(layout: PageLayout) -> float | None:
+    rows: dict[int, list[TextBlock]] = {}
+    for block in layout.blocks:
+        rows.setdefault(round(block.bbox.y0 / 8), []).append(block)
+    for row in sorted(rows.values(), key=lambda items: min(block.bbox.y0 for block in items)):
+        terms: set[str] = set()
+        for block in row:
+            if _is_mark_scheme_header_text(block.text):
+                return block.bbox.y0
+            terms.update(_clean_cell_text(block.text).split())
+        if {"question", "answer", "marks"} <= terms:
+            return min(block.bbox.y0 for block in row)
+    return None
 
 
 def _legacy_standalone_question_anchor(
@@ -867,8 +1563,19 @@ def _has_earlier_later_expected_legacy_anchor(
         if not after_position < position < before_position:
             continue
         if parent_question_id(candidate.question_number) in later_expected:
+            if not _legacy_anchor_blocks_expected_sequence(candidate):
+                continue
             return True
     return False
+
+
+def _legacy_anchor_blocks_expected_sequence(candidate: MarkSchemeAnchor) -> bool:
+    if candidate.x0 <= 60:
+        return True
+    match = re.match(r"^(?:Q\s*)?\d{1,2}(?P<rest>.*)$", " ".join(candidate.text.replace("\u00a0", " ").split()), re.IGNORECASE)
+    if not match:
+        return False
+    return _legacy_compact_part_label_rest(match.group("rest").lstrip())
 
 
 def _blocks_for_legacy_anchor_bounds(
@@ -884,6 +1591,18 @@ def _blocks_for_legacy_anchor_bounds(
             continue
         top = anchor.y0 if layout.page_number == anchor.page_number else config.detection.crop_top_margin
         bottom = next_anchor.y0 if next_anchor and layout.page_number == next_anchor.page_number else layout.height - config.detection.bottom_margin
+        boundary_y = _legacy_foreign_mark_scheme_boundary_y(layout, anchor.question_number, top, bottom, config)
+        if boundary_y is not None:
+            bottom = min(bottom, boundary_y)
+        if _next_anchor_page_has_no_legacy_continuation(
+            layout.page_number,
+            anchor.page_number,
+            next_anchor.page_number if next_anchor else None,
+            top,
+            bottom,
+            config,
+        ):
+            continue
         for block in layout.blocks:
             if block.bbox.y1 < top or block.bbox.y0 >= bottom:
                 continue
@@ -1456,6 +2175,10 @@ def _table_regions_for_anchor(
         # question-number cells blank on continuation rows. Those rows belong to
         # the current question until the next visible question-number anchor.
         bottom = next_anchor.y0 if next_anchor and layout.page_number == next_anchor.page_number else table.bbox.y1
+        boundary_y = _legacy_foreign_mark_scheme_boundary_y(layout, anchor.question_number, top, bottom, config)
+        if boundary_y is not None:
+            bottom = min(bottom, boundary_y)
+            flags.append("markscheme_foreign_question_boundary_trimmed")
         if (
             next_anchor
             and layout.page_number == next_anchor.page_number
@@ -2077,6 +2800,9 @@ def _blocks_for_table_anchor_bounds(
         top = anchor.y0 if layout.page_number == anchor.page_number else table.header_bottom
         top_tolerance = 4.0 if layout.page_number == anchor.page_number else 0.0
         bottom = next_anchor.y0 if next_anchor and layout.page_number == next_anchor.page_number else table.bbox.y1
+        boundary_y = _legacy_foreign_mark_scheme_boundary_y(layout, anchor.question_number, top, bottom, config)
+        if boundary_y is not None:
+            bottom = min(bottom, boundary_y)
         if (
             next_anchor
             and layout.page_number == next_anchor.page_number
@@ -2124,6 +2850,19 @@ def _mark_scheme_regions_for_start(
         bottom = end_y if layout.page_number == end_page else layout.height - config.detection.bottom_margin
         top = max(config.detection.crop_top_margin, top)
         bottom = min(layout.height - config.detection.bottom_margin, bottom)
+        boundary_y = _legacy_foreign_mark_scheme_boundary_y(layout, start.question_number, top, bottom, config)
+        if boundary_y is not None:
+            bottom = min(bottom, boundary_y)
+            flags.append("markscheme_foreign_question_boundary_trimmed")
+        if _next_anchor_page_has_no_legacy_continuation(
+            layout.page_number,
+            start.page_number,
+            next_start.page_number if next_start else None,
+            top,
+            bottom,
+            config,
+        ):
+            continue
         if bottom <= top:
             continue
 
@@ -2151,7 +2890,7 @@ def _mark_scheme_regions_for_start(
             max(config.detection.crop_left_margin, crop_box.x0),
             max(config.detection.crop_top_margin, crop_box.y0),
             min(layout.width - config.detection.crop_right_margin, crop_box.x1),
-            min(layout.height - config.detection.bottom_margin, crop_box.y1),
+            min(layout.height - config.detection.bottom_margin, crop_box.y1, bottom),
         )
         if crop_box.y1 <= crop_box.y0 or crop_box.x1 <= crop_box.x0:
             flags.append("markscheme_image_uncertain")
@@ -2163,6 +2902,55 @@ def _mark_scheme_regions_for_start(
     if len(regions) > 1:
         flags.append("markscheme_image_stitched")
     return regions, flags
+
+
+def _next_anchor_page_has_no_legacy_continuation(
+    page_number: int,
+    start_page: int,
+    next_anchor_page: int | None,
+    top: float,
+    bottom: float,
+    config: AppConfig,
+) -> bool:
+    if next_anchor_page is None or page_number != next_anchor_page or page_number == start_page:
+        return False
+    return bottom <= top + max(45.0, config.detection.min_crop_height * 1.5)
+
+
+def _legacy_foreign_mark_scheme_boundary_y(
+    layout: PageLayout,
+    current_question_number: str,
+    top: float,
+    bottom: float,
+    config: AppConfig,
+) -> float | None:
+    for block in sorted(layout.blocks, key=lambda item: (item.bbox.y0, item.bbox.x0)):
+        if block.bbox.y0 <= top + config.detection.anchor_y_tolerance or block.bbox.y0 >= bottom:
+            continue
+        if _is_footer_or_header_box(block.bbox, layout, config) or _is_mark_scheme_boilerplate(block.text):
+            continue
+        if _is_mark_scheme_header_text(block.text):
+            continue
+        parsed = parse_question_start(block.first_line, config)
+        if not parsed:
+            continue
+        candidate_number = parent_question_id(parsed[0])
+        if not _is_later_mark_scheme_question(candidate_number, parent_question_id(current_question_number)):
+            continue
+        cleaned = _clean_cell_text(block.first_line)
+        if re.fullmatch(r"\d{1,2}", cleaned):
+            continue
+        if block.bbox.x0 > max(config.detection.question_start_max_x, 120):
+            continue
+        return block.bbox.y0
+    return None
+
+
+def _is_later_mark_scheme_question(candidate_number: str, current_number: str) -> bool:
+    try:
+        return int(candidate_number) > int(current_number)
+    except ValueError:
+        return candidate_number != current_number
 
 
 def _mark_scheme_crop_confidence(

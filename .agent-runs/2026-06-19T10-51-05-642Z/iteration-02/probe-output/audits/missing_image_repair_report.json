@@ -1,0 +1,32 @@
+{
+  "detected_images_added_via_fallback": 0,
+  "detection_method_breakdown": {
+    "embedded_or_vector_graphic_regions": 10,
+    "legacy_fallback": 0,
+    "ocr_hint_signals": 10,
+    "question_context_inference": 0
+  },
+  "detection_success_rate_improvement": 0.0,
+  "final_missing_images": 0,
+  "initial_missing_images": 0,
+  "legacy_vs_modern_breakdown": {
+    "legacy": {
+      "detected_figure_questions": 7,
+      "expected_figure_questions": 7,
+      "fallback_detected_questions": 0,
+      "improvement": 0,
+      "remaining_missing_images": 0
+    },
+    "modern": {
+      "detected_figure_questions": 0,
+      "expected_figure_questions": 0,
+      "fallback_detected_questions": 0,
+      "improvement": 0,
+      "remaining_missing_images": 0
+    }
+  },
+  "remaining_missing_images": [],
+  "schema_name": "exam_bank.missing_image_repair_report",
+  "schema_version": 1,
+  "visual_coverage_acceptable": true
+}

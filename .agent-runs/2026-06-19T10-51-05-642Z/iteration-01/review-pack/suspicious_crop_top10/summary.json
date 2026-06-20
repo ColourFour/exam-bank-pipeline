@@ -1,0 +1,183 @@
+{
+  "created_at": "2026-06-19T10:56:51.935978+00:00",
+  "input_path": "output/json/question_bank.json",
+  "output_root": "output",
+  "artifact_root": "output",
+  "baseline_path": ".agent-runs/2026-06-19T10-51-05-642Z/iteration-01/review-pack/suspicious_crop_top10/baseline_question_bank.json",
+  "sample_path": ".agent-runs/2026-06-19T10-51-05-642Z/iteration-01/review-pack/suspicious_crop_top10/sample.json",
+  "gallery_path": ".agent-runs/2026-06-19T10-51-05-642Z/iteration-01/review-pack/suspicious_crop_top10/index.html",
+  "review_path": ".agent-runs/2026-06-19T10-51-05-642Z/iteration-01/review-pack/suspicious_crop_top10/review.jsonl",
+  "issue_set": "output-integrity",
+  "target": "suspicious_rendered_crop_dimensions",
+  "sample_size": 10,
+  "record_count": 3547,
+  "candidate_count": 31,
+  "sampled_count": 10,
+  "sample_question_ids": [
+    "13winter11_q10",
+    "51summer24_q07",
+    "42summer24_q07",
+    "43summer24_q07",
+    "42winter24_q04",
+    "45summer25_q07",
+    "43winter24_q07",
+    "32summer17_q06",
+    "63summer14_q07",
+    "52summer22_q07"
+  ],
+  "audit_summary": {
+    "by_image_kind": {
+      "mark_scheme": 29,
+      "question": 2
+    },
+    "by_reason": {
+      "extreme_aspect_ratio": 1,
+      "very_tall_rendered_crop": 31
+    },
+    "top_papers": [
+      {
+        "paper": "12winter24",
+        "count": 2,
+        "question_ids": [
+          "12winter24_q07",
+          "12winter24_q08"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 2
+        }
+      },
+      {
+        "paper": "13summer25",
+        "count": 2,
+        "question_ids": [
+          "13summer25_q09",
+          "13summer25_q11"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 2
+        }
+      },
+      {
+        "paper": "42summer24",
+        "count": 2,
+        "question_ids": [
+          "42summer24_q06",
+          "42summer24_q07"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 2
+        }
+      },
+      {
+        "paper": "42winter24",
+        "count": 2,
+        "question_ids": [
+          "42winter24_q04",
+          "42winter24_q06"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 2
+        }
+      },
+      {
+        "paper": "53winter24",
+        "count": 2,
+        "question_ids": [
+          "53winter24_q05",
+          "53winter24_q06"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 2
+        }
+      },
+      {
+        "paper": "11winter19",
+        "count": 1,
+        "question_ids": [
+          "11winter19_q11"
+        ],
+        "image_kind_counts": {
+          "question": 1
+        }
+      },
+      {
+        "paper": "12summer24",
+        "count": 1,
+        "question_ids": [
+          "12summer24_q06"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      },
+      {
+        "paper": "13summer16",
+        "count": 1,
+        "question_ids": [
+          "13summer16_q09"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      },
+      {
+        "paper": "13winter11",
+        "count": 1,
+        "question_ids": [
+          "13winter11_q10"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      },
+      {
+        "paper": "15summer25",
+        "count": 1,
+        "question_ids": [
+          "15summer25_q10"
+        ],
+        "image_kind_counts": {
+          "mark_scheme": 1
+        }
+      }
+    ],
+    "max_height_candidate": {
+      "question_id": "13winter11_q10",
+      "paper": "13winter11",
+      "question_number": "10",
+      "image_kind": "mark_scheme",
+      "path": "pm1/pm1_2011_w11_13_ms_q10_markscheme.png",
+      "width_px": 1606,
+      "height_px": 9174,
+      "aspect_ratio": 5.712,
+      "reasons": [
+        "very_tall_rendered_crop",
+        "extreme_aspect_ratio"
+      ]
+    },
+    "max_aspect_ratio_candidate": {
+      "question_id": "13winter11_q10",
+      "paper": "13winter11",
+      "question_number": "10",
+      "image_kind": "mark_scheme",
+      "path": "pm1/pm1_2011_w11_13_ms_q10_markscheme.png",
+      "width_px": 1606,
+      "height_px": 9174,
+      "aspect_ratio": 5.712,
+      "reasons": [
+        "very_tall_rendered_crop",
+        "extreme_aspect_ratio"
+      ]
+    }
+  },
+  "root_cause_options": [
+    "question_crop_boundary",
+    "mark_scheme_mapping",
+    "paper_total_detection",
+    "false_positive_validation_gate",
+    "text_ocr_quality",
+    "classification_only",
+    "source_pdf_issue",
+    "unknown"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "verdict": "pass",
+  "acceptance_criteria_review": [
+    "Pass: the new test reproduced trailing foreign-question contamination before the fix.",
+    "Pass: the fix uses the existing detect_question_anchor_candidates parser.",
+    "Pass: focused and full image-rendering tests passed after implementation."
+  ],
+  "test_quality_review": "Good focused synthetic regression for the missed-anchor crop failure; not a substitute for real-PDF corpus coverage.",
+  "repo_hygiene_review": "Clean for this slice: source and test edits only, with no canonical output rewrites.",
+  "scope_creep_review": "No scope creep observed; changes stay in prompt-region boundary detection.",
+  "regression_risks": [
+    "A legitimate later-page continuation could still require separate handling outside same-page prompt trimming.",
+    "Mark-scheme contamination was intentionally left for later iterations."
+  ],
+  "commands_run": [
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor -q (failed before implementation as expected)",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor tests/test_question_detection.py::test_legacy_mark_scheme_block_stops_before_missed_neighbor_question -q (2 passed after implementation)",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py -q (12 passed)"
+  ],
+  "residual_risks": [
+    "This iteration only addresses question prompt crops; mark-scheme images still needed separate historical-layout handling."
+  ],
+  "evidence": [
+    "Focused prompt-crop regression passed after implementation.",
+    "Final session focused suite passed: 111 tests.",
+    "Final session rendering marker gate passed: 12 tests."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Apply the same foreign-boundary idea to legacy mark-scheme crops where adjacent question rows can leak into one image.",
+  "next_iteration_focus": "Apply the same foreign-boundary idea to legacy mark-scheme crops where adjacent question rows can leak into one image."
+}

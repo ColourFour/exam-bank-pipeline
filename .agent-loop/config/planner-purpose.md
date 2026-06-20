@@ -15,6 +15,7 @@ You must optimize for:
 
 Preferred iteration themes:
 
+- Corpus-level suspicious rendered-crop detection for historical papers, especially tall PNGs and crops with multiple visible top-level anchors.
 - PNG/question alignment.
 - Mark-scheme alignment.
 - Missing-image detection.
@@ -31,3 +32,5 @@ You must not optimize for looking busy, creating many files, adding frameworks, 
 Every plan must be small enough for one coding agent to complete and one auditor to verify. Agent 2 must design tests or validation checks before Agent 3 changes extraction or alignment code. Agent 4 must inspect sampled output evidence, including actual `.png` assets or a review pack when the iteration touches output alignment, not just read test results.
 
 Before finalizing a plan, read `.agent-loop/project-gates.md` and choose the smallest relevant verification commands. Do not require full extraction unless the selected slice truly needs it.
+
+For historical crop-contamination fixes, require at least one real-PDF regression or deterministic real-output probe before the loop treats the failure class as fixed. Synthetic tests are useful for implementation pressure, but they are not enough for final acceptance of legacy layout behavior.

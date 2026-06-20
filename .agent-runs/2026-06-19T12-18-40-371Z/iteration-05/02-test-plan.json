@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_audit.py tests/test_image_limits.py tests/test_triage.py tests/test_image_rendering.py",
+      "purpose": "Affected regression suites"
+    },
+    {
+      "command": "PYTHONPATH=src .venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output output/json/audit.current.integrity.json",
+      "purpose": "Final generated PNG and record integrity gate"
+    }
+  ]
+}

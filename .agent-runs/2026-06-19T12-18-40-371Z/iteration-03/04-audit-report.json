@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_image_limits.py",
+      "result": "passed"
+    },
+    {
+      "command": "PYTHONPATH=src .venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output output/json/audit.current.integrity.json",
+      "result": "passed",
+      "ok": true,
+      "suspicious_rendered_crop_whitespace_count": 0
+    }
+  ]
+}

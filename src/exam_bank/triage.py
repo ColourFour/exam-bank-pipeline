@@ -12,6 +12,8 @@ import random
 from typing import Any
 from urllib.parse import urlparse
 
+from .audit import audit_current_output_integrity
+
 
 ROOT_CAUSE_OPTIONS = [
     "question_crop_boundary",
@@ -190,6 +192,82 @@ def create_triage_iteration(
     return {"iteration_dir": str(iteration_dir), **summary}
 
 
+def create_suspicious_crop_review_pack(
+    input_path: str | Path,
+    *,
+    artifact_root: str | Path | None = None,
+    review_root: str | Path | None = None,
+    iteration: str | Path | None = None,
+    sample_size: int = 30,
+) -> dict[str, Any]:
+    if sample_size < 1:
+        raise ValueError("sample_size must be at least 1.")
+
+    input_path = Path(input_path)
+    output_root = Path(artifact_root) if artifact_root is not None else _infer_output_root(input_path)
+    review_root = Path(review_root) if review_root is not None else output_root / "triage"
+    iteration_dir = _iteration_dir(review_root, iteration)
+    if iteration_dir.exists():
+        raise FileExistsError(f"Suspicious crop review iteration already exists: {iteration_dir}")
+    iteration_dir.mkdir(parents=True)
+
+    payload, records = load_question_bank(input_path)
+    records_by_id = {str(record.get("question_id")): record for record in records if record.get("question_id")}
+    audit = audit_current_output_integrity(
+        input_path,
+        artifact_root=output_root,
+        example_limit=sample_size,
+    )
+    candidates = _suspicious_crop_review_candidates(audit)
+    sample = candidates[: min(sample_size, len(candidates))]
+
+    baseline_path = iteration_dir / "baseline_question_bank.json"
+    baseline_path.write_text(input_path.read_text(encoding="utf-8"), encoding="utf-8")
+
+    sample_payload = {
+        "issue_set": "output-integrity",
+        "target": "suspicious_rendered_crop_artifacts",
+        "seed": "",
+        "sample_size": sample_size,
+        "sampled_count": len(sample),
+        "questions": [
+            _suspicious_crop_sample_record(candidate, records_by_id.get(str(candidate.get("question_id")), {}), iteration_dir, output_root)
+            for candidate in sample
+        ],
+    }
+    sample_path = iteration_dir / "sample.json"
+    _write_json(sample_path, sample_payload)
+
+    summary = {
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "input_path": str(input_path),
+        "output_root": str(output_root),
+        "artifact_root": str(output_root),
+        "baseline_path": str(baseline_path),
+        "sample_path": str(sample_path),
+        "gallery_path": str(iteration_dir / "index.html"),
+        "review_path": str(iteration_dir / "review.jsonl"),
+        "issue_set": "output-integrity",
+        "target": "suspicious_rendered_crop_artifacts",
+        "sample_size": sample_size,
+        "record_count": len(records),
+        "candidate_count": len(candidates),
+        "dimension_candidate_count": int((audit.get("counts") or {}).get("suspicious_rendered_crop_dimension_count") or 0),
+        "whitespace_candidate_count": int((audit.get("counts") or {}).get("suspicious_rendered_crop_whitespace_count") or 0),
+        "sampled_count": len(sample),
+        "sample_question_ids": [str(candidate.get("question_id") or "") for candidate in sample],
+        "audit_summary": {
+            "dimensions": audit.get("suspicious_rendered_crop_dimension_summary") or {},
+            "whitespace": audit.get("suspicious_rendered_crop_whitespace_summary") or {},
+        },
+        "root_cause_options": ROOT_CAUSE_OPTIONS,
+    }
+    _write_json(iteration_dir / "summary.json", summary)
+    (iteration_dir / "review.jsonl").touch()
+    write_gallery(iteration_dir / "index.html", sample_payload)
+    return {"iteration_dir": str(iteration_dir), **summary}
+
+
 def compare_iteration(
     iteration_dir: str | Path,
     *,
@@ -319,6 +397,49 @@ def _sample_record(record: dict[str, Any], iteration_dir: Path, output_root: Pat
         "extraction_quality_flags": _list_field(record, "extraction_quality_flags"),
         "question_text_snippet": str(record.get("question_text") or "")[:800],
     }
+
+
+def _suspicious_crop_sample_record(
+    candidate: dict[str, Any],
+    record: dict[str, Any],
+    iteration_dir: Path,
+    output_root: Path,
+) -> dict[str, Any]:
+    sample = _sample_record(record, iteration_dir, output_root)
+    candidate_path = str(candidate.get("path") or "")
+    sample.update(
+        {
+            "primary_issue": str(candidate.get("primary_issue") or "suspicious_rendered_crop_dimensions"),
+            "suspicious_crop": {
+                "image_kind": candidate.get("image_kind"),
+                "path": candidate_path,
+                "width_px": candidate.get("width_px"),
+                "height_px": candidate.get("height_px"),
+                "aspect_ratio": candidate.get("aspect_ratio"),
+                "content_bbox": candidate.get("content_bbox"),
+                "blank_top_ratio": candidate.get("blank_top_ratio"),
+                "blank_bottom_ratio": candidate.get("blank_bottom_ratio"),
+                "content_area_ratio": candidate.get("content_area_ratio"),
+                "reasons": candidate.get("reasons") if isinstance(candidate.get("reasons"), list) else [],
+            },
+            "suspicious_crop_image_src": _gallery_asset_src(candidate_path, iteration_dir, output_root),
+        }
+    )
+    return sample
+
+
+def _suspicious_crop_review_candidates(audit: dict[str, Any]) -> list[dict[str, Any]]:
+    dimensions = [
+        {**candidate, "primary_issue": "suspicious_rendered_crop_dimensions"}
+        for candidate in audit.get("suspicious_rendered_crop_review_candidates") or []
+        if isinstance(candidate, dict)
+    ]
+    whitespace = [
+        {**candidate, "primary_issue": "suspicious_rendered_crop_whitespace"}
+        for candidate in audit.get("suspicious_rendered_crop_whitespace_review_candidates") or []
+        if isinstance(candidate, dict)
+    ]
+    return [*dimensions, *whitespace]
 
 
 def _gallery_html(sample_payload: dict[str, Any]) -> str:
@@ -557,6 +678,7 @@ def _gallery_card(record: dict[str, Any]) -> str:
     qid = str(record.get("question_id") or "")
     question_img = _image_or_missing(record.get("question_image_src"), "Question crop")
     mark_img = _image_or_missing(record.get("mark_scheme_image_src"), "Mark-scheme crop")
+    suspicious_crop = record.get("suspicious_crop") if isinstance(record.get("suspicious_crop"), dict) else {}
     flags = _flag_group(record.get("validation_flags"), "Validation flags")
     review_flags = _flag_group(record.get("review_flags"), "Review flags")
     visual_flags = _flag_group(record.get("visual_reason_flags"), "Visual flags")
@@ -573,6 +695,11 @@ def _gallery_card(record: dict[str, Any]) -> str:
         "Mapping reason": record.get("mapping_failure_reason"),
         "Question image": record.get("question_image_path"),
         "Mark image": record.get("mark_scheme_image_path"),
+        "Suspicious crop kind": suspicious_crop.get("image_kind"),
+        "Suspicious crop path": suspicious_crop.get("path"),
+        "Suspicious dimensions": _suspicious_dimensions_label(suspicious_crop),
+        "Suspicious whitespace": _suspicious_whitespace_label(suspicious_crop),
+        "Suspicious reasons": ", ".join(str(item) for item in suspicious_crop.get("reasons") or []),
         "Source PDF": record.get("source_pdf"),
     }
     metadata_html = _definition_list(metadata)
@@ -612,6 +739,31 @@ def _gallery_card(record: dict[str, Any]) -> str:
     </section>
   </div>
 </article>"""
+
+
+def _suspicious_dimensions_label(suspicious_crop: dict[str, Any]) -> str:
+    width = suspicious_crop.get("width_px")
+    height = suspicious_crop.get("height_px")
+    aspect = suspicious_crop.get("aspect_ratio")
+    if width is None or height is None:
+        return ""
+    label = f"{width}x{height}"
+    if aspect is not None:
+        label += f" aspect {aspect}"
+    return label
+
+
+def _suspicious_whitespace_label(suspicious_crop: dict[str, Any]) -> str:
+    values = []
+    for label, key in [
+        ("top", "blank_top_ratio"),
+        ("bottom", "blank_bottom_ratio"),
+        ("content area", "content_area_ratio"),
+    ]:
+        value = suspicious_crop.get(key)
+        if value is not None:
+            values.append(f"{label} {value}")
+    return ", ".join(values)
 
 
 def _image_or_missing(src: Any, alt: str) -> str:

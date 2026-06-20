@@ -1,0 +1,32 @@
+{
+  "verdict": "pass_with_risks",
+  "acceptance_criteria_review": {
+    "inspects_readable_png_dimensions": "Pass. The audit opens existing relative image artifacts with Pillow and records width/height evidence.",
+    "reports_deterministic_failure_group": "Pass. The new failure code suspicious_rendered_crop_dimensions includes record identity, field, path, resolved path, image kind, dimensions, aspect ratio, and reason list.",
+    "does_not_crash_on_unreadable_existing_placeholders": "Pass. Existing tests with fake placeholder files still pass."
+  },
+  "test_quality_review": "The regression test uses real generated PNG files and proves both question and mark-scheme dimension candidates are reported. It does not prove semantic cross-question contamination, which is correctly documented.",
+  "repo_hygiene_review": "Source edits are limited to one existing audit module and one existing test file. The live audit output is run-local under .agent-runs.",
+  "scope_creep_review": "No renderer behavior, canonical output, dependencies, or schema-consuming downstream projection was changed.",
+  "regression_risks": [
+    "The 5000px absolute-height and 5:1 aspect-ratio thresholds may flag legitimate long mark-scheme answers; they should be treated as review candidates.",
+    "The live output-integrity gate now fails current output because it found 31 candidates."
+  ],
+  "commands_run": [
+    {
+      "command": ".venv/bin/python -m pytest tests/test_audit.py -q",
+      "result": "pass: 11 passed"
+    },
+    {
+      "command": ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T08-10-11-928Z/iteration-01/audit.current.integrity.json --example-limit 5",
+      "result": "expected failure: exit 1 with 31 suspicious rendered-crop dimension candidates"
+    }
+  ],
+  "evidence": [
+    "The first live candidate is 11winter19_q11 question_image_path at 1606x5070.",
+    "The live report includes mark-scheme candidates such as 12summer24_q06 at 2218x6033.",
+    "No missing or duplicate path failures were introduced in the live report."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Reduce false positives by adding a review-pack or inventory summarizer for suspicious dimension candidates so auditors can prioritize by paper, image kind, and reason."
+}

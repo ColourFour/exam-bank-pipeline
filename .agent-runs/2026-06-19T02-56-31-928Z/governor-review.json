@@ -1,0 +1,48 @@
+{
+  "cycle_verdict": "continue_after_cleanup",
+  "user_focus": "Improve output images so each question or mark-scheme image contains only one question or mark scheme, especially for 2008-2021 papers.",
+  "actual_improvements": [
+    "Question prompt crops now trim at later same-page foreign question anchors even when the main question-span detector missed that later anchor.",
+    "Legacy mark-scheme text and image bounds now stop before missed neighboring top-level question rows.",
+    "Legacy mark-scheme anchor detection now ignores Mark Scheme Notes, Specific Marking Principles, General Marking Principles, Types of Mark, and Abbreviations front matter.",
+    "Numbered notes above a same-page Question / Answer / Marks table are ignored while real answer rows remain detectable.",
+    "Legacy mark-scheme crops skip next-anchor-only pages and clamp crop padding to the computed question boundary.",
+    "A real S20 P51 q6 regression test now protects against the prior crop that included notes, q1-q7 material, and question 7 rows."
+  ],
+  "evidence": [
+    "Focused pre-fix tests reproduced both question prompt trailing contamination and legacy mark-scheme missed-neighbor contamination.",
+    "S20 P51 q6 mark-scheme image shrank from a 10274 px tall contaminated crop in the targeted probe to a 2232 by 1290 image containing only q6(a) and q6(b).",
+    "S21 P32 targeted run produced no tall outliers and reported a foreign_question_region_removed flag for question 6.",
+    "Focused suite passed: tests/test_image_rendering.py, tests/test_question_detection.py, and the S20 P51 regression totaled 111 passing tests.",
+    "Rendering marker suite passed with 12 tests."
+  ],
+  "fake_progress": [
+    "The loop did not regenerate the canonical output image set under output/.",
+    "The loop did not inspect every 2008-2021 paper, so it cannot claim complete historical coverage.",
+    "The broad non-integration suite remains blocked by unrelated generated-artifact and fixture debt."
+  ],
+  "bloat_introduced": [
+    "New loop artifacts were added under .agent-runs/2026-06-19T02-56-31-928Z as requested audit trail.",
+    "Production code gained focused helper functions in image_rendering.py and mark_schemes.py; these are bounded but should not become a second parser layer."
+  ],
+  "cleanup_required": [
+    "Do not delete this run's .agent-runs artifacts; they document the requested five-iteration loop.",
+    "Decide separately whether .agent-runs should remain tracked or be ignored, because the repository already tracked prior run artifacts.",
+    "Repair or refresh unrelated generated artifacts before treating pytest -m 'not integration' as a clean gate."
+  ],
+  "agent_failure_patterns": [
+    "Initial targeted work improved parser boundaries but still required visual/real-PDF verification to catch the following-page q7 leak.",
+    "The loop intentionally avoided canonical output regeneration, so improvements are code/test-level until a corpus rebuild is run."
+  ],
+  "planner_policy_updates": [
+    "For historical crop work, require at least one real-PDF regression test for each newly fixed failure class.",
+    "For the next cycle, prioritize corpus-level detection of multi-anchor/tall rendered crops over additional isolated helper refinements.",
+    "Keep manual visual checks tied to concrete dimensions and source PDFs, not only screenshots."
+  ],
+  "backlog_updates": [
+    "Promote corpus-level suspicious rendered-crop detection for 2008-2021 papers, especially tall images and crops with multiple top-level anchors.",
+    "Add a review-pack or validation gate that can sample suspicious rendered PNGs without rewriting canonical output.",
+    "Keep real-PDF regression tests for every historical crop failure class that graduates from manual probe to code fix."
+  ],
+  "next_cycle_focus": "Run a 2008-2021 corpus audit that detects rendered question or mark-scheme PNGs with multiple top-level anchors or abnormal height/width ratios, then fix the highest-count remaining failure family."
+}

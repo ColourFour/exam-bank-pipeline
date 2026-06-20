@@ -1,0 +1,17 @@
+ .agent-loop/BACKLOG.md                             |   1 +
+ .agent-loop/config/planner-purpose.md              |   3 +
+ .agent-runs/latest                                 |   2 +-
+ .../9709/2019/mark_schemes/9709_m19_ms_42.pdf      | Bin 98304 -> 256939 bytes
+ src/exam_bank/audit.py                             | 493 +++++++++++++++++++++
+ src/exam_bank/cli.py                               |  43 +-
+ src/exam_bank/image_rendering.py                   |  88 +++-
+ src/exam_bank/mark_schemes.py                      | 172 ++++++-
+ src/exam_bank/question_detection.py                |  10 +-
+ src/exam_bank/triage.py                            | 115 +++++
+ tests/test_audit.py                                | 266 +++++++++++
+ tests/test_image_rendering.py                      |  35 ++
+ tests/test_question_detection.py                   | 373 +++++++++++++++-
+ tests/test_runtime_paths.py                        |  11 +
+ tests/test_sample_pipeline.py                      |  94 ++++
+ tests/test_triage.py                               |  64 +++
+ 16 files changed, 1762 insertions(+), 8 deletions(-)

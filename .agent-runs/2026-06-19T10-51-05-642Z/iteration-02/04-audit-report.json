@@ -1,0 +1,27 @@
+{
+  "verdict": "pass_with_risks",
+  "acceptance_criteria_review": {
+    "real_pdf_regression": "Pass. The test processes 9709_w11_qp_13 with 9709_w11_ms_13.",
+    "q10_text_excludes_q9": "Pass. The test asserts q10 content is present and q9 inverse-function text is absent.",
+    "regenerated_image_smaller_than_stale_candidate": "Pass. The test asserts the generated q10 crop is below 5000px and aspect ratio below 3.0."
+  },
+  "test_quality_review": "The test uses real repository PDFs and image dimensions, matching the project policy for historical crop failures.",
+  "repo_hygiene_review": "Only a test file changed. Probe outputs are run-local, but an earlier exploratory command accidentally wrote one generated q10 image under output/ before being corrected.",
+  "scope_creep_review": "No parser or canonical output rebuild was performed.",
+  "regression_risks": [
+    "The canonical output directory may now contain a repaired q10 image from the accidental exploratory command; a later validation run should treat that as generated-output drift needing explicit manifest handling."
+  ],
+  "commands_run": [
+    {
+      "command": ".venv/bin/python -m pytest tests/test_sample_pipeline.py::test_repo_w11_p13_q10_mark_scheme_excludes_previous_questions -q",
+      "result": "pass: 1 passed"
+    }
+  ],
+  "evidence": [
+    "Visual inspection showed the stale canonical q10 image includes q6-q9 before q10.",
+    "Run-local regeneration produced q10 status pass/pass with no q9 text and dimensions 1606x4616.",
+    "The focused regression now protects that behavior."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Check whether the next top suspicious candidates are also stale under current code or still reproduce live parser failures."
+}

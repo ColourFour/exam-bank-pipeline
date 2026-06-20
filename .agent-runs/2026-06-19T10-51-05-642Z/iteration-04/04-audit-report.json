@@ -1,0 +1,30 @@
+{
+  "verdict": "pass_with_risks",
+  "acceptance_criteria_review": {
+    "ignore_unknown_numeric_label": "Pass. The fixture line 90 (x) is no longer reported.",
+    "preserve_known_foreign_labels": "Pass. q7 and q9 remain reported for q10 when q7/q9 records exist for the paper.",
+    "live_false_positive_removed": "Pass. The live foreign-label count dropped from 25 to 22 and the prior 90-label example disappeared."
+  },
+  "test_quality_review": "The fixture explicitly controls the known question set, making the intended filter behavior clear.",
+  "repo_hygiene_review": "The change is limited to audit logic and tests.",
+  "scope_creep_review": "No fuzzy OCR or visual parsing was introduced.",
+  "regression_risks": [
+    "Foreign labels for missing records in an incomplete paper export could be suppressed by the known-number filter."
+  ],
+  "commands_run": [
+    {
+      "command": ".venv/bin/python -m pytest tests/test_audit.py -q",
+      "result": "pass: 14 passed"
+    },
+    {
+      "command": ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T10-51-05-642Z/iteration-04/audit.current.integrity.json --example-limit 10",
+      "result": "expected failure: 22 foreign mark-scheme text records and 30 suspicious crop dimension candidates"
+    }
+  ],
+  "evidence": [
+    "mark_scheme_text_foreign_question_label_record_count went from 25 to 22.",
+    "The 13summer16_q01 / 90 (x) false-positive example is absent from the live examples."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Expose ranked review candidates and summary buckets for the remaining foreign mark-scheme text labels."
+}

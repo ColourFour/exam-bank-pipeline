@@ -1109,13 +1109,21 @@ def _question_validation_flags(
     text_len = len(text.strip())
     anchor_text = blocks[0].first_line if blocks else ""
     body_after_anchor = re.sub(rf"^\s*{re.escape(start.question_number)}(?:\([^)]+\))*\s*", "", anchor_text).strip()
-    weak_anchor = (
+    complete_single_part_prompt = (
+        terminal_mark_total is not None
+        and not subparts
+        and text_len >= max(45, config.detection.min_question_chars * 2)
+        and not contamination_detected
+        and start.confidence >= 0.5
+    )
+    weak_anchor_candidate = (
         not blocks
         or text_len < max(14, config.detection.min_question_chars // 2)
         or (len(body_after_anchor) < 4 and not _has_strong_follow_on_question_body(blocks, start.question_number, config))
         or (start.confidence < 0.6 and block_count <= 2 and text_len < 120)
         or ("question_start_uncertain" in review_flags and text_len < 80)
     )
+    weak_anchor = weak_anchor_candidate and not complete_single_part_prompt
     likely_truncated = (
         text_len < max(config.detection.min_question_chars, 28)
         or (block_count <= 1 and text_len < 32 and bool(subparts))

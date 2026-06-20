@@ -1,0 +1,54 @@
+{
+  "summary": "Added summary buckets and ranked review candidates for mark_scheme_text foreign-label failures.",
+  "files_changed": [
+    {
+      "path": "src/exam_bank/audit.py",
+      "why": "Exposed mark_scheme_text_foreign_label_summary and mark_scheme_text_foreign_label_review_candidates derived from the existing failure records."
+    },
+    {
+      "path": "tests/test_audit.py",
+      "why": "Extended the foreign-label fixture to assert the new summary and ranking output without changing failure semantics."
+    }
+  ],
+  "files_created": [
+    ".agent-runs/2026-06-19T10-51-05-642Z/iteration-05/01-plan.json",
+    ".agent-runs/2026-06-19T10-51-05-642Z/iteration-05/02-test-plan.json",
+    ".agent-runs/2026-06-19T10-51-05-642Z/iteration-05/audit.current.integrity.json"
+  ],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T10-51-05-642Z/iteration-05/audit.current.integrity.json --example-limit 10"
+  ],
+  "test_results": [
+    "Initial targeted test failed as expected because mark_scheme_text_foreign_label_summary was absent.",
+    "Final audit tests passed: 14 passed.",
+    "Live audit still exits 1 because current output contains known integrity failures, but it now includes ranked foreign-label candidates."
+  ],
+  "acceptance_criteria_status": {
+    "summary_field": "met",
+    "label_and_paper_buckets": "met",
+    "ranked_review_candidates": "met"
+  },
+  "live_current_output_findings": {
+    "record_count": 3547,
+    "mark_scheme_text_foreign_label_record_count": 22,
+    "ranked_candidate_limit": 10,
+    "top_ranked_candidate": "63summer14_q07",
+    "top_ranked_candidate_foreign_labels": [
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": [
+    "No generated output was intentionally modified by this iteration.",
+    "The live audit report was written under the run folder."
+  ],
+  "known_risks": [
+    "The new summary ranks review work; it does not repair stale text or rendered image artifacts."
+  ]
+}

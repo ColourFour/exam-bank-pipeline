@@ -1,0 +1,35 @@
+{
+  "summary": "Added a focused prompt-crop boundary fix so rendered question regions stop before later foreign question anchors detected on the same page.",
+  "files_changed": [
+    "src/exam_bank/image_rendering.py",
+    "tests/test_image_rendering.py"
+  ],
+  "files_created": [],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering"
+  ],
+  "test_results": "Focused loop verification passed in the final session: 111 focused tests passed and 12 rendering-marker tests passed.",
+  "acceptance_criteria_status": [
+    "Satisfied: later same-page foreign question anchors remove or trim prompt crop regions.",
+    "Satisfied: the fix reuses detect_question_anchor_candidates rather than ad hoc string matching.",
+    "Satisfied: image-rendering tests pass."
+  ],
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": "No generated outputs or canonical inputs were changed.",
+  "known_risks": [
+    "The synthetic test does not prove full historical corpus coverage."
+  ],
+  "implementation_summary": [
+    "Imported QuestionStart so image-rendering code can compare detected anchor candidates against the active question.",
+    "Added _trim_regions_at_foreign_question_boundaries after vertical furniture trimming.",
+    "Added _foreign_question_anchors_for_span_page and _anchor_is_later_foreign_question using detect_question_anchor_candidates.",
+    "Extended _contains_other_question_start so missed standalone top-level anchors are treated as crop boundaries.",
+    "Added a regression test for a prompt crop that previously retained the next question."
+  ],
+  "behavior_change": "Question prompt crop regions now stop before later top-level foreign question anchors on the same page, including anchors not present in the parsed question start list.",
+  "scope_control": "No canonical output images or source PDFs were modified."
+}

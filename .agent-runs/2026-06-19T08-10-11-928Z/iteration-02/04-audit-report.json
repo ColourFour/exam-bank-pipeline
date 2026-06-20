@@ -1,0 +1,31 @@
+{
+  "verdict": "pass",
+  "acceptance_criteria_review": {
+    "duplicate_question_image_paths_fail": "Pass. Cross-record duplicate question image paths now produce duplicate_question_image_path failures.",
+    "duplicate_mark_scheme_image_paths_fail": "Pass. Cross-record duplicate mark-scheme paths now produce duplicate_mark_scheme_image_path failures.",
+    "same_record_aliases_deduplicated": "Pass. The regression fixture uses repeated aliases inside each record, but the duplicate record count is 2 rather than inflated by aliases."
+  },
+  "test_quality_review": "The test uses distinct question IDs and question numbers, so it isolates image path sharing as the failure cause.",
+  "repo_hygiene_review": "The change is bounded to the existing audit and test file. No canonical outputs or manifests were edited.",
+  "scope_creep_review": "No storage-content duplicate logic was added; this remains a path-mapping audit as planned.",
+  "regression_risks": [
+    "If a future export intentionally shares one image across multiple records, the audit will force a review/exception path."
+  ],
+  "commands_run": [
+    {
+      "command": ".venv/bin/python -m pytest tests/test_audit.py -q",
+      "result": "pass: 12 passed"
+    },
+    {
+      "command": ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T08-10-11-928Z/iteration-02/audit.current.integrity.json --example-limit 5",
+      "result": "expected failure: exit 1 due to 31 suspicious dimensions; duplicate image path mapping counts were zero"
+    }
+  ],
+  "evidence": [
+    "The live report has image_paths_unique_across_records=true.",
+    "The live report has duplicate_question_image_path_value_count=0 and duplicate_mark_scheme_image_path_value_count=0.",
+    "The only live failure group remains suspicious_rendered_crop_dimensions."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Add a strict manifest/path-kind consistency check so artifact paths cannot point to a question image from a mark-scheme field or vice versa."
+}

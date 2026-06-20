@@ -1,0 +1,54 @@
+{
+  "cycle_verdict": "continue_with_targeted_artifact_repairs",
+  "user_focus": "Add five more iterations to the agentic improvement loop for exam-bank output integrity.",
+  "actual_improvements": [
+    "Added a suspicious-crop review-pack generator and CLI command that samples ranked audit candidates into a static review pack.",
+    "Added a real repository PDF regression for 13winter11_q10 proving the mark-scheme crop excludes earlier q9 material.",
+    "Added audit detection for mark_scheme_text lines that start with a different known question number from the same paper.",
+    "Reduced text-label false positives by filtering detected labels against the paper's known question numbers.",
+    "Added summary buckets and ranked review candidates for mark_scheme_text foreign-label failures."
+  ],
+  "live_current_output_findings": {
+    "record_count": 3547,
+    "suspicious_rendered_crop_dimension_count_after_cycle": 30,
+    "mark_scheme_text_foreign_label_record_count_after_cycle": 22,
+    "top_suspicious_crop_review_pack_sample": "13winter11_q10",
+    "top_foreign_label_review_candidate": "63summer14_q07"
+  },
+  "evidence": [
+    "Review pack artifact: .agent-runs/2026-06-19T10-51-05-642Z/iteration-01/review-pack/suspicious_crop_top10/index.html.",
+    "Real-PDF regression added in tests/test_sample_pipeline.py for 2011 winter paper 13 question 10.",
+    "Final live audit report: .agent-runs/2026-06-19T10-51-05-642Z/iteration-05/audit.current.integrity.json.",
+    "Final audit unit test run for this cycle: tests/test_audit.py passed with 14 tests."
+  ],
+  "fake_progress": [
+    "Most live output artifacts remain unrepaired; the cycle mainly improved detection, triage, and one regression lock.",
+    "The suspicious-crop review pack links to existing images and does not itself classify or fix them.",
+    "Foreign-label review candidates are ranked evidence, not proof that every record is semantically wrong."
+  ],
+  "bloat_introduced": [
+    "Run artifacts were added under .agent-runs/2026-06-19T10-51-05-642Z.",
+    "src/exam_bank/triage.py gained review-pack generation helpers.",
+    "src/exam_bank/audit.py gained focused helpers for mark_scheme_text foreign-label detection, filtering, summaries, and candidates."
+  ],
+  "cleanup_required": [
+    "Decide separately whether run artifacts under .agent-runs should be tracked or archived.",
+    "Inspect and repair the remaining 30 suspicious rendered crop candidates.",
+    "Inspect and repair the remaining 22 mark_scheme_text foreign-label candidates."
+  ],
+  "agent_failure_patterns": [
+    "One exploratory probe was accidentally run against the default output root before being rerun into the iteration folder; this likely regenerated output/pm1/pm1_2011_w11_13_ms_q10_markscheme.png.",
+    "The cycle still leaves current output-integrity-audit exiting 1 by design because known live output failures remain."
+  ],
+  "acceptance_criteria_pattern_that_worked_best": "Each iteration used a narrow failing test or live audit artifact, then recorded implementation and audit evidence in the iteration folder.",
+  "next_cycle_focus": [
+    "Use the review pack to visually classify the top suspicious crop candidates.",
+    "Repair high-confidence stale mark_scheme_text candidates, starting with records that include several foreign labels.",
+    "Rerun output-integrity-audit after repairs and track counts until both suspicious crop and foreign-label failures decline."
+  ],
+  "what_agent_1_should_stop_doing": [
+    "Do not add more ranking metadata before using the existing ranked candidates to repair output.",
+    "Do not run exploratory sample generation without explicitly setting a run-local output root."
+  ],
+  "planner_policy_edits": "No planner policy edits were made this cycle."
+}

@@ -77,6 +77,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "topic-packets",
         "ai-sidecar-audit",
         "triage-sample",
+        "suspicious-crop-review-pack",
         "triage-serve",
         "triage-compare",
         "auto-triage-status",
@@ -87,6 +88,8 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "output-cleanup-plan",
         "output-normalize-structure",
         "export-summary-diff",
+        "regenerate-mark-scheme-pngs",
+        "regenerate-question-pngs",
     }
     process_parser = action.choices["process"]
     process_options = {option for parser_action in process_parser._actions for option in parser_action.option_strings}
@@ -122,6 +125,16 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     assert "--sample-size" in triage_options
     assert "--target" in triage_options
     assert "--seed" in triage_options
+
+    suspicious_crop_parser = action.choices["suspicious-crop-review-pack"]
+    suspicious_crop_options = {
+        option for parser_action in suspicious_crop_parser._actions for option in parser_action.option_strings
+    }
+    assert "--input" in suspicious_crop_options
+    assert "--artifact-root" in suspicious_crop_options
+    assert "--output-root" in suspicious_crop_options
+    assert "--iteration" in suspicious_crop_options
+    assert "--sample-size" in suspicious_crop_options
 
     auto_plan_parser = action.choices["auto-triage-plan"]
     auto_plan_options = {

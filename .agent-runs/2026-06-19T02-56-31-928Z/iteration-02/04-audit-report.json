@@ -1,0 +1,30 @@
+{
+  "verdict": "pass",
+  "acceptance_criteria_review": [
+    "Pass: the missed-neighbor regression failed before implementation and passed after.",
+    "Pass: both text-block bounds and image-region bounds use the new legacy foreign boundary.",
+    "Pass: question-detection tests passed in the focused runs."
+  ],
+  "test_quality_review": "Good focused synthetic regression for same-page missed-neighbor leakage; it directly checks text exclusion and crop bottom.",
+  "repo_hygiene_review": "Clean for this slice: bounded mark_schemes.py and test edits only.",
+  "scope_creep_review": "No scope creep observed; the new helper is limited to legacy mark-scheme boundary detection.",
+  "regression_risks": [
+    "The later-row parser could miss unusual next-question formats.",
+    "Preliminary notes pages still needed separate false-anchor handling."
+  ],
+  "commands_run": [
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor tests/test_question_detection.py::test_legacy_mark_scheme_block_stops_before_missed_neighbor_question -q (2 passed)",
+    ".venv/bin/python -m pytest tests/test_question_detection.py -q (passed during focused cycle)"
+  ],
+  "residual_risks": [
+    "False legacy anchors on preliminary mark-scheme notes pages still needed separate handling."
+  ],
+  "evidence": [
+    "Focused missed-neighbor regression passed after implementation.",
+    "Final session focused suite passed: 111 tests.",
+    "Final session rendering marker gate passed: 12 tests."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Prevent historical notes and specific marking principles pages from being treated as question anchors.",
+  "next_iteration_focus": "Prevent historical notes and specific marking principles pages from being treated as question anchors."
+}

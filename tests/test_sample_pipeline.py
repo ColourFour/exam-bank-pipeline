@@ -50,6 +50,12 @@ REPO_J21_P33_QP = Path("input/question_papers/9709 Mathematics June 2021 Questio
 REPO_J21_P33_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  33.pdf")
 REPO_J21_P42_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  42.pdf")
 REPO_J21_P42_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  42.pdf")
+REPO_S20_P51_QP = Path("input/pastpapers/9709/2020/question_papers/9709_s20_qp_51.pdf")
+REPO_S20_P51_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_51.pdf")
+REPO_W18_P11_QP = Path("input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf")
+REPO_W18_P11_MS = Path("input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf")
+REPO_W11_P13_QP = Path("input/pastpapers/9709/2011/question_papers/9709_w11_qp_13.pdf")
+REPO_W11_P13_MS = Path("input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_13.pdf")
 REPO_N24_P12_QP = Path("input/question_papers/9709 Mathematics November 2024 Question paper  12.pdf")
 REPO_N24_P12_MS = Path("input/mark_schemes/9709 Mathematics November 2024 Mark Scheme  12.pdf")
 REPO_M24_P12_QP = Path("input/question_papers/9709 Mathematics March 2024 Question paper  12.pdf")
@@ -725,6 +731,94 @@ def test_repo_mark_scheme_no_subparts_fix_j21_p42_q6(tmp_path: Path) -> None:
     assert q6.question_marks_total == 8
     assert q6.markscheme_marks_total == 8
     assert q6.markscheme_mapping_status == "pass"
+
+
+def test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+
+    if not REPO_S20_P51_QP.exists() or not REPO_S20_P51_MS.exists():
+        pytest.skip("Repo June 2020 P51 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_S20_P51_QP, config, mark_scheme_pdf=REPO_S20_P51_MS)
+    q6 = next(record for record in result.records if record.question_number == "6")
+
+    assert q6.markscheme_mapping_status == "pass"
+    assert "Mark Scheme Notes" not in q6.answer_text
+    assert "Specific Marking Principles" not in q6.answer_text
+    assert "7(a)" not in q6.answer_text
+    assert q6.markscheme_image
+
+    mark_path = Path(q6.markscheme_image)
+    if not mark_path.is_absolute():
+        mark_path = result.output_root / mark_path
+    with Image.open(mark_path) as image:
+        width, height = image.size
+
+    assert height / width < 1.0
+
+
+def test_repo_w11_p13_q10_mark_scheme_excludes_previous_questions(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+
+    if not REPO_W11_P13_QP.exists() or not REPO_W11_P13_MS.exists():
+        pytest.skip("Repo November 2011 P13 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_W11_P13_QP, config, mark_scheme_pdf=REPO_W11_P13_MS)
+    q10 = next(record for record in result.records if record.question_number == "10")
+
+    assert q10.markscheme_mapping_status == "pass"
+    assert "10 (i)" in q10.answer_text
+    assert "9  (i)" not in q10.answer_text
+    assert "f ^{−}1" not in q10.answer_text
+    assert q10.markscheme_image
+
+    mark_path = Path(q10.markscheme_image)
+    if not mark_path.is_absolute() and not mark_path.exists():
+        mark_path = result.output_root / mark_path
+    with Image.open(mark_path) as image:
+        width, height = image.size
+
+    assert height < 5000
+    assert height / width < 3.0
+
+
+def test_repo_w18_p11_q9_mark_scheme_stops_before_repeated_header_next_question(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+
+    if not REPO_W18_P11_QP.exists() or not REPO_W18_P11_MS.exists():
+        pytest.skip("Repo November 2018 P11 sample PDFs are not available.")
+
+    config = AppConfig()
+    _configure_test_output(config, tmp_path)
+    config.ocr.enabled = False
+
+    result = process_sample(REPO_W18_P11_QP, config, mark_scheme_pdf=REPO_W18_P11_MS)
+    q9 = next(record for record in result.records if record.question_number == "9")
+
+    assert q9.markscheme_mapping_status == "pass"
+    assert "9  Angle OAB" in q9.answer_text
+    assert "10(i)(a)" not in q9.answer_text
+    assert "10(i)(b)" not in q9.answer_text
+    assert q9.markscheme_image
+
+    mark_path = Path(q9.markscheme_image)
+    if not mark_path.is_absolute() and not mark_path.exists():
+        mark_path = result.output_root / mark_path
+    with Image.open(mark_path) as image:
+        width, height = image.size
+
+    assert height / width < 1.4
 
 
 def test_repo_j21_p33_q9_recovers_embedded_part_a(tmp_path: Path) -> None:

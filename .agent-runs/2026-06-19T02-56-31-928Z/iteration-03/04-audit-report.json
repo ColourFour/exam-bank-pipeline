@@ -1,0 +1,32 @@
+{
+  "verdict": "pass_with_risks",
+  "acceptance_criteria_review": [
+    "Pass: notes-only pages are ignored.",
+    "Pass: specific marking principles pages are ignored.",
+    "Pass: numbered notes before a same-page answer table are ignored while rows after the table header remain eligible."
+  ],
+  "test_quality_review": "Good coverage of the notes-page failure class, including a guard that real answer rows after a table header remain eligible.",
+  "repo_hygiene_review": "Clean for this slice: bounded mark_schemes.py and question-detection test edits only.",
+  "scope_creep_review": "No filename-specific handling was introduced; the marker list remains generic to mark-scheme front matter.",
+  "regression_risks": [
+    "Front-matter heading detection may need expansion for other historical paper styles.",
+    "S20 P51 still required a following-page boundary fix after this iteration."
+  ],
+  "commands_run": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_specific_marking_principles_page tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_numbered_notes_page tests/test_question_detection.py::test_legacy_mark_scheme_blocks_ignore_numbered_notes_before_same_page_answer_table -q (3 passed)"
+  ],
+  "manual_evidence": [
+    "Before this class of fix, S20 P51 question 6 mark-scheme image was 10274 px tall and visually included Mark Scheme Notes, question 1 through question 6, and question 7."
+  ],
+  "residual_risks": [
+    "After notes filtering, S20 P51 question 6 still needed next-anchor page handling because question 7 could remain in the rendered crop."
+  ],
+  "evidence": [
+    "Three notes-focused regressions passed.",
+    "Manual evidence identified the pre-fix S20 P51 q6 crop as a 10274 px tall contaminated crop.",
+    "Final session focused suite passed: 111 tests."
+  ],
+  "required_fixes": [],
+  "recommended_next_planner_focus": "Skip or clamp next-anchor pages that contain only the next question and no continuation of the active legacy answer.",
+  "next_iteration_focus": "Skip or clamp next-anchor pages that contain only the next question and no continuation of the active legacy answer."
+}

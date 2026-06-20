@@ -1,0 +1,41 @@
+{
+  "summary": "Added deterministic summary buckets for suspicious rendered-crop dimension findings in the current output-integrity audit.",
+  "files_changed": [
+    {
+      "path": "src/exam_bank/audit.py",
+      "why": "Added suspicious_rendered_crop_dimension_summary with counts by image kind, counts by reason, top paper buckets, and max height/aspect-ratio candidates."
+    },
+    {
+      "path": "tests/test_audit.py",
+      "why": "Extended the suspicious-dimension regression test to assert summary fields and deterministic candidate selection."
+    }
+  ],
+  "files_created": [
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-04/01-plan.json",
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-04/02-test-plan.json",
+    ".agent-runs/2026-06-19T08-10-11-928Z/iteration-04/audit.current.integrity.json"
+  ],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q",
+    ".venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output --output .agent-runs/2026-06-19T08-10-11-928Z/iteration-04/audit.current.integrity.json --example-limit 5"
+  ],
+  "test_results": [
+    "Initial targeted pytest run failed as expected because suspicious_rendered_crop_dimension_summary was absent.",
+    "Final targeted pytest run passed: 13 passed.",
+    "Live output-integrity audit exited 1 due to 31 suspicious dimension candidates and now includes summary buckets."
+  ],
+  "acceptance_criteria_status": {
+    "summary_present": "met",
+    "counts_by_kind_and_reason": "met",
+    "top_papers_and_max_candidates": "met"
+  },
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": [
+    "No canonical output was rewritten.",
+    "The live summary report was written under this run's iteration folder."
+  ],
+  "known_risks": [
+    "The summary prioritizes by dimensions and paper counts; it still requires visual inspection before repair decisions."
+  ]
+}

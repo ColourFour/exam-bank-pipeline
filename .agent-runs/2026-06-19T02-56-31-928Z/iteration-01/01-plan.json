@@ -1,0 +1,41 @@
+{
+  "selected_goal": "Prevent rendered question prompt images from retaining a later standalone top-level question when the later anchor was missed by the main span detector.",
+  "why_this_now": "The user called out 2008-2021 papers where one question image includes multiple questions. Same-page trailing contamination is one of the highest-impact crop errors because the question prompt image can show the next question even when question spans are otherwise mapped.",
+  "repo_evidence": [
+    "src/exam_bank/image_rendering.py trims furniture and neighboring content, but the existing check relied on known neighboring question starts.",
+    "Some historical PDF layouts expose the next question as a standalone anchor candidate that is not present in the parsed question start list.",
+    "tests/test_image_rendering.py already has synthetic crop-region tests that can isolate crop trimming behavior without needing a full PDF run."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/image_rendering.py",
+    "tests/test_image_rendering.py"
+  ],
+  "files_protected": [
+    "input/",
+    "output/",
+    "exam_bank_taxonomy/",
+    "data/review/"
+  ],
+  "acceptance_criteria": [
+    "A prompt crop region is removed or shortened when it encounters a later top-level foreign question anchor on the same page.",
+    "The fix uses existing anchor detection machinery rather than broad text-string heuristics.",
+    "Existing image-rendering tests continue to pass."
+  ],
+  "test_expectations": [
+    "Add a focused failing test where question 5's crop includes a missed question 6 anchor.",
+    "Run the new test before implementation and confirm it fails.",
+    "Run the focused test and the full image-rendering test file after implementation."
+  ],
+  "implementation_boundaries": [
+    "Do not change generated output files.",
+    "Do not alter question-number parsing outside the crop-rendering boundary decision.",
+    "Keep the change local to prompt-region trimming."
+  ],
+  "repo_hygiene_risk": "Low: bounded source and test edits only; no canonical outputs or generated datasets are rewritten.",
+  "rollback_plan": "Remove the new crop-boundary helper and the synthetic test, returning prompt trimming to the previous neighbor-start-only behavior.",
+  "done_when": [
+    "The focused foreign-question prompt crop test passes.",
+    "The full image-rendering test module passes.",
+    "No generated output files are modified."
+  ]
+}

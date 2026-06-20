@@ -1,0 +1,36 @@
+{
+  "selected_goal": "Detect duplicate question and mark-scheme image-path mappings in the current output-integrity audit.",
+  "why_this_now": "After iteration 1 added suspicious crop detection, the next highest-value integrity risk from the backlog is duplicate mappings where multiple records unexpectedly point to the same canonical rendered asset.",
+  "repo_evidence": [
+    ".agent-loop/BACKLOG.md includes duplicate mappings where multiple records point to the same canonical question or mark-scheme image unexpectedly.",
+    "src/exam_bank/audit.py already gathers per-record question and mark-scheme path entries but only validates existence and absoluteness.",
+    "tests/test_audit.py already has current-output-integrity fixtures that can express shared image paths without generating new fixture trees."
+  ],
+  "files_likely_to_change": [
+    "src/exam_bank/audit.py",
+    "tests/test_audit.py"
+  ],
+  "files_protected": [
+    "output/json/question_bank.json",
+    "output/json/asset_manifest.v1.json",
+    "output/<subject_family>/*.png",
+    "input/pastpapers/**"
+  ],
+  "acceptance_criteria": [
+    "The audit fails when two or more records reference the same nonblank question image path.",
+    "The audit fails when two or more records reference the same nonblank mark-scheme image path.",
+    "Repeated path fields inside the same record, such as question_image_path plus canonical_question_artifact, are deduplicated and do not create false duplicate mapping failures."
+  ],
+  "test_expectations": [
+    "Add or update tests in tests/test_audit.py to prove cross-record duplicate question and mark-scheme image paths are failures.",
+    "Run the targeted audit tests."
+  ],
+  "implementation_boundaries": [
+    "Do not rewrite output files or asset manifests.",
+    "Do not infer legitimate shared images; report duplicate mappings as review-required failures.",
+    "Keep duplicate detection path-based and deterministic."
+  ],
+  "repo_hygiene_risk": "Low. The change extends an existing audit and existing tests only.",
+  "rollback_plan": "Remove the duplicate path collection/checks and the related test assertions.",
+  "done_when": "Targeted tests pass and a live output-integrity audit records whether current output has duplicate image path mappings."
+}

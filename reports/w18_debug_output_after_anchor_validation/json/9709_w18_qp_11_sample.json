@@ -1,0 +1,4135 @@
+{
+  "schema_name": "exam_bank.question_bank",
+  "schema_version": 2,
+  "record_count": 11,
+  "run_manifest": {
+    "schema_version": 1,
+    "generated_at": "2026-06-20T05:49:19.307051+00:00",
+    "run_id": "20260620T054919Z-8e51e342857c",
+    "pipeline_version": "0.1.0",
+    "git_commit": "63860a399a897f39bec857486e9ad2f80a073e04",
+    "model_versions": {
+      "topic_classifier": "local-topic-heuristics-v1",
+      "difficulty_classifier": [
+        "local-difficulty-v1"
+      ],
+      "openai_classifier": ""
+    },
+    "ocr_engine_version": "",
+    "input_manifest_sha256": "8e51e342857c4afc6ef205273b9ddfc53d122e4202d522d01ba7c9cb697aefb5",
+    "artifact_root": "reports/w18_debug_output_after_anchor_validation",
+    "output_layout": {
+      "version": 1,
+      "profile": "legacy"
+    },
+    "qa_summary": {
+      "record_count": 11,
+      "paper_family_counts": {
+        "pm1": 11
+      },
+      "validation_status_counts": {
+        "fail": 5,
+        "pass": 5,
+        "review": 1
+      },
+      "mapping_status_counts": {
+        "fail": 3,
+        "pass": 8
+      },
+      "scope_quality_status_counts": {
+        "clean": 11
+      },
+      "text_fidelity_status_counts": {
+        "clean": 11
+      },
+      "visual_curation_status_counts": {
+        "fail": 5,
+        "ready": 1,
+        "review": 5
+      },
+      "text_only_status_counts": {
+        "fail": 5,
+        "ready": 2,
+        "review": 4
+      },
+      "question_crop_confidence_counts": {
+        "high": 5,
+        "low": 6
+      },
+      "mark_scheme_crop_confidence_counts": {
+        "high": 9,
+        "low": 2
+      },
+      "ocr_summary": {
+        "ran_count": 0,
+        "selected_count": 0,
+        "engine_counts": {}
+      },
+      "artifact_path_counts": {
+        "missing_question_image_path": 0,
+        "missing_mark_scheme_image_path": 2
+      }
+    }
+  },
+  "questions": [
+    {
+      "question_id": "11winter18_q01",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "1",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q01_question.png",
+      "canonical_mark_scheme_artifact": "",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q01_question.png",
+      "mark_scheme_image_path": "",
+      "question_text": "1 Showing all necessary working, solve the equation 4x -11x^{1}_{2} + 6 = 0. [3]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout"
+      ],
+      "visual_curation_status": "review",
+      "text_only_status": "review",
+      "mark_scheme_text": "1  (4x^{½}_{−}3)(_{x}^{½}_{−}2) oe soi Alt: 4x ^{+} 6 ^{=} 11 x^{⇒}16x^{2}_{−}73x ^{+} 36 M1 Attempt solution for x^{½} or sub u =  x^{½}\nx^{½} = 3/ 4 or 2 A1 Reasonable solutions for x^{½} implies M1 (ݔ= 2, 3/4,\n(16x−9)(x−4) M1A0)\nx = 9 /16 oe or 4 A1 Little or no working shown scores SCB3, spotting one\nsolution, B0\n3",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q01"
+      ],
+      "mark_scheme_confidence_score": 0.45,
+      "question_solution_marks": 3,
+      "difficulty": "easy",
+      "difficulty_score": 13,
+      "difficulty_band": "easy",
+      "subparts": [],
+      "subparts_solution_marks": {},
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q01_question.png"
+      ],
+      "mark_scheme_image_paths": [],
+      "page_refs": {
+        "question": [
+          2,
+          3
+        ],
+        "mark_scheme": []
+      },
+      "topic": "algebra",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "1",
+        "topic_confidence": "medium",
+        "topic_uncertain": false,
+        "topic_trust_status": "degraded_text",
+        "difficulty": "easy",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "low mark allocation",
+        "difficulty_uncertain": false,
+        "difficulty_score": 13,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 3,
+            "contribution": -0.8,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 4,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "algebra",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "medium",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "fail",
+        "mapping_failure_reason": "partial_question_block",
+        "missing_mark_scheme_reason": "segmentation_failure",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "high",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "1",
+          "question_id": "11winter18_q01",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q01_question.png",
+          "flags": [],
+          "merged_blocks": 1,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 2,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 52.82,
+                "x1": 555.36,
+                "y1": 89.64
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 52.82,
+                "x1": 555.36,
+                "y1": 89.64
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 62.82,
+                "x1": 545.36,
+                "y1": 79.64
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout"
+        ],
+        "visual_curation_status": "review",
+        "text_only_status": "review",
+        "mark_scheme_crop_confidence": "low",
+        "review_flags": [
+          "excluded_boilerplate_copyright_footer",
+          "markscheme_foreign_question_boundary_trimmed",
+          "markscheme_image_missing",
+          "markscheme_validation_failed",
+          "markscheme_validation_failed:adjacent_primary_question_in_left_column",
+          "paper_total_focus_candidate"
+        ],
+        "extraction_quality_score": 0.68,
+        "extraction_quality_flags": [
+          "flattened_display_math",
+          "weak_text_structure"
+        ],
+        "validation_status": "pass",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": -7,
+        "ocr_text_score": -100,
+        "selected_text_score": -7,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "merged_or_sparse_prose",
+          "native_score=-7",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "suspiciously_short_text"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_mapping_status_not_pass",
+          "ocr_missing_question_number"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [],
+          "subpart_type": "none",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            3
+          ],
+          "terminal_mark_total_detected": 3,
+          "question_total_detected": 3,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 80,
+          "block_count": 1,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [],
+          "question_subparts": [],
+          "question_total_detected": 3,
+          "mark_scheme_total_detected": 3,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q01"
+          ],
+          "mark_scheme_confidence_score": 0.45,
+          "missing_mark_scheme_reason": "segmentation_failure",
+          "asset_identity": {
+            "question_id": "11winter18_q01",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q01_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q01"
+        ],
+        "mark_scheme_confidence_score": 0.45,
+        "question_total_detected": 3,
+        "mark_scheme_total_detected": 3,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": "cross_page_scope"
+      }
+    },
+    {
+      "question_id": "11winter18_q02",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "2",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q02_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q02_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q02_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q02_markscheme.png",
+      "question_text": "2 A line has equation y = x + 1 and a curve has equation y = x^{2} + bx + 5. Find the set of values of the constant b for which the line meets the curve. [4]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_graph_or_diagram_prompt"
+      ],
+      "visual_curation_status": "fail",
+      "text_only_status": "fail",
+      "mark_scheme_text": "2  x^{2} + bx + 5 = x + 1→ x^{2} + x(b−1) + 4  ( = 0) M1 Eliminate x or y with all terms on side of an equation\n(b^{2}−4ac =)    (b−1)^{2}−16 M1\nb associated with ‒3 & +5 or b−1 associated with  ±4 A1 (x−2)^{2} = 0 or(x + 2)^{2} = 0, x= ±2,b−= ±1 4 (M1A1)\nAssociation can be an equality or an inequality\nb⩾ 5, b⩽ –3  A1\n4",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q02"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 4,
+      "difficulty": "easy",
+      "difficulty_score": 26,
+      "difficulty_band": "easy",
+      "subparts": [],
+      "subparts_solution_marks": {},
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q02_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q02_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          3,
+          4
+        ],
+        "mark_scheme": [
+          6
+        ]
+      },
+      "topic": "algebra",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "2",
+        "topic_confidence": "medium",
+        "topic_uncertain": false,
+        "topic_trust_status": "review_required",
+        "difficulty": "easy",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "routine-looking question with limited complexity signals",
+        "difficulty_uncertain": false,
+        "difficulty_score": 26,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 4,
+            "contribution": 0,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 6,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "algebra",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "medium",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "2",
+          "question_id": "11winter18_q02",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q02_question.png",
+          "flags": [
+            "crop_uncertain",
+            "missing_image_detection_failure"
+          ],
+          "merged_blocks": 2,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "detection_failure",
+          "missing_image_failure_metadata": {
+            "reason": "detection_failure",
+            "question_pages": [
+              3,
+              4
+            ],
+            "detection_methods_attempted": [
+              "embedded_image_objects",
+              "vector_graphic_regions",
+              "bbox_detected_diagrams",
+              "ocr_hint_signals",
+              "question_context_inference"
+            ],
+            "hard_failure": true,
+            "visual_reason_flags": [
+              "contains_equation_layout",
+              "contains_graph_or_diagram_prompt"
+            ]
+          },
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 3,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 100.32
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 100.32
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 63.85,
+                "x1": 545.36,
+                "y1": 90.32
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_graph_or_diagram_prompt"
+        ],
+        "visual_curation_status": "fail",
+        "text_only_status": "fail",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "low_confidence_question_crop",
+          "missing_image_detection_failure",
+          "paper_total_focus_candidate"
+        ],
+        "extraction_quality_score": 0.78,
+        "extraction_quality_flags": [
+          "flattened_display_math",
+          "heavy_math_density"
+        ],
+        "validation_status": "fail",
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 51,
+        "ocr_text_score": -100,
+        "selected_text_score": 51,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "native_score=51",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_missing_question_number"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [],
+          "subpart_type": "none",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            4
+          ],
+          "terminal_mark_total_detected": 4,
+          "question_total_detected": 4,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 157,
+          "block_count": 2,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [],
+          "question_subparts": [],
+          "question_total_detected": 4,
+          "mark_scheme_total_detected": 4,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q02"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q02",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q02_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q02"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 4,
+        "mark_scheme_total_detected": 4,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": "cross_page_scope"
+      }
+    },
+    {
+      "question_id": "11winter18_q03",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "3",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q03_question.png",
+      "canonical_mark_scheme_artifact": "",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q03_question.png",
+      "mark_scheme_image_path": "",
+      "question_text": "3 constant. Two points A and B have coordinates (3a, -a) and (-a, 2a) respectively, where a is a positive (i) Find the equation of the line through the origin parallel to AB. [2] (ii) The length of the line AB is 3^{1}_{3} units. Find the value of a. [3]",
+      "question_text_role": "readable_text",
+      "question_text_trust": "high",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": false,
+      "visual_reason_flags": [],
+      "visual_curation_status": "review",
+      "text_only_status": "ready",
+      "mark_scheme_text": "3(i)  Gradient of AB = ‒3/4  B1 Accept ‒3a/4a\ny= −3x  oe  B1FT Answer must not include a. Ft on their numerical gradient\n4\n2\n3(ii)  (4a)^{2} + (3a)^{2} = (10 / 3)^{2} soi  M1 May be unsimplified\n25a^{2} = 100 / 9  oe  A1\na = 2/3  A1\n3",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q03"
+      ],
+      "mark_scheme_confidence_score": 0.45,
+      "question_solution_marks": 5,
+      "difficulty": "easy",
+      "difficulty_score": 26,
+      "difficulty_band": "easy",
+      "subparts": [
+        "i",
+        "ii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q03_question.png"
+      ],
+      "mark_scheme_image_paths": [],
+      "page_refs": {
+        "question": [
+          4,
+          5
+        ],
+        "mark_scheme": []
+      },
+      "topic": "coordinate_geometry",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "3(i)-(ii)",
+        "topic_confidence": "high",
+        "topic_uncertain": false,
+        "topic_trust_status": "normal",
+        "difficulty": "easy",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "routine-looking question with limited complexity signals",
+        "difficulty_uncertain": false,
+        "difficulty_score": 26,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 5,
+            "contribution": 0,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 3,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "coordinate_geometry",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "high",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "fail",
+        "mapping_failure_reason": "partial_question_block",
+        "missing_mark_scheme_reason": "segmentation_failure",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "high",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "3",
+          "question_id": "11winter18_q03",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q03_question.png",
+          "flags": [
+            "crop_split_prompt_regions"
+          ],
+          "merged_blocks": 3,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 4,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 54.75,
+                "x1": 555.36,
+                "y1": 126.36
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 54.75,
+                "x1": 555.36,
+                "y1": 126.36
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 64.75,
+                "x1": 545.36,
+                "y1": 116.36
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 4,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.07,
+                "y0": 436.05,
+                "x1": 555.36,
+                "y1": 472.28
+              },
+              "final_crop_bbox": {
+                "x0": 66.07,
+                "y0": 436.05,
+                "x1": 555.36,
+                "y1": 472.28
+              },
+              "text_bbox": {
+                "x0": 76.07,
+                "y0": 446.05,
+                "x1": 545.36,
+                "y1": 462.28
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "readable_text",
+        "question_text_trust": "high",
+        "visual_required": false,
+        "visual_reason_flags": [],
+        "visual_curation_status": "review",
+        "text_only_status": "ready",
+        "mark_scheme_crop_confidence": "low",
+        "review_flags": [
+          "crop_split_prompt_regions",
+          "excluded_boilerplate_copyright_footer",
+          "markscheme_foreign_question_boundary_trimmed",
+          "markscheme_image_missing",
+          "markscheme_validation_failed",
+          "markscheme_validation_failed:adjacent_primary_question_in_left_column"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "pass",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 77,
+        "ocr_text_score": -100,
+        "selected_text_score": 77,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=77",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_mapping_status_not_pass",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            2,
+            3
+          ],
+          "terminal_mark_total_detected": 3,
+          "question_total_detected": 5,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 253,
+          "block_count": 3,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii"
+          ],
+          "question_total_detected": 5,
+          "mark_scheme_total_detected": 5,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q03"
+          ],
+          "mark_scheme_confidence_score": 0.45,
+          "missing_mark_scheme_reason": "segmentation_failure",
+          "asset_identity": {
+            "question_id": "11winter18_q03",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q03_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q03"
+        ],
+        "mark_scheme_confidence_score": 0.45,
+        "question_total_detected": 5,
+        "mark_scheme_total_detected": 5,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q04",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "4",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q04_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q04_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q04_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q04_markscheme.png",
+      "question_text": "4 The first term of a series is 6 and the second term is 2. (i) For the case where the series is an arithmetic progression, find the sum of the first 80 terms. [3] (ii) For the case where the series is a geometric progression, find the sum to infinity. [2]",
+      "question_text_role": "readable_text",
+      "question_text_trust": "high",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": false,
+      "visual_reason_flags": [],
+      "visual_curation_status": "ready",
+      "text_only_status": "ready",
+      "mark_scheme_text": "4(i)  S_{80} = 802 12 + 79×(−4) or 802[6 + l], l= −310 M1A1 Correct formula (M1). Correct a, d and n (A1) .\n–12160  A1\n3\n4(ii)  S_{∞} = 1−61 = 9 M1A1 Correct formula with r < 1 for M1\n3\n2",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q04"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 5,
+      "difficulty": "average",
+      "difficulty_score": 37,
+      "difficulty_band": "average",
+      "subparts": [
+        "i",
+        "ii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q04_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q04_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          5,
+          6
+        ],
+        "mark_scheme": [
+          7
+        ]
+      },
+      "topic": "series_and_sequences",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "4(i)-(ii)",
+        "topic_confidence": "high",
+        "topic_uncertain": false,
+        "topic_trust_status": "normal",
+        "difficulty": "average",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "P1 topic is often later-paper difficulty",
+        "difficulty_uncertain": false,
+        "difficulty_score": 37,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 5,
+            "contribution": 0,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 0,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "series_and_sequences",
+            "subtopic": "general",
+            "difficult_topic_prior": true,
+            "routine_easy_topic_prior": false,
+            "contribution": 0.7
+          },
+          "trust": {
+            "topic_confidence": "high",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "high",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "4",
+          "question_id": "11winter18_q04",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q04_question.png",
+          "flags": [
+            "crop_split_prompt_regions"
+          ],
+          "merged_blocks": 3,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 5,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 113.14
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 113.14
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 65.83,
+                "x1": 545.36,
+                "y1": 103.14
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 5,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.07,
+                "y0": 448.47,
+                "x1": 555.35,
+                "y1": 479.98
+              },
+              "final_crop_bbox": {
+                "x0": 66.07,
+                "y0": 448.47,
+                "x1": 555.35,
+                "y1": 479.98
+              },
+              "text_bbox": {
+                "x0": 76.07,
+                "y0": 458.47,
+                "x1": 545.35,
+                "y1": 469.98
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "readable_text",
+        "question_text_trust": "high",
+        "visual_required": false,
+        "visual_reason_flags": [],
+        "visual_curation_status": "ready",
+        "text_only_status": "ready",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_split_prompt_regions",
+          "excluded_boilerplate_copyright_footer",
+          "markscheme_foreign_question_boundary_trimmed"
+        ],
+        "extraction_quality_score": 1.0,
+        "extraction_quality_flags": [],
+        "validation_status": "pass",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 84,
+        "ocr_text_score": -100,
+        "selected_text_score": 84,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=84",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            3,
+            2
+          ],
+          "terminal_mark_total_detected": 2,
+          "question_total_detected": 5,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 251,
+          "block_count": 3,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii"
+          ],
+          "question_total_detected": 5,
+          "mark_scheme_total_detected": 5,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q04"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q04",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q04_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q04"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 5,
+        "mark_scheme_total_detected": 5,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q05",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "5",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q05_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q05_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q05_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q05_markscheme.png",
+      "question_text": "5 (i) Show that the equation (cos θ -4)/(sin θ) - (4 sin θ)/(5 cos θ -2) = 0 may be expressed as 9 cos^{2} θ -22 cos θ + 4 = 0. [3] (ii) Hence solve the equation (cos θ -4)/(sin θ) - (4 sin θ)/(5 cos θ -2) = 0 for 0° ≤ θ ≤ 360°. [3]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_fraction_or_integral_layout",
+        "contains_inequality_or_region_prompt",
+        "contains_trig_expression"
+      ],
+      "visual_curation_status": "fail",
+      "text_only_status": "fail",
+      "mark_scheme_text": "5(i)  ((cos θ−4)(5 cos θ−2)−4 sin^{2}θ)/(sin θ(5 cos θ−2)) ( = 0) M1 Accept numerator only\n(5 cos^{2}θ−22 cos θ+ 8−4 1−cos^{2}θ)/(sin θ(5 cos θ−2))( ) ( = 0) M1 Simplify numerator and use only  s^{2} _{=} 1^{−}c^{2}. Accept numerator\n9 cos^{2}θ−22 cos θ+ 4 = 0 www AG A1\n3\n5(ii)  Attempt to solve for cos θ, (formula, completing square expected)  M1 Expect cos θ= 0.1978. Allow 2.247 in addition\nθ= 78.6°,  281.4° (only, second solution in the range)  A1A1FT Ft for (360º ‒ 1st solution)\n3",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q05"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 6,
+      "difficulty": "average",
+      "difficulty_score": 57,
+      "difficulty_band": "average",
+      "subparts": [
+        "i",
+        "ii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q05_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q05_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          6,
+          7,
+          8
+        ],
+        "mark_scheme": [
+          8
+        ]
+      },
+      "topic": "trigonometry",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "5(i)-(ii)",
+        "topic_confidence": "high",
+        "topic_uncertain": false,
+        "topic_trust_status": "review_required",
+        "difficulty": "average",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "chains results across parts; less direct exam-style wording; proof or interpretation wording; high algebraic or symbolic density",
+        "difficulty_uncertain": false,
+        "difficulty_score": 57,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 6,
+            "contribution": 0,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 1,
+            "linked_keyword_present": true,
+            "contribution": 0.4
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": true,
+            "proof_or_show_wording": true,
+            "modelling_wording": false,
+            "contribution": 0.8
+          },
+          "mathematical_density": {
+            "symbol_count": 26,
+            "contribution": 0.7
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "trigonometry",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "high",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "high",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "5",
+          "question_id": "11winter18_q05",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q05_question.png",
+          "flags": [],
+          "merged_blocks": 6,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "detection_failure",
+          "missing_image_failure_metadata": {
+            "reason": "detection_failure",
+            "hard_failure": true,
+            "visual_reason_flags": [
+              "contains_equation_layout",
+              "contains_fraction_or_integral_layout",
+              "contains_inequality_or_region_prompt",
+              "contains_trig_expression"
+            ]
+          },
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 6,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 135.94
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 135.94
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 65.83,
+                "x1": 545.36,
+                "y1": 125.94
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 3,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 7,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.08,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 141.22
+              },
+              "final_crop_bbox": {
+                "x0": 66.08,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 141.22
+              },
+              "text_bbox": {
+                "x0": 76.08,
+                "y0": 65.83,
+                "x1": 545.36,
+                "y1": 131.22
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 3,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_fraction_or_integral_layout",
+          "contains_inequality_or_region_prompt",
+          "contains_trig_expression"
+        ],
+        "visual_curation_status": "fail",
+        "text_only_status": "fail",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "excluded_boilerplate_copyright_footer",
+          "missing_image_detection_failure"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "fail",
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 76,
+        "ocr_text_score": -100,
+        "selected_text_score": 76,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=76",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_function_structure",
+          "ocr_lost_greek_symbol",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_math_structure",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            3,
+            3
+          ],
+          "terminal_mark_total_detected": 3,
+          "question_total_detected": 6,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 230,
+          "block_count": 6,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii"
+          ],
+          "question_total_detected": 6,
+          "mark_scheme_total_detected": 6,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q05"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q05",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q05_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q05"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 6,
+        "mark_scheme_total_detected": 6,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q06",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "6",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q06_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q06_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q06_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q06_markscheme.png",
+      "question_text": "6 non-zero constant.A curve has a stationary point at (3,9^{1}_{2}) and has an equation for which ddyx = ax^{2} + a^{2}x, where a is a (i) Find the value of a. [2] (ii) Find the equation of the curve. [4] (iii) Determine, showing all necessary working, the nature of the stationary point. [2]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_flattened_math_structure",
+        "contains_graph_or_diagram_prompt"
+      ],
+      "visual_curation_status": "fail",
+      "text_only_status": "fail",
+      "mark_scheme_text": "6(i)  0 = 9a + 3a^{2} M1 Sub dy = 0 and x = 3\ndx\na= −3 only  A1\n2\n6(ii)  ddyx= −3x^{2} + 9x →y= −x^{3} + 92x^{2} ( +c) M1A1FT Attempt integration. theira.  13ax^{3} + ½a^{2}x^{2} scores M1. Ft on\n9½= −27 + 40½ + c DM1 Sub x = 3, y = 9½. Dependent on c present\nc= −4 A1 Expect y= −x^{3} + 9x^{2} −4\n2\n4\n6(iii)  (d^{2}y)/(dx^{2})= −6x + 9 M1 2ax + a^{2} scores M1\nAt x = 3,  (d^{2}y)/(dx^{2})= −9  0<  MAX www  A1 Requires at least one of ‒9 or < 0. Other methods possible.\n2",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q06"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 8,
+      "difficulty": "easy",
+      "difficulty_score": 27,
+      "difficulty_band": "easy",
+      "subparts": [
+        "i",
+        "ii",
+        "iii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null,
+        "iii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q06_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q06_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          8,
+          9,
+          10
+        ],
+        "mark_scheme": [
+          9
+        ]
+      },
+      "topic": "differentiation",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "6(i)-(iii)",
+        "topic_confidence": "low",
+        "topic_uncertain": true,
+        "topic_trust_status": "review_required",
+        "difficulty": "easy",
+        "difficulty_confidence": "medium",
+        "difficulty_evidence": "higher mark allocation; routine topic for this paper",
+        "difficulty_uncertain": false,
+        "difficulty_score": 27,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 8,
+            "contribution": 0.6,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 6,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "differentiation",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": true,
+            "contribution": -0.5
+          },
+          "trust": {
+            "topic_confidence": "low",
+            "text_quality_low": false,
+            "confidence": "medium"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "6",
+          "question_id": "11winter18_q06",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q06_question.png",
+          "flags": [
+            "crop_split_prompt_regions",
+            "crop_uncertain",
+            "missing_image_detection_failure"
+          ],
+          "merged_blocks": 4,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "detection_failure",
+          "missing_image_failure_metadata": {
+            "reason": "detection_failure",
+            "question_pages": [
+              8,
+              9,
+              10
+            ],
+            "detection_methods_attempted": [
+              "embedded_image_objects",
+              "vector_graphic_regions",
+              "bbox_detected_diagrams",
+              "ocr_hint_signals",
+              "question_context_inference"
+            ],
+            "hard_failure": true,
+            "visual_reason_flags": [
+              "contains_equation_layout",
+              "contains_flattened_math_structure",
+              "contains_graph_or_diagram_prompt"
+            ]
+          },
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 8,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 52.11,
+                "x1": 555.36,
+                "y1": 132.84
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 52.11,
+                "x1": 555.36,
+                "y1": 132.84
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 62.11,
+                "x1": 545.36,
+                "y1": 122.84
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 8,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.07,
+                "y0": 414.87,
+                "x1": 555.35,
+                "y1": 446.38
+              },
+              "final_crop_bbox": {
+                "x0": 66.07,
+                "y0": 414.87,
+                "x1": 555.35,
+                "y1": 446.38
+              },
+              "text_bbox": {
+                "x0": 76.07,
+                "y0": 424.87,
+                "x1": 545.35,
+                "y1": 436.38
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 9,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 62.83,
+                "y0": 415.71,
+                "x1": 555.35,
+                "y1": 447.22
+              },
+              "final_crop_bbox": {
+                "x0": 62.83,
+                "y0": 415.71,
+                "x1": 555.35,
+                "y1": 447.22
+              },
+              "text_bbox": {
+                "x0": 72.83,
+                "y0": 425.71,
+                "x1": 545.35,
+                "y1": 437.22
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_flattened_math_structure",
+          "contains_graph_or_diagram_prompt"
+        ],
+        "visual_curation_status": "fail",
+        "text_only_status": "fail",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_split_prompt_regions",
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "missing_image_detection_failure",
+          "ocr_hint_figure_regions",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "weak_question_text"
+        ],
+        "extraction_quality_score": 1.0,
+        "extraction_quality_flags": [],
+        "validation_status": "fail",
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 97,
+        "ocr_text_score": -100,
+        "selected_text_score": 97,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=97",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            2,
+            4,
+            2
+          ],
+          "terminal_mark_total_detected": 2,
+          "question_total_detected": 8,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 292,
+          "block_count": 4,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_total_detected": 8,
+          "mark_scheme_total_detected": 8,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q06"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q06",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q06_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q06"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 8,
+        "mark_scheme_total_detected": 8,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q07",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "7",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q07_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q07_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q07_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q07_markscheme.png",
+      "question_text": "7 curve intersects the line The diagram showspart yof = xthe at the origincurvewith Oequation and at the point y = k(x^{3} A- (72,x^{2}2+) 12. x)forsomeconstant k. The (i) Find the value of k. [1] (ii) Verify that the curve meets the line y = x again when x = 5. [2] (iii) Find, showing all necessary working, the area of the shaded region. [5]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_graph_or_diagram_prompt",
+        "contains_inequality_or_region_prompt"
+      ],
+      "visual_curation_status": "review",
+      "text_only_status": "review",
+      "mark_scheme_text": "7(i)  2 = k(8 ‒ 28 + 24) → k = 1/2  B1\n1\n7(ii)  When x = 5, y = [½](125 ‒ 175 + 60) = 5  M1 Or solve [½](x^{3}_{−}7x^{2} _{+} 12x) _{=} x^{⇒}x ^{=} 5  [x ^{=} 0, 2]\nWhich lies on y = x, oe   A1\n2\n7(iii)  ∫[1_{2}^{(}x^{3}_{−}7x^{2} _{+} 12x)^{−}x]dx.   M1 Expect ^{∫}1_{2}^{x}^{3}_{−}7_{2}^{x}^{2} _{+} 5x\n1x^{4}−7x^{3} + 5x^{2} B2,1,0FT Ft on their k\n8 6 2\n2 ‒ 28/3 +10  DM1 Apply limits 0 → 2\n8/3  A1\nOR 1x^{4}−7x^{3} + 3x^{2} B2,1,0FT Integrate to find area under curve, Ft on their k\n8 6\n2 ‒ 28/3 +12  M1 Apply limits 0 → 2. Dep on integration attempted\nArea ^{∆} = ½ ^{×}2 ^{×}2 or ∫2_{x} dx ^{=} ½x^{2}_{}    2^{=} M1\n0\n8/3  A1\n5",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q07"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 8,
+      "difficulty": "average",
+      "difficulty_score": 47,
+      "difficulty_band": "average",
+      "subparts": [
+        "i",
+        "ii",
+        "iii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null,
+        "iii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q07_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q07_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          10,
+          11,
+          12
+        ],
+        "mark_scheme": [
+          10
+        ]
+      },
+      "topic": "integration",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "7(i)-(iii)",
+        "topic_confidence": "low",
+        "topic_uncertain": true,
+        "topic_trust_status": "degraded_text",
+        "difficulty": "average",
+        "difficulty_confidence": "medium",
+        "difficulty_evidence": "higher mark allocation; P1 topic is often later-paper difficulty",
+        "difficulty_uncertain": false,
+        "difficulty_score": 47,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 8,
+            "contribution": 0.6,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 8,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "integration",
+            "subtopic": "general",
+            "difficult_topic_prior": true,
+            "routine_easy_topic_prior": false,
+            "contribution": 0.7
+          },
+          "trust": {
+            "topic_confidence": "low",
+            "text_quality_low": false,
+            "confidence": "medium"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "7",
+          "question_id": "11winter18_q07",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q07_question.png",
+          "flags": [
+            "centered_page_number_trimmed",
+            "crop_header_footer_trimmed",
+            "crop_split_prompt_regions",
+            "crop_uncertain",
+            "figure_overlap_preserved",
+            "figure_region_separated",
+            "page_diagram_union_fragments:2",
+            "page_diagram_union_used",
+            "question_text_figure_overlap_prevented",
+            "text_crop_edge_safety_applied",
+            "text_figure_overlap_trimmed"
+          ],
+          "merged_blocks": 9,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 1,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 10,
+              "region_kind": "page_diagram_union",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 55.83,
+                "x1": 560.0,
+                "y1": 298.2
+              },
+              "final_crop_bbox": {
+                "x0": 35,
+                "y0": 52.16,
+                "x1": 560.0,
+                "y1": 308.2
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 65.83,
+                "x1": 545.36,
+                "y1": 288.2
+              },
+              "figure_bbox": {
+                "x0": 64.84,
+                "y0": 95.29,
+                "x1": 553.35,
+                "y1": 279.58
+              },
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 7,
+              "graphics_count": 1,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 10,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.07,
+                "y0": 468.87,
+                "x1": 555.36,
+                "y1": 501.48
+              },
+              "final_crop_bbox": {
+                "x0": 66.07,
+                "y0": 468.87,
+                "x1": 555.36,
+                "y1": 501.48
+              },
+              "text_bbox": {
+                "x0": 76.07,
+                "y0": 478.87,
+                "x1": 545.36,
+                "y1": 491.48
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 11,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 62.84,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 87.34
+              },
+              "final_crop_bbox": {
+                "x0": 62.84,
+                "y0": 55.83,
+                "x1": 555.36,
+                "y1": 87.34
+              },
+              "text_bbox": {
+                "x0": 72.84,
+                "y0": 65.83,
+                "x1": 545.36,
+                "y1": 77.34
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_graph_or_diagram_prompt",
+          "contains_inequality_or_region_prompt"
+        ],
+        "visual_curation_status": "review",
+        "text_only_status": "review",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "centered_page_number_trimmed",
+          "crop_header_footer_trimmed",
+          "crop_split_prompt_regions",
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "figure_overlap_preserved",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "ocr_hint_figure_regions",
+          "page_diagram_union_fragments:2",
+          "page_diagram_union_used",
+          "question_text_figure_overlap_prevented",
+          "text_crop_edge_safety_applied",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "weak_question_text"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "pass",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 99,
+        "ocr_text_score": -100,
+        "selected_text_score": 99,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=99",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_math_structure",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            1,
+            2,
+            5
+          ],
+          "terminal_mark_total_detected": 5,
+          "question_total_detected": 8,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 387,
+          "block_count": 9,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_total_detected": 8,
+          "mark_scheme_total_detected": 8,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q07"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q07",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q07_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q07"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 8,
+        "mark_scheme_total_detected": 8,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q08",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "8",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q08_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q08_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q08_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q08_markscheme.png",
+      "question_text": "8 The diagram shows a solid figure OABCDEF having a horizontal rectangular base OABC with OA = 6 units and AB = 3 units. The vertical edges OF, AD and BE have lengths 6 units, 4 units and 4 units respectively. Unit vectors i, j and k are parallel to OA, OC and OF respectively. (i) Find--→DF. [1] (ii) Find the unit vector in the direction of--→EF. [3] (iii) Use a scalar product to find angle EFD. [4]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_graph_or_diagram_prompt",
+        "contains_vector_notation"
+      ],
+      "visual_curation_status": "review",
+      "text_only_status": "review",
+      "mark_scheme_text": "1\n8(ii)  JJJGEF= −6i−3j + 2k B1\n|(JJJG)/(EF =)| (−6)^{2} + (−3)^{2 } + 2^{2} M1 Must use their JJJGEF\nUnit vector = 17(−6i−3j + 2k) A1\n3\n8(iii)  JJJG JJJGDF EF.   = (‒6i + 2k).(‒6i ‒ 3j + 2k) = 36 + 4 = 40  M1\n|JJJGDF | = √40, |JJJGEF| =7  M1\ncosEFD =  40  oe  M1\n7 40\nEFD = 25.4º  A1 Special case: use of cosine rule M1(must evaluate lengths\nusing correct method) A1 only\n4",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q08"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 8,
+      "difficulty": "average",
+      "difficulty_score": 36,
+      "difficulty_band": "average",
+      "subparts": [
+        "i",
+        "ii",
+        "iii"
+      ],
+      "subparts_solution_marks": {
+        "i": null,
+        "ii": null,
+        "iii": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q08_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q08_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          12,
+          13,
+          14
+        ],
+        "mark_scheme": [
+          11
+        ]
+      },
+      "topic": "coordinate_geometry",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "8(i)-(iii)",
+        "topic_confidence": "low",
+        "topic_uncertain": true,
+        "topic_trust_status": "degraded_text",
+        "difficulty": "average",
+        "difficulty_confidence": "medium",
+        "difficulty_evidence": "higher mark allocation",
+        "difficulty_uncertain": false,
+        "difficulty_score": 36,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 8,
+            "contribution": 0.6,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 6,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "coordinate_geometry",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "low",
+            "text_quality_low": false,
+            "confidence": "medium"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "8",
+          "question_id": "11winter18_q08",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q08_question.png",
+          "flags": [
+            "crop_furniture_trim_skipped_protected_content",
+            "crop_split_prompt_regions",
+            "crop_uncertain",
+            "figure_region_separated",
+            "page_diagram_union_skipped_neighbor_question",
+            "question_text_figure_overlap_prevented",
+            "text_figure_overlap_trimmed"
+          ],
+          "merged_blocks": 11,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 2,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 12,
+              "region_kind": "figure",
+              "original_crop_bbox": {
+                "x0": 31.32,
+                "y0": 47.83,
+                "x1": 563.4,
+                "y1": 300.36
+              },
+              "final_crop_bbox": {
+                "x0": 35,
+                "y0": 47.83,
+                "x1": 560.0,
+                "y1": 300.36
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 65.83,
+                "x1": 545.41,
+                "y1": 290.36
+              },
+              "figure_bbox": {
+                "x0": 35,
+                "y0": 47.83,
+                "x1": 560.0,
+                "y1": 300.36
+              },
+              "text_figure_overlap_area": 116346.55,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 8,
+              "graphics_count": 2,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 12,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 69.32,
+                "y0": 302.55,
+                "x1": 555.36,
+                "y1": 342.72
+              },
+              "final_crop_bbox": {
+                "x0": 69.32,
+                "y0": 302.55,
+                "x1": 555.36,
+                "y1": 342.72
+              },
+              "text_bbox": {
+                "x0": 79.32,
+                "y0": 312.55,
+                "x1": 545.36,
+                "y1": 332.72
+              },
+              "figure_bbox": {
+                "x0": 35,
+                "y0": 47.83,
+                "x1": 560.0,
+                "y1": 300.36
+              },
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 12,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.08,
+                "y0": 483.15,
+                "x1": 555.36,
+                "y1": 523.2
+              },
+              "final_crop_bbox": {
+                "x0": 66.08,
+                "y0": 483.15,
+                "x1": 555.36,
+                "y1": 523.2
+              },
+              "text_bbox": {
+                "x0": 76.08,
+                "y0": 493.15,
+                "x1": 545.36,
+                "y1": 513.2
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 13,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 62.84,
+                "y0": 55.47,
+                "x1": 555.36,
+                "y1": 87.36
+              },
+              "final_crop_bbox": {
+                "x0": 62.84,
+                "y0": 55.47,
+                "x1": 555.36,
+                "y1": 87.36
+              },
+              "text_bbox": {
+                "x0": 72.84,
+                "y0": 65.47,
+                "x1": 545.36,
+                "y1": 77.36
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_graph_or_diagram_prompt",
+          "contains_vector_notation"
+        ],
+        "visual_curation_status": "review",
+        "text_only_status": "review",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_furniture_trim_skipped_protected_content",
+          "crop_split_prompt_regions",
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "figure_region_separated",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_foreign_question_boundary_trimmed",
+          "ocr_hint_figure_regions",
+          "page_diagram_union_skipped_neighbor_question",
+          "question_text_figure_overlap_prevented",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "weak_question_text"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "pass",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 121,
+        "ocr_text_score": -100,
+        "selected_text_score": 121,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=121",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_math_structure",
+          "ocr_lost_unit_structure",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "subpart_type": "roman",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            1,
+            3,
+            4
+          ],
+          "terminal_mark_total_detected": 4,
+          "question_total_detected": 8,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 430,
+          "block_count": 15,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_subparts": [
+            "i",
+            "ii",
+            "iii"
+          ],
+          "question_total_detected": 8,
+          "mark_scheme_total_detected": 8,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q08"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q08",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q08_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q08"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 8,
+        "mark_scheme_total_detected": 8,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q09",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "9",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q09_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q09_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q09_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q09_markscheme.png",
+      "question_text": "9 The diagram shows a triangle OAB in which angle ABO is a right angle, angle AOB = 1_{5}0 radians and AB = 5 cm. The arc BCis part of a circle with centre A and meets OA at C. The arc CD is part of a circle with centre O and meets OB at D. Find the area of the shaded region. [8]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_graph_or_diagram_prompt",
+        "contains_inequality_or_region_prompt"
+      ],
+      "visual_curation_status": "review",
+      "text_only_status": "review",
+      "mark_scheme_text": "9  Angle OAB = π/ 2−π/ 5 = 3π/10 soi  B1 Allow 54° or 0.9425 rads\nSector CAB = 12×their3 10π×5^{2} M1 Expect 11.78\nOA = sin 5π = 8.507 M1A1 May be implied by OC = 3.507\n5\nSector COD = 12×(their 3.507)²×π5 M1 Expect 3.86\n∆OAB = 12×5×(their 8.507)sin 310π M1 Or 12×5×tan 5π or 2.5 × (their8.507)^{2}−25\n5\n= 17.20 or 17.21  A1\nShaded area 17.20 (or1 7.21)−11.78−3.86 = 1.56 or 1.57 A1\n8",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q09"
+      ],
+      "mark_scheme_confidence_score": 0.55,
+      "question_solution_marks": 16,
+      "difficulty": "average",
+      "difficulty_score": 36,
+      "difficulty_band": "average",
+      "subparts": [],
+      "subparts_solution_marks": {},
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q09_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q09_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          14,
+          15,
+          16
+        ],
+        "mark_scheme": [
+          12
+        ]
+      },
+      "topic": "circular_measure",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "9",
+        "topic_confidence": "low",
+        "topic_uncertain": true,
+        "topic_trust_status": "degraded_text",
+        "difficulty": "average",
+        "difficulty_confidence": "medium",
+        "difficulty_evidence": "higher mark allocation",
+        "difficulty_uncertain": false,
+        "difficulty_score": 36,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 8,
+            "contribution": 0.6,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 2,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "circular_measure",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": false,
+            "contribution": 0
+          },
+          "trust": {
+            "topic_confidence": "low",
+            "text_quality_low": false,
+            "confidence": "medium"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "9",
+          "question_id": "11winter18_q09",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q09_question.png",
+          "flags": [
+            "crop_furniture_trim_skipped_protected_content",
+            "crop_uncertain",
+            "figure_label_edge_safety_applied",
+            "figure_region_separated",
+            "question_text_figure_overlap_prevented",
+            "text_figure_overlap_trimmed"
+          ],
+          "merged_blocks": 7,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 1,
+          "missing_image_reason": "",
+          "missing_image_failure_metadata": {},
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 14,
+              "region_kind": "figure",
+              "original_crop_bbox": {
+                "x0": 31.32,
+                "y0": 47.83,
+                "x1": 563.41,
+                "y1": 264.24
+              },
+              "final_crop_bbox": {
+                "x0": 35,
+                "y0": 45,
+                "x1": 560.0,
+                "y1": 277.32
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 65.83,
+                "x1": 545.41,
+                "y1": 267.32
+              },
+              "figure_bbox": {
+                "x0": 35,
+                "y0": 45,
+                "x1": 560.0,
+                "y1": 277.32
+              },
+              "text_figure_overlap_area": 99955.89,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 7,
+              "graphics_count": 2,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_graph_or_diagram_prompt",
+          "contains_inequality_or_region_prompt"
+        ],
+        "visual_curation_status": "review",
+        "text_only_status": "review",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_furniture_trim_skipped_protected_content",
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "figure_label_edge_safety_applied",
+          "figure_region_separated",
+          "impossible_question_number_anchor_excluded",
+          "low_classification_confidence",
+          "low_confidence_question_crop",
+          "markscheme_foreign_question_boundary_trimmed",
+          "ocr_hint_figure_regions",
+          "paper_total_focus_candidate",
+          "question_mark_total_mismatch",
+          "question_mark_total_review_only",
+          "question_text_figure_overlap_prevented",
+          "text_figure_overlap_trimmed",
+          "topic_uncertain",
+          "topic_uncertain_low_quality_text",
+          "weak_question_text"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "review",
+        "validation_flags": [],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 73,
+        "ocr_text_score": -100,
+        "selected_text_score": 73,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "native_score=73",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_mapping_status_not_pass",
+          "ocr_missing_question_number",
+          "ocr_validation_status_not_pass"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [],
+          "subpart_type": "none",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            8
+          ],
+          "terminal_mark_total_detected": 8,
+          "question_total_detected": 8,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 306,
+          "block_count": 7,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [],
+          "question_subparts": [],
+          "question_total_detected": 8,
+          "mark_scheme_total_detected": 16,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q09"
+          ],
+          "mark_scheme_confidence_score": 0.55,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q09",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q09_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q09"
+        ],
+        "mark_scheme_confidence_score": 0.55,
+        "question_total_detected": 8,
+        "mark_scheme_total_detected": 16,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": "question_mark_total_mismatch, cross_page_scope"
+      }
+    },
+    {
+      "question_id": "11winter18_q10",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "10",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q10_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q10_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q10_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q10_markscheme.png",
+      "question_text": "10 A curve has equation y = 1_{2}(4x -3)^{-}1. The point A on the curve has coordinates (1, 1_{2}). (i) (a) Find and simplify the equation of the normal through A. [5] (b) Find the x-coordinate of the point where this normal meets the curve again. [3] (ii) Apointismovingalongthecurveinsuchawaythatasitpassesthrough A its x-coordinate is decreasing at the rate of 0.3 units per second. Find the rate of change of its y-coordinate at A. [2]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_graph_or_diagram_prompt"
+      ],
+      "visual_curation_status": "fail",
+      "text_only_status": "fail",
+      "mark_scheme_text": "10(ii)  Use of chain rule: ddyt = (their−2)×( ± )0.3 = 0.6 M1A1 Allow +0.3 or ‒0.3 for M1\n2",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q10"
+      ],
+      "mark_scheme_confidence_score": 0.55,
+      "question_solution_marks": 2,
+      "difficulty": "easy",
+      "difficulty_score": 34,
+      "difficulty_band": "easy",
+      "subparts": [
+        "a",
+        "b"
+      ],
+      "subparts_solution_marks": {
+        "a": null,
+        "b": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q10_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q10_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          16,
+          17,
+          18
+        ],
+        "mark_scheme": [
+          13
+        ]
+      },
+      "topic": "differentiation",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "10(a)-(b)",
+        "topic_confidence": "high",
+        "topic_uncertain": false,
+        "topic_trust_status": "review_required",
+        "difficulty": "easy",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "very high mark allocation; routine topic for this paper",
+        "difficulty_uncertain": false,
+        "difficulty_score": 34,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 10,
+            "contribution": 1,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 0,
+            "linked_keyword_present": false,
+            "contribution": 0
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": false,
+            "proof_or_show_wording": false,
+            "modelling_wording": false,
+            "contribution": 0
+          },
+          "mathematical_density": {
+            "symbol_count": 7,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "differentiation",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": true,
+            "contribution": -0.5
+          },
+          "trust": {
+            "topic_confidence": "high",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "fail",
+        "mapping_failure_reason": "mark_scheme_part_structure_mismatch",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "low",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "10",
+          "question_id": "11winter18_q10",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q10_question.png",
+          "flags": [
+            "centered_page_number_trimmed",
+            "crop_header_footer_trimmed",
+            "crop_split_prompt_regions",
+            "crop_uncertain",
+            "missing_image_detection_failure"
+          ],
+          "merged_blocks": 6,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "detection_failure",
+          "missing_image_failure_metadata": {
+            "reason": "detection_failure",
+            "question_pages": [
+              16,
+              17,
+              18
+            ],
+            "detection_methods_attempted": [
+              "embedded_image_objects",
+              "vector_graphic_regions",
+              "bbox_detected_diagrams",
+              "ocr_hint_signals",
+              "question_context_inference"
+            ],
+            "hard_failure": true,
+            "visual_reason_flags": [
+              "contains_equation_layout",
+              "contains_graph_or_diagram_prompt"
+            ]
+          },
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 16,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 48.04,
+                "x1": 555.36,
+                "y1": 114.12
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 52.16,
+                "x1": 555.36,
+                "y1": 114.12
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 58.04,
+                "x1": 545.36,
+                "y1": 104.12
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 17,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 86.36,
+                "y0": 55.47,
+                "x1": 555.36,
+                "y1": 87.36
+              },
+              "final_crop_bbox": {
+                "x0": 86.36,
+                "y0": 55.47,
+                "x1": 555.36,
+                "y1": 87.36
+              },
+              "text_bbox": {
+                "x0": 96.36,
+                "y0": 65.47,
+                "x1": 545.36,
+                "y1": 77.36
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 17,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 66.07,
+                "y0": 422.3,
+                "x1": 555.42,
+                "y1": 480.1
+              },
+              "final_crop_bbox": {
+                "x0": 66.07,
+                "y0": 422.3,
+                "x1": 555.42,
+                "y1": 480.1
+              },
+              "text_bbox": {
+                "x0": 76.07,
+                "y0": 432.3,
+                "x1": 545.42,
+                "y1": 470.1
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 3,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_graph_or_diagram_prompt"
+        ],
+        "visual_curation_status": "fail",
+        "text_only_status": "fail",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "centered_page_number_trimmed",
+          "crop_header_footer_trimmed",
+          "crop_split_prompt_regions",
+          "crop_uncertain",
+          "excluded_boilerplate_copyright_footer",
+          "impossible_question_number_anchor_excluded",
+          "low_confidence_question_crop",
+          "mark_scheme_part_structure_mismatch",
+          "markscheme_foreign_question_boundary_trimmed",
+          "missing_image_detection_failure",
+          "object_cue_resisted_override"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "fail",
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 103,
+        "ocr_text_score": -100,
+        "selected_text_score": 103,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=103",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_visual_dependency_prompt",
+          "ocr_mapping_status_not_pass",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "a",
+            "b"
+          ],
+          "subpart_type": "alpha",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            5,
+            3,
+            2
+          ],
+          "terminal_mark_total_detected": 2,
+          "question_total_detected": 10,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 437,
+          "block_count": 6,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "ii"
+          ],
+          "question_subparts": [
+            "a",
+            "b"
+          ],
+          "question_total_detected": 10,
+          "mark_scheme_total_detected": 2,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q10"
+          ],
+          "mark_scheme_confidence_score": 0.55,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q10",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q10_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q10"
+        ],
+        "mark_scheme_confidence_score": 0.55,
+        "question_total_detected": 10,
+        "mark_scheme_total_detected": 2,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    },
+    {
+      "question_id": "11winter18_q11",
+      "paper": "11winter18",
+      "canonical_paper_id": "11winter18",
+      "canonical_session": "winter18",
+      "canonical_year_folder": "2018",
+      "paper_family": "pm1",
+      "question_number": "11",
+      "canonical_question_artifact": "pm1/pm1_2018_w18_11_qp_q11_question.png",
+      "canonical_mark_scheme_artifact": "pm1/pm1_2018_w18_11_ms_q11_markscheme.png",
+      "question_image_path": "pm1/pm1_2018_w18_11_qp_q11_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2018_w18_11_ms_q11_markscheme.png",
+      "question_text": "11 (a) The one-one function f is defined by f(x) = (x -3)^{2}-1 for x < a, where a is a constant. (i) State the greatest possible value of a. [1] (ii) It is given that a takes this greatest possible value. State the range of f and find an expression for f^{-}1(x). [3] (b) The function g is defined by g(x) = (x -3)^{2} for x ≥ 0. (i) Show that ggconstants to be found.(2x) can be expressed in the form (2x -3)^{4} + b(2x -3)^{2} + c, where b and c are[2] (ii) Hence expand gg(2x) completely, simplifying your answer. [4]",
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium",
+      "ocr_ran": false,
+      "ocr_engine": "",
+      "ocr_text": "",
+      "ocr_text_trust": "unusable",
+      "ocr_failure_reason": "disabled",
+      "visual_required": true,
+      "visual_reason_flags": [
+        "contains_equation_layout",
+        "contains_inequality_or_region_prompt"
+      ],
+      "visual_curation_status": "fail",
+      "text_only_status": "fail",
+      "mark_scheme_text": "11(a)(i)  [Greatest value of a is] 3  B1 Must be in terms of a. Allow a < 3. Allow a⩽3\n1\n11(a)(ii)  Range is y> −1 B1 Ft on their a. Accept any equivalent notation\ny = (x−3)^{2}−→1  (x−3)^{2} = 1 + y→x = 3( ± ) 1 + y M1 Order of operations correct. Allow sign errors\nf^{−}1(x) = 3− 1 + x  cao  A1\n3\n11(b)(i)  gg(2x)  = (2x−3)^{2}−32 B1\n(2x−3)^{4}−6(2x−3)^{2} + 9 B1\n2\n11(b)(ii)  16x^{4}_{−}96x^{3} _{+} 216x^{2}_{−}216x + 81_{} + (−24x^{2} _{+} 72x−54) + 9^{} B4,3,2,1,0\n16x^{4}−96x^{3} + 192x^{2}−144x + 36\n4",
+      "mark_scheme_block_ids": [
+        "9709_w18_ms_11:q11"
+      ],
+      "mark_scheme_confidence_score": 0.95,
+      "question_solution_marks": 10,
+      "difficulty": "average",
+      "difficulty_score": 54,
+      "difficulty_band": "average",
+      "subparts": [
+        "a",
+        "b"
+      ],
+      "subparts_solution_marks": {
+        "a": null,
+        "b": null
+      },
+      "question_image_paths": [
+        "pm1/pm1_2018_w18_11_qp_q11_question.png"
+      ],
+      "mark_scheme_image_paths": [
+        "pm1/pm1_2018_w18_11_ms_q11_markscheme.png"
+      ],
+      "page_refs": {
+        "question": [
+          18,
+          19,
+          20
+        ],
+        "mark_scheme": [
+          14
+        ]
+      },
+      "topic": "functions",
+      "notes": {
+        "subtopic": "general",
+        "source_pdf": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+        "mark_scheme_source_pdf": "input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf",
+        "source_paper_code": "11",
+        "full_question_label": "11(a)-(b)",
+        "topic_confidence": "high",
+        "topic_uncertain": false,
+        "topic_trust_status": "review_required",
+        "difficulty": "average",
+        "difficulty_confidence": "high",
+        "difficulty_evidence": "very high mark allocation; chains results across parts; less direct exam-style wording; proof or interpretation wording; routine topic for this paper",
+        "difficulty_uncertain": false,
+        "difficulty_score": 54,
+        "difficulty_score_scale": "0-100",
+        "difficulty_features": {
+          "marks": {
+            "marks": 10,
+            "contribution": 1,
+            "missing": false
+          },
+          "structure": {
+            "part_count": 1,
+            "linked_keyword_present": true,
+            "contribution": 0.4
+          },
+          "cognitive_demand": {
+            "direct_routine": false,
+            "disguised_wording_present": true,
+            "proof_or_show_wording": true,
+            "modelling_wording": false,
+            "contribution": 0.8
+          },
+          "mathematical_density": {
+            "symbol_count": 16,
+            "contribution": 0
+          },
+          "mixed_topic_complexity": {
+            "secondary_topic_count": 0,
+            "secondary_topics": [],
+            "contribution": 0
+          },
+          "topic_prior": {
+            "paper_family": "P1",
+            "topic": "functions",
+            "subtopic": "general",
+            "difficult_topic_prior": false,
+            "routine_easy_topic_prior": true,
+            "contribution": -0.5
+          },
+          "trust": {
+            "topic_confidence": "high",
+            "text_quality_low": false,
+            "confidence": "high"
+          }
+        },
+        "difficulty_review_flags": [],
+        "difficulty_model_version": "local-difficulty-v1",
+        "mapping_status": "pass",
+        "mapping_failure_reason": "",
+        "missing_mark_scheme_reason": "",
+        "scope_quality_status": "clean",
+        "question_crop_confidence": "high",
+        "question_crop_diagnostics": {
+          "source_file": "input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf",
+          "question_number": "11",
+          "question_id": "11winter18_q11",
+          "paper_id": "11winter18",
+          "component": "11",
+          "canonical_path": "pm1/pm1_2018_w18_11_qp_q11_question.png",
+          "flags": [
+            "crop_split_prompt_regions"
+          ],
+          "merged_blocks": 7,
+          "duplicate_visual_blocks_removed": 0,
+          "detected_figure_count": 0,
+          "missing_image_reason": "detection_failure",
+          "missing_image_failure_metadata": {
+            "reason": "detection_failure",
+            "hard_failure": true,
+            "visual_reason_flags": [
+              "contains_equation_layout",
+              "contains_inequality_or_region_prompt"
+            ]
+          },
+          "excluded_boilerplate_reasons": [],
+          "regions": [
+            {
+              "page_number": 18,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 39.32,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 108.12
+              },
+              "final_crop_bbox": {
+                "x0": 39.32,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 108.12
+              },
+              "text_bbox": {
+                "x0": 49.32,
+                "y0": 63.85,
+                "x1": 545.36,
+                "y1": 98.12
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 18,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 89.6,
+                "y0": 190.46,
+                "x1": 555.41,
+                "y1": 245.58
+              },
+              "final_crop_bbox": {
+                "x0": 89.6,
+                "y0": 190.46,
+                "x1": 555.41,
+                "y1": 245.58
+              },
+              "text_bbox": {
+                "x0": 99.6,
+                "y0": 200.46,
+                "x1": 545.41,
+                "y1": 235.58
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 19,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 62.84,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 121.78
+              },
+              "final_crop_bbox": {
+                "x0": 62.84,
+                "y0": 53.85,
+                "x1": 555.36,
+                "y1": 121.78
+              },
+              "text_bbox": {
+                "x0": 72.84,
+                "y0": 63.85,
+                "x1": 545.36,
+                "y1": 111.78
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 2,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            },
+            {
+              "page_number": 19,
+              "region_kind": "text",
+              "original_crop_bbox": {
+                "x0": 89.59,
+                "y0": 286.35,
+                "x1": 555.36,
+                "y1": 327.66
+              },
+              "final_crop_bbox": {
+                "x0": 89.59,
+                "y0": 286.35,
+                "x1": 555.36,
+                "y1": 327.66
+              },
+              "text_bbox": {
+                "x0": 99.59,
+                "y0": 296.35,
+                "x1": 545.36,
+                "y1": 317.66
+              },
+              "figure_bbox": null,
+              "text_figure_overlap_area": 0.0,
+              "text_trimmed_for_figure": false,
+              "merged_blocks": 1,
+              "graphics_count": 0,
+              "duplicate_visual_blocks_removed": 0,
+              "excluded_regions": []
+            }
+          ]
+        },
+        "text_source_profile": "native_pdf",
+        "text_fidelity_status": "clean",
+        "text_fidelity_flags": [],
+        "question_text_role": "search_hint",
+        "question_text_trust": "medium",
+        "visual_required": true,
+        "visual_reason_flags": [
+          "contains_equation_layout",
+          "contains_inequality_or_region_prompt"
+        ],
+        "visual_curation_status": "fail",
+        "text_only_status": "fail",
+        "mark_scheme_crop_confidence": "high",
+        "review_flags": [
+          "crop_split_prompt_regions",
+          "excluded_boilerplate_additional_page",
+          "excluded_boilerplate_copyright_footer",
+          "impossible_question_number_anchor_excluded",
+          "missing_image_detection_failure"
+        ],
+        "extraction_quality_score": 0.92,
+        "extraction_quality_flags": [
+          "heavy_math_density"
+        ],
+        "validation_status": "fail",
+        "validation_flags": [
+          "missing_image_detection_failure"
+        ],
+        "recovery_attempted": false,
+        "recovery_result": "not_needed",
+        "ocr_ran": false,
+        "ocr_engine": "",
+        "ocr_text_trust": "unusable",
+        "ocr_failure_reason": "disabled",
+        "ocr_text_role": "missing",
+        "text_candidate_source": "native",
+        "native_text_score": 116,
+        "ocr_text_score": -100,
+        "selected_text_score": 116,
+        "text_candidate_decision": "native_retained",
+        "text_candidate_decision_reasons": [
+          "expected_mark_brackets_present",
+          "expected_question_number_present",
+          "expected_subparts_present",
+          "native_score=116",
+          "ocr_rejected",
+          "ocr_score=-100",
+          "prompt_words_present",
+          "readable_prose_spacing",
+          "reasonable_text_length"
+        ],
+        "ocr_selected": false,
+        "ocr_rejected_reasons": [
+          "empty_ocr_text",
+          "empty_text",
+          "ocr_lost_function_structure",
+          "ocr_lost_mark_brackets",
+          "ocr_lost_math_structure",
+          "ocr_missing_question_number",
+          "ocr_missing_subpart_labels"
+        ],
+        "question_structure_detected": {
+          "format_profile": "legacy",
+          "subparts": [
+            "a",
+            "b"
+          ],
+          "subpart_type": "alpha",
+          "missing_internal_subparts": [],
+          "subpart_sequence_gap": false,
+          "first_label_incomplete": false,
+          "impossible_subpart_sequence_detected": false,
+          "mark_values_detected": [
+            1,
+            3,
+            2,
+            4
+          ],
+          "terminal_mark_total_detected": 4,
+          "question_total_detected": 10,
+          "has_terminal_mark_total": true,
+          "missing_terminal_mark_total": false,
+          "text_length": 518,
+          "block_count": 7,
+          "weak_anchor": false,
+          "likely_truncated": false,
+          "contamination_detected": false,
+          "contamination_indicators": {
+            "duplicate_subpart_labels": [],
+            "filler_line_count": 0,
+            "embedded_furniture_count": 0,
+            "foreign_question_anchors": [],
+            "foreign_content_segments": 0,
+            "foreign_content_examples": [],
+            "review_hint_flags": [],
+            "signal_score": 0
+          }
+        },
+        "mark_scheme_structure_detected": {
+          "subparts": [
+            "a",
+            "b"
+          ],
+          "question_subparts": [
+            "a",
+            "b"
+          ],
+          "question_total_detected": 10,
+          "mark_scheme_total_detected": 10,
+          "mark_scheme_block_ids": [
+            "9709_w18_ms_11:q11"
+          ],
+          "mark_scheme_confidence_score": 0.95,
+          "missing_mark_scheme_reason": "",
+          "asset_identity": {
+            "question_id": "11winter18_q11",
+            "paper_id": "11winter18",
+            "component": "11",
+            "canonical_path": "pm1/pm1_2018_w18_11_ms_q11_markscheme.png"
+          }
+        },
+        "mark_scheme_block_ids": [
+          "9709_w18_ms_11:q11"
+        ],
+        "mark_scheme_confidence_score": 0.95,
+        "question_total_detected": 10,
+        "mark_scheme_total_detected": 10,
+        "question_format_profile": "legacy",
+        "paper_total_expected": 75,
+        "paper_total_detected": 75,
+        "paper_total_status": "matched",
+        "rescan_triggered": false,
+        "rescan_result": "not_triggered",
+        "paper_total_before_rescan": 75,
+        "paper_total_after_rescan": 75,
+        "paper_total_focus_questions": [
+          "9",
+          "1",
+          "2"
+        ],
+        "paper_total_focus_pages": [
+          14,
+          15,
+          16,
+          2,
+          3,
+          4
+        ],
+        "paper_total_focus_reason": ""
+      }
+    }
+  ]
+}

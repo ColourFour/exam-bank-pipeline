@@ -1,0 +1,41 @@
+{
+  "plan_under_test": "Prevent legacy mark-scheme crops from including the next question when the next anchor is near the top of the following page.",
+  "test_files_changed": [
+    "tests/test_question_detection.py"
+  ],
+  "tests_added_or_changed": [
+    "test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top"
+  ],
+  "expected_initial_failure": "The new test should fail before implementation because the active question includes the following page that starts with the next anchor.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py -q",
+    "targeted process_sample probe for input/pastpapers/9709/2020/question_papers/9709_s20_qp_51.pdf with mark scheme input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_51.pdf"
+  ],
+  "what_passing_proves": [
+    "A next-anchor-only following page is excluded from the active legacy mark-scheme block.",
+    "The focused real-PDF probe no longer produces the S20 P51 q6/q7 contaminated crop."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove every valid continuation page is preserved.",
+    "It does not prove a full 2008-2021 corpus rebuild is clean."
+  ],
+  "risk_of_bad_tests": "The skip heuristic could be overfit to near-top anchors; the regression must stay paired with broad question-detection tests.",
+  "new_tests": [
+    {
+      "file": "tests/test_question_detection.py",
+      "test": "test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top",
+      "purpose": "Proves a next-anchor-only page is not included in the active legacy answer block."
+    }
+  ],
+  "commands": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py -q",
+    "targeted process_sample probe for input/pastpapers/9709/2020/question_papers/9709_s20_qp_51.pdf with mark scheme input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_51.pdf"
+  ],
+  "success_criteria": [
+    "The next-anchor-page unit test passes.",
+    "Combined image-rendering and question-detection tests pass.",
+    "The S20 P51 q6 mark-scheme PNG is no longer a multi-question tall crop."
+  ]
+}

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from PIL import Image, ImageDraw
+
 from exam_bank.audit import (
     audit_current_output_integrity,
     audit_difficulty,
@@ -540,6 +542,342 @@ def test_current_output_integrity_infers_missing_mark_scheme_group_companion_fro
     ]
 
 
+def test_current_output_integrity_fails_on_duplicate_image_path_mappings(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    shared_question_path = "p1/12spring24/questions/q01.png"
+    shared_mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
+    _write_file(artifact_root / shared_question_path)
+    _write_file(artifact_root / shared_mark_scheme_path)
+
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=shared_question_path,
+            mark_scheme_image_path=shared_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q02",
+            paper="12spring24",
+            question_number="2",
+            question_image_path=shared_question_path,
+            mark_scheme_image_path=shared_mark_scheme_path,
+        ),
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert report["checks"]["image_paths_unique_across_records"] is False
+    assert report["counts"]["duplicate_question_image_path_value_count"] == 1
+    assert report["counts"]["duplicate_question_image_path_record_count"] == 2
+    assert report["counts"]["duplicate_mark_scheme_image_path_value_count"] == 1
+    assert report["counts"]["duplicate_mark_scheme_image_path_record_count"] == 2
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    assert failures["duplicate_question_image_path"]["count"] == 2
+    assert failures["duplicate_mark_scheme_image_path"]["count"] == 2
+    assert {example["duplicate_key"] for example in failures["duplicate_question_image_path"]["examples"]} == {
+        shared_question_path
+    }
+    assert {example["duplicate_key"] for example in failures["duplicate_mark_scheme_image_path"]["examples"]} == {
+        shared_mark_scheme_path
+    }
+
+
+def test_current_output_integrity_fails_on_question_mark_scheme_path_role_mismatch(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    mark_scheme_looking_question_path = "pm1/pm1_2024_m24_12_ms_q01_markscheme.png"
+    question_looking_mark_scheme_path = "pm1/pm1_2024_m24_12_qp_q01_question.png"
+    _write_file(artifact_root / mark_scheme_looking_question_path)
+    _write_file(artifact_root / question_looking_mark_scheme_path)
+
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=mark_scheme_looking_question_path,
+            mark_scheme_image_path=question_looking_mark_scheme_path,
+        )
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert report["checks"]["image_path_roles_match_fields"] is False
+    assert report["counts"]["question_image_path_kind_mismatch_count"] == 1
+    assert report["counts"]["mark_scheme_image_path_kind_mismatch_count"] == 1
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    assert failures["question_image_path_kind_mismatch"]["examples"][0]["path"] == mark_scheme_looking_question_path
+    assert failures["mark_scheme_image_path_kind_mismatch"]["examples"][0]["path"] == question_looking_mark_scheme_path
+
+
+def test_current_output_integrity_flags_foreign_mark_scheme_text_labels(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    q10_question_path = "p1/13winter11/questions/q10.png"
+    q10_mark_scheme_path = "p1/13winter11/mark_scheme/q10.png"
+    q7_question_path = "p5/51summer24/questions/q07.png"
+    q7_mark_scheme_path = "p5/51summer24/mark_scheme/q07.png"
+    known_q9_question_path = "p1/13winter11/questions/q09.png"
+    known_q9_mark_scheme_path = "p1/13winter11/mark_scheme/q09.png"
+    known_q7_question_path = "p1/13winter11/questions/q07.png"
+    known_q7_mark_scheme_path = "p1/13winter11/mark_scheme/q07.png"
+    for path in [
+        q10_question_path,
+        q10_mark_scheme_path,
+        q7_question_path,
+        q7_mark_scheme_path,
+        known_q9_question_path,
+        known_q9_mark_scheme_path,
+        known_q7_question_path,
+        known_q7_mark_scheme_path,
+    ]:
+        _write_file(artifact_root / path)
+
+    contaminated = _integrity_record(
+        "13winter11_q10",
+        paper="13winter11",
+        question_number="10",
+        question_image_path=q10_question_path,
+        mark_scheme_image_path=q10_mark_scheme_path,
+        source_pdf="",
+    )
+    contaminated["notes"]["mark_scheme_source_pdf"] = ""
+    contaminated["mark_scheme_text"] = (
+        "10 (i) Integrate the curve.\n"
+        "90 (x) Ignore this numeric expression.\n"
+        "9  (i) f^{-1}(x) = x - 3\n"
+        "7  (i) y = m(x - 2)"
+    )
+    known_q9 = _integrity_record(
+        "13winter11_q09",
+        paper="13winter11",
+        question_number="9",
+        question_image_path=known_q9_question_path,
+        mark_scheme_image_path=known_q9_mark_scheme_path,
+        source_pdf="",
+    )
+    known_q9["notes"]["mark_scheme_source_pdf"] = ""
+    known_q7 = _integrity_record(
+        "13winter11_q07",
+        paper="13winter11",
+        question_number="7",
+        question_image_path=known_q7_question_path,
+        mark_scheme_image_path=known_q7_mark_scheme_path,
+        source_pdf="",
+    )
+    known_q7["notes"]["mark_scheme_source_pdf"] = ""
+    long_legitimate = _integrity_record(
+        "51summer24_q07",
+        paper="51summer24",
+        question_number="7",
+        question_image_path=q7_question_path,
+        mark_scheme_image_path=q7_mark_scheme_path,
+        source_pdf="",
+    )
+    long_legitimate["notes"]["mark_scheme_source_pdf"] = ""
+    long_legitimate["mark_scheme_text"] = (
+        "7(a) 3360\n"
+        "7(b) Number of arrangements with 2s at the end.\n"
+        "7(c) Total number of selections = ^{8}C_{3} [= 56]"
+    )
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, [contaminated, known_q9, known_q7, long_legitimate], artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert report["checks"]["mark_scheme_text_has_no_foreign_question_labels"] is False
+    assert report["counts"]["mark_scheme_text_foreign_question_label_record_count"] == 1
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    examples = failures["mark_scheme_text_foreign_question_label"]["examples"]
+    assert examples == [
+        {
+            "index": 0,
+            "question_id": "13winter11_q10",
+            "paper": "13winter11",
+            "question_number": "10",
+            "source_companion": "9709_2011_November_13",
+            "foreign_question_labels": ["7", "9"],
+            "line_examples": ["9 (i) f^{-1}(x) = x - 3", "7 (i) y = m(x - 2)"],
+        }
+    ]
+    assert report["mark_scheme_text_foreign_label_summary"] == {
+        "by_foreign_label": {"7": 1, "9": 1},
+        "top_papers": [
+            {
+                "paper": "13winter11",
+                "count": 1,
+                "question_ids": ["13winter11_q10"],
+                "foreign_label_counts": {"7": 1, "9": 1},
+            }
+        ],
+    }
+    assert report["mark_scheme_text_foreign_label_review_candidates"] == [
+        {
+            "question_id": "13winter11_q10",
+            "paper": "13winter11",
+            "question_number": "10",
+            "foreign_question_labels": ["7", "9"],
+            "line_examples": ["9 (i) f^{-1}(x) = x - 3", "7 (i) y = m(x - 2)"],
+        }
+    ]
+
+
+def test_current_output_integrity_flags_suspicious_rendered_crop_dimensions(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    normal_question_path = "p1/12spring24/questions/q01.png"
+    normal_mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
+    tall_question_path = "p1/12spring24/questions/q02.png"
+    tall_mark_scheme_path = "p1/12spring24/mark_scheme/q02.png"
+    multi_page_question_path = "p1/12spring24/questions/q03.png"
+    multi_page_mark_scheme_path = "p1/12spring24/mark_scheme/q03.png"
+    _write_png(artifact_root / normal_question_path, size=(420, 360))
+    _write_png(artifact_root / normal_mark_scheme_path, size=(420, 520))
+    _write_png(artifact_root / tall_question_path, size=(220, 1400))
+    _write_png(artifact_root / tall_mark_scheme_path, size=(260, 1800))
+    _write_png(artifact_root / multi_page_question_path, size=(1606, 5071))
+    _write_png(artifact_root / multi_page_mark_scheme_path, size=(2218, 9077))
+
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=normal_question_path,
+            mark_scheme_image_path=normal_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q02",
+            paper="12spring24",
+            question_number="2",
+            question_image_path=tall_question_path,
+            mark_scheme_image_path=tall_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q03",
+            paper="12spring24",
+            question_number="3",
+            question_image_path=multi_page_question_path,
+            mark_scheme_image_path=multi_page_mark_scheme_path,
+        ),
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert report["checks"]["rendered_crop_dimensions_not_suspicious"] is False
+    assert report["counts"]["suspicious_rendered_crop_dimension_count"] == 2
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    assert failures["suspicious_rendered_crop_dimensions"]["count"] == 2
+    examples = failures["suspicious_rendered_crop_dimensions"]["examples"]
+    assert {example["field"] for example in examples} == {"question_image_path", "mark_scheme_image_path"}
+    assert {example["image_kind"] for example in examples} == {"question", "mark_scheme"}
+    assert [example["path"] for example in examples] == [tall_mark_scheme_path, tall_question_path]
+    assert all(example["height_px"] > example["width_px"] for example in examples)
+    assert all("extreme_aspect_ratio" in example["reasons"] for example in examples)
+    review_candidates = report["suspicious_rendered_crop_review_candidates"]
+    assert [candidate["path"] for candidate in review_candidates] == [tall_mark_scheme_path, tall_question_path]
+    assert review_candidates[0]["height_px"] == 1800
+    summary = report["suspicious_rendered_crop_dimension_summary"]
+    assert summary["by_image_kind"] == {"mark_scheme": 1, "question": 1}
+    assert summary["by_reason"] == {"extreme_aspect_ratio": 2}
+    assert summary["top_papers"] == [
+        {
+            "paper": "12spring24",
+            "count": 2,
+            "question_ids": ["12spring24_q02"],
+            "image_kind_counts": {"mark_scheme": 1, "question": 1},
+        }
+    ]
+    assert summary["max_height_candidate"]["path"] == tall_mark_scheme_path
+    assert summary["max_aspect_ratio_candidate"]["path"] == tall_mark_scheme_path
+
+
+def test_current_output_integrity_flags_excessive_blank_png_margins(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    normal_question_path = "p1/12spring24/questions/q01.png"
+    normal_mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
+    blank_bottom_question_path = "p1/12spring24/questions/q02.png"
+    blank_bottom_mark_scheme_path = "p1/12spring24/mark_scheme/q02.png"
+    all_white_question_path = "p1/12spring24/questions/q03.png"
+    all_white_mark_scheme_path = "p1/12spring24/mark_scheme/q03.png"
+    _write_content_png(artifact_root / normal_question_path, size=(400, 400), content_box=(40, 50, 360, 340))
+    _write_content_png(artifact_root / normal_mark_scheme_path, size=(400, 400), content_box=(40, 40, 360, 320))
+    _write_content_png(artifact_root / blank_bottom_question_path, size=(400, 900), content_box=(40, 40, 360, 90))
+    _write_content_png(artifact_root / blank_bottom_mark_scheme_path, size=(400, 900), content_box=(40, 30, 360, 80))
+    _write_png(artifact_root / all_white_question_path, size=(400, 900))
+    _write_png(artifact_root / all_white_mark_scheme_path, size=(400, 900))
+
+    records = [
+        _integrity_record(
+            "12spring24_q01",
+            paper="12spring24",
+            question_number="1",
+            question_image_path=normal_question_path,
+            mark_scheme_image_path=normal_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q02",
+            paper="12spring24",
+            question_number="2",
+            question_image_path=blank_bottom_question_path,
+            mark_scheme_image_path=blank_bottom_mark_scheme_path,
+        ),
+        _integrity_record(
+            "12spring24_q03",
+            paper="12spring24",
+            question_number="3",
+            question_image_path=all_white_question_path,
+            mark_scheme_image_path=all_white_mark_scheme_path,
+        ),
+    ]
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, records, artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    assert report["ok"] is False
+    assert report["checks"]["rendered_crop_whitespace_not_suspicious"] is False
+    assert report["counts"]["suspicious_rendered_crop_whitespace_count"] == 2
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    assert failures["suspicious_rendered_crop_whitespace"]["count"] == 2
+    examples = failures["suspicious_rendered_crop_whitespace"]["examples"]
+    assert [example["path"] for example in examples] == [blank_bottom_mark_scheme_path, blank_bottom_question_path]
+    assert all("excessive_blank_bottom_margin" in example["reasons"] for example in examples)
+    assert all("very_low_content_area" in example["reasons"] for example in examples)
+    assert all(example["blank_bottom_ratio"] >= 0.75 for example in examples)
+    assert all(example["content_bbox"] for example in examples)
+
+    review_candidates = report["suspicious_rendered_crop_whitespace_review_candidates"]
+    assert [candidate["path"] for candidate in review_candidates] == [
+        blank_bottom_mark_scheme_path,
+        blank_bottom_question_path,
+    ]
+    summary = report["suspicious_rendered_crop_whitespace_summary"]
+    assert summary["by_image_kind"] == {"mark_scheme": 1, "question": 1}
+    assert summary["by_reason"] == {
+        "excessive_blank_bottom_margin": 2,
+        "very_low_content_area": 2,
+    }
+    assert summary["top_papers"] == [
+        {
+            "paper": "12spring24",
+            "count": 2,
+            "question_ids": ["12spring24_q02"],
+            "image_kind_counts": {"mark_scheme": 1, "question": 1},
+        }
+    ]
+    assert summary["max_bottom_margin_candidate"]["path"] == blank_bottom_mark_scheme_path
+
+
 def _integrity_record(
     question_id: str,
     *,
@@ -588,3 +926,16 @@ def _write_integrity_bank(path: Path, records: list[dict[str, object]], *, artif
 def _write_file(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(b"fake png")
+
+
+def _write_png(path: Path, *, size: tuple[int, int]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    Image.new("RGB", size, "white").save(path)
+
+
+def _write_content_png(path: Path, *, size: tuple[int, int], content_box: tuple[int, int, int, int]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image = Image.new("RGB", size, "white")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle(content_box, fill="black")
+    image.save(path)

@@ -1,0 +1,22 @@
+{
+  "plan_under_test": "Suspicious rendered-crop dimension findings have deterministic prioritization summaries in the audit report.",
+  "test_files_changed": [
+    "tests/test_audit.py"
+  ],
+  "tests_added_or_changed": [
+    "Extend the suspicious dimension regression test to assert summary counts by image kind, reason, paper, and max-height/max-aspect examples."
+  ],
+  "expected_initial_failure": "Before implementation, the extended test should fail because suspicious_rendered_crop_dimension_summary is absent.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_audit.py -q"
+  ],
+  "what_passing_proves": [
+    "The audit report gives reviewers deterministic summary evidence for suspicious crop candidates.",
+    "Summary data is derived from the same failure evidence used by the gate."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not visually inspect the candidates.",
+    "It does not reduce the 31 live candidates or repair any crops."
+  ],
+  "risk_of_bad_tests": "Low. The assertions reuse the existing synthetic suspicious-dimension fixture."
+}

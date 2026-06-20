@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_audit.py::test_current_output_integrity_flags_excessive_blank_png_margins",
+      "purpose": "Focused regression for PNG blank-margin audit"
+    },
+    {
+      "command": "PYTHONPATH=src .venv/bin/pytest tests/test_audit.py",
+      "purpose": "Ensure existing audit behavior is unchanged"
+    }
+  ]
+}

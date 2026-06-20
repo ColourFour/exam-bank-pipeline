@@ -1,0 +1,35 @@
+{
+  "summary": "Skipped next-anchor-only legacy mark-scheme pages and clamped padded crop bottoms so following-page question starts do not enter the active crop.",
+  "files_changed": [
+    "src/exam_bank/mark_schemes.py",
+    "tests/test_question_detection.py"
+  ],
+  "files_created": [],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_block_skips_next_anchor_page_when_anchor_is_near_top -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering"
+  ],
+  "test_results": "Focused loop verification passed in the final session: 111 focused tests passed and 12 rendering-marker tests passed.",
+  "acceptance_criteria_status": [
+    "Satisfied: next-anchor-only following pages are skipped for the active legacy question.",
+    "Satisfied: padded mark-scheme crop bottoms are clamped to the computed boundary.",
+    "Satisfied: the S20 P51 q6 targeted evidence excludes q7 contamination."
+  ],
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": "No generated outputs or canonical inputs were changed.",
+  "known_risks": [
+    "The heuristic is intentionally conservative but still needs corpus-level auditing for valid continuation-page edge cases."
+  ],
+  "implementation_summary": [
+    "Added _next_anchor_page_has_no_legacy_continuation to detect following pages that contain only a later legacy anchor.",
+    "Used that helper in _blocks_for_legacy_anchor_bounds so next-anchor-only pages are skipped.",
+    "Used the same check in _mark_scheme_regions_for_start for rendered regions.",
+    "Clamped padded mark-scheme crop bottoms to the computed boundary so padding cannot pull in the next question.",
+    "Added a regression test for a near-top next anchor on the following page."
+  ],
+  "behavior_change": "Legacy mark-scheme crops now exclude a following page that starts the next question without carrying active-question continuation content.",
+  "scope_control": "The crop-padding clamp is only applied to the computed legacy mark-scheme region bottom."
+}

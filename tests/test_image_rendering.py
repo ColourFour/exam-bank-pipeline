@@ -140,6 +140,41 @@ def test_single_page_union_skips_disjoint_text_tail_and_allows_page_union() -> N
     assert "page_diagram_union_used" in page_flags
 
 
+def test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor() -> None:
+    config = AppConfig()
+    current_question = [
+        TextBlock(page_number=1, text="1 Solve the equation. [2]", bbox=BoundingBox(50, 82, 310, 96)),
+        TextBlock(page_number=1, text="Show your working clearly.", bbox=BoundingBox(72, 118, 330, 132)),
+    ]
+    foreign_number = TextBlock(page_number=1, text="2", bbox=BoundingBox(50, 255, 60, 269))
+    foreign_prompt = TextBlock(page_number=1, text="Find the next answer. [4]", bbox=BoundingBox(72, 256, 340, 270))
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s21_qp_12.pdf"),
+        paper_name="9709_s21_qp_12",
+        question_number="1",
+        start_page=1,
+        start_y=82,
+        end_page=1,
+        end_y=330,
+        page_numbers=[1],
+        blocks=[*current_question, foreign_number, foreign_prompt],
+        full_question_label="1",
+    )
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[*current_question, foreign_number, foreign_prompt],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+    rendered_text = "\n".join(block.text for region in regions for block in region.text_blocks)
+
+    assert "foreign_question_region_removed" in flags
+    assert all(region.bbox.y1 < foreign_number.bbox.y0 for region in regions)
+    assert "Find the next answer" not in rendered_text
+
+
 def test_vertical_furniture_trim_removes_centered_header_without_cutting_top_diagram() -> None:
     config = AppConfig()
     diagram = BoundingBox(150, 72, 430, 260)

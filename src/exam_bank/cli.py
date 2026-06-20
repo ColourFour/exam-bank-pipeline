@@ -22,6 +22,7 @@ from .auto_triage import (
 from .config import AppConfig, load_config
 from . import deepseek_enrich, topic_packets, topic_routing
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
+from .mark_scheme_regeneration import regenerate_mark_scheme_pngs_from_question_bank
 from .output_management import (
     build_cleanup_plan,
     build_output_inventory,
@@ -32,7 +33,15 @@ from .output_management import (
 )
 from .output_structure_normalization import normalize_output_structure, validate_normalized_output
 from .pipeline import PipelineResult, process_inputs
-from .triage import ISSUE_SET_ALL_NON_READY, ISSUE_SET_HARD_FAILURES, compare_iteration, create_triage_iteration, serve_iteration
+from .question_regeneration import regenerate_question_pngs_from_question_bank
+from .triage import (
+    ISSUE_SET_ALL_NON_READY,
+    ISSUE_SET_HARD_FAILURES,
+    compare_iteration,
+    create_suspicious_crop_review_pack,
+    create_triage_iteration,
+    serve_iteration,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -89,6 +98,54 @@ def build_parser() -> argparse.ArgumentParser:
     process.add_argument("--tesseract-cmd", default="", help="Optional path to the tesseract binary.")
     _add_run_tracking_arguments(process)
     process.set_defaults(func=cmd_process)
+
+    regenerate_mark_schemes = subparsers.add_parser(
+        "regenerate-mark-scheme-pngs",
+        help="Regenerate mark-scheme PNG crops from an existing question_bank.json by question ID or sample filter.",
+    )
+    regenerate_mark_schemes.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    regenerate_mark_schemes.add_argument("--output", default="output", help="Output root for regenerated PNGs.")
+    regenerate_mark_schemes.add_argument("--config", default="config.yaml", help="Optional config.yaml path.")
+    regenerate_mark_schemes.add_argument(
+        "--question-ids",
+        default="",
+        help="Comma-separated question IDs or canonical mark-scheme artifact stems to regenerate.",
+    )
+    regenerate_mark_schemes.add_argument(
+        "--question-id",
+        action="append",
+        default=[],
+        help="Question ID or canonical mark-scheme artifact stem to regenerate. May be repeated.",
+    )
+    regenerate_mark_schemes.add_argument("--all", action="store_true", help="Regenerate every mark-scheme PNG in the question bank.")
+    regenerate_mark_schemes.add_argument("--year-min", type=int, default=None, help="Optional minimum canonical year filter.")
+    regenerate_mark_schemes.add_argument("--year-max", type=int, default=None, help="Optional maximum canonical year filter.")
+    regenerate_mark_schemes.add_argument("--limit", type=int, default=0, help="Optional maximum number of selected records.")
+    regenerate_mark_schemes.set_defaults(func=cmd_regenerate_mark_scheme_pngs)
+
+    regenerate_questions = subparsers.add_parser(
+        "regenerate-question-pngs",
+        help="Regenerate question PNG crops from an existing question_bank.json by question ID or sample filter.",
+    )
+    regenerate_questions.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    regenerate_questions.add_argument("--output", default="output", help="Output root for regenerated PNGs.")
+    regenerate_questions.add_argument("--config", default="config.yaml", help="Optional config.yaml path.")
+    regenerate_questions.add_argument(
+        "--question-ids",
+        default="",
+        help="Comma-separated question IDs or canonical question artifact stems to regenerate.",
+    )
+    regenerate_questions.add_argument(
+        "--question-id",
+        action="append",
+        default=[],
+        help="Question ID or canonical question artifact stem to regenerate. May be repeated.",
+    )
+    regenerate_questions.add_argument("--all", action="store_true", help="Regenerate every question PNG in the question bank.")
+    regenerate_questions.add_argument("--year-min", type=int, default=None, help="Optional minimum canonical year filter.")
+    regenerate_questions.add_argument("--year-max", type=int, default=None, help="Optional maximum canonical year filter.")
+    regenerate_questions.add_argument("--limit", type=int, default=0, help="Optional maximum number of selected records.")
+    regenerate_questions.set_defaults(func=cmd_regenerate_question_pngs)
 
     audit = subparsers.add_parser(
         "audit",
@@ -247,6 +304,25 @@ def build_parser() -> argparse.ArgumentParser:
     triage_sample.add_argument("--target", default="auto", help="Primary issue to sample, or auto for the largest issue.")
     triage_sample.add_argument("--seed", type=int, default=1, help="Deterministic sample seed.")
     triage_sample.set_defaults(func=cmd_triage_sample)
+
+    suspicious_crop_pack = subparsers.add_parser(
+        "suspicious-crop-review-pack",
+        help="Create a deterministic review gallery from output-integrity suspicious rendered-crop candidates.",
+    )
+    suspicious_crop_pack.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
+    suspicious_crop_pack.add_argument(
+        "--artifact-root",
+        default="",
+        help="Root used to resolve relative image artifact paths. Defaults to the input output root.",
+    )
+    suspicious_crop_pack.add_argument(
+        "--output-root",
+        default="",
+        help="Review-pack output root. Defaults to a triage/ folder beside the exported JSON output tree.",
+    )
+    suspicious_crop_pack.add_argument("--iteration", default="", help="Optional iteration folder name or path.")
+    suspicious_crop_pack.add_argument("--sample-size", type=int, default=30, help="Maximum number of ranked candidates.")
+    suspicious_crop_pack.set_defaults(func=cmd_suspicious_crop_review_pack)
 
     triage_serve = subparsers.add_parser(
         "triage-serve",
@@ -482,6 +558,44 @@ def cmd_process(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_regenerate_mark_scheme_pngs(args: argparse.Namespace) -> int:
+    config = load_config(args.config)
+    _configure_runtime_paths(config, Path("."), Path(args.output))
+    question_ids = list(getattr(args, "question_id", []) or [])
+    if getattr(args, "question_ids", ""):
+        question_ids.append(args.question_ids)
+    report = regenerate_mark_scheme_pngs_from_question_bank(
+        question_bank_path=args.input,
+        config=config,
+        question_ids=question_ids,
+        all_records=bool(getattr(args, "all", False)),
+        year_min=getattr(args, "year_min", None),
+        year_max=getattr(args, "year_max", None),
+        limit=int(getattr(args, "limit", 0) or 0) or None,
+    )
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["failed_count"] == 0 and report["skipped_count"] == 0 and not report["missing_requested_ids"] else 1
+
+
+def cmd_regenerate_question_pngs(args: argparse.Namespace) -> int:
+    config = load_config(args.config)
+    _configure_runtime_paths(config, Path("."), Path(args.output))
+    question_ids = list(getattr(args, "question_id", []) or [])
+    if getattr(args, "question_ids", ""):
+        question_ids.append(args.question_ids)
+    report = regenerate_question_pngs_from_question_bank(
+        question_bank_path=args.input,
+        config=config,
+        question_ids=question_ids,
+        all_records=bool(getattr(args, "all", False)),
+        year_min=getattr(args, "year_min", None),
+        year_max=getattr(args, "year_max", None),
+        limit=int(getattr(args, "limit", 0) or 0) or None,
+    )
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["failed_count"] == 0 and report["skipped_count"] == 0 and not report["missing_requested_ids"] else 1
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
     output = Path(args.output) if args.output else None
     report = write_audit(args.input, output)
@@ -599,6 +713,21 @@ def cmd_triage_sample(args: argparse.Namespace) -> int:
         sample_size=args.sample_size,
         target=args.target,
         seed=args.seed,
+    )
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_suspicious_crop_review_pack(args: argparse.Namespace) -> int:
+    artifact_root = Path(args.artifact_root) if args.artifact_root else None
+    review_root = Path(args.output_root) if args.output_root else None
+    iteration = Path(args.iteration) if args.iteration else None
+    summary = create_suspicious_crop_review_pack(
+        args.input,
+        artifact_root=artifact_root,
+        review_root=review_root,
+        iteration=iteration,
+        sample_size=args.sample_size,
     )
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0

@@ -1,0 +1,35 @@
+{
+  "summary": "Added legacy mark-scheme foreign-boundary detection so missed same-page neighboring question rows do not leak into the active answer block or crop.",
+  "files_changed": [
+    "src/exam_bank/mark_schemes.py",
+    "tests/test_question_detection.py"
+  ],
+  "files_created": [],
+  "files_deleted": [],
+  "tests_run": [
+    ".venv/bin/python -m pytest tests/test_question_detection.py::test_legacy_mark_scheme_block_stops_before_missed_neighbor_question -q",
+    ".venv/bin/python -m pytest tests/test_question_detection.py -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py tests/test_question_detection.py tests/test_sample_pipeline.py::test_repo_s20_p51_mark_scheme_q6_excludes_notes_and_q7 -q",
+    ".venv/bin/python -m pytest -q -m rendering"
+  ],
+  "test_results": "Focused loop verification passed in the final session: 111 focused tests passed and 12 rendering-marker tests passed.",
+  "acceptance_criteria_status": [
+    "Satisfied: legacy blocks stop before later missed top-level question rows.",
+    "Satisfied: mark-scheme rendered region bottoms are clamped to the computed foreign boundary.",
+    "Satisfied: question-detection tests pass in the focused suite."
+  ],
+  "deviations_from_plan": [],
+  "repo_hygiene_notes": "No generated outputs or canonical inputs were changed.",
+  "known_risks": [
+    "This iteration did not yet address false anchors from preliminary mark-scheme notes pages."
+  ],
+  "implementation_summary": [
+    "Added _legacy_foreign_mark_scheme_boundary_y to find later same-page legacy question rows.",
+    "Added _is_later_mark_scheme_question to compare candidate question numbers against the active anchor.",
+    "Applied the boundary to _blocks_for_legacy_anchor_bounds.",
+    "Applied the same boundary to _mark_scheme_regions_for_start and tagged regions with markscheme_foreign_question_boundary_trimmed.",
+    "Added a focused regression test for a missed same-page neighboring mark-scheme question."
+  ],
+  "behavior_change": "Legacy mark-scheme text blocks and rendered regions now clamp at a later foreign question boundary instead of including the next question's answer rows.",
+  "scope_control": "The implementation is limited to legacy mark-scheme parsing and crop bounds."
+}

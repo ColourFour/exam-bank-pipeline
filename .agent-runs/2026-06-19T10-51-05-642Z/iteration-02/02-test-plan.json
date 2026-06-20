@@ -1,0 +1,22 @@
+{
+  "plan_under_test": "The current legacy mark-scheme parser regenerates 13winter11_q10 without neighboring q6-q9 content.",
+  "test_files_changed": [
+    "tests/test_sample_pipeline.py"
+  ],
+  "tests_added_or_changed": [
+    "Add a real-PDF sample-pipeline regression for W11 Paper 13 q10 mark-scheme boundaries."
+  ],
+  "expected_initial_failure": "Not expected to fail in the current dirty worktree because the previous parser changes already appear to repair this case; the canonical output is stale.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_sample_pipeline.py::test_repo_w11_p13_q10_mark_scheme_excludes_previous_questions -q"
+  ],
+  "what_passing_proves": [
+    "Current code regenerates q10 without q9 answer text.",
+    "The generated q10 crop is much smaller than the stale 9174px canonical candidate."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not update the full canonical output set.",
+    "It does not prove every remaining suspicious crop is stale rather than a live parser bug."
+  ],
+  "risk_of_bad_tests": "Moderate runtime cost because it processes a real PDF pair, but it is aligned with the historical-crop policy."
+}

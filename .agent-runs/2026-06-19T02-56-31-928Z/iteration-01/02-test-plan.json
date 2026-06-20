@@ -1,0 +1,40 @@
+{
+  "plan_under_test": "Prevent rendered question prompt images from retaining a later standalone top-level question when the later anchor was missed by the main span detector.",
+  "test_files_changed": [
+    "tests/test_image_rendering.py"
+  ],
+  "tests_added_or_changed": [
+    "test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor"
+  ],
+  "expected_initial_failure": "The new test fails before implementation because the prompt crop region extends into the later standalone question anchor.",
+  "commands_to_run": [
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py -q"
+  ],
+  "what_passing_proves": [
+    "A prompt region is removed or trimmed when a later foreign question anchor is detected on the same page.",
+    "The focused behavior works within the existing image-rendering test module."
+  ],
+  "what_passing_does_not_prove": [
+    "It does not prove every historical PDF crop is clean.",
+    "It does not exercise mark-scheme crop boundaries."
+  ],
+  "risk_of_bad_tests": "The synthetic layout could miss real PDF quirks, so later iterations should include real-PDF probes.",
+  "new_tests": [
+    {
+      "file": "tests/test_image_rendering.py",
+      "test": "test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor",
+      "purpose": "Proves a crop for question 5 drops text at a later question 6 anchor even when question 6 was not in the known start list."
+    }
+  ],
+  "expected_pre_implementation_result": "The new test fails because the crop region still extends into the later question anchor.",
+  "commands": [
+    ".venv/bin/python -m pytest tests/test_image_rendering.py::test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor -q",
+    ".venv/bin/python -m pytest tests/test_image_rendering.py -q"
+  ],
+  "success_criteria": [
+    "The focused test fails before code changes.",
+    "The focused test passes after code changes.",
+    "The full image-rendering test module passes."
+  ]
+}

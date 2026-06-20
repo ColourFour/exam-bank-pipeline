@@ -1,0 +1,311 @@
+diff --git a/src/exam_bank/triage.py b/src/exam_bank/triage.py
+index ac811d2..bf4e8e3 100644
+--- a/src/exam_bank/triage.py
++++ b/src/exam_bank/triage.py
+@@ -12,6 +12,8 @@ import random
+ from typing import Any
+ from urllib.parse import urlparse
+ 
++from .audit import audit_current_output_integrity
++
+ 
+ ROOT_CAUSE_OPTIONS = [
+     "question_crop_boundary",
+@@ -190,6 +192,82 @@ def create_triage_iteration(
+     return {"iteration_dir": str(iteration_dir), **summary}
+ 
+ 
++def create_suspicious_crop_review_pack(
++    input_path: str | Path,
++    *,
++    artifact_root: str | Path | None = None,
++    review_root: str | Path | None = None,
++    iteration: str | Path | None = None,
++    sample_size: int = 30,
++) -> dict[str, Any]:
++    if sample_size < 1:
++        raise ValueError("sample_size must be at least 1.")
++
++    input_path = Path(input_path)
++    output_root = Path(artifact_root) if artifact_root is not None else _infer_output_root(input_path)
++    review_root = Path(review_root) if review_root is not None else output_root / "triage"
++    iteration_dir = _iteration_dir(review_root, iteration)
++    if iteration_dir.exists():
++        raise FileExistsError(f"Suspicious crop review iteration already exists: {iteration_dir}")
++    iteration_dir.mkdir(parents=True)
++
++    payload, records = load_question_bank(input_path)
++    records_by_id = {str(record.get("question_id")): record for record in records if record.get("question_id")}
++    audit = audit_current_output_integrity(
++        input_path,
++        artifact_root=output_root,
++        example_limit=sample_size,
++    )
++    candidates = _suspicious_crop_review_candidates(audit)
++    sample = candidates[: min(sample_size, len(candidates))]
++
++    baseline_path = iteration_dir / "baseline_question_bank.json"
++    baseline_path.write_text(input_path.read_text(encoding="utf-8"), encoding="utf-8")
++
++    sample_payload = {
++        "issue_set": "output-integrity",
++        "target": "suspicious_rendered_crop_artifacts",
++        "seed": "",
++        "sample_size": sample_size,
++        "sampled_count": len(sample),
++        "questions": [
++            _suspicious_crop_sample_record(candidate, records_by_id.get(str(candidate.get("question_id")), {}), iteration_dir, output_root)
++            for candidate in sample
++        ],
++    }
++    sample_path = iteration_dir / "sample.json"
++    _write_json(sample_path, sample_payload)
++
++    summary = {
++        "created_at": datetime.now(timezone.utc).isoformat(),
++        "input_path": str(input_path),
++        "output_root": str(output_root),
++        "artifact_root": str(output_root),
++        "baseline_path": str(baseline_path),
++        "sample_path": str(sample_path),
++        "gallery_path": str(iteration_dir / "index.html"),
++        "review_path": str(iteration_dir / "review.jsonl"),
++        "issue_set": "output-integrity",
++        "target": "suspicious_rendered_crop_artifacts",
++        "sample_size": sample_size,
++        "record_count": len(records),
++        "candidate_count": len(candidates),
++        "dimension_candidate_count": int((audit.get("counts") or {}).get("suspicious_rendered_crop_dimension_count") or 0),
++        "whitespace_candidate_count": int((audit.get("counts") or {}).get("suspicious_rendered_crop_whitespace_count") or 0),
++        "sampled_count": len(sample),
++        "sample_question_ids": [str(candidate.get("question_id") or "") for candidate in sample],
++        "audit_summary": {
++            "dimensions": audit.get("suspicious_rendered_crop_dimension_summary") or {},
++            "whitespace": audit.get("suspicious_rendered_crop_whitespace_summary") or {},
++        },
++        "root_cause_options": ROOT_CAUSE_OPTIONS,
++    }
++    _write_json(iteration_dir / "summary.json", summary)
++    (iteration_dir / "review.jsonl").touch()
++    write_gallery(iteration_dir / "index.html", sample_payload)
++    return {"iteration_dir": str(iteration_dir), **summary}
++
++
+ def compare_iteration(
+     iteration_dir: str | Path,
+     *,
+@@ -321,6 +399,49 @@ def _sample_record(record: dict[str, Any], iteration_dir: Path, output_root: Pat
+     }
+ 
+ 
++def _suspicious_crop_sample_record(
++    candidate: dict[str, Any],
++    record: dict[str, Any],
++    iteration_dir: Path,
++    output_root: Path,
++) -> dict[str, Any]:
++    sample = _sample_record(record, iteration_dir, output_root)
++    candidate_path = str(candidate.get("path") or "")
++    sample.update(
++        {
++            "primary_issue": str(candidate.get("primary_issue") or "suspicious_rendered_crop_dimensions"),
++            "suspicious_crop": {
++                "image_kind": candidate.get("image_kind"),
++                "path": candidate_path,
++                "width_px": candidate.get("width_px"),
++                "height_px": candidate.get("height_px"),
++                "aspect_ratio": candidate.get("aspect_ratio"),
++                "content_bbox": candidate.get("content_bbox"),
++                "blank_top_ratio": candidate.get("blank_top_ratio"),
++                "blank_bottom_ratio": candidate.get("blank_bottom_ratio"),
++                "content_area_ratio": candidate.get("content_area_ratio"),
++                "reasons": candidate.get("reasons") if isinstance(candidate.get("reasons"), list) else [],
++            },
++            "suspicious_crop_image_src": _gallery_asset_src(candidate_path, iteration_dir, output_root),
++        }
++    )
++    return sample
++
++
++def _suspicious_crop_review_candidates(audit: dict[str, Any]) -> list[dict[str, Any]]:
++    dimensions = [
++        {**candidate, "primary_issue": "suspicious_rendered_crop_dimensions"}
++        for candidate in audit.get("suspicious_rendered_crop_review_candidates") or []
++        if isinstance(candidate, dict)
++    ]
++    whitespace = [
++        {**candidate, "primary_issue": "suspicious_rendered_crop_whitespace"}
++        for candidate in audit.get("suspicious_rendered_crop_whitespace_review_candidates") or []
++        if isinstance(candidate, dict)
++    ]
++    return [*dimensions, *whitespace]
++
++
+ def _gallery_html(sample_payload: dict[str, Any]) -> str:
+     questions = sample_payload.get("questions") if isinstance(sample_payload.get("questions"), list) else []
+     cards = "\n".join(_gallery_card(record) for record in questions)
+@@ -557,6 +678,7 @@ def _gallery_card(record: dict[str, Any]) -> str:
+     qid = str(record.get("question_id") or "")
+     question_img = _image_or_missing(record.get("question_image_src"), "Question crop")
+     mark_img = _image_or_missing(record.get("mark_scheme_image_src"), "Mark-scheme crop")
++    suspicious_crop = record.get("suspicious_crop") if isinstance(record.get("suspicious_crop"), dict) else {}
+     flags = _flag_group(record.get("validation_flags"), "Validation flags")
+     review_flags = _flag_group(record.get("review_flags"), "Review flags")
+     visual_flags = _flag_group(record.get("visual_reason_flags"), "Visual flags")
+@@ -573,6 +695,11 @@ def _gallery_card(record: dict[str, Any]) -> str:
+         "Mapping reason": record.get("mapping_failure_reason"),
+         "Question image": record.get("question_image_path"),
+         "Mark image": record.get("mark_scheme_image_path"),
++        "Suspicious crop kind": suspicious_crop.get("image_kind"),
++        "Suspicious crop path": suspicious_crop.get("path"),
++        "Suspicious dimensions": _suspicious_dimensions_label(suspicious_crop),
++        "Suspicious whitespace": _suspicious_whitespace_label(suspicious_crop),
++        "Suspicious reasons": ", ".join(str(item) for item in suspicious_crop.get("reasons") or []),
+         "Source PDF": record.get("source_pdf"),
+     }
+     metadata_html = _definition_list(metadata)
+@@ -614,6 +741,31 @@ def _gallery_card(record: dict[str, Any]) -> str:
+ </article>"""
+ 
+ 
++def _suspicious_dimensions_label(suspicious_crop: dict[str, Any]) -> str:
++    width = suspicious_crop.get("width_px")
++    height = suspicious_crop.get("height_px")
++    aspect = suspicious_crop.get("aspect_ratio")
++    if width is None or height is None:
++        return ""
++    label = f"{width}x{height}"
++    if aspect is not None:
++        label += f" aspect {aspect}"
++    return label
++
++
++def _suspicious_whitespace_label(suspicious_crop: dict[str, Any]) -> str:
++    values = []
++    for label, key in [
++        ("top", "blank_top_ratio"),
++        ("bottom", "blank_bottom_ratio"),
++        ("content area", "content_area_ratio"),
++    ]:
++        value = suspicious_crop.get(key)
++        if value is not None:
++            values.append(f"{label} {value}")
++    return ", ".join(values)
++
++
+ def _image_or_missing(src: Any, alt: str) -> str:
+     if not src:
+         return '<div class="missing">Missing image</div>'
+diff --git a/tests/test_triage.py b/tests/test_triage.py
+index 52345e0..47071bd 100644
+--- a/tests/test_triage.py
++++ b/tests/test_triage.py
+@@ -1,8 +1,11 @@
+ import json
+ from pathlib import Path
+ 
++from PIL import Image, ImageDraw
++
+ from exam_bank.triage import (
+     compare_iteration,
++    create_suspicious_crop_review_pack,
+     create_triage_iteration,
+     is_hard_failure,
+     issue_counts,
+@@ -80,6 +83,79 @@ def test_create_triage_iteration_writes_baseline_sample_and_escaped_gallery(tmp_
+     assert "<pre>Bad <img" not in html
+ 
+ 
++def test_create_suspicious_crop_review_pack_from_integrity_audit_candidates(tmp_path: Path) -> None:
++    output_root = tmp_path / "output"
++    input_path = output_root / "json" / "question_bank.json"
++    artifact_root = output_root
++    normal_question_path = "p1/sample/questions/q01.png"
++    normal_mark_scheme_path = "p1/sample/mark_scheme/q01.png"
++    tall_question_path = "p1/sample/questions/q02.png"
++    taller_mark_scheme_path = "p1/sample/mark_scheme/q02.png"
++    whitespace_question_path = "p1/sample/questions/q03.png"
++    whitespace_mark_scheme_path = "p1/sample/mark_scheme/q03.png"
++    _write_png(artifact_root / normal_question_path, size=(420, 360))
++    _write_png(artifact_root / normal_mark_scheme_path, size=(420, 520))
++    _write_png(artifact_root / tall_question_path, size=(220, 1400))
++    _write_png(artifact_root / taller_mark_scheme_path, size=(260, 1800))
++    _write_content_png(artifact_root / whitespace_question_path, size=(400, 900), content_box=(40, 40, 360, 90))
++    _write_content_png(artifact_root / whitespace_mark_scheme_path, size=(400, 400), content_box=(40, 60, 360, 340))
++    records = [
++        _record(
++            "q1",
++            question_image_path=normal_question_path,
++            mark_scheme_image_path=normal_mark_scheme_path,
++        ),
++        _record(
++            "q2",
++            question_text="Tall <b>crop</b>",
++            question_image_path=tall_question_path,
++            mark_scheme_image_path=taller_mark_scheme_path,
++        ),
++        _record(
++            "q3",
++            question_text="Blank bottom crop",
++            question_image_path=whitespace_question_path,
++            mark_scheme_image_path=whitespace_mark_scheme_path,
++        ),
++    ]
++    input_path.parent.mkdir(parents=True)
++    input_path.write_text(
++        json.dumps({"record_count": len(records), "run_manifest": {"artifact_root": str(artifact_root)}, "questions": records}),
++        encoding="utf-8",
++    )
++
++    summary = create_suspicious_crop_review_pack(
++        input_path,
++        artifact_root=artifact_root,
++        review_root=output_root / "triage",
++        iteration="suspicious_crop_001",
++        sample_size=3,
++    )
++    iteration_dir = Path(summary["iteration_dir"])
++
++    assert summary["candidate_count"] == 3
++    assert summary["dimension_candidate_count"] == 2
++    assert summary["whitespace_candidate_count"] == 1
++    assert summary["sampled_count"] == 3
++    assert summary["sample_question_ids"] == ["q2", "q2", "q3"]
++    sample = json.loads((iteration_dir / "sample.json").read_text(encoding="utf-8"))
++    assert [item["suspicious_crop"]["path"] for item in sample["questions"]] == [
++        taller_mark_scheme_path,
++        tall_question_path,
++        whitespace_question_path,
++    ]
++    assert sample["questions"][0]["primary_issue"] == "suspicious_rendered_crop_dimensions"
++    assert sample["questions"][2]["primary_issue"] == "suspicious_rendered_crop_whitespace"
++    assert sample["questions"][2]["suspicious_crop"]["blank_bottom_ratio"] >= 0.75
++    assert (iteration_dir / "review.jsonl").exists()
++    html = (iteration_dir / "index.html").read_text(encoding="utf-8")
++    assert "../../p1/sample/mark_scheme/q02.png" in html
++    assert "../../p1/sample/questions/q03.png" in html
++    assert "Suspicious whitespace" in html
++    assert "Tall &lt;b&gt;crop&lt;/b&gt;" in html
++    assert "<pre>Tall <b>" not in html
++
++
+ def test_compare_iteration_reports_target_movement_and_status_changes(tmp_path: Path) -> None:
+     iteration_dir = tmp_path / "output" / "triage" / "iteration_001"
+     iteration_dir.mkdir(parents=True)
+@@ -155,3 +231,16 @@ def _record(
+             "mapping_failure_reason": mapping_failure_reason,
+         },
+     }
++
++
++def _write_png(path: Path, *, size: tuple[int, int]) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    Image.new("RGB", size, "white").save(path)
++
++
++def _write_content_png(path: Path, *, size: tuple[int, int], content_box: tuple[int, int, int, int]) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    image = Image.new("RGB", size, "white")
++    draw = ImageDraw.Draw(image)
++    draw.rectangle(content_box, fill="black")
++    image.save(path)
