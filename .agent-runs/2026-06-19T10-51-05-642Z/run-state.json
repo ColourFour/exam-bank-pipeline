@@ -1,9 +1,0 @@
-{
-  "run_id": "2026-06-19T10-51-05-642Z",
-  "created_at": "2026-06-19T10:51:05.642Z",
-  "iterations_expected": 5,
-  "status": "completed",
-  "completed_at": "2026-06-19T11:17:13.000Z",
-  "focus": "Continue output-integrity improvement by adding review-pack tooling, a real-PDF crop regression, and mark-scheme text contamination detection and prioritization.",
-  "summary": "Five bounded iterations added a suspicious-crop review-pack CLI, locked a real 13winter11_q10 mark-scheme crop regression, detected foreign question labels in mark_scheme_text, filtered that detection against known paper question numbers, and exposed summary buckets plus ranked review candidates."
-}

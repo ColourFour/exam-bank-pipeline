@@ -19,6 +19,11 @@ output/json/*
 !output/json/.gitkeep
 !output/json/asset_manifest.v1.json
 output_ocr_candidate/
+reports/*
+!reports/.gitkeep
+!reports/asterion_export_release_manifest*.json
+!reports/asterion_export_release_provenance*.json
+.agent-runs/
 repo_file_inventory.txt
 generated_output_inventory.txt
 output_generated_file_inventory.txt

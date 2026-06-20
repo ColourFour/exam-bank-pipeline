@@ -44,7 +44,7 @@ Purpose: build the canonical image-first question bank from PDFs without OCR.
 
 Input: `input/`, `config.yaml`
 
-Output: `output/json/question_bank.json`, `output/p*/...` image artifacts, `output/run_status/<run_id>/`
+Output: `output/json/question_bank.json`, `output/{pm1,pm3,stats,mechanics}/*.png` image artifacts, `output/run_status/<run_id>/`
 
 Category/runtime: standard, long
 

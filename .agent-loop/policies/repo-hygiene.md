@@ -6,8 +6,10 @@ The loop must leave the repo cleaner and more trustworthy than it found it, with
 
 - Prefer editing existing tests, validators, or focused scripts over creating new frameworks.
 - Keep generated agent artifacts in `.agent-runs/`, not in source, input, dataset, or canonical output directories.
+- Keep `.agent-runs/` ignored and local. Do not commit run packets, run-state files, repo deltas, or generated probe outputs from loop runs.
 - Keep suspicious-output review packs small and clearly scoped to the selected risk.
 - Do not commit caches, logs, screenshots, one-off reports, local databases, or model outputs.
+- Keep generated `reports/` outputs ignored by default. The only expected tracked exceptions are intentional Asterion release manifest/provenance files whose hashes are used for handoff.
 - Do not introduce new dependency stacks for small problems.
 - Do not create a permanent framework for a one-time workflow.
 - Do not add broad reports where a deterministic validation check, failing fixture, or small review pack is sufficient.

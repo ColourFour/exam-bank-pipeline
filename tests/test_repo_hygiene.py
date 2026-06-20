@@ -22,8 +22,9 @@ def test_readme_centers_supported_process_command() -> None:
 
     assert (
         ".venv/bin/python -m exam_bank.cli process \\\n"
-        "  --input input \\\n"
-        "  --output output"
+        "  --input input/pastpapers/9709 \\\n"
+        "  --output output \\\n"
+        "  --enable-ocr"
     ) in readme
     assert "process-folder" not in readme
     assert "topic-pdfs" not in readme
@@ -57,8 +58,47 @@ def test_generated_inventory_files_are_ignored() -> None:
         "output_inventory.md",
         "output_cleanup_plan.md",
         "output_ocr_candidate/",
+        "reports/*",
+        ".agent-runs/",
     ]:
         assert pattern in gitignore
+
+
+def test_generated_agent_and_report_artifacts_are_ignored() -> None:
+    ignored_check = subprocess.run(
+        [
+            "git",
+            "check-ignore",
+            "--no-index",
+            ".agent-runs/latest",
+            ".agent-runs/2026-06-20T00-00-00-000Z/iteration-01/01-plan.json",
+            "reports/output_storage_duplicate_audit.v1.json",
+            "reports/debug/smoke.png",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert set(ignored_check.stdout.splitlines()) == {
+        ".agent-runs/latest",
+        ".agent-runs/2026-06-20T00-00-00-000Z/iteration-01/01-plan.json",
+        "reports/output_storage_duplicate_audit.v1.json",
+        "reports/debug/smoke.png",
+    }
+
+    manifest_check = subprocess.run(
+        [
+            "git",
+            "check-ignore",
+            "--no-index",
+            "reports/asterion_export_release_manifest_pr16_2026_06_11.json",
+            "reports/asterion_export_release_provenance_pr15_2026_06_11.json",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert manifest_check.returncode == 1
+    assert manifest_check.stdout == ""
 
 
 def test_os_and_python_cache_junk_is_absent_and_ignored() -> None:

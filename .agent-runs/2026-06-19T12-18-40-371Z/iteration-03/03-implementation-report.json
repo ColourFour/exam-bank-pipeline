@@ -1,9 +1,0 @@
-{
-  "iteration": 3,
-  "implemented": [
-    "Added trim_isolated_edge_furniture for tiny centered top/bottom page-number bands",
-    "Added clean_rendered_crop_image wrapper to apply furniture trimming before whitespace trimming",
-    "Updated question and mark-scheme render paths to use the wrapper",
-    "Added regression tests for centered page-number removal and left-aligned question-label preservation"
-  ]
-}

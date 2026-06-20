@@ -11,7 +11,7 @@ source .venv/bin/activate
 ## Release Inputs
 
 - Canonical question bank: `output/json/question_bank.json`
-- Canonical image artifacts: `output/p*/<paper>/questions/*.png` and `output/p*/<paper>/mark_scheme/*.png`
+- Canonical image artifacts: `output/pm1/*.png`, `output/pm3/*.png`, `output/stats/*.png`, and `output/mechanics/*.png`
 - Topic routing sidecar: `output/json/question_bank.topic_routing.v1.json`
 - Mark-event sidecar: `output/json/question_bank.mark_events.v1.json`
 - Advisory evidence sidecar: `output/advisory_evidence/question_bank.advisory_evidence.v1.json`

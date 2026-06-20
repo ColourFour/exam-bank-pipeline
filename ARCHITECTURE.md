@@ -4,12 +4,14 @@ This repository is an image-first CAIE 9709 exam-bank pipeline. Question crops a
 
 ## Data Flow
 
-1. Source PDFs under `input/` are processed into `output/json/question_bank.json` plus canonical images under `output/p*/<paper>/questions/` and `output/p*/<paper>/mark_scheme/`.
+1. Source PDFs under `input/` are processed into `output/json/question_bank.json` plus flat canonical image assets under `output/pm1/`, `output/pm3/`, `output/stats/`, and `output/mechanics/`.
 2. Sidecars add advisory evidence without mutating the canonical bank: topic routing, mark events, advisory examiner-report/grade-threshold links, difficulty indexes, and AI-assisted review/debug outputs.
 3. `src/exam_bank/asterion_export.py` builds `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`, the broad all-course static-site catalog with canonical image references, asset IDs, integrity metadata, quality gates, subparts, role gates, course fields, and blocked/review states preserved.
 4. The same export path writes `output/asterion/exports/latest/asterion_question_bank_v1.json`, the reviewed/safe student-runtime subset derived from the catalog.
 5. `src/exam_bank/asterion_export.py` also builds `asterion_content_lab_candidates_v1.json`, which is review-only candidate metadata. It is not student runtime.
 6. `src/exam_bank/asterion_student_runtime_safe.py` audits P3 Content Lab candidates for an explicit student-runtime-safe candidate export. This remains P3-specific review infrastructure.
+
+Canonical asset paths use `PaperIdentity` names such as `pm1/pm1_2024_m24_12_qp_q06_question.png` and `mechanics/mechanics_2025_w25_52_ms_q05_markscheme.png`. Older nested paths like `output/p1/<paper>/questions/q01.png` are legacy compatibility inputs for normalization, not the active output layout.
 
 ## Course Contract
 
@@ -34,6 +36,8 @@ The Asterion all-course catalog adds these fields to each record:
 - `review_status`
 
 The helper layer filters by `course_id`, paper, and component name; returns empty arrays for scaffolded courses; and fails closed for invalid course IDs. P3 legacy runtime behavior is preserved by treating `usage_roles.canonical_practice=allow` as `student_runtime_safe=true` for P3 records. P1, M1, and S1 require explicit reviewed/safe promotion before they can enter student runtime.
+
+Course IDs and canonical asset subject-family folders are related but not interchangeable. Asterion course routing uses the reviewed course contract, while asset storage uses the `PaperIdentity` subject family (`pm1`, `pm3`, `stats`, `mechanics`) embedded in each canonical path.
 
 `asterion_exam_bank_catalog_v1.json` may include reviewed, needs-review, blocked, and candidate-state records. Its metadata includes course and component counts for P1, P3, M1, and S1. `asterion_question_bank_v1.json` is the student-facing subset and should contain only reviewed/safe records.
 

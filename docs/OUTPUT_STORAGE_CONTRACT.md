@@ -4,12 +4,16 @@ The exam-bank pipeline is image-first. Canonical rendered question images and ma
 
 ## Canonical Asset Locations
 
-Canonical image assets live under the paper-first output tree:
+Canonical image assets live under the flat subject-family output tree:
 
-- `output/p*/<paper>/questions/*.png`
-- `output/p*/<paper>/mark_scheme/*.png`
+- `output/pm1/*.png`
+- `output/pm3/*.png`
+- `output/stats/*.png`
+- `output/mechanics/*.png`
 
 These paths are stable relative asset references. JSON exports should store these relative paths, not absolute local paths.
+
+Older nested paths such as `output/p1/<paper>/questions/q01.png` and `output/p1/<paper>/mark_scheme/q01.png` are legacy compatibility inputs for normalization. They are not the active canonical output contract.
 
 `output/json/question_bank.json` is the canonical metadata index for the current run. `output/json/asset_manifest.v1.json` is an index over canonical image files. The manifest is not a replacement source of truth; it records asset IDs, paths, SHA-256 hashes, sizes, and image dimensions for validation and lookup.
 
@@ -43,7 +47,7 @@ Asterion export release handoff is represented by a tracked manifest under `repo
 
 Downstream JSON should reference canonical assets with one or both of:
 
-- canonical relative paths such as `p1/12spring21/questions/q01.png`
+- canonical relative paths such as `pm1/pm1_2021_m21_12_qp_q01_question.png`
 - stable asset IDs from `output/json/asset_manifest.v1.json`
 
 Asterion exports preserve path fields for runtime compatibility, but those fields should point at canonical relative paths. New consumers should prefer `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, and subpart/source artifact `*_asset_id` fields when available, resolving them through the manifest.
