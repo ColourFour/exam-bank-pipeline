@@ -199,7 +199,7 @@ def _detect_prompt_regions(
 
         for segment in segments:
             text_box = _union_boxes([block.bbox for block in segment])
-            raw_graphics, excluded_regions = _graphics_for_segment(text_box, layout, config)
+            raw_graphics, excluded_regions = _graphics_for_segment(text_box, layout, config, span=span, segment=segment)
             for excluded in excluded_regions:
                 reason = str(excluded.get("label") or "")
                 if reason:
@@ -218,6 +218,7 @@ def _detect_prompt_regions(
                     excluded_regions,
                     layout,
                     config,
+                    span,
                 )
                 flags.extend(separation_flags)
                 regions.extend(separated)
@@ -380,6 +381,8 @@ def _single_page_union_regions(
 
     page_number = next(iter(page_numbers))
     layout = _layout_by_number(layouts, page_number)
+    if _has_top_page_edge_graphic(regions, layout, config):
+        return None, ["single_page_union_skipped_page_edge_diagram"]
     union_box = _union_boxes([region.bbox for region in regions])
     text_blocks = [block for region in regions for block in region.text_blocks]
     graphics = [graphic for region in regions for graphic in region.graphics]
@@ -479,6 +482,9 @@ def _union_regions_for_page(
     config: AppConfig,
     kind: str,
 ) -> tuple[CropRegion | None, str]:
+    if _has_top_page_edge_graphic(regions, layout, config):
+        return None, f"{kind}_skipped_page_edge_diagram"
+
     graphics = _dominant_graphic_cluster([graphic for region in regions for graphic in region.graphics])
     text_blocks = _text_blocks_for_dominant_diagram_union(
         [block for region in regions for block in region.text_blocks],
@@ -535,6 +541,16 @@ def _has_disjoint_text_only_tail(groups: list[list[CropRegion]]) -> bool:
         return False
     trailing_groups = groups[1:]
     return any(not any(region.graphics for region in group) for group in trailing_groups)
+
+
+def _has_top_page_edge_graphic(regions: list[CropRegion], layout: PageLayout, config: AppConfig) -> bool:
+    if not any(region.text_blocks and not region.graphics for region in regions):
+        return False
+    return any(
+        layout.page_number == region.page_number and graphic.y0 <= config.detection.crop_top_margin
+        for region in regions
+        for graphic in region.graphics
+    )
 
 
 def _dominant_graphic_cluster(graphics: list[BoundingBox]) -> list[BoundingBox]:
@@ -705,7 +721,14 @@ def _split_prompt_segments(blocks: list[TextBlock], config: AppConfig) -> list[l
     return segments
 
 
-def _graphics_for_segment(text_box: BoundingBox, layout: PageLayout, config: AppConfig) -> tuple[list[BoundingBox], list[dict[str, object]]]:
+def _graphics_for_segment(
+    text_box: BoundingBox,
+    layout: PageLayout,
+    config: AppConfig,
+    *,
+    span: QuestionSpan | None = None,
+    segment: list[TextBlock] | None = None,
+) -> tuple[list[BoundingBox], list[dict[str, object]]]:
     graphics: list[BoundingBox] = []
     excluded_regions: list[dict[str, object]] = []
     top = text_box.y0 - config.detection.prompt_graphic_overlap_padding
@@ -713,7 +736,12 @@ def _graphics_for_segment(text_box: BoundingBox, layout: PageLayout, config: App
     answer_rule_bands = _answer_rule_y_bands(layout)
     for graphic in layout.graphics:
         furniture_label = _page_furniture_box_label(graphic, layout, config, answer_rule_bands)
-        if furniture_label:
+        allow_furniture_graphic = (
+            furniture_label == "watermark"
+            and span is not None
+            and _watermark_box_looks_like_current_question_diagram(graphic, span, segment or [], layout, config)
+        )
+        if furniture_label and not allow_furniture_graphic:
             excluded_regions.append(_excluded_region(furniture_label, graphic))
             continue
         if _is_formula_rule_box(graphic, layout):
@@ -726,8 +754,183 @@ def _graphics_for_segment(text_box: BoundingBox, layout: PageLayout, config: App
         graphic_height = graphic.y1 - graphic.y0
         significant_nearby_graphic = graphic_width >= 20 and graphic_height >= 20
         if overlaps_vertically and (overlaps_horizontally or significant_nearby_graphic):
-            graphics.append(graphic)
+            candidate = graphic
+            if allow_furniture_graphic and span is not None:
+                candidate = _trim_top_page_watermark_diagram_graphic(candidate, span, layout, config)
+            if candidate is not None and span is not None:
+                candidate = _trim_graphic_at_previous_question_content(candidate, span, layout, config)
+            if candidate is not None and span is not None:
+                candidate = _trim_graphic_at_next_question_boundary(candidate, span, layout, config)
+            if candidate is not None:
+                graphics.append(candidate)
     return graphics, excluded_regions
+
+
+def _trim_top_page_watermark_diagram_graphic(
+    graphic: BoundingBox,
+    span: QuestionSpan,
+    layout: PageLayout,
+    config: AppConfig,
+) -> BoundingBox | None:
+    page_span_blocks = [block for block in span.blocks if block.page_number == layout.page_number]
+    diagram_blocks = [
+        block
+        for block in page_span_blocks
+        if _is_figure_label_or_current_anchor_block(block, span, config) and block.bbox.y0 <= graphic.y1 + config.detection.crop_padding
+    ]
+    if not diagram_blocks:
+        return graphic
+
+    diagram_label_box = _union_boxes([block.bbox for block in diagram_blocks])
+    anchor_blocks = [
+        block
+        for block in page_span_blocks
+        if (parsed := parse_question_start(block.first_line, config)) is not None and parsed[0] == span.question_number
+    ]
+    anchor_box = _union_boxes([block.bbox for block in anchor_blocks]) if anchor_blocks else None
+    x_padding = max(55.0, min(70.0, config.detection.prompt_graphic_lookahead * 0.38))
+    left = max(config.detection.crop_left_margin, diagram_label_box.x0 - x_padding)
+    if anchor_box is not None:
+        left = min(left, max(config.detection.crop_left_margin, anchor_box.x0 - config.detection.crop_padding))
+    right = min(layout.width - config.detection.crop_right_margin, diagram_label_box.x1 + x_padding)
+
+    prose_tops = [
+        block.bbox.y0
+        for block in page_span_blocks
+        if block not in diagram_blocks
+        and block not in anchor_blocks
+        and block.bbox.y0 > diagram_label_box.y1
+        and len(_clean_text_line(block.text)) > 18
+    ]
+    bottom = graphic.y1
+    if prose_tops:
+        safe_bottom = min(
+            min(prose_tops) - config.detection.crop_padding - 1.0,
+            diagram_label_box.y1 + config.detection.crop_padding,
+        )
+        if safe_bottom > diagram_label_box.y1 + 2.0:
+            bottom = min(bottom, safe_bottom)
+
+    top = graphic.y0
+    if right <= left + 12 or bottom <= top + config.detection.min_crop_height:
+        return None
+    return BoundingBox(left, top, right, bottom)
+
+
+def _watermark_box_looks_like_current_question_diagram(
+    graphic: BoundingBox,
+    span: QuestionSpan,
+    segment: list[TextBlock],
+    layout: PageLayout,
+    config: AppConfig,
+) -> bool:
+    if not _span_has_figure_prompt(span):
+        return False
+    if layout.page_number != span.start_page:
+        return False
+    if span.start_y > config.detection.crop_top_margin + 55:
+        return False
+    if graphic.y0 > config.detection.crop_top_margin:
+        return False
+    if graphic.y1 > span.end_y + max(45.0, config.detection.crop_padding * 4):
+        return False
+
+    blocks = segment or [block for block in span.blocks if block.page_number == layout.page_number]
+    evidence = [
+        block
+        for block in blocks
+        if _block_center_inside_box(block, graphic) or _intersection_area(block.bbox, graphic) / max(1.0, _box_area(block.bbox)) >= 0.35
+    ]
+    if len(evidence) >= 3:
+        return True
+    evidence_text = _clean_text_line(" ".join(block.text for block in evidence)).lower()
+    return len(evidence) >= 2 and bool(re.search(r"\b(?:diagram|circle|arc|tangent|sector|shaded|graph)\b", evidence_text))
+
+
+def _trim_graphic_at_previous_question_content(
+    graphic: BoundingBox,
+    span: QuestionSpan | None,
+    layout: PageLayout,
+    config: AppConfig,
+) -> BoundingBox | None:
+    if span is None or layout.page_number != span.start_page:
+        return graphic
+    if graphic.y0 >= span.start_y - config.detection.crop_padding:
+        return graphic
+
+    span_block_keys = {_block_identity_key(block) for block in span.blocks}
+    foreign_blocks_above = [
+        block
+        for block in layout.blocks
+        if _block_identity_key(block) not in span_block_keys
+        and block.bbox.y1 <= span.start_y - config.detection.anchor_y_tolerance
+        and _boxes_intersect(block.bbox, graphic)
+        and _graphic_trim_foreign_content_block(block, layout, config)
+    ]
+    if not foreign_blocks_above:
+        return graphic
+
+    safe_top = max(block.bbox.y1 for block in foreign_blocks_above) + max(2.0, config.detection.crop_padding * 3.5)
+    if safe_top <= graphic.y0 + 1.0:
+        return graphic
+    if safe_top >= graphic.y1 - max(8.0, config.detection.min_crop_height * 0.5):
+        return None
+    return BoundingBox(graphic.x0, safe_top, graphic.x1, graphic.y1)
+
+
+def _trim_graphic_at_next_question_boundary(
+    graphic: BoundingBox,
+    span: QuestionSpan,
+    layout: PageLayout,
+    config: AppConfig,
+) -> BoundingBox | None:
+    if layout.page_number != span.end_page:
+        return graphic
+    if graphic.y0 >= span.end_y - config.detection.anchor_y_tolerance:
+        return None
+    if graphic.y1 <= span.end_y + config.detection.crop_padding:
+        return graphic
+
+    safe_bottom = span.end_y - 1.0
+    if safe_bottom <= graphic.y0 + max(8.0, config.detection.min_crop_height * 0.5):
+        return None
+    return BoundingBox(graphic.x0, graphic.y0, graphic.x1, safe_bottom)
+
+
+def _block_identity_key(block: TextBlock) -> tuple[int, str, float, float, float, float]:
+    return (
+        block.page_number,
+        _clean_text_line(block.text),
+        round(block.bbox.x0, 2),
+        round(block.bbox.y0, 2),
+        round(block.bbox.x1, 2),
+        round(block.bbox.y1, 2),
+    )
+
+
+def _block_center_inside_box(block: TextBlock, box: BoundingBox) -> bool:
+    center_x = (block.bbox.x0 + block.bbox.x1) / 2
+    center_y = (block.bbox.y0 + block.bbox.y1) / 2
+    return box.x0 <= center_x <= box.x1 and box.y0 <= center_y <= box.y1
+
+
+def _graphic_trim_foreign_content_block(block: TextBlock, layout: PageLayout, config: AppConfig) -> bool:
+    text = _clean_text_line(block.text)
+    if not text:
+        return False
+    if _is_footer_or_header_box(block.bbox, layout, config):
+        return False
+    if _is_centered_page_number_block(block, layout, config):
+        return False
+    if _is_boilerplate_text(text):
+        return False
+    if _is_answer_space_text(text):
+        return False
+    if _is_margin_furniture_text(block, layout, config):
+        return False
+    if _is_control_artifact_text(text):
+        return False
+    return True
 
 
 def _separate_text_and_figure_regions(
@@ -739,14 +942,15 @@ def _separate_text_and_figure_regions(
     excluded_regions: list[dict[str, object]],
     layout: PageLayout,
     config: AppConfig,
+    span: QuestionSpan,
 ) -> tuple[list[CropRegion], list[str]]:
     flags = ["figure_region_separated"]
-    figure_box = _figure_box_for_segment(segment, graphics, layout, config)
+    figure_box = _figure_box_for_segment(segment, graphics, layout, config, span)
     figure_crop = _trim_crop_furniture_edges(_clamp_crop_to_prompt_area(figure_box, layout, config), layout, config)
     figure_label_blocks = [
         block
         for block in segment
-        if _block_belongs_to_figure(block, figure_crop, config)
+        if _is_figure_label_or_current_anchor_block(block, span, config) and _block_belongs_to_figure(block, figure_crop, config)
     ]
     if figure_label_blocks:
         label_box = _union_boxes([block.bbox for block in figure_label_blocks])
@@ -829,12 +1033,13 @@ def _figure_box_for_segment(
     graphics: list[BoundingBox],
     layout: PageLayout,
     config: AppConfig,
+    span: QuestionSpan,
 ) -> BoundingBox:
     graphic_box = _union_boxes(_merge_graphics_into_figures(graphics))
     label_boxes = [
         block.bbox
         for block in segment
-        if _block_belongs_to_figure(block, graphic_box, config)
+        if _is_figure_label_or_current_anchor_block(block, span, config) and _block_belongs_to_figure(block, graphic_box, config)
     ]
     return _union_boxes([graphic_box] + label_boxes).padded(config.detection.crop_padding, layout.width, layout.height)
 
@@ -849,6 +1054,10 @@ def _merge_graphics_into_figures(graphics: list[BoundingBox]) -> list[BoundingBo
 
 
 def _block_belongs_to_figure(block: TextBlock, figure_box: BoundingBox, config: AppConfig) -> bool:
+    text = _clean_text_line(block.text)
+    if len(text) > 36 and not _looks_like_diagram_axis_or_label_text(text):
+        return False
+
     block_area = _box_area(block.bbox)
     if block_area <= 0:
         return False
@@ -865,6 +1074,13 @@ def _block_belongs_to_figure(block: TextBlock, figure_box: BoundingBox, config: 
     center_x = (block.bbox.x0 + block.bbox.x1) / 2
     center_y = (block.bbox.y0 + block.bbox.y1) / 2
     return padded_figure.x0 <= center_x <= padded_figure.x1 and padded_figure.y0 <= center_y <= padded_figure.y1
+
+
+def _is_figure_label_or_current_anchor_block(block: TextBlock, span: QuestionSpan, config: AppConfig) -> bool:
+    parsed = parse_question_start(block.first_line, config)
+    if parsed and parsed[0] == span.question_number:
+        return True
+    return _is_diagram_label_only_block(block, span, config)
 
 
 def _segment_is_figure_label_only(segment: list[TextBlock], span: QuestionSpan, config: AppConfig) -> bool:
@@ -1038,13 +1254,20 @@ def _is_prompt_text_block(block: TextBlock, span: QuestionSpan, layout: PageLayo
         return False
 
     parsed = parse_question_start(text, config)
-    if parsed and parsed[0] != span.question_number:
+    if parsed and parsed[0] != span.question_number and not _is_unit_diagram_label_block(block, span, config):
         return False
 
     # Lone page numbers and administrative codes should not set crop bounds.
     if text.isdigit() and (block.bbox.y0 < config.detection.crop_top_margin or block.bbox.y1 > layout.height - config.detection.bottom_margin):
         return False
     return True
+
+
+def _is_unit_diagram_label_block(block: TextBlock, span: QuestionSpan, config: AppConfig) -> bool:
+    text = _clean_text_line(block.text)
+    if not re.search(r"\b(?:cm|mm|m|km|kg|g|s|ms|rad|N)\b", text):
+        return False
+    return _is_diagram_label_only_block(block, span, config)
 
 
 def _trim_vertical_furniture_from_regions(

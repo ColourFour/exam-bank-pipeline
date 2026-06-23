@@ -15,6 +15,8 @@ pytestmark = [pytest.mark.integration, pytest.mark.rendering]
 
 
 REPO_S09_P1_QP = Path("input/pastpapers/9709/2009/question_papers/9709_s09_qp_1.pdf")
+REPO_S08_P1_QP = Path("input/pastpapers/9709/2008/question_papers/9709_s08_qp_1.pdf")
+REPO_W08_P1_QP = Path("input/pastpapers/9709/2008/question_papers/9709_w08_qp_1.pdf")
 
 
 def _config(tmp_path: Path) -> AppConfig:
@@ -22,6 +24,72 @@ def _config(tmp_path: Path) -> AppConfig:
     config.output.apply_root(tmp_path / "output")
     config.ocr.enabled = False
     return config
+
+
+def _render_question(
+    tmp_path: Path,
+    *,
+    pdf: Path,
+    year: str,
+    session: str,
+    question_number: str,
+):
+    pytest.importorskip("fitz")
+    if not pdf.exists():
+        pytest.skip(f"Repo question paper PDF is not available: {pdf}")
+
+    config = _config(tmp_path)
+    layouts = extract_pdf_layout(pdf, config)
+    span = next(item for item in detect_question_spans(layouts, pdf, config) if item.question_number == question_number)
+    identity = paper_identity_from_parts(
+        syllabus="9709",
+        subject_family="pm1",
+        year=year,
+        session=session,
+        component="01",
+        question_number=question_number,
+    )
+    return render_question_image(pdf, span, layouts, config, identity=identity)
+
+
+def test_legacy_2008_s08_q05_crop_trims_previous_question_diagram_hint(tmp_path: Path) -> None:
+    result = _render_question(tmp_path, pdf=REPO_S08_P1_QP, year="2008", session="s08", question_number="5")
+
+    assert result.screenshot_path and result.screenshot_path.exists()
+    assert "single_page_union_crop_used" in result.review_flags
+    assert "page_diagram_union_skipped_neighbor_question" not in result.review_flags
+    region = result.crop_diagnostics["regions"][0]
+    assert region["region_kind"] == "single_page_union"
+    assert region["final_crop_bbox"]["y0"] > 328
+    assert region["final_crop_bbox"]["y1"] < 650
+
+
+def test_legacy_2008_w08_q06_top_page_diagram_is_not_dropped_as_watermark(tmp_path: Path) -> None:
+    result = _render_question(tmp_path, pdf=REPO_W08_P1_QP, year="2008", session="w08", question_number="6")
+
+    assert result.screenshot_path and result.screenshot_path.exists()
+    regions = result.crop_diagnostics["regions"]
+    figure_region = regions[0]
+    text_region = regions[1]
+    assert figure_region["graphics_count"] == 1
+    assert figure_region["final_crop_bbox"]["y0"] <= 45
+    assert 250 <= figure_region["final_crop_bbox"]["y1"] <= 305
+    assert figure_region["final_crop_bbox"]["x1"] < 470
+    assert figure_region["figure_bbox"]["y0"] <= 45
+    assert text_region["region_kind"] == "text"
+    assert text_region["final_crop_bbox"]["y0"] >= 260
+    assert text_region["final_crop_bbox"]["x1"] > 550
+
+
+def test_legacy_2009_s09_q05_crop_trims_previous_graph_question(tmp_path: Path) -> None:
+    result = _render_question(tmp_path, pdf=REPO_S09_P1_QP, year="2009", session="s09", question_number="5")
+
+    assert result.screenshot_path and result.screenshot_path.exists()
+    assert "single_page_union_crop_used" in result.review_flags
+    region = result.crop_diagnostics["regions"][0]
+    assert region["region_kind"] == "single_page_union"
+    assert region["final_crop_bbox"]["y0"] > 500
+    assert region["figure_bbox"]["y0"] > 520
 
 
 def test_legacy_2009_q02_question_crop_excludes_previous_question_watermark_region(tmp_path: Path) -> None:
