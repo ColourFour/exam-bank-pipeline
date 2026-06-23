@@ -1,0 +1,16 @@
+{
+  "message_id": "fake-message-no-pdf",
+  "thread_id": "fake-thread-c",
+  "received_at": "2026-06-23T17:20:00+08:00",
+  "from_email": "student.three@example.invalid",
+  "from_name": "Student Three",
+  "subject": "p3_vectors_hw1",
+  "body_preview": "I attached the notes file.",
+  "attachments": [
+    {
+      "filename": "bad_upload.txt",
+      "path": "attachments/bad_upload.txt",
+      "content_type": "text/plain"
+    }
+  ]
+}

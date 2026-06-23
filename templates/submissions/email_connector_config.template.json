@@ -1,0 +1,10 @@
+{
+  "provider": "imap_or_gmail_or_outlook",
+  "account_label": "teacher_assignment_inbox",
+  "assignment_id": "p3_quiz_2026_06_23",
+  "mailbox_scope": "label_or_folder_name",
+  "search_query": "subject:p3_quiz_2026_06_23 has:attachment",
+  "since": "2026-06-23T00:00:00+08:00",
+  "limit": 100,
+  "dry_run": true
+}

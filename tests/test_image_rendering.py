@@ -11,6 +11,7 @@ from exam_bank.image_rendering import (
     _graphics_for_segment,
     _same_page_diagram_union_regions,
     _single_page_union_regions,
+    _trim_permission_footer_from_regions,
     _trim_vertical_furniture_from_regions,
 )
 from exam_bank.core.asset_paths import AssetPath
@@ -415,3 +416,106 @@ def test_missing_figure_prompt_is_marked_detection_failure() -> None:
 
     assert diagnostics["detected_figure_count"] == 0
     assert diagnostics["missing_image_reason"] == "detection_failure"
+
+
+def test_permission_footer_phrase_is_trimmed_from_final_question_crop() -> None:
+    config = AppConfig()
+    question = text_block("(b) Hence find x. [3]", 690, x=72)
+    footer = TextBlock(
+        page_number=1,
+        text="Permission to reproduce items where third-party owned material protected by copyright is included has been sought.",
+        bbox=BoundingBox(45, 780, 550, 788),
+        font_size=6,
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question, footer])
+    region = CropRegion(page_number=1, bbox=BoundingBox(35, 620, 560, 802), text_blocks=[question], region_kind="text")
+
+    trimmed, flags = _trim_permission_footer_from_regions([region], [layout], config)
+
+    assert "permission_footer_trimmed" in flags
+    assert trimmed[0].bbox.y1 < footer.bbox.y0
+    assert trimmed[0].bbox.y1 > question.bbox.y1
+    assert trimmed[0].footer_cutoff["reason"] == "footer_phrase"
+    assert trimmed[0].footer_cutoff["signals"] == ["footer_phrase"]
+
+
+def test_permission_footer_detector_leaves_normal_bottom_question_unchanged() -> None:
+    config = AppConfig()
+    question = text_block("(c) Find the area of the shaded region. [5]", 735, x=72)
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question])
+    region = CropRegion(page_number=1, bbox=BoundingBox(35, 640, 560, 790), text_blocks=[question], region_kind="text")
+
+    trimmed, flags = _trim_permission_footer_from_regions([region], [layout], config)
+
+    assert flags == []
+    assert trimmed[0].bbox == region.bbox
+    assert trimmed[0].footer_cutoff["reason"] == "not_detected"
+    assert trimmed[0].footer_cutoff["final_bottom"] == 790
+
+
+def test_permission_footer_detector_does_not_overtrim_question_content_near_bottom() -> None:
+    config = AppConfig()
+    final_line = text_block("State the exact value of k. [2]", 768, x=72)
+    footer = TextBlock(
+        page_number=1,
+        text="UCLES 2008",
+        bbox=BoundingBox(45, 782, 105, 790),
+        font_size=6,
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[final_line, footer])
+    region = CropRegion(page_number=1, bbox=BoundingBox(35, 700, 560, 804), text_blocks=[final_line], region_kind="text")
+
+    trimmed, flags = _trim_permission_footer_from_regions([region], [layout], config)
+
+    assert "permission_footer_trimmed" not in flags
+    assert "permission_footer_trim_skipped_protected_content" in flags
+    assert trimmed[0].bbox == region.bbox
+    assert trimmed[0].footer_cutoff["reason"] == "skipped_protected_content"
+
+
+def test_permission_footer_rule_plus_cambridge_text_is_trimmed_above_rule() -> None:
+    config = AppConfig()
+    question = text_block("(iii) Complete the proof. [4]", 650, x=72)
+    rule = BoundingBox(35, 742, 560, 744)
+    footer_1 = TextBlock(
+        page_number=1,
+        text="University of Cambridge International Examinations",
+        bbox=BoundingBox(45, 758, 305, 766),
+        font_size=6,
+    )
+    footer_2 = TextBlock(
+        page_number=1,
+        text="Cambridge Assessment is the brand name of the University of Cambridge Local Examinations Syndicate",
+        bbox=BoundingBox(45, 770, 550, 778),
+        font_size=6,
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question, footer_1, footer_2], graphics=[rule])
+    region = CropRegion(page_number=1, bbox=BoundingBox(35, 600, 560, 805), text_blocks=[question], region_kind="text")
+
+    trimmed, flags = _trim_permission_footer_from_regions([region], [layout], config)
+
+    assert "permission_footer_trimmed" in flags
+    assert trimmed[0].bbox.y1 < rule.y0
+    assert trimmed[0].bbox.y1 > question.bbox.y1
+    assert trimmed[0].footer_cutoff["reason"] == "horizontal_rule_with_footer_phrase"
+    assert trimmed[0].footer_cutoff["signals"] == ["horizontal_rule", "footer_phrase"]
+
+
+def test_permission_footer_only_region_is_removed() -> None:
+    config = AppConfig()
+    question = text_block("Find the perimeter of ABCD. [3]", 555, x=72)
+    footer = TextBlock(
+        page_number=1,
+        text="University of Cambridge International Examinations is part of the Cambridge Assessment Group.",
+        bbox=BoundingBox(45, 771, 520, 778),
+        font_size=7,
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question, footer])
+    question_region = CropRegion(page_number=1, bbox=BoundingBox(35, 520, 560, 580), text_blocks=[question], region_kind="text")
+    footer_region = CropRegion(page_number=1, bbox=BoundingBox(35, 762, 560, 798), text_blocks=[footer], region_kind="text")
+
+    trimmed, flags = _trim_permission_footer_from_regions([question_region, footer_region], [layout], config)
+
+    assert "permission_footer_region_removed" in flags
+    assert len(trimmed) == 1
+    assert trimmed[0].text_blocks == [question]

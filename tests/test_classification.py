@@ -36,6 +36,40 @@ def test_classifies_binomial_coefficient_as_binomial_expansion() -> None:
     assert result.topic_confidence in {"medium", "high"}
 
 
+def test_benign_ocr_region_hint_does_not_force_low_topic_confidence() -> None:
+    result = classify_question(
+        "Find the coefficient of x^2 in the expansion of (1 + 2x)^6. [3]",
+        marks=3,
+        config=AppConfig(),
+        context_flags=["ocr_hint_figure_regions"],
+        source_name="9709_s21_qp_12.pdf",
+        mark_scheme_text="Use the binomial expansion and collect the coefficient of x^2.",
+        question_ocr_text="Find the coefficient of x^2 in the expansion of (1 + 2x)^6. [3]",
+    )
+
+    assert result.topic == "binomial_expansion"
+    assert result.topic_confidence == "high"
+    assert "topic_uncertain_low_quality_text" not in result.review_flags
+    assert "weak_question_text" not in result.review_flags
+
+
+def test_ocr_structural_rejection_still_forces_low_topic_confidence() -> None:
+    result = classify_question(
+        "Find the coefficient of x^2 in the expansion of (1 + 2x)^6. [3]",
+        marks=3,
+        config=AppConfig(),
+        context_flags=["ocr_large_margin_blocked_by_structural_rejection"],
+        source_name="9709_s21_qp_12.pdf",
+        mark_scheme_text="Use the binomial expansion and collect the coefficient of x^2.",
+        question_ocr_text="Find the coefficient of x^2 in the expansion of (1 + 2x)^6. [3]",
+    )
+
+    assert result.topic == "binomial_expansion"
+    assert result.topic_confidence == "low"
+    assert "topic_uncertain_low_quality_text" in result.review_flags
+    assert "weak_question_text" in result.review_flags
+
+
 def test_classifies_ap_question_as_series_and_sequences() -> None:
     result = classify_question(
         "An arithmetic progression has first term 3 and common difference 5. Find the sum of the first 20 terms. [4]",

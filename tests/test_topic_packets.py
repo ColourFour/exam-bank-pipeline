@@ -84,6 +84,28 @@ def test_major_topic_grouping_ignores_subtopic_and_manifest_shape(tmp_path: Path
     assert manifest["pdf_outputs"]["topic_packet"]["file_size_bytes"] > 0
 
 
+def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q1": {"paper_family": "pm3"},
+            "q2": {"paper_family": "pm3"},
+        },
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    assert summary["total_included"] == 2
+    assert summary["skipped_by_reason"].get("invalid_paper_family", 0) == 0
+    assert (paths["output"] / "p3" / "integration" / "topic_packet.pdf").is_file()
+
+
 def test_pdf_optimization_does_not_modify_canonical_source_images(tmp_path: Path) -> None:
     paths = _fixture(tmp_path)
     source = paths["artifact_root"] / "p3" / "paper" / "questions" / "q1.png"

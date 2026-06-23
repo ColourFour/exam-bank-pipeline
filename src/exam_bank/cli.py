@@ -20,7 +20,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich, topic_packets, topic_routing
+from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_routing
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .mark_scheme_regeneration import regenerate_mark_scheme_pngs_from_question_bank
 from .output_management import (
@@ -98,6 +98,23 @@ def build_parser() -> argparse.ArgumentParser:
     process.add_argument("--tesseract-cmd", default="", help="Optional path to the tesseract binary.")
     _add_run_tracking_arguments(process)
     process.set_defaults(func=cmd_process)
+
+    quiz_packet = subparsers.add_parser(
+        "quiz-packet",
+        help="Run the local quiz packet workflow from assignment.pdf and scans/ in one command.",
+    )
+    quiz_packet.add_argument("--quiz-dir", type=Path, required=True, help="Quiz folder containing assignment.pdf and scans/.")
+    quiz_packet.add_argument("--course-id", required=True, help="Course ID for generated assignment metadata.")
+    quiz_packet.add_argument("--assignment-pdf", type=Path, default=None, help="Optional assignment PDF path. Defaults to quiz-dir/assignment.pdf.")
+    quiz_packet.add_argument("--assignment-id", default="", help="Optional assignment ID. Defaults to the quiz folder name.")
+    quiz_packet.add_argument("--class-id", default="local_class", help="Class ID for generated assignment and roster rows.")
+    quiz_packet.add_argument("--timezone", default="", help="Timezone for generated assignment metadata.")
+    quiz_packet.add_argument("--output-root", type=Path, default=Path("output/submissions"), help="Submission output root.")
+    quiz_packet.add_argument("--reports-root", type=Path, default=Path("reports/submissions"), help="Submission reports root.")
+    quiz_packet.add_argument("--open-report", action="store_true", help="Open the teacher report after it is written when possible.")
+    quiz_packet.add_argument("--no-grade", action="store_true", help="Skip quiz-packet draft grading artifacts.")
+    quiz_packet.add_argument("--force", action="store_true", help="Regenerate assignment.json even if it already exists.")
+    quiz_packet.set_defaults(func=cmd_quiz_packet)
 
     regenerate_mark_schemes = subparsers.add_parser(
         "regenerate-mark-scheme-pngs",
@@ -268,6 +285,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     topic_routing.add_topic_routing_cli_arguments(topic_route_ai)
     topic_route_ai.set_defaults(func=cmd_topic_route_ai)
+
+    topic_confidence_rescore = subparsers.add_parser(
+        "topic-confidence-rescore",
+        help="Write deterministic topic-confidence rescoring reports with typed extraction flags.",
+    )
+    topic_confidence_rescoring.add_topic_confidence_rescoring_cli_arguments(topic_confidence_rescore)
+    topic_confidence_rescore.set_defaults(func=cmd_topic_confidence_rescore)
 
     topic_packet = subparsers.add_parser(
         "topic-packets",
@@ -558,6 +582,32 @@ def cmd_process(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_quiz_packet(args: argparse.Namespace) -> int:
+    from exam_bank.submissions.quiz_packet import run_quiz_packet
+
+    result = run_quiz_packet(
+        quiz_dir=args.quiz_dir,
+        course_id=args.course_id,
+        assignment_pdf=args.assignment_pdf,
+        assignment_id=args.assignment_id or None,
+        class_id=args.class_id,
+        timezone_name=args.timezone or None,
+        output_root=args.output_root,
+        reports_root=args.reports_root,
+        open_report=bool(args.open_report),
+        no_grade=bool(args.no_grade),
+        force=bool(args.force),
+    )
+    printable = {
+        key: str(value) if isinstance(value, Path) else value
+        for key, value in result.items()
+        if key not in {"warnings"}
+    }
+    printable["warnings"] = result["warnings"]
+    print(json.dumps(printable, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_regenerate_mark_scheme_pngs(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     _configure_runtime_paths(config, Path("."), Path(args.output))
@@ -670,6 +720,10 @@ def cmd_enrich_ai(args: argparse.Namespace) -> int:
 def cmd_topic_route_ai(args: argparse.Namespace) -> int:
     topic_routing.finalize_topic_routing_args(args)
     return topic_routing.run_topic_routing_from_args(args)
+
+
+def cmd_topic_confidence_rescore(args: argparse.Namespace) -> int:
+    return topic_confidence_rescoring.run_topic_confidence_rescoring_from_args(args)
 
 
 def cmd_topic_packets(args: argparse.Namespace) -> int:

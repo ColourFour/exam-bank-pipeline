@@ -2171,9 +2171,13 @@ def _first(value: Any) -> Any:
 
 def _paper_family(record: dict[str, Any]) -> str:
     family = str(record.get("paper_family", "")).strip().lower()
-    if family in {"m1", "p4"}:
+    if family == "pm1":
+        return "p1"
+    if family == "pm3":
+        return "p3"
+    if family in {"mechanics", "m1", "p4"}:
         return "p4"
-    if family in {"s1", "p5"}:
+    if family in {"stats", "statistics", "s1", "p5"}:
         return "p5"
     return family
 

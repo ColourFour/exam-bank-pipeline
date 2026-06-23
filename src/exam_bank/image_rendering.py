@@ -32,6 +32,7 @@ class CropRegion:
     figure_bbox: BoundingBox | None = None
     text_figure_overlap_area: float = 0.0
     text_trimmed_for_figure: bool = False
+    footer_cutoff: dict[str, object] | None = None
 
 
 def render_question_image(
@@ -260,6 +261,8 @@ def _detect_prompt_regions(
         flags.extend(["missing_image_detection_failure", "crop_uncertain"])
     regions, foreign_flags = _trim_regions_at_foreign_question_boundaries(regions, span, layouts, config)
     flags.extend(foreign_flags)
+    regions, footer_flags = _trim_permission_footer_from_regions(regions, layouts, config)
+    flags.extend(footer_flags)
     return regions, sorted(set(flags))
 
 
@@ -1180,6 +1183,7 @@ def _remove_meaningful_region_overlaps(regions: list[CropRegion], config: AppCon
                     figure_bbox=current.figure_bbox,
                     text_figure_overlap_area=max(current.text_figure_overlap_area, overlap),
                     text_trimmed_for_figure=True,
+                    footer_cutoff=current.footer_cutoff,
                 )
             elif overlap > max(12.0, _box_area(current.bbox) * 0.05):
                 flags.append("text_figure_overlap_unresolved")
@@ -1342,6 +1346,208 @@ def _trim_vertical_furniture_from_region(
         bbox=BoundingBox(region.bbox.x0, top, region.bbox.x1, bottom),
         original_bbox=region.original_bbox or region.bbox,
     ), sorted(set(flags))
+
+
+def _trim_permission_footer_from_regions(
+    regions: list[CropRegion],
+    layouts: list[PageLayout],
+    config: AppConfig,
+) -> tuple[list[CropRegion], list[str]]:
+    trimmed: list[CropRegion] = []
+    flags: list[str] = []
+    for region in regions:
+        layout = _layout_by_number(layouts, region.page_number)
+        updated, region_flags = _trim_permission_footer_from_region(region, layout, config)
+        if updated is not None:
+            trimmed.append(updated)
+        flags.extend(region_flags)
+    return trimmed, sorted(set(flags))
+
+
+def _trim_permission_footer_from_region(
+    region: CropRegion,
+    layout: PageLayout,
+    config: AppConfig,
+) -> tuple[CropRegion | None, list[str]]:
+    original_bottom = region.bbox.y1
+    decision = _detect_permission_footer_cutoff(region, layout, config)
+    if decision is None:
+        return replace(
+            region,
+            footer_cutoff={
+                "original_bottom": round(original_bottom, 2),
+                "detected_footer_cutoff_y": None,
+                "reason": "not_detected",
+                "signals": [],
+                "final_bottom": round(region.bbox.y1, 2),
+            },
+        ), []
+
+    cutoff_y, signals, reason = decision
+    padding = max(8.0, min(20.0, config.detection.crop_padding))
+    final_bottom = max(region.bbox.y0, cutoff_y - padding)
+    min_preserved_height = max(config.detection.min_crop_height * 2.0, 60.0)
+    if final_bottom <= region.bbox.y0 + min_preserved_height:
+        if _region_is_permission_footer_only(region, layout):
+            return None, ["permission_footer_region_removed", "permission_footer_trimmed"]
+        return replace(
+            region,
+            footer_cutoff={
+                "original_bottom": round(original_bottom, 2),
+                "detected_footer_cutoff_y": round(cutoff_y, 2),
+                "reason": "skipped_min_preserved_height",
+                "signals": signals,
+                "final_bottom": round(region.bbox.y1, 2),
+            },
+        ), ["permission_footer_trim_skipped_min_height", "crop_uncertain"]
+
+    if not _footer_trim_preserves_region_content(region, final_bottom):
+        return replace(
+            region,
+            footer_cutoff={
+                "original_bottom": round(original_bottom, 2),
+                "detected_footer_cutoff_y": round(cutoff_y, 2),
+                "reason": "skipped_protected_content",
+                "signals": signals,
+                "final_bottom": round(region.bbox.y1, 2),
+            },
+        ), ["permission_footer_trim_skipped_protected_content", "crop_uncertain"]
+
+    if final_bottom >= region.bbox.y1 - 1.0:
+        return replace(
+            region,
+            footer_cutoff={
+                "original_bottom": round(original_bottom, 2),
+                "detected_footer_cutoff_y": round(cutoff_y, 2),
+                "reason": "detected_below_crop",
+                "signals": signals,
+                "final_bottom": round(region.bbox.y1, 2),
+            },
+        ), []
+
+    return replace(
+        region,
+        bbox=BoundingBox(region.bbox.x0, region.bbox.y0, region.bbox.x1, final_bottom),
+        original_bbox=region.original_bbox or region.bbox,
+        footer_cutoff={
+            "original_bottom": round(original_bottom, 2),
+            "detected_footer_cutoff_y": round(cutoff_y, 2),
+            "reason": reason,
+            "signals": signals,
+            "final_bottom": round(final_bottom, 2),
+        },
+    ), ["permission_footer_trimmed"]
+
+
+def _detect_permission_footer_cutoff(
+    region: CropRegion,
+    layout: PageLayout,
+    config: AppConfig,
+) -> tuple[float, list[str], str] | None:
+    if region.bbox.y1 < layout.height * 0.72:
+        return None
+
+    lower_y = layout.height * 0.70
+    phrase_blocks = [
+        block
+        for block in layout.blocks
+        if block.bbox.y0 >= lower_y
+        and _boxes_intersect(region.bbox, block.bbox)
+        and _is_permission_footer_phrase(_clean_text_line(block.text))
+    ]
+    rule = _footer_horizontal_rule(region, layout)
+    dense_blocks = _footer_like_dense_small_text_blocks(region, layout, lower_y)
+
+    if rule is not None:
+        blocks_below_rule = [block for block in phrase_blocks + dense_blocks if block.bbox.y0 >= rule.y0 - 4.0]
+        if phrase_blocks and blocks_below_rule:
+            return rule.y0, ["horizontal_rule", "footer_phrase"], "horizontal_rule_with_footer_phrase"
+        if dense_blocks and blocks_below_rule and _dense_footer_text_is_strong(dense_blocks):
+            return rule.y0, ["horizontal_rule", "dense_small_footer_text"], "horizontal_rule_with_dense_footer_text"
+
+    if phrase_blocks:
+        first_phrase = min(block.bbox.y0 for block in phrase_blocks)
+        return first_phrase, ["footer_phrase"], "footer_phrase"
+
+    return None
+
+
+def _footer_horizontal_rule(region: CropRegion, layout: PageLayout) -> BoundingBox | None:
+    candidates = []
+    for graphic in layout.graphics:
+        if not _boxes_intersect(region.bbox, graphic):
+            continue
+        width = _box_width(graphic)
+        height = _box_height(graphic)
+        if graphic.y0 < layout.height * 0.74:
+            continue
+        if height <= 3.5 and width >= layout.width * 0.45:
+            candidates.append(graphic)
+    if not candidates:
+        return None
+    return min(candidates, key=lambda box: box.y0)
+
+
+def _footer_like_dense_small_text_blocks(region: CropRegion, layout: PageLayout, lower_y: float) -> list[TextBlock]:
+    blocks = []
+    for block in layout.blocks:
+        if block.bbox.y0 < lower_y or not _boxes_intersect(region.bbox, block.bbox):
+            continue
+        text = _clean_text_line(block.text)
+        if not text or _is_permission_footer_phrase(text):
+            blocks.append(block)
+            continue
+        height = _box_height(block.bbox)
+        small_font = block.font_size is not None and block.font_size <= 7.5
+        short_line_height = height <= 10.0
+        if (small_font or short_line_height) and len(text) >= 8:
+            blocks.append(block)
+    return blocks
+
+
+def _dense_footer_text_is_strong(blocks: list[TextBlock]) -> bool:
+    cleaned = [_clean_text_line(block.text) for block in blocks if _clean_text_line(block.text)]
+    if not cleaned:
+        return False
+    return len(cleaned) >= 2 and sum(len(text) for text in cleaned) >= 45
+
+
+def _is_permission_footer_phrase(text: str) -> bool:
+    patterns = [
+        r"\bPermission to reproduce\b",
+        r"\bUCLES\b",
+        r"\bCambridge Assessment\b",
+        r"\bcopyright\b",
+        r"\bLocal Examinations Syndicate\b",
+        r"\bUniversity of Cambridge International Examinations\b",
+    ]
+    return any(re.search(pattern, text, re.IGNORECASE) for pattern in patterns)
+
+
+def _footer_trim_preserves_region_content(region: CropRegion, final_bottom: float) -> bool:
+    protected_boxes = [block.bbox for block in region.text_blocks if not _is_permission_footer_phrase(_clean_text_line(block.text))]
+    protected_boxes.extend(graphic for graphic in region.graphics if graphic.y0 < final_bottom + 1.0)
+    return all(box.y1 <= final_bottom + 1.0 for box in protected_boxes)
+
+
+def _region_is_permission_footer_only(region: CropRegion, layout: PageLayout) -> bool:
+    if region.graphics:
+        return False
+    if not region.text_blocks:
+        return False
+    lower_y = layout.height * 0.70
+    for block in region.text_blocks:
+        text = _clean_text_line(block.text)
+        if block.bbox.y0 < lower_y:
+            return False
+        if _is_permission_footer_phrase(text):
+            continue
+        if block.font_size is not None and block.font_size <= 7.5 and len(text) >= 8:
+            continue
+        if _box_height(block.bbox) <= 10.0 and len(text) >= 8:
+            continue
+        return False
+    return True
 
 
 def _safe_top_furniture_trim(
@@ -1670,6 +1876,7 @@ def _write_crop_metadata(span: QuestionSpan, regions: list[CropRegion], flags: l
                 "figure_bbox_pdf_points": _box_payload(region.figure_bbox) if region.figure_bbox else None,
                 "text_figure_overlap_area": round(region.text_figure_overlap_area, 2),
                 "text_trimmed_for_figure": region.text_trimmed_for_figure,
+                "footer_cutoff": _footer_cutoff_payload(region),
                 "text_blocks": [block.text for block in region.text_blocks],
                 "merged_blocks": len(region.text_blocks),
                 "graphics_count": len(region.graphics),
@@ -2054,6 +2261,7 @@ def _crop_diagnostics(
                 "figure_bbox": _box_payload(region.figure_bbox) if region.figure_bbox else None,
                 "text_figure_overlap_area": round(region.text_figure_overlap_area, 2),
                 "text_trimmed_for_figure": region.text_trimmed_for_figure,
+                "footer_cutoff": _footer_cutoff_payload(region),
                 "merged_blocks": len(region.text_blocks),
                 "graphics_count": len(region.graphics),
                 "duplicate_visual_blocks_removed": region.duplicate_graphics_removed,
@@ -2066,6 +2274,19 @@ def _crop_diagnostics(
 
 def _excluded_region(label: str, box: BoundingBox) -> dict[str, object]:
     return {"label": label, "bbox": _box_payload(box)}
+
+
+def _footer_cutoff_payload(region: CropRegion) -> dict[str, object]:
+    if region.footer_cutoff is not None:
+        return region.footer_cutoff
+    original_bottom = (region.original_bbox or region.bbox).y1
+    return {
+        "original_bottom": round(original_bottom, 2),
+        "detected_footer_cutoff_y": None,
+        "reason": "not_evaluated",
+        "signals": [],
+        "final_bottom": round(region.bbox.y1, 2),
+    }
 
 
 def _box_payload(box: BoundingBox) -> dict[str, float]:

@@ -1,0 +1,16 @@
+{
+  "message_id": "fake-message-duplicate",
+  "thread_id": "fake-thread-f",
+  "received_at": "2026-06-23T17:35:00+08:00",
+  "from_email": "student.three@example.invalid",
+  "from_name": "Student Three",
+  "subject": "p3_vectors_hw1",
+  "body_preview": "Attached is my quiz.",
+  "attachments": [
+    {
+      "filename": "S0003_duplicate_a.pdf",
+      "path": "attachments/duplicate_same_hash.pdf",
+      "content_type": "application/pdf"
+    }
+  ]
+}

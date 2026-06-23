@@ -1,0 +1,16 @@
+{
+  "message_id": "fake-message-valid-filename",
+  "thread_id": "fake-thread-a",
+  "received_at": "2026-06-23T17:12:00+08:00",
+  "from_email": "student.one@example.invalid",
+  "from_name": "Student One",
+  "subject": "p3_vectors_hw1",
+  "body_preview": "Attached is my quiz.",
+  "attachments": [
+    {
+      "filename": "S0001_email_quiz.pdf",
+      "path": "attachments/S0001_email_quiz.pdf",
+      "content_type": "application/pdf"
+    }
+  ]
+}

@@ -324,6 +324,8 @@ Records with failed mapping, failed validation, failed scope, missing image path
 - [Mark-event evidence contract](docs/MARK_EVENTS_CONTRACT.md)
 - [Advisory evidence contract](docs/ADVISORY_EVIDENCE_CONTRACT.md)
 - [Difficulty index contract](docs/DIFFICULTY_INDEX_CONTRACT.md)
+- [Submission tracking contract](docs/SUBMISSION_TRACKING_CONTRACT.md)
+- [Submission privacy boundaries](docs/SUBMISSION_PRIVACY_BOUNDARIES.md)
 - [AI-assisted enrichment](docs/AI_ASSISTED_ENRICHMENT.md)
 - [Triage workflow](docs/TRIAGE_WORKFLOW.md)
 - [Auto-triage workflow](docs/AUTO_TRIAGE.md)

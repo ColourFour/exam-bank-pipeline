@@ -214,6 +214,71 @@ Acceptance:
 - Archive decisions are documented.
 - No current export or image tree is deleted during doc or hygiene work.
 
+### 8. Automated Assignment Submission / Grading Assets
+
+Purpose: prepare a local-first path for assignment submission tracking and later teacher-reviewed grading without coupling private student data to canonical exam-bank generation, Asterion exports, or student-runtime content.
+
+Current readiness status: the repo has strong reusable assets for canonical question/mark-scheme images, topic metadata, PDF handling, advisory mark events, reviewed-rubric gating, JSON sidecars, CSV-style reports, and audit patterns. It does not yet have roster, assignment, submission, email intake, reminder, feedback-draft, per-student grading-result, or outgoing-message audit models. See `reports/AUTOMATED_GRADING_READINESS_REVIEW_2026_06_22.md` for the readiness review.
+
+Implementation phases:
+
+- Phase 0 - Contracts and privacy guardrails: add a submission-tracking contract doc, confirm ignored private storage roots, and define fixture rules with fake names, fake emails, and no real submissions.
+- Phase 1 - Local submission tracker v1: support assignment JSON, roster CSV/JSON, local folder PDF ingest, PDF validation, student matching, submitted/missing/rejected/late status, CSV completion export, JSONL audit log, and draft acknowledgement/resend/reminder text only.
+- Phase 2 - Teacher review and grading preparation: implemented; adds a submission review queue, placeholder grading-result model, and manual teacher notes without sending student-facing grade emails.
+- Phase 3 - Draft automated grading: implemented as a draft-only layer; performs safe native PDF extraction, writes teacher-facing draft grading artifacts, audits legacy salvage decisions, and fails closed with null scores when extraction, reviewed-rubric, question, or deterministic answer mapping is weak.
+- Phase 4 - Email intake: add inbound email connector support, attachment validation, duplicate/resend handling, and acknowledgement draft generation; do not live-send messages until explicitly approved.
+- Phase 5 - Controlled outgoing email: add a teacher-approved outgoing queue for reminder emails, submission acknowledgements, and individual feedback emails with a full outgoing audit log.
+- Phase 6 - High-confidence automation: allow auto-send only for explicitly allowed cases, keep low-confidence items teacher-review-only, and route mistake summaries into Asterion repair lanes when appropriate.
+
+Explicit v1 non-goals:
+
+- No live email sending.
+- No Gmail, Outlook, SMTP, or IMAP integration.
+- No OCR for submission scoring.
+- No final or student-facing automated grading.
+- No real student data in fixtures or committed artifacts.
+- No changes to Asterion exports, canonical question-bank generation, or production extraction behavior.
+
+Privacy boundaries:
+
+- Keep real rosters, submissions, grades, and email addresses out of git.
+- Store accepted PDFs and generated private reports only under ignored local roots.
+- Use fake names and reserved fake email domains in fixtures.
+- Generate outgoing messages as drafts with `send_allowed=false` until a teacher-approved outgoing queue exists.
+- Keep student submission data separate from Asterion/static-site exports.
+
+Verification expectations:
+
+- For roadmap/doc-only changes, run `git diff --check`.
+- For v1 implementation, add focused tests before behavior: model loading, PDF validation, student matching, duplicate handling, late status, completion CSV export, audit JSONL, and draft message generation.
+- Do not require the full extraction/rendering suite for docs-only changes.
+
+Next Build Tasks:
+
+1. Add `docs/SUBMISSION_TRACKING_CONTRACT.md`.
+2. Add `.gitignore` protections for private submission roots if missing.
+3. Add `src/exam_bank/submissions/models.py`.
+4. Add local assignment/roster fixtures using fake data only.
+5. Add PDF validation and completion report tests before implementation.
+
+V1 acceptance criteria:
+
+- A fake roster can be loaded.
+- A fake assignment can be loaded.
+- A local folder of test PDFs can be ingested.
+- Invalid files are rejected with reasons.
+- Missing students are reported.
+- Late submissions are marked.
+- Duplicate submissions are handled deterministically.
+- A completion CSV is exported.
+- An audit JSONL is written.
+- Acknowledgement, resend, and reminder drafts are generated but not sent.
+- No real emails are sent.
+- No real student data is committed.
+- Tests pass, or unrelated existing failures are documented.
+
+Next concrete implementation task: write `docs/SUBMISSION_TRACKING_CONTRACT.md` with schema boundaries, private-storage rules, fixture rules, v1 CLI scope, and fail-closed behavior before adding any ingestion code.
+
 ## Deferred Work
 
 These items are still valuable but should wait until the active priorities above are stable:

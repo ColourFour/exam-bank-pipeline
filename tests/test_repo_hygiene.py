@@ -101,6 +101,53 @@ def test_generated_agent_and_report_artifacts_are_ignored() -> None:
     assert manifest_check.stdout == ""
 
 
+def test_submission_private_roots_are_gitignored() -> None:
+    ignored_check = subprocess.run(
+        [
+            "git",
+            "check-ignore",
+            "--no-index",
+            "data/submissions/roster.csv",
+            "data/submissions/student-work.pdf",
+            "output/submissions/completion.csv",
+            "output/submissions/drafts/reminder.txt",
+            "reports/submissions/audit.jsonl",
+            "reports/submissions/run-summary.json",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert set(ignored_check.stdout.splitlines()) == {
+        "data/submissions/roster.csv",
+        "data/submissions/student-work.pdf",
+        "output/submissions/completion.csv",
+        "output/submissions/drafts/reminder.txt",
+        "reports/submissions/audit.jsonl",
+        "reports/submissions/run-summary.json",
+    }
+
+    placeholder_check = subprocess.run(
+        [
+            "git",
+            "check-ignore",
+            "--no-index",
+            "data/submissions/.gitkeep",
+            "output/submissions/.gitkeep",
+            "reports/submissions/.gitkeep",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert placeholder_check.returncode == 1
+    assert placeholder_check.stdout == ""
+
+
+def test_submission_contract_docs_exist() -> None:
+    assert Path("docs/SUBMISSION_TRACKING_CONTRACT.md").is_file()
+    assert Path("docs/SUBMISSION_PRIVACY_BOUNDARIES.md").is_file()
+
+
 def test_os_and_python_cache_junk_is_absent_and_ignored() -> None:
     visible_files = subprocess.run(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard"],

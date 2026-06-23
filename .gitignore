@@ -18,11 +18,20 @@ output/*
 output/json/*
 !output/json/.gitkeep
 !output/json/asset_manifest.v1.json
+!output/submissions/
+output/submissions/*
+!output/submissions/.gitkeep
 output_ocr_candidate/
 reports/*
 !reports/.gitkeep
 !reports/asterion_export_release_manifest*.json
 !reports/asterion_export_release_provenance*.json
+!reports/SUBMISSION_DRAFT_GRADING_SALVAGE_AUDIT_2026_06_22.md
+!reports/SUBMISSION_PHASE_0_3_READINESS_AUDIT_2026_06_22.md
+!reports/SUBMISSION_PHASE_4_BLOCKER_REDUCTION_2026_06_22.md
+!reports/submissions/
+reports/submissions/*
+!reports/submissions/.gitkeep
 .agent-runs/
 repo_file_inventory.txt
 generated_output_inventory.txt
@@ -38,6 +47,10 @@ output_cleanup_plan.md
 
 # Legacy/generated practice output
 practice/
+
+# Private local submission data
+data/submissions/*
+!data/submissions/.gitkeep
 
 # OS/editor
 .DS_Store

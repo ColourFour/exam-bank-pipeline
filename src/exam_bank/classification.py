@@ -255,7 +255,7 @@ def _local_classify(
     candidates.sort(key=lambda item: item.score, reverse=True)
 
     flags: list[str] = list(family_decision.review_flags)
-    if _text_quality_is_low(normalized) or any(flag.startswith("ocr") or "short_question_text" in flag for flag in context_flags):
+    if _text_quality_is_low(normalized) or _context_flags_indicate_weak_question_text(context_flags):
         flags.append("topic_uncertain_low_quality_text")
         flags.append("weak_question_text")
     if mark_scheme_text and _text_quality_is_low(evidence_sources["mark_scheme"]):
@@ -1575,3 +1575,17 @@ def _text_quality_is_low(text: str) -> bool:
         return True
     replacement_markers = text.count("?") + text.count("\ufffd")
     return replacement_markers >= 4
+
+
+def _context_flags_indicate_weak_question_text(context_flags: list[str]) -> bool:
+    weak_flags = {
+        "ocr_large_margin_blocked_by_structural_rejection",
+        "ocr_question_crop_failed",
+    }
+    for flag in context_flags:
+        text = str(flag)
+        if "short_question_text" in text:
+            return True
+        if text in weak_flags:
+            return True
+    return False
