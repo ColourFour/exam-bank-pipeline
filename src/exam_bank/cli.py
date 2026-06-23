@@ -116,6 +116,18 @@ def build_parser() -> argparse.ArgumentParser:
     quiz_packet.add_argument("--force", action="store_true", help="Regenerate assignment.json even if it already exists.")
     quiz_packet.set_defaults(func=cmd_quiz_packet)
 
+    grade_quiz_bma = subparsers.add_parser(
+        "grade-quiz-bma",
+        help="Build evidence-based B/M/A visual-first grading matrix artifacts for a local quiz packet.",
+    )
+    grade_quiz_bma.add_argument("--assignment-id", required=True, help="Assignment ID under output/submissions.")
+    grade_quiz_bma.add_argument("--submission-output-root", type=Path, default=Path("output/submissions"))
+    grade_quiz_bma.add_argument("--reports-root", type=Path, default=Path("reports/submissions"))
+    grade_quiz_bma.add_argument("--mode", default="visual-first", choices=["visual-first"])
+    grade_quiz_bma.add_argument("--open-report", action="store_true")
+    grade_quiz_bma.add_argument("--allow-suspicious-full-marks", action="store_true")
+    grade_quiz_bma.set_defaults(func=cmd_grade_quiz_bma)
+
     regenerate_mark_schemes = subparsers.add_parser(
         "regenerate-mark-scheme-pngs",
         help="Regenerate mark-scheme PNG crops from an existing question_bank.json by question ID or sample filter.",
@@ -503,6 +515,62 @@ def build_parser() -> argparse.ArgumentParser:
     summary_diff.add_argument("before", help="Earlier export or sidecar JSON path.")
     summary_diff.add_argument("after", help="Later comparable export or sidecar JSON path.")
     summary_diff.set_defaults(func=cmd_export_summary_diff)
+
+    email_check = subparsers.add_parser(
+        "email-check",
+        help="Check a configured email provider connection without sending student messages.",
+    )
+    email_check.add_argument("--provider", default="", help="Email provider name, e.g. outlook-cn.")
+    email_check.add_argument("--from", dest="from_address", default="", help="Requested sender/account address for providers that support it.")
+    email_check.add_argument("--allow-partial", action="store_true", help="Exit successfully if only SMTP or IMAP succeeds.")
+    email_check.set_defaults(func=cmd_email_check)
+
+    email_send_test = subparsers.add_parser(
+        "email-send-test",
+        help="Send exactly one controlled smoke-test email.",
+    )
+    email_send_test.add_argument("--provider", default="", help="Email provider name, e.g. outlook-cn.")
+    email_send_test.add_argument("--from", dest="from_address", default="", help="Requested sender/account address.")
+    email_send_test.add_argument("--to", required=True, help="Single smoke-test recipient.")
+    email_send_test.add_argument("--subject", required=True, help='Subject. Must contain "Smoke Test" by default.')
+    email_send_test.add_argument("--body", required=True, help="Plain-text smoke-test body.")
+    email_send_test.add_argument("--allow-non-smoke-subject", action="store_true")
+    email_send_test.add_argument("--dry-run", action="store_true")
+    email_send_test.add_argument("--attachment", dest="attachments", type=Path, action="append", default=[])
+    email_send_test.add_argument("--cc", default="")
+    email_send_test.add_argument("--bcc", default="")
+    email_send_test.add_argument("--assignment-id", default="")
+    email_send_test.add_argument("--roster-file", type=Path, default=None)
+    email_send_test.add_argument("--score-file", type=Path, default=None)
+    email_send_test.add_argument("--allow-default-mail-account", action="store_true")
+    email_send_test.set_defaults(func=cmd_email_send_test)
+
+    email_receive_test = subparsers.add_parser(
+        "email-receive-test",
+        help="Search provider mailbox for a controlled smoke-test email.",
+    )
+    email_receive_test.add_argument("--provider", default="", help="Email provider name, e.g. outlook-cn.")
+    email_receive_test.add_argument("--query", required=True, help="Safe subject/token query.")
+    email_receive_test.add_argument("--limit", type=int, default=5)
+    email_receive_test.add_argument("--assignment-id", default="")
+    email_receive_test.add_argument("--roster-file", type=Path, default=None)
+    email_receive_test.add_argument("--score-file", type=Path, default=None)
+    email_receive_test.set_defaults(func=cmd_email_receive_test)
+
+    email_smoke_test = subparsers.add_parser(
+        "email-smoke-test",
+        help="Run the full controlled email smoke test and write local reports.",
+    )
+    email_smoke_test.add_argument("--provider", default="", help="Email provider name, e.g. outlook-cn.")
+    email_smoke_test.add_argument("--from", dest="from_address", default="", help="Requested sender/account address.")
+    email_smoke_test.add_argument("--to", required=True, help="Single smoke-test recipient.")
+    email_smoke_test.add_argument("--open-report", action="store_true")
+    email_smoke_test.add_argument("--attachment", dest="attachments", type=Path, action="append", default=[])
+    email_smoke_test.add_argument("--assignment-id", default="")
+    email_smoke_test.add_argument("--roster-file", type=Path, default=None)
+    email_smoke_test.add_argument("--score-file", type=Path, default=None)
+    email_smoke_test.add_argument("--allow-default-mail-account", action="store_true")
+    email_smoke_test.set_defaults(func=cmd_email_smoke_test)
     return parser
 
 
@@ -606,6 +674,170 @@ def cmd_quiz_packet(args: argparse.Namespace) -> int:
     printable["warnings"] = result["warnings"]
     print(json.dumps(printable, indent=2, sort_keys=True))
     return 0
+
+
+def cmd_grade_quiz_bma(args: argparse.Namespace) -> int:
+    from exam_bank.submissions.bma_grading import build_bma_grading_matrix
+
+    result = build_bma_grading_matrix(
+        assignment_id=args.assignment_id,
+        submission_output_root=args.submission_output_root,
+        reports_root=args.reports_root,
+        mode=args.mode,
+        allow_suspicious_full_marks=bool(args.allow_suspicious_full_marks),
+        open_report=bool(args.open_report),
+    )
+    printable = {
+        key: str(value) if isinstance(value, Path) else value
+        for key, value in result.items()
+        if key not in {"summary"}
+    }
+    printable["summary"] = result["summary"]
+    print(json.dumps(printable, indent=2, sort_keys=True))
+    return int(result["exit_code"])
+
+
+def cmd_email_check(args: argparse.Namespace) -> int:
+    from exam_bank.emailing.providers import build_email_provider
+
+    try:
+        provider = build_email_provider(args.provider or None)
+        _configure_email_provider_from_args(provider, args)
+        status = provider.check_connection()
+    except ValueError as exc:
+        print(f"Email check failed: {exc}")
+        return 2
+    print(json.dumps(status.to_dict(), indent=2, sort_keys=True))
+    if status.smtp_ok and status.imap_ok and status.error_code is None:
+        return 0
+    if args.allow_partial and (status.smtp_ok or status.imap_ok):
+        return 0
+    return 1
+
+
+def cmd_email_send_test(args: argparse.Namespace) -> int:
+    from exam_bank.emailing.providers import build_email_provider
+    from exam_bank.emailing.smoke import DEFAULT_REPORTS_ROOT, EmailSmokeSafetyError, validate_smoke_send_request, write_audit_event
+
+    try:
+        validate_smoke_send_request(
+            to=args.to,
+            subject=args.subject,
+            attachments=list(args.attachments or []),
+            allow_non_smoke_subject=bool(args.allow_non_smoke_subject),
+            assignment_id=args.assignment_id or None,
+            roster_file=args.roster_file,
+            score_file=args.score_file,
+            cc=args.cc or None,
+            bcc=args.bcc or None,
+        )
+        provider = build_email_provider(args.provider or None)
+        _configure_email_provider_from_args(provider, args)
+        result = provider.send_message(
+            to=args.to,
+            subject=args.subject,
+            body_text=args.body,
+            from_address=args.from_address or None,
+            attachments=None,
+            dry_run=bool(args.dry_run),
+        )
+    except EmailSmokeSafetyError as exc:
+        print(f"Email send blocked: {exc}")
+        return 2
+    except ValueError as exc:
+        print(f"Email send failed: {exc}")
+        return 2
+    write_audit_event(
+        event_type="email_send_test",
+        provider=result.provider,
+        subject=result.subject,
+        recipient=result.to,
+        dry_run=result.dry_run,
+        status="sent" if result.sent else "dry_run" if result.dry_run and result.error_code is None else "failed",
+        error_code=result.error_code,
+        provider_message_id=result.provider_message_id,
+        reports_root=DEFAULT_REPORTS_ROOT,
+    )
+    print(json.dumps(result.to_dict(), indent=2, sort_keys=True))
+    return 0 if result.error_code is None and (result.sent or result.dry_run) else 1
+
+
+def cmd_email_receive_test(args: argparse.Namespace) -> int:
+    from exam_bank.emailing.providers import build_email_provider
+    from exam_bank.emailing.smoke import DEFAULT_REPORTS_ROOT, EmailSmokeSafetyError, safe_summary_dict, validate_smoke_send_request, write_audit_event
+
+    try:
+        validate_smoke_send_request(
+            to="smoke@example.invalid",
+            subject="Smoke Test receive safety check",
+            assignment_id=args.assignment_id or None,
+            roster_file=args.roster_file,
+            score_file=args.score_file,
+        )
+        provider = build_email_provider(args.provider or None)
+        messages = provider.search_messages(query=args.query, limit=args.limit)
+    except EmailSmokeSafetyError as exc:
+        print(f"Email receive blocked: {exc}")
+        return 2
+    except RuntimeError as exc:
+        code = str(exc) or "imap_login_failed"
+        write_audit_event(
+            event_type="email_receive_test",
+            provider=args.provider or "",
+            subject=args.query,
+            status="failed",
+            error_code=code,
+            reports_root=DEFAULT_REPORTS_ROOT,
+        )
+        print(json.dumps({"provider": args.provider or "", "ok": False, "error_code": code}, indent=2, sort_keys=True))
+        return 1
+    except ValueError as exc:
+        print(f"Email receive failed: {exc}")
+        return 2
+    write_audit_event(
+        event_type="email_receive_test",
+        provider=provider.provider_name,
+        subject=args.query,
+        status="found" if messages else "not_found",
+        reports_root=DEFAULT_REPORTS_ROOT,
+    )
+    print(json.dumps({"provider": provider.provider_name, "matches": [safe_summary_dict(message) for message in messages]}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_email_smoke_test(args: argparse.Namespace) -> int:
+    from exam_bank.emailing.providers import build_email_provider
+    from exam_bank.emailing.smoke import EmailSmokeSafetyError, run_email_smoke_test, validate_smoke_send_request
+
+    try:
+        validate_smoke_send_request(
+            to=args.to,
+            subject="Exam Bank Email Smoke Test",
+            attachments=list(args.attachments or []),
+            assignment_id=args.assignment_id or None,
+            roster_file=args.roster_file,
+            score_file=args.score_file,
+        )
+        provider = build_email_provider(args.provider or None)
+        _configure_email_provider_from_args(provider, args)
+        report = run_email_smoke_test(provider=provider, to=args.to, from_address=args.from_address or None, open_report=bool(args.open_report))
+    except EmailSmokeSafetyError as exc:
+        print(f"Email smoke test blocked: {exc}")
+        return 2
+    except ValueError as exc:
+        print(f"Email smoke test failed: {exc}")
+        return 2
+    print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
+    print(f"Smoke report: {report.report_path}")
+    return 0 if report.smtp_ok and report.imap_ok and report.send_ok and report.receive_ok else 1
+
+
+def _configure_email_provider_from_args(provider: object, args: argparse.Namespace) -> None:
+    from_address = getattr(args, "from_address", "") or None
+    if from_address is not None and hasattr(provider, "requested_from_address"):
+        setattr(provider, "requested_from_address", from_address)
+    if hasattr(provider, "allow_default_mail_account"):
+        setattr(provider, "allow_default_mail_account", bool(getattr(args, "allow_default_mail_account", False)))
 
 
 def cmd_regenerate_mark_scheme_pngs(args: argparse.Namespace) -> int:
