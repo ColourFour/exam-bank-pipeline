@@ -138,6 +138,7 @@ def build_assignment_schedule(
     assignment_dir = paths.assignments_dir / _safe_segment(assignment_id)
     assignment_path = assignment_dir / "assignment.json"
     assignment = load_assignment(assignment_path)
+    assignment_label = _assignment_label(assignment.title, assignment_id)
     roster = [student for student in load_roster(paths.roster_path) if student.class_id == class_id and student.active]
     effective_send_at = send_at or datetime.now(timezone.utc)
     schedule: list[dict[str, object]] = []
@@ -154,10 +155,10 @@ def build_assignment_schedule(
                 effective_send_at,
                 "scheduled",
                 "",
-                subject=f"{assignment.title}",
+                subject=assignment_label,
                 body_text=(
                     f"Hello {student.display_name},\n\n"
-                    f"Please complete the attached assignment: {assignment.title}.\n"
+                    f"Please complete the attached assignment: {assignment_label}.\n"
                     f"Due: {assignment.due_at.isoformat() if assignment.due_at else 'not set'}.\n\n"
                     "Reply to this email with your completed PDF attached."
                 ),
@@ -176,10 +177,10 @@ def build_assignment_schedule(
                         scheduled_at,
                         "scheduled",
                         "",
-                        subject=f"Reminder: {assignment.title} due in {hours} hours",
+                        subject=f"Reminder: {assignment_label} due in {hours} hours",
                         body_text=(
                             f"Hello {student.display_name},\n\n"
-                            f"Our records do not yet show your submission for {assignment.title}. "
+                            f"Our records do not yet show your submission for {assignment_label}. "
                             f"It is due at {assignment.due_at.isoformat()}."
                         ),
                     )
@@ -569,3 +570,10 @@ def _safe_segment(value: str) -> str:
     if not normalized:
         raise ValueError("Identifier cannot be empty")
     return normalized
+
+
+def _assignment_label(title: str, assignment_id: str) -> str:
+    cleaned = str(title or assignment_id).strip()
+    if cleaned.lower().startswith("assignment:"):
+        return cleaned
+    return f"assignment: {cleaned}"

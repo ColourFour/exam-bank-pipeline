@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam Bank Classroom</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside id="classSidebar" class="sidebar" aria-label="Class sidebar">
+        <div class="sidebar-head">
+          <div>
+            <h1>Exam Bank</h1>
+            <p id="classCount" class="muted">No classes loaded</p>
+          </div>
+        </div>
+        <button id="showAddClassBtn" class="button add-class-button" type="button">+ Add class</button>
+        <section id="addClassPanel" class="add-class-modal" role="dialog" aria-modal="true" aria-labelledby="addClassTitle" hidden>
+          <div class="card-head">
+            <h3 id="addClassTitle">Add Class</h3>
+            <button class="icon-button" type="button" data-hide="addClassPanel">x</button>
+          </div>
+          <form id="classForm" class="stack-form">
+            <label>Class ID<input name="class_id" required placeholder="class_12a"></label>
+            <label>Display name<input name="display_name" placeholder="Class 12A"></label>
+            <label>Course ID<input name="course_id" value="p3"></label>
+            <label>Teacher email<input name="teacher_email" value="brooker@rdfzcygj.cn"></label>
+            <label>Timezone<input name="timezone" value="Asia/Shanghai"></label>
+            <button class="button primary" type="submit">Create class</button>
+          </form>
+        </section>
+        <div id="classList" class="class-list"></div>
+        <div class="sidebar-footer">
+          <span class="status-pill">Local only</span>
+          <button id="refreshBtn" class="button ghost" type="button">Refresh</button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div id="emptyState" class="empty-state">
+          <h2>Select a class</h2>
+          <p>Open a class from the left rail to manage rosters, assignments, submissions, and teacher-triggered email.</p>
+        </div>
+
+        <section id="classWorkspace" hidden>
+          <div class="workspace-head">
+            <div>
+              <p class="eyebrow">Selected class</p>
+              <h2 id="classTitle">Class</h2>
+              <p id="classCourseMeta" class="muted"></p>
+            </div>
+            <div id="classSummary" class="metric-row"></div>
+            <div class="class-actions">
+              <button id="showAddAssignmentBtn" class="button primary" type="button">Add assignment</button>
+              <button id="editClassRosterBtn" class="button secondary" type="button">Edit roster</button>
+              <details class="more-menu">
+                <summary class="button secondary">More</summary>
+                <div class="more-menu-panel">
+                  <a class="button secondary" href="/api/reports/" target="_blank" rel="noreferrer">Open reports</a>
+                  <button id="deleteClassBtn" class="button danger" type="button">Delete class</button>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <nav class="tabs" aria-label="Class sections">
+            <button class="tab" type="button" data-tab="overview">Overview</button>
+            <button class="tab" type="button" data-tab="roster">Roster</button>
+            <button class="tab" type="button" data-tab="assignments">Assignments</button>
+            <button class="tab" type="button" data-tab="submissions">Submissions</button>
+            <button class="tab" type="button" data-tab="email">Email</button>
+            <button class="tab" type="button" data-tab="reports">Reports</button>
+          </nav>
+
+          <section id="overviewTab" class="tab-panel">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Class Overview</h3>
+                  <p class="muted">Assignments and submission status at a glance.</p>
+                </div>
+              </div>
+              <div id="overviewAssignments" class="assignment-grid"></div>
+            </div>
+          </section>
+
+          <section id="rosterTab" class="tab-panel" hidden>
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Roster</h3>
+                  <p id="rosterSummary" class="muted">Open the roster to edit student rows.</p>
+                </div>
+                <div class="button-row">
+                  <button id="toggleRosterBtn" class="button secondary" type="button">Open roster</button>
+                  <button id="exportRosterBtn" class="button secondary" type="button">Export CSV</button>
+                </div>
+              </div>
+              <div id="rosterEditor" hidden>
+                <div class="table-wrap">
+                  <table id="rosterTable">
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Email</th><th>Active</th><th></th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div class="button-row">
+                  <button id="addStudentBtn" class="button secondary" type="button">Add student row</button>
+                  <button id="saveRosterBtn" class="button primary" type="button">Save roster</button>
+                  <label class="button secondary file-button">Import CSV<input id="importRosterInput" type="file" accept=".csv"></label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="assignmentsTab" class="tab-panel" hidden>
+            <section id="assignmentFormPanel" class="card" hidden>
+              <div class="card-head">
+                <h3>Add Assignment</h3>
+                <button class="button secondary" type="button" data-hide="assignmentFormPanel">Cancel</button>
+              </div>
+              <form id="assignmentForm" class="grid-form">
+                <label>Assignment ID<input name="assignment_id" required placeholder="hw1"></label>
+                <label>Title<input name="title" required placeholder="test 1 - topic - content"></label>
+                <label>PDF<input name="pdf" type="file" accept="application/pdf,.pdf" required></label>
+                <label>Send date/time<input name="send_at" type="datetime-local" required></label>
+                <label>Due date/time<input name="due_at" type="datetime-local" required></label>
+                <label>Timezone<input name="timezone" value="Asia/Shanghai"></label>
+                <button class="button primary" type="submit">Save assignment</button>
+              </form>
+            </section>
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Assignments</h3>
+                  <p class="muted">Open an assignment for submission intake and email actions.</p>
+                </div>
+                <button class="button primary" type="button" data-show="assignmentFormPanel">Add assignment</button>
+              </div>
+              <div id="assignmentList" class="assignment-grid"></div>
+            </div>
+          </section>
+
+          <section id="submissionsTab" class="tab-panel" hidden>
+            <div class="card submissions-card">
+              <div class="card-head">
+                <div>
+                  <h3>Submissions</h3>
+                  <p class="muted">Pull or upload completed PDFs, then ingest to update the roster.</p>
+                </div>
+              </div>
+              <div id="submissionAssignmentSummary" class="selected-assignment muted">Open an assignment first.</div>
+              <div class="button-row">
+                <label class="button secondary file-button">Upload submission PDFs<input id="submissionFiles" type="file" accept="application/pdf,.pdf" multiple></label>
+                <button id="ingestBtn" class="button secondary" type="button">Ingest inbox folder</button>
+                <button id="ingestMailBtn" class="button secondary" type="button">Pull PDFs from Mail.app</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="emailTab" class="tab-panel" hidden>
+            <div id="assignmentDetailPanel" class="detail-grid" hidden>
+              <article class="card">
+                <div class="card-head">
+                  <div>
+                    <h3 id="assignmentTitle">Assignment</h3>
+                    <p id="assignmentMeta" class="muted"></p>
+                  </div>
+                  <a id="assignmentPdfLink" class="button secondary" href="#" target="_blank" rel="noreferrer">Open PDF</a>
+                </div>
+                <div id="assignmentSummary" class="metric-row"></div>
+              </article>
+
+              <article class="card">
+                <div class="card-head">
+                  <div>
+                    <h3>Assignment Email</h3>
+                    <p class="muted">Nothing sends until you press a send button and confirm.</p>
+                  </div>
+                  <span id="emailStatusBadge" class="badge">not sent</span>
+                </div>
+                <div id="assignmentEmailPreview" class="preview-grid"></div>
+                <div class="button-row">
+                  <button id="sendLaterBtn" class="button secondary" type="button">Send later</button>
+                  <button id="sendNowBtn" class="button primary" type="button">Send now</button>
+                </div>
+              </article>
+
+              <article class="card receipt-card">
+                <div class="card-head">
+                  <div>
+                    <h3>Submission Receipts</h3>
+                    <p class="muted">Receipts go only to submitted students. Scores, feedback, and attachments are not included.</p>
+                  </div>
+                </div>
+                <div id="receiptPreview" class="preview-grid"></div>
+                <div class="button-row">
+                  <button id="receiptLaterBtn" class="button secondary" type="button">Send later</button>
+                  <button id="receiptNowBtn" class="button primary" type="button">Send now</button>
+                </div>
+              </article>
+            </div>
+            <div id="noAssignmentEmailState" class="empty-state compact">
+              <h3>Open an assignment</h3>
+              <p>Email controls appear only for the selected assignment.</p>
+            </div>
+          </section>
+
+          <section id="reportsTab" class="tab-panel" hidden>
+            <div class="card">
+              <div class="card-head">
+                <h3>Reports</h3>
+                <button id="refreshReportsBtn" class="button secondary" type="button">Refresh reports</button>
+              </div>
+              <div id="reportLinks" class="report-list"></div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <div id="confirmModal" class="modal-backdrop" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <div>
+            <p id="modalEyebrow" class="eyebrow">Confirm</p>
+            <h2 id="modalTitle">Confirm send</h2>
+          </div>
+          <button id="modalCloseBtn" class="icon-button" type="button">x</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+        <label class="confirm-line"><input id="modalConfirmCheckbox" type="checkbox"> <span id="modalConfirmText">I understand this action.</span></label>
+        <label id="modalSendTextWrap" class="confirm-text" hidden><span id="modalRequiredTextLabel">Type SEND</span><input id="modalSendText"></label>
+        <div class="modal-actions">
+          <button id="modalCancelBtn" class="button secondary" type="button">Cancel</button>
+          <button id="modalConfirmBtn" class="button primary" type="button">Confirm</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

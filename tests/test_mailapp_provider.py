@@ -81,6 +81,29 @@ def test_mailapp_provider_allows_default_account_when_explicit() -> None:
     assert "-- Continue with Mail.app default sender" in scripts[0]
 
 
+def test_mailapp_provider_sends_absolute_attachment_paths(tmp_path) -> None:
+    attachment = tmp_path / "assignment.pdf"
+    attachment.write_bytes(b"%PDF-1.4\n")
+    scripts: list[str] = []
+
+    def runner(script: str) -> MailAppCommandResult:
+        scripts.append(script)
+        return MailAppCommandResult(returncode=0, stdout="", stderr="")
+
+    provider = MailAppEmailProvider(runner=runner)
+
+    result = provider.send_message(
+        to="brooker@rdfzcygj.cn",
+        subject="assignment: test 1 - topic - content",
+        body_text="body",
+        attachments=[attachment],
+    )
+
+    assert result.sent is True
+    assert str(attachment.resolve()) in scripts[0]
+    assert "delay 2" in scripts[0]
+
+
 def test_mailapp_receive_unsupported_is_reported_honestly() -> None:
     def runner(script: str) -> MailAppCommandResult:
         return MailAppCommandResult(returncode=1, stdout="", stderr="Can't get messages of mailbox")
@@ -93,6 +116,21 @@ def test_mailapp_receive_unsupported_is_reported_honestly() -> None:
         assert str(exc) == "mailapp_search_unsupported"
     else:
         raise AssertionError("Expected receive/search unsupported error")
+
+
+def test_mailapp_search_reports_attachment_presence() -> None:
+    def runner(script: str) -> MailAppCommandResult:
+        return MailAppCommandResult(
+            returncode=0,
+            stdout="msg-1\tTeacher <brooker@rdfzcygj.cn>\tassignment: test 1 - topic - content\t\t1\tbody\n",
+            stderr="",
+        )
+
+    provider = MailAppEmailProvider(runner=runner)
+
+    messages = provider.search_messages(query="assignment: test 1 - topic - content", limit=5)
+
+    assert messages[0].has_attachments is True
 
 
 def test_mailapp_connection_verifies_requested_account() -> None:

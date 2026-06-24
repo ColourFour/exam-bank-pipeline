@@ -101,6 +101,7 @@ class MailAppEmailProvider:
         missing_attachments = [path for path in attachments or [] if not path.exists()]
         if missing_attachments:
             return _send_error(to, subject, sent_at, "attachment_missing", from_address=requested_from, dry_run=dry_run)
+        resolved_attachments = [path.expanduser().resolve() for path in attachments or []]
         if dry_run:
             return EmailSendResult(
                 provider=self.provider_name,
@@ -118,7 +119,7 @@ class MailAppEmailProvider:
             subject=subject,
             body_text=body_text,
             from_address=requested_from,
-            attachments=attachments or [],
+            attachments=resolved_attachments,
             allow_default_mail_account=self.allow_default_mail_account,
         )
         result = self._runner(script)
@@ -154,7 +155,13 @@ class MailAppEmailProvider:
             fields = line.split("\t")
             if len(fields) < 5:
                 continue
-            message_id, sender, subject, date_text, snippet = fields[:5]
+            message_id, sender, subject, date_text = fields[:4]
+            if len(fields) > 5 and fields[4].strip().isdigit():
+                attachment_count = _parse_int(fields[4])
+                snippet = fields[5]
+            else:
+                snippet = fields[4]
+                attachment_count = _parse_int(fields[5]) if len(fields) > 5 else 0
             messages.append(
                 EmailMessageSummary(
                     provider=self.provider_name,
@@ -164,7 +171,7 @@ class MailAppEmailProvider:
                     subject=subject,
                     date=_parse_mailapp_date(date_text),
                     snippet=snippet[:240],
-                    has_attachments=False,
+                    has_attachments=attachment_count > 0,
                 )
             )
         return messages[:limit]
@@ -254,6 +261,7 @@ def build_mailapp_send_script(
             make new attachment with properties {{file name:attachmentFile{index}}} at after last paragraph
         end tell
 """.rstrip()
+    attachment_delay = "\n        delay 2" if attachments else ""
     return f"""
 tell application "Mail"
     set newMessage to make new outgoing message with properties {{subject:{_as_applescript_string(subject)}, content:{_as_applescript_string(body_text)}, visible:false}}
@@ -261,6 +269,7 @@ tell application "Mail"
         make new to recipient at end of to recipients with properties {{address:{_as_applescript_string(to)}}}
 {sender_block}
 {attachment_block}
+{attachment_delay}
         send
         try
             return message id
@@ -286,7 +295,11 @@ tell application "Mail"
                 set foundMessages to messages of eachMailbox whose subject contains queryText
                 repeat with eachMessage in foundMessages
                     if (count of matchedLines) is greater than or equal to {safe_limit} then exit repeat
-                    set lineFields to {{message id of eachMessage as text, sender of eachMessage as text, subject of eachMessage as text, date received of eachMessage as text, content of eachMessage as text}}
+                    set attachmentCount to 0
+                    repeat with eachAttachment in mail attachments of eachMessage
+                        set attachmentCount to attachmentCount + 1
+                    end repeat
+                    set lineFields to {{message id of eachMessage as text, sender of eachMessage as text, subject of eachMessage as text, date received of eachMessage as text, attachmentCount as text, content of eachMessage as text}}
                     set end of matchedLines to lineFields as text
                 end repeat
             on error
@@ -410,3 +423,10 @@ def _parse_mailapp_date(value: str) -> datetime | None:
         except ValueError:
             continue
     return None
+
+
+def _parse_int(value: str) -> int:
+    try:
+        return int(value)
+    except ValueError:
+        return 0

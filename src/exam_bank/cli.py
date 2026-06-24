@@ -572,6 +572,18 @@ def build_parser() -> argparse.ArgumentParser:
     email_smoke_test.add_argument("--allow-default-mail-account", action="store_true")
     email_smoke_test.set_defaults(func=cmd_email_smoke_test)
 
+    classroom = subparsers.add_parser(
+        "classroom",
+        help="Run the local browser classroom dashboard.",
+    )
+    classroom.add_argument("--host", default="127.0.0.1")
+    classroom.add_argument("--port", type=int, default=8765)
+    classroom.add_argument("--open", action="store_true")
+    classroom.add_argument("--classes-root", type=Path, default=Path("data/classes"))
+    classroom.add_argument("--submission-output-root", type=Path, default=Path("output/submissions"))
+    classroom.add_argument("--reports-root", type=Path, default=Path("reports/submissions"))
+    classroom.set_defaults(func=cmd_classroom_dashboard)
+
     class_init = subparsers.add_parser(
         "class-init",
         help="Create a local class workspace with roster.csv and assignments/.",
@@ -880,6 +892,18 @@ def cmd_email_smoke_test(args: argparse.Namespace) -> int:
     print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
     print(f"Smoke report: {report.report_path}")
     return 0 if report.smtp_ok and report.imap_ok and report.send_ok and report.receive_ok else 1
+
+
+def cmd_classroom_dashboard(args: argparse.Namespace) -> int:
+    from exam_bank.classroom_dashboard import ClassroomDashboardConfig, serve_dashboard
+
+    config = ClassroomDashboardConfig(
+        classes_root=args.classes_root,
+        output_root=args.submission_output_root,
+        reports_root=args.reports_root,
+    )
+    serve_dashboard(host=args.host, port=args.port, open_browser=bool(args.open), config=config)
+    return 0
 
 
 def cmd_class_init(args: argparse.Namespace) -> int:
