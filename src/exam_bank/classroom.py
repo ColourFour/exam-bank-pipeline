@@ -199,6 +199,7 @@ def dispatch_due_messages(
     from_address: str | None = None,
     provider: EmailProvider | None = None,
     classes_root: Path = DEFAULT_CLASSES_ROOT,
+    resend_sent: bool = False,
 ) -> dict[str, object]:
     paths = class_paths(class_id, classes_root=classes_root)
     assignment_dir = paths.assignments_dir / _safe_segment(assignment_id)
@@ -210,8 +211,12 @@ def dispatch_due_messages(
     sent = dry_run = skipped = failed = 0
     audit_events: list[dict[str, object]] = []
 
+    eligible_statuses = {"scheduled", "failed"}
+    if resend_sent:
+        eligible_statuses.add("sent")
+
     for item in schedule:
-        if str(item.get("status")) not in {"scheduled", "failed"}:
+        if str(item.get("status")) not in eligible_statuses:
             continue
         scheduled_at = parse_datetime(str(item["scheduled_at"]))
         if scheduled_at > current_time:
@@ -234,6 +239,7 @@ def dispatch_due_messages(
             dry_run += 1
             _append_dispatch_audit(audit_events, item, status="dry_run", error_code="")
             continue
+        previous_sent_at = str(item.get("sent_at") or "")
         result = mail_provider.send_message(
             to=recipient,
             subject=str(item.get("subject") or ""),
@@ -244,6 +250,12 @@ def dispatch_due_messages(
         item["status"] = "sent" if result.sent else "failed"
         item["sent_at"] = result.sent_at.isoformat() if result.sent else ""
         item["last_error"] = result.error_code or ""
+        if result.sent and previous_sent_at:
+            sent_history = item.get("sent_history")
+            if not isinstance(sent_history, list):
+                sent_history = []
+            sent_history.append({"sent_at": previous_sent_at, "recipient_email": recipient})
+            item["sent_history"] = sent_history
         if result.sent:
             sent += 1
         else:

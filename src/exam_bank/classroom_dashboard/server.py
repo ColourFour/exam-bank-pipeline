@@ -429,11 +429,12 @@ class ClassroomDashboardApp:
 
     def _send_dispatch(self, class_id: str, assignment_id: str, payload: dict[str, object], *, mode: str = "due") -> DashboardResponse:
         effective_payload = dict(payload)
+        resend_sent = mode == "send_now"
         if mode == "confirmed_send_date":
             effective_payload["now"] = self._assignment_send_at(class_id, assignment_id).isoformat()
         elif mode == "send_now" and not effective_payload.get("now"):
             effective_payload["now"] = self._assignment_send_at(class_id, assignment_id).isoformat()
-        due_messages = self._due_messages(class_id, assignment_id, effective_payload)
+        due_messages = self._due_messages(class_id, assignment_id, effective_payload, include_sent=resend_sent)
         provider = MailAppEmailProvider(requested_from_address=str(payload.get("from_address") or self._class_teacher_email(class_id)))
         self._validate_live_send(class_id, assignment_id, payload, due_messages, provider=provider, require_send_word=len(due_messages) > 1)
         self._audit("dispatch_live_send_attempted", class_id=class_id, assignment_id=assignment_id, status="attempted")
@@ -445,6 +446,7 @@ class ClassroomDashboardApp:
             from_address=str(payload.get("from_address") or self._class_teacher_email(class_id)),
             provider=provider,
             classes_root=self.config.classes_root,
+            resend_sent=resend_sent,
         )
         self._mark_email_status(class_id, assignment_id, "sent" if int(result.get("sent", 0)) else "not_sent")
         self._audit("dispatch_live_send_completed", class_id=class_id, assignment_id=assignment_id, status="completed")
@@ -548,6 +550,8 @@ class ClassroomDashboardApp:
         roster = [row for row in self._read_roster(class_id) if _is_active(row)]
         recipients = [row for row in roster if row.get("email")]
         pdf = assignment_dir / "assignment.pdf"
+        schedule = _read_json(assignment_dir / "message_schedule.json", default=[])
+        sent_recipients = _sent_email_rows(schedule)
         subject = _assignment_label(meta, assignment_id)
         body = (
             f"Please complete the assignment: {subject}.\n"
@@ -557,6 +561,9 @@ class ClassroomDashboardApp:
         return {
             "recipient_count": len(recipients),
             "roster_total": len(roster),
+            "already_sent": bool(sent_recipients),
+            "sent_recipient_count": len(sent_recipients),
+            "sent_recipients": sent_recipients,
             "missing_email_count": sum(1 for row in roster if not row.get("email")),
             "invalid_email_count": len(_invalid_roster_emails(roster)),
             "sample_recipients": [{"student_id": row.get("student_id", ""), "email": row.get("email", "")} for row in recipients[:5]],
@@ -571,13 +578,16 @@ class ClassroomDashboardApp:
             "scores_included": False,
         }
 
-    def _due_messages(self, class_id: str, assignment_id: str, payload: dict[str, object]) -> list[dict[str, object]]:
+    def _due_messages(self, class_id: str, assignment_id: str, payload: dict[str, object], *, include_sent: bool = False) -> list[dict[str, object]]:
         assignment_dir = class_paths(class_id, classes_root=self.config.classes_root).assignments_dir / _safe_segment(assignment_id)
         schedule = _read_json(assignment_dir / "message_schedule.json", default=[])
         now = parse_datetime(str(payload["now"])) if payload.get("now") else datetime.now(timezone.utc)
+        eligible_statuses = {"scheduled", "failed"}
+        if include_sent:
+            eligible_statuses.add("sent")
         due = []
         for item in schedule:
-            if str(item.get("status")) not in {"scheduled", "failed"}:
+            if str(item.get("status")) not in eligible_statuses:
                 continue
             if parse_datetime(str(item.get("scheduled_at"))) <= now and item.get("recipient_email"):
                 due.append(item)
@@ -887,6 +897,25 @@ def _email_status(schedule: object) -> str:
     if "failed" in statuses:
         return "failed"
     return "not_sent"
+
+
+def _sent_email_rows(schedule: object) -> list[dict[str, str]]:
+    if not isinstance(schedule, list):
+        return []
+    rows = []
+    for item in schedule:
+        if not isinstance(item, dict):
+            continue
+        if item.get("message_type") != "assignment_distribution" or item.get("status") != "sent":
+            continue
+        rows.append(
+            {
+                "student_id": str(item.get("student_id") or ""),
+                "email": str(item.get("recipient_email") or ""),
+                "sent_at": str(item.get("sent_at") or ""),
+            }
+        )
+    return rows
 
 
 def _assignment_status_counts(assignments: list[dict[str, object]]) -> dict[str, int]:

@@ -434,6 +434,30 @@ def test_send_now_sends_assignment_even_when_send_date_is_future(tmp_path: Path,
     assert ConnectedFakeMailProvider.sent_messages[0]["to"] == "brooker@rdfzcygj.cn"
 
 
+def test_send_now_allows_resending_sent_assignment(tmp_path: Path, monkeypatch) -> None:
+    import exam_bank.classroom_dashboard.server as server
+
+    ConnectedFakeMailProvider.sent_messages = []
+    monkeypatch.setattr(server, "MailAppEmailProvider", ConnectedFakeMailProvider)
+    app = _app(tmp_path)
+    _create_class(app)
+    _save_roster(app, email="brooker@rdfzcygj.cn", second_email="")
+    _create_assignment(app, send_at="2026-07-15T09:00", due_at="2026-07-30T17:00")
+
+    first = _post_json(app, "/api/classes/class_12a/assignments/hw1/send-now", {"confirm": True})
+    preview = app.handle("POST", "/api/classes/class_12a/assignments/hw1/preview-dispatch")
+    second = _post_json(app, "/api/classes/class_12a/assignments/hw1/send-now", {"confirm": True})
+
+    assert first.status == 200
+    assert second.status == 200
+    assert _json(second)["result"]["sent"] == 1
+    assert len(ConnectedFakeMailProvider.sent_messages) == 2
+    preview_payload = _json(preview)["preview"]
+    assert preview_payload["already_sent"] is True
+    assert preview_payload["sent_recipient_count"] == 1
+    assert preview_payload["sent_recipients"][0]["email"] == "brooker@rdfzcygj.cn"
+
+
 def test_send_now_to_multiple_recipients_requires_send_text(tmp_path: Path, monkeypatch) -> None:
     import exam_bank.classroom_dashboard.server as server
 

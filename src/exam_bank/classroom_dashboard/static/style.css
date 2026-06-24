@@ -369,6 +369,16 @@ a {
   padding: 0.65rem;
 }
 
+.preview-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.preview-item.warning {
+  border-color: rgba(181, 71, 8, 0.28);
+  background: #fffaeb;
+  color: var(--warning);
+}
+
 .metric strong,
 .preview-item strong {
   display: block;

@@ -326,7 +326,22 @@ async function openAssignment(assignmentId, tab = state.activeTab) {
 }
 
 function renderAssignmentEmailPreview(preview) {
+  const sentRecipients = Array.isArray(preview.sent_recipients) ? preview.sent_recipients : [];
+  const sentList = sentRecipients
+    .slice(0, 12)
+    .map((row) => `${escapeHtml(row.student_id || "")} ${escapeHtml(row.email || "")} ${escapeHtml(row.sent_at || "")}`.trim())
+    .join("<br>");
   $("assignmentEmailPreview").innerHTML = `
+    ${
+      preview.already_sent
+        ? `<div class="preview-item warning full-width"><strong>Already sent</strong>This assignment email has already been sent to ${preview.sent_recipient_count || sentRecipients.length} student${(preview.sent_recipient_count || sentRecipients.length) === 1 ? "" : "s"}. Sending now will resend it.</div>`
+        : ""
+    }
+    ${
+      sentRecipients.length
+        ? `<div class="preview-item full-width"><strong>Sent emails</strong>${sentList}${sentRecipients.length > 12 ? "<br>..." : ""}</div>`
+        : ""
+    }
     <div class="preview-item"><strong>Provider</strong>${escapeHtml(preview.provider || "Mail.app")}</div>
     <div class="preview-item"><strong>Recipients ready</strong>${preview.recipient_count || 0} / ${preview.roster_total || 0}</div>
     <div class="preview-item"><strong>Invalid emails</strong>${preview.invalid_email_count || 0}</div>
@@ -391,7 +406,14 @@ function closeModal() {
 function previewModalBody(preview, { live = false, receipt = false } = {}) {
   const recipients = preview.sample_recipients || preview.recipients || [];
   const recipientLines = recipients.slice(0, 5).map((row) => `${row.student_id || ""} ${row.email || ""}`.trim()).join("\n");
+  const sentRecipients = Array.isArray(preview.sent_recipients) ? preview.sent_recipients : [];
+  const sentLines = sentRecipients.slice(0, 8).map((row) => `${row.student_id || ""} ${row.email || ""} ${row.sent_at || ""}`.trim()).join("\n");
   return `
+    ${
+      preview.already_sent
+        ? `<div class="modal-preview"><strong>Already sent</strong>\nThis assignment email has already been sent to ${preview.sent_recipient_count || sentRecipients.length} student${(preview.sent_recipient_count || sentRecipients.length) === 1 ? "" : "s"}. Confirming send now will resend it.\n${escapeHtml(sentLines || "No sent recipient details available.")}</div>`
+        : ""
+    }
     <div class="metric-row">
       <div class="metric"><strong>${preview.recipient_count ?? preview.count ?? 0}</strong><span>recipients</span></div>
       <div class="metric"><strong>${preview.invalid_email_count || 0}</strong><span>invalid emails</span></div>

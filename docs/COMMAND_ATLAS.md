@@ -27,6 +27,7 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | Topic routing | `topic-route-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
 | AI enrichment | `enrich-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
 | AI sidecar audit | `ai-sidecar-audit` | Audit-only | Fast | No |
+| Classroom dashboard | `classroom`, `class-*` | Local teacher workflow | Interactive | Yes, under class/submission roots |
 | Output inventory | `output-inventory` | Audit-only | Fast to medium | Optional report writes |
 | Output cleanup plan | `output-cleanup-plan` | Audit-only | Fast to medium | Optional report writes |
 | Export summary diff | `export-summary-diff` | Audit-only | Fast | No |
@@ -517,6 +518,84 @@ Category/runtime: audit-only, fast
   --input output/json/question_bank.ai_assisted.v2.json
 ```
 
+## Classroom Dashboard
+
+The classroom dashboard is a local teacher workflow for class rosters, assignment PDFs, submission intake, and explicitly confirmed email actions. Bind it to localhost only. Real class data lives under `data/classes/`, real submission artifacts under `output/submissions/`, and reports under `reports/submissions/`.
+
+### Run Dashboard
+
+Purpose: start the local browser classroom dashboard.
+
+Input: class workspaces under `data/classes/`
+
+Output: local HTTP dashboard
+
+Category/runtime: interactive local workflow
+
+```bash
+.venv/bin/python -m exam_bank.cli classroom \
+  --host 127.0.0.1 \
+  --port 8765
+```
+
+If the default port is already in use, choose another local port:
+
+```bash
+.venv/bin/python -m exam_bank.cli classroom \
+  --host 127.0.0.1 \
+  --port 8766
+```
+
+### Classroom CLI Workflow
+
+Purpose: create a class workspace, add an assignment PDF, dry-run due email dispatch, optionally send live due messages, and ingest submissions.
+
+Input: roster CSV, assignment PDF, Mail.app setup for live sends
+
+Output: class workspace, message schedule, dispatch audit, submission reports
+
+Category/runtime: local teacher workflow; live email sends only with explicit `--send-live`
+
+```bash
+.venv/bin/python -m exam_bank.cli class-init \
+  --class-id <class_id> \
+  --roster path/to/roster.csv
+```
+
+```bash
+.venv/bin/python -m exam_bank.cli class-add-assignment \
+  --class-id <class_id> \
+  --assignment-id <assignment_id> \
+  --pdf path/to/assignment.pdf \
+  --title "Quiz Review" \
+  --send-at 2026-06-24T13:50:00+08:00 \
+  --due-at 2026-06-26T11:55:00+08:00
+```
+
+```bash
+.venv/bin/python -m exam_bank.cli class-dispatch-due \
+  --class-id <class_id> \
+  --assignment-id <assignment_id> \
+  --now 2026-06-24T13:50:00+08:00
+```
+
+```bash
+.venv/bin/python -m exam_bank.cli class-dispatch-due \
+  --class-id <class_id> \
+  --assignment-id <assignment_id> \
+  --now 2026-06-24T13:50:00+08:00 \
+  --from teacher@example.edu \
+  --send-live
+```
+
+```bash
+.venv/bin/python -m exam_bank.cli class-ingest-submissions \
+  --class-id <class_id> \
+  --assignment-id <assignment_id>
+```
+
+Dashboard `Send now` can intentionally resend an assignment email even when the assignment is already marked sent. The page shows an "Already sent" note and the previously sent recipient emails before confirmation. The non-dashboard `class-dispatch-due --send-live` command remains conservative and dispatches only due `scheduled` or `failed` schedule rows.
+
 ## Output Management
 
 ### Output Inventory
@@ -707,6 +786,22 @@ Category/runtime: test, fast
   tests/test_runtime_paths.py \
   tests/test_generator_cli_safety.py \
   -q
+```
+
+### Classroom Dashboard Tests
+
+Purpose: verify the local classroom dashboard, email confirmation surfaces, resend behavior, and dispatcher integration.
+
+Input: classroom source and tests
+
+Output: pytest result
+
+Category/runtime: test, fast
+
+```bash
+.venv/bin/python -m pytest \
+  tests/test_classroom.py \
+  tests/test_classroom_dashboard.py
 ```
 
 ### Targeted Audit/Output Tests
