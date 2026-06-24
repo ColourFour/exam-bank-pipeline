@@ -98,8 +98,9 @@ class MailAppEmailProvider:
     ) -> EmailSendResult:
         sent_at = datetime.now(timezone.utc)
         requested_from = from_address or self.requested_from_address
-        if attachments:
-            return _send_error(to, subject, sent_at, "attachments_blocked", from_address=requested_from, dry_run=dry_run)
+        missing_attachments = [path for path in attachments or [] if not path.exists()]
+        if missing_attachments:
+            return _send_error(to, subject, sent_at, "attachment_missing", from_address=requested_from, dry_run=dry_run)
         if dry_run:
             return EmailSendResult(
                 provider=self.provider_name,
@@ -117,6 +118,7 @@ class MailAppEmailProvider:
             subject=subject,
             body_text=body_text,
             from_address=requested_from,
+            attachments=attachments or [],
             allow_default_mail_account=self.allow_default_mail_account,
         )
         result = self._runner(script)
@@ -167,6 +169,13 @@ class MailAppEmailProvider:
             )
         return messages[:limit]
 
+    def export_pdf_attachments(self, *, query: str, target_dir: Path, limit: int = 50) -> list[Path]:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        result = self._runner(build_mailapp_export_pdf_attachments_script(query=query, target_dir=target_dir, limit=limit))
+        if result.returncode != 0:
+            raise MailAppProviderError(_classify_mailapp_error(result.stderr))
+        return [Path(line.strip()) for line in result.stdout.splitlines() if line.strip()]
+
 
 class MailAppProviderError(RuntimeError):
     pass
@@ -216,6 +225,7 @@ def build_mailapp_send_script(
     subject: str,
     body_text: str,
     from_address: str | None = None,
+    attachments: list[Path] | None = None,
     allow_default_mail_account: bool = False,
 ) -> str:
     sender_block = ""
@@ -236,12 +246,21 @@ def build_mailapp_send_script(
                 error "mailapp_sender_refused"
             end try
 """.rstrip()
+    attachment_block = ""
+    for index, attachment in enumerate(attachments or [], start=1):
+        attachment_block += f"""
+        set attachmentFile{index} to POSIX file {_as_applescript_string(str(attachment))}
+        tell content
+            make new attachment with properties {{file name:attachmentFile{index}}} at after last paragraph
+        end tell
+""".rstrip()
     return f"""
 tell application "Mail"
     set newMessage to make new outgoing message with properties {{subject:{_as_applescript_string(subject)}, content:{_as_applescript_string(body_text)}, visible:false}}
     tell newMessage
         make new to recipient at end of to recipients with properties {{address:{_as_applescript_string(to)}}}
 {sender_block}
+{attachment_block}
         send
         try
             return message id
@@ -284,6 +303,46 @@ end tell
 """.strip()
 
 
+def build_mailapp_export_pdf_attachments_script(*, query: str, target_dir: Path, limit: int = 50) -> str:
+    safe_limit = max(1, min(int(limit), 200))
+    target = str(target_dir.resolve()) + "/"
+    return f"""
+tell application "Mail"
+    set oldDelimiters to AppleScript's text item delimiters
+    set AppleScript's text item delimiters to linefeed
+    set queryText to {_as_applescript_string(query)}
+    set targetFolder to POSIX file {_as_applescript_string(target)} as alias
+    set savedPaths to {{}}
+    repeat with eachAccount in accounts
+        repeat with eachMailbox in mailboxes of eachAccount
+            try
+                set foundMessages to messages of eachMailbox whose subject contains queryText
+                repeat with eachMessage in foundMessages
+                    if (count of savedPaths) is greater than or equal to {safe_limit} then exit repeat
+                    repeat with eachAttachment in mail attachments of eachMessage
+                        try
+                            set attachmentName to name of eachAttachment as text
+                            if attachmentName ends with ".pdf" or attachmentName ends with ".PDF" then
+                                set saveFile to ((targetFolder as text) & attachmentName)
+                                save eachAttachment in file saveFile
+                                set end of savedPaths to POSIX path of saveFile
+                            end if
+                        end try
+                    end repeat
+                end repeat
+            on error
+            end try
+            if (count of savedPaths) is greater than or equal to {safe_limit} then exit repeat
+        end repeat
+        if (count of savedPaths) is greater than or equal to {safe_limit} then exit repeat
+    end repeat
+    set outputText to savedPaths as text
+    set AppleScript's text item delimiters to oldDelimiters
+    return outputText
+end tell
+""".strip()
+
+
 def _as_applescript_string(value: str) -> str:
     escaped = value.replace("\\", "\\\\").replace('"', '\\"').replace("\r", "\\r").replace("\n", "\\n")
     return f'"{escaped}"'
@@ -307,6 +366,7 @@ def _safe_mailapp_message(code: str | None) -> str | None:
         return None
     messages = {
         "attachments_blocked": "Attachments are blocked for email smoke tests.",
+        "attachment_missing": "One or more requested attachments do not exist.",
         "mailapp_account_not_verified": "Mail.app is available, but the requested account address was not found.",
         "mailapp_account_verification_unavailable": "Mail.app is available, but account address could not be verified automatically.",
         "mailapp_automation_permission_blocked": MAILAPP_PERMISSION_NOTE,

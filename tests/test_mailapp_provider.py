@@ -4,6 +4,7 @@ from exam_bank.emailing.mailapp import (
     MAILAPP_PERMISSION_NOTE,
     MailAppCommandResult,
     MailAppEmailProvider,
+    build_mailapp_export_pdf_attachments_script,
     build_mailapp_send_script,
 )
 
@@ -107,3 +108,15 @@ def test_mailapp_connection_verifies_requested_account() -> None:
     assert status.mailapp_available is True
     assert status.account_verified is True
     assert status.error_code is None
+
+
+def test_mailapp_export_pdf_attachment_script_escapes_query_and_target(tmp_path) -> None:
+    script = build_mailapp_export_pdf_attachments_script(
+        query='Exam Bank" & do shell script "echo bad"',
+        target_dir=tmp_path,
+        limit=5,
+    )
+
+    assert '\\" & do shell script \\"echo bad\\"' in script
+    assert "mail attachments" in script
+    assert ".pdf" in script

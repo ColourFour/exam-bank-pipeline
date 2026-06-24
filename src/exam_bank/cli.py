@@ -571,6 +571,56 @@ def build_parser() -> argparse.ArgumentParser:
     email_smoke_test.add_argument("--score-file", type=Path, default=None)
     email_smoke_test.add_argument("--allow-default-mail-account", action="store_true")
     email_smoke_test.set_defaults(func=cmd_email_smoke_test)
+
+    class_init = subparsers.add_parser(
+        "class-init",
+        help="Create a local class workspace with roster.csv and assignments/.",
+    )
+    class_init.add_argument("--class-id", required=True)
+    class_init.add_argument("--roster", type=Path, default=None, help="Optional existing roster CSV to normalize into the class workspace.")
+    class_init.add_argument("--classes-root", type=Path, default=Path("data/classes"))
+    class_init.set_defaults(func=cmd_class_init)
+
+    class_add_assignment = subparsers.add_parser(
+        "class-add-assignment",
+        help="Add an assignment PDF to a class workspace and build the message/reminder schedule.",
+    )
+    class_add_assignment.add_argument("--class-id", required=True)
+    class_add_assignment.add_argument("--pdf", type=Path, required=True)
+    class_add_assignment.add_argument("--assignment-id", required=True)
+    class_add_assignment.add_argument("--title", default="")
+    class_add_assignment.add_argument("--due-at", default="", help="ISO datetime. If omitted, prompts interactively.")
+    class_add_assignment.add_argument("--send-at", default="", help="ISO datetime. If omitted, prompts interactively.")
+    class_add_assignment.add_argument("--classes-root", type=Path, default=Path("data/classes"))
+    class_add_assignment.set_defaults(func=cmd_class_add_assignment)
+
+    class_dispatch_due = subparsers.add_parser(
+        "class-dispatch-due",
+        help="Dispatch scheduled assignment/reminder messages due at or before --now.",
+    )
+    class_dispatch_due.add_argument("--class-id", required=True)
+    class_dispatch_due.add_argument("--assignment-id", required=True)
+    class_dispatch_due.add_argument("--now", default="")
+    class_dispatch_due.add_argument("--from", dest="from_address", default="")
+    class_dispatch_due.add_argument("--send-live", action="store_true", help="Actually send due messages through Mail.app. Omit for dry-run.")
+    class_dispatch_due.add_argument("--classes-root", type=Path, default=Path("data/classes"))
+    class_dispatch_due.set_defaults(func=cmd_class_dispatch_due)
+
+    class_ingest_submissions = subparsers.add_parser(
+        "class-ingest-submissions",
+        help="Ingest PDFs from a class assignment inbox, update roster status, and optionally send acknowledgements.",
+    )
+    class_ingest_submissions.add_argument("--class-id", required=True)
+    class_ingest_submissions.add_argument("--assignment-id", required=True)
+    class_ingest_submissions.add_argument("--classes-root", type=Path, default=Path("data/classes"))
+    class_ingest_submissions.add_argument("--submission-output-root", type=Path, default=Path("output/submissions"))
+    class_ingest_submissions.add_argument("--reports-root", type=Path, default=Path("reports/submissions"))
+    class_ingest_submissions.add_argument("--send-acknowledgements", action="store_true")
+    class_ingest_submissions.add_argument("--from", dest="from_address", default="")
+    class_ingest_submissions.add_argument("--from-mailapp", action="store_true", help="Import matching PDF attachments from Mail.app before ingesting.")
+    class_ingest_submissions.add_argument("--mail-query", default="", help="Mail.app subject query. Defaults to assignment id.")
+    class_ingest_submissions.add_argument("--mail-limit", type=int, default=50)
+    class_ingest_submissions.set_defaults(func=cmd_class_ingest_submissions)
     return parser
 
 
@@ -830,6 +880,72 @@ def cmd_email_smoke_test(args: argparse.Namespace) -> int:
     print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
     print(f"Smoke report: {report.report_path}")
     return 0 if report.smtp_ok and report.imap_ok and report.send_ok and report.receive_ok else 1
+
+
+def cmd_class_init(args: argparse.Namespace) -> int:
+    from exam_bank.classroom import init_class_workspace
+
+    result = init_class_workspace(class_id=args.class_id, roster_source=args.roster, classes_root=args.classes_root)
+    print(json.dumps(_printable_paths(result), indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_class_add_assignment(args: argparse.Namespace) -> int:
+    from exam_bank.classroom import add_assignment, parse_cli_datetime
+
+    due_at = parse_cli_datetime(args.due_at or input("Due date/time (ISO, e.g. 2026-06-30T17:00:00+08:00): ").strip())
+    send_at = parse_cli_datetime(args.send_at or input("Send date/time (ISO, e.g. 2026-06-24T09:00:00+08:00): ").strip())
+    title = args.title or args.pdf.stem.replace("_", " ").strip()
+    result = add_assignment(
+        class_id=args.class_id,
+        pdf_path=args.pdf,
+        assignment_id=args.assignment_id,
+        title=title,
+        due_at=due_at,
+        send_at=send_at,
+        classes_root=args.classes_root,
+    )
+    print(json.dumps(_printable_paths(result), indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_class_dispatch_due(args: argparse.Namespace) -> int:
+    from exam_bank.classroom import dispatch_due_messages, parse_cli_datetime
+
+    now = parse_cli_datetime(args.now) if args.now else None
+    result = dispatch_due_messages(
+        class_id=args.class_id,
+        assignment_id=args.assignment_id,
+        now=now,
+        send_live=bool(args.send_live),
+        from_address=args.from_address or None,
+        classes_root=args.classes_root,
+    )
+    print(json.dumps(_printable_paths(result), indent=2, sort_keys=True))
+    return 0 if int(result["failed"]) == 0 else 1
+
+
+def cmd_class_ingest_submissions(args: argparse.Namespace) -> int:
+    from exam_bank.classroom import ingest_class_assignment
+
+    result = ingest_class_assignment(
+        class_id=args.class_id,
+        assignment_id=args.assignment_id,
+        classes_root=args.classes_root,
+        output_root=args.submission_output_root,
+        reports_root=args.reports_root,
+        send_acknowledgements=bool(args.send_acknowledgements),
+        from_address=args.from_address or None,
+        import_from_mailapp=bool(args.from_mailapp),
+        mail_query=args.mail_query or None,
+        mail_limit=args.mail_limit,
+    )
+    print(json.dumps(_printable_paths(result), indent=2, sort_keys=True))
+    return 0
+
+
+def _printable_paths(payload: dict[str, object]) -> dict[str, object]:
+    return {key: str(value) if isinstance(value, Path) else value for key, value in payload.items()}
 
 
 def _configure_email_provider_from_args(provider: object, args: argparse.Namespace) -> None:
