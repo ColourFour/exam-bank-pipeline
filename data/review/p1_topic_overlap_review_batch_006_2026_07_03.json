@@ -1,0 +1,1605 @@
+{
+  "schema_name": "exam_bank.p1_topic_overlap_review_batch",
+  "schema_version": 1,
+  "generated_at": "2026-07-03T00:00:00+08:00",
+  "paper_family": "p1",
+  "batch_id": "batch_006",
+  "source_summary": "output/topic_packets/topic_packet_summary.json",
+  "source_question_bank": "output/json/question_bank.json",
+  "review_scope": "Next five failing P1 papers after batch 005, excluding the held-out 11summer10 exception: 11winter19, 11winter20, 11winter23, 11winter24, and 11winter25.",
+  "policy": {
+    "primary_topic": "Dominant assessed topic by mark-bearing method and question intent.",
+    "secondary_topics": "Count only for substantial mark-bearing overlap; do not use secondary labels to fabricate coverage.",
+    "exceptions": "Legacy or non-current-syllabus material remains excluded/documented rather than forced into a current P1 topic."
+  },
+  "major_topics": [
+    "circular_measure",
+    "coordinate_geometry",
+    "differentiation",
+    "functions",
+    "integration",
+    "quadratics",
+    "series",
+    "trigonometry"
+  ],
+  "summary": {
+    "record_count": 56,
+    "papers_reviewed": [
+      "11winter19",
+      "11winter20",
+      "11winter23",
+      "11winter24",
+      "11winter25"
+    ],
+    "status_counts": {
+      "add_secondary_topic": 13,
+      "exclude_current_syllabus": 1,
+      "keep": 31,
+      "relabel_primary": 7,
+      "relabel_primary_add_secondary": 4
+    },
+    "primary_topic_counts": {
+      "circular_measure": 4,
+      "coordinate_geometry": 5,
+      "differentiation": 12,
+      "functions": 8,
+      "integration": 6,
+      "quadratics": 4,
+      "series": 11,
+      "trigonometry": 5
+    },
+    "secondary_topic_counts": {
+      "circular_measure": 1,
+      "differentiation": 1,
+      "integration": 4,
+      "quadratics": 11,
+      "trigonometry": 1
+    },
+    "excluded_current_syllabus_count": 1,
+    "excluded_question_ids": [
+      "11winter19_q10"
+    ],
+    "coverage_after_review": {
+      "11winter19": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 3,
+        "functions": 1,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 1
+      },
+      "11winter20": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 3,
+        "functions": 2,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 2
+      },
+      "11winter23": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 2,
+        "functions": 2,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 1
+      },
+      "11winter24": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 3,
+        "functions": 1,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 1
+      },
+      "11winter25": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 2,
+        "functions": 2,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 3,
+        "trigonometry": 1
+      }
+    },
+    "documented_genuine_exceptions": [],
+    "remaining_exceptions": []
+  },
+  "records": [
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q01",
+      "question_number": 1,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q02",
+      "question_number": 2,
+      "current_topic": "functions",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing quadratics overlap.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q03",
+      "question_number": 3,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing differentiation label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing differentiation label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q04",
+      "question_number": 4,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q05",
+      "question_number": 5,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing trigonometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing trigonometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q06",
+      "question_number": 6,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q07",
+      "question_number": 7,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing functions label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing functions label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q08",
+      "question_number": 8,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing circular_measure label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing circular_measure label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q09",
+      "question_number": 9,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.",
+      "review_notes": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q10",
+      "question_number": 10,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": null,
+      "primary": null,
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [],
+      "status": "exclude_current_syllabus",
+      "current_syllabus": false,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Legacy 3D vector/scalar-product content is outside the current P1 major-topic set, so it is excluded rather than forced into a current topic.",
+      "review_notes": "Legacy 3D vector/scalar-product content is outside the current P1 major-topic set, so it is excluded rather than forced into a current topic."
+    },
+    {
+      "paper": "11winter19",
+      "paper_code": "11winter19",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter19_q11",
+      "question_number": 11,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "integration",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2019_w19_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2019_w19_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2019/question_papers/9709_w19_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2019/mark_schemes/9709_w19_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q01",
+      "question_number": 1,
+      "current_topic": "quadratics",
+      "primary_topic": "quadratics",
+      "primary": "quadratics",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "quadratics"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing quadratics label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing quadratics label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q02",
+      "question_number": 2,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw coordinate_geometry label.",
+      "review_notes": "Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw coordinate_geometry label."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q03",
+      "question_number": 3,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q04",
+      "question_number": 4,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "trigonometry"
+      ],
+      "secondary": [
+        "trigonometry"
+      ],
+      "coverage_topics": [
+        "functions",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains functions; the mark scheme also contains substantial mark-bearing trigonometry overlap.",
+      "review_notes": "The primary label remains functions; the mark scheme also contains substantial mark-bearing trigonometry overlap."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q05",
+      "question_number": 5,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q06",
+      "question_number": 6,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q07",
+      "question_number": 7,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing trigonometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing trigonometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q08",
+      "question_number": 8,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q09",
+      "question_number": 9,
+      "current_topic": "differentiation",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "coordinate_geometry"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows coordinate_geometry is the dominant assessed topic rather than the raw differentiation label.",
+      "review_notes": "Review of the question and mark scheme shows coordinate_geometry is the dominant assessed topic rather than the raw differentiation label."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q10",
+      "question_number": 10,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing circular_measure label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing circular_measure label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q11",
+      "question_number": 11,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter20",
+      "paper_code": "11winter20",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter20_q12",
+      "question_number": 12,
+      "current_topic": "differentiation",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "differentiation",
+        "quadratics"
+      ],
+      "secondary": [
+        "differentiation",
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2020_w20_11_qp_q12_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2020_w20_11_ms_q12_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2020/question_papers/9709_w20_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2020/mark_schemes/9709_w20_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows integration is the dominant assessed topic, with substantial mark-bearing differentiation, quadratics overlap.",
+      "review_notes": "Review of the question and mark scheme shows integration is the dominant assessed topic, with substantial mark-bearing differentiation, quadratics overlap."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q01",
+      "question_number": 1,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q02",
+      "question_number": 2,
+      "current_topic": "trigonometry",
+      "primary_topic": "quadratics",
+      "primary": "quadratics",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "quadratics"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows quadratics is the dominant assessed topic rather than the raw trigonometry label.",
+      "review_notes": "Review of the question and mark scheme shows quadratics is the dominant assessed topic rather than the raw trigonometry label."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q03",
+      "question_number": 3,
+      "current_topic": "quadratics",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw quadratics label.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw quadratics label."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q04",
+      "question_number": 4,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing functions label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing functions label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q05",
+      "question_number": 5,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing trigonometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing trigonometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q06",
+      "question_number": 6,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing circular_measure label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing circular_measure label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q07",
+      "question_number": 7,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q08",
+      "question_number": 8,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "integration",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q09",
+      "question_number": 9,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q10",
+      "question_number": 10,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.",
+      "review_notes": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap."
+    },
+    {
+      "paper": "11winter23",
+      "paper_code": "11winter23",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter23_q11",
+      "question_number": 11,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "coordinate_geometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2023_w23_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2023_w23_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2023/mark_schemes/9709_w23_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing coordinate_geometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing coordinate_geometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q01",
+      "question_number": 1,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q02",
+      "question_number": 2,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing differentiation label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing differentiation label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q03",
+      "question_number": 3,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing circular_measure label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing circular_measure label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q04",
+      "question_number": 4,
+      "current_topic": "algebra",
+      "primary_topic": "quadratics",
+      "primary": "quadratics",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "quadratics"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing quadratics label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing quadratics label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q05",
+      "question_number": 5,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing integration overlap.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing integration overlap."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q06",
+      "question_number": 6,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "coordinate_geometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing coordinate_geometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing coordinate_geometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q07",
+      "question_number": 7,
+      "current_topic": "differentiation",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw differentiation label.",
+      "review_notes": "Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw differentiation label."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q08",
+      "question_number": 8,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "trigonometry",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains trigonometry; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains trigonometry; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q09",
+      "question_number": 9,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q10",
+      "question_number": 10,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter24",
+      "paper_code": "11winter24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter24_q11",
+      "question_number": 11,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_w24_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_w24_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_w24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_w24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing functions label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing functions label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q01",
+      "question_number": 1,
+      "current_topic": "quadratics",
+      "primary_topic": "quadratics",
+      "primary": "quadratics",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "quadratics"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing quadratics label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing quadratics label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q02",
+      "question_number": 2,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q03",
+      "question_number": 3,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "series",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains series; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains series; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q04",
+      "question_number": 4,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing functions label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing functions label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q05",
+      "question_number": 5,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing trigonometry label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing trigonometry label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q06",
+      "question_number": 6,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing functions label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing functions label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q07",
+      "question_number": 7,
+      "current_topic": "circular_measure",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "circular_measure"
+      ],
+      "secondary": [
+        "circular_measure"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "circular_measure"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing circular_measure overlap.",
+      "review_notes": "Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing circular_measure overlap."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q08",
+      "question_number": 8,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing integration label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing integration label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q09",
+      "question_number": 9,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The existing series label matches the dominant mark-bearing topic.",
+      "review_notes": "The existing series label matches the dominant mark-bearing topic."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q10",
+      "question_number": 10,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap.",
+      "review_notes": "The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap."
+    },
+    {
+      "paper": "11winter25",
+      "paper_code": "11winter25",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter25_q11",
+      "question_number": 11,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2025_w25_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2025_w25_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_006_2026_07_03",
+      "rationale": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.",
+      "review_notes": "The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap."
+    }
+  ]
+}

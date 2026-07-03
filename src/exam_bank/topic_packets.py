@@ -306,7 +306,7 @@ def add_topic_packet_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--split-question-answer-pdfs",
         action="store_true",
-        help="Also write legacy questions.pdf and answers.pdf files. The default output is topic_packet.pdf.",
+        help="Also write legacy questions.pdf and answers.pdf files. The default output is <paper_family>_<topic>_packet.pdf.",
     )
 
 
@@ -652,7 +652,7 @@ def generate_topic_packets(
         )
         if not dry_run:
             packet_dir.mkdir(parents=True, exist_ok=True)
-            topic_pdf = packet_dir / "topic_packet.pdf"
+            topic_pdf = packet_pdf_path(packet_dir, key)
             packet_stats = write_topic_packet_pdf(
                 topic_pdf,
                 packet_records,
@@ -724,7 +724,7 @@ def generate_topic_packets(
             "answer_count": manifest["answer_count"],
             "missing_answer_count": manifest["missing_answer_count"],
             "output_dir": str(packet_dir),
-            "pdf_path": manifest.get("pdf_path", str(packet_dir / "topic_packet.pdf")),
+            "pdf_path": manifest.get("pdf_path", str(packet_dir / packet_pdf_filename(key))),
             "page_count": page_count,
             "pdf_image_optimization": manifest["pdf_image_optimization"],
             "page_size": manifest["page_size"],
@@ -2878,6 +2878,14 @@ def packet_output_dir(output_root: Path, key: PacketKey) -> Path:
     else:
         base = output_root / key.paper_family / key.topic_id
     return base / key.subtopic_id if key.subtopic_id else base
+
+
+def packet_pdf_filename(key: PacketKey) -> str:
+    return f"{key.paper_family}_{key.topic_id}_packet.pdf"
+
+
+def packet_pdf_path(packet_dir: Path, key: PacketKey) -> Path:
+    return packet_dir / packet_pdf_filename(key)
 
 
 def _summary_packet_ref(packet: dict[str, Any] | None) -> dict[str, Any] | None:

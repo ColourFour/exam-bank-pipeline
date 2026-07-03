@@ -1,0 +1,54 @@
+question_id,paper,paper_code,question_number,current_topic,primary_topic,secondary_topics,coverage_topics,status,current_syllabus,rationale
+11summer12_q01,11summer12,11summer12,1,trigonometry,trigonometry,,trigonometry,keep,True,Solve and simplify a trigonometric equation; the marks are concentrated on trig identities and solution range handling.
+11summer12_q02,11summer12,11summer12,2,binomial_expansion,series,,series,keep,True,Arithmetic progression algebra dominates all parts.
+11summer12_q03,11summer12,11summer12,3,coordinate_geometry,circular_measure,,circular_measure,relabel_primary,True,"Equilateral-triangle geometry is setup; the assessed work is arc length, sector area, and shaded-area circular-measure reasoning."
+11summer12_q04,11summer12,11summer12,4,coordinate_geometry,differentiation,,differentiation,relabel_primary,True,Related-rates question on a spherical watermelon; marks require differentiating mass with respect to radius and chaining rates.
+11summer12_q05,11summer12,11summer12,5,differentiation,quadratics,,quadratics,relabel_primary,True,Intersection and tangency conditions reduce to quadratic equations and a discriminant/tangent condition; differentiation is not the dominant assessed method.
+11summer12_q06,11summer12,11summer12,6,trigonometry,,,,exclude_current_syllabus,False,"Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be forced into trigonometry."
+11summer12_q07,11summer12,11summer12,7,series_and_sequences,series,,series,keep,True,Binomial expansion coefficients and a term-matching condition dominate; trig notation is incidental context.
+11summer12_q08,11summer12,11summer12,8,functions,functions,quadratics,functions;quadratics,add_secondary_topic,True,"Function inverse/range work is primary, with substantial completing-the-square and quadratic-range work supporting the function analysis."
+11summer12_q09,11summer12,11summer12,9,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,True,Straight-line gradient and coordinate-geometry work dominate.
+11summer12_q10,11summer12,11summer12,10,differentiation,differentiation,,differentiation,keep,True,"Stationary points, curve gradient, and curve behaviour are differentiation-led."
+11summer12_q11,11summer12,11summer12,11,integration,integration,,integration,keep,True,Area under a curve and exact integral evaluation dominate.
+11summer13_q01,11summer13,11summer13,1,functions,differentiation,,differentiation,relabel_primary,True,The function context supports a derivative/sign argument; the assessed method is differentiation to prove the function is increasing.
+11summer13_q02,11summer13,11summer13,2,binomial_expansion,series,,series,keep,True,Arithmetic progression terms and sums dominate.
+11summer13_q03,11summer13,11summer13,3,circular_measure,circular_measure,,circular_measure,keep,True,"Arc length, sector area, and circular geometry dominate."
+11summer13_q04,11summer13,11summer13,4,series_and_sequences,series,,series,keep,True,Binomial expansion and coefficient comparison dominate.
+11summer13_q05,11summer13,11summer13,5,trigonometry,trigonometry,,trigonometry,keep,True,Trigonometric equation solving dominates.
+11summer13_q06,11summer13,11summer13,6,coordinate_geometry,,,,exclude_current_syllabus,False,"Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as coordinate geometry."
+11summer13_q07,11summer13,11summer13,7,differentiation,quadratics,coordinate_geometry,quadratics;coordinate_geometry,relabel_primary_add_secondary,True,"The main tangent/intersection work is quadratic discriminant algebra; the coordinate points, midpoint, and line geometry are substantial secondary coverage."
+11summer13_q08,11summer13,11summer13,8,functions,functions,quadratics,functions;quadratics,add_secondary_topic,True,"Function composition and inverse/range reasoning are primary, with completing-the-square/quadratic-range work earning substantial marks."
+11summer13_q09,11summer13,11summer13,9,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,"Stationary points and second derivative are primary, but recovering the original function by integration is a substantial mark-bearing part."
+11summer13_q10,11summer13,11summer13,10,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,"Tangent/normal work is primary, with a substantial exact-area integration part."
+11summer14_q01,11summer14,11summer14,1,trigonometry,trigonometry,,trigonometry,keep,True,Trigonometric identities/equations dominate.
+11summer14_q02,11summer14,11summer14,2,quadratics,quadratics,,quadratics,keep,True,Quadratic equation and discriminant/completing-square work dominate.
+11summer14_q03,11summer14,11summer14,3,binomial_expansion,series,,series,keep,True,Binomial expansion and coefficient work dominate.
+11summer14_q04,11summer14,11summer14,4,differentiation,differentiation,,differentiation,keep,True,Differentiation and stationary-point analysis dominate.
+11summer14_q05,11summer14,11summer14,5,series_and_sequences,series,,series,keep,True,Arithmetic/geometric progression work dominates.
+11summer14_q06,11summer14,11summer14,6,circular_measure,circular_measure,,circular_measure,keep,True,"Sector, arc, and circular-area reasoning dominate."
+11summer14_q07,11summer14,11summer14,7,algebra,coordinate_geometry,,coordinate_geometry,relabel_primary,True,Distance and gradient conditions between coordinate points are P1 coordinate geometry; the raw algebra label was routing it to P3.
+11summer14_q08,11summer14,11summer14,8,quadratics,,,,exclude_current_syllabus,False,"Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be forced into quadratics."
+11summer14_q09,11summer14,11summer14,9,trigonometry,trigonometry,,trigonometry,keep,True,Trigonometric equation/identity work dominates.
+11summer14_q10,11summer14,11summer14,10,functions,functions,,functions,keep,True,Function transformation/composition/inverse work dominates.
+11summer14_q11,11summer14,11summer14,11,integration,integration,quadratics,integration;quadratics,add_secondary_topic,True,"Exact area by integration is primary, while the tangent condition also gives substantial quadratic/discriminant coverage."
+11summer14_q12,11summer14,11summer14,12,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,"Stationary-point and derivative behaviour are primary, with integration used substantially to recover the curve."
+11summer15_q01,11summer15,11summer15,1,trigonometry,trigonometry,,trigonometry,keep,True,Trigonometric equation solving dominates.
+11summer15_q02,11summer15,11summer15,2,coordinate_geometry,differentiation,coordinate_geometry,differentiation;coordinate_geometry,relabel_primary_add_secondary,True,"The coordinate setup is substantial, but the assessed endpoint is a related-rate differentiation calculation."
+11summer15_q03,11summer15,11summer15,3,binomial_expansion,series,,series,keep,True,Progression work dominates.
+11summer15_q04,11summer15,11summer15,4,trigonometry,,,,exclude_current_syllabus,False,"Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be forced into trigonometry."
+11summer15_q05,11summer15,11summer15,5,circular_measure,circular_measure,,circular_measure,keep,True,Sector/arc/circular-area work dominates.
+11summer15_q06,11summer15,11summer15,6,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,True,Straight-line and circle coordinate geometry dominate.
+11summer15_q07,11summer15,11summer15,7,series_and_sequences,series,,series,keep,True,Series progression reasoning dominates; the circular-measure setting is incidental to the progression count.
+11summer15_q08,11summer15,11summer15,8,functions,functions,trigonometry,functions;trigonometry,add_secondary_topic,True,"Inverse-function/domain reasoning is primary, with trigonometric equation and cosine-graph work as substantial secondary coverage."
+11summer15_q09,11summer15,11summer15,9,differentiation,differentiation,quadratics,differentiation;quadratics,add_secondary_topic,True,"Derivative/stationary-point work is primary, with a discriminant condition on the derivative giving substantial quadratic coverage."
+11summer15_q10,11summer15,11summer15,10,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,"Normal/gradient work is primary, with the exact-area comparison requiring substantial integration."
+11summer17_q01,11summer17,11summer17,1,binomial_expansion,series,,series,keep,True,Progression/series work dominates.
+11summer17_q02,11summer17,11summer17,2,quadratics,,,,exclude_current_syllabus,False,"Legacy 3D vector content is outside the current P1 major-topic set, so it should not be forced into quadratics."
+11summer17_q03,11summer17,11summer17,3,trigonometry,trigonometry,,trigonometry,keep,True,Trigonometric equation and identity work dominate.
+11summer17_q04,11summer17,11summer17,4,series_and_sequences,series,,series,keep,True,Binomial expansion and coefficient comparison dominate.
+11summer17_q05,11summer17,11summer17,5,functions,trigonometry,coordinate_geometry,trigonometry;coordinate_geometry,relabel_primary_add_secondary,True,"Cosine graph/intersection work is primary, with a substantial line-through-points and intercept coordinate-geometry part."
+11summer17_q06,11summer17,11summer17,6,functions,differentiation,,differentiation,relabel_primary,True,Optimization of prism surface area is differentiation-led rather than general function analysis.
+11summer17_q07,11summer17,11summer17,7,coordinate_geometry,integration,differentiation,integration;differentiation,relabel_primary_add_secondary,True,"Recovering the curve from dy/dx is primary, while derivative sign reasoning remains substantial secondary coverage."
+11summer17_q08,11summer17,11summer17,8,circular_measure,circular_measure,,circular_measure,keep,True,Arc/sector/circular-area work dominates.
+11summer17_q09,11summer17,11summer17,9,quadratics,functions,quadratics,functions;quadratics,relabel_primary_add_secondary,True,"Inverse/composition function work is primary, with the equal-roots discriminant condition giving substantial quadratic coverage."
+11summer17_q10,11summer17,11summer17,10,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,"Tangent/normal work is primary, with a substantial volume-by-integration part."

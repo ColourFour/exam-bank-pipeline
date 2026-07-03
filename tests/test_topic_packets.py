@@ -70,7 +70,9 @@ def test_major_topic_grouping_ignores_subtopic_and_manifest_shape(tmp_path: Path
     assert manifest["total_questions"] == 2
     assert manifest["problem_count"] == 2
     assert manifest["question_count"] == 2
-    assert (packet_dir / "topic_packet.pdf").is_file()
+    packet_pdf = packet_dir / "p3_integration_packet.pdf"
+    assert packet_pdf.is_file()
+    assert not (packet_dir / "topic_packet.pdf").exists()
     assert not (packet_dir / "questions.pdf").exists()
     assert not (packet_dir / "answers.pdf").exists()
     assert set(manifest) >= {
@@ -89,7 +91,11 @@ def test_major_topic_grouping_ignores_subtopic_and_manifest_shape(tmp_path: Path
     }
     assert manifest["included_records"][0]["problem_number"] == 1
     assert manifest["included_records"][0]["source_label"] == "2024 June P31 Question 1"
+    assert manifest["pdf_path"] == str(packet_pdf)
+    assert manifest["pdf_outputs"]["topic_packet"]["path"] == str(packet_pdf)
     assert manifest["pdf_outputs"]["topic_packet"]["file_size_bytes"] > 0
+    assert summary["packets_generated"][0]["pdf_path"] == str(packet_pdf)
+    assert summary["generated_pdfs"] == [str(packet_pdf)]
 
 
 def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
@@ -111,7 +117,7 @@ def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path)
 
     assert summary["total_included"] == 2
     assert summary["skipped_by_reason"].get("invalid_paper_family", 0) == 0
-    assert (paths["output"] / "p3" / "integration" / "topic_packet.pdf").is_file()
+    assert (paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf").is_file()
 
 
 @pytest.mark.parametrize(
@@ -1013,7 +1019,7 @@ def test_low_crop_confidence_downgrades_release_record_to_review_section(tmp_pat
     )
 
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
-    packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
+    packet = fitz.open(paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf")
     text = "\n".join(page.get_text() for page in packet)
     assert summary["total_included"] == 2
     assert summary["total_included_in_release_packets"] == 1
@@ -1129,7 +1135,7 @@ def test_question_and_answer_order_match(tmp_path: Path) -> None:
 
     packet_dir = paths["output"] / "p3" / "integration"
     manifest = json.loads((packet_dir / "manifest.json").read_text(encoding="utf-8"))
-    packet = fitz.open(packet_dir / "topic_packet.pdf")
+    packet = fitz.open(packet_dir / "p3_integration_packet.pdf")
     assert manifest["included_question_ids"] == ["q1", "q2"]
     assert packet.page_count == 2
     assert manifest["page_size"] == "a4"
@@ -1167,7 +1173,7 @@ def test_missing_mark_scheme_excluded_from_packet(tmp_path: Path) -> None:
 
     packet_dir = paths["output"] / "p3" / "integration"
     manifest = json.loads((packet_dir / "manifest.json").read_text(encoding="utf-8"))
-    packet = fitz.open(packet_dir / "topic_packet.pdf")
+    packet = fitz.open(packet_dir / "p3_integration_packet.pdf")
     assert "q2" in summary["missing_mark_scheme_images"]
     assert "q2" in summary["records_with_missing_mark_schemes"]
     assert summary["skipped_by_reason"]["missing_answer_image"] == 1
@@ -1200,7 +1206,7 @@ def test_packet_builder_includes_record_with_nested_mark_scheme_canonical_path(t
 
     packet_dir = paths["output"] / "p3" / "integration"
     manifest = json.loads((packet_dir / "manifest.json").read_text(encoding="utf-8"))
-    packet = fitz.open(packet_dir / "topic_packet.pdf")
+    packet = fitz.open(packet_dir / "p3_integration_packet.pdf")
     assert summary["total_included"] == 2
     assert summary["skipped_by_reason"].get("missing_answer_image", 0) == 0
     assert manifest["included_question_ids"] == ["q1", "q2"]
@@ -1286,7 +1292,7 @@ def test_multiple_question_and_mark_scheme_images_do_not_increment_problem_numbe
         artifact_root=paths["artifact_root"],
     )
 
-    packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
+    packet = fitz.open(paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf")
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
     assert [item["problem_number"] for item in manifest["included_records"]] == [1, 2]
     assert packet.page_count == 2
@@ -1336,7 +1342,7 @@ def test_long_review_required_problem_header_is_rendered(tmp_path: Path) -> None
 
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
     q2 = next(record for record in manifest["included_records"] if record["question_id"] == "q2")
-    packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
+    packet = fitz.open(paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf")
     page_text = packet[int(q2["question_start_page"]) - 1].get_text()
     assert "Problem 2 - 2024 June P31 Question 2" in page_text
     assert "Review Required - verify topic/routing before classroom use." in page_text
@@ -1357,7 +1363,7 @@ def test_answer_placement_inline_preserves_paired_order(tmp_path: Path) -> None:
         answer_placement="inline",
     )
 
-    packet = fitz.open(paths["output"] / "p3" / "integration" / "topic_packet.pdf")
+    packet = fitz.open(paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf")
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
     assert packet.page_count == 5
     assert manifest["layout"] == "one-per-page"

@@ -46,9 +46,10 @@ def build_report(*, question_bank_path: Path, packets_root: Path, taxonomy_path:
     pdf_count = 0
     for manifest_path in sorted(packets_root.glob("**/manifest.json")):
         manifest_count += 1
-        if (manifest_path.parent / "topic_packet.pdf").is_file():
-            pdf_count += 1
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        pdf_path = _manifest_pdf_path(manifest_path, manifest)
+        if pdf_path.is_file():
+            pdf_count += 1
         family = str(manifest.get("paper_family") or "")
         topic = str(manifest.get("topic_id") or "")
         for item in manifest.get("included_records") or []:
@@ -62,7 +63,7 @@ def build_report(*, question_bank_path: Path, packets_root: Path, taxonomy_path:
                 "section": str(item.get("section") or ""),
                 "review_reasons": list(item.get("review_reasons") or []),
                 "manifest_path": str(manifest_path),
-                "pdf_path": str(manifest_path.parent / "topic_packet.pdf"),
+                "pdf_path": str(pdf_path),
             }
 
     skipped_records = summary.get("skipped_records") or []
@@ -182,6 +183,19 @@ def build_report(*, question_bank_path: Path, packets_root: Path, taxonomy_path:
         },
         "hard_requirement_failures": hard_failures,
     }
+
+
+def _manifest_pdf_path(manifest_path: Path, manifest: dict[str, Any]) -> Path:
+    raw_path = str(manifest.get("pdf_path") or "").strip()
+    if not raw_path:
+        return manifest_path.parent / "topic_packet.pdf"
+    pdf_path = Path(raw_path)
+    if pdf_path.is_absolute() or pdf_path.is_file():
+        return pdf_path
+    sibling_path = manifest_path.parent / pdf_path.name
+    if sibling_path.is_file():
+        return sibling_path
+    return pdf_path
 
 
 def render_markdown(report: dict[str, Any]) -> str:

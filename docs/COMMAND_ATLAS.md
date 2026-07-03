@@ -380,7 +380,7 @@ Purpose: generate image-first printable CAIE 9709 major-topic packets from canon
 
 Input: `output/json/question_bank.json`, `exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`, artifacts under `output/`
 
-Output: `output/topic_packets/<paper_family>/<major_topic>/topic_packet.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
+Output: `output/topic_packets/<paper_family>/<major_topic>/<paper_family>_<major_topic>_packet.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
 
 Category/runtime: standard projection, fast to medium
 

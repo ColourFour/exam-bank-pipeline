@@ -1,0 +1,1589 @@
+{
+  "schema_name": "exam_bank.p1_topic_overlap_review_batch",
+  "schema_version": 1,
+  "generated_at": "2026-07-03T00:00:00+08:00",
+  "paper_family": "p1",
+  "batch_id": "batch_004",
+  "source_summary": "output/topic_packets/topic_packet_summary.json",
+  "source_question_bank": "output/json/question_bank.json",
+  "review_scope": "Next five failing P1 papers after batch 003 and the carried 11summer10 exception: 11summer24, 11winter09, 11winter10, 11winter11, and 11winter12.",
+  "policy": {
+    "primary_topic": "Dominant assessed topic by mark-bearing method and question intent.",
+    "secondary_topics": "Count only for substantial mark-bearing overlap; do not use secondary labels to fabricate coverage.",
+    "exceptions": "Legacy or non-current-syllabus material remains excluded/documented rather than forced into a current P1 topic."
+  },
+  "major_topics": [
+    "circular_measure",
+    "coordinate_geometry",
+    "differentiation",
+    "functions",
+    "integration",
+    "quadratics",
+    "series",
+    "trigonometry"
+  ],
+  "summary": {
+    "papers_reviewed": [
+      "11summer24",
+      "11winter09",
+      "11winter10",
+      "11winter11",
+      "11winter12"
+    ],
+    "record_count": 54,
+    "status_counts": {
+      "relabel_primary": 3,
+      "add_secondary_topic": 16,
+      "keep": 24,
+      "relabel_primary_add_secondary": 7,
+      "exclude_current_syllabus": 4
+    },
+    "primary_topic_counts": {
+      "quadratics": 1,
+      "functions": 7,
+      "series": 10,
+      "differentiation": 12,
+      "trigonometry": 6,
+      "circular_measure": 5,
+      "integration": 6,
+      "coordinate_geometry": 3
+    },
+    "secondary_topic_counts": {
+      "trigonometry": 2,
+      "quadratics": 13,
+      "integration": 3,
+      "coordinate_geometry": 4,
+      "circular_measure": 1,
+      "differentiation": 2,
+      "functions": 1
+    },
+    "excluded_current_syllabus_count": 4,
+    "excluded_question_ids": [
+      "11winter09_q09",
+      "11winter10_q05",
+      "11winter11_q08",
+      "11winter12_q09"
+    ],
+    "coverage_after_review": {
+      "11summer24": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 2,
+        "functions": 2,
+        "integration": 1,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 2
+      },
+      "11winter09": {
+        "circular_measure": 1,
+        "coordinate_geometry": 1,
+        "differentiation": 3,
+        "functions": 1,
+        "integration": 2,
+        "quadratics": 2,
+        "series": 2,
+        "trigonometry": 2
+      },
+      "11winter10": {
+        "circular_measure": 2,
+        "coordinate_geometry": 1,
+        "differentiation": 3,
+        "functions": 2,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 2
+      },
+      "11winter11": {
+        "circular_measure": 1,
+        "coordinate_geometry": 2,
+        "differentiation": 3,
+        "functions": 2,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 1
+      },
+      "11winter12": {
+        "circular_measure": 1,
+        "coordinate_geometry": 2,
+        "differentiation": 3,
+        "functions": 1,
+        "integration": 2,
+        "quadratics": 3,
+        "series": 2,
+        "trigonometry": 1
+      }
+    },
+    "remaining_exceptions": []
+  },
+  "records": [
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q01",
+      "question_number": 1,
+      "current_topic": "algebra",
+      "primary_topic": "quadratics",
+      "primary": "quadratics",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "quadratics"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Completing the square and solving a quartic as a quadratic in x^2 dominate; the raw algebra label should count as P1 quadratics.",
+      "review_notes": "Completing the square and solving a quartic as a quadratic in x^2 dominate; the raw algebra label should count as P1 quadratics."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q02",
+      "question_number": 2,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "trigonometry"
+      ],
+      "secondary": [
+        "trigonometry"
+      ],
+      "coverage_topics": [
+        "functions",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q02_question.png",
+      "mark_scheme_artifact": "",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Graph transformations are primary, with the transformed sine curve giving substantial trigonometric graph coverage.",
+      "review_notes": "Graph transformations are primary, with the transformed sine curve giving substantial trigonometric graph coverage."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q03",
+      "question_number": 3,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Binomial expansion coefficient work dominates.",
+      "review_notes": "Binomial expansion coefficient work dominates."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q04",
+      "question_number": 4,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Chord gradients are used to estimate f prime; the assessed idea is numerical differentiation, not coordinate geometry.",
+      "review_notes": "Chord gradients are used to estimate f prime; the assessed idea is numerical differentiation, not coordinate geometry."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q05",
+      "question_number": 5,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Identity proof and trigonometric equation solving dominate.",
+      "review_notes": "Identity proof and trigonometric equation solving dominate."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q06",
+      "question_number": 6,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "functions"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Inverse-function graph, expression, domain/range reasoning, and equation solving dominate.",
+      "review_notes": "Inverse-function graph, expression, domain/range reasoning, and equation solving dominate."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q07",
+      "question_number": 7,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Radian angle, arc length, sector area, perimeter, and area of a circular shape dominate.",
+      "review_notes": "Radian angle, arc length, sector area, perimeter, and area of a circular shape dominate."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q08",
+      "question_number": 8,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "series",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Progression structure is primary, with a substantial quadratic equation in q used to determine the geometric progression.",
+      "review_notes": "Progression structure is primary, with a substantial quadratic equation in q used to determine the geometric progression."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q09",
+      "question_number": 9,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Volume of revolution by integrating y squared dominates.",
+      "review_notes": "Volume of revolution by integrating y squared dominates."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q10",
+      "question_number": 10,
+      "current_topic": "differentiation",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Circle tangent geometry and tangent-point coordinates are primary, with a discriminant equation in the gradient as substantial quadratic coverage.",
+      "review_notes": "Circle tangent geometry and tangent-point coordinates are primary, with a discriminant equation in the gradient as substantial quadratic coverage."
+    },
+    {
+      "paper": "11summer24",
+      "paper_code": "11summer24",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11summer24_q11",
+      "question_number": 11,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2024_m24_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2024_m24_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_m24_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2024/mark_schemes/9709_m24_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Derivative sign, normal/tangent equations, and curve-gradient work dominate.",
+      "review_notes": "Derivative sign, normal/tangent equations, and curve-gradient work dominate."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q01",
+      "question_number": 1,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Trigonometric equation solving dominates.",
+      "review_notes": "Trigonometric equation solving dominates."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q02",
+      "question_number": 2,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Sketching a cosine curve dominates; the line is supporting comparison context.",
+      "review_notes": "Sketching a cosine curve dominates; the line is supporting comparison context."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q03",
+      "question_number": 3,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Binomial expansion and coefficient comparison dominate.",
+      "review_notes": "Binomial expansion and coefficient comparison dominate."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q04",
+      "question_number": 4,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Stationary point and nature are primary, with area under the curve as substantial integration coverage.",
+      "review_notes": "Stationary point and nature are primary, with area under the curve as substantial integration coverage."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q05",
+      "question_number": 5,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arc length, sector area, and circular-region area dominate.",
+      "review_notes": "Arc length, sector area, and circular-region area dominate."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q06",
+      "question_number": 6,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration"
+      ],
+      "secondary": [
+        "integration"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Perpendicular tangents and gradient conditions are primary, with integrating dy/dx to recover the curve as substantial secondary coverage.",
+      "review_notes": "Perpendicular tangents and gradient conditions are primary, with integrating dy/dx to recover the curve as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q07",
+      "question_number": 7,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "coordinate_geometry"
+      ],
+      "secondary": [
+        "coordinate_geometry"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "coordinate_geometry"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Derivative/normal/rate work is primary, with a normal-line equation providing substantial coordinate-geometry coverage.",
+      "review_notes": "Derivative/normal/rate work is primary, with a normal-line equation providing substantial coordinate-geometry coverage."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q08",
+      "question_number": 8,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "series",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arithmetic/geometric progression structure is primary, with a substantial quadratic equation in the common ratio.",
+      "review_notes": "Arithmetic/geometric progression structure is primary, with a substantial quadratic equation in the common ratio."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q09",
+      "question_number": 9,
+      "current_topic": "trigonometry",
+      "primary_topic": null,
+      "primary": null,
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [],
+      "status": "exclude_current_syllabus",
+      "current_syllabus": false,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry.",
+      "review_notes": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry."
+    },
+    {
+      "paper": "11winter09",
+      "paper_code": "11winter09",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter09_q10",
+      "question_number": 10,
+      "current_topic": "quadratics",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2009_w09_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2009_w09_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2009/question_papers/9709_w09_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Composition, inverse functions, inverse graphs, and function-domain restrictions are primary; the solved equations/discriminant give substantial quadratics coverage.",
+      "review_notes": "Composition, inverse functions, inverse graphs, and function-domain restrictions are primary; the solved equations/discriminant give substantial quadratics coverage."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q01",
+      "question_number": 1,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Indefinite integration dominates.",
+      "review_notes": "Indefinite integration dominates."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q02",
+      "question_number": 2,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Binomial expansion coefficient extraction dominates.",
+      "review_notes": "Binomial expansion coefficient extraction dominates."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q03",
+      "question_number": 3,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Function composition is primary, with completing-square form as substantial quadratic coverage.",
+      "review_notes": "Function composition is primary, with completing-square form as substantial quadratic coverage."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q04",
+      "question_number": 4,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Identity proof and trigonometric equation solving dominate.",
+      "review_notes": "Identity proof and trigonometric equation solving dominate."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q05",
+      "question_number": 5,
+      "current_topic": "trigonometry",
+      "primary_topic": null,
+      "primary": null,
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [],
+      "status": "exclude_current_syllabus",
+      "current_syllabus": false,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Legacy 3D vector scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry.",
+      "review_notes": "Legacy 3D vector scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q06",
+      "question_number": 6,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arithmetic and geometric progression sums dominate.",
+      "review_notes": "Arithmetic and geometric progression sums dominate."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q07",
+      "question_number": 7,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "trigonometry"
+      ],
+      "secondary": [
+        "trigonometry"
+      ],
+      "coverage_topics": [
+        "functions",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Range, graph, and inverse-function work are primary, with tangent-function graph/inverse trig content as substantial secondary coverage.",
+      "review_notes": "Range, graph, and inverse-function work are primary, with tangent-function graph/inverse trig content as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q08",
+      "question_number": 8,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "circular_measure"
+      ],
+      "secondary": [
+        "circular_measure"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "circular_measure"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Optimization by differentiation is primary, with quarter-circle perimeter/area formulae as substantial circular-measure setup.",
+      "review_notes": "Optimization by differentiation is primary, with quarter-circle perimeter/area formulae as substantial circular-measure setup."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q09",
+      "question_number": 9,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Tangent circles, radian angle, sectors, and shaded-area calculation dominate.",
+      "review_notes": "Tangent circles, radian angle, sectors, and shaded-area calculation dominate."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q10",
+      "question_number": 10,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "secondary": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Normal to a curve is primary, with axis intercepts/midpoint as coordinate geometry and the second intersection found from a quadratic.",
+      "review_notes": "Normal to a curve is primary, with axis intercepts/midpoint as coordinate geometry and the second intersection found from a quadratic."
+    },
+    {
+      "paper": "11winter10",
+      "paper_code": "11winter10",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter10_q11",
+      "question_number": 11,
+      "current_topic": "quadratics",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "differentiation",
+        "quadratics"
+      ],
+      "secondary": [
+        "differentiation",
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2010_w10_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2010_w10_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2010/question_papers/9709_w10_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2010/mark_schemes/9709_w10_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Volume of revolution by integration is the largest single block; derivative/no-stationary reasoning and discriminant conditions are substantial secondary topics.",
+      "review_notes": "Volume of revolution by integration is the largest single block; derivative/no-stationary reasoning and discriminant conditions are substantial secondary topics."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q01",
+      "question_number": 1,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Binomial expansion term extraction dominates.",
+      "review_notes": "Binomial expansion term extraction dominates."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q02",
+      "question_number": 2,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Derivative and non-negative gradient proof dominate.",
+      "review_notes": "Derivative and non-negative gradient proof dominate."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q03",
+      "question_number": 3,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "trigonometry"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Cosine graph and trig-equation root counting dominate.",
+      "review_notes": "Cosine graph and trig-equation root counting dominate."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q04",
+      "question_number": 4,
+      "current_topic": "functions",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "functions"
+      ],
+      "secondary": [
+        "functions"
+      ],
+      "coverage_topics": [
+        "integration",
+        "functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Recovering f from f prime by integration is primary, while range/stationary-value context is substantial function coverage.",
+      "review_notes": "Recovering f from f prime by integration is primary, while range/stationary-value context is substantial function coverage."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q05",
+      "question_number": 5,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arc, sector, triangle, and circular-area formulae dominate.",
+      "review_notes": "Arc, sector, triangle, and circular-area formulae dominate."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q06",
+      "question_number": 6,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arithmetic and geometric progression sums dominate.",
+      "review_notes": "Arithmetic and geometric progression sums dominate."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q07",
+      "question_number": 7,
+      "current_topic": "quadratics",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Optimization by differentiation is primary, with a quadratic area expression as substantial secondary coverage.",
+      "review_notes": "Optimization by differentiation is primary, with a quadratic area expression as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q08",
+      "question_number": 8,
+      "current_topic": "trigonometry",
+      "primary_topic": null,
+      "primary": null,
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [],
+      "status": "exclude_current_syllabus",
+      "current_syllabus": false,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry.",
+      "review_notes": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q09",
+      "question_number": 9,
+      "current_topic": "differentiation",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "coordinate_geometry",
+        "quadratics"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Line/curve intersections, distance, midpoint, and tangent cases make coordinate geometry primary, with discriminant equations as substantial quadratics.",
+      "review_notes": "Line/curve intersections, distance, midpoint, and tangent cases make coordinate geometry primary, with discriminant equations as substantial quadratics."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q10",
+      "question_number": 10,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [
+        "integration",
+        "coordinate_geometry"
+      ],
+      "secondary": [
+        "integration",
+        "coordinate_geometry"
+      ],
+      "coverage_topics": [
+        "differentiation",
+        "integration",
+        "coordinate_geometry"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Normal to a curve is primary, with volume of revolution as integration and line/intersection geometry as coordinate coverage.",
+      "review_notes": "Normal to a curve is primary, with volume of revolution as integration and line/intersection geometry as coordinate coverage."
+    },
+    {
+      "paper": "11winter11",
+      "paper_code": "11winter11",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter11_q11",
+      "question_number": 11,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2011_w11_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2011_w11_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2011/question_papers/9709_w11_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Function range, inverse-domain, graph and inverse-expression work are primary, with completing square and square-root inversion as substantial quadratic coverage.",
+      "review_notes": "Function range, inverse-domain, graph and inverse-expression work are primary, with completing square and square-root inversion as substantial quadratic coverage."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q01",
+      "question_number": 1,
+      "current_topic": "series_and_sequences",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "series",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q01_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q01_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arithmetic progression sum is primary, with solving a quadratic in n as substantial secondary coverage.",
+      "review_notes": "Arithmetic progression sum is primary, with solving a quadratic in n as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q02",
+      "question_number": 2,
+      "current_topic": "integration",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "integration"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q02_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q02_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Integrating dy/dx and using a point to find the curve equation dominate.",
+      "review_notes": "Integrating dy/dx and using a point to find the curve equation dominate."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q03",
+      "question_number": 3,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "relabel_primary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q03_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q03_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Related rates through dA/dr and dr/dt dominate; the circular setting is context.",
+      "review_notes": "Related rates through dA/dr and dr/dt dominate; the circular setting is context."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q04",
+      "question_number": 4,
+      "current_topic": "binomial_expansion",
+      "primary_topic": "series",
+      "primary": "series",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "series"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q04_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q04_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Binomial expansion coefficient extraction dominates.",
+      "review_notes": "Binomial expansion coefficient extraction dominates."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q05",
+      "question_number": 5,
+      "current_topic": "differentiation",
+      "primary_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "differentiation"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q05_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q05_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Stationary point verification and nature by derivatives dominate.",
+      "review_notes": "Stationary point verification and nature by derivatives dominate."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q06",
+      "question_number": 6,
+      "current_topic": "circular_measure",
+      "primary_topic": "circular_measure",
+      "primary": "circular_measure",
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [
+        "circular_measure"
+      ],
+      "status": "keep",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q06_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q06_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Arc lengths and perimeter in a circular-sector construction dominate.",
+      "review_notes": "Arc lengths and perimeter in a circular-sector construction dominate."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q07",
+      "question_number": 7,
+      "current_topic": "trigonometry",
+      "primary_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "trigonometry",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q07_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q07_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Trig equation solving is primary, with a quadratic in sin theta as substantial secondary coverage.",
+      "review_notes": "Trig equation solving is primary, with a quadratic in sin theta as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q08",
+      "question_number": 8,
+      "current_topic": "coordinate_geometry",
+      "primary_topic": "integration",
+      "primary": "integration",
+      "secondary_topics": [
+        "coordinate_geometry"
+      ],
+      "secondary": [
+        "coordinate_geometry"
+      ],
+      "coverage_topics": [
+        "integration",
+        "coordinate_geometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q08_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q08_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Area between a curve and line by integration is primary, with intersection coordinates/line-curve setup as substantial coordinate-geometry coverage.",
+      "review_notes": "Area between a curve and line by integration is primary, with intersection coordinates/line-curve setup as substantial coordinate-geometry coverage."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q09",
+      "question_number": 9,
+      "current_topic": "trigonometry",
+      "primary_topic": null,
+      "primary": null,
+      "secondary_topics": [],
+      "secondary": [],
+      "coverage_topics": [],
+      "status": "exclude_current_syllabus",
+      "current_syllabus": false,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q09_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q09_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry.",
+      "review_notes": "Legacy 3D vector and scalar-product content is outside the current P1 major-topic set, so it should not be counted as trigonometry."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q10",
+      "question_number": 10,
+      "current_topic": "functions",
+      "primary_topic": "functions",
+      "primary": "functions",
+      "secondary_topics": [
+        "quadratics"
+      ],
+      "secondary": [
+        "quadratics"
+      ],
+      "coverage_topics": [
+        "functions",
+        "quadratics"
+      ],
+      "status": "add_secondary_topic",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q10_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q10_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Function range and inverse work are primary, with completing square and quadratic-vertex form as substantial secondary coverage.",
+      "review_notes": "Function range and inverse work are primary, with completing square and quadratic-vertex form as substantial secondary coverage."
+    },
+    {
+      "paper": "11winter12",
+      "paper_code": "11winter12",
+      "component_code": "11",
+      "paper_family": "p1",
+      "question_id": "11winter12_q11",
+      "question_number": 11,
+      "current_topic": "differentiation",
+      "primary_topic": "coordinate_geometry",
+      "primary": "coordinate_geometry",
+      "secondary_topics": [
+        "differentiation"
+      ],
+      "secondary": [
+        "differentiation"
+      ],
+      "coverage_topics": [
+        "coordinate_geometry",
+        "differentiation"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "current_syllabus": true,
+      "source_artifact": "pm1/pm1_2012_w12_11_qp_q11_question.png",
+      "mark_scheme_artifact": "pm1/pm1_2012_w12_11_ms_q11_markscheme.png",
+      "source_pdf": "input/pastpapers/9709/2012/question_papers/9709_w12_qp_11.pdf",
+      "mark_scheme_source_pdf": "input/pastpapers/9709/2012/mark_schemes/9709_w12_ms_11.pdf",
+      "source": "p1_topic_overlap_review_batch_004_2026_07_03",
+      "rationale": "Tangent/normal line equations, intercept distance, and line intersection dominate coordinate geometry; derivative work supplies substantial secondary differentiation coverage.",
+      "review_notes": "Tangent/normal line equations, intercept distance, and line intersection dominate coordinate geometry; derivative work supplies substantial secondary differentiation coverage."
+    }
+  ]
+}

@@ -518,7 +518,7 @@ def render_storage_optimization_plan(audit: dict[str, Any]) -> str:
         "output/codex_text_extraction_candidate*",
         "output/codex_text_extraction_targeted/*",
         "output/archive/generated_cleanup_*",
-        "output/topic_packets/*/topic_packet.pdf",
+        "output/topic_packets/*/*/*_packet.pdf",
         "output/audits/*",
         "output/run_status/*",
     ]:

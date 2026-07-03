@@ -1,0 +1,57 @@
+question_id,paper,paper_code,question_number,current_topic,primary_topic,secondary_topics,coverage_topics,status,current_syllabus,rationale
+11winter19_q01,11winter19,11winter19,1,binomial_expansion,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter19_q02,11winter19,11winter19,2,functions,differentiation,quadratics,differentiation;quadratics,relabel_primary_add_secondary,True,"Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing quadratics overlap."
+11winter19_q03,11winter19,11winter19,3,differentiation,differentiation,,differentiation,keep,True,The existing differentiation label matches the dominant mark-bearing topic.
+11winter19_q04,11winter19,11winter19,4,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter19_q05,11winter19,11winter19,5,trigonometry,trigonometry,,trigonometry,keep,True,The existing trigonometry label matches the dominant mark-bearing topic.
+11winter19_q06,11winter19,11winter19,6,coordinate_geometry,coordinate_geometry,quadratics,coordinate_geometry;quadratics,add_secondary_topic,True,The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter19_q07,11winter19,11winter19,7,functions,functions,,functions,keep,True,The existing functions label matches the dominant mark-bearing topic.
+11winter19_q08,11winter19,11winter19,8,circular_measure,circular_measure,,circular_measure,keep,True,The existing circular_measure label matches the dominant mark-bearing topic.
+11winter19_q09,11winter19,11winter19,9,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.
+11winter19_q10,11winter19,11winter19,10,coordinate_geometry,,,,exclude_current_syllabus,False,"Legacy 3D vector/scalar-product content is outside the current P1 major-topic set, so it is excluded rather than forced into a current topic."
+11winter19_q11,11winter19,11winter19,11,integration,integration,quadratics,integration;quadratics,add_secondary_topic,True,The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter20_q01,11winter20,11winter20,1,quadratics,quadratics,,quadratics,keep,True,The existing quadratics label matches the dominant mark-bearing topic.
+11winter20_q02,11winter20,11winter20,2,coordinate_geometry,integration,,integration,relabel_primary,True,Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw coordinate_geometry label.
+11winter20_q03,11winter20,11winter20,3,coordinate_geometry,differentiation,,differentiation,relabel_primary,True,Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label.
+11winter20_q04,11winter20,11winter20,4,functions,functions,trigonometry,functions;trigonometry,add_secondary_topic,True,The primary label remains functions; the mark scheme also contains substantial mark-bearing trigonometry overlap.
+11winter20_q05,11winter20,11winter20,5,binomial_expansion,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter20_q06,11winter20,11winter20,6,coordinate_geometry,differentiation,,differentiation,relabel_primary,True,Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw coordinate_geometry label.
+11winter20_q07,11winter20,11winter20,7,trigonometry,trigonometry,,trigonometry,keep,True,The existing trigonometry label matches the dominant mark-bearing topic.
+11winter20_q08,11winter20,11winter20,8,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter20_q09,11winter20,11winter20,9,differentiation,coordinate_geometry,,coordinate_geometry,relabel_primary,True,Review of the question and mark scheme shows coordinate_geometry is the dominant assessed topic rather than the raw differentiation label.
+11winter20_q10,11winter20,11winter20,10,circular_measure,circular_measure,,circular_measure,keep,True,The existing circular_measure label matches the dominant mark-bearing topic.
+11winter20_q11,11winter20,11winter20,11,functions,functions,quadratics,functions;quadratics,add_secondary_topic,True,The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter20_q12,11winter20,11winter20,12,differentiation,integration,differentiation;quadratics,integration;differentiation;quadratics,relabel_primary_add_secondary,True,"Review of the question and mark scheme shows integration is the dominant assessed topic, with substantial mark-bearing differentiation, quadratics overlap."
+11winter23_q01,11winter23,11winter23,1,binomial_expansion,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter23_q02,11winter23,11winter23,2,trigonometry,quadratics,,quadratics,relabel_primary,True,Review of the question and mark scheme shows quadratics is the dominant assessed topic rather than the raw trigonometry label.
+11winter23_q03,11winter23,11winter23,3,quadratics,differentiation,,differentiation,relabel_primary,True,Review of the question and mark scheme shows differentiation is the dominant assessed topic rather than the raw quadratics label.
+11winter23_q04,11winter23,11winter23,4,functions,functions,,functions,keep,True,The existing functions label matches the dominant mark-bearing topic.
+11winter23_q05,11winter23,11winter23,5,trigonometry,trigonometry,,trigonometry,keep,True,The existing trigonometry label matches the dominant mark-bearing topic.
+11winter23_q06,11winter23,11winter23,6,circular_measure,circular_measure,,circular_measure,keep,True,The existing circular_measure label matches the dominant mark-bearing topic.
+11winter23_q07,11winter23,11winter23,7,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter23_q08,11winter23,11winter23,8,integration,integration,quadratics,integration;quadratics,add_secondary_topic,True,The primary label remains integration; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter23_q09,11winter23,11winter23,9,functions,functions,quadratics,functions;quadratics,add_secondary_topic,True,The primary label remains functions; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter23_q10,11winter23,11winter23,10,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.
+11winter23_q11,11winter23,11winter23,11,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,True,The existing coordinate_geometry label matches the dominant mark-bearing topic.
+11winter24_q01,11winter24,11winter24,1,binomial_expansion,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter24_q02,11winter24,11winter24,2,differentiation,differentiation,,differentiation,keep,True,The existing differentiation label matches the dominant mark-bearing topic.
+11winter24_q03,11winter24,11winter24,3,circular_measure,circular_measure,,circular_measure,keep,True,The existing circular_measure label matches the dominant mark-bearing topic.
+11winter24_q04,11winter24,11winter24,4,algebra,quadratics,,quadratics,keep,True,The existing quadratics label matches the dominant mark-bearing topic.
+11winter24_q05,11winter24,11winter24,5,coordinate_geometry,differentiation,integration,differentiation;integration,relabel_primary_add_secondary,True,"Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing integration overlap."
+11winter24_q06,11winter24,11winter24,6,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,True,The existing coordinate_geometry label matches the dominant mark-bearing topic.
+11winter24_q07,11winter24,11winter24,7,differentiation,integration,,integration,relabel_primary,True,Review of the question and mark scheme shows integration is the dominant assessed topic rather than the raw differentiation label.
+11winter24_q08,11winter24,11winter24,8,trigonometry,trigonometry,quadratics,trigonometry;quadratics,add_secondary_topic,True,The primary label remains trigonometry; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter24_q09,11winter24,11winter24,9,differentiation,differentiation,quadratics,differentiation;quadratics,add_secondary_topic,True,The primary label remains differentiation; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter24_q10,11winter24,11winter24,10,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter24_q11,11winter24,11winter24,11,functions,functions,,functions,keep,True,The existing functions label matches the dominant mark-bearing topic.
+11winter25_q01,11winter25,11winter25,1,quadratics,quadratics,,quadratics,keep,True,The existing quadratics label matches the dominant mark-bearing topic.
+11winter25_q02,11winter25,11winter25,2,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter25_q03,11winter25,11winter25,3,binomial_expansion,series,quadratics,series;quadratics,add_secondary_topic,True,The primary label remains series; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter25_q04,11winter25,11winter25,4,functions,functions,,functions,keep,True,The existing functions label matches the dominant mark-bearing topic.
+11winter25_q05,11winter25,11winter25,5,trigonometry,trigonometry,,trigonometry,keep,True,The existing trigonometry label matches the dominant mark-bearing topic.
+11winter25_q06,11winter25,11winter25,6,functions,functions,,functions,keep,True,The existing functions label matches the dominant mark-bearing topic.
+11winter25_q07,11winter25,11winter25,7,circular_measure,differentiation,circular_measure,differentiation;circular_measure,relabel_primary_add_secondary,True,"Review of the question and mark scheme shows differentiation is the dominant assessed topic, with substantial mark-bearing circular_measure overlap."
+11winter25_q08,11winter25,11winter25,8,integration,integration,,integration,keep,True,The existing integration label matches the dominant mark-bearing topic.
+11winter25_q09,11winter25,11winter25,9,series_and_sequences,series,,series,keep,True,The existing series label matches the dominant mark-bearing topic.
+11winter25_q10,11winter25,11winter25,10,coordinate_geometry,coordinate_geometry,quadratics,coordinate_geometry;quadratics,add_secondary_topic,True,The primary label remains coordinate_geometry; the mark scheme also contains substantial mark-bearing quadratics overlap.
+11winter25_q11,11winter25,11winter25,11,differentiation,differentiation,integration,differentiation;integration,add_secondary_topic,True,The primary label remains differentiation; the mark scheme also contains substantial mark-bearing integration overlap.
