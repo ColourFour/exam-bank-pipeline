@@ -1,0 +1,819 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 24
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-29T04:49:33+00:00",
+  "record_count": 24,
+  "records": [
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer14_q10",
+      "reason": "The question and mark scheme focus on range, graphing the inverse, and deriving a piecewise inverse function, so the current functions topic is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 151
+    },
+    {
+      "action": "keep",
+      "confidence": 0.93,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer14_q11",
+      "reason": "Although the question uses a tangent and intersections, the largest assessed part asks for the area between a line and curve by integration, so the current integration topic is acceptable.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 152
+    },
+    {
+      "action": "keep",
+      "confidence": 0.94,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_qp_q12_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2014_s14_11_ms_q12_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer14_q12",
+      "reason": "The evidence centres on a given derivative, second derivative, and stationary point classification, so differentiation is the correct topic despite an initial integration step.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 153
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q01",
+      "reason": "The question asks for trigonometric ratios and a sine addition result in terms of k, matching the trigonometry topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 154
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.95,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q02",
+      "reason": "The route topic is coordinate_geometry, but the assessed method is forming A(p) and using dA/dp with dp/dt to find a rate of change, so differentiation is the clearer allowed topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 155
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q03",
+      "reason": "Both images show binomial expansions and coefficient extraction, which are part of the series topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 156
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q05",
+      "reason": "The question uses sector perimeter, sector area, and radian angle, so circular_measure is the correct topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "circular_measure",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 158
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q06",
+      "reason": "The work is based on line equations, intercepts, perpendicular gradients, and a midpoint, so the coordinate_geometry topic is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "coordinate_geometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 159
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q07",
+      "reason": "The question assesses geometric progression sum to infinity and an arithmetic progression of sector angles, so series is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 160
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q08",
+      "reason": "The evidence focuses on a defined function, graph, one-to-one reasoning, and inverse function expression, so the current functions topic is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 161
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2015_s15_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer15_q09",
+      "reason": "The question requires first derivatives, stationary points, their nature, and discriminant reasoning for stationary points, so differentiation is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 162
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q01",
+      "reason": "The question asks for the term independent of x in a binomial expansion, which belongs to series.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 164
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q02",
+      "reason": "The question solves a trigonometric equation over a full degree interval, so trigonometry is the correct topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 165
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q03",
+      "reason": "The problem asks for a volume of revolution by integrating with respect to y, matching the integration topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 166
+    },
+    {
+      "action": "keep",
+      "confidence": 0.94,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q04",
+      "reason": "The question includes a rate calculation from dy/dx, but the main requested curve equation is found by integration from the given derivative, so integration is acceptable.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 167
+    },
+    {
+      "action": "keep",
+      "confidence": 0.93,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q05",
+      "reason": "The question derives a quadratic area expression and finds its maximum value, which fits the quadratics topic for Pure 1 routing.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "quadratics",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 168
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q06",
+      "reason": "The evidence assesses a tangent to a quadratic using discriminant reasoning, roots of a quadratic, and a vertex, so quadratics is clearer than differentiation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "quadratics",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 169
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q07",
+      "reason": "The problem asks for arc length, perimeter, and area in a circular sector configuration using radians, so circular_measure is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "circular_measure",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 170
+    },
+    {
+      "action": "keep",
+      "confidence": 0.91,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q08",
+      "reason": "The final task is to find a perpendicular bisector equation using gradients, points, and midpoint geometry; differentiation is only used to locate C and D, so coordinate_geometry is acceptable.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "coordinate_geometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 171
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q09",
+      "reason": "The evidence assesses a geometric progression sum to infinity and arithmetic progression conditions and sums, so series is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 172
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2016_s16_11_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer16_q11",
+      "reason": "The question is about a defined function, its range, intercepts, sketch, and inverse with domain and range, so functions is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 174
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer17_q01",
+      "reason": "The problem asks for coefficients in a binomial expansion, which is squarely in the series topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 175
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer17_q03",
+      "reason": "The item proves a trigonometric identity and then solves a related trigonometric equation, so trigonometry is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 177
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.94,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2017_s17_11_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11summer17_q05",
+      "reason": "The question is built around the graph y = 2 cos x and coordinates on that trigonometric curve, so trigonometry is clearer than the current functions topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T04:49:33+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 179
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_06.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_06.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

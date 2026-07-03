@@ -1,0 +1,48 @@
+{
+  "accepted_action_counts": {
+    "exclude": 47,
+    "keep": 954,
+    "relabel": 362
+  },
+  "accepted_count": 1363,
+  "last_completed_slice": 68,
+  "merged_decisions_path": "data/review/topic_review_batches/topic_review_auto_reviewed_merged_0017.v1.json",
+  "notes": [
+    "Round 17 reviewed slices 65-68 (records 1921-2040).",
+    "Round 17 contributed 102 accepted current-relevant decisions and 18 pending rows.",
+    "Pending rows were held for missing mark-scheme evidence, mixed-topic ambiguity, or confidence/risk flags.",
+    "Added exact alias for combinations and arrangements with restrictions to resolve accepted S1 relabel phrase."
+  ],
+  "packet_validation": {
+    "applied_reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 954,
+      "relabel": 362
+    },
+    "reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 954,
+      "relabel": 362
+    },
+    "reviewed_decisions_loaded": 1363,
+    "total_excluded_questions": 47,
+    "total_included_in_release_packets": 1561,
+    "total_included_in_review_packets": 1940,
+    "total_review_required_questions": 1940
+  },
+  "pending_count": 677,
+  "raw_decision_action_counts": {
+    "exclude": 47,
+    "keep": 954,
+    "pending": 677,
+    "relabel": 362
+  },
+  "reviewed_by_subagents_count": 2040,
+  "round": 17,
+  "slice_size": 30,
+  "validation": {
+    "focused_pytest": ".venv/bin/pytest -q tests/test_topic_review_loop.py tests/test_topic_packets.py",
+    "focused_pytest_result": "pending at report write; see command output for final status",
+    "packet_dry_run_result": "passed after adding exact permutations/combinations phrase alias exposed by accepted slice 67 relabels"
+  }
+}

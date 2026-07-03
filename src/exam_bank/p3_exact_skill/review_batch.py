@@ -49,7 +49,7 @@ SEED_REGISTRY_SUBPART_IDS = (
     "33summer23_q11_b",
     "31summer24_q04_b",
     "32summer23_q06_c",
-    "32autumn23_q06_c",
+    "32winter23_q06_c",
     "33summer23_q06_b",
     "33summer23_q09_b",
     "32spring23_q05_b",
@@ -654,13 +654,13 @@ def select_batch_0003_items(
 
     specs = [
         (
-            "32autumn23_q09_b",
+            "32winter23_q09_b",
             "prior_ambiguous_retag_probe",
             "Retest Batch 0001/0002 trig-identity ambiguity where area/integration is the assessed target and trig identities are method support.",
             ["supporting_method_confusion", "integration_trig_area_target", "do_not_default_to_clean"],
         ),
         (
-            "31autumn21_q07_c",
+            "31winter21_q07_c",
             "prior_ambiguous_retag_probe",
             "Retest Batch 0001 DE/log ambiguity where the selected part is limiting behaviour from a differential-equation solution.",
             ["supporting_method_confusion", "de_log_context", "do_not_default_to_clean"],
@@ -672,25 +672,25 @@ def select_batch_0003_items(
             ["wrong_skill_routing", "implicit_vs_derivative_rules", "do_not_default_to_clean"],
         ),
         (
-            "33autumn22_q10_a",
+            "33winter22_q10_a",
             "prior_ambiguous_retag_probe",
             "Retest Batch 0002 log/exponential ambiguity where the subpart identifies constants in a differential-equation model.",
             ["supporting_method_confusion", "de_log_context", "do_not_default_to_clean"],
         ),
         (
-            "33autumn22_q10_b",
+            "33winter22_q10_b",
             "prior_ambiguous_retag_probe",
             "Retest Batch 0002 log/exponential ambiguity where logarithms occur during separable differential-equation solving.",
             ["supporting_method_confusion", "de_log_context", "do_not_default_to_clean"],
         ),
         (
-            "31autumn21_q04_whole",
+            "31winter21_q04_whole",
             "prior_ambiguous_retag_probe",
             "Retest broad standard-integration routing where substitution, changed limits, and improper-limit structure need narrower treatment.",
             ["broad_integration_label", "retag_to_narrower_integration", "do_not_default_to_clean"],
         ),
         (
-            "33autumn23_q07_b",
+            "33winter23_q07_b",
             "prior_blocked_confirmation",
             "Confirm Batch 0001 blocked polynomial/remainder route on an implicit-differentiation stationary-tangent subpart.",
             ["wrong_skill_routing", "polynomial_support_only", "do_not_default_to_clean"],

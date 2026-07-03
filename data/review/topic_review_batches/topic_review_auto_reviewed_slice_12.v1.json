@@ -1,0 +1,797 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 22
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-29T07:33:32+00:00",
+  "record_count": 22,
+  "records": [
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11winter20_q03",
+      "reason": "The question asks for dr/dt from dV/dt for a spherical balloon, and the mark scheme differentiates V with respect to r, so differentiation is the correct P1 topic rather than coordinate geometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "related rates using sphere volume derivative",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 331
+    },
+    {
+      "action": "keep",
+      "confidence": 0.91,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11winter20_q04",
+      "reason": "The inspected images show a transformed graph of y = cos theta and ask for the transformed equation; this fits the functions topic through graph transformations, with trigonometry only as the base function.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "transformations of a cosine graph",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 332
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11winter20_q06",
+      "reason": "The item asks for the point where a curve has a specified gradient, and the mark scheme differentiates the curve and solves for x, so differentiation is the correct topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "gradient of a curve by differentiation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 334
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2020_w20_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "11winter20_q07",
+      "reason": "The question and mark scheme prove a trigonometric identity and solve a trigonometric equation over a degree interval, matching trigonometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "trigonometric identity and equation solving",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 335
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q01",
+      "reason": "The item asks for an indefinite integral of algebraic powers, and the mark scheme awards integrated power terms with a constant.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "indefinite integration of powers",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 341
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q02",
+      "reason": "The question and mark scheme find terms in a binomial expansion and use a coefficient condition, matching series.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "binomial expansion terms and coefficient condition",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 342
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q03",
+      "reason": "The item uses roots of a quadratic and the discriminant condition for equal roots, matching quadratics.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "roots and discriminant for equal roots",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "quadratics",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 343
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q04",
+      "reason": "The question asks for a tangent equation and angle; the mark scheme differentiates to find the tangent gradient, matching differentiation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "tangent gradient and tangent angle",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 344
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q05",
+      "reason": "The question and mark scheme prove a trigonometric identity and solve a trigonometric equation in a specified range, matching trigonometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "trigonometric identity and equation solving",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 345
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q06",
+      "reason": "The item is about a function composition ff(x) and finding the inverse function, matching functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "self-inverse function and inverse expression",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 346
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q07",
+      "reason": "The question uses gradients, equations of parallel and perpendicular lines, intersection coordinates and distance, matching coordinate geometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "parallel and perpendicular lines with distance",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "coordinate_geometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 347
+    },
+    {
+      "action": "keep",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q09",
+      "reason": "The item treats f(x)=3-4cos^k x as a function, asking for range, exact solutions, graph sketching and whether an inverse exists, so the current functions topic is acceptable.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "range, exact solutions and invertibility of a trig-defined function",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 349
+    },
+    {
+      "action": "keep",
+      "confidence": 0.91,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q10",
+      "reason": "Although part (a) applies arithmetic progression angles to a circle sector, the item is mainly about arithmetic and geometric progressions, and the mark scheme centres on AP/GP equations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "arithmetic and geometric progressions with sector application",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 350
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2011_s11_12_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer11_q11",
+      "reason": "The item asks for a volume of revolution and the mark scheme uses pi times the integral of y squared, matching integration.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "volume of revolution by integration",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 351
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q01",
+      "reason": "The question asks for a volume generated by rotating a region about the x-axis, and the mark scheme integrates y squared with limits, matching integration.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "volume of revolution by integration",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 352
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q02",
+      "reason": "The question asks for dy/dx and then dy/dt using dx/dt, and the mark scheme applies differentiation and the chain rule, so differentiation is correct rather than coordinate geometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "derivative and connected rates",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 353
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q03",
+      "reason": "The item finds a coefficient in binomial expansions and solves for a constant, matching series.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "binomial expansion coefficient equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 354
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q04",
+      "reason": "The question and mark scheme use midpoint, perpendicular gradient, line intercepts and distance, matching coordinate geometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "perpendicular bisector and distance between intercepts",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "coordinate_geometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 355
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q05",
+      "reason": "The item proves an identity using tan, sin and cos, then solves a trigonometric equation in degrees, matching trigonometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "trigonometric identity and equation solving",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 356
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q06",
+      "reason": "The question and mark scheme use chord length, arc length s = r theta, sector area and segment area in radians, matching circular measure.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "chord length, arc length, perimeter and area in radians",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "circular_measure",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 357
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q07",
+      "reason": "The item uses sum formula information for an arithmetic progression and equations for a geometric progression, matching series.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "arithmetic and geometric progression conditions",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "series",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 358
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.93,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm1/pm1_2012_s12_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "12summer12_q09",
+      "reason": "The main classification evidence is finding a maximum point by differentiating the curve and using the tangent/chord gradient condition; the later area calculation is secondary, so differentiation is a better allowed topic than coordinate geometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T07:33:32+00:00",
+      "reviewed_skill": "stationary point and curve/line intersection before area integration",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 360
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91_slice_12",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_12.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_12.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

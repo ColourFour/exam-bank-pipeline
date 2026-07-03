@@ -1,0 +1,2596 @@
+{
+  "batch_id": "topic_review_0237b41ffe91_slice_26",
+  "decision_schema": {
+    "properties": {
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "current_syllabus_status": {
+        "enum": [
+          "ambiguous",
+          "current_relevant",
+          "legacy_but_relevant",
+          "not_in_2026_syllabus",
+          "outdated_not_relevant"
+        ]
+      },
+      "decision_action": {
+        "enum": [
+          "exclude",
+          "keep",
+          "pending",
+          "relabel"
+        ]
+      },
+      "decision_version": {
+        "const": "topic_review_auto_decision_v1"
+      },
+      "evidence_refs": {
+        "type": "array"
+      },
+      "explanation": {
+        "type": "string"
+      },
+      "prompt_version": {
+        "const": "topic_review_9709_2026_2027_v1"
+      },
+      "question_id": {
+        "type": "string"
+      },
+      "release_override": {
+        "type": "boolean"
+      },
+      "review_source": {
+        "const": "automated_agentic_review"
+      },
+      "reviewed_skill": {
+        "type": "string"
+      },
+      "reviewed_subtopic": {
+        "type": "string"
+      },
+      "reviewed_topic": {
+        "type": "string"
+      },
+      "reviewer_model": {
+        "type": "string"
+      },
+      "risk_flags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "decision_version",
+      "review_source",
+      "question_id",
+      "decision_action",
+      "reviewed_topic",
+      "current_syllabus_status",
+      "release_override",
+      "confidence",
+      "evidence_refs",
+      "risk_flags",
+      "explanation",
+      "reviewer_model",
+      "prompt_version"
+    ],
+    "type": "object"
+  },
+  "manifest": {
+    "batch_id": "topic_review_0237b41ffe91",
+    "confidence_threshold": 0.9,
+    "created_at": "2026-06-29T03:29:57+00:00",
+    "dry_run": false,
+    "prompt_version": "topic_review_9709_2026_2027_v1",
+    "review_required_input_count": 2572,
+    "schema_name": "exam_bank.topic_review.auto_review_batch",
+    "schema_version": 1,
+    "selected_count": 2265,
+    "skipped_count": 307,
+    "skipped_reason_counts": {
+      "already_reviewed": 306,
+      "unknown_question_id": 1
+    },
+    "slice_end_index": 780,
+    "slice_number": 26,
+    "slice_row_count": 30,
+    "slice_start_index": 751,
+    "source_batch_path": "data/review/topic_review_batches/topic_review_batch.json",
+    "source_files": {
+      "artifact_root": "output",
+      "canonical_taxonomy_root": "exam_bank_taxonomy/canonical",
+      "question_bank": "output/json/question_bank.json",
+      "reviewed_decisions": "data/review/topic_bank_reviewed_decisions.v1.json",
+      "taxonomy": "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json",
+      "topic_routing": "data/topic_routing/question_bank.topic_routing.v1.json"
+    },
+    "syllabus_baseline": {
+      "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+      "syllabus_code": "9709",
+      "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+      "valid_for": [
+        "2026",
+        "2027"
+      ]
+    }
+  },
+  "reviewer_prompt": "You are reviewing CAIE 9709 Mathematics topic routing for printable topic packets. Use the 2026-2027 syllabus as the current baseline. Inspect the canonical question image and mark-scheme image. Choose exactly one decision_action: keep, relabel, exclude, or pending. Use keep only when the current topic is correct for the normalized paper family. Use relabel only when another supplied allowed topic is clearly correct. Use exclude when the question is outdated or not relevant to the 2026-2027 syllabus. Use pending for ambiguity, poor image evidence, mixed-topic uncertainty, or any curriculum doubt. Set release_override true only when both canonical images were inspected and are usable. Return JSON matching the supplied schema. Do not invent topic IDs.",
+  "rows": [
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 751,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2016_w16_13_ms_q11_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2016_w16_13_qp_q11_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "11 (i)  Attempt diffn. and equate to 0 ddyx= \u2212k(kx\u22123)^{\u2212}2 + k = 0 *M1  term(s) Must contain (kx\u22123)^{\u2212}2 + other\n(kx \u22123)^{2} = 1  or k^{3}x^{2}\u22126k^{2}x + 8k( = 0) DM1  Simplify to a quadratic\nx = 2   or   4 *A1*A1  Legitimately obtained\nk k\n(d^{2}y)/(dx^{2}) = 2k^{2}(kx\u22123)^{\u2212}3 B1 Ft must contain Ak^{2}(kx\u22123)^{\u2212}3\nWhen x ^{=} k^{2},   (d^{2}y)/(dx)_{2} = (\u22122k^{2})_{ 0}^{<} MAX All previous  DB1  where Convincing alt. methods (values either side) must show which ^{A}>0\nWhen x = k^{4},   (d^{2}y)/(dx^{2}) = (2k^{2})_{ 0}> MIN working correct  DB1  values used & cannot use _{x} = 3 /k\n[7]\n(ii) V= (=\u03c0()\u03c0\u222b[)(\u222bx\uf8ee\uf8f0\u2212(x3\u2212)^{\u2212}3_{2})+\u22121(+x(\u2212x3\u2212)^{2}3(2)/(+ 2]dx))\uf8f9\uf8fb dx  *M1 A1  integrate Attempt to expand  y\u00b2 and then\n== ((\u03c0\u03c0))\uf8ee\uf8ef\uf8f0\uf8ef\u2212\uf8ee\uf8ef\uf8f01\u2212(x13\u2212+34)^{\u2212}\u22121\uf8eb\uf8ec\uf8ed+13(\u2212x9\u22123+3)0^{3}\uf8f6\uf8f7\uf8f8(\uf8f9\uf8fa\uf8fb+2x)\uf8fa\uf8f9\uf8fa\uf8fb  Condone missing 2x  A1 DM1  Or Apply limits 0\u21922 \uf8ee\uf8ef\uf8f0\u2212(x\u22123)^{\u2212}1 + x3^{3} \u22123x^{2} + 9x + 2x\uf8f9\uf8fa\uf8fb\n= 40\u03c0/ 3  oe  or 41.9 A1  2 missing \u2192 28\u03c0/ 3 scores\n[5] M1A0A1M1A0",
+      "ocr_text": "11 Accurve has equation y = (kx \u2014 3)7! + (kx \u2014 3), where k is a non-zero constant. (i) Find the x-coordinates of the stationary points in terms of k, and determine the nature of each stationary point, justifying your answers. [7] (ii) y= (x= 3) 1 + (e=3) The diagram shows part of the curve for the case when k = 1. Showing all necessary working, find the volume obtained when the region between the curve, the x-axis, the y-axis and the line x = 2, shown shaded in the diagram, is rotated through 360\u00b0 about the x-axis. [5]",
+      "paper": "13winter16",
+      "paper_family": "p1",
+      "question_id": "13winter16_q11",
+      "question_number": "11",
+      "question_text": "11 Accurve has equation y = (kx \u2014 3)7! + (kx \u2014 3), where k is a non-zero constant. (i) Find the x-coordinates of the stationary points in terms of k, and determine the nature of each stationary point, justifying your answers. [7] (ii) y= (x= 3) 1 + (e=3) The diagram shows part of the curve for the case when k = 1. Showing all necessary working, find the volume obtained when the region between the curve, the x-axis, the y-axis and the line x = 2, shown shaded in the diagram, is rotated through 360\u00b0 about the x-axis. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 752,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2017_w17_13_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4  f '(x) = \uf8ee\uf8ef\uf8f0\uf8eb\uf8ec\uf8ed32\uf8f6\uf8f7\uf8f8(2x\u22121)1/2\uf8f9\uf8fa\uf8fb\u00d7[2]\u2212[6] B2, 1, 0  Deduct 1 mark for each [...] incorrect.\nf '(x)  0   or < -  0   or   0=   SOI  M1\n(2x \u22121)1/2  2   or  < -  2   or 2=   OE  A1  Allow with k used instead of x\nLargest value of k is 5 A1  Allow k - 5   or  k = 5  Answer must be in terms of k (not x)\n2 2 2\n5",
+      "ocr_text": "3 4 The function f is such that f(x) = (2x \u2014 1)? \u2014 6x for $ <x <k, where k is a constant. Find the largest value of k for which f is a decreasing function. [5]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q04",
+      "question_number": "4",
+      "question_text": "4 The function f is such that f(x) = (2x -1)^{3}_{2}-6x for ^{1}_{2} < x < k, where k is a constant. Find the largest value of k for which f is a decreasing function. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 753,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2017_w17_13_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5(i)  cos \u03b8+ 4 + 5 sin^{2}\u03b8+ 5 sin \u03b8\u22125 sin \u03b8\u22125  ( = 0) M1  Multiply throughout by sin \u03b8 +1. Accept if 5 sin \u03b8\u22125 sin \u03b8 is not\nseen\n5(1^{\u2212} cos^{2}_{\u03b8}) _{+} cos^{\u03b8}\u22121  ( = 0) M1  Use s^{2} _{=} 1\u2212c^{2}\n5 cos^{2}\u03b8\u2212cos \u03b8\u22124 = 0                       AG A1  Rearrange to AG\n3\n5(ii)  cos \u03b8= 1   and   0.8 \u2212 B1  Both required\n\u03b8= [0\u00b0, 360\u00b0],    143.1[ \u00b0],     216.9[ \u00b0] B1 B1 B1  Both solutions required for 1st mark. For 3rd mark FT for\nFT  (360\u00b0\u2212their1 43.1\u00b0)\nExtra solution(s) in range (e.g. 180\u00ba) among 4 correct solutions\nscores 3\n4\n4",
+      "ocr_text": "58+4 5 (i) Show that the equation \u2014\u2014 +5 sin @\u2014 5 = 0 may be expressed as 5 cos\u201d @ \u2014 cos 0-4 = 0. sin [3] 044 (ii) Hence solve the equation \u2014\u2014 + 5sin@\u20145 =0 for 0\u00b0 < 0 < 360\u00b0. [4] sin",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q05",
+      "question_number": "5",
+      "question_text": "5 (i) Show that the equation (cos \u03b8 + 4)/(sin \u03b8 + 1) + 5 sin \u03b8 -5 = 0 may be expressed as 5 cos^{2} \u03b8 -cos \u03b8 -4 = 0. [3] (ii) Hence solve the equation (cos \u03b8 + 4)/(sin \u03b8 + 1) + 5 sin \u03b8 -5 = 0 for 0\u00b0 \u2264 \u03b8 \u2264 360\u00b0. [4]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_trigonometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 754,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": false,
+      "mark_scheme_text": "6(i)  y = (2)/(x^{2}\u22121) \u21d2 x^{2} = 2y + 1  OE  M1\nx = ( \u00b1 ) 2y + 1  OE  A1  With or without x/y interchanged.\nf^{\u2212}1(x)= \u2212 2x + 1  OE  A1  Minus sign obligatory. Must be a function of x.\n3\n6(ii)  \uf8eb\uf8ec\uf8edx^{2}2\u22121\uf8f6+\uf8f7\uf8f82 1 = 5 B1\n(2)/(x^{2}\u22121) = ( \u00b1 )2  OE    OR     x^{4}\u22122x^{2} = 0  OE  B1  Condone x^{2} = 0 as an additional solution\nx^{2}\u2212=1 ( \u00b1 )1    \u21d2 x^{2} =  2  or 0( )\nx= \u2212 2    or     \u22121.41 only\n4",
+      "ocr_text": "6 The functions f and g are defined by 2 eal g(x) =x\u00b0+1forx>0. f(x) = for x < -l, (i) Find an expression for f~!(x). (ii) Solve the equation gf(x) = 5. [4] [3]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q06",
+      "question_number": "6",
+      "question_text": "6 The functions f and g are defined by f(x) = (2)/(x^{2}-1) for x < -1, g(x) = x^{2} + 1 for x > 0. (i) Find an expression for f^{-}1(x). [3] (ii) Solve the equation gf(x) = 5. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 755,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_circular_measure",
+      "current_packet_topic": "circular_measure",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(i)  sin^{\u2212}1\uf8eb\uf8ec\uf8ed53\uf8f6=\uf8f7\uf8f8 0.6435                                                          AG M1  OR (PBC = )cos^{\u2212}1\uf8eb\uf8ec\uf8ed53\uf8f6\uf8f7\uf8f8 = 0.9273\u21d2(ABP = )\u03c02\u22120.9273 = 0.6435\nOr other valid method. Check working and diagram for evidence of\nincorrect method\n7(ii)  Use (once) of sector area  = \u00bdr^{2}\u03b8 M1\nArea sector BAP = \u00bd\u00d75^{2}\u00d70.6435  =  8.04   A1\nArea sector DAQ = \u00bd\u00d7\u00bd\u03c0\u00d73^{2}  =  7.07 , Allow 9\u03c0 A1\n4\n3\n7(iii)  EITHER:  (M1  Use of correct strategy\nRegion = sect + sect \u2012 (rect \u2012 \u2206) or sect \u2012 [rect \u2012 (sect +\u2206)]\n(Area \u2206BPC =) \u00bd \u00d7 3 \u00d7 4 = 6   Seen  A1\n8.04 + 7.07 \u2012 (15 \u2012 6) = 6.11  A1)\nOR1:  (M1  Use of correct strategy\nRegion = sector ADQ \u2012 (trap ABPD \u2012 sector ABP).\n(Area trap ABPD = ) \u00bd (5 + 1) \u00d73 = 9  Seen  A1\n7.07 \u2012 (9 \u2012 8.04) = 7.07 \u2012 0.96 = 6.11   A1)\nOR2: (M1  Use of correct strategy\nArea segment AP= 2.5686    Area segment AQ = 0.5438\nRegion = segment AP + segment AQ + \u2206APQ.\n(Area \u2206APQ =) \u00bd \u00d7 2 \u00d7 3 = 3   Seen A1\n2.57 + 0.54 + 3 = 6.11    A1)\n3",
+      "ocr_text": "D P Q C The diagram shows a rectangle ABCD in which AB = 5 units and BC = 3 units. Point P lies on DC and AP is an arc of a circle with centre B. Point Q lies on DC and AQ is an arc of a circle with centre D. (i) Show that angle ABP = 0.6435 radians, correct to 4 decimal places. [1] (ii) Calculate the areas of the sectors BAP and DAQ. [3] (iii) Calculate the area of the shaded region. [3]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q07",
+      "question_number": "7",
+      "question_text": "7 The diagram shows a rectangle ABCD in which AB = 5 units and BC = 3 units. Point P lies on DC and AP is an arc of a circle with centre B. Point Q lies on DC and AQ is an arc of a circle with centre (i) Show that angle ABP = 0.6435 radians, correct to 4 decimal places. [1] (ii) Calculate the areas of the sectors BAP and DAQ. [3] (iii) Calculate the area of the shaded region. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_circular_measure"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 756,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_integration",
+      "current_packet_topic": "integration",
+      "image_evidence_available": false,
+      "mark_scheme_text": "8(i)  EITHER:  (M1  Form 3-term quad & attempt to solve for \u221ax.\n4 \u2012 3\u221ax = 3 \u2012 2x  \u2192 2x \u2012 3\u221ax + 1 (=0) or e.g. 2k^{2}\u20123k + 1 (=0)\nx = \u00bd, 1  A1  Or k = \u00bd  or 1  (where k = \u221ax).\nx = \u00bc, 1  A1)\nOR1: (M1\n(3 x)^{2} = (1 + 2x)^{2}\n4x^{2}\u22125x + 1  (=0)  A1\nx = \u00bc, 1  A1)\nOR2: (M1  Eliminate x\n3^{\u2212}2^{y}= \uf8ec\uf8eb\uf8ed4^{\u2212}3^{y}\uf8f6\uf8f7\uf8f82 (\u21922y^{2}_{\u2212}7y + 5( = 0))\ny =  52 , 1  A1\nx = \u00bc, 1  A1)\n3\n8(ii)  EITHER:  (B1\nArea under line = \u222b(3\u22122x)dx = 3x\u2212x^{2}\n= \uf8ee\uf8ef\uf8f0(3\u22121)\u2212\uf8eb\uf8ec\uf8ed34\u2212161 \uf8f6\uf8f7\uf8f8\uf8f9\uf8fa\uf8fb M1  Apply their limits (e.g. \u00bc\u2192 1) after integn.\nArea under curve = \u222b(4^{\u2212}3x1/2)_{d}x      4^{=} x^{\u2212}2x3/2 B1\n\uf8ee\uf8f0(4\u22122)\u2212(1\u2212\u00bc)\uf8f9\uf8fb M1  Apply their limits (e.g. \u00bc\u2192 1) after integration.\nRequired area = 1621 \u2012 54  =  161  (or 0.0625)  A1)\nOR:  (*M1  Subtract functions and then attempt integration\n+/\u2012\u222b(3\u22122x)\u2212\uf8eb\uf8ec\uf8ec\uf8ed4\u22123x^{1}_{2}\uf8f6\uf8f7\uf8f7\uf8f8= +/\u2212\u222b\u2212\u2212( 1 2x + 3x^{1}_{2})\n+/\u2012\uf8ee\uf8ef\uf8f0\u2212\u2212x x^{2} + (3x3/2)/(3 / 2)\uf8f9\uf8fa\uf8fb A2, 1, 0 FT  FT on their subtraction.  Deduct 1 mark for each term incorrect\n+/\u2012\uf8ee\uf8ef\uf8f0\u2212\u2212+1 1 2\u2212\u2212\uf8eb\uf8ec\uf8ed 14 + 161 + 18\uf8f6\uf8f7\uf8f8\uf8fa\uf8fb\uf8f9 = 161  (or 0.0625)  DM1 A1)  Apply their limits \u00bc\u2192 1\n5",
+      "ocr_text": "The diagram shows parts of the graphs of y = 3 \u2014 2x and y = 4 \u2014 3,/x intersecting at points A and B. (i) Find by calculation the x-coordinates of A and B. [3] (ii) Find, showing all necessary working, the area of the shaded region. [5]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q08",
+      "question_number": "8",
+      "question_text": "8 The diagram shows parts of the graphs of y = 3 -2x and y = 4 -3x intersecting at points A and B. (i) Find by calculation the x-coordinates of A and B. [3] (ii) Find, showing all necessary working, the area of the shaded region. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_integration"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 757,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2017_w17_13_ms_q10_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "10(i)  ax^{2} + bx = 0  \u2192 x(ax + b) = 0  \u2192 x = \u2212ab B1\nFind f \u2033(x) and attempt sub their \u2212ab into their f \u2033(x) M1\nWhen x = \u2212ab,  f  \u2033(x) = 2a\uf8eb\uf8ec\uf8ed\u2212ab\uf8f6\uf8f7\uf8f8 + b= \u2212b    MAX A1\n3\n10(ii)  Sub f '(\u22122) = 0   M1\nSub f '(1) = 9   M1\na = 3        b = 6 *A1  Solve simultaneously to give both results.\nf '(x) = 3x^{2} + 6x \u2192   f(x) = x^{3} + 3x^{2} ( +c) *M1  Sub their a, b into f '(x) and integrate \u2018correctly\u2019. Allow\nax3^{3} + bx2^{2}( +c)\n\u2212= \u2212+3  8 12 + c DM1  Sub x= \u22122,  y= \u22123. Dependent on c present. Dependent also on a,\nb substituted.\nf(x) = x^{3} + 3x^{2}\u22127 A1\n6",
+      "ocr_text": "10 Accurve has equation y = f(x) and it is given that f/(x) = ax\u201d + bx, where a and b are positive constants. (i) Find, in terms of a and b, the non-zero value of x for which the curve has a stationary point and determine, showing all necessary working, the nature of the stationary point. [3] (ii) It is now given that the curve has a stationary point at (\u20142, \u20143) and that the gradient of the curve at x = 1 is 9. Find f(x). [6]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q10",
+      "question_number": "10",
+      "question_text": "10 A curve has equation y = f(x) and it is given that f^{\u2032}(x) = ax^{2} + bx, where a and b are positive constants. (i) Find, in terms of a and b, the non-zero value of x for which the curve has a stationary point and determine, showing all necessary working, the nature of the stationary point. [3] (ii) It is now given that the curve has a stationary point at (-2,-3) and that the gradient of the curve at x = 1 is 9. Find f(x). [6]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 758,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2017_w17_13_qp_q11_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+      "current_packet_topic": "coordinate_geometry",
+      "image_evidence_available": false,
+      "mark_scheme_text": "11(i)  Gradient of AB =  1 B1\n2\nEquation of AB is y =  12 x \u2013 12 B1\n2\n11(ii)  ddyx = \u00bd(x\u22121)^{\u2212}1_{2} B1\n\u00bd(x\u22121)^{\u2212}1_{2} = \u00bd. Equate their ddyx to their \u00bd  *M1\nx = 2,   y = 1 A1\ny \u2012 1 = \u00bd(x \u2012 2) (thro' their(2,1) & their \u00bd) \u2192 y = \u00bdx DM1 A1\n5\n11(iii)  EITHER:  (M1  Where \u03b8  is angle between AB and the x-axis\nsin \u03b8= d \u2192 d = sin \u03b8\n1\ngradient of  AB = \u00bd  \u21d2tan \u03b8= \u00bd  \u21d2\u03b8= 26.5(7)\u00b0 B1\nd = sin 26.5(7)\u00b0    0.45=    (or  1 )  A1)\n5\nOR1: (M1\nPerpendicular through O has equation y= \u22122x\nIntersection with AB:   2\u2212 x = \u00bdx\u2212\u00bd  \u2192\uf8ec\uf8ed\uf8eb15,  \u221252\uf8f7\uf8f8\uf8f6 A1\nd = \uf8eb\uf8ec\uf8ed15\uf8f6\uf8f7\uf8f82 + \uf8eb\uf8ec\uf8ed52\uf8f6\uf8f7\uf8f82 = 0.45 (or  15 )  A1)\nOR2:  (M1\nPerpendicular through (2, 1)has equation y= \u22122x + 5\nIntersection with AB:  2\u2212 x + 5 = \u00bdx\u2212\u00bd   \u2192\uf8ec\uf8eb\uf8ed115,   53\uf8f6\uf8f7\uf8f8 A1\nd = \uf8eb\uf8ec\uf8ed15\uf8f6\uf8f7\uf8f82 + \uf8eb\uf8ec\uf8ed52\uf8f6\uf8f7\uf8f82 = 0.45 (or 1/\u221a5)  A1)\n11(iii)  OR3:  (B1\n\u2206OAC has area 14  [where C = (0, \u221212)]\n12 \u00d7 25 \u00d7d =  14  \u2192 d =  15 M1 A1)\n3",
+      "ocr_text": "11 Rie y=(x-1) O A(1, 0) 1 The diagram shows the curve y = (x \u2014 1)? and points A (1, 0) and B(5, 2) lying on the curve. (i) Find the equation of the line AB, giving your answer in the form y = mx +c. [2] (ii) Find, showing all necessary working, the equation of the tangent to the curve which is parallel to AB. [5] (iii) Find the perpendicular distance between the line AB and the tangent parallel to AB. Give your answer correct to 2 decimal places. [3]",
+      "paper": "13winter17",
+      "paper_family": "p1",
+      "question_id": "13winter17_q11",
+      "question_number": "11",
+      "question_text": "11 The diagram shows the curve y = (x -1)^{1}_{2} and points A (1,0) and B (5,2) lying on the curve. (i) Find the equation of the line AB, giving your answer in the form y = mx + c. [2] (ii) Find, showing all necessary working, the equation of the tangent to the curve which is parallel to AB. [5] (iii) Find the perpendicular distance between theline AB and the tangent parallelto AB. Give your answer correct to 2 decimal places. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_coordinate_geometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 759,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_series",
+      "current_packet_topic": "series",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  7C5x^{2}(\u22122 /x)^{5} soi  B1  Can appear in an expansion. Allow 7C2\n21\u00d7 \u221232 soi  B1  Identified. Allow (21x^{2}) \u00d7 (\u201232 x^{\u20125}). Implied by correct answer\n\u2012672  B1  Allow (\u2212672)/(x^{3}) . If 0/3 scored, 672 scores SCB1\n3",
+      "ocr_text": "7 1 __ Find the coefficient of + in the expansion of (x - =) . x x [3]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q01",
+      "question_number": "1",
+      "question_text": "1 Find the coefficient of x1_{3} in the expansion of(x -2x)^{7}. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_series"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 760,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  f\u2032(x) = 3x^{2} + 4x\u22124 B1\nFactors or crit. values or sub any 2 values (x \u2260\u22122) into f\u2032(x) soi  M1  Expect (x + 2)(3x\u22122) or \u20122, \u2154 or any 2 subs\n(excluding x = \u20122).\nFor \u2212<2 x < 23, f\u2032(x) < 0; for x > 2 3, f\u2032(x) >0 soi Allow  - ,. M1  Or at least 1 specific value (\u2260\u22122) in each interval giving opp\nsigns\nOr f\u2032(23 )=0 and f\u2032\u2032(23 )\u22600 (i.e. gradient changes sign at x =  23 )\nNeither www  A1  Must have \u2018Neither\u2019\nALT 1 At least 3 values of f(x)   M1  e.g. f(0) = 7, f(1) = 6, f(2) = 15\nAt least 3 correct values of f(x)   A1\nAt least 3 correct values of f(x) spanning x = \u2154  A1\nShows a decreasing and then increasing pattern. Neither www  A1  Or similar wording. Must have \u2018Neither\u2019\nALT 2 f\u2032(x) = 3x^{2} + 4x\u22124  =  3(x(+ 2\u221216)/(23 3)) B1B1  Do not condone sign errors\nf\u2032(x).\u2212163 M1\nf\u2032(x) < 0 for some values and > 0 for other values. Neither www  A1  Or similar wording. Must have \u2018Neither\u2019\n4",
+      "ocr_text": "2. The function f is defined by f(x) = x + 2x \u2014 4x +7 for x 2 -2. Determine, showing all necessary working, whether f is an increasing function, a decreasing function or neither. [4]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q02",
+      "question_number": "2",
+      "question_text": "2 The function f is defined by f(x) = x^{3} + 2x^{2}-4x + 7for x\u2265-2. Determine,showingallnecessary working, whether f is an increasing function, a decreasing function or neither. [4]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 761,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_circular_measure",
+      "current_packet_topic": "circular_measure",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3(i)  0.8 oe  B1\n1\n3(ii)  BD = 5sintheir 0.8   M1  Expect 3.58(7). Methods using degrees are acceptable\nDC = 5 \u2012 5 cos their 0.8  M1  Expect 1.51(6)\nSector = \u00bd \u00d7 5^{2} \u00d7 their0.8   M1  Expect 10 for sector.\nOR Seg = \u00bd \u00d7 5^{2} \u00d7 [their 0.8 \u2012 sintheir 0.8]  Expect 1.03(3) for segment\nTrap = \u00bd(5 + theirDC) \u00d7 theirBD oe  M1  OR (for last 2 marks) if X is on AB and XC is parallel to BD:\nOR \u2206BDC = \u00bdtheirBD \u00d7 theirCD\nShaded area = 11.69 \u2012 10 OR 2.71(9) \u2012 1.03(3) = 1.69 cao  A1  BDCX \u2012(sector \u2012\u2206AXC) = 5.43(8) \u2012 [10 \u2012 6.24(9)] = 1.69 cao\nM1A1\n5",
+      "ocr_text": "D B The diagram shows an arc BC of a circle with centre A and radius Scm. The length of the arc BC is 4cm. The point D is such that the line BD is perpendicular to BA and DC is parallel to BA. (i) Find angle BAC in radians. [1] (ii) Find the area of the shaded region BDC. [5]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q03",
+      "question_number": "3",
+      "question_text": "3 The diagram shows an arc B C of a circle with centre Aandradius5 cm. ThelengthofthearcBC is 4 cm. The point D is such that the line BD is perpendicular to BA and DC is parallel to BA. (i) Find angle BAC in radians. [1] (ii) Find the area of the shaded region BDC. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_circular_measure"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 762,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+      "current_packet_topic": "coordinate_geometry",
+      "image_evidence_available": false,
+      "mark_scheme_text": "4(i)  Gradient, m, of AB = 3/4  B1\nEquation of BC is y\u22124 = \u221234(x\u22123) M1A1  Line through (3, 4) with gradient \u2212m1 (M1). (Expect\ny = \u22124x + 8)\n3\nx = 6 A1  Ignore any y coordinate given.\n4\n4(ii)  (AC)^{2} = 7^{2} + 1^{2} \u2192 AC = 7.071 M1A1  M mark for  (their6 + /\u22121 )^{2} + 1.\n2",
+      "ocr_text": "4 Two points A and B have coordinates (\u20141, 1) and (3, 4) respectively. The line BC is perpendicular to AB and intersects the x-axis at C. (i) Find the equation of BC and the x-coordinate of C. [4] (ii) Find the distance AC, giving your answer correct to 3 decimal places. [2]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q04",
+      "question_number": "4",
+      "question_text": "4 Two points A and B have coordinates (-1,1) and (3,4) respectively. The line BC is perpendicular to AB and intersects the x-axis at C. (i) Find the equation of BC and the x-coordinate of C. [4] (ii) Find the distance AC, giving your answer correct to 3 decimal places. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_coordinate_geometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 763,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_series",
+      "current_packet_topic": "series",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  a + (n\u22121)3 = 94 B1\nn2\uf8ee\uf8f02a + (n\u22121)3\uf8f9=\uf8fb 1420     OR     n2[a + 94] = 1420 B1\nAttempt elimination of a or n  M1\n3n^{2}\u2212191n + 2840  ( = 0)    OR    a^{2}\u22123a\u2212598   ( = 0) A1  3-term quadratic (not necessarily all on the same side)\nn = 40 (only)  A1\na = \u201223 (only)  A1  Award 5/6 if a 2nd pair of solutions (71/3, 26) is given in\naddition or if given as the only answer.\n6",
+      "ocr_text": "5 In an arithmetic progression the first term is a and the common difference is 3. The nth term is 94 and the sum of the first n terms is 1420. Find n and a. [6]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q05",
+      "question_number": "5",
+      "question_text": "5 In an arithmetic progression the first term is aandthecommondi\ufb00erenceis3. The nthtermis94 and the sum of the first n terms is 1420. Find n and a. [6]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_series"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 764,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (BO)= \u22128i\u22126j B1  OR (OB) = 8i + 6j\n(BF)= \u22126j\u22128i + 7k + 4i + 2j    4= \u2212 i\u22124j + 7k B1  OR (FB) = 4i + 4j \u2012 7k\n(BF BO. ) = (\u22124)(\u22128) + (\u22124)(\u22126) M1  OR (FB.OB) Expect 56. Accept one reversed but award final A0\nBF\u00d7BO = 4^{2} + 4^{2} + 7^{2}\u00d7 8^{2} + 6^{2} M1  Expect 90. At least one magnitude methodically correct\nAngle OBF = cos^{\u2212}1\uf8eb\uf8ec\uf8edtheirtheir 56 90\uf8f6\uf8f7\uf8f8  cos= \u22121\uf8eb\uf8ec\uf8ed 56 90\uf8f6\uf8f7\uf8f8  or cos^{\u2212}1\uf8eb\uf8ec\uf8ed 28 45\uf8f6\uf8f7\uf8f8 DM1A1  marks Or equivalent \u2018integer\u2019 fractions. All M marks dependent on use of (\u00b1)BO and (\u00b1)BF. 3rd M mark dep on both preceding M\n6",
+      "ocr_text": "The diagram shows a solid figure OABCDEFG with a horizontal rectangular base OABC in which OA = 8 units and AB = 6 units. The rectangle DEFG lies in a horizontal plane and is such that D is 7 units vertically above O and DE is parallel to OA. The sides DE and DG have lengths 4 units and 2 units respectively. Unit vectors i, j and k are parallel to OA, OC and OD respectively. Use a scalar a product to find angle OBF, giving your answer in the form cos! (=). where a and b are integers. [6]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q06",
+      "question_number": "6",
+      "question_text": "6 The diagram showsasolidfigure OABCDEF Gwithahorizontalrectangularbase OAB Cinwhich OA = 8 units and AB = 6 units. The rectangle DEFG lies in a horizontal plane and is such that D is 7 units vertically above O and DE is parallel to OA. The sides DEand DG have lengths 4 units and product to find angle2 units respectively. OBF Unit vectors, giving your answer in the form cos \u03b8, j and k are parallel to OA, OC_{-}1 0 andab1, where OD respectively. a and b are integers. Use a scalar [6]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_trigonometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 765,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(i)  ((tan \u03b8+ 1)(1\u2212cos \u03b8 + (tan \u03b8\u22121)(1 + cos \u03b8)/(1 + cos \u03b8 1\u2212cos \u03b8)( ))( ) ) soi  M1\n(tan \u03b8\u2212tan \u03b8cos\u03b8+ 1\u2212cos \u03b8+ tan \u03b8\u2212+1 tan \u03b8cos\u03b8\u2212cos \u03b8)/(1\u2212cos^{2}\u03b8)  www  A1\n(2(tan \u03b8\u2212cos \u03b8)/(sin^{2}\u03b8)) www  AG A1\n3\n7(ii)  (2)(tan \u03b8\u2212cos \u03b8)  ( = 0)\u2192(2)\uf8eb\uf8ec\uf8ed(sin \u03b8)/(cos \u03b8)\u2212cos \u03b8\uf8f6\uf8f7\uf8f8( = 0)     soi M1  Equate numerator to zero and replace tan \u03b8 by sin \u03b8/ cos \u03b8\n(2)(sin^{\u03b8}\u2212(1^{\u2212} sin^{2}_{\u03b8})) ( = 0) DM1  Multiply by cos \u03b8 and replace cos^{2}_{\u03b8} by1 \u2212sin^{2}_{\u03b8}\nsin \u03b8= 0.618(0) soi  A1  Allow (\u221a5\u20131)/2\n\u03b8= 38.2\u00b0 A1  Apply penalty \u20121 for extra solutions in range\n4",
+      "ocr_text": "tan@+1 tan@-1 _ 2(tan@-cos@) 7 i) Show that = (@\u00ae Show tha 1+cos@ 1-\u2014cos@ sin? @ [3] (ii) Hence, showing all necessary working, solve the equation tan@+1 + tanOd-1 | l+cos@ 1\u2014cos@ | for 0\u00b0 < 8< 90\u00b0. [4]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q07",
+      "question_number": "7",
+      "question_text": "7 (i) Show that (tan \u03b8 + 1)/(1 + cos \u03b8) + (tan \u03b8 -1)/(1 -cos \u03b8) \u2261 (2 tan \u03b8 -cos \u03b8)/(sin^{2} \u03b8)(). [3] (ii) Hence, showing all necessary working, solve the equation (tan \u03b8 + 1)/(1 + cos \u03b8) + (tan \u03b8 -1)/(1 -cos \u03b8) = 0 for 0\u00b0 < \u03b8 < 90\u00b0. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_trigonometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 766,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2018_w18_13_ms_q08_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "8(i)  y = \u2153 ax^{3} + \u00bdbx^{2}\u22124x ( +c) B1\n11 = 0 + 0 + 0 + c M1  Sub x = 0, y = 11 into an integrated expression. c must be present\ny = 1_{3} ax^{3} + 1_{2} bx^{2}\u22124x + 11 A1\n3\n8(ii)  4a + 2b\u22124 = 0 M1  Sub x = 2,  dy/ dx = 0\n13(8a) + 2b\u2212+8 11 = 3 M1  Sub x = 2,  y = 3 into an integrated expression. Allow if 11\nmissing\nSolve simultaneous equations  DM1  Dep. on both M marks\na = 3,  b= \u22124 A1A1  Allow if no working seen for simultaneous equations\n5",
+      "ocr_text": "d 8 Accurve passes through (0, 11) and has an equation for which x = ax\u201d + bx \u2014 4, where a and b are constants. (i) Find the equation of the curve in terms of a and b. [3] (ii) It is now given that the curve has a stationary point at (2, 3). Find the values of a and b. [5]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q08",
+      "question_number": "8",
+      "question_text": "8 A curve passes through (0,11) and has an equation for which ddyx = ax^{2} + bx -4, where a and b are constants. (i) Find the equation of the curve in terms of a and b. [3] (ii) It is now given that the curve has a stationary point at (2,3). Find the values of a and b. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 767,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q09_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": false,
+      "mark_scheme_text": "9(i)  For their 3-term quad a recognisable application of b^{2}\u22124ac M1  Expect 2x^{2}\u2212x(3 + k) + 1\u2212k^{2} ( = 0) oe for the 3-term quad.\n(b^{2}_{\u2212}4ac ^{=} ) (  3 ^{+} k)^{2}_{\u2212}4(2)(1^{\u2212}k^{2})_{ oe } A1  Must be correct. Ignore any RHS\n9k^{2} + 6k + 1 A1  Ignore any RHS\n(3k + 1)^{2}.0 Do not allow > 0. Hence curve and line meet.  AG A1  Allow (9)\uf8eb\uf8ec\uf8edk + 13\uf8f6\uf8f7\uf8f82.0. Conclusion required.\nALT Attempt solution of 3-term quadratic  M1\nSolutions x = k + 1,    \u00bd(1\u2212k) A1A1\nWhich exist for all values of k. Hence curve and line meet.  AG A1\n4\n9(ii)  k= \u22121/ 3 B1 ALT dy/ dx = 4x\u22123\u21d24x\u22123 = k\nSub (one of) their k = \u221213 into either line 1 \u2192 2x^{2}\u221283x + 89 ( = 0) M1  Sub k = 4x\u22123 into line 1 \u2192 2x^{2}\u2212x(4x) + 1\u2212(4x\u22123)^{2}( = 0)\nOr into the derivative of line 1 \u2192 4x \u2212(3 + k)( = 0)\nx = 2/3 Do not allow unsubstantiated \uf8eb\uf8ec\uf8ed23,\u221219\uf8f6\uf8f7\uf8f8 following k = \u221213 (A1  x = 2/3, y =)/(oe])\u20121/9 (both required) [from \u221218x^{2} + 24x\u22128 (=0)\ny = \u20121/9 Do not allow unsubstantiated \uf8eb\uf8ec\uf8ed23,\u221219\uf8f6\uf8f7\uf8f8 following k = \u221213 A1  k= \u22121/ 3\n4",
+      "ocr_text": "9 Accurve has equation y = 2x\u00b0 \u2014 3x + 1 and a line has equation y = kx + kK\u2019, where k is a constant. (i) Show that, for all values of k, the curve and the line meet. [4] (ii) State the value of k for which the line is a tangent to the curve and find the coordinates of the point where the line touches the curve. [4]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q09",
+      "question_number": "9",
+      "question_text": "9 Accurve has equation y = 2x\u00b0 \u2014 3x + 1 and a line has equation y = kx + kK\u2019, where k is a constant. (i) Show that, for all values of k, the curve and the line meet. [4] (ii) State the value of k for which the line is a tangent to the curve and find the coordinates of the point where the line touches the curve. [4]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 768,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": false,
+      "mark_scheme_text": "10(i)  V = 4(\u03c0)\u222b(3x\u22121)^{\u2212}2/3dx      4= (\u03c0)\uf8ee\uf8ef\uf8ef\uf8f0(3x1/ 3\u22121)1/3\uf8f9\uf8fa\u00f7\uf8fa\uf8fb 3[ ] M1A1A1  Recognisable integration of for [ ] [ ]  y^{2} (M1) Independent A1, A1\n4(\u03c0)[2\u22121] DM1  Expect 4(\u03c0)(3x\u22121)^{13}\n4\u03c0  or 12.6  A1  Apply limits \u2154 \u2192 3. Some working must be shown.\n5\n10(ii)  dy/ dx = (\u22122 / 3)(3x\u22121)^{\u2212}4/3\u00d73 B1  Expect \u22122(3x\u22121)^{\u2212}4/3\nWhen x = 2 / 3,  y = 2 soi dy/ dx = \u22122 B1B1  2nd B1 dep. on correct expression for dy//dx\nEquation of normal is y\u22122 = \u00bd(x\u221223) M1  Line through (\u2154, their 2) and with grad \u20121/m. Dep on m from\ndiffn\ny = 1x + 5 A1\n2 3\n5",
+      "ocr_text": "10 Oo 1 2 3 1 The diagram shows part of the curve y = 2(3x \u2014 1) 3 and the lines x = 2 and x = 3. The curve and the 2 line x = 5 intersect at the point A. (i) Find, showing all necessary working, the volume obtained when the shaded region is rotated through 360\u00b0 about the x-axis. [5] (ii) Find the equation of the normal to the curve at A, giving your answer in the form y = mx +c. [5]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q10",
+      "question_number": "10",
+      "question_text": "10 Oo 1 2 3 1 The diagram shows part of the curve y = 2(3x \u2014 1) 3 and the lines x = 2 and x = 3. The curve and the 2 line x = 5 intersect at the point A. (i) Find, showing all necessary working, the volume obtained when the shaded region is rotated through 360\u00b0 about the x-axis. [5] (ii) Find the equation of the normal to the curve at A, giving your answer in the form y = mx +c. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 769,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2018_w18_13_qp_q11_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": false,
+      "mark_scheme_text": "11(i)  [2] \uf8f0\uf8ee(x\u22123)^{2}\uf8fb\uf8f9  7[\u2212 ] B1B1B1\n3\n11(ii)  Largest value of k is 3. Allow (k = ) 3.  B1  Allow k - 3 but not x - 3 as final answer.\n1\n11(iii)  y = 2(x\u22123)^{2}\u22127\u2192(x\u22123)^{2} = \u00bd(y + 7) or with x/y transposed  M1  Ft their a, b, c. Order of operations correct. Allow sign errors\nx = 3 \u00b1 \u00bd(y + 7) Allow 3 + \u221a or 3 \u2012\u221a or with x/y transposed  DM1  Ft their a, b, c. Order of operations correct. Allow sign errors\nf^{\u2212}1(x) = 3\u2212 \u00bd(x + 7) A1\n(Domain is x) .their \u22127 B1FT  Allow other forms for interval but if variable appears must be x\n4\n11(iv)  x + 3 - 1. Allow x + 3 = 1  M1  Allow x + 3 - k\nlargest  isp \u22122 . Allow (p =) \u20122  A1  Allow p - \u22122 but not x - \u22122 as final answer.\nfg(x) = f(x + 3) = 2x^{2}\u22127 cao  B1\n3",
+      "ocr_text": "11 (i)_ Express 2x? \u2014 12x + 11 in the form a(x + b)* +c, where a, b and c are constants. The function f is defined by f(x) = 2x? \u2014 12x +11 forx <k. (ii) State the largest value of the constant k for which f is a one-one function. [1] (iii) For this value of k find an expression for f~!(x) and state the domain of f~!. [4] The function g is defined by g(x) =x +3 forx <p. (iv) With k now taking the value 1, find the largest value of the constant p which allows the composite function fg to be formed, and find an expression for fg(x) whenever this composite function exists. [3] [3]",
+      "paper": "13winter18",
+      "paper_family": "p1",
+      "question_id": "13winter18_q11",
+      "question_number": "11",
+      "question_text": "11 (i) Express 2x^{2}-12x + 11 in the form a(x + b)^{2} + c, where a, b and c are constants. [3] The function f is defined by f(x) = 2x^{2}-12x + 11 for x \u2264 k. (ii) State the largest value of the constant k for which f is a one-one function. [1] (iii) For this value of k find an expression for f^{-}1(x) and state the domain of f^{-}1. [4] The function g is defined by g(x) = x + 3 for x \u2264 p. (iv) With k now taking the value 1, find the largest value of the constant p which allows the composite function fg to be formed, and find an expression for fg(x) whenever this composite function exists. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 770,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_series",
+      "current_packet_topic": "series",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1(i)  1 + 6y + 15y^{2} B1 CAO\n1\n1(ii)  1 ^{+} 6(px^{\u2212}2x^{2}) _{+} 15(px^{\u2212}2x^{2})^{2} M1 SOI. Allow 6C1\u00d71^{5}(px^{\u2212}2x^{2}),  6C2^{\u00d7}1^{4}(px^{\u2212}2x^{2})^{2}\n(15p^{2}_{\u2212}12)_{(}x^{2}_{)} ^{=} 48(x^{2}) A1 1 term from each bracket and equate to 48\np = 2  A1 SC: A1p = 4 from 15p \u2012 12 = 48\n3",
+      "ocr_text": "1 (i) Expand (1 + y)\u00b0 in ascending powers of y as far as the term in y? . [1] (ii) In the expansion of (1 + (px - 2x7 ))\u00b0 the coefficient of x\u201d is 48. Find the value of the positive constant p. [3]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q01",
+      "question_number": "1",
+      "question_text": "1 (i) Expand (1 + y)^{6} in ascending powers of y as far as the term in y^{2}. [1] (ii) Intheexpansionof(1 + (px -2x^{2}))6 the coefficient of x^{2} is 48. Find the value of the positive constant p. [3] MTIICT Be IWN10 OIND/12/A/AT/10",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_series"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 771,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  (y = )\uf8f0\uf8ee(x\u22123)^{2}\uf8fb\uf8f9 2[\u2212 ] DB1*B1  DB1 dependent on 3 in 1st bracket\nx\u22123 = ( \u00b1 ) y + 2 or y\u22123 = ( \u00b1 ) x + 2 M1 Correct order of operations\n(g^{\u2212}1(x)) _{=} 3 ^{+} x ^{+} 2 A1  Must be in terms of x\nDomain (of g^{\u2212}1) is (x) > \u20121  B1 Allow (\u20121, \u221e). Do not allow y > \u20121 or g(x) > \u20121 or\ng^{\u2212}1(x) > \u20121\n5",
+      "ocr_text": "2 The function g is defined by g(x) = x? \u20146x+7 for x >4. By first completing the square, find an expression for g~!(x) and state the domain of g\u2122!. [5]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q02",
+      "question_number": "2",
+      "question_text": "2 The functiong is defined by g(x) = x^{2}-6x + 7 forx > 4. By firstcompletingthe square, findan expression for g^{-}1(x) and state the domain of g^{-}1. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 772,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_quadratics",
+      "current_packet_topic": "quadratics",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3  ddyx  = 3x^{2} + 2x \u2012 8  B1\nSet to zero (SOI) and solve  M1\n(Min) a = \u20122, (Max) b = 4/3. \u2013 in terms of a and b.    A1 Accept a.\u22122,   b - 4_{3}\nA1 SC: A1 for a> \u22122,     b < 4_{3} or for \u2212<2 x < 4_{3}\n4",
+      "ocr_text": "3 The equation of a curve is y = x +x? \u20148x+7. The curve has no stationary points in the interval a<x<b. Find the least possible value of a and the greatest possible value of b. [4]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q03",
+      "question_number": "3",
+      "question_text": "3 The equation of a curve is y = x^{3} + x^{2}-8x + 7. Thecurvehasnostationarypointsintheinterval a < x < b. Find the least possible value of a and the greatest possible value of b. [4] MTIICT Be IWN10 OIND/12/A/AT/10",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_quadratics"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 773,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_circular_measure",
+      "current_packet_topic": "circular_measure",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4(i)  Angle CAO =  \u03c0 B1\n3\n1\n4(ii)  (Sector AOC) = 1r^{2}\u00d7their\u03c0 M1 SOI\n2 3\n(\u2206ABC) = 12(r)(2r)sin\uf8eb\uf8ec\uf8edtheir\u03c03\uf8f6\uf8f7\uf8f8 or 12(2r)(r) 23 or 12(r)(r) 3 M1 For M1M1,their\u03c03  must be of the form k\u03c0 where\n0 < k < \u00bd\n(\u2206ABC) = 12(r)(2r)sin\uf8eb\uf8ec\uf8ed\u03c03\uf8f6\uf8f7\uf8f8 or 12(2r)(r) 23 or 12(r)(r) 3 A1 All correct\nr^{2}\uf8eb\uf8ec\uf8ec\uf8ed 23\uf8f6\uf8f7\uf8f7\uf8f8\u221212r^{2}\uf8eb\uf8ec\uf8ed\u03c03\uf8f6\uf8f7\uf8f8 A1\n4",
+      "ocr_text": "A r O r B The diagram shows a semicircle ACB with centre O and radius r. Arc OC is part of a circle with centre A. (i) Express angle CAO in radians in terms of 2. [1] (ii) Find the area of the shaded region in terms of r, z and V3, simplifying your answer. [4]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q04",
+      "question_number": "4",
+      "question_text": "4 The diagram showsasemicircleACBwithcentre Oandradiusr. ArcOC is part of a circle with centre A. (i) Express angle CAO in radians in terms of 0. [1] (ii) Find the area of the shaded region in terms of r, 0 and \u00ef3, simplifying your answer. [4]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_circular_measure"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 774,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": false,
+      "mark_scheme_text": "5(i)  S = 28x^{2}, V = 8x^{3} B1B1 SOI\n(2)/(7V ^{3} = 7)\u00d74x^{2} = S B1 AG, WWW\n3\n5(ii)  \uf8eb\uf8ec\uf8edddVS \uf8f6=\uf8f7\uf8f8 14V3^{\u2212}1_{3} = 14  30 SOI when V = 1000 *M1A1 Attempt to differentiate  For M mark \uf8eb\uf8ec\uf8edddVS \uf8f6\uf8f7\uf8f8 to be of form kV^{\u2212}1_{3}\n\uf8eb\uf8ec\uf8edddVt = ddSt \u00d7ddVS \uf8f6\uf8f7\uf8f8 OE used with ddSt = 2 and their1 14_{30} DM1\n30 or 4.29  A1 OE\n7\nAlternative method for question 5(ii)\nV = 7S^{3}_{2}7 \u2192\uf8eb\uf8ec\uf8edddVS \uf8f6\uf8f7\uf8f8 = 23\u00d7S^{1}_{2}\u00d7717 = 1430 SOI when S = 700  *M1A1 Attempt to differentiate  For M mark \uf8eb\uf8ec\uf8edddVS \uf8f6\uf8f7\uf8f8 to be of formkS^{1}_{2}\n\uf8eb\uf8ec\uf8edddVt = ddSt \u00d7ddVS \uf8f6\uf8f7\uf8f8 OE used with ddSt = 2 and their1 14_{30} DM1\n30 or 4.29  A1 OE\n7\n5(ii)  Alternative method for question 5(ii)\nAttempt to find either ddVx or \uf8eb\uf8ec\uf8ed ddSxandddVS \uf8f6\uf8f7\uf8f8 together with either ddxt *M1\norx\nddVx  = 24x^{2} or \uf8eb\uf8ec\uf8edddSx =  56x and  ddVS = 37x\uf8f6\uf8f7\uf8f8, ddxt  =  1401 orx = 5 (A1)  A1\nCorrect method for dV DM1\ndt\n30 or 4.29  A1 OE\n7\n4",
+      "ocr_text": "\u00abcm 4xcm 2xcm The dimensions of a cuboid are x cm, 2x cm and 4x cm, as shown in the diagram. (i) Show that the surface area S cm? and the volume V cm? are connected by the relation (ii) When the volume of the cuboid is 1000 cm? the surface area is increasing at 2 cm? s~!. Find the rate of increase of the volume at this instant. [4]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q05",
+      "question_number": "5",
+      "question_text": "5 The dimensions of a cuboid are x cm, 2x cm and 4x cm, as shown in the diagram. (i) Show that the surface area S cm^{2} and the volume V cm^{3} are connected by the relation S = 7V^{3}. [3] MTIICT Be IWN10 OIND/12/A/AT/10 (ii) When the volume of the cuboid is 1000 cm^{3} the surface area is increasing at 2 cm^{2}s^{-}1. Find the rate of increase of the volume at this instant. [4]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 775,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": false,
+      "mark_scheme_text": "6(i)  3kx\u22122k = x^{2}\u2212kx + 2  \u2192 x^{2}\u22124kx + 2k + 2  ( = 0) B1 kx terms combined correctly-implied by correct b^{2}\u22124ac\nAttempt to find b^{2}\u22124ac M1 Form a quadratic equation in k\n1 and \u22121_{2} A1 SOI\nk > 1,  k< \u22121_{2} A1 Allow x > 1,  x< \u22121/ 2\n4\n6(ii)  y = 3x\u22122,     y= \u22123x + 1 M1 Use of theirk values (twice) in y = 3kx\u22122k\n2\n3x\u2212= \u22122  32x + 1 OR y + 2 = 2\u22122y M1 Equate lines  their tangent equations OR substitute y = 0 into both\nx =  23 , \u2192 y = 0 in one or both lines  A1 Substitute x =  23  in one or both lines\n3",
+      "ocr_text": "6 A line has equation y = 3kx \u2014 2k and a curve has equation y = x* \u2014 kx + 2, where k is a constant. (i) Find the set of values of k for which the line and curve meet at two distinct points. [4] (ii) For each of two particular values of k, the line is a tangent to the curve. Show that these two tangents meet on the x-axis. [3]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q06",
+      "question_number": "6",
+      "question_text": "6 A line has equation y = 3kx -2k and a curve has equation y = x^{2}-kx + 2, where k is a constant. (i) Find the set of values of k for which the line and curve meet at two distinct points. [4] MTIICT Be IWN10 OIND/12/A/AT/10 (ii) Foreachoftwoparticularvaluesofk,the line is a tangent to the curve. Show that these two tangents meet on the x-axis. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 776,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7(i)  3 cos^{4}_{\u03b8}+ 4(1^{\u2212} cos^{2}_{\u03b8})_{\u2212}3 ( = 0) M1 Use s^{2} _{=} 1\u2212c^{2}\n3x^{2} + 4(1\u2212x)\u22123 ( = 0)\u2192   3x^{2}\u22124x + 1 ( = 0) A1 AG\n2\n7(ii)  Attempt to solve for x M1 Expect x = 1, 1/3\ncos \u03b8= ( \u00b1 )1,   ( \u00b1 )0.5774 A1 Accept ( \u00b1 )\uf8eb\uf8ec\uf8ed 13\uf8f6\uf8f7\uf8f8 SOI\n(\u03b8 = ) 0\u00ba, 180\u00ba, 54.7\u00ba, 125.3\u00ba  A3,2,1,0 A2,1,0 if more than 4 solutions in range\n5",
+      "ocr_text": "7 (i) Show that the equation 3 cos* 6 + 4 sin? @ \u2014 3 = 0 can be expressed as 3x? \u2014 4x + 1 = 0, where x = cos? 0. [2] (ii) Hence solve the equation 3 cos*@ +4 sin? 6 \u2014 3 = 0 for 0\u00b0 < 6< 180\u00b0. [5]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q07",
+      "question_number": "7",
+      "question_text": "7 (i) Show that the equation3 cos^{4} \u03b8 + 4 sin^{2} \u03b8 -3 = 0canbeexpressedas3x^{2}-4x + 1 = 0,where x = cos^{2} \u03b8. [2] MTIICT Be IWN10 OIND/12/A/AT/10 (ii) Hence solve the equation 3 cos^{4} \u03b8 + 4 sin^{2} \u03b8 -3 = 0 for 0\u00b0 \u2264 \u03b8 \u2264 180\u00b0. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_trigonometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 777,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q08_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_functions",
+      "current_packet_topic": "functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "8(i)  (2x \u22121)^{1}_{2} < 2 or 3(2x \u22121)^{1}_{2} < 6 M1 SOI\n2x \u2212<1 4 A1 SOI\n1 < x < 5 A1 A1 Allow 2 separate statements\n2 2\n4\n8(ii)  f(x) = [3(2x\u22121)3/2\u00f7\uf8eb\uf8ec\uf8ed32\uf8f6\uf8f7\uf8f8\u00f7(2)] [\u22126x] (+c)  B1 B1\nSubsitute x = 1, y = \u20123 into an integrated expression.   M1 Dependent on c being present (c = 2)\nf(x) = (2x\u22121)^{3}_{2}\u22126x + 2 A1\n4",
+      "ocr_text": "8 A function f is defined for x > 5 and is such that f\u2019(x) = 3(2x \u2014 1? -6. (i) Find the set of values of x for which f is decreasing. [4] (ii) It is now given that f(1) = \u20143. Find f(x). [4]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q08",
+      "question_number": "8",
+      "question_text": "8 A function f is defined for x > 1_{2} and is such that f^{ \u2032}(x) = 3(2x -1)^{1}_{2}-6. (i) Find the set of values of x for which f is decreasing. [4] MTIICT Be IWN10 OIND/12/A/AT/10 (ii) It is now given that f(1) = -3. Find f(x). [4]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 778,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q09_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_series",
+      "current_packet_topic": "series",
+      "image_evidence_available": false,
+      "mark_scheme_text": "9(i)  (5k\u22126)/(3k) = (6k\u2212)/(5k\u22126)4      \u2192     5( k\u22126)^{2} = 3k(6k\u22124) M1 OR any valid relationship\n25k^{2}\u221260k + 36 = 18k^{2}\u221212k \u2192    7k^{2}\u221248k + 36 A1 AG\n2\n9(ii)  k =  6 , 6  B1B1 Allow 0.857(1) for 6\n7 7\nWhen k =  6, r =  \u22122 B1 Must be exact\n7 3\nWhen k = 6, r =  4 B1\n3\n4\n9(iii)  Use of S_{\u221e} = (a)/(1\u2212r) with r = their\u221223 and a = 3\u00d7their 76 M1 Provided 0 < |their \u20122/3| < 1\n187 \u00f7\uf8eb\uf8ec\uf8ed1 + 23\uf8f6\uf8f7\uf8f8 = 5435 or 1.54  A1 FT if 0.857(1) has been used in part (ii).\n2",
+      "ocr_text": "9 The first, second and third terms of a geometric progression are 3k, 5k \u2014 6 and 6k \u2014 4, respectively. (i) Show that k satisfies the equation Tk? \u2014 48k +36 =0. [2] (ii) Find, showing all necessary working, the exact values of the common ratio corresponding to each of the possible values of k. [4] (iii) One of these ratios gives a progression which is convergent. Find the sum to infinity. [2]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q09",
+      "question_number": "9",
+      "question_text": "9 The first, second and third terms of a geometric progression are 3k, 5k -6 and 6k -4, respectively. (i) Show that k satisfies the equation 7k^{2}-48k + 36 = 0. [2] (ii) Find, showing all necessary working, the exact values of the common ratio corresponding to each of the possible values of k. [4] MTIICT Be IWN10 OIND/12/A/AT/10 (iii) One of these ratios gives a progression which is convergent. Find the sum to infinity. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_series"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 779,
+      "canonical_mark_scheme_image_path": "output/pm1/pm1_2019_w19_13_ms_q10_markscheme.png",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+      "current_packet_topic": "coordinate_geometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "10(i)  \uf8eb\uf8f66 \uf8eb18\uf8f6 \uf8eb12\uf8f6 \uf8eb\u221212\uf8f6 B1B1\nAX = \uf8ec\uf8f7\uf8ed\uf8f8\uf8ec\uf8f7\uf8ec\uf8f723 , and one of  AB = \uf8ec\uf8ed\uf8ec\uf8ec96\uf8f7\uf8f8\uf8f7\uf8f7, XB = \uf8ec\uf8ed\uf8ec\uf8ec64\uf8f7\uf8f8\uf8f7\uf8f7 , BX = \uf8ec\uf8ed\uf8ec\uf8ec \u2212\u221264 \uf8f7\uf8f8\uf8f7\uf8f7\nState AB = 3AX (or XB = 2AX orAB = 32XB etc) hence straight line   B1 WWWA conclusion (i.e. a straight line) is required.\nOR\nAX AB.  = 1 (\u2192\u03b8 = 0) or  AX BX.  = \u20131 (\u2192\u03b8 = 180)\nAX AB AX BX\nhence straight line\n3\n10(ii)  \uf8eb\u22123\uf8f6 B1\nCX= \uf8ec\uf8ec\uf8ec\uf8ed 62 \uf8f7\uf8f7\uf8f7\uf8f8\nCX AX. = \u221218 + 12 + 6 M1\n= 0 (hence CX is perpendicular to AX)   A1\n3\n10(iii)  CX = 3^{2} + 6^{2} + 2^{2},  AB = 18^{2} + 6^{2} + 9^{2} M1\nBoth attempted\nArea \u2206ABC =  12 \u00d7 their 21 \u00d7 their 7 = 73^{1}_{2} M1A1 Accept answers which round to 73.5\n3",
+      "ocr_text": "10 Relative to an origin O, the position vectors of the points A, B and X are given by -8 10 \u20142 = = => i= (-4), a -| 2} and a= (-2) 2 11 5 (09) Find AX and show that AXB is a straight line. [3] 1 The position vector of a point C is given by oc = ( -8 } 3 (ii) Show that CX is perpendicular to AX. [3] (iii) Find the area of triangle ABC. [3]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q10",
+      "question_number": "10",
+      "question_text": "10 Relative to an origin O, the position vectors of the points A, B and Xare given by --\u2192 ` -8a --\u2192 ` 10a --\u2192 ` -2a OA = -4 , OB = 2 and OX = -2 . (i) Find--\u2192AXand show that AXB is a straight line. [3] MTIICT Be IWN10 OIND/12/A/AT/10 The position vector of a point C is given byOC = -8 . (ii) Show that CXis perpendicular to AX. [3] (iii) Find the area of triangle ABC. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_coordinate_geometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p1_topic_circular_measure",
+          "topic_id": "circular_measure",
+          "topic_label": "Circular measure"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "coordinate_geometry",
+          "topic_label": "Coordinate geometry"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_functions",
+          "topic_id": "functions",
+          "topic_label": "Functions"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_quadratics",
+          "topic_id": "quadratics",
+          "topic_label": "Quadratics"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_series",
+          "topic_id": "series",
+          "topic_label": "Series"
+        },
+        {
+          "canonical_topic_id": "9709_p1_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 780,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/pm1/pm1_2019_w19_13_qp_q11_question.png",
+      "current_canonical_topic_id": "9709_p1_topic_integration",
+      "current_packet_topic": "integration",
+      "image_evidence_available": false,
+      "mark_scheme_text": "11(i)  ddyx= \u22122(x\u22121)^{\u2212}3 B1\nWhen x = 2, m = \u20122 \u2192 gradient of normal = \u22121 M1 m must come from differentiation\nm\nEquation of normal is y\u22123 = \u00bd(x\u22122)\u2192 y = \u00bdx + 2 A1 AG Through (2, 3) with gradient \u22121. Simplify to AG\nm\n3\n11(ii)  (\u03c0)\u222by_{1}^{2}(dx),(\u03c0)\u222by_{2}^{2}(dx) *M1 Attempt to integrate y^{2} for at least one of the functions\n(\u03c0)\u222b(1_{2}^{x} + 2^{)}^{2}_{  or  }^{(}1_{4}^{x}^{2} _{+} 2x + 4^{)} A1A1 A1 for (1_{2}^{x} + 2)^{2} depends on an attempt to integrate this\n(\u03c0)\u222b((x^{\u2212}1)^{\u2212}4 _{+} 4(x^{\u2212}1)^{\u2212}2 _{+} 4) form later\n(\u03c0)\uf8ee\uf8f02_{3}(1_{2}^{x} + 2)^{3}_{  or  }_{12}^{1} x^{3} _{+} x^{2} _{+} 4x\uf8f9\uf8fb A1A1 Must have at least 2 terms correct for each integral\n(\u03c0)\uf8ee\uf8ef\uf8ef\uf8f0(x(\u2212 \u22123)/(\u22123)1) + 4(x\u2212\u221211)^{\u2212}1 + 4x\uf8f9\uf8fa\uf8fa\uf8fb\n(\u03c0)\uf8f1\uf8f2\uf8f318\u221212512 or23 + 4 + 8\u2212\uf8eb\uf8ec\uf8ed121 + 1 + 4\uf8f6\uf8f7\uf8f8\uf8fe\uf8fc\uf8fd \uf8f1\uf8f2\uf8f324\u22121\u22122 + 12\u2212\uf8eb\uf8ec\uf8ed\u221231\u22124 + 8\uf8f6\uf8f7\uf8f8\uf8fe\uf8fc\uf8fd DM1 Apply limits to at least 1 integrated expansion\nAttempt to add 2 volume integrals (or 1 volume integral + frustum)  DM1\n\u03c0{ 7_{12}^{7} +  6_{24}^{7}}\n13 78 \u03c0 or 111\u03c08  or 13.9\u03c0 or 43.6  A1 23 + 4 + 8\u2212\uf8eb\uf8ec\uf8ed121 + 1 + 4\uf8f6\uf8f7\uf8f8 24\u22121\u22122 + 12\u2212\uf8eb\uf8ec\uf8ed\u221231\u22124 + 8\uf8f6\uf8f7\uf8f8\n8",
+      "ocr_text": "11 a The diagram shows part of the curve y = (x \u2014 1)~? +2, and the lines x = 1 and x = 3. The point A on the curve has coordinates (2, 3). The normal to the curve at A crosses the line x = | at B. The diagram shows part of the curve y = (x \u2014 1)~? +2, and the lines x = 1 and x = 3. The point A on the curve has coordinates (2, 3). The normal to the curve at A crosses the line x = | at B. (i) Show that the normal AB has equation y = 3x +2. [3] (ii) Find, showing all necessary working, the volume of revolution obtained when the shaded region is rotated through 360\u00b0 about the x-axis. [8]",
+      "paper": "13winter19",
+      "paper_family": "p1",
+      "question_id": "13winter19_q11",
+      "question_number": "11",
+      "question_text": "11 y The diagram shows part of the curve y = (x -1)^{-}2 + 2, and the lines x = 1 and x = 3. The point A on the curve has coordinates (2,3). The normal to the curve at A crosses the line x = 1 at B. (i) Show that the normal AB has equation y = 1_{2}x + 2. [3] MTIICT Be IWN10 OIND/12/A/AT/10 (ii) Find, showing all necessary working, the volume of revolution obtained when the shaded region is rotated through 360\u00b0 about the x-axis. [8] MTIICT Be IWN10 OIND/12/A/AT/10",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p1",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p1_topic_integration"
+        }
+      ]
+    }
+  ],
+  "schema_name": "exam_bank.topic_review.auto_review_batch",
+  "schema_version": 1,
+  "skipped_rows": []
+}

@@ -75,6 +75,7 @@ def regenerate_mark_scheme_pngs_from_question_bank(
                     "failure_reason": rendered.failure_reason if rendered else "missing_result",
                     "crop_method": _debug_crop_method(rendered.mapping_method if rendered else ""),
                     "image_path": str(rendered.image_path) if rendered and rendered.image_path else "",
+                    "page_numbers": rendered.page_numbers if rendered else [],
                     "review_flags": rendered.review_flags if rendered else ["markscheme_image_missing"],
                 }
             )
@@ -115,7 +116,7 @@ def _select_records(
 ) -> list[dict[str, Any]]:
     selected: list[dict[str, Any]] = []
     for row in rows:
-        if not row.get("canonical_mark_scheme_artifact") and not row.get("mark_scheme_image_path"):
+        if not _record_mark_scheme_artifact(row):
             continue
         if requested_ids and not (_record_match_keys(row) & requested_ids):
             continue
@@ -159,8 +160,7 @@ def _selected_record(row: dict[str, Any]) -> _SelectedRecord:
 
 
 def _identity_parts_from_mark_scheme_artifact(row: dict[str, Any]) -> dict[str, str]:
-    for field in ("canonical_mark_scheme_artifact", "mark_scheme_image_path"):
-        value = str(row.get(field) or "")
+    for value in _record_mark_scheme_artifact_values(row):
         if not value:
             continue
         match = re.search(
@@ -185,8 +185,7 @@ def _normalize_requested_ids(values: Iterable[str]) -> set[str]:
 
 def _record_match_keys(row: dict[str, Any]) -> set[str]:
     keys = {_normalize_lookup_key(row.get("question_id"))}
-    for field in ("canonical_mark_scheme_artifact", "mark_scheme_image_path"):
-        value = str(row.get(field) or "")
+    for value in _record_mark_scheme_artifact_values(row):
         if not value:
             continue
         path = Path(value)
@@ -195,6 +194,22 @@ def _record_match_keys(row: dict[str, Any]) -> set[str]:
         keys.add(_normalize_lookup_key(stem.removesuffix("_markscheme")))
         keys.add(_normalize_lookup_key(path.name))
     return {key for key in keys if key}
+
+
+def _record_mark_scheme_artifact(row: dict[str, Any]) -> str:
+    return next((value for value in _record_mark_scheme_artifact_values(row) if value), "")
+
+
+def _record_mark_scheme_artifact_values(row: dict[str, Any]) -> list[str]:
+    values = [
+        str(row.get("canonical_mark_scheme_artifact") or ""),
+        str(row.get("mark_scheme_image_path") or ""),
+    ]
+    notes = row.get("notes") if isinstance(row.get("notes"), dict) else {}
+    detected = notes.get("mark_scheme_structure_detected") if isinstance(notes.get("mark_scheme_structure_detected"), dict) else {}
+    asset_identity = detected.get("asset_identity") if isinstance(detected.get("asset_identity"), dict) else {}
+    values.append(str(asset_identity.get("canonical_path") or ""))
+    return values
 
 
 def _normalize_lookup_key(value: Any) -> str:
@@ -224,6 +239,6 @@ def _string_list(value: Any) -> list[str]:
 def _debug_crop_method(mapping_method: str) -> str:
     if mapping_method == "table_row_block":
         return "table_grid"
-    if mapping_method in {"table_grid", "ocr_left_column"}:
+    if mapping_method in {"table_grid", "ocr_left_column", "formulaic_left_margin_anchor_fallback"}:
         return mapping_method
     return "fallback"

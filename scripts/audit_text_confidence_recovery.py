@@ -629,7 +629,7 @@ def paper_year(record: dict[str, Any]) -> str:
     if year:
         return str(year)
     paper = str(value(record, "paper") or "")
-    match = re.match(r"^\d{2}(?:spring|summer|autumn)(?P<yy>\d{2})$", paper)
+    match = re.match(r"^\d{2}(?:spring|summer|autumn|winter)(?P<yy>\d{2})$", paper)
     if match:
         return str(2000 + int(match.group("yy")))
     return "missing"

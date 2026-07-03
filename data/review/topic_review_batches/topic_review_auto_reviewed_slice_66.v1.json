@@ -1,0 +1,1077 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 30
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-30T02:16:20+00:00",
+  "record_count": 30,
+  "records": [
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter09_q02",
+      "reason": "The question gives a probability distribution for X, uses the mean to solve for probabilities, and the mark scheme calculates Var(X), so discrete random variables is the correct S1 topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "probability distribution table with mean and variance",
+      "reviewed_subtopic": "discrete_random_variables_expectation_variance",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1951
+    },
+    {
+      "action": "keep",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter09_q03",
+      "reason": "The question and mark scheme standardise a normally distributed journey time and use an inverse normal percentile to find class boundaries.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "normal probabilities and inverse-normal cut points",
+      "reviewed_subtopic": "normal_distribution_inverse_parameters",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1952
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter09_q04",
+      "reason": "The question uses stem-and-leaf diagrams, quartiles and a box-and-whisker plot, with the mark scheme awarding quartile and display marks.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "stem-and-leaf diagrams and box-and-whisker plot comparison",
+      "reviewed_subtopic": "data_representation_stem_box",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1953
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2009_w09_61_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter09_q05",
+      "reason": "The item asks for numbers formed from digits and teams selected under restrictions, and the mark scheme uses permutations and combinations throughout.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "arrangements and selections with restrictions",
+      "reviewed_subtopic": "combinations_selections",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1954
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q01",
+      "reason": "The question asks for the mean and standard deviation from summary statistics, and the mark scheme uses the standard deviation formula.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "mean and standard deviation from summary statistics",
+      "reviewed_subtopic": "data_mean_variance_coding",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1955
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q02",
+      "reason": "The item models the number of underweight apples in a sample using binomial mean and variance, then applies a normal approximation with continuity correction.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "binomial model with normal approximation and continuity correction",
+      "reviewed_subtopic": "binomial_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1956
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q03",
+      "reason": "The question starts from a normal model for times and the mark scheme standardises that normal variable before using the resulting tail probability in a binomial calculation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "normal distribution probability and binomial follow-up",
+      "reviewed_subtopic": "normal_distribution_probabilities",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1957
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q04",
+      "reason": "The question and mark scheme use histogram frequency density, class width, frequencies and an estimated grouped mean.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "histogram frequency density and grouped mean estimate",
+      "reviewed_subtopic": "data_histograms",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1958
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q05",
+      "reason": "The item asks for probabilities from independent choices of entrances, and the mark scheme multiplies and adds elementary event probabilities.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "independent choices and same-entrance probabilities",
+      "reviewed_subtopic": "probability_basic_rules",
+      "reviewed_topic": "probability",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1959
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q06",
+      "reason": "The question asks how many arrangements of coloured pegs are possible, and the mark scheme uses permutations with repeated identical colours.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "arrangements of coloured pegs with repeated colours",
+      "reviewed_subtopic": "permutations_repeated_arrangements",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1960
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2010_w10_61_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter10_q07",
+      "reason": "The question defines a random variable X with a probability distribution table and asks for Var(X), matching discrete random variables.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "probability distribution and variance of a discrete random variable",
+      "reviewed_subtopic": "discrete_random_variables_expectation_variance",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1961
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.95,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q01",
+      "reason": "The question concerns the number of germinating seeds in 250 independent trials, and the mark scheme uses binomial mean and variance with continuity correction.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "binomial count approximated by a normal distribution",
+      "reviewed_subtopic": "binomial_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1962
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q02",
+      "reason": "The item uses coded summary statistics to find n, standard deviation and sum of squares, matching representation of data summary-statistics skills.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "coded mean, standard deviation and sum of squares",
+      "reviewed_subtopic": "data_mean_variance_coding",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1963
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q03",
+      "reason": "The question defines X as the number of girls in a team, asks for its probability distribution table and then Var(X).",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "probability distribution table and variance for number selected",
+      "reviewed_subtopic": "discrete_random_variables_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1964
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q04",
+      "reason": "The mark scheme identifies quartiles and compares box-and-whisker plots for History and Physics marks, so representation of data is the correct topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "box-and-whisker plots and comparison of spread",
+      "reviewed_subtopic": "data_representation_stem_box",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1965
+    },
+    {
+      "action": "keep",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q05",
+      "reason": "The question is explicitly about normally distributed letter weights, with inverse-normal standardisation, tail probabilities and a binomial follow-up.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "normal distribution parameter and tail probabilities",
+      "reviewed_subtopic": "normal_distribution_inverse_parameters",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1966
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q06",
+      "reason": "The item asks for arrangements of repeated letters, vowels together, and possessions kept together, and the mark scheme uses factorial arrangements.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "letter arrangements and grouped possessions",
+      "reviewed_subtopic": "permutations_repeated_arrangements",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1967
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2011_w11_61_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter11_q07",
+      "reason": "The question asks for exact matching probabilities, a conditional probability and an independence check for selections from bags.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "basic, conditional and independence probability from bags",
+      "reviewed_subtopic": "probability_conditional_tree_diagrams",
+      "reviewed_topic": "probability",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1968
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q01",
+      "reason": "The question asks for the probability distribution table of the number of green pens selected without replacement, matching discrete random variables.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "probability distribution for number of green pens selected",
+      "reviewed_subtopic": "discrete_random_variables_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1969
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q02",
+      "reason": "The question uses coded summaries to find Σx and Σx², and the mark scheme expands the coded expressions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "coded sums and sum of squares",
+      "reviewed_subtopic": "data_mean_variance_coding",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1970
+    },
+    {
+      "action": "keep",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q03",
+      "reason": "The item gives a normal model with a percentile to find standard deviation, then uses the resulting normal probability in a binomial calculation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "normal distribution parameter from percentile and binomial follow-up",
+      "reviewed_subtopic": "normal_distribution_inverse_parameters",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1971
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q04",
+      "reason": "The first two parts and most data-handling evidence require a stem-and-leaf diagram and lower quartile; the final selection probability is secondary.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "stem-and-leaf display and lower quartile with probability follow-up",
+      "reviewed_subtopic": "data_representation_stem_box",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1972
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q05",
+      "reason": "The item models firework failures with independent Bernoulli trials and the mark scheme uses binomial probabilities and expected profit.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "binomial probability and expected profit",
+      "reviewed_subtopic": "binomial_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1973
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.94,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q06",
+      "reason": "The main first part models the number of on-time days in 96 trials using binomial mean and variance with a normal approximation; the conditional probability part is secondary.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "binomial normal approximation with conditional probability follow-up",
+      "reviewed_subtopic": "binomial_distribution",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1974
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2012_w12_61_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter12_q07",
+      "reason": "The question is entirely counting arrangements and choices under restrictions, and the mark scheme uses factorials and combinations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "arrangements, ordered selections and distributions with restrictions",
+      "reviewed_subtopic": "combinations_selections",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1975
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter13_q01",
+      "reason": "The question gives three normal distributions and asks for sketches showing means and relative spreads; the mark scheme verifies normal-curve shape, centre and variance.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "sketching normal distributions by mean and variance",
+      "reviewed_subtopic": "normal_distribution_probabilities",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1976
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter13_q02",
+      "reason": "The item asks for P(Mumbok given age group) after choosing a town and person, and the mark scheme uses conditional probability.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "conditional probability from a two-stage table selection",
+      "reviewed_subtopic": "probability_conditional_tree_diagrams",
+      "reviewed_topic": "probability",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1977
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter13_q03",
+      "reason": "The question uses mean and Σx² to find coded sums Σ(x-5) and Σ(x-5)², matching summary-statistics coding.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "coded sums from mean and sum of squares",
+      "reviewed_subtopic": "data_mean_variance_coding",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1978
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter13_q04",
+      "reason": "The question asks for a box-and-whisker plot, identifies outliers using the interquartile range, and compares display limitations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "box-and-whisker plot, outlier threshold and display limitation",
+      "reviewed_subtopic": "data_representation_stem_box",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1979
+    },
+    {
+      "action": "keep",
+      "confidence": 0.99,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/stats/stats_2013_w13_61_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+          "topic_map_root": "exam_bank_taxonomy/canonical",
+          "type": "syllabus_reference",
+          "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "61winter13_q05",
+      "reason": "The question is based on a normal model for carrot lengths, uses inverse/forward normal probabilities and then a binomial calculation from that probability.",
+      "release_override": true,
+      "reviewed_at": "2026-06-30T02:16:20+00:00",
+      "reviewed_skill": "normal distribution percentile and interval probability with binomial follow-up",
+      "reviewed_subtopic": "normal_distribution_probabilities",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1980
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91_slice_66",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_66.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_66.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

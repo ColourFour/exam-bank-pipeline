@@ -1,0 +1,1017 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 30
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-29T23:26:40+00:00",
+  "record_count": 30,
+  "records": [
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q02",
+      "reason": "The inspected question asks candidates to use base-2 logarithm laws to form and solve a quadratic equation, and the mark scheme awards logarithm-product/quotient law use, so the current logarithmic and exponential functions topic is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "logarithm laws reducing an equation to a quadratic",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1021
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q03",
+      "reason": "The inspected item solves cos theta + 4 cos 2 theta = 3 over an interval, and the mark scheme uses trigonometric formulae and a quadratic in cos theta, matching trigonometry.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a trigonometric equation using double-angle identities",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1022
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q04",
+      "reason": "The inspected question first derives tan x = x + pi from geometry, then explicitly requires using an iterative formula to determine x; the mark scheme awards iteration and convergence evidence, so numerical solution of equations is the best topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "fixed-point iteration for a trigonometric equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "numerical_solution_of_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1023
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q05",
+      "reason": "The inspected item asks for dy/dx from parametric equations and a tangent equation, and the mark scheme awards dx/dt, dy/dt and dy/dx work, matching differentiation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "parametric differentiation and tangent equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1024
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q06",
+      "reason": "The inspected question is built around setting up dy/dx = 2xy, separating variables, integrating and applying an initial condition, so differential equations is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "forming and solving a separable differential equation from proportional gradient",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1025
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q07",
+      "reason": "The inspected question requires complex-number form, an argument of a conjugate, and an Argand region, with matching mark-scheme evidence; complex numbers is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "complex conjugates, arguments and Argand diagram loci",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1026
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q08",
+      "reason": "The inspected question asks for partial fractions and an ascending-power expansion of a rational function; the mark scheme is algebraic partial fractions and binomial-style expansion, so algebra is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "partial fractions and series expansion of a rational function",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1027
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q09",
+      "reason": "The inspected item uses normals to planes, scalar products, and vector equations for a line of intersection, which is squarely vectors.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "angle between planes and vector equation of their line of intersection",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "vectors",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1028
+    },
+    {
+      "action": "keep",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2011_s11_32_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer11_q10",
+      "reason": "The inspected question includes an integration-by-parts area part, but the remaining and slightly larger assessed portion concerns differentiating x^2 e^-x for a maximum and a tangent through the origin, so keeping differentiation is justified.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "curve differentiation for stationary points and tangent through the origin",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1029
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q01",
+      "reason": "The inspected item solves ln(3x+4)=2ln(x+1), and the mark scheme awards log-law removal and solving the resulting quadratic, matching logarithmic and exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a logarithmic equation by log laws and quadratic reduction",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1030
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q02",
+      "reason": "The inspected question derives tan theta = 3 theta and then asks for iteration using theta_(n+1)=arctan(3 theta_n); the mark scheme awards iterative use and accuracy evidence, so numerical solution of equations is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "fixed-point iteration for a trigonometric equation from geometry",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "numerical_solution_of_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1031
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q03",
+      "reason": "The inspected item asks for an ascending-power expansion of sqrt((1-x)/(1+x)), and the mark scheme is entirely binomial expansion algebra, so algebra is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "binomial expansion of a surd rational expression",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1032
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q04",
+      "reason": "The inspected question solves a cosec/sec/cot equation over 0 to 360 degrees, and the mark scheme uses trigonometric formulae and interval solutions; trigonometry is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a trigonometric equation with reciprocal functions",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1033
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q05",
+      "reason": "The inspected question asks to solve dy/dx=e^(2x+y) with an initial condition, and the mark scheme awards separation, integration and constant evaluation, matching differential equations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "separable differential equation with exponential terms",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1034
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q06",
+      "reason": "The inspected item requires differentiating y=3sin x+4cos^3 x, finding stationary points and classifying one, so differentiation is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "stationary points and nature using derivatives",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1035
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q07",
+      "reason": "The inspected question and mark scheme use complex division, Argand plotting and arguments of complex numbers, so complex numbers is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "complex division, Argand diagram points and arguments",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1036
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q08",
+      "reason": "Although the final result contains logarithms, the inspected question is an integral evaluated by substitution followed by partial fractions and definite integration, so the correct allowed P3 topic is integration rather than logarithmic and exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "integration by substitution and partial fractions leading to logarithms",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1037
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.94,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q09",
+      "reason": "The inspected item has a tangent-by-differentiation part, but the larger assessed part is finding a volume of revolution by integration by parts, so the better allowed P3 topic is integration.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "volume of revolution by integration with a derivative tangent subpart",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1038
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2012_s12_32_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer12_q10",
+      "reason": "The inspected question concerns vector equations of lines and planes, intersections and perpendicular distances from planes, matching vectors.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "lines, planes and perpendicular distances in vector form",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "vectors",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1039
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q01",
+      "reason": "The inspected question is a modulus equation |x-2|=|x/3| with no calculus content; the mark scheme solves by linear cases or squaring, so the correct allowed topic is algebra rather than differentiation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a modulus equation by cases or squaring",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1040
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q02",
+      "reason": "The inspected question is explicitly about applying an iterative formula and deriving the fixed-point equation for its limit, matching numerical solution of equations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "iteration and fixed-point equation for a convergent sequence",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "numerical_solution_of_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1041
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q03",
+      "reason": "The inspected item uses y=Ae^(-kx^2), a graph of ln y against x^2, and solving for A and k via logarithmic linearisation, so logarithmic and exponential functions is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "linearising an exponential model with logarithms",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1042
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q04",
+      "reason": "The inspected question uses the factor theorem to find a polynomial coefficient and then factorise the cubic; the mark scheme confirms polynomial algebra, so algebra is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "factor theorem and polynomial factorisation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1043
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q05",
+      "reason": "The inspected curve question asks for the x-coordinate of a maximum, and the mark scheme uses implicit differentiation or differentiating a rearranged equation, so differentiation is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "implicit differentiation and stationary point condition",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1044
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q07",
+      "reason": "The inspected item expands cos(x+45 degrees), rewrites the expression in R cos(x+alpha) form, and solves a trigonometric equation, so the correct allowed topic is trigonometry rather than algebra.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "R cos(x+alpha) form and solving a trigonometric equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1045
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q08",
+      "reason": "The inspected item starts with partial fractions but uses them to solve a separable differential equation and evaluate y, so differential equations is the best current P3 topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "partial fractions supporting a separable differential equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1046
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2013_s13_32_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer13_q09",
+      "reason": "The inspected question solves a complex equation involving a conjugate and analyses an Argand diagram region, matching complex numbers.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "complex equation with conjugate and Argand-region maximisation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1047
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer14_q01",
+      "reason": "The inspected item asks for a set of x-values satisfying a modulus inequality, and the mark scheme uses equivalent quadratic or linear inequalities, so algebra is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a modulus inequality with a parameter",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1048
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer14_q02",
+      "reason": "The inspected question solves 2 ln(5-e^-2x)=1, and the mark scheme removes logarithms and solves the resulting exponential equation, so logarithmic and exponential functions is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a logarithmic equation involving an exponential term",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1049
+    },
+    {
+      "action": "keep",
+      "confidence": 0.95,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2014_s14_32_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "32summer14_q03",
+      "reason": "The inspected question crop includes the full duplicated equation cos(x+30 degrees)=2cos x and interval, and the mark scheme uses compound-angle formulae and interval solutions, so trigonometry is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T23:26:40+00:00",
+      "reviewed_skill": "solving a trigonometric equation using compound-angle formulae",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 1050
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91_slice_35",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_35.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_35.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

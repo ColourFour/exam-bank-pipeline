@@ -45,6 +45,7 @@ def build_structured_question_text(
     config: AppConfig,
 ) -> StructuredQuestionText:
     lines = _lines_from_blocks(span.blocks)
+    text_only_diagram_line_keys = _text_only_diagram_line_keys(lines, layouts, span, config)
     diagram_lines: list[str] = []
     body_lines: list[str] = []
 
@@ -61,6 +62,9 @@ def build_structured_question_text(
             diagram_lines.append(line.text)
             continue
         if _looks_like_answer_filler_line(line.text):
+            continue
+        if _line_key(line) in text_only_diagram_line_keys:
+            diagram_lines.append(line.text)
             continue
         if _looks_like_diagram_text(line, layout, span, config):
             diagram_lines.append(line.text)
@@ -108,9 +112,97 @@ def _lines_from_blocks(blocks: list[TextBlock]) -> list[_LineItem]:
     return items
 
 
+def _text_only_diagram_line_keys(
+    lines: list[_LineItem],
+    layouts: list[PageLayout],
+    span: QuestionSpan,
+    config: AppConfig,
+) -> set[tuple[int, float, float, str]]:
+    if not _span_has_visual_prompt(span):
+        return set()
+
+    candidates_by_page: dict[int, list[_LineItem]] = {}
+    for line in lines:
+        layout = _layout_by_number(layouts, line.page_number)
+        if layout.graphics:
+            continue
+        if _looks_like_text_only_diagram_label(line, span, config):
+            candidates_by_page.setdefault(line.page_number, []).append(line)
+
+    keys: set[tuple[int, float, float, str]] = set()
+    max_gap = max(config.detection.prompt_graphic_lookahead * 1.7, config.detection.prompt_region_max_gap * 4.0)
+    for page_lines in candidates_by_page.values():
+        cluster: list[_LineItem] = []
+        previous: _LineItem | None = None
+        for line in sorted(page_lines, key=lambda item: (item.bbox.y0, item.bbox.x0)):
+            if previous is None or line.bbox.y0 - previous.bbox.y1 <= max_gap:
+                cluster.append(line)
+            else:
+                if _text_only_diagram_cluster_is_strong(cluster):
+                    keys.update(_line_key(item) for item in cluster)
+                cluster = [line]
+            previous = line
+        if _text_only_diagram_cluster_is_strong(cluster):
+            keys.update(_line_key(item) for item in cluster)
+    return keys
+
+
+def _text_only_diagram_cluster_is_strong(lines: list[_LineItem]) -> bool:
+    if len(lines) < 2:
+        return False
+    cleaned = [_normalize_light(line.text) for line in lines]
+    has_axis_label = any("(" in text and ")" in text for text in cleaned)
+    has_numeric_or_origin_label = any(re.search(r"(?:^|\s)(?:O|-?\d+(?:\.\d+)?)(?:\s|$)", text) for text in cleaned)
+    return has_axis_label or has_numeric_or_origin_label
+
+
+def _looks_like_text_only_diagram_label(line: _LineItem, span: QuestionSpan, config: AppConfig) -> bool:
+    cleaned = _normalize_light(line.text)
+    if not cleaned:
+        return False
+    if re.search(r"\[\d{1,2}\]", cleaned):
+        return False
+    if _PART_LINE_RE.match(cleaned):
+        return False
+    parsed_anchor = re.match(rf"^\s*{re.escape(span.question_number)}\s+(.+?)\s*$", cleaned)
+    if parsed_anchor:
+        cleaned = parsed_anchor.group(1)
+    elif cleaned == span.question_number and line.bbox.x0 <= config.detection.question_start_max_x + 20:
+        return False
+
+    sentence_like = bool(
+        re.search(
+            r"\b(?:the|find|show|calculate|solve|given|diagram|graph|sketch|draw|hence|for|from|with)\b",
+            cleaned,
+            re.IGNORECASE,
+        )
+    )
+    if sentence_like and not _looks_like_diagram_axis_or_label_text(cleaned):
+        return False
+    if _looks_like_diagram_axis_or_label_text(cleaned):
+        return True
+    return len(cleaned) <= 28 and len(cleaned.split()) <= 4 and not sentence_like and bool(re.search(r"[A-Z0-9()°]", cleaned))
+
+
+def _line_key(line: _LineItem) -> tuple[int, float, float, str]:
+    return (line.page_number, round(line.bbox.y0, 2), round(line.bbox.x0, 2), _normalize_light(line.text))
+
+
+def _span_has_visual_prompt(span: QuestionSpan) -> bool:
+    text = _normalize_light(span.combined_text).lower()
+    return bool(
+        re.search(
+            r"\b(?:diagram|graph|sketch|draw|shown|velocity-time|displacement-time|speed-time|force-time|v\s*\(|t\s*\(|shaded|figure)\b",
+            text,
+        )
+    )
+
+
 def _looks_like_diagram_text(line: _LineItem, layout: PageLayout, span: QuestionSpan, config: AppConfig) -> bool:
     cleaned = _normalize_light(line.text)
     if not cleaned:
+        return False
+    if re.search(r"\[\d{1,2}\]", cleaned):
         return False
     if re.match(rf"^\s*{re.escape(span.question_number)}(?:\b|[.)])", cleaned):
         return False
@@ -176,8 +268,6 @@ def _is_duplicate_question_number_diagram_label(
     if cleaned != span.question_number:
         return False
     if not _body_already_has_question_anchor(body_lines, cleaned):
-        return False
-    if line.bbox.x0 <= config.detection.question_start_max_x + 40:
         return False
     return any(_distance_to_box(line.bbox, graphic) <= 32 for graphic in layout.graphics)
 

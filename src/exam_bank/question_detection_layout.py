@@ -12,13 +12,15 @@ _PROMPT_WORD_RE = re.compile(
 )
 _SIMPLE_DIAGRAM_LABEL_RE = re.compile(
     r"^(?:[A-Z](?:\^\{[′']\}|[′'])?(?:\s+[A-Z](?:\^\{[′']\}|[′'])?){0,4}|[xyXY]|θ|π|"
+    r"\d+(?:\.\d+)?\s+[A-Z](?:\^\{[′']\}|[′'])?(?:\s+[A-Z](?:\^\{[′']\}|[′'])?){0,4}|"
+    r"[A-Z]\s*\([^)]{1,40}\)|"
     r"\d+(?:\.\d+)?\s*(?:cm|mm|m|kg|rad)|\d+(?:\.\d+)?°?)$"
 )
 _GRAPH_EQUATION_LABEL_RE = re.compile(
     r"^(?:-?\d+(?:\.\d+)?\s+)?[xyXY]\s*=\s*[-+A-Za-z0-9πθ().{}\[\]^_/*\s]+$"
 )
 _AXIS_UNIT_LABEL_RE = re.compile(
-    r"^(?:-?\d+(?:\.\d+)?\s+)?[A-Za-z]\s*\([^)]{1,40}\)$"
+    r"^(?:O\s+)?(?:-?\d+(?:\.\d+)?\s+)?[A-Za-z](?:[A-Za-z ]{0,24}[A-Za-z])?\s*\([^)]{1,40}\)$"
 )
 
 
@@ -46,7 +48,8 @@ def looks_like_diagram_axis_or_label_text(text: str) -> bool:
         return True
     if re.fullmatch(r"(?:-?\d+(?:\.\d+)?\s*){2,}[xyXY]?", cleaned):
         return True
-    if re.fullmatch(r"(?:O\s+)?(?:-?\d+(?:\.\d+)?|π|(?:\d+_?\{?\d+\}?π))(\s+(?:-?\d+(?:\.\d+)?|π|(?:\d+_?\{?\d+\}?π))){1,}\s*[xyXY]?", cleaned):
+    numeric_tick = r"-?\d+(?:_\{\d+\})?(?:\.\d+)?|π|(?:\d+_?\{?\d+\}?π)"
+    if re.fullmatch(rf"(?:O\s+)?(?:{numeric_tick})(\s+(?:{numeric_tick}))*\s*[xyXY]?", cleaned):
         return True
     if re.fullmatch(r"\d+_\{\d+\}π", cleaned):
         return True

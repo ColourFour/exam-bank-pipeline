@@ -24,13 +24,13 @@
     "selected_items": [
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
+        "queue_id": "p3_exact_skill_review_queue:v1:32winter23_q09:32winter23_q09_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "supporting_topic"
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
+        "queue_id": "p3_exact_skill_review_queue:v1:31winter21_q07:31winter21_q07_c",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "supporting_topic"
       },
@@ -42,25 +42,25 @@
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
+        "queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_a",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "supporting_topic"
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
+        "queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "supporting_topic"
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
+        "queue_id": "p3_exact_skill_review_queue:v1:31winter21_q04:31winter21_q04_whole",
         "recommended_scope": "reviewer_decide",
         "topic_routing_alignment": "aligned"
       },
       {
         "cross_topic_status": "cross_topic_reviewable",
-        "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
+        "queue_id": "p3_exact_skill_review_queue:v1:33winter23_q07:33winter23_q07_b",
         "recommended_scope": "subpart_level",
         "topic_routing_alignment": "supporting_topic"
       },
@@ -162,7 +162,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_integration"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_32autumn23_q09_b",
+          "candidate_id": "content_lab_32winter23_q09_b",
           "generation_gate_block_reasons": [
             "mark_events_not_reviewed_or_approved",
             "missing_source_skill_ids"
@@ -190,7 +190,7 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0001",
+            "event_id": "32winter23_q09_me0001",
             "mark_code": "M1",
             "part_path": [
               "a"
@@ -199,7 +199,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0002",
+            "event_id": "32winter23_q09_me0002",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -208,7 +208,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0003",
+            "event_id": "32winter23_q09_me0003",
             "mark_code": "DM1",
             "part_path": [
               "a"
@@ -217,7 +217,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0004",
+            "event_id": "32winter23_q09_me0004",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -226,7 +226,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0005",
+            "event_id": "32winter23_q09_me0005",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -235,7 +235,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0006",
+            "event_id": "32winter23_q09_me0006",
             "mark_code": "M1",
             "part_path": [
               "a"
@@ -244,7 +244,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0007",
+            "event_id": "32winter23_q09_me0007",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -253,7 +253,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0008",
+            "event_id": "32winter23_q09_me0008",
             "mark_code": "DM1",
             "part_path": [
               "a"
@@ -262,7 +262,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0009",
+            "event_id": "32winter23_q09_me0009",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -271,7 +271,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0010",
+            "event_id": "32winter23_q09_me0010",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -280,7 +280,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0011",
+            "event_id": "32winter23_q09_me0011",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -289,7 +289,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0012",
+            "event_id": "32winter23_q09_me0012",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -298,7 +298,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0013",
+            "event_id": "32winter23_q09_me0013",
             "mark_code": "DM1",
             "part_path": [
               "b"
@@ -307,7 +307,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0014",
+            "event_id": "32winter23_q09_me0014",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -316,7 +316,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0015",
+            "event_id": "32winter23_q09_me0015",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -325,7 +325,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0016",
+            "event_id": "32winter23_q09_me0016",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -334,7 +334,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0017",
+            "event_id": "32winter23_q09_me0017",
             "mark_code": "DM1",
             "part_path": [
               "b"
@@ -343,7 +343,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0018",
+            "event_id": "32winter23_q09_me0018",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -352,7 +352,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0019",
+            "event_id": "32winter23_q09_me0019",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -361,7 +361,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0020",
+            "event_id": "32winter23_q09_me0020",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -370,7 +370,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0021",
+            "event_id": "32winter23_q09_me0021",
             "mark_code": "DM1",
             "part_path": [
               "b"
@@ -379,7 +379,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "32autumn23_q09_me0022",
+            "event_id": "32winter23_q09_me0022",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -388,30 +388,30 @@
           }
         ],
         "matching_mark_event_ids": [
-          "32autumn23_q09_me0011",
-          "32autumn23_q09_me0012",
-          "32autumn23_q09_me0013",
-          "32autumn23_q09_me0014",
-          "32autumn23_q09_me0015",
-          "32autumn23_q09_me0016",
-          "32autumn23_q09_me0017",
-          "32autumn23_q09_me0018",
-          "32autumn23_q09_me0019",
-          "32autumn23_q09_me0020",
-          "32autumn23_q09_me0021",
-          "32autumn23_q09_me0022"
+          "32winter23_q09_me0011",
+          "32winter23_q09_me0012",
+          "32winter23_q09_me0013",
+          "32winter23_q09_me0014",
+          "32winter23_q09_me0015",
+          "32winter23_q09_me0016",
+          "32winter23_q09_me0017",
+          "32winter23_q09_me0018",
+          "32winter23_q09_me0019",
+          "32winter23_q09_me0020",
+          "32winter23_q09_me0021",
+          "32winter23_q09_me0022"
         ],
         "other_part_mark_event_ids": [
-          "32autumn23_q09_me0001",
-          "32autumn23_q09_me0002",
-          "32autumn23_q09_me0003",
-          "32autumn23_q09_me0004",
-          "32autumn23_q09_me0005",
-          "32autumn23_q09_me0006",
-          "32autumn23_q09_me0007",
-          "32autumn23_q09_me0008",
-          "32autumn23_q09_me0009",
-          "32autumn23_q09_me0010"
+          "32winter23_q09_me0001",
+          "32winter23_q09_me0002",
+          "32winter23_q09_me0003",
+          "32winter23_q09_me0004",
+          "32winter23_q09_me0005",
+          "32winter23_q09_me0006",
+          "32winter23_q09_me0007",
+          "32winter23_q09_me0008",
+          "32winter23_q09_me0009",
+          "32winter23_q09_me0010"
         ],
         "topic_routing": {
           "confidence": "medium",
@@ -431,14 +431,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/32autumn23/mark_scheme/q09.png",
+          "path": "p3/32winter23/mark_scheme/q09.png",
           "sha256": "7c70eb1c41efdf43528634ac48130a048852b8a20decca8f40028f2f392aad62"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/32autumn23/questions/q09.png",
+          "path": "p3/32winter23/questions/q09.png",
           "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"
         }
       ],
@@ -457,43 +457,43 @@
       "mark_event_filtering": {
         "confidence": "part_path_matched",
         "matching_mark_event_ids": [
-          "32autumn23_q09_me0011",
-          "32autumn23_q09_me0012",
-          "32autumn23_q09_me0013",
-          "32autumn23_q09_me0014",
-          "32autumn23_q09_me0015",
-          "32autumn23_q09_me0016",
-          "32autumn23_q09_me0017",
-          "32autumn23_q09_me0018",
-          "32autumn23_q09_me0019",
-          "32autumn23_q09_me0020",
-          "32autumn23_q09_me0021",
-          "32autumn23_q09_me0022"
+          "32winter23_q09_me0011",
+          "32winter23_q09_me0012",
+          "32winter23_q09_me0013",
+          "32winter23_q09_me0014",
+          "32winter23_q09_me0015",
+          "32winter23_q09_me0016",
+          "32winter23_q09_me0017",
+          "32winter23_q09_me0018",
+          "32winter23_q09_me0019",
+          "32winter23_q09_me0020",
+          "32winter23_q09_me0021",
+          "32winter23_q09_me0022"
         ],
         "other_part_mark_event_ids": [
-          "32autumn23_q09_me0001",
-          "32autumn23_q09_me0002",
-          "32autumn23_q09_me0003",
-          "32autumn23_q09_me0004",
-          "32autumn23_q09_me0005",
-          "32autumn23_q09_me0006",
-          "32autumn23_q09_me0007",
-          "32autumn23_q09_me0008",
-          "32autumn23_q09_me0009",
-          "32autumn23_q09_me0010"
+          "32winter23_q09_me0001",
+          "32winter23_q09_me0002",
+          "32winter23_q09_me0003",
+          "32winter23_q09_me0004",
+          "32winter23_q09_me0005",
+          "32winter23_q09_me0006",
+          "32winter23_q09_me0007",
+          "32winter23_q09_me0008",
+          "32winter23_q09_me0009",
+          "32winter23_q09_me0010"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "32autumn23",
+      "paper": "32winter23",
       "part_id": "b",
       "part_level_review": true,
       "proposed_source_skill_id": "9709_p3_3_3_identities_compound_double_angle_equations",
       "proposed_source_skill_ids": [
         "9709_p3_3_3_identities_compound_double_angle_equations"
       ],
-      "question_id": "32autumn23_q09",
-      "queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
+      "question_id": "32winter23_q09",
+      "queue_id": "p3_exact_skill_review_queue:v1:32winter23_q09:32winter23_q09_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "supporting_method_not_target_skill",
@@ -501,7 +501,7 @@
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0001/0002 trig-identity ambiguity where area/integration is the assessed target and trig identities are method support.",
       "session": "November",
-      "subpart_id": "32autumn23_q09_b",
+      "subpart_id": "32winter23_q09_b",
       "unknown_alignment_reason": "",
       "variant": "2",
       "whole_question_review": false
@@ -517,7 +517,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_31autumn21_q07_c",
+          "candidate_id": "content_lab_31winter21_q07_c",
           "generation_gate_block_reasons": [
             "mark_events_not_reviewed_or_approved",
             "missing_source_skill_ids"
@@ -545,7 +545,7 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0001",
+            "event_id": "31winter21_q07_me0001",
             "mark_code": "B1",
             "part_path": [
               "a"
@@ -554,7 +554,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0002",
+            "event_id": "31winter21_q07_me0002",
             "mark_code": "B1",
             "part_path": [
               "b"
@@ -563,7 +563,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0003",
+            "event_id": "31winter21_q07_me0003",
             "mark_code": "B1",
             "part_path": [
               "b"
@@ -572,7 +572,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0004",
+            "event_id": "31winter21_q07_me0004",
             "mark_code": "B1",
             "part_path": [
               "b"
@@ -581,7 +581,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0005",
+            "event_id": "31winter21_q07_me0005",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -590,7 +590,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0006",
+            "event_id": "31winter21_q07_me0006",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -599,7 +599,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0007",
+            "event_id": "31winter21_q07_me0007",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -608,7 +608,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0008",
+            "event_id": "31winter21_q07_me0008",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -617,7 +617,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q07_me0009",
+            "event_id": "31winter21_q07_me0009",
             "mark_code": "B1",
             "part_path": [
               "c"
@@ -626,17 +626,17 @@
           }
         ],
         "matching_mark_event_ids": [
-          "31autumn21_q07_me0009"
+          "31winter21_q07_me0009"
         ],
         "other_part_mark_event_ids": [
-          "31autumn21_q07_me0001",
-          "31autumn21_q07_me0002",
-          "31autumn21_q07_me0003",
-          "31autumn21_q07_me0004",
-          "31autumn21_q07_me0005",
-          "31autumn21_q07_me0006",
-          "31autumn21_q07_me0007",
-          "31autumn21_q07_me0008"
+          "31winter21_q07_me0001",
+          "31winter21_q07_me0002",
+          "31winter21_q07_me0003",
+          "31winter21_q07_me0004",
+          "31winter21_q07_me0005",
+          "31winter21_q07_me0006",
+          "31winter21_q07_me0007",
+          "31winter21_q07_me0008"
         ],
         "topic_routing": {
           "confidence": "high",
@@ -654,14 +654,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/31autumn21/mark_scheme/q07.png",
+          "path": "p3/31winter21/mark_scheme/q07.png",
           "sha256": "10dd73f6cca934197876cb68a0257abcdfb13a479134dbb5a831aeb0be0ce240"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/31autumn21/questions/q07.png",
+          "path": "p3/31winter21/questions/q07.png",
           "sha256": "94854043f612f37e702b9fe3f6f56ee45787056d7b02b0df951586037cb323ba"
         }
       ],
@@ -680,30 +680,30 @@
       "mark_event_filtering": {
         "confidence": "part_path_matched",
         "matching_mark_event_ids": [
-          "31autumn21_q07_me0009"
+          "31winter21_q07_me0009"
         ],
         "other_part_mark_event_ids": [
-          "31autumn21_q07_me0001",
-          "31autumn21_q07_me0002",
-          "31autumn21_q07_me0003",
-          "31autumn21_q07_me0004",
-          "31autumn21_q07_me0005",
-          "31autumn21_q07_me0006",
-          "31autumn21_q07_me0007",
-          "31autumn21_q07_me0008"
+          "31winter21_q07_me0001",
+          "31winter21_q07_me0002",
+          "31winter21_q07_me0003",
+          "31winter21_q07_me0004",
+          "31winter21_q07_me0005",
+          "31winter21_q07_me0006",
+          "31winter21_q07_me0007",
+          "31winter21_q07_me0008"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "31autumn21",
+      "paper": "31winter21",
       "part_id": "c",
       "part_level_review": true,
       "proposed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
       "proposed_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
       ],
-      "question_id": "31autumn21_q07",
-      "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
+      "question_id": "31winter21_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:31winter21_q07:31winter21_q07_c",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "supporting_method_not_target_skill",
@@ -711,7 +711,7 @@
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0001 DE/log ambiguity where the selected part is limiting behaviour from a differential-equation solution.",
       "session": "November",
-      "subpart_id": "31autumn21_q07_c",
+      "subpart_id": "31winter21_q07_c",
       "unknown_alignment_reason": "",
       "variant": "1",
       "whole_question_review": false
@@ -947,7 +947,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_33autumn22_q10_a",
+          "candidate_id": "content_lab_33winter22_q10_a",
           "generation_gate_block_reasons": [
             "mapping_or_subpart_not_reviewed_or_approved",
             "mark_events_not_reviewed_or_approved",
@@ -976,7 +976,7 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0001",
+            "event_id": "33winter22_q10_me0001",
             "mark_code": "B1",
             "part_path": [
               "a"
@@ -985,7 +985,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0002",
+            "event_id": "33winter22_q10_me0002",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -994,7 +994,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0003",
+            "event_id": "33winter22_q10_me0003",
             "mark_code": "A1FT",
             "part_path": [
               "b"
@@ -1003,7 +1003,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0004",
+            "event_id": "33winter22_q10_me0004",
             "mark_code": "A1FT",
             "part_path": [
               "b"
@@ -1012,7 +1012,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0005",
+            "event_id": "33winter22_q10_me0005",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -1021,7 +1021,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0006",
+            "event_id": "33winter22_q10_me0006",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1030,7 +1030,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0007",
+            "event_id": "33winter22_q10_me0007",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1039,7 +1039,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0008",
+            "event_id": "33winter22_q10_me0008",
             "mark_code": "B1",
             "part_path": [
               "c"
@@ -1048,7 +1048,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0009",
+            "event_id": "33winter22_q10_me0009",
             "mark_code": "B1",
             "part_path": [
               "c"
@@ -1057,17 +1057,17 @@
           }
         ],
         "matching_mark_event_ids": [
-          "33autumn22_q10_me0001"
+          "33winter22_q10_me0001"
         ],
         "other_part_mark_event_ids": [
-          "33autumn22_q10_me0002",
-          "33autumn22_q10_me0003",
-          "33autumn22_q10_me0004",
-          "33autumn22_q10_me0005",
-          "33autumn22_q10_me0006",
-          "33autumn22_q10_me0007",
-          "33autumn22_q10_me0008",
-          "33autumn22_q10_me0009"
+          "33winter22_q10_me0002",
+          "33winter22_q10_me0003",
+          "33winter22_q10_me0004",
+          "33winter22_q10_me0005",
+          "33winter22_q10_me0006",
+          "33winter22_q10_me0007",
+          "33winter22_q10_me0008",
+          "33winter22_q10_me0009"
         ],
         "topic_routing": {
           "confidence": "high",
@@ -1085,14 +1085,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn22/mark_scheme/q10.png",
+          "path": "p3/33winter22/mark_scheme/q10.png",
           "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn22/questions/q10.png",
+          "path": "p3/33winter22/questions/q10.png",
           "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"
         }
       ],
@@ -1111,30 +1111,30 @@
       "mark_event_filtering": {
         "confidence": "part_path_matched",
         "matching_mark_event_ids": [
-          "33autumn22_q10_me0001"
+          "33winter22_q10_me0001"
         ],
         "other_part_mark_event_ids": [
-          "33autumn22_q10_me0002",
-          "33autumn22_q10_me0003",
-          "33autumn22_q10_me0004",
-          "33autumn22_q10_me0005",
-          "33autumn22_q10_me0006",
-          "33autumn22_q10_me0007",
-          "33autumn22_q10_me0008",
-          "33autumn22_q10_me0009"
+          "33winter22_q10_me0002",
+          "33winter22_q10_me0003",
+          "33winter22_q10_me0004",
+          "33winter22_q10_me0005",
+          "33winter22_q10_me0006",
+          "33winter22_q10_me0007",
+          "33winter22_q10_me0008",
+          "33winter22_q10_me0009"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "33autumn22",
+      "paper": "33winter22",
       "part_id": "a",
       "part_level_review": true,
       "proposed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
       "proposed_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
       ],
-      "question_id": "33autumn22_q10",
-      "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
+      "question_id": "33winter22_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_a",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "supporting_method_not_target_skill",
@@ -1142,7 +1142,7 @@
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0002 log/exponential ambiguity where the subpart identifies constants in a differential-equation model.",
       "session": "November",
-      "subpart_id": "33autumn22_q10_a",
+      "subpart_id": "33winter22_q10_a",
       "unknown_alignment_reason": "",
       "variant": "3",
       "whole_question_review": false
@@ -1158,7 +1158,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_differential_equations"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_33autumn22_q10_b",
+          "candidate_id": "content_lab_33winter22_q10_b",
           "generation_gate_block_reasons": [
             "mapping_or_subpart_not_reviewed_or_approved",
             "mark_events_not_reviewed_or_approved",
@@ -1187,7 +1187,7 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0001",
+            "event_id": "33winter22_q10_me0001",
             "mark_code": "B1",
             "part_path": [
               "a"
@@ -1196,7 +1196,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0002",
+            "event_id": "33winter22_q10_me0002",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -1205,7 +1205,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0003",
+            "event_id": "33winter22_q10_me0003",
             "mark_code": "A1FT",
             "part_path": [
               "b"
@@ -1214,7 +1214,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0004",
+            "event_id": "33winter22_q10_me0004",
             "mark_code": "A1FT",
             "part_path": [
               "b"
@@ -1223,7 +1223,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0005",
+            "event_id": "33winter22_q10_me0005",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -1232,7 +1232,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0006",
+            "event_id": "33winter22_q10_me0006",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1241,7 +1241,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0007",
+            "event_id": "33winter22_q10_me0007",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1250,7 +1250,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0008",
+            "event_id": "33winter22_q10_me0008",
             "mark_code": "B1",
             "part_path": [
               "c"
@@ -1259,7 +1259,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn22_q10_me0009",
+            "event_id": "33winter22_q10_me0009",
             "mark_code": "B1",
             "part_path": [
               "c"
@@ -1268,17 +1268,17 @@
           }
         ],
         "matching_mark_event_ids": [
-          "33autumn22_q10_me0002",
-          "33autumn22_q10_me0003",
-          "33autumn22_q10_me0004",
-          "33autumn22_q10_me0005",
-          "33autumn22_q10_me0006",
-          "33autumn22_q10_me0007"
+          "33winter22_q10_me0002",
+          "33winter22_q10_me0003",
+          "33winter22_q10_me0004",
+          "33winter22_q10_me0005",
+          "33winter22_q10_me0006",
+          "33winter22_q10_me0007"
         ],
         "other_part_mark_event_ids": [
-          "33autumn22_q10_me0001",
-          "33autumn22_q10_me0008",
-          "33autumn22_q10_me0009"
+          "33winter22_q10_me0001",
+          "33winter22_q10_me0008",
+          "33winter22_q10_me0009"
         ],
         "topic_routing": {
           "confidence": "high",
@@ -1296,14 +1296,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn22/mark_scheme/q10.png",
+          "path": "p3/33winter22/mark_scheme/q10.png",
           "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn22/questions/q10.png",
+          "path": "p3/33winter22/questions/q10.png",
           "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"
         }
       ],
@@ -1322,30 +1322,30 @@
       "mark_event_filtering": {
         "confidence": "part_path_matched",
         "matching_mark_event_ids": [
-          "33autumn22_q10_me0002",
-          "33autumn22_q10_me0003",
-          "33autumn22_q10_me0004",
-          "33autumn22_q10_me0005",
-          "33autumn22_q10_me0006",
-          "33autumn22_q10_me0007"
+          "33winter22_q10_me0002",
+          "33winter22_q10_me0003",
+          "33winter22_q10_me0004",
+          "33winter22_q10_me0005",
+          "33winter22_q10_me0006",
+          "33winter22_q10_me0007"
         ],
         "other_part_mark_event_ids": [
-          "33autumn22_q10_me0001",
-          "33autumn22_q10_me0008",
-          "33autumn22_q10_me0009"
+          "33winter22_q10_me0001",
+          "33winter22_q10_me0008",
+          "33winter22_q10_me0009"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "33autumn22",
+      "paper": "33winter22",
       "part_id": "b",
       "part_level_review": true,
       "proposed_source_skill_id": "9709_p3_3_2_log_exponential_equations",
       "proposed_source_skill_ids": [
         "9709_p3_3_2_log_exponential_equations"
       ],
-      "question_id": "33autumn22_q10",
-      "queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
+      "question_id": "33winter22_q10",
+      "queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "supporting_method_not_target_skill",
@@ -1353,7 +1353,7 @@
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest Batch 0002 log/exponential ambiguity where logarithms occur during separable differential-equation solving.",
       "session": "November",
-      "subpart_id": "33autumn22_q10_b",
+      "subpart_id": "33winter22_q10_b",
       "unknown_alignment_reason": "",
       "variant": "3",
       "whole_question_review": false
@@ -1369,7 +1369,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_integration"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_31autumn21_q04_whole",
+          "candidate_id": "content_lab_31winter21_q04_whole",
           "generation_gate_block_reasons": [
             "question_quality_gate_blocks_content_lab_generation",
             "mapping_or_subpart_not_reviewed_or_approved",
@@ -1398,42 +1398,42 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0001",
+            "event_id": "31winter21_q04_me0001",
             "mark_code": "B1",
             "part_path": [],
             "review_status": "advisory"
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0002",
+            "event_id": "31winter21_q04_me0002",
             "mark_code": "M1",
             "part_path": [],
             "review_status": "advisory"
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0003",
+            "event_id": "31winter21_q04_me0003",
             "mark_code": "A1",
             "part_path": [],
             "review_status": "advisory"
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0004",
+            "event_id": "31winter21_q04_me0004",
             "mark_code": "M1",
             "part_path": [],
             "review_status": "advisory"
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0005",
+            "event_id": "31winter21_q04_me0005",
             "mark_code": "A1",
             "part_path": [],
             "review_status": "advisory"
           },
           {
             "advisory_only": true,
-            "event_id": "31autumn21_q04_me0006",
+            "event_id": "31winter21_q04_me0006",
             "mark_code": "A1",
             "part_path": [],
             "review_status": "advisory"
@@ -1441,12 +1441,12 @@
         ],
         "matching_mark_event_ids": [],
         "other_part_mark_event_ids": [
-          "31autumn21_q04_me0001",
-          "31autumn21_q04_me0002",
-          "31autumn21_q04_me0003",
-          "31autumn21_q04_me0004",
-          "31autumn21_q04_me0005",
-          "31autumn21_q04_me0006"
+          "31winter21_q04_me0001",
+          "31winter21_q04_me0002",
+          "31winter21_q04_me0003",
+          "31winter21_q04_me0004",
+          "31winter21_q04_me0005",
+          "31winter21_q04_me0006"
         ],
         "topic_routing": {
           "confidence": "high",
@@ -1464,14 +1464,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/31autumn21/mark_scheme/q04.png",
+          "path": "p3/31winter21/mark_scheme/q04.png",
           "sha256": "b907f807c2fc1c8435b226e171fc2256e4daf6cb327f81cd24d8c6e9e883b461"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/31autumn21/questions/q04.png",
+          "path": "p3/31winter21/questions/q04.png",
           "sha256": "ad5427ac36cf4c78ff3cb2f8939815d36b9e38c43ea9f18cae27a6afdff967c1"
         }
       ],
@@ -1492,25 +1492,25 @@
         "confidence": "uncertain_no_confident_part_match",
         "matching_mark_event_ids": [],
         "other_part_mark_event_ids": [
-          "31autumn21_q04_me0001",
-          "31autumn21_q04_me0002",
-          "31autumn21_q04_me0003",
-          "31autumn21_q04_me0004",
-          "31autumn21_q04_me0005",
-          "31autumn21_q04_me0006"
+          "31winter21_q04_me0001",
+          "31winter21_q04_me0002",
+          "31winter21_q04_me0003",
+          "31winter21_q04_me0004",
+          "31winter21_q04_me0005",
+          "31winter21_q04_me0006"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "31autumn21",
+      "paper": "31winter21",
       "part_id": "whole",
       "part_level_review": false,
       "proposed_source_skill_id": "9709_p3_3_5_standard_integration",
       "proposed_source_skill_ids": [
         "9709_p3_3_5_standard_integration"
       ],
-      "question_id": "31autumn21_q04",
-      "queue_id": "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
+      "question_id": "31winter21_q04",
+      "queue_id": "p3_exact_skill_review_queue:v1:31winter21_q04:31winter21_q04_whole",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "cross_content_not_exact_skill_isolatable",
@@ -1518,7 +1518,7 @@
       "selection_category": "prior_ambiguous_retag_probe",
       "selection_reason": "Retest broad standard-integration routing where substitution, changed limits, and improper-limit structure need narrower treatment.",
       "session": "November",
-      "subpart_id": "31autumn21_q04_whole",
+      "subpart_id": "31winter21_q04_whole",
       "unknown_alignment_reason": "",
       "variant": "1",
       "whole_question_review": true
@@ -1534,7 +1534,7 @@
           "topic_routing_primary_topic_id": "9709_p3_topic_differentiation"
         },
         "content_lab_blocker_context": {
-          "candidate_id": "content_lab_33autumn23_q07_b",
+          "candidate_id": "content_lab_33winter23_q07_b",
           "generation_gate_block_reasons": [
             "mark_events_not_reviewed_or_approved",
             "missing_source_skill_ids"
@@ -1562,7 +1562,7 @@
         "mark_event_refs": [
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0001",
+            "event_id": "33winter23_q07_me0001",
             "mark_code": "B1",
             "part_path": [
               "a"
@@ -1571,7 +1571,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0002",
+            "event_id": "33winter23_q07_me0002",
             "mark_code": "M1",
             "part_path": [
               "a"
@@ -1580,7 +1580,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0003",
+            "event_id": "33winter23_q07_me0003",
             "mark_code": "B1",
             "part_path": [
               "a"
@@ -1589,7 +1589,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0004",
+            "event_id": "33winter23_q07_me0004",
             "mark_code": "A1",
             "part_path": [
               "a"
@@ -1598,7 +1598,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0005",
+            "event_id": "33winter23_q07_me0005",
             "mark_code": "M1",
             "part_path": [
               "b"
@@ -1607,7 +1607,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0006",
+            "event_id": "33winter23_q07_me0006",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1616,7 +1616,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0007",
+            "event_id": "33winter23_q07_me0007",
             "mark_code": "DM1",
             "part_path": [
               "b"
@@ -1625,7 +1625,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0008",
+            "event_id": "33winter23_q07_me0008",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1634,7 +1634,7 @@
           },
           {
             "advisory_only": true,
-            "event_id": "33autumn23_q07_me0009",
+            "event_id": "33winter23_q07_me0009",
             "mark_code": "A1",
             "part_path": [
               "b"
@@ -1643,17 +1643,17 @@
           }
         ],
         "matching_mark_event_ids": [
-          "33autumn23_q07_me0005",
-          "33autumn23_q07_me0006",
-          "33autumn23_q07_me0007",
-          "33autumn23_q07_me0008",
-          "33autumn23_q07_me0009"
+          "33winter23_q07_me0005",
+          "33winter23_q07_me0006",
+          "33winter23_q07_me0007",
+          "33winter23_q07_me0008",
+          "33winter23_q07_me0009"
         ],
         "other_part_mark_event_ids": [
-          "33autumn23_q07_me0001",
-          "33autumn23_q07_me0002",
-          "33autumn23_q07_me0003",
-          "33autumn23_q07_me0004"
+          "33winter23_q07_me0001",
+          "33winter23_q07_me0002",
+          "33winter23_q07_me0003",
+          "33winter23_q07_me0004"
         ],
         "topic_routing": {
           "confidence": "high",
@@ -1671,14 +1671,14 @@
       "canonical_mark_scheme_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn23/mark_scheme/q07.png",
+          "path": "p3/33winter23/mark_scheme/q07.png",
           "sha256": "e3f52fb16c21599508e8229f93b0e42d82cb21f725802ed1fe36129522fa0a99"
         }
       ],
       "canonical_question_image_refs": [
         {
           "exists": true,
-          "path": "p3/33autumn23/questions/q07.png",
+          "path": "p3/33winter23/questions/q07.png",
           "sha256": "8aa237bc12120cdfed4bd7e9fde899b0abe39270eaa6bd413388ecf21785c864"
         }
       ],
@@ -1697,30 +1697,30 @@
       "mark_event_filtering": {
         "confidence": "part_path_matched",
         "matching_mark_event_ids": [
-          "33autumn23_q07_me0005",
-          "33autumn23_q07_me0006",
-          "33autumn23_q07_me0007",
-          "33autumn23_q07_me0008",
-          "33autumn23_q07_me0009"
+          "33winter23_q07_me0005",
+          "33winter23_q07_me0006",
+          "33winter23_q07_me0007",
+          "33winter23_q07_me0008",
+          "33winter23_q07_me0009"
         ],
         "other_part_mark_event_ids": [
-          "33autumn23_q07_me0001",
-          "33autumn23_q07_me0002",
-          "33autumn23_q07_me0003",
-          "33autumn23_q07_me0004"
+          "33winter23_q07_me0001",
+          "33winter23_q07_me0002",
+          "33winter23_q07_me0003",
+          "33winter23_q07_me0004"
         ],
         "warning": "Only matching_mark_event_ids should be used for future part-level mark-event review probes. When confidence is uncertain, all event IDs remain outside the matching set."
       },
       "mark_scheme_evidence_expected": true,
-      "paper": "33autumn23",
+      "paper": "33winter23",
       "part_id": "b",
       "part_level_review": true,
       "proposed_source_skill_id": "9709_p3_3_1_polynomial_division_factor_remainder",
       "proposed_source_skill_ids": [
         "9709_p3_3_1_polynomial_division_factor_remainder"
       ],
-      "question_id": "33autumn23_q07",
-      "queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
+      "question_id": "33winter23_q07",
+      "queue_id": "p3_exact_skill_review_queue:v1:33winter23_q07:33winter23_q07_b",
       "related_reviewed_evidence_ids": [],
       "related_reviewed_registry_evidence_exists": false,
       "review_outcome_category_default": "blocked_wrong_or_unsafe_label",
@@ -1728,7 +1728,7 @@
       "selection_category": "prior_blocked_confirmation",
       "selection_reason": "Confirm Batch 0001 blocked polynomial/remainder route on an implicit-differentiation stationary-tangent subpart.",
       "session": "November",
-      "subpart_id": "33autumn23_q07_b",
+      "subpart_id": "33winter23_q07_b",
       "unknown_alignment_reason": "",
       "variant": "3",
       "whole_question_review": false
@@ -3444,26 +3444,26 @@
     }
   ],
   "selected_question_ids": [
-    "31autumn21_q04",
-    "31autumn21_q07",
+    "31winter21_q04",
+    "31winter21_q07",
     "31summer23_q02",
     "31summer24_q06",
     "31summer24_q09",
-    "32autumn23_q09",
+    "32winter23_q09",
     "32spring24_q05",
     "32summer23_q07",
-    "33autumn22_q10",
-    "33autumn23_q07",
+    "33winter22_q10",
+    "33winter23_q07",
     "33summer23_q11"
   ],
   "selected_queue_ids": [
-    "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b",
-    "p3_exact_skill_review_queue:v1:31autumn21_q07:31autumn21_q07_c",
+    "p3_exact_skill_review_queue:v1:32winter23_q09:32winter23_q09_b",
+    "p3_exact_skill_review_queue:v1:31winter21_q07:31winter21_q07_c",
     "p3_exact_skill_review_queue:v1:32summer23_q07:32summer23_q07_b",
-    "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a",
-    "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b",
-    "p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole",
-    "p3_exact_skill_review_queue:v1:33autumn23_q07:33autumn23_q07_b",
+    "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_a",
+    "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_b",
+    "p3_exact_skill_review_queue:v1:31winter21_q04:31winter21_q04_whole",
+    "p3_exact_skill_review_queue:v1:33winter23_q07:33winter23_q07_b",
     "p3_exact_skill_review_queue:v1:31summer23_q02:31summer23_q02_a",
     "p3_exact_skill_review_queue:v1:31summer24_q06:31summer24_q06_c",
     "p3_exact_skill_review_queue:v1:31summer24_q09:31summer24_q09_a",

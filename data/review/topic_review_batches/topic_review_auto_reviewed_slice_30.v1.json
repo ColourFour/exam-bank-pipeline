@@ -1,0 +1,721 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 20,
+    "not_in_2026_syllabus": 1
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-29T09:33:03+00:00",
+  "record_count": 21,
+  "records": [
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2018_s18_31_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2018_s18_31_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer18_q06",
+      "reason": "The inspected question gives a separable differential equation for a chemical reaction and the mark scheme separates variables, integrates, applies the initial condition and uses a second data point. Differential equations is the correct current P3 topic rather than differentiation.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "separable differential equation model with initial condition",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 871
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2018_s18_31_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2018_s18_31_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer18_q07",
+      "reason": "Both inspected images show solving a quadratic for complex roots, plotting them on an Argand diagram, and using their geometry to find an angle and prove an equilateral triangle, so complex_numbers is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "complex quadratic roots, Argand diagram and argument geometry",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 872
+    },
+    {
+      "action": "exclude",
+      "confidence": 0.94,
+      "current_syllabus_status": "not_in_2026_syllabus",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q01",
+      "reason": "The inspected question and mark scheme are entirely about applying the trapezium rule to approximate a definite integral. Numerical integration by the trapezium rule is not one of the supplied current P3 topic IDs for the 2026-2027 syllabus, so this row should be excluded.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "trapezium rule numerical integration",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 875
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q02",
+      "reason": "The inspected images solve a logarithmic equation using laws of logarithms to form and solve a quadratic, so logarithmic_and_exponential_functions is the correct current P3 topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "logarithmic equation solved using log laws",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 876
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q03",
+      "reason": "The inspected question asks for the gradient of an implicitly defined curve, and the mark scheme differentiates terms containing y and dy/dx. Differentiation is the correct P3 topic rather than logarithmic/exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "implicit differentiation to find a gradient",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 877
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q04",
+      "reason": "The item uses reciprocal/compound-angle trigonometry to form a quadratic in tan theta and solve over a specified interval, so trigonometry is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "cotangent equation reduced to a quadratic in tan theta",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 878
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.95,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q05",
+      "reason": "Although part (i) asks for a derivative, the larger part solves a separable differential equation with an initial condition, and the mark scheme separates variables and integrates. Differential_equations is the better primary current P3 topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "separable differential equation after a supporting derivative",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 879
+    },
+    {
+      "action": "keep",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q06",
+      "reason": "The inspected item proves a trigonometric identity and then uses it to evaluate an exact definite integral. The row's integration topic is defensible as the primary packet topic for this current P3 skill.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "trigonometric identity used to evaluate an exact integral",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 880
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q07",
+      "reason": "Both images show deriving an equation for a, verifying a bracketing interval, and applying a fixed-point iteration to a required accuracy, so numerical_solution_of_equations is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "fixed-point iteration after deriving a root equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "numerical_solution_of_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 881
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2019_s19_31_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer19_q08",
+      "reason": "The inspected evidence decomposes a rational function into partial fractions and expands it in ascending powers of x, matching the current P3 algebra topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "partial fractions and binomial-style expansion of rational functions",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 882
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer20_q07",
+      "reason": "The inspected evidence differentiates f(x) to prove monotonicity and then evaluates a definite integral as ln(1+sin x). This is a calculus item, with integration the better primary current P3 topic than logarithmic/exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "quotient-rule derivative followed by exact trigonometric integral",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "integration",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 890
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer20_q08",
+      "reason": "The inspected question explicitly asks to set up and solve a differential equation, and the mark scheme separates variables, integrates, and applies two points. Differential_equations is the correct topic rather than logarithmic/exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "separable differential equation from proportional gradient statement",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differential_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 891
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2020_s20_31_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31summer20_q10",
+      "reason": "The inspected images work with a complex expression in Cartesian form, an argument condition involving the conjugate, and Argand-region inequalities, so complex_numbers is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "complex conjugate argument and Argand-region inequalities",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 892
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q01",
+      "reason": "The inspected question and mark scheme solve a modulus inequality, which is current P3 algebra content. It is not a differentiation item.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "modulus inequality solved by algebraic or graphical reasoning",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 893
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q02",
+      "reason": "The inspected evidence solves an exponential equation involving powers of 3 and logarithms, so logarithmic_and_exponential_functions is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "exponential equation solved using laws of indices and logarithms",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "logarithmic_and_exponential_functions",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 894
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q03",
+      "reason": "The inspected item applies a given iterative formula to a required accuracy and identifies the fixed-point equation, matching numerical_solution_of_equations.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "fixed-point iteration and exact fixed-point equation",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "numerical_solution_of_equations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 895
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q04",
+      "reason": "The inspected question asks for stationary points, and the mark scheme uses the product or quotient rule, sets the derivative to zero and solves for x. Differentiation is the correct P3 topic rather than logarithmic/exponential functions.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "stationary points using product rule and trigonometric equation solving",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "differentiation",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 896
+    },
+    {
+      "action": "keep",
+      "confidence": 0.92,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q05",
+      "reason": "The inspected item is balanced between proving a double-angle trigonometric identity and using it in an exact integral. Since the row is already routed to trigonometry and the identity work is central, trigonometry is a defensible current P3 topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "double-angle identity used in an exact integral",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "trigonometry",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 897
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q06",
+      "reason": "Both inspected images use 3D position vectors, a midpoint, a section ratio, vector equations of lines and an intersection point, so vectors is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "position vectors, section ratio, vector line and intersection",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "vectors",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 898
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q07",
+      "reason": "The inspected question and mark scheme use a complex root, conjugate root, modulus and argument, and an Argand-region sketch, so complex_numbers is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "complex root of a polynomial, modulus, argument and Argand inequalities",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "complex_numbers",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 899
+    },
+    {
+      "action": "keep",
+      "confidence": 0.98,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "/Users/sbrooker/repos/exam-bank-pipeline/output/pm3/pm3_2009_w09_31_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "31winter09_q08",
+      "reason": "The inspected item expresses a rational function in partial fractions and then expands it in ascending powers, which is current P3 algebra content.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T09:33:03+00:00",
+      "reviewed_skill": "partial fractions and expansion in ascending powers",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "algebra",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 900
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91_slice_30",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_30.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_30.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

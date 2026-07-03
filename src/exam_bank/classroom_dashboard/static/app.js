@@ -316,6 +316,7 @@ async function openAssignment(assignmentId, tab = state.activeTab) {
     <div class="metric"><strong>${payload.submission_status.missing}</strong><span>missing</span></div>
   `;
   $("submissionAssignmentSummary").textContent = `${assignmentLabel(payload.assignment, assignmentId)} selected.`;
+  renderSubmissionTable(payload.submission_rows || [], (payload.answer_check && payload.answer_check.questions) || []);
   $("emailStatusBadge").textContent = payload.dispatch_status || "not sent";
   $("emailStatusBadge").className = `badge ${badgeClass(payload.dispatch_status)}`;
   renderAssignmentEmailPreview(payload.email_preview || {});
@@ -375,6 +376,58 @@ function renderReports(reports) {
     link.target = "_blank";
     root.appendChild(link);
   }
+}
+
+function renderSubmissionTable(rows, questions) {
+  const table = $("submissionTable");
+  const thead = table.querySelector("thead");
+  const tbody = table.querySelector("tbody");
+  const questionList = Array.isArray(questions) ? questions : [];
+  thead.innerHTML = `
+    <tr>
+      <th>Student</th>
+      <th>Email</th>
+      <th>State</th>
+      <th>Submitted file/time</th>
+      <th>Total</th>
+      ${questionList.map((question) => `<th class="question-col">${escapeHtml(question.display_label || question.question_label || "")}</th>`).join("")}
+      <th>Notes</th>
+    </tr>
+  `;
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="${6 + questionList.length}" class="muted">No roster rows yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows
+    .map((row) => {
+      const questionById = new Map((row.questions || []).map((question) => [question.question_id, question]));
+      const total = row.total_expected === "" || row.total_expected === undefined ? "" : `${row.total_answered || 0}/${row.total_expected || 0}`;
+      const fileLabel = row.source_filename
+        ? row.stored_pdf_url
+          ? `<a href="${escapeHtml(row.stored_pdf_url)}" target="_blank" rel="noreferrer">${escapeHtml(row.source_filename)}</a>`
+          : escapeHtml(row.source_filename)
+        : "";
+      const submitted = [fileLabel, escapeHtml(row.submitted_at || "")].filter(Boolean).join("<br>");
+      return `
+        <tr>
+          <td><strong>${escapeHtml(row.display_name || row.student_id || "")}</strong><br><span class="muted">${escapeHtml(row.student_id || "")}</span></td>
+          <td>${escapeHtml(row.email || "")}</td>
+          <td><span class="badge ${badgeClass(row.submission_state)}">${escapeHtml(row.submission_state || "missing")}</span></td>
+          <td>${submitted || '<span class="muted">not submitted</span>'}</td>
+          <td>${escapeHtml(total)}</td>
+          ${questionList.map((question) => renderQuestionCell(questionById.get(question.question_id), row.submission_state)).join("")}
+          <td>${escapeHtml(row.notes || "")}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+function renderQuestionCell(question, submissionState) {
+  const status = question && question.status ? question.status : submissionState === "missing" ? "not_submitted" : "review_needed";
+  const score = question && question.score !== "" && question.score !== undefined ? String(question.score) : "";
+  const label = status === "answered" ? "answered" : status === "missing" ? "missing" : status === "review_needed" ? "review" : "not submitted";
+  return `<td class="answer-cell answer-${escapeHtml(status)}"><span>${escapeHtml(label)}</span>${score ? `<strong>${escapeHtml(score)}</strong>` : ""}</td>`;
 }
 
 async function previewAck({ silent = false } = {}) {
@@ -564,11 +617,26 @@ async function ingestSubmissions(fromMailapp = false) {
   await api(`/api/classes/${state.selectedClassId}/assignments/${state.selectedAssignmentId}/ingest-submissions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ from_mailapp: fromMailapp, mail_query: state.selectedAssignmentId })
+    body: JSON.stringify({ from_mailapp: fromMailapp })
   });
   showToast("Submissions ingested.");
   await openClass(state.selectedClassId, { preserveTab: true });
   await openAssignment(state.selectedAssignmentId, state.activeTab);
+}
+
+async function syncSubmissions() {
+  if (!state.selectedAssignmentId) {
+    showToast("Open an assignment first.");
+    return;
+  }
+  await api(`/api/classes/${state.selectedClassId}/assignments/${state.selectedAssignmentId}/sync-submissions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({})
+  });
+  showToast("Submissions synced.");
+  await openClass(state.selectedClassId, { preserveTab: true });
+  await openAssignment(state.selectedAssignmentId, "submissions");
 }
 
 document.addEventListener("click", async (event) => {
@@ -625,6 +693,7 @@ $("sendNowBtn").addEventListener("click", openAssignmentSendNowModal);
 $("receiptLaterBtn").addEventListener("click", openReceiptLaterModal);
 $("receiptNowBtn").addEventListener("click", openReceiptNowModal);
 $("submissionFiles").addEventListener("change", uploadSubmissions);
+$("syncSubmissionsBtn").addEventListener("click", syncSubmissions);
 $("ingestBtn").addEventListener("click", () => ingestSubmissions(false));
 $("ingestMailBtn").addEventListener("click", () => ingestSubmissions(true));
 $("modalCloseBtn").addEventListener("click", closeModal);

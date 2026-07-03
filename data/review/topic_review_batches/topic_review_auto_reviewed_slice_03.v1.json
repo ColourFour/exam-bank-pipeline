@@ -1,0 +1,324 @@
+{
+  "artifact_kind": "automated_agentic_topic_bank_decision_input",
+  "confidence_threshold": 0.9,
+  "current_syllabus_status_counts": {
+    "current_relevant": 9
+  },
+  "description": "Automated image-and-syllabus reviewed correction layer for topic packets. Does not modify question_bank.json.",
+  "generated_at": "2026-06-29T03:44:00+00:00",
+  "record_count": 9,
+  "records": [
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q01",
+      "reason": "The question and mark scheme assess a stem-and-leaf diagram, median, lower quartile, interquartile range, and a missing data value. That is representation of data, not probability, and the topic is current in the 2026-2027 Paper 5 syllabus.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 81
+    },
+    {
+      "action": "keep",
+      "confidence": 0.96,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q02",
+      "reason": "The item asks for simple and conditional probabilities using country membership and sugar-in-tea events. The mark scheme uses total probability and conditional probability, so the current probability topic is correct and current.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "probability",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 82
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q03",
+      "reason": "The question concerns arrangements of CDs with a block condition and selections using combinations. The mark scheme uses factorials and combination notation, so permutations_and_combinations is the clear current topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 83
+    },
+    {
+      "action": "keep",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q04",
+      "reason": "The question states normally distributed times and requires inverse-standardisation to find a mean and a tail probability. The mark scheme standardises with z-values, so the current normal distribution topic is correct.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 84
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q05",
+      "reason": "The item asks for a histogram from grouped data and an estimated mean using class midpoints. The mark scheme uses frequency density and grouped-data mean methods, which are representation of data rather than probability.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "representation_of_data",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 85
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.93,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2008_s08_06_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2008_s08_06_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer08_q06",
+      "reason": "Although part (i) uses a tree diagram, the main assessment defines the random variable X, completes its probability distribution, and calculates E(X). This fits discrete_random_variables under the current Paper 5 syllabus more closely than the broader probability topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 86
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.93,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2009_s09_06_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2009_s09_06_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer09_q01",
+      "reason": "The primary assessment is a normally distributed carton volume model with standard deviation 8 and inverse-standardisation to find the mean. Part (ii) adds a short probability/combinations calculation from observed counts, but the dominant current syllabus topic is the_normal_distribution.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "the_normal_distribution",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 88
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2009_s09_06_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2009_s09_06_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer09_q02",
+      "reason": "The question defines a discrete random variable X, gives a probability distribution table, and asks for E(X) and Var(X). The mark scheme uses expectation and variance formulas, so discrete_random_variables is the clear current topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "discrete_random_variables",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 89
+    },
+    {
+      "action": "relabel",
+      "confidence": 0.97,
+      "current_syllabus_status": "current_relevant",
+      "evidence_refs": [
+        {
+          "path": "stats/stats_2009_s09_06_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "stats/stats_2009_s09_06_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        },
+        {
+          "path": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+          "type": "syllabus_reference"
+        }
+      ],
+      "prompt_version": "topic_review_9709_2026_2027_v1",
+      "question_id": "06summer09_q04",
+      "reason": "The item asks for group selections and line arrangements with adjacency restrictions. The mark scheme uses products of combinations and factorial arrangements, so permutations_and_combinations is the correct current topic.",
+      "release_override": true,
+      "reviewed_at": "2026-06-29T03:44:00+00:00",
+      "reviewed_skill": "",
+      "reviewed_subtopic": "",
+      "reviewed_topic": "permutations_and_combinations",
+      "reviewer": "automated_agentic_review:codex_subagent",
+      "reviewer_model": "codex_subagent",
+      "risk_flags": [],
+      "source": "automated_agentic_review",
+      "source_batch_id": "topic_review_0237b41ffe91",
+      "source_batch_index": 90
+    }
+  ],
+  "review_source": "automated_agentic_review",
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions",
+  "schema_version": 1,
+  "source_batch_id": "topic_review_0237b41ffe91",
+  "source_batch_path": "data/review/topic_review_batches/topic_review_batch_slice_03.json",
+  "source_decisions_path": "data/review/topic_review_batches/topic_review_decisions_slice_03.jsonl",
+  "syllabus_baseline": {
+    "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+    "syllabus_code": "9709",
+    "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+    "valid_for": [
+      "2026",
+      "2027"
+    ]
+  }
+}

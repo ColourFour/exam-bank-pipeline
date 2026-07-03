@@ -29,7 +29,7 @@ Blocking means the export should not be treated as release-quality until the iss
 
 Warning means the export can continue through controlled review or downstream handoff, but the condition must be recorded in release notes and must not be silently promoted to student-facing eligibility.
 
-The current known exception is the missing source mark scheme for `9709_2025_November_33`. This accounts for `33autumn25_q01` through `33autumn25_q11` missing mark-scheme image paths. It is a warning only while those records remain blocked or review-only in Asterion-facing roles. It becomes blocking if any of those records are promoted to student-facing practice, quick checks, generation input, or any role that requires mark-scheme image availability.
+The current known exception is the missing source mark scheme for `9709_2025_November_33`. This accounts for `33winter25_q01` through `33winter25_q11` missing mark-scheme image paths. It is a warning only while those records remain blocked or review-only in Asterion-facing roles. It becomes blocking if any of those records are promoted to student-facing practice, quick checks, generation input, or any role that requires mark-scheme image availability.
 
 ## Checklist
 

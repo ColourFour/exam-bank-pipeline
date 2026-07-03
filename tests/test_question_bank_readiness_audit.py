@@ -94,13 +94,14 @@ def _base_record(question_id: str = "12spring24_q01", question_number: str = "1"
     }
 
 
-def _write_bank(path: Path, records: list[dict]) -> None:
+def _write_bank(path: Path, records: list[dict], *, run_manifest: dict | None = None) -> None:
     path.write_text(
         json.dumps(
             {
                 "schema_name": "exam_bank.question_bank",
                 "schema_version": 2,
                 "record_count": len(records),
+                **({"run_manifest": run_manifest} if run_manifest is not None else {}),
                 "questions": records,
             }
         ),
@@ -225,6 +226,36 @@ def test_readiness_audit_writes_reports_and_baseline_comparison(tmp_path: Path) 
     hard_blockers = _read_csv(out_dir / "hard_blockers.csv")
     assert hard_blockers[0]["question_id"] == "12spring24_q02"
     assert "missing_mark_scheme_image_path" in hard_blockers[0]["hard_blockers"]
+
+
+def test_readiness_audit_accepts_current_run_manifest_shape(tmp_path: Path) -> None:
+    run_manifest = {
+        "generated_at": "2026-06-30T00:00:00+00:00",
+        "run_id": "20260630T000000Z-testmanifest",
+        "pipeline_version": "test",
+        "git_commit": "abcdef",
+        "model_versions": {"topic_classifier": "test"},
+        "ocr_engine_version": "",
+        "input_manifest_sha256": "0" * 64,
+        "artifact_root": "output",
+        "qa_summary": {
+            "record_count": 1,
+            "mapping_status_counts": {"pass": 1},
+            "validation_status_counts": {"pass": 1},
+        },
+    }
+    input_path = tmp_path / "question_bank.json"
+    out_dir = tmp_path / "audit"
+    _write_bank(input_path, [_base_record()], run_manifest=run_manifest)
+
+    assert main(["--input", str(input_path), "--out-dir", str(out_dir)]) == 0
+    summary = json.loads((out_dir / "audit_summary.json").read_text(encoding="utf-8"))
+
+    assert summary["run_metadata"]["fully_auditable_from_json_alone"] is True
+    assert summary["run_metadata"]["missing_fields"] == []
+    assert summary["run_metadata"]["present_values"]["generated_at"] == "2026-06-30T00:00:00+00:00"
+    assert summary["run_metadata"]["present_values"]["run_id"] == "20260630T000000Z-testmanifest"
+    assert summary["run_metadata"]["present_values"]["qa_summary"] == run_manifest["qa_summary"]
 
 
 def test_readiness_audit_surfaces_suspicious_ocr_and_false_negatives(tmp_path: Path) -> None:

@@ -351,6 +351,58 @@ def visual_reason_flags(
     return sorted(flags)
 
 
+def references_source_visual(text: str) -> bool:
+    """Return true when the prompt refers to a provided visual artifact."""
+
+    normalized = _normalize_for_visual_flags(str(text or ""))
+    if not normalized:
+        return False
+    lowered = normalized.lower()
+    compacted = _compact_for_visual_flags(normalized)
+    visual_noun = (
+        r"(?:diagram|figure|fig\.?|graph|table|grid|histogram|scatter diagram|"
+        r"box(?:-and-whisker| and whisker)? plot|boxplot|box plot)"
+    )
+    if re.search(rf"\b(?:the|following)\s+{visual_noun}\s+(?:shows?|gives?|represents?|illustrates?|below|above)\b", lowered):
+        return True
+    if re.search(rf"\b(?:shown|given|displayed|illustrated)\s+(?:in|on)\s+(?:the\s+)?{visual_noun}\b", lowered):
+        return True
+    if re.search(rf"\b(?:from|using|in)\s+(?:the\s+)?{visual_noun}\b", lowered):
+        return True
+    if re.search(r"\bon\s+(?:the\s+)?grid\s+below\b", lowered):
+        return True
+    if re.search(r"\bshaded\s+(?:region|area|sector|segment)\b", lowered):
+        return True
+    return any(
+        phrase in compacted
+        for phrase in {
+            "thediagramshows",
+            "diagramshows",
+            "thefigureshows",
+            "figureshows",
+            "thegraphshows",
+            "graphshows",
+            "thetableshows",
+            "tableshows",
+            "showninthediagram",
+            "showninthefigure",
+            "showninfig",
+            "showninthegraph",
+            "showninthetable",
+            "asshowninthediagram",
+            "thediagrambelow",
+            "thefigurebelow",
+            "thegraphbelow",
+            "thetablebelow",
+            "thegridbelow",
+            "gridbelow",
+            "shadedregion",
+            "shadedsector",
+            "shadedsegment",
+        }
+    )
+
+
 def derive_question_text_semantics(
     *,
     question_text: str,

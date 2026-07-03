@@ -1,0 +1,2122 @@
+{
+  "batch_id": "topic_review_0237b41ffe91_slice_62",
+  "decision_schema": {
+    "properties": {
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "current_syllabus_status": {
+        "enum": [
+          "ambiguous",
+          "current_relevant",
+          "legacy_but_relevant",
+          "not_in_2026_syllabus",
+          "outdated_not_relevant"
+        ]
+      },
+      "decision_action": {
+        "enum": [
+          "exclude",
+          "keep",
+          "pending",
+          "relabel"
+        ]
+      },
+      "decision_version": {
+        "const": "topic_review_auto_decision_v1"
+      },
+      "evidence_refs": {
+        "type": "array"
+      },
+      "explanation": {
+        "type": "string"
+      },
+      "prompt_version": {
+        "const": "topic_review_9709_2026_2027_v1"
+      },
+      "question_id": {
+        "type": "string"
+      },
+      "release_override": {
+        "type": "boolean"
+      },
+      "review_source": {
+        "const": "automated_agentic_review"
+      },
+      "reviewed_skill": {
+        "type": "string"
+      },
+      "reviewed_subtopic": {
+        "type": "string"
+      },
+      "reviewed_topic": {
+        "type": "string"
+      },
+      "reviewer_model": {
+        "type": "string"
+      },
+      "risk_flags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "decision_version",
+      "review_source",
+      "question_id",
+      "decision_action",
+      "reviewed_topic",
+      "current_syllabus_status",
+      "release_override",
+      "confidence",
+      "evidence_refs",
+      "risk_flags",
+      "explanation",
+      "reviewer_model",
+      "prompt_version"
+    ],
+    "type": "object"
+  },
+  "manifest": {
+    "batch_id": "topic_review_0237b41ffe91",
+    "confidence_threshold": 0.9,
+    "created_at": "2026-06-29T03:29:57+00:00",
+    "dry_run": false,
+    "prompt_version": "topic_review_9709_2026_2027_v1",
+    "review_required_input_count": 2572,
+    "schema_name": "exam_bank.topic_review.auto_review_batch",
+    "schema_version": 1,
+    "selected_count": 2265,
+    "skipped_count": 307,
+    "skipped_reason_counts": {
+      "already_reviewed": 306,
+      "unknown_question_id": 1
+    },
+    "slice_end_index": 1860,
+    "slice_number": 62,
+    "slice_row_count": 30,
+    "slice_start_index": 1831,
+    "source_batch_path": "data/review/topic_review_batches/topic_review_batch.json",
+    "source_files": {
+      "artifact_root": "output",
+      "canonical_taxonomy_root": "exam_bank_taxonomy/canonical",
+      "question_bank": "output/json/question_bank.json",
+      "reviewed_decisions": "data/review/topic_bank_reviewed_decisions.v1.json",
+      "taxonomy": "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json",
+      "topic_routing": "data/topic_routing/question_bank.topic_routing.v1.json"
+    },
+    "syllabus_baseline": {
+      "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+      "syllabus_code": "9709",
+      "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+      "valid_for": [
+        "2026",
+        "2027"
+      ]
+    }
+  },
+  "reviewer_prompt": "You are reviewing CAIE 9709 Mathematics topic routing for printable topic packets. Use the 2026-2027 syllabus as the current baseline. Inspect the canonical question image and mark-scheme image. Choose exactly one decision_action: keep, relabel, exclude, or pending. Use keep only when the current topic is correct for the normalized paper family. Use relabel only when another supplied allowed topic is clearly correct. Use exclude when the question is outdated or not relevant to the 2026-2027 syllabus. Use pending for ambiguity, poor image evidence, mixed-topic uncertainty, or any curriculum doubt. Set release_override true only when both canonical images were inspected and are usable. Return JSON matching the supplied schema. Do not invent topic IDs.",
+  "rows": [
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1831,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2013_w13_43_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2013_w13_43_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  (i)  The sketch requires three straight\nline segments with +ve, zero and \u2013\nve slopes in order, which together\nwith a segment of the t axis form a\nB1  trapezium.\nFor using v = at for T_{1} or\nM1                 u = \u2013at for T_{3}\nT_{1} = V \u00f7 0.3, T_{3} = V   A1  3\n(ii)  [S = \u00bd T_{1}V + T_{2}V + \u00bd T_{3}V]   M1  For using the area property for the\ndistance travelled\nM1  For substituting for T_{1}, T_{2} and T_{3} in\nterms of V\nS = 552V \u2013 V {0.5(T_{1} + T_{3})}\n= 552V \u2013 13V^{2}/6  A1\n13V^{2} \u2013 3312V + 72000=0  B1  AG\nV = 24  B1  5",
+      "ocr_text": "5 A car travels in a straight line from A to B, a distance of 12 km, taking 552 seconds. The car starts from rest at A and accelerates for T, s at 0.3m s\u2019, reaching a speed of Vms\u2122'. The car then continues to move at Vms\"! for T, s. It then decelerates for T, s at 1 ms, coming to rest at B. (i) Sketch the velocity-time graph for the motion and express 7, and T, in terms of V. [3] (ii) Express the total distance travelled in terms of V and show that 13V? \u2014 3312V + 72000 = 0. Hence find the value of V. [5]",
+      "paper": "43winter13",
+      "paper_family": "p5",
+      "question_id": "43winter13_q05",
+      "question_number": "5",
+      "question_text": "5 A car travels in a straight line from Ato B,a distance of 12 km,taking552seconds. Thecarstarts from rest atto move at V A m s and accelerates for_{-}1for T_{2} s. It then decelerates for T_{1} s at 0.3 m s^{-}2, reaching a speed of T_{3} s at 1 m s^{-}2, coming to rest at V m s^{-}1. The car then continues B. (i) Sketch the velocity-time graph for the motion and express T_{1} and T_{3} in terms of V. [3] (ii) ExpressthetotaldistancetravelledintermsofV and show that13V^{2}-3312V + 72 000 = 0. Hence find the value of V. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1832,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2013_w13_43_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2013_w13_43_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_energy_work_and_power",
+      "current_packet_topic": "energy_work_and_power",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i)  [144000/v \u2013 4800   For using DF = P/v and Newton\u2019s\n= 12500a]  M1  2^{nd} law at A or at B\nAcceleration at A is 0.336 ms^{\u20132} A1\nThe speed at B 24 ms^{\u20131} A1  3  AG\n(ii)  WD by DF = 5800 \u00d7 500 &\nWD against res\u2019ce = 4800 \u00d7 500  B1\nLoss in KE = \u00bd12500(24^{2 }\u2013 16^{2})  B1\nFor using WD by DF = PE gain \u2013\nM1  KE loss + WD against res\u2019ce\n5800x500 = 12500gh \u2013\n\u00bd12500(24^{2} \u2013 16^{2}) + 4800 \u00d7 500  A1\nHeight of C is 20 m  A1  5\n(ii)   Alternative",
+      "ocr_text": "6 A lorry of mass 12 500 kg travels along a road from A to C passing through a point B. The resistance to motion of the lorry is 4800 N for the whole journey from A to C. (i) (ii) The section AB of the road is straight and horizontal. On this section of the road the power of the lorry\u2019s engine is constant and equal to 144 kW. The speed of the lorry at A is 16 ms\"! and its acceleration at B is 0.096ms~\u2019. Find the acceleration of the lorry at A and show that its speed at Bis 24ms'. [3] The section BC of the road has length 500 m, is straight and inclined upwards towards C. On this section of the road the lorry\u2019s driving force is constant and equal to 5800 N. The speed of the lorry at C is 16ms\u00b0'. Find the height of C above the level of AB. [5]",
+      "paper": "43winter13",
+      "paper_family": "p5",
+      "question_id": "43winter13_q06",
+      "question_number": "6",
+      "question_text": "6 A lorry of mass 12 500 kg travels along a road from A to C passing through a point B. The resistance to motion of the lorry is 4800 N for the whole journey from A to C. (i) The section AB of the roadis straight and horizontal. On this section of the road the power of the lorry\u2019s engine is constant and equal to 144 kW. The speed of the lorry at A is 16 m s^{-}1and its acceleration at B is 0.096 m s^{-}2. Find the acceleration of the lorry at A and show that its speed at B is 24 m s^{-}1. [3] (ii) The section BCoftheroadhaslength500 m,isstraightandinclinedupwardstowards C. On thisthe lorry atsection Cof is 16 m stheroad_{-}1the. Find the height oflorry\u2019s driving force C above the level of is constant and ABequal. to 5800 N. Thespeed[5]of",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_energy_work_and_power"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1833,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2013_w13_43_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2013_w13_43_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i)  [s=k_{1}t^{2}/2 \u2013 0.005t^{3}/3+(C)]  M1  For using s = \u0283vdt\n[k_{1}(60^{2}/2) \u2013 0.005(60^{3}/3) = 540]  DM1  For using limits 0 and 60 and\nequating to 540\nk_{1} = 0. 5   A1\n0.5 \u00d7 60 \u2013 0.005 \u00d7 60^{2} = k_{2} \u00f7\u221a60  M1  For using v_{1}(60) = v_{2}(60)\nk_{2} = 12\u221a60                  A1  5  AG\n(ii)  For using s = 540 +\nM1                      12\u221a60\u0283_{60}^{t   }(t\u20131/2 )dt\n[s = 540 + 12\u221a60(2\u221at \u2013 2\u221a60) =]          Accept any other correct form for s\n24\u221a(60t) \u2013900          A1  2  if it is used in (iii)\n(iii)  [24\u221a(60t) \u2013 900 = 1260]  M1  For solving s(t) = 1260 for t\nt = 135  A1\nv = 12\u221a60 \u00f7 \u221a135) speed is 8 ms^{\u20131}\nB1  3",
+      "ocr_text": "A vehicle starts from rest at a point O and moves ina straight line. Its speed vms\"' at time t seconds after leaving O is defined as follows. For0<r<60, v=k,t-0.0057, fort 260, v= Tr The distance travelled by the vehicle during the first 60s is 540 m. (i) Find the value of the constant k, and show that k, = 12 /(60). [5] (ii) Find an expression in terms of f for the total distance travelled when t > 60. [2] (iii) Find the speed of the vehicle when it has travelled a total distance of 1260 m. [3]",
+      "paper": "43winter13",
+      "paper_family": "p5",
+      "question_id": "43winter13_q07",
+      "question_number": "7",
+      "question_text": "7 A vehicle starts from rest at a point O and moves in a straight line. Its speed v m s^{-}1at time t seconds after leaving O is defined as follows. For 0 \u2264 t \u2264 60, v = k_{1}t -0.005t^{2}, for t \u2265 60, v = \u00efk_{2}t. The distance travelled by the vehicle during the first 60 s is 540 m. (i) Find the value of the constant k_{1} and show that k_{2} = 12(60). [5] (ii) Find an expression in terms of t for the total distance travelled when t \u2265 60. [2] (iii) Find the speed of the vehicle when it has travelled a total distance of 1260 m. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1834,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_energy_work_and_power",
+      "current_packet_topic": "energy_work_and_power",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  (i)  DF = P \u00f7 18  B1\n[P \u00f7 18 \u2013 800 = 1400 \u00d7 0.5] M1  For using DF \u2013 R = ma\nP = 27000  A1  3\n(ii)  [1080 \u2013 800 = 1400a]  M1  For using DF = P \u00f7 25 and DF \u2013 R = ma\nAcceleration is 0.2ms^{\u20132} A1  2",
+      "ocr_text": "A car of mass 1400kg moves on a horizontal straight road. The resistance to the car\u2019s motion is constant and equal to 800 N and the power of the car\u2019s engine is constant and equal to P W. At an -1 2 instant when the car\u2019s speed is 18 ms ~ its acceleration is 0.5ms~. (i) Find the value of P. [3] 1 The car continues and passes through another point with speed 25ms_\". (ii) Find the car\u2019s acceleration at this point. [2]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q01",
+      "question_number": "1",
+      "question_text": "1 A car of mass 1400 kg moveson a horizontal straight road. The resistance to the car\u2019smotion is constant and equal to 800 N and the power of the car\u2019s engine is constant and equal to P W.A tan instant when the car\u2019s speed is 18 m s^{-}1its acceleration is 0.5 m s^{-}2. (i) Find the value of P. [3] The car continues and passes through another point with speed 25 m s^{-}1. (ii) Find the car\u2019s acceleration at this point. [2]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_energy_work_and_power"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1835,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  M1  For applying Newton\u2019s 2nd law to P or to\nQ\n0.65 \u00d7 10 \u00d7 (63/65) \u2013 T = 0.65a or A1\nT \u2013 0.65 \u00d7 10 \u00d7 (16/65) = 0.65a\nT \u2013 0.65 \u00d7 10 \u00d7 (16/65) = 0.65a or B1\n0.65 \u00d7 10 \u00d7 (63/65) \u2013 T = 0.65a or\n0.65 \u00d7 10 \u00d7 (63 \u2013 16)/65 = 2 \u00d7 0.65a\n[T \u2013 1.6  =  6.3 \u2013 T] or\n[T = 6.3 \u2013 0.65 \u00d7 (47/13)]  or\n[T = 1.6 + 0.65 \u00d7 (47/13)]  M1  For eliminating a\nTension is 3.95N  A1  5",
+      "ocr_text": "The tops of each of two smooth inclined planes A and B meet at a right angle. Plane A is inclined at angle @ to the horizontal and plane B is inclined at angle B to the horizontal, where sin a = 8 and sin B= #. A small smooth pulley is fixed at the top of the planes and a light inextensible string passes over the pulley. Two particles P and Q, each of mass 0.65 kg, are attached to the string, one at each end. Particle Q is held at rest at a point of the same line of greatest slope of the plane B as the pulley. Particle P rests freely below the pulley in contact with plane A (see diagram). Particle Q is released and the particles start to move with the string taut. Find the tension in the string. [5]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q02",
+      "question_number": "2",
+      "question_text": "2 Thetopsofeachoftwosmoothinclinedplanes Aand Bmeetatarightangle. Plane A is inclined at angle ) to the horizontal and plane B is inclined at angle to the horizontal, where sin ) = 63_{65} and sin = 16_{65}. A small smooth pulley is fixed at the top of the planes and a light inextensible string passes over the pulley. Two particles P and Q, each of mass 0.65 kg, are attached to the string, one at each end. Particle Q is held at rest at a point of the same line of greatest slope of the plane B as the pulley. Particle P rests freely below the pulley in contact with plane A (see diagram). Particle Q is released and the particles start to move with the string taut. Find the tension in the string. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1836,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3  (i)  [Wcos\u03b1 + 7 \u00d7 0.6 = 8]  M1  For resolving forces acting at O vertically\nWcos\u03b1 = 3.8 (cwo)  A1  AG\nWsin\u03b1 = 5.6  B1  3\n(ii)  For using W^{2} = (Wsin\u03b1)^{2} + (Wcos\u03b1)^{2}\nor tan\u03b1 = (Wsin\u03b1 \u00f7 Wcos\u03b1)\nM1\nW = 6.77 or \u03b1 = 55.8  A1\n\u03b1 = 55.8 or W = 6.77  B1  3",
+      "ocr_text": "8N Each of three light inextensible strings has a particle attached to one of its ends. The other ends of the strings are tied together at a point O. Two of the strings pass over fixed smooth pegs and the particles hang freely in equilibrium. The weights of the particles and the angles between the sloping parts of the strings and the vertical are as shown in the diagram. It is given that sin B = 0.8 and cos B = 0.6. (i) Show that W cos a = 3.8 and find the value of W sina. [3] Vwn J Vin Each of three light inextensible strings has a particle attached to one of its ends. The other ends of the strings are tied together at a point O. Two of the strings pass over fixed smooth pegs and the particles hang freely in equilibrium. The weights of the particles and the angles between the sloping parts of the strings and the vertical are as shown in the diagram. It is given that sin B = 0.8 and cos B = 0.6. (i) Show that W cos a = 3.8 and find the value of W sina. [3] (ii) Hence find the values of W and a. [3]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q03",
+      "question_number": "3",
+      "question_text": "3 Each of three light inextensible strings has a particle attached to one of its ends. The other ends of the strings are tied together at a point O. Two of the strings pass over fixed smooth pegs and the particles hang freely in equilibrium. The weights of the particles and the angles between the sloping parts of the strings and the vertical are as shown in the diagram. It is given that sin = 0.8 and cos = 0.6. (i) Show that W cos ) = 3.8 and find the value of W sin ). [3] (ii) Hence find the values of Wand ). [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1837,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4  (i)  v(8) = 0.25 \u00d7 8 = 2  B1\n2 = \u20136.4 + 19.2 \u2013 k )k = 10.8  B1 2  ft (12.8 \u2013 v)\n(ii)  [dv/dt = \u20130.2t + 2.4 (= 0 when t = 12)  M1  For finding t when\nvmax = \u20130.1 \u00d7 144 + 2.4 \u00d7 12 \u2013 10.8]  dv/dt = 0 and substituting into v(t)\nMaximum speed is 3.6ms^{\u20131} A1 2  ft (14.4 \u2013 incorrect k)\n(iii)  Displacement s_{1} = \u00bd 0.25 \u00d7 8^{2}    (= 8)   B1\n[Displacement  _{s}_{2 }= [\u20130.1t^{3}/3 + 1.2t^{2} \u2013 10.8t]_{8}^{18 } M1  For using displacement  _{s}_{2} = \u222b8^{18}(\u22121.0_{t}^{2} _{+} 4.2_{t}\u2212108.)d_{t}\n(=26.7)]\nDisplacement is 34.7m  A1  3",
+      "ocr_text": "A particle P starts from rest and moves in a straight line for 18 seconds. For the first 8 seconds of the motion P has constant acceleration 0.25ms~*. Subsequently P\u2019s velocity, vyms~' at time t seconds after the motion started, is given by v=-0.1\u00b0 +2.4t\u2014k, where 8 < \u00a2 < 18 and k is a constant. (i) Find the value of v when t = 8 and hence find the value of k. [2] (ii) Find the maximum velocity of P. [2] (iii) Find the displacement of P from its initial position when f = 18. [3]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q04",
+      "question_number": "4",
+      "question_text": "4 A particle P starts from rest and moves in a straight line for 18 seconds. For the first 8 seconds of the motion P has constant acceleration 0.25 m s^{-}2. Subsequently P\u2019svelocity, v m s^{-}1 at time t second s after the motion started, is given by v = -0.1t^{2} + 2.4t -k, where 8 \u2264 t \u2264 18 and k is a constant. (i) Find the value of v when t = 8 and hence find the value of k. [2] (ii) Find the maximum velocity of P. [2] (iii) Find the displacement of P from its initial position when t = 18. [3]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1838,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  [P \u2013 8g sin 5^{o} \u2013 F = 8a]  M1  For using Newton\u2019s 2^{nd} law (either case)\n7(o)/(8X \u2013 8g sin 5)X \u2013 8g sin 5 \u2013 F= 8 \u00d7 0.15 _{o}\u2013 andF= 8 \u00d7 1.15 A1\nX = 8   A1\nM1  For obtaining a numerical expression for\nF\nFF = 64 \u2013 8 = 56 \u2013 8gg sin 5 sin 5^{o}_{o} \u2013 8  \u2013 8 \u00d7\u00d7 0.15  1.15 oror\nF = 56 \u00d7 1.15 \u2013 64 \u00d7 0.15 \u2013 8g sin 5^{o} or\nF = 47.8(275...)  A1 ft X either from error for one term in X/F\nequation or from error in solution of\ncorrect X/F equations\nR = 8g cos 5^{o}               (= 79.695...)  B1\n[\u00b5 = 47.8\u00f779.7]  M1  For using \u00b5 = FR\nCoefficient is 0.600 (accept 0.6)  A1  8",
+      "ocr_text": "A box of mass 8 kg is on a rough plane inclined at 5\u00b0 to the horizontal. A force of magnitude PN acts on the box in a direction upwards and parallel to a line of greatest slope of the plane. When P = 7X the box moves up the line of greatest slope with acceleration 0.15 ms~* and when P = 8X the box moves up the line of greatest slope with acceleration 1.15ms. Find the value of X and the coefficient of friction between the box and the plane. [8]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q05",
+      "question_number": "5",
+      "question_text": "5 Aboxofmass8 kg is on a rough plane inclined at 5to the horizontal. A force of magnitude P N actsonthe boxinadirectionupwardsandparalleltoaline of greatestslope of theplane. When P = 7X theboxmovesupthelineofgreatestslopewithacceleration0.15 m s^{-}2 andwhenP = 8X the box moves up the line of greatest slope with acceleration 1.15 m s^{-}2. Find the value of Xand the coefficient of friction between the box and the plane. [8]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1839,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i)  M1  For using the gradient property for\nacceleration\nAcceleration is 4 ms^{\u20132} A1\nM1  For applying Newton\u2019s 2^{nd} law to both\nparticles or using the formula\n(M + m)a =  (M \u2013 m)g\nand for using m + M = 1\nFor T \u2013 mg = 4mand (1 \u2013 m)g \u2013 T =\n4(1 \u2013 m)\nor 4 = (1 \u2013 m \u2013 m)g A1\nP has mass 0.3kg and Q has mass 0.7kg  A1  5\n(ii)  For using the area property of the graph or _{2}\nh = \u00bd at to obtain h = 2  B1  1\n(iii)  Distance travelled upwards by   B1\nP =  \u00bd 1.4 \u00d7 4\nHeight is 4.8m  B1  2",
+      "ocr_text": "v(m s~!) Particle P O t(s) P Q , m | -4 Fig. 1 Fig. 2 Particles P and Q have a total mass of 1 kg. The particles are attached to opposite ends of a light inextensible string which passes over a smooth fixed pulley. P is held at rest and Q hangs freely, with both straight parts of the string vertical. Both particles are at a height of hm above the floor (see Fig. 1). P is released from rest and the particles start to move with the string taut. Fig. 2 shows the velocity-time graphs for P\u2019s motion and for Q\u2019s motion, where the positive direction for velocity is vertically upwards. Find (i) the magnitude of the acceleration with which the particles start to move and the mass of each of the particles, [5] (ii) the value of h, [1] (iii) the greatest height above the floor reached by particle P. [2] [Question 7 is printed on the next page.]",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q06",
+      "question_number": "6",
+      "question_text": "6 Particles P and Q have a total mass of 1 kg. Theparticlesareattachedtooppositeendsofalight inextensible string which passes over a smooth fixed pulley. P is held at rest and Q hangs freely, with both straight part s of the string vertical. Both particles are at a height of h mabovethefloor(see Fig. 1). P is released from rest and the particles start to move with thestring taut. Fig. 2 shows the velocity-time graph s for P\u2019s motion and for Q\u2019s motion,where the positive direction for velocity is vertically upwards. Find (i) the magnitude of the acceleration with which the particles start to move and the mass of each of the particles, [5] (ii) the value of h, [1] (iii) the greatest height above the floor reached by particle P. [2] [Question 7 is printed on the next page.]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1840,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_w14_43_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_w14_43_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i)  4^{2} = 0^{2} + 2a\u00d7 12.5 )a = 0.64  B1\n[35 \u00d7 0.96 \u2013 3g\u00d7 0.6 \u2013 F = 3 \u00d7 0.64]  M1  For using Newton\u2019s 2^{nd} law to find F\nF = 13.68  A1\nWD against F = 13.68 \u00d7 12.5 = 171 J  B1  4\n(ii)  Rfrom O to A = 3g\u00d7 0.8 \u2013 35 \u00d7 0.28  B1\n[\u00b5 = 13.68 \u00f7 14.2 (= 0.96338)]  M1  For using \u00b5 = F \u00f7 R\nCoefficient is 0.963 (accept 0.96)  A1  3\n(iii)  [\u20133g\u00d7 0.6 \u2013 0.96338 \u00d7 (3g\u00d7 0.8) = 3a]  M1  For applying Newton\u2019s 2^{nd} law to the\nblock to find a\nAcceleration is \u201313.7ms^{\u20132} A1\n[0 = 16 + 2(\u201313.7)s]  M1  For using v^{2} = u^{2} + 2as to find s\nDistance travelled is 0.584m  A1  4\nAlternative for part (i)\n(i)  Gain in KE = \u00bd 3 \u00d7 4^{2 }( = 24J)  B1\nGain in PE = 3g\u00d7 12.5 \u00d7 0.6 ( = 225J)  B1\n[WD = 35 \u00d7 12.5 \u00d7 0.96 \u2013 \u00bd 3 \u00d7 4^{2} \u2013   M1  For using WD against F\n3g\u00d7 12.5 \u00d7 0.6]  = WD by applied force \u2013 KE gain \u2013 PE\ngain\nWD against F is 171J  A1  4\nAlternative for part (iii)\nWD against F = 0.96(338..) \u00d7 3g\u00d7 0.8s B1\nM1  For using KE loss = PE gain + WD\nagainst friction\n\u00bd3\u00d74^{2} = 3gs(0.6) + 0.96(338..)\u00d73g\u00d70.8s A1\nDistance travelled is 0.584m  A1  4",
+      "ocr_text": "A small block of mass 3 kg is initially at rest at the bottom O of a rough plane inclined at an angle a to the horizontal, where sina = 0.6 and cosa = 0.8. A force of magnitude 35 N acts on the block at an angle B above the plane, where sin B = 0.28 and cos B = 0.96. The block starts to move up a line of greatest slope of the plane and passes through a point A with speed 4ms\"!. The distance OA is",
+      "paper": "43winter14",
+      "paper_family": "p5",
+      "question_id": "43winter14_q07",
+      "question_number": "7",
+      "question_text": "7 A small block of mass 3 kg is initially at rest at the bottom O of a rough plane inclined at an angle ) to the horizontal, where sin ) = 0.6 and cos ) = 0.8. A force of magnitude 35 N acts on the block at an angle above the plane, where sin = 0.28 and cos = 0.96. The block starts to move up a line ofgreatestslopeoftheplaneandpassesthroughapointAwithspeed4 m s^{-}1. The distance OAis (i) For the motionof theblock from O to A,find the work done against the frictional force acting on the block. [4] (ii) Find the coefficient of friction between the block and the plane. [3] At the instant that the block passes through A the force of magnitude 35 N ceases to act. (iii) Find the distance the block travels up the plane after passing through A. [4] Permission to reproduce items where third-party owned material protected by copyright is included has been sought and cleared where possible. Every reasonable efforthasbeenmadebythepublisher(UCLES)totracecopyrightholders,butif anyitemsrequiringclearancehaveunwittinglybeenincluded,thepublisherwill be pleasedto make amendsat the earliestpossibleopportunity. CambridgeInternational Examinationsis partof the CambridgeAssessment Group. Cambridge Assessment is the brandname of Universityof Cambridge Local Examinations Syndicate(UCLES), whichis itself a departmentof the Universityof Cambridge.",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1841,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  Tension is 30 N  B1\nFor resolving forces acting on B,\n[R = (4g \u2013 30) \u00d7 0.8]  M1  perpendicular to the plane.\nNormal component is 8 N  A1  3",
+      "ocr_text": "A small ball B of mass 4 kg is attached to one end of a light inextensible string. A particle P of mass 3 kg is attached to the other end of the string. The string passes over a fixed smooth pulley. The system is in equilibrium with the string taut and its straight parts vertical. B is at rest on a rough plane inclined to the horizontal at an angle of a, where cosa = 0.8 (see diagram). State the tension in the string and find the normal component of the contact force exerted on B by the plane. [3]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q01",
+      "question_number": "1",
+      "question_text": "1 A small ball B of mass 4 kg is attached to one end of a light inextensible string. A particle P of mass 3 kg isattachedtothe other endofthe string. Thestring passes over a fixed smooth pulley. The system is in equilibrium with the string taut and its straight parts vertical.B is at rest on a rough plane inclined to the horizontal at an angle of!, where cos \u03b8 = 0.8 (see diagram). State the tension in the string and find the normal component of the contact force exerted on B by the plane. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1842,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  F = Tcos\u03b1 = 0.96T B1\nR = 0.2g \u2013 Tsin\u03b1 = 2 \u2013 0.28T B1\n[0.96T = 0.25(2 \u2013 0.28T)]  M1  For using F = \u00b5R\n[(0.96 + 0.07)T = 0.5 \u2192 T = ...]  M1  For solving resultant equation for T\nT = 0.485  A1  5",
+      "ocr_text": "TN a a 0.2kg A ring of mass 0.2 kg is threaded on a fixed rough horizontal rod and a light inextensible string is attached to the ring at an angle a above the horizontal, where cos a = 0.96. The ring is in limiting equilibrium with the tension in the string TN (see diagram). Given that the coefficient of friction between the ring and the rod is 0.25, find the value of T. [5]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q02",
+      "question_number": "2",
+      "question_text": "2 TN Aringofmass0.2 kg is threaded on a fixed rough horizontal rod and a light inextensible string is attachedtotheringatanangle!above the horizontal,where cos \u03b8 = 0.96. Theringisinlimiting equilibriumwiththetensioninthestringT N(seediagram). Given that the coefficient of friction between the ring and the rod is 0.25, find the value of T. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1843,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3  For resolving forces in the x or\nM1  \u2013x direction\n120 cos 75^{o} = 150 \u2013 100 \u2013 P cos \u03b8^{ o} A1\nM1  For resolving forces in the y direction\n120 sin 75^{o} = P sin \u03b8^{ o} A1\n[P^{2} = 14400 \u2013 12000 cos 75^{o }+2500]  For using P^{2} 2 2\nor tan \u03b8 = [120 sin 75^{o}/(50 \u2013 120 cos 75^{o})]  M1  (= (P cos \u03b8  + (P sin \u03b8)/(P sin \u03b8/P cos \u03b8 = tan \u03b8)) ) or for using\nP = 117 or \u03b8 = 80.7  A1\n\u03b8 = 80.7 or P = 117  B1  7",
+      "ocr_text": "Resultant IN PN \\ 150 N 100 N Three horizontal forces of magnitudes 150 N, 100 N and P N have directions as shown in the diagram. The resultant of the three forces is shown by the broken line in the diagram. This resultant has magnitude 120 N and makes an angle 75\u00b0 with the 150 N force. Find the values of P and 6. [7]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q03",
+      "question_number": "3",
+      "question_text": "3 Resultant P N Three horizontal forces of magnitudes 150 N, 100 N and P N have directions as shown in the diagram. The resultant of the three forces is shown by the broken line in the diagram. This resultant has magnitude 120 N and makes an angle 75\u00b0 with the 150 N force. Find the values of P and 1. [7]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1844,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4 (i)  For applying Newton\u2019s second law to A\nor to B or for using\nM1  m_{A}g \u2013 m_{B}g = (m_{A} + m_{B})a\n0.35g \u2013 T = 0.35a\nT \u2013 0.15g = 0.15a\n(0.35 \u2013 0.15)g = (0.35 + 0.15)a A1  Two of the three equations\nAcceleration is 4 ms^{\u20132} B1\nTension is 2.1 N  B1  4\n(ii) [v_{1}^{2} = 0 + 8 \u00d7 1.6 ( = 12.8)]  M1  For using v_{1}^{2} = 0 + 2a \u00d7 1.6\n[H = 1.6 + (\u201312.8) \u00f7 (\u201320)]  M1  or for using For using H = 1.6 + (0 \u2013 h = (0 \u2013 v_{1}^{2})/v(\u20132^{1}^{2})/g(\u20132)  g)\nGreatest height is 2.24m   A1  3",
+      "ocr_text": "Particles A and B, of masses 0.35 kg and 0.15 kg respectively, are attached to the ends of a light inextensible string which passes over a fixed smooth pulley. The system is at rest with B held on the horizontal floor, the string taut and its straight parts vertical. A is at a height of 1.6m above the floor (see diagram). B is released and the system begins to move; B does not reach the pulley. Find (i) the acceleration of the particles and the tension in the string before A reaches the floor, [4] (ii) the greatest height above the floor reached by B. [3]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q04",
+      "question_number": "4",
+      "question_text": "4 ParticlesA and B, of masses 0.35 kg and 0.15 kg respectively, are attached to the ends of a light inextensible string which passes over a fixed smooth pulley. The system is at rest with B held on the horizontal floor, the string taut and its straight parts vertical. A is at a height of 1.6 m above the floor (see diagram). B is released and the system begins to move; B does not reach the pulley. Find (i) the acceleration of the particles and the tension in the string before A reaches the floor, [4] (ii) the greatest height above the floor reached by B. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1845,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5 (i) a(5 =  2 \u2013 3^{2})\u00f7(2 \u00d7 500) = 0.016  B1\nM1  For using Newton\u2019s 2^{nd} law\nDF + 90g \u00d7 0.05 \u2013 R = 90 \u00d7 0.016  A1\n[R =  420\u2013 90(0.016 \u2013 0.5)]  M1  For using DF = P/v\nv\nR =  420 + 43.56  A1  5  AG\nv\nSR for assuming constant R and DF\n(max 2/5)\nPE loss = 90g(500)(0.05) and KE gain =  ^{1}_{2} (90)(5^{2}\u20133^{2}) B1\nWDDF+PE loss = KEgain+WDR\n\u2192 R = 420/v + 43.56 B1\n(ii) v_{M}^{2} = 3^{2} + 2\u00d70.016 \u00d7 250 \u2192\nspeed at mid-point is 4.12ms^{\u20131} B1\n[Decrease in R from top to mid-way\n=420[(1\u00f73) \u2013 (1\u00f7 17 )]\nor  For finding the difference in R for either\n[Decrease in R from midway to b\u2019m =  top to midway or midway to bottom\n420[(1\u00f7 17 ) \u2013 (1\u00f75)]  M1\n38.1 and 17.9  A1  3",
+      "ocr_text": "A cyclist and his bicycle have a total mass of 90kg. The cyclist starts to move with speed 3ms\"! from the top of a straight hill, of length 500m, which is inclined at an angle of sin\u2122' 0.05 to the horizontal. The cyclist moves with constant acceleration until he reaches the bottom of the hill with speed 5ms\u2122!. The cyclist generates 420 W of power while moving down the hill. The resistance to the motion of the cyclist and his bicycle, RN, and the cyclist\u2019s speed, vms~!, both vary. (i) Show that R = 420 + 43.56. [5] v (ii) Find the cyclist\u2019s speed at the mid-point of the hill. Hence find the decrease in the value of R when the cyclist moves from the top of the hill to the mid-point of the hill, and when the cyclist moves from the mid-point of the hill to the bottom of the hill. [3]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q05",
+      "question_number": "5",
+      "question_text": "5 Afromcyclistthe to p and of h is a bicycle straight have hill,a of total length mass 500 m,of 90 kg.which Theiscyclistinclinedstartsat antoanglemoveofwith sin^{-}speed_{1}0.053 m sto the^{-}1 (horizontal.)/(speed 5 m s 1)_{-} The cyclist moves with constant acceleration until he reaches the bottom of the hill with. The cyclist generates 420 W of power while moving down the hill. The resistance to the motion of the cyclist and his bicycle, R N, and the cyclist\u2019s speed, v m s^{-}1, both vary. (i) Show that R = 420v + 43.56. [5] (ii) Find thecyclist\u2019s speedatthemid-point of the hill. Hencefindthedecrease in the value of R when the cyclist moves from the top of the hill to the mid-point of the hill, and when the cyclist moves from the mid-point of the hill to the bottom of the hill. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1846,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2015_w15_43_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2015_w15_43_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6 (i)  Time taken\n=  0.08  = 400 s  B1\n0.0002\nv =  ddxt  = 0.16t \u2013 0.0006t^{2} B1\n[speed  = \u20130.16 \u00d7 400 + 0.0006 \u00d7 400^{2}]  M1  For evaluating \u00b1v(400)\nSpeed at O is 32 ms^{\u20131} A1  4\n(ii) (a) Time to furthest point is 0.16/0.0006 s  B1 vv  = 0.16= kt \u2013 0.0006t \u2013 kt^{2} or  t^{2} from part (i)\n[0.08(800/3)^{2} \u2013 0.0002(800/3)^{3}]   For evaluating\n(\u00d72)   M1^{* } x(tfurthest point) (\u00d72)\nDistance moved is 3790 m  A1  3\n(b) [speed = 3790/400 ms^{\u20131}]  For using \u2018average speed = total distance\ndM1^{*} moved/time taken\u2019\nAverage speed is 9.48 ms^{\u20131} A1  2",
+      "ocr_text": "6 A particle P starts from rest at a point O of a straight line and moves along the line. The displacement of the particle at time \u00a2s after leaving O is xm, where x = 0.087 \u2014 0.000277. (i) Find the value of t when P returns to O and find the speed of P as it passes through O on its return. [4] (ii) For the motion of P until the instant it returns to O, find (a) the total distance travelled, [3] (b) the average speed. [2] [Question 7 is printed on the next page.]",
+      "paper": "43winter15",
+      "paper_family": "p5",
+      "question_id": "43winter15_q06",
+      "question_number": "6",
+      "question_text": "6 A particle P starts from rest at a point O of a straight line and moves along the line. The displacement of the particle at time t s after leaving O is x m, where x = 0.08t^{2}-0.0002t^{3}. (i) Find the valueoftwhenPreturnstoOandfindthespeedofPasitpassesthroughOonits return. [4] (ii) For the motion of P until the instant it returns to O, find (a) the total distance travelled, [3] (b) the average speed. [2] [Question 7 is printed on the next page.]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1847,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_energy_work_and_power",
+      "current_packet_topic": "energy_work_and_power",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  (i)  PE gain = 50g \u00d7 3.5 (=1750)  B1\n[WD = 50g \u00d7 3.5 + 25 \u00d7 3.5]   M1  For using WD = PE gain + WD against\nresistance\nWork done = 1837.5J or 1840J  A1  [3]\n(ii)  [P = 1837.5/2] or   M1  For using P = WD/t or for using\n[P/v = 50g + 25 and 3.5=2v]  P = Fvands = vt\nPower = 919W  A1  [2]",
+      "ocr_text": "1 A crane is used to raise a block of mass 50 kg vertically upwards at constant speed through a height of 3.5m. There is a constant resistance to motion of 25 N. (i) Find the work done by the crane. [3] (ii) Given that the time taken to raise the block is 2 s, find the power of the crane. [2]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q01",
+      "question_number": "1",
+      "question_text": "1 A crane is used to raise a block of mass 50 kg vertically upwards at constant speed through a height of 3.5 m. There is a constant resistance to motion of 25 N. (i) Find the work done by the crane. [3] (ii) Given that the time taken to raise the block is 2 s, find the power of the crane. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_energy_work_and_power"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1848,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  M1  For resolving horizontally\nM1  For resolving vertically\nT_{A} cos 50\u00b0 \u2013 T_{B} cos 10\u00b0 = 0 and\nT_{A} sin 50\u00b0 \u2013 T_{B} sin 10\u00b0 \u2013 20g = 0  A1\nM1  For solving equations to find T_{A} and T_{B}\nTension in PA is 306N\nTension in PB is 200N  A1  [5]\nAlternative (Lami\u2019s Theorem)\n[T_{A}/sin 80\u00b0 = T_{B}/sin 140\u00b0 = 20g/sin 140\u00b0]  M1  For applying Lami\u2019s Theorem\n[T_{A}=20g sin 80\u00b0/sin 140\u00b0] M1  For solving for T_{A}\nTension in PA is 306N   A1\n[T_{B}=20g sin 140\u00b0/sin 140\u00b0]  M1  For solving for T_{B}\nTension in PB is 200N  A1  [5]",
+      "ocr_text": "B The diagram shows a small object P of mass 20 kg held in equilibrium by light ropes attached to fixed points A and B. The rope PA is inclined at an angle of 50\u00b0 above the horizontal, the rope PB is inclined at an angle of 10\u00b0 below the horizontal, and both ropes are in the same vertical plane. Find the tension in the rope PA and the tension in the rope PB. [5]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q02",
+      "question_number": "2",
+      "question_text": "2 The diagram shows a small objectP of mass 20 kg held in equilibrium by light ropes attached to fixed points A and B. The rope PA is inclined at an angle of 50\u00b0 above the horizontal, the rope PB is inclined at an angle of 10\u00b0 below the horizontal, and both ropes are in the same vertical plane. Find the tension in the rope PA and the tension in the rope PB. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1849,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3  (i)  [7g \u2013 T=7aandT \u2013 3g = 3a]   M1  For applying Newton\u2019s second law to P\nor [7g \u2013 3g = 10a]  and to Q or for using m_{P}g \u2013 m_{Q}g =\n(m_{P} + m_{Q})a\nAcceleration is 4ms^{\u22122 } A1\n[v^{2} = 0 + 2 \u00d7 4 \u00d7 0.4] (v^{2} = 3.2)  M1  For using v^{2} = u^{2 }+ 2as\nSpeed is 1.79ms^{\u22121 } A1  [4]\n(ii)  [0 = 3.2 + 2 \u00d7 (\u2013g) \u00d7 s] (s = 0.16)  M1  For using 0 = u^{2 }+ 2(\u2013g)s\n0.16 + 0.4 = 0.56\nSo particle Q does not come to rest before\nit reaches the pulley  A1  [2]\nAlternative\n[v^{2} = 3.2 + 2 \u00d7 (\u2013g) \u00d7 0.1]  M1  For using v^{2} = u^{2} + 2(\u2013g)(0.1)\nv = \u221a1.2 (= 1.10)\nSo particle Q does not come to rest before\nit reaches the pulley  A1  [2]",
+      "ocr_text": "i Floor Particles P and Q, of masses 7kg and 3kg respectively, are attached to the two ends of a light inextensible string. The string passes over two small smooth pulleys attached to the two ends of a horizontal table. The two particles hang vertically below the two pulleys. The two particles are both initially at rest, 0.5 m below the level of the table, and 0.4 m above the horizontal floor (see diagram). (i) Find the acceleration of the particles and the speed of P immediately before it reaches the floor. | | V.4m 4 Floor Particles P and Q, of masses 7kg and 3kg respectively, are attached to the two ends of a light inextensible string. The string passes over two small smooth pulleys attached to the two ends of a horizontal table. The two particles hang vertically below the two pulleys. The two particles are both initially at rest, 0.5 m below the level of the table, and 0.4 m above the horizontal floor (see diagram). (i) Find the acceleration of the particles and the speed of P immediately before it reaches the floor. [4] (ii) Determine whether Q comes to instantaneous rest before it reaches the pulley directly above it. [2]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q03",
+      "question_number": "3",
+      "question_text": "3 Particles P and Q, of masses 7 kg and 3 kg respectively, are attached to the two ends of a light inextensible string. Thestringpassesovertwosmallsmoothpulleysattachedtothetwoendsofa horizontal table. The two particles hang vertically below the two pulleys. The two particles are both initially at rest, 0.5 m below the level of the table, and 0.4 m above the horizontal floor (see diagram). (i) Find the acceleration of the particles and the speed of P immediately before it reaches the floor. (ii) Determine whether Q comes to instantaneous rest before it reaches the pulley directly above it. [2] 4 vertically upwards from ground level near the bottom of the tower with a speed of 20 m sA ball A is released from rest at the top of a tall tower. One second later, another ball B is projected_{-}1. The two balls are at the same height 1.5 s after ball B is projected. (i) Show that the height of the tower is 50 m. [3] (ii) Find the length of time for which b all B has been in motion when b all Areachestheground. Hence find the total distance travelled by ball B up to the instant when ball A reaches the ground. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1850,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  (i)  6t \u20130.3t^{2} = 0 \u2192 t = 20 (or 0)  B1\n[s = 6t^{2}/2 \u2013 0.3t^{3}/3 (+C)] M1  For integrating v(t) to obtain s(t)\n[s = 6(20)^{2}/2 \u2013  0.3(20)^{3}/3]  DM1  For evaluating s(t) when v=0\nDistance OX is 400m  A1  [4]\n(ii)  [v = kt \u2013 6t^{2} (+C)] M1*  For integrating a(t) to obtain v(t)\n[s = kt^{2}/2 \u2013 6t^{3}/3]  M1*  For integrating v(t) to obtain s(t) and for\nusing s(0) = 0\n[400 = 0.5k \u00d7 10^{2} \u2013 2 \u00d7 10^{3}]    DM1  For using t = 10 and s = 400 to form\nequation in k\nk = 48  A1  [4]",
+      "ocr_text": "A particle P starts from a fixed point O and moves in a straight line. At time \u00a2s after leaving O, the velocity vms\"! of P is given by v = 6f \u2014 0.327. The particle comes to instantaneous rest at point X. (i) Find the distance OX. [4] A second particle Q starts from rest from O, at the same instant as P, and also travels in a straight line. The acceleration ams~ of Q is given by a = k \u2014 12t, where k is a constant. The displacement of Q from O is 400 m when f\u00a2 = 10. (ii) Find the value of k. [4]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q05",
+      "question_number": "5",
+      "question_text": "5 velocityA particle v m s P starts from a fixed point_{-}1of P is given by(O)/(v = 6t -0.3t^{2}) and moves in a straight line.. The particle comes to instantaneous rest at pointAt time t s after leaving(O, the)/(X). (i) Find the distance OX. [4] Aline.second The acceleration particle Qstarts a m sfrom_{-}2of Qrest is given byfrom O,at a =the ksame -12t, where instant as k is a constant.P,and also travels The displacementinastraight of Q from O is 400 m when t = 10. (ii) Find the value of k. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1851,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_energy_work_and_power",
+      "current_packet_topic": "energy_work_and_power",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i)  Driving force = 160/5  (= 32N)  B1\n[160/5 \u2013 20 = m \u00d7 0.15]   M1  For using Newton\u2019s Second Law\nTotal mass is 80kg                               AG  A1  [3]\n(ii)  [300/v \u2013 20 \u2013 80g sin 2\u00b0= 0]   M1  For resolving up hill\nSpeed is 6.26ms^{\u22121                                                    } AG A1  [2]\n(iii)  Driving force =\n300/(0.9 \u00d7 6.26) (= 53.2N)   B1\nM1  For using Newton\u2019s Second Law\n300/(0.9 \u00d7 6.26) \u2013 20 \u2013 80g sin 2\u00b0 =80a A1\nAcceleration is 0.0666ms^{\u22122} A1  [4]",
+      "ocr_text": "A cyclist is cycling with constant power of 160 W along a horizontal straight road. There is a constant resistance to motion of 20N. At an instant when the cyclist\u2019s speed is 5ms\u2122!, his acceleration is 0.15ms~. (i) Show that the total mass of the cyclist and bicycle is 80 kg. [3] The cyclist comes to a hill inclined at 2\u00b0 to the horizontal. When the cyclist starts climbing the hill, he increases his power to a constant 300 W. The resistance to motion remains 20 N. (ii) Show that the steady speed up the hill which the cyclist can maintain when working at this power is 6.26ms\"!, correct to 3 significant figures. [2] (iii) Find the acceleration at an instant when the cyclist is travelling at 90% of the speed in part (ii). [4]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q06",
+      "question_number": "6",
+      "question_text": "6 A cyclist is cycling with constant power of 160 W along a horizontal straight road.resistance to motion of 20 N. At an instant when the cyclist\u2019s speed is 5 m s^{-}1,There is a constant h is acceleration is 0.15 m s^{-}2. (i) Show that the total mass of the cyclist and bicycle is 80 kg. [3] The cyclist comes to a hill inclined at 2\u00b0 to the horizontal. When the cyclist starts climbing the hill, he increases his power to a constant 300 W. The resistance to motion remains 20 N. (ii) Show that the steady speed up the hill which the cyclist can maintain when working at this poweris 6.26 m s^{-}1, correct to 3 significant figures. [2] (iii) Find the acceleration at an instant when the cyclist is travelling at 90% of the speed in part (ii). [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_energy_work_and_power"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1852,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_43_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_43_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i) R = 50g cos 10\u00b0 and\nF = 50g sin 10\u00b0 B1\n\u00b5\u2a7e 0.176  B1  [2]  \u00b5\u2a7eF \u00f7 R    Allow  \u00b5\u2a7e tan 10\u00b0\n(ii)  PE loss = 50g \u00d7 d sin 10^{o} B1  d = 5 or d = 10\nWD against friction =\n0.19 \u00d7 50g cos 10\u00b0 \u00d7 d B1  d =5 or d = 10\nM1  For using WD by 50N force + PE loss \u2013\nWD against friction = KE gain\n50 \u00d7 5 + 50g \u00d7 10 sin 10\u00b0 \u2013 0.19 \u00d7\n50g cos 10\u00b0 \u00d7 10 = 0.5 \u00d7 50v^{2} A1\nSpeed is 2.70ms^{\u20131 } A1  [5]\nSC for candidates using Newton\u2019s Second\nlaw: max 2/5\nB1 v = 2.94 ms^{\u20131} after 5m\nB1 Speed is2.70ms^{\u20131}\n(iii)  50g sin 20^{o} \u2013   M1  For using Newton\u2019s Second Law\n0.19 \u00d7 50g cos 20^{o} = 50a\nAcceleration is 1.63ms^{\u22122 } A1  [2]",
+      "ocr_text": "A box of mass 50 kg is at rest on a plane inclined at 10\u00b0 to the horizontal. (i) Find an inequality for the coefficient of friction between the box and the plane. [2] In fact the coefficient of friction between the box and the plane is 0.19. (ii) A girl pushes the box with a force of 50 N, acting down a line of greatest slope of the plane, for a distance of 5m. She then stops pushing. Use an energy method to find the speed of the box when it has travelled a further 5 m. [5] The box then comes to a plane inclined at 20\u00b0 below the horizontal. The box moves down a line of greatest slope of this plane. The coefficient of friction is still 0.19 and the girl is not pushing the box. (iii) Find the acceleration of the box. [2]",
+      "paper": "43winter16",
+      "paper_family": "p5",
+      "question_id": "43winter16_q07",
+      "question_number": "7",
+      "question_text": "7 A box of mass 50 kg is at rest on a plane inclined at 10\u00b0 to the horizontal. (i) Find an in equal it y for the coefficient of friction between the box and the plane. [2] In fact the coefficient of friction between the box and the plane is 0.19. (ii) A girl pushes the box with a force of 50 N, acting down a line of greatest slope of the plane, for a distance of 5 m. Shethenstopspushing. Use an energy method to find thespeed ofthebox when it has travelled a further 5 m. [5] Thebox then comes to a plane inclined at 20\u00b0below the horizontal. Thebox moves down alineof greatest slope of this plane. The coefficient of friction is still 0.19 and the girl is not pushing the box. (iii) Find the acceleration of the box. [2] AIICL OCC Onda ATNOIAQIOINGGL",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1853,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2017_w17_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_43_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  (X=) 20 cos 60 + 30 cos 60 \u2013 F B1\n[F = 20 cos 60 + 30 cos 60]  M1 Use of horizontalcomponent of resultant\n= 0\nF = 25  A1\n3",
+      "ocr_text": "30N Three coplanar forces of magnitudes F N, 20N and 30N act at a point P, as shown in the diagram. The resultant of the three forces acts in a direction perpendicular to the force of magnitude FN. Find the value of F. [3]",
+      "paper": "43winter17",
+      "paper_family": "p5",
+      "question_id": "43winter17_q01",
+      "question_number": "1",
+      "question_text": "1 Threecoplanar forcesof magnitudes F N,20 N and30 Nactatapoint P,as shown in the diagram. The resultant of the three forces acts in a direction perpendicular to the force of magnitude F N. Find the value of F. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1854,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_43_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": false,
+      "mark_scheme_text": "4(i)  EITHER:  (M1 Applies Newton\u2019s Second Law to one of\n[T \u2013 0.35g = 0.35a  the particles  or forms system equation in\nor 0.45g \u2013 T = 0.45a  a (m_{B}g \u2013 m_{A}g = (m_{A} + m_{B})a)\nor 0.45g \u2013 0.35g = 0.8a]\n[0.45g \u2013 T = 0.45a  M1 Applies Newton\u2019s Second Law to form\nor T \u2013 0.35g = 0.35a]\u2192a = \u2026  second equation in T and a and solves for\na\nor solves system equation for a\na = 1.25 m s^{\u20132} A1\n[v^{2} = 2 \u00d7 1.25 \u00d7 0.64]  (= 1.6)  M1 Using v^{2} = u^{2} + 2as\nVelocity = 1.26 ms^{\u20131} A1)\nOR:  (M1 Attempts PE loss\n[PE loss = 0.45g\u00d7 0.64 \u2013 0.35g\u00d7 0.64]\n[KE gain = \u00bd (0.35 + 0.45) v^{2}]  M1 Attempts KE gain\nPE loss = 0.45g\u00d7 0.64 \u2013 0.35g\u00d7 0.64  A1\nand KE gain = \u00bd (0.35 + 0.45) v^{2}\n[\u00bd (0.8) v^{2} = 0.1g \u00d7 0.64]   (v^{2} = 1.6)  M1 Using PE loss = KE gain\nVelocity = 1.26 ms^{\u20131} A1)\n5\n4(ii)  EITHER:  (M1  Using v^{2} = u^{2} + 2as\n[0 = 1.6 \u2013 2gs]  (s = 0.08)\nDistance = 0.16m  A1)\nOR:  (M1 Using PE gain = KE loss for particle A\n[0.35gh = \u00bd (0.35) \u00d7 1.6]  (h = 0.08)\nDistance = 0.16 m  A1)\n2",
+      "ocr_text": "(ii) Two particles A and B have masses 0.35 kg and 0.45 kg respectively. The particles are attached to the ends of a light inextensible string which passes over a small fixed smooth pulley which is 1 m above horizontal ground. Initially particle A is held at rest on the ground vertically below the pulley, with the string taut. Particle B hangs vertically below the pulley at a height of 0.64 m above the ground. Particle A is released. (i) Find the speed of A at the instant that B reaches the ground. [5] Assuming that B does not bounce after it reaches the ground, find the total distance travelled by A between the instant that B reaches the ground and the instant when the string becomes taut [2] again.",
+      "paper": "43winter17",
+      "paper_family": "p5",
+      "question_id": "43winter17_q04",
+      "question_number": "4",
+      "question_text": "4 Two particles A and B have masses 0.35 kg and 0.45 kg respectively. The particles are attached to the ends of a light inextensible string which passes over a small fixed smooth pulley which is 1 m above horizontalground. Initially particle A isheld atrest ontheground verticallybelow thepulley,with thestringtaut. Particle Bhangsverticallybelowthepulleyataheightof0.64 mabovetheground. Particle A is released. (i) Find the speed of A at the instant that B reaches the ground. [5] (ii) Assuming that B does not bounce after it reaches the ground, find the total distance travelled by A between the instant that Breachesthegroundandtheinstantwhenthestringbecomestaut again. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1855,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2017_w17_43_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_43_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5(i)  v = \u222b k(3t^{2} \u2013 12t + 2) dt *M1 Use of v = \u222b a dt\n= k(3t^{3}/3 \u2013 12t^{2}/2 + 2t) + C\nv ^{=} k(t^{3}_{\u2212}6t^{2} _{+} 2t) _{+} C A1 Condone C missing\nC = 0.4  B1\n0.1 = k(1 \u2013 6 +2) + 0.4  [\u20130.3 = \u20133k]  DM1 Substitutes  t = 1, v = 0.1\nk = 0.1  A1 AG\n5\n5(ii)  [s = \u222b 0.1(t^{3} \u2013 6t^{2} +2t) + 0.4 dt M1 Use of s = \u222b v dt\n= 0.1(t^{4}/4 \u2013 6t^{3}/3 + 2t^{2}/2) + 0.4t + C]\ns = 0.025t^{4} \u2013 0.2t^{3} + 0.1t^{2} + 0.4t A1 C = 0 seen or implied\n2\n5(iii)  Substitutes t = 2to show s = 0  B1 AG\n1",
+      "ocr_text": "5 A particle starts from a fixed origin with velocity 0.4ms~! and moves in a straight line. The acceleration am s~ of the particle \u00a2s after it leaves the origin is given by a = k(30 \u2014 12t+2), where k is aconstant. When \u00a2 = 1, the velocity of P is 0.1m sl, (i) Show that the value of k is 0.1. [5] (ii) Find an expression for the displacement of the particle from the origin in terms of f. [2] (iii) Hence verify that the particle is again at the origin at f = 2. [1]",
+      "paper": "43winter17",
+      "paper_family": "p5",
+      "question_id": "43winter17_q05",
+      "question_number": "5",
+      "question_text": "5 accelerationA particle starts a m s^{-}from_{2} of the particlea fixed origin t s after it leaves the origin is given bywith velocity 0.4 m s^{-}1 and moves a =in k(a3tstraight_{2}-12t +line. 2), where The k is a constant. When t = 1, the velocity of P is 0.1 m s^{-}1. (i) Show that the value of k is 0.1. [5] (ii) Find an expression for the displacement of the particle from the origin in terms of t. [2] (iii) Hence verify that the particle is again at the origin at t = 2. [1]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1856,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_43_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": false,
+      "mark_scheme_text": "6(i)  [Area = \u00bd (10 + 4) \u00d7 6 = 42 m]  B1\nDisplacement = 42 m\n1\n6(ii)  2v = 64 M1 Using similar triangles or using acceleration = gradient and v = u + at\nor [gradient =1.5, v = 6 + 1.5 \u00d7 6]\nv = 3 ms^{\u20131} A1\n2\n6(iii)  Total distance travelled   B1 FT Area found with FT distance from (i) and\n= 42 + \u00bd (T \u2013 10) \u00d7 3   FT speed from (ii)\n[42 + \u00bd (T \u2013 10) \u00d7 3 = 49.5] \u2192T= \u2026  M1 For equation and solving for T\nT = 15 s  A1\n3\n6(iv)  V = 1.75 \u00d7 4 = 7 ms^{-1} B1\nQ travels [\u00bd (13 + 6) \u00d7 7 = 66.5 m]  M1 Finding area for Q and interpreting total\nDistance apart = [66.5 + 42 \u2013 7.5]  distance between particles\nDistance between P and Q = 101 m   A1\n3",
+      "ocr_text": "The diagram shows the velocity-time graphs for two particles, P and Q, which are moving in the same straight line. The graph for P consists of four straight line segments. The graph for Q consists of The diagram shows the velocity-time graphs for two particles, P and Q, which are moving in the same straight line. The graph for P consists of four straight line segments. The graph for Q consists of three straight line segments. Both particles start from the same initial position O on the line. Q starts 2 seconds after P and both particles come to rest at time \u00a2 = T. The greatest velocity of Q is Vms7!. (i) Find the displacement of P from O at t = 10. [1] (ii) Find the velocity of P at t = 12. [2] (iii) Given that the total distance covered by P during the T seconds of its motion is 49.5 m, find the value of T. [3] (iv) Given also that the acceleration of Q from t = 2 to t = 6 is 1.75 ms~\u2019, find the value of V and hence find the distance between the two particles when they both come to rest at t = T. [3]",
+      "paper": "43winter17",
+      "paper_family": "p5",
+      "question_id": "43winter17_q06",
+      "question_number": "6",
+      "question_text": "6 The diagram shows the velocity-time graphs for two particles, P and Q, which are moving in the same straight line. The graph for Pconsistsoffourstraightlinesegments. The graph for Q consists of 2 seconds after three straight line segments. P and both particles come to rest at time Both particles start from the same initial position t = T. The greatest velocity of O on the line.(Q starts)/(Q is V m s 1)_{-}. (i) Find the displacement of P from O at t = 10. [1] (ii) Find the velocity of P at t = 12. [2] (iii) Given that the total distance covered by P during the Tseconds of its motion is 49.5 m, find the value of T. [3] (iv) Given also that the acceleration of Qfrom t = 2tot = 6is1.75 m s^{-}2,find the value of V and hence find the distance between the two particles when they both come to rest at t = T. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1857,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_43_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(i)  R = 0.2g cos 30 \u2013 T sin 15 B1\n[F = 0.3 \u00d7 (0.2g cos 30 \u2013 T sin 15)] M1 Use of F = \u00b5R\nM1 For resolving along the plane\nT cos 15 + 0.3 \u00d7 (0.2g cos 30 \u2013 T sin 15)   A1\n= 0.2g sin 30\nM1 For solving a 4 term equation for T\nT = 0.541  A1\n6\n7(ii)  0.3 \u00d7 0.2g cos 30 \u00d7 3  [= 1.5588 J]  B1 WD against F = friction \u00d7 distance\nWD  = 0.25 \u00d7 3  [= 0.75 J]  B1 WD against 0.25 force\n0.2g\u00d7 3 sin 30  [= 3 J]  B1 PE loss = mgh\n[\u00bd (0.2) v^{2} = 3 \u2013 1.5588 \u2013 0.75]  M1 Work/Energy equation\nSpeed = 2.63 ms^{-1 } A1\n5",
+      "ocr_text": "A particle P of mass 0.2 kg rests on a rough plane inclined at 30\u00b0 to the horizontal. The coefficient of friction between the particle and the plane is 0.3. A force of magnitude T N acts upwards on P at 15\u00b0 above a line of greatest slope of the plane (see diagram). (i) Find the least value of T for which the particle remains at rest. [6] The force of magnitude T N is now removed. A new force of magnitude 0.25 N acts on P up the plane, parallel to a line of greatest slope of the plane. Starting from rest, P slides down the plane. After moving a distance of 3 m, P passes through the point A. (ii) Use an energy method to find the speed of P at A. [5]",
+      "paper": "43winter17",
+      "paper_family": "p5",
+      "question_id": "43winter17_q07",
+      "question_number": "7",
+      "question_text": "7 A particle P of mass 0.2 kg rests on a rough plane inclined at 30\u00b0 to the horizontal. The coefficient of friction between the particle and the plane is 0.3. A force of magnitude T N acts upwards on P at 15\u00b0 above a line of greatest slope of the plane (see diagram). (i) Find the least value of Tfor which the particle remains at rest. [6] The force of magnitude T N is now removed. A new force of magnitude 0.25 N acts on P up the plane, paralleltoalineofgreatestslopeoftheplane. Startingfromrest,Pslidesdowntheplane. After moving a distance of 3 m, P passes through the point A. (ii) Use an energy method to find the speed of P at A. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1858,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2018_w18_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_43_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_newtons_laws_of_motion",
+      "current_packet_topic": "newtons_laws_of_motion",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  [T sin 70 + T sin 45 = 0.2g]  M1 Resolving vertically\nT = 1.21N (1.21447\u2026)  A1\n[P + T cos 70 = T cos 45]  M1 Resolving horizontally\nP = 0.443 (0.443389\u2026)  A1\n4",
+      "ocr_text": "A small smooth ring R of mass 0.2 kg is threaded onto a light inextensible string ARB. The two ends of the string are attached to points A and B on a sloping roof inclined at 45\u00b0 to the horizontal. A horizontal force of magnitude PN, acting in the plane ARB, is applied to the ring. The section BR of the string is perpendicular to the roof and the section AR of the string is inclined at 70\u00b0 to the horizontal (see diagram). The system is in equilibrium. Find the tension in the string and the value of P. [4]",
+      "paper": "43winter18",
+      "paper_family": "p5",
+      "question_id": "43winter18_q01",
+      "question_number": "1",
+      "question_text": "1 A small smooth ring R of mass 0.2 kg is threaded onto a light inextensible string ARB. The two ends of thestringareattachedtopointsAand Bonaslopingroof inclined at 45\u00b0to the horizontal. A horizontal force of magnitude P N,actingintheplane ARB,is applied t other in g. ThesectionBR of the string is perpendicular to the roof and the section AR of the string is inclined at 70\u00b0 to the horizontal(see diagram). The system is in equilibrium. Find the tension in the string and the value of P. [4]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_newtons_laws_of_motion"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1859,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_43_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_forces_and_equilibrium",
+      "current_packet_topic": "forces_and_equilibrium",
+      "image_evidence_available": false,
+      "mark_scheme_text": "2  R = mg + 50 sin 20  B1\n[F = 0.3(mg + 50 sin 20)]  M1 Use of F = \u00b5R\nM1 Resolving horizontally\n50 cos 20 \u2013 0.3(mg + 50 sin 20) = 0  A1ft ft R (R containing term in m)\nm = 14.0kg (13.9514\u2026)  A1\n5",
+      "ocr_text": "A block is pushed along a horizontal floor by a force of magnitude 50N which acts at an angle of 20\u00b0 to the horizontal (see diagram). The coefficient of friction between the block and the floor is 0.3. Given that the speed of the block is constant, find the mass of the block. [5]",
+      "paper": "43winter18",
+      "paper_family": "p5",
+      "question_id": "43winter18_q02",
+      "question_number": "2",
+      "question_text": "A block is pushed along a horizontal floor by a force of magnitude 50N which acts at an angle of 20\u00b0 to the horizontal (see diagram). The coefficient of friction between the block and the floor is 0.3. Given that the speed of the block is constant, find the mass of the block. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_forces_and_equilibrium"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1860,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_43_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line",
+      "current_packet_topic": "kinematics_of_motion_in_a_straight_line",
+      "image_evidence_available": false,
+      "mark_scheme_text": "4(i)  B1 Three correct straight lines\nv = 6ms^{\u20131}, t = 5s and t = 17s  B1 Correct trapezium with key values\n[\u00bd \u00d7 6 \u00d7 (12 + 20)] or [\u00bd \u00d7 5 \u00d7 6 + 12 \u00d7 6 + \u00bd \u00d7 3 \u00d7 6]  M1 Use of trapezium area or use of suvat\nformulae\nTotal distance = 96m  A1 AG\n4\n4(ii)  [\u00bd \u00d7 20 \u00d7 v = 96]  M1 Uses area of triangle = 96 or uses\ns = ut + \u00bd at^{2} to form equation in a\nv = 9.6ms^{\u20131} or 48 = \u00bd a (10)^{2} A1\nAcceleration = 9.6/10 = 0.96ms^{\u20132} A1\n3",
+      "ocr_text": "4 A runner sets off from a point P at time tf = 0, where \u00a2 is in seconds. The runner starts from rest and accelerates at 1.2ms~? for 5s. For the next 12s the runner moves at constant speed before decelerating uniformly over a period of 3s, coming to rest at Q. A cyclist sets off from P at time t = 10 and accelerates uniformly for 10s, before immediately decelerating uniformly to rest at Q at time t = 30. (i) Sketch the velocity-time graph for the runner and show that the distance PQ is 96 m. [4] v(ms-!) po, (s) 0) 10 20 30 (ii) Find the magnitude of the acceleration of the cyclist. [3]",
+      "paper": "43winter18",
+      "paper_family": "p5",
+      "question_id": "43winter18_q04",
+      "question_number": "4",
+      "question_text": "4 A runner sets off from a point P at time tf = 0, where \u00a2 is in seconds. The runner starts from rest and accelerates at 1.2ms~? for 5s. For the next 12s the runner moves at constant speed before decelerating uniformly over a period of 3s, coming to rest at Q. A cyclist sets off from P at time t = 10 and accelerates uniformly for 10s, before immediately decelerating uniformly to rest at Q at time t = 30. (i) Sketch the velocity-time graph for the runner and show that the distance PQ is 96 m. [4] v(ms-!) po, (s) 0) 10 20 30 (ii) Find the magnitude of the acceleration of the cyclist. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p4",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_m1_topic_kinematics_of_motion_in_a_straight_line"
+        }
+      ]
+    }
+  ],
+  "schema_name": "exam_bank.topic_review.auto_review_batch",
+  "schema_version": 1,
+  "skipped_rows": []
+}

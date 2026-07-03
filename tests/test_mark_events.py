@@ -154,7 +154,7 @@ def test_targeted_total_mismatch_repairs_from_text_and_agreed_totals(tmp_path: P
     assert records["51summer24_q02"]["total_marks_expected"] == 7
     assert records["51summer24_q02"]["question_total_evidence"]["source"] == "ocr_text"
 
-    q10 = records["32autumn25_q10"]
+    q10 = records["32winter25_q10"]
     assert q10["question_total_detected"] == 9
     assert q10["total_marks_detected"] == 9
     assert q10["total_marks_expected"] == 9
@@ -175,7 +175,7 @@ def test_targeted_total_mismatch_repairs_from_text_and_agreed_totals(tmp_path: P
 
 def test_agreed_expected_and_mark_scheme_total_can_repair_stale_question_total(tmp_path: Path) -> None:
     artifact_root = tmp_path / "output"
-    image = artifact_root / "p3" / "32autumn25" / "mark_scheme" / "q10.png"
+    image = artifact_root / "p3" / "32winter25" / "mark_scheme" / "q10.png"
     image.parent.mkdir(parents=True)
     image.write_bytes(b"mark-image")
     payload = {
@@ -184,12 +184,12 @@ def test_agreed_expected_and_mark_scheme_total_can_repair_stale_question_total(t
         "record_count": 1,
         "questions": [
             {
-                "question_id": "32autumn25_q10",
-                "paper": "32autumn25",
+                "question_id": "32winter25_q10",
+                "paper": "32winter25",
                 "paper_family": "p3",
                 "question_number": "10",
-                "mark_scheme_image_path": "p3/32autumn25/mark_scheme/q10.png",
-                "mark_scheme_image_paths": ["p3/32autumn25/mark_scheme/q10.png"],
+                "mark_scheme_image_path": "p3/32winter25/mark_scheme/q10.png",
+                "mark_scheme_image_paths": ["p3/32winter25/mark_scheme/q10.png"],
                 "question_text": "10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
                 "mark_scheme_text": (
                     "10(a) State equation B1\nUse chain rule M1\nObtain k DM1\nObtain result A1 AG\n"
@@ -310,7 +310,7 @@ def _write_targeted_total_fixture(tmp_path: Path) -> tuple[Path, Path]:
     for relative in [
         "p5/51summer23/mark_scheme/q04.png",
         "p5/51summer24/mark_scheme/q02.png",
-        "p3/32autumn25/mark_scheme/q10.png",
+        "p3/32winter25/mark_scheme/q10.png",
     ]:
         image = artifact_root / relative
         image.parent.mkdir(parents=True, exist_ok=True)
@@ -350,11 +350,11 @@ def _write_targeted_total_fixture(tmp_path: Path) -> tuple[Path, Path]:
             question_total_detected=3,
         ),
         _targeted_record(
-            question_id="32autumn25_q10",
-            paper="32autumn25",
+            question_id="32winter25_q10",
+            paper="32winter25",
             paper_family="p3",
             question_number="10",
-            mark_scheme_image_path="p3/32autumn25/mark_scheme/q10.png",
+            mark_scheme_image_path="p3/32winter25/mark_scheme/q10.png",
             question_text="10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
             ocr_text="10 (a) Show that dh/dt = (500 - h^2)/250. [4]",
             mark_scheme_text=(

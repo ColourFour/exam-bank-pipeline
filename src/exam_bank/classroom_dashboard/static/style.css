@@ -626,6 +626,56 @@ tr.invalid-email {
   margin-bottom: 0.75rem;
 }
 
+.submissions-table-wrap {
+  margin-top: 0.85rem;
+  background: #fff;
+}
+
+.submissions-table {
+  min-width: 980px;
+  table-layout: fixed;
+}
+
+.submissions-table th,
+.submissions-table td {
+  overflow-wrap: anywhere;
+}
+
+.submissions-table .question-col {
+  width: 6rem;
+  text-align: center;
+}
+
+.answer-cell {
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.answer-cell span,
+.answer-cell strong {
+  display: block;
+}
+
+.answer-cell strong {
+  margin-top: 0.15rem;
+}
+
+.answer-answered {
+  background: #ecfdf3;
+  color: var(--success);
+}
+
+.answer-missing,
+.answer-not_submitted {
+  background: #fef3f2;
+  color: var(--danger);
+}
+
+.answer-review_needed {
+  background: #fffaeb;
+  color: var(--warning);
+}
+
 .report-list a {
   display: block;
   border: 1px solid var(--border);

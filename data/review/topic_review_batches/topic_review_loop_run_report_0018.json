@@ -1,0 +1,47 @@
+{
+  "accepted_action_counts": {
+    "exclude": 47,
+    "keep": 986,
+    "relabel": 432
+  },
+  "accepted_count": 1465,
+  "last_completed_slice": 72,
+  "merged_decisions_path": "data/review/topic_review_batches/topic_review_auto_reviewed_merged_0018.v1.json",
+  "notes": [
+    "Round 18 reviewed slices 69-72 (records 2041-2160).",
+    "Round 18 contributed 102 accepted current-relevant decisions and 18 pending rows.",
+    "Pending rows were held for missing mark-scheme evidence, incomplete crop evidence, or mixed-topic ambiguity."
+  ],
+  "packet_validation": {
+    "applied_reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 986,
+      "relabel": 432
+    },
+    "reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 986,
+      "relabel": 432
+    },
+    "reviewed_decisions_loaded": 1465,
+    "total_excluded_questions": 47,
+    "total_included_in_release_packets": 1625,
+    "total_included_in_review_packets": 1876,
+    "total_review_required_questions": 1876
+  },
+  "pending_count": 695,
+  "raw_decision_action_counts": {
+    "exclude": 47,
+    "keep": 986,
+    "pending": 695,
+    "relabel": 432
+  },
+  "reviewed_by_subagents_count": 2160,
+  "round": 18,
+  "slice_size": 30,
+  "validation": {
+    "focused_pytest": ".venv/bin/pytest -q tests/test_topic_review_loop.py tests/test_topic_packets.py",
+    "focused_pytest_result": "63 passed, 5 warnings",
+    "packet_dry_run_result": "passed"
+  }
+}

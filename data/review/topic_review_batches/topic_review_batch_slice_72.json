@@ -1,0 +1,2142 @@
+{
+  "batch_id": "topic_review_0237b41ffe91_slice_72",
+  "decision_schema": {
+    "properties": {
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "current_syllabus_status": {
+        "enum": [
+          "ambiguous",
+          "current_relevant",
+          "legacy_but_relevant",
+          "not_in_2026_syllabus",
+          "outdated_not_relevant"
+        ]
+      },
+      "decision_action": {
+        "enum": [
+          "exclude",
+          "keep",
+          "pending",
+          "relabel"
+        ]
+      },
+      "decision_version": {
+        "const": "topic_review_auto_decision_v1"
+      },
+      "evidence_refs": {
+        "type": "array"
+      },
+      "explanation": {
+        "type": "string"
+      },
+      "prompt_version": {
+        "const": "topic_review_9709_2026_2027_v1"
+      },
+      "question_id": {
+        "type": "string"
+      },
+      "release_override": {
+        "type": "boolean"
+      },
+      "review_source": {
+        "const": "automated_agentic_review"
+      },
+      "reviewed_skill": {
+        "type": "string"
+      },
+      "reviewed_subtopic": {
+        "type": "string"
+      },
+      "reviewed_topic": {
+        "type": "string"
+      },
+      "reviewer_model": {
+        "type": "string"
+      },
+      "risk_flags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "decision_version",
+      "review_source",
+      "question_id",
+      "decision_action",
+      "reviewed_topic",
+      "current_syllabus_status",
+      "release_override",
+      "confidence",
+      "evidence_refs",
+      "risk_flags",
+      "explanation",
+      "reviewer_model",
+      "prompt_version"
+    ],
+    "type": "object"
+  },
+  "manifest": {
+    "batch_id": "topic_review_0237b41ffe91",
+    "confidence_threshold": 0.9,
+    "created_at": "2026-06-29T03:29:57+00:00",
+    "dry_run": false,
+    "prompt_version": "topic_review_9709_2026_2027_v1",
+    "review_required_input_count": 2572,
+    "schema_name": "exam_bank.topic_review.auto_review_batch",
+    "schema_version": 1,
+    "selected_count": 2265,
+    "skipped_count": 307,
+    "skipped_reason_counts": {
+      "already_reviewed": 306,
+      "unknown_question_id": 1
+    },
+    "slice_end_index": 2160,
+    "slice_number": 72,
+    "slice_row_count": 30,
+    "slice_start_index": 2131,
+    "source_batch_path": "data/review/topic_review_batches/topic_review_batch.json",
+    "source_files": {
+      "artifact_root": "output",
+      "canonical_taxonomy_root": "exam_bank_taxonomy/canonical",
+      "question_bank": "output/json/question_bank.json",
+      "reviewed_decisions": "data/review/topic_bank_reviewed_decisions.v1.json",
+      "taxonomy": "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json",
+      "topic_routing": "data/topic_routing/question_bank.topic_routing.v1.json"
+    },
+    "syllabus_baseline": {
+      "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+      "syllabus_code": "9709",
+      "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+      "valid_for": [
+        "2026",
+        "2027"
+      ]
+    }
+  },
+  "reviewer_prompt": "You are reviewing CAIE 9709 Mathematics topic routing for printable topic packets. Use the 2026-2027 syllabus as the current baseline. Inspect the canonical question image and mark-scheme image. Choose exactly one decision_action: keep, relabel, exclude, or pending. Use keep only when the current topic is correct for the normalized paper family. Use relabel only when another supplied allowed topic is clearly correct. Use exclude when the question is outdated or not relevant to the 2026-2027 syllabus. Use pending for ambiguity, poor image evidence, mixed-topic uncertainty, or any curriculum doubt. Set release_override true only when both canonical images were inspected and are usable. Return JSON matching the supplied schema. Do not invent topic IDs.",
+  "rows": [
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2131,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_62_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_62_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  (i)  cw    5,  5,  10,   20,   40  M1  cw either 4 or 5 etc\nfd     8,  6,  1.8,  1.7,  0.2  M1  fd or scaled freq [f/their cw attempt]\nfd may be \u00f7 1000\nfd\n8\n6\nA1  Correct heights seen accurately on diagram\n4\nB1  Correct bar ends, accurately plotted on axis\n2\nB1  [5] Labels fd and capacity (thousands)\nCorrect horizontal scale required.\n0     10     20   30   40   50    60    70    80   90     Vertical scale linear from 0\nCapacity (1000s)\n(ii)  (5\u00d740+10\u00d730+17.5\u00d718+32.5\u00d734+62.5\u00d78)/130  M1  \u03a3fx/130 where x is mid point attempt(value\nwithin class, not end pt or cw)\n= 2420/130 = 18.6 thousand  A1  [2]\n(iii)  median group = 8 \u2013 12 thousand  B1  Thousands not needed\nLQ group = 3 \u2013 7 thousand B1  [2]",
+      "ocr_text": "5 The number of people a football stadium can hold is called the \u2018capacity\u2019. The capacities of 130 football stadiums in the UK, to the nearest thousand, are summarised in the table. 3000-7000 | 8000-12 000 | 13 000-22 000 | 23 000-42. 000 | 43 000-82 000 (i) On graph paper, draw a histogram to represent this information. Use a scale of 2 cm for a capacity of 10000 on the horizontal axis. [5] (ii) Calculate an estimate of the mean capacity of these 130 stadiums. [2] (iii) Find which class in the table contains the median and which contains the lower quartile. [2]",
+      "paper": "62winter16",
+      "paper_family": "p5",
+      "question_id": "62winter16_q05",
+      "question_number": "5",
+      "question_text": "5 The number of people a football stadium can hold is called the \u2018capacity\u2019. The capacities of 130 football stadiums in the UK, to the nearest thousand, are summarised in the table. Capacity 3000-7000 8000-12 000 13 000-22 000 23 000-42 000 43 000-82 000 Number of stadiums 40 30 18 34 8 (i) On graph paper, draw a histogram to represent this information. Use a scale of 2 cm for a capacity of 10 000 on the horizontal axis. [5] (ii) Calculate an estimate of the mean capacity of these 130 stadiums. [2] (iii) Find which class in the table contains the median and which contains the lower quartile. [2]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2132,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2016_w16_62_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2016_w16_62_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i)  e.g. (OAEE)(CPNHGN) or cv\nM1  4!/2! or 6!/2! seen anywhere\n4!2!\u00d76!2!\u00d72= 8640  M1 A1  [3] All multiplied by 2 oe\n(ii)  First Method\nTotal ways = 10!/2!2! = 907200  B1  Total ways together correct\nEE together in 9!/2! ways = 181440  M1  EE together attempt alone\nEE not together = 907200 \u2013 181440  M1  Considering total \u2013 EE together\n= 725760   A1  [4]\nOR\nSecond Method\nC  P  N  H  G  N  O  A  in 8!/2! ways  B1  8!/2! Seen\nInsert E in 9 ways  M1  Interspersing an E, x n where n=7,8,9. Condone\nadditional factors.\nInsert 2nd E in 8 ways, \u00f7 2  M1  Mult by 9\u00d78(\u00f72), ^{9}C_{2 } or ^{9}P_{2 } only oe\nTotal = 8!/2!\u00d79\u00d78 \u00f7 2 = 725760  A1\n(iii)  First Method\nEN** in ^{6}C_{2} ways  M1  6C_{x } or ^{y}C_{2} seen alone or mult by k > 1, x<6, y>2\nM1  (1x1x)^{ 6}C_{2} seen strictly alone or added to their\nEENN only\n= 15 different ways  A1\nEENN in 1 way  B1\nTotal 16 ways  A1 [5]\nOR\nSecond Method\nListing with at least 8 different correct options Listing all correct options  M1 M1  Value stated or implied by final answer\nTotal  = 15 different ways EENN in 1 way  A1 B1  correct value stated\nTotal 16 ways  A1\nAward 16 SRB2 if no method is present",
+      "ocr_text": "6 Find the number of ways all 10 letters of the word COPENHAGEN can be arranged so that (i) the vowels (A, E, O) are together and the consonants (C, G, H, N, P) are together, [3] (ii) the Es are not next to each other. [4] Four letters are selected from the 10 letters of the word COPENHAGEN. (iii) Find the number of different selections if the four letters must contain the same number of Es and Ns with at least one of each. [5]",
+      "paper": "62winter16",
+      "paper_family": "p5",
+      "question_id": "62winter16_q06",
+      "question_number": "6",
+      "question_text": "6 Find the number of ways all 10 letters of the word COPENHAGEN can be arranged so that (i) the vowels (A, E, O) are together and the consonants (C, G, H, N, P) are together, [3] (ii) the Es are not next to each other. [4] Four letters are selected from the 10 letters of the word COPENHAGEN. (iii) Find thenumberofdi\ufb00erentselectionsifthefourlettersmustcontainthesamenumberofEs and Ns with at least one of each. [5] AIICL OCC Onda aATNO/IZXININGAL",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2133,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "1  EITHER:  (M1 Expanding brackets and forming a three term equation involving 27\n(\u03a3x = ) 11.5n = 27 + 10n and at least one term in n, without x\nM1 10n or 11.5n seen in expression without x\n(1.5n = 27 implies M2)\nn = 18  A1)\nOR:  (M1 Dividing coded sum by n and forming a three term equation involving\n11.5 = 27 + 10  11.5 and at least one term in n, without x\nn M1 27/n seen in expression without x\n(1.5 =  27 implies M2)\nn\nn = 18  A1)\n3",
+      "ocr_text": "1 Andy counts the number of emails, x, he receives each day and notes that, over a period of n days, &X(x \u2014 10) = 27 and the mean number of emails is 11.5. Find the value of n. [3]",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q01",
+      "question_number": "1",
+      "question_text": "1 Andycountsthenumberofemails,x,hereceiveseachdayandnotesthat,over a period of n day s, \u03a3(x -10) = 27 and the mean number of emails is 11.5. Find the value of n. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2134,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "2(i)  points (50, 14), (80, 62), (100, 132), (120, 140)  B1 Correct cfs values seen listed, in or by table or on graph, 0 not\nrequired\ncf  B1 Axes labelled \u2018cumulative frequency\u2019 (or cf) and \u2018circumference [or\n200.  cir or c etc.] (in) cm\u2019.\nLinear scales \u2013 c.f. 0\u2013140 circumference 40\u2013120 (ignore <40 on circ.)\nAt least 3 values stated on each axis, but (0,0) can be implied without\nstating.\n100\nB1 All points plotted accurately\n0        20           40           60         80        100      120\nCircumference cm\n3\n2(ii)  140 \u2013 54 = 86  M1 Finding correct value from graph (checked \u00b11mm) or linear\ninterpolation. Subtraction from 140 can be implied\nPercentage = 61.4%  A1 60.5% \u2a7d Ans \u2a7d 64.5%\n2",
+      "ocr_text": "2 The circumferences, c cm, of some trees in a wood were measured. The results are summarised in the table. Circumference (ccm) | 40<c<50 SO0<cK< 80<c<100 | 100<c<120 Preneey ee (i) On the grid, draw a cumulative frequency graph to represent the information. [3] (ii) Estimate the percentage of trees which have a circumference larger than 75 cm. [2]",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q02",
+      "question_number": "2",
+      "question_text": "2 The circumferences, c cm, of some trees in a wood were measured. The results are summarised in the table. Circumference (c cm) 40 < c \u2264 50 50 < c \u2264 80 80 < c \u2264 100 100 < c \u2264 120 Frequency 14 48 70 8 (i) On the grid, draw a cumulative frequency graph to represent the information. [3] (ii) Estimate the percentage of trees which have a circumference larger than 75 cm. [2]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2135,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "3(i)  EITHER: P(X = 3) = P(RRB) = 2 \u00d7 1 \u00d7 4 (M1  probabilities in order 2p \u00d7 1q \u00d74r, p, q, r \u2a7d 6 and p\u2a7e q \u2a7e r, r \u2a7e4,\n6 5 4 accept \u00d7 1 as 4.\nr\n=  151   AG A1) Needs either P(RRB) OE stated or identified on tree diagram.\nOR1: P(X = 3) = P(RRB) =  6^{2}CC_{2}^{2} \u00d7 4_{4} CC^{1}_{1} (M1 probabilities stated clearly, \u00d7 4_{4} CC^{1}_{1} or \u00d7 1 or \u00d7 44  included\n=  151  AG A1) Needs either P(RRB) OE stated or identified on tree diagram.\nOR2: P(X = 3) = P(RRB) =  6^{2}CC_{1}^{1} \u00d7 1_{5} CC^{1}_{1} \u00d7 4_{4} CC^{1}_{1} (M1 probabilities in order p \u2a7e q\u2a7e r, r \u2a7e4  p^{2} CC^{1}_{1} \u00d7 q^{1} CC^{1}_{1} \u00d7 4_{r}CC_{1}^{1} p, q, r \u2a7d 6 and\n(\u00d7 4_{4} CC^{1}_{1} or \u00d7 1 or \u00d7 44  acceptable)\n= 1/15 AG A1) Needs either P(RRB) OE stated or identified on tree diagram.\n2\n3(ii)  P(1) = P(B) = 64  ( 23  = 0.667)   B1 Probability distribution table drawn with at least 2 correct and at least 1 probability. All probabilities 0 \u2a7d p < 1.  x values\nP(2) = P(RB) = 62  \u00d7 54  =  154  (= 0.267)  B1 P(1) or P(2) correct unsimplified, or better, and identified.\nP(3) = P(RRB) = 62  \u00d7 15  \u00d7 44  =  151  (= 0.0667)  B1 All probabilities in table, evaluated correctly OE. Additional must have a stated probability of 0  x values\nx  1  2  3\nP  10 4 1\n15 15 15\n3",
+      "ocr_text": "3 A box contains 6 identical-sized discs, of which 4 are blue and 2 are red. Discs are taken at random from the box in turn and not replaced. Let X be the number of discs taken, up to and including the first blue one. (i) Show that P(X = 3) = 34. [2] (ii) Draw up the probability distribution table for X. [3]",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q03",
+      "question_number": "3",
+      "question_text": "3 A box contains 6 identical-sized discs, of which 4 are blue and 2 are red. Discs are taken at random fromtheboxinturnandnotreplaced. Let X be the number ofdiscstaken,up to and including the first blue one. (i) Show that P(X = 3) = 15^{1}. [2] (ii) Draw up the probability distribution table for X. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2136,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "5(i)  EITHER:  (M1 Binomial term of form ^{30}C_{x}p^{x}(1 \u2013 p)30 \u2013 x  , 0 < p < 1 any p\nP(> 2) = 1 \u2013 P(0, 1, 2)\n= 1 \u2013 (0.96)^{30} \u2013 30C_{1}(0.04)(0.96)^{29} \u2013 30C_{2}(0.04)^{2}(0.96)^{28} A1 Correct unsimplified answer\n( = 1 \u2013 0.2938\u2026 \u2013 0.3673\u2026 \u2013 0.2219\u2026 )\n= 1-0.883103 = 0.117 (0.116896) A1)\nOR:  (M1 Binomial term of form ^{30}C_{x}p^{x}(1 \u2013 p)30 \u2013 x  , 0 < p < 1 any p\nP(> 2) = P(3,4,5,6,\u2026.30)\n= 30C_{3}(0.04)^{3}(0.96)^{27}+ 30C_{4}(0.04)^{4}(0.96)^{26} + \u2026 +(0.04)^{30} A1 Correct unsimplified answer\n= 0.117 A1)\n3\n5(ii)  np = 280 \u00d70.1169 = 32.73, npq = 280 \u00d70.1169 \u00d7 0.8831 =  M1 FT Correct unsimplified np and npq, FT their p from (i),\n28.9\nP(\u2a7e 30) = P\uf8eb\uf8ec\uf8edz > (29.5\u221232.73)/(28.9)\uf8f6\uf8f7\uf8f8 = P(z > \u2013 0.6008) M1 Substituting Formula   their \u00b5 and \u03c3 (\u221anpq only) into the Standardisation\nM1 Using continuity correction of 29.5 or 30.5\nM1 Appropriate area \u03a6 from standardisation formula P(z >\u2026.) in final\nsolution\n= 0.726 A1\n5",
+      "ocr_text": "5 Blank CDs are packed in boxes of 30. The probability that a blank CD is faulty is 0.04. A box is rejected if more than 2 of the blank CDs are faulty. (i) Find the probability that a box is rejected. [3] (ii) 280 boxes are chosen randomly. Use an approximation to find the probability that at least 30 of [5] these boxes are rejected.",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q05",
+      "question_number": "5",
+      "question_text": "5 BlankCDsarepackedinboxesof30. TheprobabilitythatablankCDisfaultyis0.04. Aboxis rejected if more than 2 of the blank CDs are faulty. (i) Find the probability that a box is rejected. [3] (ii) 280 boxes are chosen randomly. Use an approximation to find the probability that at least 30 of these boxes are rejected. [5]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2137,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "6(a)(i)  EITHER:  (M1 5P_{2 } or ^{5}C_{2 }\u00d72! or 5 \u00d7 4 OE (considering final 2 digits)\n3**, 4**, 6**, 8**\noptions 4 \u00d7 5 \u00d7 4 = 80 M1 Mult by 4 or summing 4 options (considering first digit)\nA1) Correct final answer\nOR:  (M1 Calculating total number of values (with subtraction seen)\nTotal number of values: 6 \u00d7 5 \u00d7 4 = 120\nNumber of values less than 300: 2 \u00d7 5 \u00d7 4 = 40 M1 Calculating number of unwanted values\nNumber of evens = 120 \u2013 40 = 80 A1) Correct final answer\n3\n6(a)(ii)  3**, 4**, 6**, 8**  (M1\nEITHER:  6 linked to considering middle digit e.g. multiplied or in list\noptions 4 \u00d7 6 \u00d7 4 (last)\nM1 Multiply an integer by 4 \u00d7 4 (condone \u00d7 16)\n(No additional figures present for both M\u2019s to be awarded)\n= 96  A1)\nOR:  (M1 Calculating total number of values (with subtraction seen)\nTotal number of values 4 \u00d7 6 \u00d7 6 = 144\nNumber of odd values 4 \u00d7 6 \u00d7 2 = 48  M1 Calculating number of unwanted values\nNumber of evens = 144 \u2013 48 = 96  A1)\n3\n6(b)(i)  252   B1\n1\n6(b)(ii)  B (6)G(4)\n5  0 in ^{6}C_{5 }(\u00d74C_{0}) = 6 \u00d7 1 = 6  M1 Multiplying 2 combinations ^{6}C_{q}\u00d7 4C_{r}, q + r = 5, or ^{6}C_{5} seen alone\n4  1 in ^{6}C_{4 }\u00d7 4C_{1} = 15 \u00d7 4 = 60\n3  2 in ^{6}C_{3 }\u00d74C_{2} = 20 \u00d7 6 = 120  M1 Summing 2 or 3 appropriate outcomes, involving perm/comb, no\nextra outcomes.\nTotal = 186 ways  A1\n3",
+      "ocr_text": "6 (a) Find the number of different 3-digit numbers greater than 300 that can be made from the digits 1, 2, 3, 4, 6, 8 if (i) no digit can be repeated, [3] (ii) a digit can be repeated and the number made is even. [3] (b) A team of 5 is chosen from 6 boys and 4 girls. Find the number of ways the team can be chosen if (i) there are no restrictions, [1] (ii) the team contains more boys than girls. [3]",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q06",
+      "question_number": "6",
+      "question_text": "6 (a) Find the number of di\ufb00erent 3-digit numbers greater than 300 that can be made from the digits 1, 2, 3, 4, 6, 8 if (i) no digit can be repeated, [3] (ii) a digit can be repeated and the number made is even. [3] (b) A team of 5 is chosen from 6 boys and 4 girls. Find the number of ways the team can be chosen if (i) there are no restrictions, [1] (ii) the team contains more boys than girls. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2138,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2017_w17_62_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+      "current_packet_topic": "the_normal_distribution",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(i)  P(> 65) = P\uf8eb\uf8ec\uf8edz > (65\u221261.4)/(12.3)\uf8f6\uf8f7\uf8f8 = P (z > 0.2927)  M1 Standardising no continuity correction, no square or square root, condone \u00b1 standardisation formula\nM1 Correct area (< 0.5)\n= 1 \u2013 0.6153 = 0.385  A1\n3\n7(ii)  P (< 65) = 0.6153 so P(< k) = 0.25 + 0.6153 = 0.8653  B1\nz = 1.105  B1 z = \u00b1 1.105 seen or rounding to 1.1\n1.105 = (k\u221261.4)/(12.3) M1 standardising allow backwards so must be a \u00b1, cc, sq rt, sq. Need to see use of tables z-value, not 1 \u2013 z value.\nk = 75.0  A1 Answers which round to 75.0. Condone 75 if supported.\n4\n7(iii)  2.326 = 972.\u03c3\u2212\u00b5 B1 \u00b1 2.326 seen (Use of critical value)\n\u20130.44 =552.\u03c3\u2212\u00b5 B1 \u00b1 0.44 seen\nM1 An equation with a z-value, \u00b5, \u03c3 and 97.2 or 55.2, allow \u221a\u03c3 or \u03c3^{2}\nM1 Algebraic elimination \u00b5 or \u03c3 from their two simultaneous equations\n\u00b5 = 61.9  A1 both correct answers\n\u03c3 = 15.2\n5",
+      "ocr_text": "7 InJimpuri the weights, in kilograms, of boys aged 16 years have a normal distribution with mean 61.4 and standard deviation 12.3. (i) Find the probability that a randomly chosen boy aged 16 years in Jimpuri weighs more than 65 kilograms. [3] (ii) For boys aged 16 years in Jimpuri, 25% have a weight between 65 kilograms and k kilograms, where k is greater than 65. Find k. [4] In Brigville the weights, in kilograms, of boys aged 16 years have a normal distribution. 99% of the boys weigh less than 97.2 kilograms and 33% of the boys weigh less than 55.2 kilograms. (iii) Find the mean and standard deviation of the weights of boys aged 16 years in Brigville. [5]",
+      "paper": "62winter17",
+      "paper_family": "p5",
+      "question_id": "62winter17_q07",
+      "question_number": "7",
+      "question_text": "7 InJimpuri the weights, in kilograms, of boys aged 16 years have a normal distribution with mean 61.4 and standard deviation 12.3. (i) Find the probability that a randomly chosen boy aged 16 years in Jimpuri weighs more than 65 kilograms. [3] (ii) For boys aged 16 years in Jimpuri, 25% have a weight between 65 kilograms and k kilograms, where k is greater than 65. Find k. [4] In Brigville the weights, in kilograms, of boys aged 16 years have a normal distribution. 99% of the boys weigh less than 97.2 kilograms and 33% of the boys weigh less than 55.2 kilograms. (iii) Find the mean and standard deviation of the weights of boys aged 16 years in Brigville. [5]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_the_normal_distribution"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2139,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2018_w18_62_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1(i)  4!4!2!11! M1  4!11!\u00d7kor2!11!\u00d7k , k a positive integer\n= 34650  A1  Correct final answer\n2\n1(ii)  Method 1\nP(SS) =  4\u00d7 3 = 12  (= 0.10911)  B1  One of P(SS), P(PP) or P(II) correct, allow unsimplified\n11 10 110\nP(PP) = 112\u00d7101 = 1102  (= 0.01818)  M1  Sum of probabilities from 3 appropriate identifiable scenarios (either by labelling or of form  4\u00d7a + 2\u00d7c + 4\u00d7a\nP(II) = 114\u00d7103 = 11012  (= 0.10911) 114 \u00d7103 where a = 4 or 3, b = 11 or 10, 11c = 2 bor 111)  b 11 b\nTotal =  26 = 13 oe (0.236)  A1  Correct final answer\n110 55\nMethod 2\nTotal number of selections = ^{11}C_{2} = 55  B1  Seen as the denominator of fraction (no extra terms) allow\nSelections with 2 Ps = 1  unsimplified\nSelections with 2 Ss = ^{4}C_{2} = 6  M1  Sum of 3 appropriate identifiable scenarios (either by labelling or\nSelections with 2 Is = ^{4}C_{2} = 6,   values, condone use of permutations. May be implied by 2,12,12)\nTotal selections with 2 letters the same = 13  A1  Correct final answer, without use of permutations\nProbability of 2 letters the same = 1355  oe (0.236)\n3",
+      "ocr_text": "1 (i) How many different arrangements are there of the 11 letters in the word MISSISSIPPI? [2] (ii) Two letters are chosen at random from the 11 letters in the word MISSISSIPPI. Find the probability that these two letters are the same. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q01",
+      "question_number": "1",
+      "question_text": "1 (i) How many di\ufb00erent arrangements are there of the 11 letters in the word MISSISSIPPI? [2] (ii) Two letters are chosen at random from the 11 letters in the word MISSISSIPPI. Find the probability that these two letters are the same. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2140,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2018_w18_62_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "",
+      "ocr_text": "2 The following back-to-back stem-and-leaf diagram shows the reaction times in seconds in an experiment involving two groups of people, A and B. A B (4) 4200]|20]567 (3) (5) 98500/21/122377 (6) (8) 98753222]221/1356689 (7) (6) 876521/231/45788999 (8) (3) 863|24/2456788 (7) dd) 0|25/0278 (4) Key: 5 | 22 | 6 means a reaction time of 0.225 seconds for A and 0.226 seconds for B (i) Find the median and the interquartile range for group A. [3] The median value for group B is 0.235 seconds, the lower quartile is 0.217 seconds and the upper quartile is 0.245 seconds. (ii) Draw box-and-whisker plots for groups A and B on the grid. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q02",
+      "question_number": "2",
+      "question_text": "2 The following back-to-back stem-and-leaf diagram shows the reaction times in seconds in an experiment involving two groups of people, A and B. (4) 4 2 0 0 20 5 6 7 (3) (5) 9 8 5 0 0 21 1 2 2 3 7 7 (6) (8) 9 8 7 5 3 2 2 2 22 1 3 5 6 6 8 9 (7) (6) 8 7 6 5 2 1 23 4 5 7 8 8 9 9 9 (8) (3) 8 6 3 24 2 4 5 6 7 8 8 (7) (1) 0 25 0 2 7 8 (4) Key: 5 22 6 means a reaction time of 0.225 seconds for A and 0.226 seconds for B (i) Find the median and the interquartile range for group A. [3] ThemedianvalueforgroupBis0.235seconds, thelowerquartileis0.217secondsandtheupper quartile is 0.245 seconds. (ii) Draw box-and-whisker plots for groups A and B on the grid. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2141,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "3(i)  Method 1\nP(3) + P(4) + P(5) = ^{5}C_{3} 0.75^{3}\u00d70.25^{2}  + M1  One binomial term ^{5}C_{x}p^{x}(1 \u2013 p)^{5-}x , x \u2260 0 or 5, any p\n5C_{4} 0.75^{4}\u00d70.25^{1}  + 5C_{5} 0.75^{5}\u00d70.25^{0} M1  Correct unsimplified expression\n= 0.26367 + 0.39551 + 0.23730  A1  Correct final answer, allow 0.8965 (isw) but not 0.897 alone\n= 0.896  (459/512)\nMethod 2\n1 \u2013 P(0) \u2212 P(1) \u2013 P(2) = 1\u22125C_{0} 0.75^{0}\u00d70.25^{5} M1  One binomial term ^{5}C_{x}p^{x}(1 \u2013 p)^{5-}x , x \u2260 0 or 5, any p\n\u2212 5C_{1} 0.75^{1}\u00d70.25^{4}\u2212 5C_{2} 0.75^{2}\u00d70.25^{3} M1  Correct simplified expression\n= 1 \u2013 0.00097656 \u2013 0.014648 \u2013 0.087891  A1  Correct final answer, allow 0.8965 (isw) but not 0.897 alone\n= 0.896 (459/512)\n3\n3(ii)  Method 1\nP(C,C) + P(C,C\u2032) + P(C\u2032,C)  B1  Unsimplified prob completed on both days\n0.8 \u00d7 0.9\n0.8 \u00d7 0.1 + 0.2 \u00d7 0.6  M1  Unsimplified prob 0.8 \u00d7 a + 0.2 \u00d7 b, a = 0.1or 0.4, b = 0.6 or 0.9\n= 0.92 oe  A1  Correct final answer\nMethod 2\n1 \u2013 P(C\u2032,C\u2032) =  1 \u2013 0.2 \u00d7 0.4   B1  Unsimplified prob completed on no days\nM1  1 \u2013 0.2 \u00d7 a, a=0.1or 0.4 allow unsimplified\n= 0.92 A1  Correct final answer\n3",
+      "ocr_text": "3. Jake attempts the crossword puzzle in his daily newspaper every day. The probability that he will complete the puzzle on any given day is 0.75, independently of all other days. (i) Find the probability that he will complete the puzzle at least three times over a period of five days. [3] Kenny also attempts the puzzle every day. The probability that he will complete the puzzle on a Monday is 0.8. The probability that he will complete it on a Tuesday is 0.9 if he completed it on the previous day and 0.6 if he did not complete it on the previous day. (ii) Find the probability that Kenny will complete the puzzle on at least one of the two days Monday and Tuesday in a randomly chosen week. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q03",
+      "question_number": "3",
+      "question_text": "3 Jakeattemptsthecrosswordpuzzleinhisdailynewspapereveryday. Theprobabilitythathewill complete the puzzle on any given day is 0.75, independently of all other days. (i) Find theprobabilitythathewillcompletethepuzzleatleastthreetimesoveraperiodoffive days. [3] Kenny also attempts the puzzle every day. The probability that he will complete the puzzle on a Monday is 0.8. The probability that he will complete it on a Tuesday is 0.9 if he completed it on the previous day and 0.6 if he did not complete it on the previous day. (ii) Find the probability that Kenny will complete the puzzle on at least one of the two days Monday and Tuesday in a randomly chosen week. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2142,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "4(i)  5! \u00d7 6! \u00d72  B1  k\u00d75! or m\u00d76! (k,m integer, k,m\u2a7e 1), no inappropriate addition\nB1  n \u00d7 5! \u00d7 6! (n integer, n\u2a7e 1), no inappropriate addition\n= 172800  B1  Correct final answer, isw rounding (www scores B3)\nAll marks based on their final answer\n3\n4(ii)  \u2026 G \u2026 G \u2026 G \u2026 G \u2026 G \u2026 G \u2026  M1  k \u00d7 6! or k \u00d7 7P_{5 } (k is an integer, k\u2a7e 1) no inappropriate add.\nNo. ways girls placed \u00d7 No. ways boys placed in gaps =  (7P_{5 } \u2261 7 \u00d7 6 \u00d7 5 \u00d7 4 \u00d7 3 or ^{7}C_{5} \u00d7 5!)\n6! \u00d7 ^{7}P_{5} M1  Correct unsimplified expression\n= 1814400  A1  Correct exact final answer (ignore subsequent rounding)\n3",
+      "ocr_text": "4 (i) Find the number of different ways that 5 boys and 6 girls can stand in a row if all the boys stand together and all the girls stand together. [3] (ii) Find the number of different ways that 5 boys and 6 girls can stand in a row if no boy stands next to another boy. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q04",
+      "question_number": "4",
+      "question_text": "4 (i) Find the number of di\ufb00erent ways that 5 boys and 6 girls can stand in a row if all the boys stand together and all the girls stand together. [3] (ii) Find the number of di\ufb00erent ways that 5 boys and 6 girls can stand in a row if no boy stands next to another boy. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2143,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "6(i)  x  \u20132  \u20131  0  1  2  3  B1  \u20132, \u20131, 0, 1, 2, 3 seen as top line of a pdf table with at least 1 probability OR attempting to evaluate P(\u20132), P(\u20131), P(0), P(1), P(2),\np  1 2 3 3 2 1 P(3) (condone additional values with p=0 stated)\n12 12 12 12 12 12\nB1  At least 4 probs correct (need not be in table)\nB1  All probs correct in a table\n3\n6(ii)  E(X) = \u2212\u00d72 1\u2212\u00d71 2 + 0 +121\u00d73 + 2\u00d72 + 1\u00d73 = 0.5  M1  Unsimplified expression for mean using with at least 2 non-zero values (may be seen in variance). their pdf table (or correct)\nNumerator terms may be implied by values.\nVar(X) = (\u22122)^{2}\u00d71 + (\u22121)^{2}\u00d7212+ 1^{2}\u00d73 + 2^{2}\u00d72 + 3^{2}\u00d71\u2212(their0.5)^{2} M1  Unsimplified expression for variance using correct) with at least 2 non-zero values and terms may be implied by values. If \u2013k^{2} is seen for (\u2013theirtheir E(X). Numerator  pdf table (or k)^{2}, the method\nmust be confirmed by seeing value used correctly\n26/12 \u22121/4 = 23/12  A1  Correct final answer\n3\n6(iii)  Method 1\nP(X non-zero) = 9/12  B1ft  If Binomial distribution used 0/3\nP(X non-zero) ft from their pdf table, \u03a3p=1 oe\nP(X = 1 | X non-zero) = P(XP=(X non1   \u2229X non\u2212zero\u2212zero) )  =  912312 M1  Their P(X = 1)/their P(X non-zero) from their pdf table oe\n= 1/3 oe  A1  Correct final answer www\nMethod 2\nP(X = 1 | X non-zero) = Number of Number ofnonoutcomes\u2212zerooutcomes= 1 B1ft  table or pdf table numerators oe Number of non-zero outcomes (expect 9) ft from their outcome\nM1  a/b, a = their 3 from their outcome table or pdf table numerators,\nb = their 9 (not 12)\n=  3 = 1 oe  A1  Correct final answer www\n9 3\n3",
+      "ocr_text": "6 A fair red spinner has 4 sides, numbered 1, 2, 3, 4. A fair blue spinner has 3 sides, numbered 1, 2, 3. When a spinner is spun, the score is the number on the side on which it lands. The spinners are spun at the same time. The random variable X denotes the score on the red spinner minus the score on the blue spinner. (i) Draw up the probability distribution table for X. [3] (ii) Find Var(X). [3] (iii) Find the probability that X is equal to 1, given that X is non-zero. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q06",
+      "question_number": "6",
+      "question_text": "6 A fair red spinner has 4 sides, numbered 1, 2, 3, 4. A fair blue spinner has 3 sides, numbered 1, 2, 3. When a spinner is spun, the score is the number on the side on which it lands. The spinners are spun at the same time. The random variable X denotes the score on the red spinner minus the score on the blue spinner. (i) Draw up the probability distribution table for X. [3] (ii) Find Var(X). [3] (iii) Find the probability that X is equal to 1, given that X is non-zero. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2144,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2018_w18_62_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(a)(i)  P(X < 4) = P\uf8eb\uf8ec\uf8edZ < (4\u22123.24)/(0.96)\uf8f6\uf8f7\uf8f8 M1  \u00b1Standardisation formula, no cc, no sq rt, no square\n= P (Z < 0.7917) =  0.7858   A1  0.7855 < p \u2a7d0.7858 or p = 0.786 Cao (implies M1A1 awarded),\nmay be seen used in calculation\ntheir 0.7858 \u00d7 365 = 286 (or 287)  B1ft  Their probability \u00d7 365 provided 4sf probability seen.\nFT answer rounded or truncated to nearest integer.\nNo approximation notation used.\n3\n7(a)(ii)  P(X < k) = P(Z < k\u22123.24) = 0.8  B1  (z=) \u00b1 0.842 seen\n0.96\nk \u22123.24 = 0.842  M1  z= \u00b1k\u22123.24 , allow cc, sq rt or square equated to a z-value\n0.96 0.96\n(0.7881, 0.2119, 0.158, 0.8, 0.2 etc. are not acceptable)\nk = 4.05  A1  Correct final answer, www\n3\n7(a)(iii)  P(\u22121.5 < Z < 1.5)  =   M1  \u03a6(z = 1.5) or \u03a6(z = \u20131.5) seen used or p = 0.9332 seen\n\u03a6(1.5)\u2212\u03a6(\u22121.5) = 2\u03a6(1.5)\u22121 M1  Correct final area expression using their probabilities\n= 2 \u00d7 0.9332 \u2013 1 oe\n= 0.866  A1  Correct final answer\n3\n7(b)  P(Y > 0) = P\uf8eb\uf8ec\uf8edZ > 0\u03c3\u2212\u00b5\uf8f6\uf8f7\uf8f8 \u2261 P\uf8eb\uf8ec\uf8edZ > (0\u2212)/(3 / 4)\u00b5\u00b5\uf8f6\uf8f7\uf8f8 or   M1  \u00b1Standardisation attempt in terms of one variable  no sq rt or square, condone \u00b10.5 as cc\nP (Z > 0\u2212\uf8ec\uf8eb\uf8ed\u03c343\u03c3\uf8f6\uf8f7\uf8f8)\n= P (Z> \u22124 / 3) A1  Correct unsimplified standardisation, no variables\n= 0.909  A1  Correct final answer\n3",
+      "ocr_text": "7 ~ (a) The time, X hours, for which students use a games machine in any given day has a normal distribution with mean 3.24 hours and standard deviation 0.96 hours. (i) On how many days of the year (365 days) would you expect a randomly chosen student to use a games machine for less than 4 hours? [3] (ii) Find the value of k such that P(X > k) = 0.2. [3] (iii) Find the probability that the number of hours for which a randomly chosen student uses a games machine in a day is within 1.5 standard deviations of the mean. [3] (b) The variable Y is normally distributed with mean py and standard deviation o, where 40 = 3u and ut #0. Find the probability that a randomly chosen value of Y is positive. [3]",
+      "paper": "62winter18",
+      "paper_family": "p5",
+      "question_id": "62winter18_q07",
+      "question_number": "7",
+      "question_text": "7 (a) The time, X hours, for which students use a games machine in any given day has a normal distribution with mean 3.24 hours and standard deviation 0.96 hours. (i) On how many days of the year (365 days) would you expect a randomly chosen student to use a games machine for less than 4 hours? [3] (ii) Find the value of k such that P(X > k) = 0.2. [3] (iii) Find the probability that the number of hours for which a randomly chosen student uses a games machine in a day is within 1.5 standard deviations of the mean. [3] (b) The variable Yis normally distributed with mean - and standard deviation 3, where 43 = 3- and - \u22600. Find the probability that a randomly chosen value of Yis positive. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2145,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2019_w19_62_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1(i)  Median = 51  B1\nUQ = 57.5, LQ = 40\nIQR = UQ\u2013LQ  M1  55\u2a7dUQ\u2a7d62\u201338\u2a7dLQ\u2a7d45\n17.5  A1  NFWW\n3\n1(ii)  Result will be disproportionately affected by 110   B1  Affected by an extreme/large value\nThere is a large outlier\n\u2026contains outliers such as 110\u2026\nNot \u2018mean affected by extreme values\u2019\n1",
+      "ocr_text": "1 Twelve tourists were asked to estimate the height, in metres, of a new building. Their estimates were as follows. 50 45 62 30 40 55 110 38 52 60 #55 + 40 (i) Find the median and the interquartile range for the data. [3] (ii) Give a disadvantage of using the mean as a measure of the central tendency in this case. [1]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q01",
+      "question_number": "1",
+      "question_text": "1 Twelve tourists were asked to estimate the height, in metres, of a new building. Their estimates were as follows. 50 45 62 30 40 55 110 38 52 60 55 40 (i) Find the median and the interquartile range for the data. [3] (ii) Give a disadvantage of using the mean as a measure of the central tendency in this case. [1] MTIICT Be IWN10 OIND/LX/IA/INT/10",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2146,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "2(i)  0.4x + 0.6\u00d72x = 0.36 or 0.4(1\u2212x) + 0.6(1\u22122x) = 0.64  M1  0.4a + (1\u2009\u2013\u20090.4)b = 0.36 or 0.64, a,b terms involving x\n1.6x = 0.36  A1  Fully justified by algebra\nx = 0.225  AG\n2\n2(ii)  P( HL') = M1  Correct numerical numerator of a fraction. Allow unsimplified.\n(0.4 1\u2212x)/(1\u22120.36)( ) = 0.4\u00d7(0.641\u22120.225) = 0.4\u00d7(0.4 0.775)/(0.775 + 0.6 0.55)\u00d7 \u00d7\nM1  Denominator 0.36 or 0.64. Allow unsimplified.\n31 or 0.484 A1\n64\n3",
+      "ocr_text": "2. Benju cycles to work each morning and he has two possible routes. He chooses the hilly route with probability 0.4 and the busy route with probability 0.6. If he chooses the hilly route, the probability that he will be late for work is x and if he chooses the busy route the probability that he will be late for work is 2x. The probability that Benju is late for work on any day is 0.36. (i) Show that x = 0.225. [2] (ii) Given that Benju is not late for work, find the probability that he chooses the hilly route. [3]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q02",
+      "question_number": "2",
+      "question_text": "2 Benju cycles to work each morning and he has two possible routes. Hechooses the hilly route with probability 0.4 and the busy route with probability 0.6. If he chooses the hilly route, the probability that he will be late for work is x and if he chooses the busy route the probability that he will be late for work is 2x. The probability that Benju is late for work on any day is 0.36. (i) Show that x = 0.225. [2] (ii) Given that Benju is not late for work, find the probability that he chooses the hilly route. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2147,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "3(i)  0.5    2.4    3    1.4    0.4  M1  At least 3 frequency densities calculated (frequency \u00f7 class\nwidth)\ne.g.\uf8eb\uf8ec\uf8ed1020,1019 or19.510 \uf8f6\uf8f7\uf8f8may be read from graph using their scale,\n3SF or exact\nAll heights correct on graph.  A1\nBar ends of 9.5, 29.5, 39.5, 59.5, 89.5  B1\nAxes labelled: Frequency density (fd) and speed/km h^{-1} (or  B1\nappropriate title). Linear scales 9.5 \u2a7d horizontal axis \u2a7d 89.5, 0\n\u2a7d vertical axis \u2a7d 3, 5 bars with no gaps\n4\n3(ii)  19.5\u00d710 + 34.5\u00d724 + 44.5\u00d730 + 54.5\u00d714 + 74.5\u00d712 M1  Uses at least 4 midpoint attempts (e.g. 19.5 \u00b1 0.5).\ntheir90 Allow unsimplified expression.\n= 195 + 828 + 1335 + 763 + 894\n90\n=  4015or 803\n90  18\n441811 or 44.6 (km h^{\u2212}1) A1  Final answer not an improper fraction NFWW\n2",
+      "ocr_text": "3 The speeds, in kmh\u201c, of 90 cars as they passed a certain marker on a road were recorded, correct to the nearest kmh7!. The results are summarised in the following table. (i) On the grid, draw a histogram to illustrate the data in the table. [4] (ii) Calculate an estimate for the mean speed of these 90 cars as they pass the marker. [2]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q03",
+      "question_number": "3",
+      "question_text": "3 The speeds, in km h^{-}1, of 90 cars as they passed a certain marker on a road were recorded, correct to the nearest km h^{-}1. The results are summarised in the following table. Speed (km h^{-}1) 10 -29 30 -39 40 -49 50 -59 60 -89 Frequency 10 24 30 14 12 (i) On the grid, draw a histogram to illustrate the data in the table. [4] (ii) Calculate an estimate for the mean speed of these 90 cars as they pass the marker. [2]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2148,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+      "current_packet_topic": "the_normal_distribution",
+      "image_evidence_available": false,
+      "mark_scheme_text": "4(i)  P(8, 9, 10) = ^{10}C_{8} 0.66^{8 }0.34^{2} +10C_{9} 0.66^{9} 0.34^{1} + 0.66^{10 } M1  Correct binomial term, ^{10}C_{a} 0.66^{a}(1\u20130.66)^{b}\na+b = 10, 0 < a,b < 10\nA1  Correct unsimplified expression\n0.284  B1  CAO\n3\n4(ii)  np = 0.66\u00d7150 = 99    B1  Accept evaluated or unsimplified \u00b5, \u03c3^{2} numerical expressions,\nnpq = 0.66\u00d7(1\u22120.66)\u00d7150 = 33.66 condone \u03c3= 33.66 = 5.8017 or 5.802\nCAO\nP(X > 84) = P\uf8eb\uf8ec\uf8edZ > (84.5\u221299)/(33.66)\uf8f6\uf8f7\uf8f8 M1  \u00b1 Standardise,  (x\u2212their99)/(their33.66) , condone \u03c3^{2}, x a value\nM1  84.5 or 83.5 used in their standardisation formula\n(=P(Z> \u22122.499) )  M1  Correct final area\n0.994  A1  Final answer (accept 0.9938)\nSC if no standardisation formula seen,\nB2 P(Z > -2.499) = 0.994\n5",
+      "ocr_text": "4 In Quarendon, 66% of households are satisfied with the speed of their wifi connection. (i) Find the probability that, out of 10 households chosen at random in Quarendon, at least 8 are satisfied with the speed of their wifi connection. [3] (ii) A random sample of 150 households in Quarendon is chosen. Use a suitable approximation to find the probability that more than 84 are satisfied with the speed of their wifi connection. [5]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q04",
+      "question_number": "4",
+      "question_text": "4 In Quarendon, 66% of households are satisfied with the speed of their wifi connection. (i) Find the probability that, out of 10 households chosen at random in Quarendon, at least 8 are satisfied with the speed of their wifi connection. [3] (ii) A random sample of 150 households in Quarendon is chosen. Use a suitable approximation to find the probability that more than 84 are satisfied with the speed of their wifi connection. [5]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_the_normal_distribution"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2149,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2019_w19_62_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5(i)  B1  Table with correct values of x, at least 1 probability, all\nx  \u20131  0  1  2  3  4  probabilities \u2a7d 1\np  1 1 3 2 3 2\n12 12 12 12 12 12\nB1  2 probabilities correct, may not be in table\nB1  2 more probabilities correct, may not be in table\nB1  All correct, values in table\nSC1 No more than 1 correct probability and at least 5\nprobabilities summing to 1 in table\n4\n5(ii)  [E(X)] = \uf8eb\uf8ec\uf8ed(\u2212+1 0 + 3 + 4 + 9 + 8)/(12)\uf8f6\uf8f7\uf8f8 = 1223 M1  May be implied by use in variance. Allow unsimplified expression\n[Var(X)] = 1 + 0 + 3 + 8 +1227 + 32( = 71)\u2212\uf8ec\uf8eb\uf8ed1223\uf8f6\uf8f7\uf8f82 M1  Appropriate variance formula using their E(X)^{2}\n2.24 or 144323 or 214435 A1  CAO\n3",
+      "ocr_text": "5 A fair red spinner has four sides, numbered 1, 2, 3, 3. A fair blue spinner has three sides, numbered \u20141, 0, 2. When a spinner is spun, the score is the number on the side on which it lands. The spinners are spun at the same time. The random variable X denotes the score on the red spinner minus the score on the blue spinner. (i) Draw up the probability distribution table for X. [4] (ii) Find Var(X). [3]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q05",
+      "question_number": "5",
+      "question_text": "5 A fair red spinner has four sides, numbered 1, 2, 3, 3. A fair blue spinner has three sides, numbered -1, 0, 2. When a spinner is spun, the score is the number on the side on which it lands. The spinners are spun at the same time. The random variable X denotesthescoreontheredspinnerminusthe score on the blue spinner. (i) Draw up the probability distribution table for X. [4] MTIICT Be IWN10 OIND/LX/IA/INT/10 (ii) Find Var(X). [3]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2150,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2019_w19_62_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+      "current_packet_topic": "the_normal_distribution",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6(i)  P(X < 45) = P\uf8eb\uf8ec\uf8edZ < (45\u221240)/(8)\uf8f6\uf8f7\uf8f8 M1  \u00b1be seen Standardise, no continuity correction, \u03c3^{2} or  \u03c3, formula must\n= P(Z < 0.625)\n0.734(0)  A1  CAO\n2\n6(ii)  1\u22122(1\u2212(i)) = 2(i)\u22121 = 2((i)\u20130.5)   M1  OE Use result of part (i) or recalculated to find area\n0.468  A1ft  0 < FT from (i) < 1 or correct.\n2\n6(iii)  P(X < 10) = 48/500 = 0.096  B1  z\u2009=\u2009\u00b1 1.305\nz = \u20131.305\nP(X > 24) = 76/500 = 0.152  B1  z\u2009=\u2009\u00b1\u20091.028\nz = 1.028\n10\u2212\u00b5= \u22121.305\u03c3 M1  Form 1 equation using 10 or 24 with\u07e4, \u07ea, \u0756\u2013value. Allow\n24\u2212\u00b5= 1.028\u03c3 continuity correction, not\u07ea^{\u0b36}, \u221a\u07ea\n14 = 2.333\u03c3  M1  OE\nSolve two equations in \u03c3 and \u00b5 to form equation in one\nvariable\n\u03c3= 6.[00],     \u00b5= 17.8[3] A1  CAO, WWW\n5",
+      "ocr_text": "6 The heights, in metres, of fir trees in a large forest have a normal distribution with mean 40 and standard deviation 8. (i) Find the probability that a fir tree chosen at random in this forest has a height less than 45 metres. [2] (ii) Find the probability that a fir tree chosen at random in this forest has a height within 5 metres of the mean. [2] In another forest, the heights of another type of fir tree are modelled by a normal distribution. A scientist measures the heights of 500 randomly chosen trees of this type. He finds that 48 trees are less than 10 m high and 76 trees are more than 24 m high. (iii) Find the mean and standard deviation of the heights of trees of this type. [5]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q06",
+      "question_number": "6",
+      "question_text": "6 The heights, in metres, of fir trees in a large forest have a normal distribution with mean 40 and standard deviation 8. (i) Find the probability that a fir tree chosen at random in this forest has a height less than 45 metres. [2] (ii) Find the probability that a fir tree chosen at random in this forest has a height within 5 metres of the mean. [2] In another forest, the heights of another type of fir tree are modelled by a normal distribution. A scientist measures the heights of 500 randomly chosen trees of this type. He finds that 48 trees are less than 10 m high and 76 trees are more than 24 m high. (iii) Find the mean and standard deviation of the heights of trees of this type. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_the_normal_distribution"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2151,
+      "canonical_mark_scheme_image_path": "",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_62_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": false,
+      "mark_scheme_text": "7(i)  6! = 720  B1  Evaluated\n1\n7(ii)  Total no of arrangements: 9! = 30240 B1  Accept unevaluated\n2!3!\nNo with Ts together =  8! = 6720 B1  Accept unevaluated\n3!\nWith Ts not together: 30240\u20136720   M1  correct or 9!\u22128!, ,m n integers > 1\nm n\nor their identified total\u2013their identified Ts together\n23520 A1  CAO\nAlternative method for question 7(ii)\n7!\u00d78\u00d77 B1  7!\u00d7(k > 0) in numerator, cannot be implied by ^{7}P_{2, } etc.\n3! 2\nB1  3!\u00d7(k > 0) in denominator\nM1  their 7! \u00d78C_{2} or^{8}P_{2}\ntheir 3!\n23520 A1  CAO\n4\n7(iii)  Number of arrangements = 7! M1  their identified number of arrangements with T at ends\n3! their identified total number of arrangements\nProbability =  theirtheir 3!2!7!9!3! = 30240840 or7!9!mn ,m n integers > 1\n1 A1  Final answer\n36  or 0.0278\n2\n7(iv)  OOT_ _      ^{4}C_{2} = 6   M1  4C_{x} seen alone or ^{4}C_{x} x k \u22651, k an integer, 0< x <4\n(OOTT_      ^{4}C = 4)/(OOOT_     C_{1} = 4)_{4} 1 A1  4C_{2} x k, k = 1 oe or ^{4}C_{1} x m, m = 1 oe alone\nOOOTT          = 1\nM1  Add 3 or 4 identified correct scenarios only, accept unsimplified\n(Total) = 15  A1  CAO, WWW\nOnly dependent on 2nd M mark\n4",
+      "ocr_text": "7 (i) Find the number of different ways in which the 9 letters of the word TOADSTOOL can be arranged so that all three Os are together and both Ts are together. [1] (ii) Find the number of different ways in which the 9 letters of the word TOADSTOOL can be arranged so that the Ts are not together. [4] (iii) Find the probability that a randomly chosen arrangement of the 9 letters of the word TOADSTOOL has a T at the beginning and a T at the end. [2] (iv) Five letters are selected from the 9 letters of the word TOADSTOOL. Find the number of different selections if the five letters include at least 2 Os and at least | T. [4]",
+      "paper": "62winter19",
+      "paper_family": "p5",
+      "question_id": "62winter19_q07",
+      "question_number": "7",
+      "question_text": "7 (i) Find the number of di\ufb00erent ways in which the 9 letters of the word TOADSTOOL can be arranged so that all three Os are together and both Ts are together. [1] (ii) Find the number of di\ufb00erent ways in which the 9 letters of the word TOADSTOOL can be arranged so that the Ts are not together. [4] MTIICT Be IWN10 OIND/LX/IA/INT/10 (iii) Find the probability that a randomly chosen arrangement of the 9 letters of the word TOADSTOOL has a T at the beginning and a T at the end. [2] (iv) Five letters are selected from the 9 letters of the word TOADSTOOL. Find the number of di\ufb00erent selections if the five letters include at least 2 Os and at least 1 T. [4] MTIICT Be IWN10 OIND/LX/IA/INT/10",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": false,
+        "reasons": [
+          "missing_canonical_mark_scheme_image"
+        ]
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2152,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2010_s10_63_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2010_s10_63_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4  (i) ends cola, 5!/2!2! = 30  M1  Considering all three options\nends green tea, 5!/3!2! = 10\nends orange juice, 5!/3!2! = 10  A1  Any one option correct\ntotal = 50 ways  A1  Correct answer\nOR  P(ends same)  = 3\u00d72 + 2\u00d71 + 2\u00d71 M1 OR  Considering all three options\n7 6 7 6 7 6\n= 5 A1 Correct fraction\n21\n5 \u00d7 !7 =  50 ways A1 Correct answer\n21 !2!2!3\n[3]\n(ii) colas together, no restrictions, 5!/2!2!  M1  Considering all colas together, or 5! seen\n= 30 ways  A1  Correct answer\ncolas together and green tea together, 4!/2!  M1  Considering all colas tog and all green tea tog,\nor 4! seen\n= 12 ways  A1  Correct answer\n30 \u2013 12 = 18 ways.  A1  Correct final answer\nOR_{1 } Attempt to list  M1A1  OR_{1}  10 or more, 12 or more correct\nM1A1  14 or more, 16 or more correct\nA1  18 correct\nOR_{2} 3\u00d74\u00d73 = 18 M1 OR_{2} Considering all colas together, or 3! seen\n2\nA1  3 ways for colas and orange juice\nM1  Considering green teas not together\nA1  4 \u00d7 3 or (4 \u00d7 3)/2\nA1  Correct final answer\n[5]",
+      "ocr_text": "4 Three identical cans of cola, 2 identical cans of green tea and 2 identical cans of orange juice are arranged in a row. Calculate the number of arrangements if (i) the first and last cans in the row are the same type of drink, [3] (ii) the 3 cans of cola are all next to each other and the 2 cans of green tea are not next to each other. [5]",
+      "paper": "63summer10",
+      "paper_family": "p5",
+      "question_id": "63summer10_q04",
+      "question_number": "4",
+      "question_text": "4 Three identical can s of cola, 2identical can s of greentea and2identicalcansoforange juiceare arranged in a row. Calculate the number of arrangements if (i) the first and last cans in the row are the same type of drink, [3] (ii) the 3 cans of cola are all next to each other and the 2 cans of green tea are not next to each other. [5]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2153,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2010_s10_63_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2010_s10_63_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  (i) P(2) = P(0,2) + P(2,0)   M1  Summing two 2-factor probabilities\n= 6/10 \u00d7 3/7 + 3/10 \u00d7 4/7\n= 30/70 = 3/7 AG  A1  Correct answer legit obtained\n[2]\n(ii)\nx  0  2  4  6  B1  Correct values for rv X\nP(X = x) 24/70  30/70  13/70  3/70  B1  Correct probs\n[2]\n(iii) E(Var(X) = 13/7 X) = 120/70 + 208/70 + 108/70 \u2013 (13/7)^{2} (B1ft)/(M1) Using variance formula correctly with mean^{2}\nsubtracted numerically, no extra division\n= 2.78  A1  Correct final answer\n[3]\n(iv) P(A2\u2502Sum 2) = 3/10\u00d74/7 M1 Correct numerator with a 0 < denom < 1\n30/70\n= 0.4 A1  Correct answer\n[2]",
+      "ocr_text": "Set A consists of the ten digits 0, 0, 0, 0, 0, 0, 2, 2, 2, 4. Set B consists of the seven digits 0, 0, 0, 0, 2, 2, 2. One digit is chosen at random from each set. The random variable X is defined as the sum of these two digits. (i) Show that P(X = 2) = 3. [2] (ii) Tabulate the probability distribution of X. [2] (iii) Find E(X) and Var(X). [3] (iv) Given that X = 2, find the probability that the digit chosen from set A was 2. [2]",
+      "paper": "63summer10",
+      "paper_family": "p5",
+      "question_id": "63summer10_q05",
+      "question_number": "5",
+      "question_text": "5 Set A consists of the ten digits 0, 0, 0, 0, 0, 0, 2, 2, 2, 4. Set B consists of the seven digits 0, 0, 0, 0, 2, 2, 2. One digit is chosen at random from each set. The random variable Xis defined asthe sum of these two digits. (i) Show that P(X = 2) = ^{3}_{7}. [2] (ii) Tabulate the probability distribution of X. [2] (iii) Find E(X) and Var(X). [3] (iv) Given that X = 2, find the probability that the digit chosen from set A was 2. [2]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2154,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2010_s10_63_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2010_s10_63_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i) for X: Median = 0.825 cm  B1  Correct median\nIQ range = 0.019 cm (0.833 \u2013 0.814)  B1  Correct IQ range\n[2]\n(ii) q = 4  B1\nr = 2  B1  Must be 4 and 2 not 3 and 1\n[2]\nSR q = 0.824 and r = 0.852  B1\n(iii)  B1  Labels X, Y and length/cm, linear scale\nY from 0.80 to 0.87 and both on one\ndiagram\nX B1ft  Correct median and quartiles for X ft\ntheirs must be a box\nB1ft  Correct median and quartiles for Y ft\ntheirs must be a box\n0.80   0.81  0.82  0.83  0.84  0.85   0.86    0.87   B1  Whiskers correct no line through middle\nlength in cm  [4]\n(iv) Y has longer insects on average  B1  Correct statement about lengths\nY has larger range  B1  Correct statement about spreads\n[2]",
+      "ocr_text": "6 The lengths of some insects of the same type from two countries, X and Y, were m stem-and-leaf diagram shows the results. (10) (18) (16) (16) (11) Country X 9766644432 888776655544333220 9998877655322100 8765553322211100 87655443311 80 81 82 83 84 85 86 Country Y 1122333556789 0012333q\u00a24566788 01224444556677789 001244556677789 12r335566788 01223555899 Key: 5 | 81] 3 means an insect from country X has length 0.815 cm and an insect from country Y has length 0.813 cm. (i) Find the median and interquartile range of the lengths of the insects from country X. (ii) The interquartile range of the lengths of the insects from country Y is 0.028 cm. Find the values of g and r. (iii) Represent the data by means of a pair of box-and-whisker plots in a single diagram on graph paper. (iv) Compare the lengths of the insects from the two countries. 2 2 4",
+      "paper": "63summer10",
+      "paper_family": "p5",
+      "question_id": "63summer10_q06",
+      "question_number": "6",
+      "question_text": "6 The lengths of some insects of the same type from two countries, X andY, were measured. The stem-and-leaf diagram shows the results. Country X Country Y Key: 5 | 81 | 3 means an insect from country Xhas length 0.815 cm and an insect from country Yhas length 0.813 cm. (i) Find the median and interquartile range of the lengths of the insects from country X. [2] (ii) The interquartile range of the lengths of the insects from country Yis 0.028 cm. Find the values of q and r. [2] (iii) Representthedatabymeansofapairofbox-and-whiskerplotsinasinglediagramongraph paper. [4] (iv) Compare the lengths of the insects from the two countries. [2]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2155,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2010_s10_63_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2010_s10_63_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+      "current_packet_topic": "the_normal_distribution",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i) 0.431 = 135\u2212\u00b5 B1 One \u00b1z-value correct, accept 0.430\n\u03c3\nB1  A second \u00b1z-value correct\n\u20130.842 = 127\u2212\u00b5 M1 Solving two equations relating \u00b5, \u03c3, 135,\n\u03c3\n127 and their z-values (must be z-values)\n\u03c3 = 6.29  A1  Correct answer accept 6.28\n\u00b5 = 132  A1  Correct answer\n[5]\n(ii)  P(X < 145) = P\uf8eb\uf8ecz < 145\u22121323.\uf8f6\uf8f7 M1 Standardising no sq rt no cc\n\uf8ed .6284 \uf8f8\n=P(z < 2.023)  M1  Correct use of normal tables\n= 0.978  A1  Answer rounding to 0.978 or 0.979\n[3]\n(iii) p = 1/3\nP(at least 2) =  1 \u2013 P(0, 1)  M1  Binomial expression with powers summing to 8 and ^{8} Csomething. (any p)\n= 1 \u2013 [(2/3)^{8} + 8C_{1}\u00d71(/3)^{1}(2/3)^{7}]  A1 Correct unsimplified expression\n= 0.805  A1  Answer rounding to 0.805\n[3]",
+      "ocr_text": "The heights that children of a particular age can jump have a normal distribution. On average, 8 children out of 10 can jump a height of more than 127 cm, and 1 child out of 3 can jump a height of more than 135 cm. (i) Find the mean and standard deviation of the heights the children can jump. [5] (ii) Find the probability that a randomly chosen child will not be able to jump a height of 145 cm. [3] (iii) Find the probability that, of 8 randomly chosen children, at least 2 will be able to jump a height of more than 135 cm. [3]",
+      "paper": "63summer10",
+      "paper_family": "p5",
+      "question_id": "63summer10_q07",
+      "question_number": "7",
+      "question_text": "7 The heights that children of a particular age can jump have a normal distribution. On average, 8 children out of 10 can jump a height of more than 127 cm, and 1 child out of 3 can jump a height of more than 135 cm. (i) Find the mean and standard deviation of the heights the children can jump. [5] (ii) Find the probability that a randomly chosen child will not be able to jump a height of 145 cm. [3] (iii) Find the probability that, of 8 randomly chosen children, at least 2 will be able to jump a height of more than 135 cm. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_the_normal_distribution"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2156,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2011_s11_63_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2011_s11_63_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+      "current_packet_topic": "the_normal_distribution",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1 (i) (3.6\u00d79 + 64) / 24  M1  Mult by 9, adding 64 then dividing by 24\n= 4.02 years  A1   [2] Correct answer\n(ii) \u03a3x9^{A}^{2} \u22126.3^{2}= 1.925^{2} M1  Attempt to find variance formula \u03a3x_{A}^{2} using correct\n\u03a3x_{A}^{2} = 150  A1  Correct \u03a3x_{A}^{2}\n1500. + 352\u2212.4017^{2}= 4.780  M1  Using 352 + their 150 in correct variance\n24 formula\nsd = 2.19 A1  [4] Correct answer",
+      "ocr_text": "\u201c9, 1 Red Street Garage has 9 used cars for sale. Fairwheel Garage has 15 used cars for sale. a of the cars in Red Street Garage is 3.6 years and the standard deviation is 1.925 years. In a) Garage, Dx = 64 and 2x\u201d = 352, where x is the age of a car in years. (i) Find the mean age of all 24 cars. (ii) Find the standard deviation of the ages of all 24 cars. [4]",
+      "paper": "63summer11",
+      "paper_family": "p5",
+      "question_id": "63summer11_q01",
+      "question_number": "1",
+      "question_text": "1 Red Street Garage has 9 used cars for sale. Fairwheel Garage has 15 used cars for sale. The mean age of the cars in Red Street Garage is 3.6 years and the standard deviation is 1.925 years. In Fairwheel Garage, \u03a3x = 64 and \u03a3x^{2} = 352, where x is the age of a car in years. (i) Find the mean age of all 24 cars. [2] (ii) Find the standard deviation of the ages of all 24 cars. [4]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_the_normal_distribution"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2157,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2011_s11_63_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2011_s11_63_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2 (i) 4\u00d73\u00d77\n= 84  B1   [1] Correct answer\n(ii) 10! \u2013 9! \u00d7 2  B1  10! \u2212 k \u00d7 9! seen oe\n= 2903040 (2900000)  B1   [2] Correct answer\nOR 8! \u00d7 9 \u00d7 8  B1  8! \u00d7 9 \u00d7 l seen oe\n= 2903040 (2900000)  B1  Correct answer\n(iii) 9C_{1} + 9C_{2} + ... + 9C_{9} M1  Using combinations\nM1  Adding 9 combinations\n= 511  A1  [3] Correct answer\nOR 2^{9} \u2013 1  M1  2^{9 } seen\nM1  Subtracting 1\n= 511  A1  Correct answer",
+      "ocr_text": "Fahad has 4 different coloured pairs of shoes (white, red, blue and black), 3 different coloured pairs of jeans (blue, black and brown) and 7 different coloured tee shirts (red, orange, yellow, blue, green, white and purple). (i) Fahad chooses an outfit consisting of one pair of shoes, one pair of jeans and one tee shirt. How many different outfits can he choose? [1] (ii) How many different ways can Fahad arrange his 3 jeans and 7 tee shirts in a row if the two blue items are not next to each other? [2] Fahad also has 9 different books about sport. When he goes on holiday he chooses at least one of these books to take with him. (iii) How many different selections are there if he can take any number of books ranging from just one of them to all of them? [3]",
+      "paper": "63summer11",
+      "paper_family": "p5",
+      "question_id": "63summer11_q02",
+      "question_number": "2",
+      "question_text": "2 Fahad has 4 different coloured pairs of shoes (white, red, blue and black), 3 different coloured pairs of jeans (blue, black and brown) and 7 different coloured tee shirts (red, orange, yellow, blue, green, white and purple). (i) Fahad chooses an outfit consisting of one pair of shoes, one pair of jeans and one tee shirt. How many different outfits can he choose? [1] (ii) How many different ways can Fahad arrange his 3 jeans and 7 tee shirts in a row if the two blue items are not next to each other? [2] Fahadalsohas9differentbooksaboutsport. Whenhegoesonholidayhechoosesatleastoneof these books to take with him. (iii) Howmanydifferentselectionsarethereifhe cantakeanynumberofbooksrangingfromjust one of them to all of them? [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2158,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2011_s11_63_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2011_s11_63_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3 (i)  median_{A} < 35 or 20 \u2264 median_{A} < 35 or   B1  Correct numerical statement re median_{A} or\nmedian_{A} = 33.0/33.1/33.5/33.6  median_{B}\nor median_{B} \u2265 50 or 50 \u2264 median_{B} < 70 or  B1   [2] Correct numerical statement re other\nmedian_{B} = 51.7/51.9/52.2/52.4  median and a conclusion\nmedian_{B} > median_{A}\nORA has 66 cand 50 < mark < 100, so med_{A }< 50  B1  As before\nor B has 156 cand 50 < mark < 100, so med_{B }> 50\nmedian_{B} > median_{A} B1  As before\n(ii)  159 \u2013 68 = 91  B1   [1] Correct final answer\n(iii) mean=\uf8eb\uf8ec\uf8ec\uf8ed +5.4.....\u00d7(25 + 145. 43 + 27)/(+ 845. 40)\u00d7 \u00d7 \u00d791\uf8f6\uf8f7\uf8f7\uf8f8/300 M1  Using an attempt at mid-points, not end points or class widths\nM1  Using an attempt at frequencies, not cum\nfreqs\nM1  Sum of 6 prods, correct freqs, divided by\n300\n= 11270 / 300 = 37.6  A1   [4] Correct answer",
+      "ocr_text": "3 The following cumulative frequency table shows the examination marks for 300 candidates in country A and 300 candidates in country B. Conuiatve owen | 25 | 66 [159 | 230 | 200 | 300 | (i) Without drawing a graph, show that the median for country B is higher than the median for [2] country A. (ii) Find the number of candidates in country A who scored between 20 and 34 marks inclusive. [1] (iii) Calculate an estimate of the mean mark for candidates in country A. [4]",
+      "paper": "63summer11",
+      "paper_family": "p5",
+      "question_id": "63summer11_q03",
+      "question_number": "3",
+      "question_text": "3 The following cumulative frequency table shows the examination marks for 300 candidates in country A and 300 candidates in country B. Mark < 10 < 20 < 35 < 50 < 70 < 100 Cumulative frequency, A 25 68 159 234 260 300 Cumulative frequency, B 10 46 72 144 198 300 (i) Without drawing a graph, show that the median for country B is higher than the median for (ii) Find the number of candidates in country A who scored between 20 and 34 marks inclusive. [1] (iii) Calculate an estimate of the mean mark for candidates in country A. [4]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2159,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2011_s11_63_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2011_s11_63_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5 (i) z = \u00b1 1.751  B1  Correct z\n\u00b1  20\u2212\u00b5 = .1751 M1  Standardising no cc, no sqrt, must be a\n\u00b5/4 z-value\n\u00b5 = 13.9 A1  [3] Correct answer\n(ii) P(X < 10) = P(z < \u00b11013 \u2212.9113/.914 )   M1  Standardising attempt with 10, their their \u00b5/4, no cc, no sqrt  \u00b5 and\n= P(z < \u22121.124)  M1  \u201c\u03a6_{\uf031} + \u03a6_{2} \u2013 1\u201d, ft their mean\n= 1\u2212 0.8694\n= 0.131\nP(10 < X < 20) = 0.96 \u2013 0.131\n= 0.829 or 0.830  A1  [3] Correct answer\n(iii) \u00b5 = 250 \u00d7 0.96 = 240  B1  240 and 9.6 or sq rt 9.6 seen unsimplified\n\u03c3^{2} = 250 \u00d7 0.96 \u00d7 0.04 = 9.6\nP(\u2265 235) = 1 \u2212 \u03a6\uf8eb\uf8ec\uf8ec\uf8ed \u00b1 (2345.\u2212240)/(6.9)\uf8f6\uf8f7\uf8f7\uf8f8 M1  Standardising, with or without cc, must have sq rt in denom\nM1  Continuity correction 234.5 or 235.5 only\n= \u03a6 (1.775)  M1  Correct region > 0.5, ft their mean\n= 0.962  A1  [5] Correct answer",
+      "ocr_text": "5 The random variable X is normally distributed with mean u and standard deviation tu. It is given that P(X > 20) = 0.04. (@ Find uw. [3] (ii) Find P(10 < X < 20). [3] (iii) 250 independent observations of X are taken. Find the probability that at least 235 of them are less than 20. [5]",
+      "paper": "63summer11",
+      "paper_family": "p5",
+      "question_id": "63summer11_q05",
+      "question_number": "5",
+      "question_text": "5 Thethat Prandom(X > 20variable) = 0.04.X isnormallydistributedwithmean\u00b5andstandarddeviation 4^{1}\u00b5. Itisgiven (i) Find \u00b5. [3] (ii) Find P(10 < X < 20). [3] (iii) 250 independent observations of Xare taken. Find the probability that at least 235 of them are less than 20. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_s1_topic_discrete_random_variables",
+          "topic_id": "discrete_random_variables",
+          "topic_label": "Discrete random variables"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_permutations_and_combinations",
+          "topic_id": "permutations_and_combinations",
+          "topic_label": "Permutations and combinations"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_probability",
+          "topic_id": "probability",
+          "topic_label": "Probability"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_representation_of_data",
+          "topic_id": "representation_of_data",
+          "topic_label": "Representation of data"
+        },
+        {
+          "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
+          "topic_id": "the_normal_distribution",
+          "topic_label": "The normal distribution"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 2160,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2012_s12_63_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2012_s12_63_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_s1_topic_probability",
+      "current_packet_topic": "probability",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  (i) stem and leaf  B1*  correct answer\nshows shape / spread / range / all  B1dep* [2] valid reason, e.g. small number of prices, easy to\nprices  calculate median\n[OR box-and-whisker  correct answer\nshows shape/spread/range  valid reason, e.g. can read median]\nSR histogram B1only\n(ii) histogram  B1*  correct answer\nshows shape/spread/modal class  B1dep*  [2]  valid reason, e.g. large number of prices, too\nmany prices for stem-and-leaf\n[OR_{1} cumulative frequency graph  correct answer\nshows shape or large number of prices  valid reason, e.g. easy to calculate median]\n[OR_{2} box-and-whisker\nshows shape/spread/range  correct answer\nvalid reason, e.g. can read median]",
+      "ocr_text": "1 Ashfaq and Kuljit have done a school statistics project on the prices of a particular model of headphones for MP3 players. Ashfaq collected prices from 21 shops. Kuljit used the internet to collect prices from 163 websites. (i) Name a suitable statistical diagram for Ashfaq to represent his data, together with a reason for choosing this particular diagram. [2] (ii) Name a suitable statistical diagram for Kuljit to represent her data, together with a reason for choosing this particular diagram. [2]",
+      "paper": "63summer12",
+      "paper_family": "p5",
+      "question_id": "63summer12_q01",
+      "question_number": "1",
+      "question_text": "1 Ashfaq and Kuljit have done a school statistics project on the prices of a particular model of headphones for MP3 players. Ashfaq collected prices from 21 shops. Kuljit used the internet to collect prices from 163 websites. (i) Name a suitable statistical diagram for Ashfaq to represent his data, together with a reason for choosing this particular diagram. [2] (ii) Name a suitable statistical diagram for Kuljit to represent her data, together with a reason for choosing this particular diagram. [2]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p5",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_s1_topic_probability"
+        }
+      ]
+    }
+  ],
+  "schema_name": "exam_bank.topic_review.auto_review_batch",
+  "schema_version": 1,
+  "skipped_rows": []
+}

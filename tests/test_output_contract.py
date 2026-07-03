@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import datetime
 import json
 from pathlib import Path
@@ -7,7 +8,7 @@ import pytest
 
 from exam_bank import __version__
 from exam_bank.config import AppConfig
-from exam_bank.exporters import QUESTION_BANK_SCHEMA_NAME, QUESTION_BANK_SCHEMA_VERSION, export_records
+from exam_bank.exporters import QUESTION_BANK_SCHEMA_NAME, QUESTION_BANK_SCHEMA_VERSION, export_records, write_question_bank_payload
 from exam_bank.models import QuestionRecord
 from exam_bank.output_layout import mark_scheme_image_output_path, paper_instance_id, question_image_output_path
 from exam_bank.output_layout import (
@@ -87,6 +88,39 @@ def _record() -> QuestionRecord:
     )
 
 
+def _payload_record(
+    question_id: str,
+    *,
+    mark_scheme_image_path: str,
+    mapping_status: str = "pass",
+    validation_status: str = "pass",
+    paper: str = "12spring24",
+) -> dict:
+    return {
+        "question_id": question_id,
+        "paper": paper,
+        "paper_family": "p1",
+        "question_number": "1",
+        "question_image_path": f"p1/{paper}/questions/{question_id}.png",
+        "mark_scheme_image_path": mark_scheme_image_path,
+        "notes": {
+            "source_pdf": "input/question_papers/9709 Mathematics March 2024 Question Paper  12.pdf",
+            "mark_scheme_source_pdf": "input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  12.pdf",
+            "mapping_status": mapping_status,
+            "mapping_failure_reason": "",
+            "missing_mark_scheme_reason": "",
+            "validation_status": validation_status,
+            "validation_flags": [],
+            "scope_quality_status": "clean",
+            "text_fidelity_status": "clean",
+            "visual_curation_status": "ready",
+            "text_only_status": "ready",
+            "question_crop_confidence": "high",
+            "mark_scheme_crop_confidence": "high",
+        },
+    }
+
+
 def test_paper_first_image_paths_follow_family_paper_questions_and_mark_scheme_layout(tmp_path: Path) -> None:
     config = AppConfig()
     config.output.apply_root(tmp_path / "output")
@@ -162,6 +196,80 @@ def test_export_records_writes_json_under_output_json_only(tmp_path: Path) -> No
     assert "paper_total_focus_questions" in question["notes"]
     assert not (tmp_path / "output" / "csv").exists()
     assert not (tmp_path / "output" / "review").exists()
+
+
+def test_payload_pass_statuses_survive_when_mark_scheme_image_is_present(tmp_path: Path) -> None:
+    output_path = tmp_path / "question_bank.json"
+    record = _payload_record(
+        "12spring24_q01",
+        mark_scheme_image_path="p1/12spring24/mark_scheme/q01.png",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    write_question_bank_payload([record], output_path)
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+
+    notes = payload["questions"][0]["notes"]
+    assert notes["mapping_status"] == "pass"
+    assert notes["validation_status"] == "pass"
+    assert payload["run_manifest"]["qa_summary"]["mapping_status_counts"] == {"pass": 1}
+    assert payload["run_manifest"]["qa_summary"]["validation_status_counts"] == {"pass": 1}
+
+
+def test_payload_missing_mark_scheme_image_forces_nonpass_statuses_and_manifest_counts(tmp_path: Path) -> None:
+    output_path = tmp_path / "question_bank.json"
+    good = _payload_record(
+        "12spring24_q01",
+        mark_scheme_image_path="p1/12spring24/mark_scheme/q01.png",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+    missing = _payload_record(
+        "12spring24_q02",
+        mark_scheme_image_path="",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+
+    write_question_bank_payload([good, missing], output_path)
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+
+    missing_notes = payload["questions"][1]["notes"]
+    assert missing_notes["mapping_status"] == "fail"
+    assert missing_notes["validation_status"] == "fail"
+    assert missing_notes["mapping_failure_reason"] == "missing_mark_scheme_image_path"
+    assert missing_notes["missing_mark_scheme_reason"] == "missing_mark_scheme_image_path"
+    assert "missing_mark_scheme_image_path" in missing_notes["validation_flags"]
+
+    payload_mapping_counts = Counter(question["notes"]["mapping_status"] for question in payload["questions"])
+    payload_validation_counts = Counter(question["notes"]["validation_status"] for question in payload["questions"])
+    manifest_summary = payload["run_manifest"]["qa_summary"]
+    assert manifest_summary["mapping_status_counts"] == dict(sorted(payload_mapping_counts.items()))
+    assert manifest_summary["validation_status_counts"] == dict(sorted(payload_validation_counts.items()))
+    assert manifest_summary["mapping_status_counts"] == {"fail": 1, "pass": 1}
+    assert manifest_summary["validation_status_counts"] == {"fail": 1, "pass": 1}
+
+
+def test_payload_preserves_known_missing_mark_scheme_companion_allowance(tmp_path: Path) -> None:
+    output_path = tmp_path / "question_bank.json"
+    record = _payload_record(
+        "33winter25_q01",
+        paper="33winter25",
+        mark_scheme_image_path="",
+        mapping_status="pass",
+        validation_status="pass",
+    )
+    record["notes"]["source_pdf"] = "input/question_papers/9709 Mathematics November 2025 Question Paper  33.pdf"
+    record["notes"]["mark_scheme_source_pdf"] = ""
+
+    write_question_bank_payload([record], output_path)
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+
+    notes = payload["questions"][0]["notes"]
+    assert notes["mapping_status"] == "pass"
+    assert notes["validation_status"] == "pass"
+    assert notes["missing_mark_scheme_reason"] == "known_missing_mark_scheme_companion"
 
 
 def test_export_records_fails_when_artifact_path_session_disagrees_with_metadata(tmp_path: Path) -> None:

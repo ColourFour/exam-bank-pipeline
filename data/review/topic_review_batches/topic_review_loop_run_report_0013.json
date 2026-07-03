@@ -1,0 +1,47 @@
+{
+  "accepted_action_counts": {
+    "exclude": 47,
+    "keep": 922,
+    "relabel": 275
+  },
+  "accepted_count": 1244,
+  "last_completed_slice": 52,
+  "merged_decisions_path": "data/review/topic_review_batches/topic_review_auto_reviewed_merged_0013.v1.json",
+  "notes": [
+    "Round 13 reviewed slices 49-52 (records 1441-1560).",
+    "Slices 49, 51, and 52 remained pending because inspected content appeared to be Mechanics/P4 while the normalized row family allowed only P5/S1 topics.",
+    "Slice 50 contributed 25 exclude decisions for content not relevant to the 2026-2027 S1 syllabus baseline; five rows remained pending because canonical/mark-scheme evidence gates were not fully satisfied."
+  ],
+  "packet_validation": {
+    "applied_reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 922,
+      "relabel": 275
+    },
+    "reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 922,
+      "relabel": 275
+    },
+    "reviewed_decisions_loaded": 1244,
+    "total_excluded_questions": 47,
+    "total_included_in_release_packets": 1464,
+    "total_included_in_review_packets": 2037,
+    "total_review_required_questions": 2037
+  },
+  "pending_count": 316,
+  "raw_decision_action_counts": {
+    "exclude": 47,
+    "keep": 922,
+    "pending": 316,
+    "relabel": 275
+  },
+  "reviewed_by_subagents_count": 1560,
+  "round": 13,
+  "slice_size": 30,
+  "validation": {
+    "focused_pytest": ".venv/bin/pytest -q tests/test_topic_review_loop.py tests/test_topic_packets.py",
+    "focused_pytest_result": "63 passed, 5 warnings",
+    "packet_dry_run_result": "passed"
+  }
+}

@@ -528,11 +528,11 @@
         "review_notes": "Accepted from clean batch_0001 draft after canonical question and mark-scheme image inspection. Part (c) explicitly uses an iterative formula for the root and the mark scheme confirms the iteration sequence. Supporting skills remain context only; advisory mark events were not promoted.",
         "source_pattern": "fixed-point iteration"
       },
-      "evidence_id": "p3_exact_skill_review:batch_0001_seed:32autumn23_q06:32autumn23_q06_c",
+      "evidence_id": "p3_exact_skill_review:batch_0001_seed:32winter23_q06:32winter23_q06_c",
       "mark_event_refs": [
         {
           "advisory_only": true,
-          "event_id": "32autumn23_q06_me0007",
+          "event_id": "32winter23_q06_me0007",
           "mark_code": "M1",
           "part_path": [
             "c"
@@ -542,7 +542,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "32autumn23_q06_me0008",
+          "event_id": "32winter23_q06_me0008",
           "mark_code": "A1",
           "part_path": [
             "c"
@@ -552,7 +552,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "32autumn23_q06_me0009",
+          "event_id": "32winter23_q06_me0009",
           "mark_code": "A1",
           "part_path": [
             "c"
@@ -561,7 +561,7 @@
           "source": "output/json/question_bank.mark_events.v1.json"
         }
       ],
-      "paper": "32autumn23",
+      "paper": "32winter23",
       "part_id": "c",
       "provenance": {
         "batch_id": "batch_0001",
@@ -572,11 +572,11 @@
         "draft_response_path": "data/review/p3_exact_skill_batches/batch_0001_review_responses.v1.json",
         "notes": "Small seed promotion only; ambiguous and blocked draft responses remain unpromoted.",
         "review_packet_path": "data/review/p3_exact_skill_batches/batch_0001_review_packet.md",
-        "source_draft_response_id": "batch_0001:10:p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c",
+        "source_draft_response_id": "batch_0001:10:p3_exact_skill_review_queue:v1:32winter23_q06:32winter23_q06_c",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:32winter23_q06:32winter23_q06_c",
         "timestamp": "2026-05-26T00:23:48Z"
       },
-      "question_id": "32autumn23_q06",
+      "question_id": "32winter23_q06",
       "reviewed_region": {
         "asterion_region_id": "asterion:9709:p3:3.6:9709-p3-3-6-fixed-point-iteration",
         "component": "p3",
@@ -596,8 +596,8 @@
       "session": "November",
       "source_mark_scheme_asset_refs": [
         {
-          "asset_id": "mark_scheme_image:32autumn23:32autumn23_q06",
-          "path": "p3/32autumn23/mark_scheme/q06.png",
+          "asset_id": "mark_scheme_image:32winter23:32winter23_q06",
+          "path": "p3/32winter23/mark_scheme/q06.png",
           "sha256": "2ec28eece625619c2b90dea97529b36b581f3c974c33527385804c903a3f1fcc",
           "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0001_seed",
           "verified": true
@@ -605,14 +605,14 @@
       ],
       "source_question_asset_refs": [
         {
-          "asset_id": "question_image:32autumn23:32autumn23_q06",
-          "path": "p3/32autumn23/questions/q06.png",
+          "asset_id": "question_image:32winter23:32winter23_q06",
+          "path": "p3/32winter23/questions/q06.png",
           "sha256": "043cb0b4e96c54933f7d2345277756773f23b08db89d57b9b49116a57739bc25",
           "verification_basis": "canonical_question_image_inspected_for_batch_0001_seed",
           "verified": true
         }
       ],
-      "subpart_id": "32autumn23_q06_c",
+      "subpart_id": "32winter23_q06_c",
       "variant": "2"
     },
     {
@@ -1246,11 +1246,11 @@
         "source_pattern": "log/exponential equations",
         "support_material_decision": "supporting_context_only"
       },
-      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33autumn23_q01:33autumn23_q01_whole",
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33winter23_q01:33winter23_q01_whole",
       "mark_event_refs": [
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0001",
+          "event_id": "33winter23_q01_me0001",
           "mark_code": "B1",
           "part_path": [],
           "review_status": "advisory",
@@ -1258,7 +1258,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0002",
+          "event_id": "33winter23_q01_me0002",
           "mark_code": "M1",
           "part_path": [],
           "review_status": "advisory",
@@ -1266,7 +1266,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0003",
+          "event_id": "33winter23_q01_me0003",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1274,7 +1274,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0004",
+          "event_id": "33winter23_q01_me0004",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1282,7 +1282,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0005",
+          "event_id": "33winter23_q01_me0005",
           "mark_code": "M1",
           "part_path": [],
           "review_status": "advisory",
@@ -1290,7 +1290,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0006",
+          "event_id": "33winter23_q01_me0006",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1298,7 +1298,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0007",
+          "event_id": "33winter23_q01_me0007",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1306,14 +1306,14 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q01_me0008",
+          "event_id": "33winter23_q01_me0008",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
           "source": "output/json/question_bank.mark_events.v1.json"
         }
       ],
-      "paper": "33autumn23",
+      "paper": "33winter23",
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0002",
@@ -1324,11 +1324,11 @@
         "draft_response_path": "data/review/p3_exact_skill_batches/batch_0002_review_responses.v1.json",
         "notes": "Small Batch 0002 seed promotion only; ambiguous, blocked, thin, duplicated, and unresolved clean draft responses remain unpromoted.",
         "review_packet_path": "data/review/p3_exact_skill_batches/batch_0002_review_packet.md",
-        "source_draft_response_id": "batch_0002:9:p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole",
+        "source_draft_response_id": "batch_0002:9:p3_exact_skill_review_queue:v1:33winter23_q01:33winter23_q01_whole",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:33winter23_q01:33winter23_q01_whole",
         "timestamp": "2026-05-26T01:45:00Z"
       },
-      "question_id": "33autumn23_q01",
+      "question_id": "33winter23_q01",
       "reviewed_region": {
         "asterion_region_id": "asterion:9709:p3:3.2:9709-p3-3-2-log-exponential-equations",
         "component": "p3",
@@ -1348,8 +1348,8 @@
       "session": "November",
       "source_mark_scheme_asset_refs": [
         {
-          "asset_id": "mark_scheme_image:33autumn23:33autumn23_q01",
-          "path": "p3/33autumn23/mark_scheme/q01.png",
+          "asset_id": "mark_scheme_image:33winter23:33winter23_q01",
+          "path": "p3/33winter23/mark_scheme/q01.png",
           "sha256": "49c2957fd30c93274422dae5834e65c047053071881ae4c020691757f80ef644",
           "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
           "verified": true
@@ -1357,14 +1357,14 @@
       ],
       "source_question_asset_refs": [
         {
-          "asset_id": "question_image:33autumn23:33autumn23_q01",
-          "path": "p3/33autumn23/questions/q01.png",
+          "asset_id": "question_image:33winter23:33winter23_q01",
+          "path": "p3/33winter23/questions/q01.png",
           "sha256": "65fca41d1592fd29bcb866912a68cb6712cc69f428cc4814a4952b67cbba5619",
           "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
           "verified": true
         }
       ],
-      "subpart_id": "33autumn23_q01_whole",
+      "subpart_id": "33winter23_q01_whole",
       "variant": "3"
     },
     {
@@ -1389,11 +1389,11 @@
         "source_pattern": "polynomial division/factor/remainder",
         "support_material_decision": "supporting_context_only"
       },
-      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33autumn23_q03:33autumn23_q03_whole",
+      "evidence_id": "p3_exact_skill_review:batch_0002_seed:33winter23_q03:33winter23_q03_whole",
       "mark_event_refs": [
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0001",
+          "event_id": "33winter23_q03_me0001",
           "mark_code": "M1",
           "part_path": [],
           "review_status": "advisory",
@@ -1401,7 +1401,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0002",
+          "event_id": "33winter23_q03_me0002",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1409,7 +1409,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0003",
+          "event_id": "33winter23_q03_me0003",
           "mark_code": "M1",
           "part_path": [],
           "review_status": "advisory",
@@ -1417,7 +1417,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0004",
+          "event_id": "33winter23_q03_me0004",
           "mark_code": "B2",
           "part_path": [],
           "review_status": "advisory",
@@ -1425,7 +1425,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0005",
+          "event_id": "33winter23_q03_me0005",
           "mark_code": "A2",
           "part_path": [],
           "review_status": "advisory",
@@ -1433,7 +1433,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0006",
+          "event_id": "33winter23_q03_me0006",
           "mark_code": "A2",
           "part_path": [],
           "review_status": "advisory",
@@ -1441,7 +1441,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0007",
+          "event_id": "33winter23_q03_me0007",
           "mark_code": "A2",
           "part_path": [],
           "review_status": "advisory",
@@ -1449,7 +1449,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0008",
+          "event_id": "33winter23_q03_me0008",
           "mark_code": "B2",
           "part_path": [],
           "review_status": "advisory",
@@ -1457,7 +1457,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0009",
+          "event_id": "33winter23_q03_me0009",
           "mark_code": "A4",
           "part_path": [],
           "review_status": "advisory",
@@ -1465,7 +1465,7 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0010",
+          "event_id": "33winter23_q03_me0010",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
@@ -1473,14 +1473,14 @@
         },
         {
           "advisory_only": true,
-          "event_id": "33autumn23_q03_me0011",
+          "event_id": "33winter23_q03_me0011",
           "mark_code": "A1",
           "part_path": [],
           "review_status": "advisory",
           "source": "output/json/question_bank.mark_events.v1.json"
         }
       ],
-      "paper": "33autumn23",
+      "paper": "33winter23",
       "part_id": "whole",
       "provenance": {
         "batch_id": "batch_0002",
@@ -1491,11 +1491,11 @@
         "draft_response_path": "data/review/p3_exact_skill_batches/batch_0002_review_responses.v1.json",
         "notes": "Small Batch 0002 seed promotion only; ambiguous, blocked, thin, duplicated, and unresolved clean draft responses remain unpromoted.",
         "review_packet_path": "data/review/p3_exact_skill_batches/batch_0002_review_packet.md",
-        "source_draft_response_id": "batch_0002:10:p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
-        "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole",
+        "source_draft_response_id": "batch_0002:10:p3_exact_skill_review_queue:v1:33winter23_q03:33winter23_q03_whole",
+        "source_queue_id": "p3_exact_skill_review_queue:v1:33winter23_q03:33winter23_q03_whole",
         "timestamp": "2026-05-26T01:45:00Z"
       },
-      "question_id": "33autumn23_q03",
+      "question_id": "33winter23_q03",
       "reviewed_region": {
         "asterion_region_id": "asterion:9709:p3:3.1:9709-p3-3-1-polynomial-division-factor-remainder",
         "component": "p3",
@@ -1515,8 +1515,8 @@
       "session": "November",
       "source_mark_scheme_asset_refs": [
         {
-          "asset_id": "mark_scheme_image:33autumn23:33autumn23_q03",
-          "path": "p3/33autumn23/mark_scheme/q03.png",
+          "asset_id": "mark_scheme_image:33winter23:33winter23_q03",
+          "path": "p3/33winter23/mark_scheme/q03.png",
           "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c",
           "verification_basis": "canonical_mark_scheme_image_inspected_for_batch_0002_seed",
           "verified": true
@@ -1524,14 +1524,14 @@
       ],
       "source_question_asset_refs": [
         {
-          "asset_id": "question_image:33autumn23:33autumn23_q03",
-          "path": "p3/33autumn23/questions/q03.png",
+          "asset_id": "question_image:33winter23:33winter23_q03",
+          "path": "p3/33winter23/questions/q03.png",
           "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7",
           "verification_basis": "canonical_question_image_inspected_for_batch_0002_seed",
           "verified": true
         }
       ],
-      "subpart_id": "33autumn23_q03_whole",
+      "subpart_id": "33winter23_q03_whole",
       "variant": "3"
     },
     {

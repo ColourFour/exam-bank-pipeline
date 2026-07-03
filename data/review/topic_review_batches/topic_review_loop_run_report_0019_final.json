@@ -1,0 +1,58 @@
+{
+  "accepted_action_counts": {
+    "exclude": 47,
+    "keep": 1012,
+    "relabel": 491
+  },
+  "accepted_count": 1550,
+  "coverage_audit": {
+    "batch_rows": 2265,
+    "decision_rows": 2265,
+    "duplicate_count": 0,
+    "extra_count": 0,
+    "missing_count": 0,
+    "unique_decision_rows": 2265
+  },
+  "final": true,
+  "last_completed_slice": 76,
+  "merged_decisions_path": "data/review/topic_review_batches/topic_review_auto_reviewed_merged_0019_final.v1.json",
+  "notes": [
+    "Final round reviewed slices 73-76 (records 2161-2265).",
+    "Final round contributed 85 accepted current-relevant decisions and 20 pending rows.",
+    "Across all 2265 actionable rows, 1550 decisions were accepted into the merged decision file and 715 rows remain pending due to evidence, ambiguity, confidence, or family/topic mismatch guardrails.",
+    "The original 2572 review_required sidecar rows included 307 skipped rows during batch creation: 306 already reviewed and 1 unknown question."
+  ],
+  "packet_validation": {
+    "applied_reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 1012,
+      "relabel": 491
+    },
+    "reviewed_decision_counts": {
+      "exclude": 47,
+      "keep": 1012,
+      "relabel": 491
+    },
+    "reviewed_decisions_loaded": 1550,
+    "total_excluded_questions": 47,
+    "total_included_in_release_packets": 1696,
+    "total_included_in_review_packets": 1805,
+    "total_review_required_questions": 1805
+  },
+  "pending_count": 715,
+  "raw_decision_action_counts": {
+    "exclude": 47,
+    "keep": 1012,
+    "pending": 715,
+    "relabel": 491
+  },
+  "reviewed_by_subagents_count": 2265,
+  "round": 19,
+  "slice_size": 30,
+  "validation": {
+    "coverage_audit_result": "passed: every actionable batch row has exactly one decision and no extras",
+    "focused_pytest": ".venv/bin/pytest -q tests/test_topic_review_loop.py tests/test_topic_packets.py",
+    "focused_pytest_result": "63 passed, 5 warnings",
+    "packet_dry_run_result": "passed"
+  }
+}

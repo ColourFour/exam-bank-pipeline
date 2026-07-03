@@ -52,19 +52,19 @@ Issue-level improvements:
 - `12summer23_q01`: `ddyx` repaired to `dy/dx`, resolving the derivative-notation expectation.
 - `35summer25_q04`: `x20` repaired to advisory `x > 0`, resolving the inequality expectation.
 - `12spring22_q08`: lost square glyphs in the circle equation are made explicit enough to clear a math-signal-loss check, but remain warning-bearing.
-- `12autumn23_q06`: the translation-vector glyph is classified as vector/matrix ambiguity instead of generic math-symbol loss.
+- `12winter23_q06`: the translation-vector glyph is classified as vector/matrix ambiguity instead of generic math-symbol loss.
 
 Clearer-but-not-repaired examples:
 
 - `12summer21_q03`: root notation is normalized to `sqrt(...)`, but the root span is inferred and needs image review.
-- `33autumn21_q05`: `cos 21` becomes advisory `cos(2θ)`, but this is inferred from nearby theta symbols.
-- `31summer21_q01`, `32summer21_q01`, `33autumn21_q02`: `in equal it y` is normalized to `inequality`, improving readability without changing mathematical content.
+- `33winter21_q05`: `cos 21` becomes advisory `cos(2θ)`, but this is inferred from nearby theta symbols.
+- `31summer21_q01`, `32summer21_q01`, `33winter21_q02`: `in equal it y` is normalized to `inequality`, improving readability without changing mathematical content.
 - Several diagram/table fixtures gain spacing and subpart-line-break flags, clarifying that their failures are mostly reading-order or table-layout problems, not fully recoverable by text normalization.
 
 Unchanged examples:
 
 - `33summer24_q03`: missing mark bracket cannot be safely restored from selected text.
-- `33autumn25_q07`: truncated ending and missing mark bracket remain unresolved.
+- `33winter25_q07`: truncated ending and missing mark bracket remain unresolved.
 - `32spring23_q04`: complex denominator corruption remains unresolved.
 - `11summer23_q01` and `12spring21_q02`: selected text is already plausible enough that no fixture rule fires.
 

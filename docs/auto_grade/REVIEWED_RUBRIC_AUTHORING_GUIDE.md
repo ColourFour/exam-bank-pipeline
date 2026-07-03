@@ -112,12 +112,12 @@ The promotion summary is written to `reports/auto_grade/reviewed_rubrics_registr
 
 ```json
 {
-  "rubric_id": "rr_11autumn21_q05",
-  "source_question_id": "11autumn21_q05",
-  "source_question_image_path": "p1/11autumn21/questions/q05.png",
-  "source_mark_scheme_image_path": "p1/11autumn21/mark_scheme/q05.png",
-  "source_mark_events_record_id": "11autumn21_q05",
-  "paper": "11autumn21",
+  "rubric_id": "rr_11winter21_q05",
+  "source_question_id": "11winter21_q05",
+  "source_question_image_path": "p1/11winter21/questions/q05.png",
+  "source_mark_scheme_image_path": "p1/11winter21/mark_scheme/q05.png",
+  "source_mark_events_record_id": "11winter21_q05",
+  "paper": "11winter21",
   "paper_family": "p1",
   "question_number": "5",
   "part_path": [],
@@ -132,8 +132,8 @@ The promotion summary is written to `reports/auto_grade/reviewed_rubrics_registr
   "approval_scope": "teacher_beta",
   "events": [
     {
-      "event_id": "rr_11autumn21_q05_e0001",
-      "source_event_id": "11autumn21_q05_me0001",
+      "event_id": "rr_11winter21_q05_e0001",
+      "source_event_id": "11winter21_q05_me0001",
       "part_path": [],
       "mark_code": "B",
       "mark_type": "independent_statement",

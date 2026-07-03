@@ -63,6 +63,26 @@ def test_formula_rule_graphics_do_not_create_diagram_regions() -> None:
     assert {"label": "barcode", "bbox": {"x0": 145, "y0": 80, "x1": 230, "y1": 80.5}} in excluded
 
 
+def test_full_height_page_edge_graphic_is_treated_as_furniture() -> None:
+    config = AppConfig()
+    text_box = BoundingBox(50, 70, 545, 130)
+    page_edge_furniture = BoundingBox(0, 0, 294.6, 841.89)
+    diagram = BoundingBox(330, 95, 430, 190)
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[],
+        graphics=[page_edge_furniture, diagram],
+    )
+
+    graphics, excluded = _graphics_for_segment(text_box, layout, config)
+
+    assert page_edge_furniture not in graphics
+    assert diagram in graphics
+    assert {"label": "page_edge_furniture", "bbox": {"x0": 0, "y0": 0, "x1": 294.6, "y1": 841.89}} in excluded
+
+
 def test_page_diagram_union_does_not_cross_large_answer_gap() -> None:
     config = AppConfig()
     layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
@@ -83,6 +103,38 @@ def test_page_diagram_union_does_not_cross_large_answer_gap() -> None:
     assert [region.region_kind for region in merged] == ["page_diagram_union", "text"]
     assert merged[0].bbox.y1 < 380
     assert merged[1].bbox.y0 == 560
+    assert "page_diagram_union_used" in flags
+
+
+def test_page_diagram_union_trims_padding_after_page_edge_furniture_exclusion() -> None:
+    config = AppConfig()
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    page_edge_furniture = {"label": "page_edge_furniture", "bbox": {"x0": 0, "y0": 0, "x1": 170, "y1": 842}}
+    diagram = BoundingBox(205, 95, 395, 265)
+    regions = [
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(40, 58, 560, 275),
+            text_blocks=[text_block("2", 73, x=50, width=20)],
+            graphics=[diagram],
+            region_kind="figure",
+            excluded_regions=[page_edge_furniture],
+        ),
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(60, 280, 555, 400),
+            text_blocks=[text_block("A particle is attached to a string. [3]", 285, x=72)],
+            region_kind="text",
+            excluded_regions=[page_edge_furniture],
+        ),
+    ]
+
+    merged, flags = _same_page_diagram_union_regions(regions, span(), [layout], config)
+
+    assert len(merged) == 1
+    assert merged[0].region_kind == "page_diagram_union"
+    assert merged[0].bbox.y0 >= 71
+    assert merged[0].figure_bbox == diagram
     assert "page_diagram_union_used" in flags
 
 
@@ -373,6 +425,84 @@ def test_question_context_infers_figure_below_diagram_prompt() -> None:
     assert "question_context_figure_inference_used" in flags
 
 
+def test_text_only_graph_axis_labels_are_rendered_as_single_diagram_region() -> None:
+    config = AppConfig()
+    prompt = text_block("5 Hence sketch a displacement-time graph for the race. [6]", 120, x=72)
+    label_top = text_block("displacement (m)", 410, x=125, width=90)
+    label_value = text_block("200", 442, x=145, width=18)
+    label_axis = text_block("0 time (s)", 725, x=155, width=360)
+    label_ticks = text_block("0 20", 738, x=165, width=295)
+    continuation = text_block("(ii) Find the value of V. [2]", 790, x=72)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s18_qp_41.pdf"),
+        paper_name="9709_s18_qp_41",
+        question_number="5",
+        start_page=1,
+        start_y=100,
+        end_page=1,
+        end_y=820,
+        page_numbers=[1],
+        blocks=[prompt, label_top, label_value, label_axis, label_ticks, continuation],
+        full_question_label="5(i)-(ii)",
+    )
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[prompt, label_top, label_value, label_axis, label_ticks, continuation],
+        graphics=[],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    diagram_regions = [region for region in regions if region.region_kind == "text_diagram_union"]
+    assert len(diagram_regions) == 1
+    assert "text_only_diagram_union_used" in flags
+    assert diagram_regions[0].bbox.y0 <= label_top.bbox.y0
+    assert diagram_regions[0].bbox.y1 >= label_ticks.bbox.y1
+    rendered_text = "\n".join(block.text for region in regions if region.region_kind != "text_diagram_union" for block in region.text_blocks)
+    assert "displacement (m)" not in rendered_text
+    assert "0 time (s)" not in rendered_text
+    assert "(ii) Find the value of V. [2]" in rendered_text
+
+
+def test_text_only_diagram_region_keeps_nearby_barcode_shaped_graphic() -> None:
+    config = AppConfig()
+    prompt = text_block("9 The diagram shows the graph of y = f(x). [2]", 250, x=72)
+    label_top = text_block("9 y", 70, x=50, width=130)
+    label_curve = text_block("y = f(x)", 125, x=380, width=45)
+    label_axis = text_block("O 1_{2}0 0 x", 210, x=175, width=270)
+    graph = BoundingBox(187, 114, 410, 171)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s19_qp_13.pdf"),
+        paper_name="9709_s19_qp_13",
+        question_number="9",
+        start_page=1,
+        start_y=65,
+        end_page=1,
+        end_y=340,
+        page_numbers=[1],
+        blocks=[label_top, label_curve, label_axis, prompt],
+        full_question_label="9",
+    )
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[label_top, label_curve, label_axis, prompt],
+        graphics=[graph],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    diagram_regions = [region for region in regions if region.region_kind == "text_diagram_union"]
+    assert len(diagram_regions) == 1
+    assert diagram_regions[0].graphics == [graph]
+    assert diagram_regions[0].bbox.y0 <= label_top.bbox.y0
+    assert diagram_regions[0].bbox.y1 >= label_axis.bbox.y1
+    assert "missing_image_detection_failure" not in flags
+
+
 def test_missing_figure_prompt_is_marked_detection_failure() -> None:
     config = AppConfig()
     prompt = text_block("4 The diagram shows a sector. [5]", 110, x=60, width=250)
@@ -416,6 +546,52 @@ def test_missing_figure_prompt_is_marked_detection_failure() -> None:
 
     assert diagnostics["detected_figure_count"] == 0
     assert diagnostics["missing_image_reason"] == "detection_failure"
+
+
+def test_student_generated_sketch_prompt_is_not_marked_detection_failure() -> None:
+    config = AppConfig()
+    prompt = text_block("4 Sketch, on a single diagram, the graphs of y = cos x and y = 1/2. [3]", 110, x=60, width=420)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s16_qp_12.pdf"),
+        paper_name="9709_s16_qp_12",
+        question_number="4",
+        start_page=1,
+        start_y=100,
+        end_page=1,
+        end_y=240,
+        page_numbers=[1],
+        blocks=[prompt],
+        full_question_label="4",
+    )
+    identity = PaperIdentity(
+        syllabus="9709",
+        subject_family="pm1",
+        year=2016,
+        session_code="s16",
+        canonical_session="summer16",
+        component="12",
+        paper_id="12summer16",
+        question_id="12summer16_q04",
+    )
+    asset = AssetPath(
+        kind="question_image",
+        paper_id="12summer16",
+        question_id="12summer16_q04",
+        component="12",
+        canonical_path="pm1/pm1_2016_s16_12_qp_q04_question.png",
+        absolute_path=Path("/tmp/12summer16_q04.png"),
+    )
+    regions, flags = _detect_prompt_regions(
+        test_span,
+        [PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[])],
+        config,
+    )
+
+    diagnostics = _crop_diagnostics(Path("9709_s16_qp_12.pdf"), test_span, regions, flags, identity=identity, asset=asset)
+
+    assert "missing_image_detection_failure" not in flags
+    assert diagnostics["detected_figure_count"] == 0
+    assert diagnostics["missing_image_reason"] == ""
 
 
 def test_permission_footer_phrase_is_trimmed_from_final_question_crop() -> None:

@@ -12,7 +12,7 @@ def test_normalizes_legacy_output_folders_filenames_and_metadata_refs(tmp_path: 
     root = tmp_path / "output"
     _write(root / "p1" / "12spring21" / "questions" / "q01.png", b"question")
     _write(root / "p3" / "31summer08" / "mark_scheme" / "q04.png", b"mark")
-    _write(root / "p4" / "42autumn23" / "questions" / "q12.png", b"stats")
+    _write(root / "p4" / "42winter23" / "questions" / "q12.png", b"stats")
     _write(root / "p5" / "51summer25" / "mark_scheme" / "q02.png", b"mechanics")
     _write_json(
         root / "json" / "question_bank.json",

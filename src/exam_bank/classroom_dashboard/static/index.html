@@ -146,14 +146,21 @@
               <div class="card-head">
                 <div>
                   <h3>Submissions</h3>
-                  <p class="muted">Pull or upload completed PDFs, then ingest to update the roster.</p>
+                  <p class="muted">Sync completed PDFs and review answer-check scores.</p>
                 </div>
               </div>
               <div id="submissionAssignmentSummary" class="selected-assignment muted">Open an assignment first.</div>
               <div class="button-row">
+                <button id="syncSubmissionsBtn" class="button primary" type="button">Sync submissions</button>
                 <label class="button secondary file-button">Upload submission PDFs<input id="submissionFiles" type="file" accept="application/pdf,.pdf" multiple></label>
                 <button id="ingestBtn" class="button secondary" type="button">Ingest inbox folder</button>
                 <button id="ingestMailBtn" class="button secondary" type="button">Pull PDFs from Mail.app</button>
+              </div>
+              <div id="submissionTableWrap" class="table-wrap submissions-table-wrap">
+                <table id="submissionTable" class="submissions-table">
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </section>

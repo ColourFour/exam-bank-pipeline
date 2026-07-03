@@ -20,7 +20,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_routing
+from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_review_loop, topic_routing
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .mark_scheme_regeneration import regenerate_mark_scheme_pngs_from_question_bank
 from .output_management import (
@@ -304,6 +304,34 @@ def build_parser() -> argparse.ArgumentParser:
     )
     topic_confidence_rescoring.add_topic_confidence_rescoring_cli_arguments(topic_confidence_rescore)
     topic_confidence_rescore.set_defaults(func=cmd_topic_confidence_rescore)
+
+    topic_review_batch = subparsers.add_parser(
+        "topic-review-batch",
+        help="Build an image-and-syllabus automated review batch for review-required topic routes.",
+    )
+    topic_review_loop.add_topic_review_batch_cli_arguments(topic_review_batch)
+    topic_review_batch.set_defaults(func=cmd_topic_review_batch)
+
+    topic_review_run = subparsers.add_parser(
+        "topic-review-run",
+        help="Run append/resumable automated topic reviews for a topic review batch.",
+    )
+    topic_review_loop.add_topic_review_run_cli_arguments(topic_review_run)
+    topic_review_run.set_defaults(func=cmd_topic_review_run)
+
+    topic_review_import = subparsers.add_parser(
+        "topic-review-import",
+        help="Validate automated topic review JSONL and write topic-bank reviewed decisions.",
+    )
+    topic_review_loop.add_topic_review_import_cli_arguments(topic_review_import)
+    topic_review_import.set_defaults(func=cmd_topic_review_import)
+
+    topic_review_merge = subparsers.add_parser(
+        "topic-review-merge",
+        help="Merge manual and automated topic-bank reviewed decision files.",
+    )
+    topic_review_loop.add_topic_review_merge_cli_arguments(topic_review_merge)
+    topic_review_merge.set_defaults(func=cmd_topic_review_merge)
 
     topic_packet = subparsers.add_parser(
         "topic-packets",
@@ -1096,6 +1124,30 @@ def cmd_topic_route_ai(args: argparse.Namespace) -> int:
 
 def cmd_topic_confidence_rescore(args: argparse.Namespace) -> int:
     return topic_confidence_rescoring.run_topic_confidence_rescoring_from_args(args)
+
+
+def cmd_topic_review_batch(args: argparse.Namespace) -> int:
+    report = topic_review_loop.build_topic_review_batch_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_topic_review_run(args: argparse.Namespace) -> int:
+    report = topic_review_loop.run_topic_reviews_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_topic_review_import(args: argparse.Namespace) -> int:
+    report = topic_review_loop.import_topic_review_decisions_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report.get("ok") else 2
+
+
+def cmd_topic_review_merge(args: argparse.Namespace) -> int:
+    report = topic_review_loop.merge_topic_review_decisions_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report.get("ok") else 2
 
 
 def cmd_topic_packets(args: argparse.Namespace) -> int:

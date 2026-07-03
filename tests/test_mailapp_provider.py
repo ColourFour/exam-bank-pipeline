@@ -4,6 +4,7 @@ from exam_bank.emailing.mailapp import (
     MAILAPP_PERMISSION_NOTE,
     MailAppCommandResult,
     MailAppEmailProvider,
+    build_mailapp_export_pdf_attachment_records_script,
     build_mailapp_export_pdf_attachments_script,
     build_mailapp_send_script,
 )
@@ -158,3 +159,44 @@ def test_mailapp_export_pdf_attachment_script_escapes_query_and_target(tmp_path)
     assert '\\" & do shell script \\"echo bad\\"' in script
     assert "mail attachments" in script
     assert ".pdf" in script
+
+
+def test_mailapp_student_export_prefixes_sender_match_and_ignores_teacher(tmp_path) -> None:
+    inbox = tmp_path / "inbox"
+
+    def runner(script: str) -> MailAppCommandResult:
+        scratch = inbox / ".mailapp_import_tmp"
+        student_pdf = scratch / "1_assignment.pdf"
+        teacher_pdf = scratch / "2_assignment.pdf"
+        student_pdf.write_bytes(b"%PDF-1.4\nstudent")
+        teacher_pdf.write_bytes(b"%PDF-1.4\nteacher")
+        stdout = (
+            f"Student One <one@example.invalid>\t{student_pdf}\tassignment: Quiz Review\tmsg-1\n"
+            f"Blake Rooker <brooker@rdfzcygj.cn>\t{teacher_pdf}\tassignment: Quiz Review\tmsg-2\n"
+        )
+        return MailAppCommandResult(returncode=0, stdout=stdout, stderr="")
+
+    provider = MailAppEmailProvider(requested_from_address="brooker@rdfzcygj.cn", runner=runner)
+
+    imported = provider.export_student_pdf_attachments(
+        query="assignment: Quiz Review",
+        target_dir=inbox,
+        roster_email_to_student_id={"one@example.invalid": "S0001"},
+        teacher_email="brooker@rdfzcygj.cn",
+    )
+
+    assert [path.name for path in imported] == ["S0001__1_assignment.pdf"]
+    assert imported[0].read_bytes().startswith(b"%PDF")
+    assert not (inbox / ".mailapp_import_tmp").exists()
+
+
+def test_mailapp_student_export_script_records_sender_and_path(tmp_path) -> None:
+    script = build_mailapp_export_pdf_attachment_records_script(
+        query='Quiz Review" & do shell script "echo bad"',
+        target_dir=tmp_path,
+        limit=5,
+    )
+
+    assert '\\" & do shell script \\"echo bad\\"' in script
+    assert "sender of eachMessage" in script
+    assert "POSIX path of saveFile" in script

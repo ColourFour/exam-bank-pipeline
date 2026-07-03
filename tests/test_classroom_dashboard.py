@@ -125,6 +125,13 @@ class ConnectedFakeMailProvider:
     def check_connection(self):
         return type("Status", (), {"connected": True})()
 
+    def export_student_pdf_attachments(self, **kwargs):
+        target_dir = Path(kwargs["target_dir"])
+        target_dir.mkdir(parents=True, exist_ok=True)
+        target = target_dir / "S0001__assignment.pdf"
+        target.write_bytes(_pdf_bytes("Question 1 complete\nQuestion 2 complete"))
+        return [target]
+
     def send_message(self, **kwargs):
         self.sent_messages.append(kwargs)
         return EmailSendResult(
@@ -480,10 +487,16 @@ def test_send_now_to_multiple_recipients_requires_send_text(tmp_path: Path, monk
 
 
 def test_submissions_panel_has_distinct_styling() -> None:
-    css = (Path(__file__).parents[1] / "src" / "exam_bank" / "classroom_dashboard" / "static" / "style.css").read_text(encoding="utf-8")
+    static_root = Path(__file__).parents[1] / "src" / "exam_bank" / "classroom_dashboard" / "static"
+    css = (static_root / "style.css").read_text(encoding="utf-8")
+    html = (static_root / "index.html").read_text(encoding="utf-8")
+    js = (static_root / "app.js").read_text(encoding="utf-8")
 
     assert ".submissions-card" in css
     assert "#f6fef9" in css
+    assert "syncSubmissionsBtn" in html
+    assert "renderSubmissionTable" in js
+    assert "answer-answered" in css
 
 
 def test_upload_submissions_saves_pdfs_to_inbox(tmp_path: Path) -> None:
@@ -503,14 +516,45 @@ def test_ingest_submissions_calls_existing_workflow(tmp_path: Path) -> None:
     app = _app(tmp_path)
     _create_class(app)
     _save_roster(app)
-    _create_assignment(app)
+    _create_assignment(app, pdf=_pdf_bytes("Question 1\nQuestion 2"))
     headers, body = _multipart({}, [("submissions", "S0001.pdf", _pdf_bytes(), "application/pdf")])
     app.handle("POST", "/api/classes/class_12a/assignments/hw1/upload-submissions", headers=headers, body=body)
 
     response = _post_json(app, "/api/classes/class_12a/assignments/hw1/ingest-submissions", {})
+    payload = _json(response)
+    rows = {row["student_id"]: row for row in payload["assignment"]["submission_rows"]}
 
     assert response.status == 200
     assert (tmp_path / "reports" / "submissions" / "hw1_completion.csv").is_file()
+    assert (tmp_path / "reports" / "submissions" / "hw1_answer_check.csv").is_file()
+    assert rows["S0001"]["submission_state"] == "submitted"
+    assert rows["S0001"]["total_answered"] == 2
+    assert rows["S0001"]["stored_pdf_url"].endswith("/api/submissions/hw1/files/S0001.pdf")
+    assert rows["S0002"]["submission_state"] == "missing"
+
+
+def test_sync_submissions_imports_mailapp_and_returns_answer_check_rows(tmp_path: Path, monkeypatch) -> None:
+    import exam_bank.classroom as classroom
+    import exam_bank.classroom_dashboard.server as server
+
+    monkeypatch.setattr(classroom, "MailAppEmailProvider", ConnectedFakeMailProvider)
+    monkeypatch.setattr(server, "MailAppEmailProvider", ConnectedFakeMailProvider)
+    app = _app(tmp_path)
+    _create_class(app)
+    _save_roster(app)
+    _create_assignment(app, pdf=_pdf_bytes("Question 1\nQuestion 2"))
+
+    response = _post_json(app, "/api/classes/class_12a/assignments/hw1/sync-submissions", {})
+    payload = _json(response)
+    rows = {row["student_id"]: row for row in payload["assignment"]["submission_rows"]}
+
+    assert response.status == 200
+    assert payload["result"]["imported_attachments"]
+    assert payload["assignment"]["answer_check"]["summary"]["question_count"] == 2
+    assert rows["S0001"]["submission_state"] == "submitted"
+    assert rows["S0001"]["total_answered"] == 2
+    assert [question["status"] for question in rows["S0001"]["questions"]] == ["answered", "answered"]
+    assert rows["S0002"]["submission_state"] == "missing"
 
 
 def test_acknowledgement_preview_does_not_send_email(tmp_path: Path) -> None:

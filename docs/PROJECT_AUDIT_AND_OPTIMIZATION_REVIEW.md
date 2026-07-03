@@ -160,7 +160,7 @@ All current records have `question_solution_marks`, but all 968 records with sub
 
 - `51summer23_q04`: question 5, mark scheme 9
 - `51summer24_q02`: question 3, mark scheme 7
-- `32autumn25_q10`: question 4, mark scheme 9
+- `32winter25_q10`: question 4, mark scheme 9
 
 Risk: mark-scheme images are useful for display, but not yet safe for automated self-marking, method/accuracy parsing, worked examples, or Guardian mark checks.
 
@@ -366,7 +366,7 @@ Measured against current `output/json/question_bank.json`:
 | Question path question-number mismatch | 0 |
 | Mark-scheme path question-number mismatch | 0 |
 
-The 11 missing mark-scheme paths correspond to the missing source companion for `9709_2025_November_33`, including records such as `33autumn25_q01` through `33autumn25_q11`.
+The 11 missing mark-scheme paths correspond to the missing source companion for `9709_2025_November_33`, including records such as `33winter25_q01` through `33winter25_q11`.
 
 Input registry state:
 
@@ -484,8 +484,8 @@ Observed text risk examples:
 - `11summer21_q08`: diagram/prose merged into extracted text.
 - `42spring21_q02`: trigonometric symbol corruption.
 - `52spring21_q02`: run-together prose.
-- `42autumn23_q07`: unit/symbol corruption.
-- `11autumn22_q09`: replacement/control-character-like corruption.
+- `42winter23_q07`: unit/symbol corruption.
+- `11winter22_q09`: replacement/control-character-like corruption.
 
 Interpretation:
 

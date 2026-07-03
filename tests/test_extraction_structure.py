@@ -164,6 +164,71 @@ def test_combined_question_text_prefers_clean_body_without_diagram_pollution() -
     assert structured.combined_question_text.endswith("[2]")
 
 
+def test_text_only_graph_axis_cluster_is_ignored_by_combined_question_text() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="5",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=780,
+        page_numbers=[1],
+        blocks=[
+            _block("5 A sprinter runs a race of 200 m.", 80),
+            _block("(i) Hence sketch a displacement-time graph for the race. [6]", 120),
+            _block("displacement (m)", 410, x=125, width=90),
+            _block("200", 442, x=145, width=18),
+            _block("0 time (s)", 725, x=155, width=360),
+            _block("0 20", 738, x=165, width=295),
+            _block("(ii) Find the value of V. [2]", 790),
+        ],
+        full_question_label="5(i)-(ii)",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "displacement (m)" not in structured.combined_question_text
+    assert "0 time (s)" not in structured.combined_question_text
+    assert "0 20" not in structured.combined_question_text
+    assert "displacement (m)" in structured.diagram_text
+    assert "0 time (s)" in structured.diagram_text
+    assert "(ii) Find the value of V. [2]" in structured.combined_question_text
+
+
+def test_marked_answer_line_near_diagram_stays_in_body_text() -> None:
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[],
+        graphics=[BoundingBox(80, 90, 360, 260)],
+    )
+    span = QuestionSpan(
+        source_pdf=Path("paper.pdf"),
+        paper_name="paper",
+        question_number="7",
+        start_page=1,
+        start_y=40,
+        end_page=1,
+        end_y=520,
+        page_numbers=[1],
+        blocks=[
+            _block("7 y", 70, x=50, width=100),
+            _block("O x", 250, x=100, width=300),
+            _block("(iii) Obtain expressions to define f^{-1}, giving the values for which each expression is", 360),
+            _block("valid. [4]", 388, x=96),
+        ],
+        full_question_label="7",
+    )
+
+    structured = build_structured_question_text(span, [layout], AppConfig())
+
+    assert "valid. [4]" in structured.combined_question_text
+    assert "valid. [4]" not in structured.diagram_text
+
+
 def test_normalizes_pdf_control_glyphs_without_dropping_math_structure() -> None:
     layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
     span = QuestionSpan(

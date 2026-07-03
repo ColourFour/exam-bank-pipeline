@@ -262,18 +262,18 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 4. `32autumn23_q06` / `32autumn23_q06_c`
+### 4. `32winter23_q06` / `32winter23_q06_c`
 
 - Selection category: `seed_mark_event_alignment_probe`
 - Selection reason: Seed registry source-skill evidence exists; review whether advisory mark-event refs can be paired safely without changing generation readiness.
 - Known risk flags: `reviewed_source_skill_exists`, `mark_events_advisory_only`, `part_level_uses_whole_question_images`, `part_level_scope_uses_whole_images`
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `True`
-- Related reviewed evidence IDs: `p3_exact_skill_review:batch_0001_seed:32autumn23_q06:32autumn23_q06_c`
-- Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c`
-- Question ID: `32autumn23_q06`
-- Part/subpart: `c` / `32autumn23_q06_c`
-- Paper/session/variant: `32autumn23` / `November` / `2`
+- Related reviewed evidence IDs: `p3_exact_skill_review:batch_0001_seed:32winter23_q06:32winter23_q06_c`
+- Queue ID: `p3_exact_skill_review_queue:v1:32winter23_q06:32winter23_q06_c`
+- Question ID: `32winter23_q06`
+- Part/subpart: `c` / `32winter23_q06_c`
+- Paper/session/variant: `32winter23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -290,28 +290,28 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_6_fixed_point_iteration"], "candidate_topic_ids": ["9709_p3_topic_numerical_solution_of_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32autumn23_q06:c", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32autumn23_q06_me0007", "mark_code": "M1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0008", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0009", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32autumn23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["c"], "proposed_part_id": "c", "proposed_subpart_id": null, "question_id": "32autumn23_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32autumn23/mark_scheme/q06.png", "sha256": "2ec28eece625619c2b90dea97529b36b581f3c974c33527385804c903a3f1fcc"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32autumn23/questions/q06.png", "sha256": "043cb0b4e96c54933f7d2345277756773f23b08db89d57b9b49116a57739bc25"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q06:32autumn23_q06_c", "supporting_skill_ids": ["9709_p3_3_6_root_location"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q06_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_6_fixed_point_iteration"], "candidate_topic_ids": ["9709_p3_topic_numerical_solution_of_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32winter23_q06:c", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32winter23_q06_me0007", "mark_code": "M1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0008", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0009", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32winter23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["c"], "proposed_part_id": "c", "proposed_subpart_id": null, "question_id": "32winter23_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32winter23/mark_scheme/q06.png", "sha256": "2ec28eece625619c2b90dea97529b36b581f3c974c33527385804c903a3f1fcc"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32winter23/questions/q06.png", "sha256": "043cb0b4e96c54933f7d2345277756773f23b08db89d57b9b49116a57739bc25"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32winter23_q06:32winter23_q06_c", "supporting_skill_ids": ["9709_p3_3_6_root_location"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_32winter23_q06_c", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32autumn23/questions/q06.png", "sha256": "043cb0b4e96c54933f7d2345277756773f23b08db89d57b9b49116a57739bc25"}`
+- `{"exists": true, "path": "p3/32winter23/questions/q06.png", "sha256": "043cb0b4e96c54933f7d2345277756773f23b08db89d57b9b49116a57739bc25"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32autumn23/mark_scheme/q06.png", "sha256": "2ec28eece625619c2b90dea97529b36b581f3c974c33527385804c903a3f1fcc"}`
+- `{"exists": true, "path": "p3/32winter23/mark_scheme/q06.png", "sha256": "2ec28eece625619c2b90dea97529b36b581f3c974c33527385804c903a3f1fcc"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0007", "mark_code": "M1", "part_path": ["c"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0008", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q06_me0009", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0007", "mark_code": "M1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0008", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q06_me0009", "mark_code": "A1", "part_path": ["c"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -615,7 +615,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 9. `33autumn23_q01` / `33autumn23_q01_whole`
+### 9. `33winter23_q01` / `33winter23_q01_whole`
 
 - Selection category: `deferred_batch_0001_clean`
 - Selection reason: Batch 0001 clean draft was intentionally deferred during seed promotion: clean_whole_question_candidate_deferred_for_later_pass.
@@ -623,10 +623,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `whole_question`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q01:33autumn23_q01_whole`
-- Question ID: `33autumn23_q01`
-- Part/subpart: `whole` / `33autumn23_q01_whole`
-- Paper/session/variant: `33autumn23` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:33winter23_q01:33winter23_q01_whole`
+- Question ID: `33winter23_q01`
+- Part/subpart: `whole` / `33winter23_q01_whole`
+- Paper/session/variant: `33winter23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -644,26 +644,26 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q01_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_33winter23_q01_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q01.png", "sha256": "65fca41d1592fd29bcb866912a68cb6712cc69f428cc4814a4952b67cbba5619"}`
+- `{"exists": true, "path": "p3/33winter23/questions/q01.png", "sha256": "65fca41d1592fd29bcb866912a68cb6712cc69f428cc4814a4952b67cbba5619"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q01.png", "sha256": "49c2957fd30c93274422dae5834e65c047053071881ae4c020691757f80ef644"}`
+- `{"exists": true, "path": "p3/33winter23/mark_scheme/q01.png", "sha256": "49c2957fd30c93274422dae5834e65c047053071881ae4c020691757f80ef644"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0005", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0007", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q01_me0008", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0005", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0007", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q01_me0008", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -683,7 +683,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 10. `33autumn23_q03` / `33autumn23_q03_whole`
+### 10. `33winter23_q03` / `33winter23_q03_whole`
 
 - Selection category: `deferred_batch_0001_clean`
 - Selection reason: Batch 0001 clean draft was intentionally deferred during seed promotion: clean_whole_question_candidate_deferred_for_later_pass.
@@ -691,10 +691,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `whole_question`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q03:33autumn23_q03_whole`
-- Question ID: `33autumn23_q03`
-- Part/subpart: `whole` / `33autumn23_q03_whole`
-- Paper/session/variant: `33autumn23` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:33winter23_q03:33winter23_q03_whole`
+- Question ID: `33winter23_q03`
+- Part/subpart: `whole` / `33winter23_q03_whole`
+- Paper/session/variant: `33winter23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -712,29 +712,29 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 11}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_33winter23_q03_whole", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "allow"}, "source_mark_event_count": 11}`
 - Proposed blockers: `mark_events_advisory_only`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q03.png", "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"}`
+- `{"exists": true, "path": "p3/33winter23/questions/q03.png", "sha256": "3e610053bb74b9bdfe1739d34cc7dada0b22f840a1085b0da8c4c6e9c73f0dd7"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q03.png", "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"}`
+- `{"exists": true, "path": "p3/33winter23/mark_scheme/q03.png", "sha256": "8db99bbf0140b32642fe6da8561285182cc8be9687eb4fc992f738c35bd8950c"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0004", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0005", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0006", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0007", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0008", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0009", "mark_code": "A4", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0010", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q03_me0011", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0004", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0005", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0006", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0007", "mark_code": "A2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0008", "mark_code": "B2", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0009", "mark_code": "A4", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0010", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q03_me0011", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -822,7 +822,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 12. `31autumn23_q08` / `31autumn23_q08_d`
+### 12. `31winter23_q08` / `31winter23_q08_d`
 
 - Selection category: `deferred_batch_0001_clean`
 - Selection reason: Batch 0001 clean draft was intentionally deferred during seed promotion: clean_but_topic_alignment_unknown_deferred.
@@ -830,10 +830,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d`
-- Question ID: `31autumn23_q08`
-- Part/subpart: `d` / `31autumn23_q08_d`
-- Paper/session/variant: `31autumn23` / `November` / `1`
+- Queue ID: `p3_exact_skill_review_queue:v1:31winter23_q08:31winter23_q08_d`
+- Question ID: `31winter23_q08`
+- Part/subpart: `d` / `31winter23_q08_d`
+- Paper/session/variant: `31winter23` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_6_fixed_point_iteration`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -850,28 +850,28 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Only one side of candidate topic or topic-routing context is available.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: numerical_methods.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_6_fixed_point_iteration"], "candidate_topic_ids": [], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:31autumn23_q08:d", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": false}, "matching_mark_event_refs": [{"event_id": "31autumn23_q08_me0007", "mark_code": "M1", "part_path": ["d"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0008", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0009", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "31autumn23_q08_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "31autumn23_q08_me0006", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["d"], "proposed_part_id": "d", "proposed_subpart_id": null, "question_id": "31autumn23_q08", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/31autumn23/mark_scheme/q08.png", "sha256": "f867fd427fc822c1ab0e90ab70ac7e88b1bb7ffcbfeac53a5210e60ac13c6f20"}], "source_question_asset_refs": [{"exists": true, "path": "p3/31autumn23/questions/q08.png", "sha256": "5203536a27e92b2a888f535ac17401acabb9fe986be08f2783284ba2e76fa296"}], "source_queue_id": "p3_exact_skill_review_queue:v1:31autumn23_q08:31autumn23_q08_d", "supporting_skill_ids": ["9709_p3_3_6_root_location"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_31autumn23_q08_d", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_6_fixed_point_iteration"], "candidate_topic_ids": [], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:31winter23_q08:d", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": false}, "matching_mark_event_refs": [{"event_id": "31winter23_q08_me0007", "mark_code": "M1", "part_path": ["d"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0008", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0009", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "31winter23_q08_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "31winter23_q08_me0006", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["d"], "proposed_part_id": "d", "proposed_subpart_id": null, "question_id": "31winter23_q08", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/31winter23/mark_scheme/q08.png", "sha256": "f867fd427fc822c1ab0e90ab70ac7e88b1bb7ffcbfeac53a5210e60ac13c6f20"}], "source_question_asset_refs": [{"exists": true, "path": "p3/31winter23/questions/q08.png", "sha256": "5203536a27e92b2a888f535ac17401acabb9fe986be08f2783284ba2e76fa296"}], "source_queue_id": "p3_exact_skill_review_queue:v1:31winter23_q08:31winter23_q08_d", "supporting_skill_ids": ["9709_p3_3_6_root_location"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31winter23_q08_d", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `defer_ambiguous_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/31autumn23/questions/q08.png", "sha256": "5203536a27e92b2a888f535ac17401acabb9fe986be08f2783284ba2e76fa296"}`
+- `{"exists": true, "path": "p3/31winter23/questions/q08.png", "sha256": "5203536a27e92b2a888f535ac17401acabb9fe986be08f2783284ba2e76fa296"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/31autumn23/mark_scheme/q08.png", "sha256": "f867fd427fc822c1ab0e90ab70ac7e88b1bb7ffcbfeac53a5210e60ac13c6f20"}`
+- `{"exists": true, "path": "p3/31winter23/mark_scheme/q08.png", "sha256": "f867fd427fc822c1ab0e90ab70ac7e88b1bb7ffcbfeac53a5210e60ac13c6f20"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0006", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0007", "mark_code": "M1", "part_path": ["d"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0008", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q08_me0009", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0003", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0006", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0007", "mark_code": "M1", "part_path": ["d"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0008", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q08_me0009", "mark_code": "A1", "part_path": ["d"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -966,7 +966,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 14. `32autumn23_q09` / `32autumn23_q09_b`
+### 14. `32winter23_q09` / `32winter23_q09_b`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Trigonometry appears inside integration or area work; verify it is not only supporting method context.
@@ -974,10 +974,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b`
-- Question ID: `32autumn23_q09`
-- Part/subpart: `b` / `32autumn23_q09_b`
-- Paper/session/variant: `32autumn23` / `November` / `2`
+- Queue ID: `p3_exact_skill_review_queue:v1:32winter23_q09:32winter23_q09_b`
+- Question ID: `32winter23_q09`
+- Part/subpart: `b` / `32winter23_q09_b`
+- Paper/session/variant: `32winter23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -994,41 +994,41 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_integration", "9709_p3_topic_differentiation"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32autumn23_q09:b", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32autumn23_q09_me0011", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0012", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0013", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0014", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0015", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0016", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0017", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0018", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0019", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0020", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0021", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0022", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32autumn23_q09_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0002", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0003", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0005", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0006", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0007", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0008", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0009", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn23_q09_me0010", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "part_path": ["b"], "proposed_part_id": "b", "proposed_subpart_id": null, "question_id": "32autumn23_q09", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32autumn23/mark_scheme/q09.png", "sha256": "7c70eb1c41efdf43528634ac48130a048852b8a20decca8f40028f2f392aad62"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32autumn23/questions/q09.png", "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn23_q09:32autumn23_q09_b", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q09_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 12}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_integration", "9709_p3_topic_differentiation"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32winter23_q09:b", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32winter23_q09_me0011", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0012", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0013", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0014", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0015", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0016", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0017", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0018", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0019", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0020", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0021", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0022", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32winter23_q09_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0002", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0003", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0005", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0006", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0007", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0008", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0009", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter23_q09_me0010", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "part_path": ["b"], "proposed_part_id": "b", "proposed_subpart_id": null, "question_id": "32winter23_q09", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32winter23/mark_scheme/q09.png", "sha256": "7c70eb1c41efdf43528634ac48130a048852b8a20decca8f40028f2f392aad62"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32winter23/questions/q09.png", "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32winter23_q09:32winter23_q09_b", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_32winter23_q09_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 12}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32autumn23/questions/q09.png", "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"}`
+- `{"exists": true, "path": "p3/32winter23/questions/q09.png", "sha256": "6e17028be9d57ce6d5668a932e446117d2deaf2b2ffa1ccf1ceadd228cc0f2aa"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32autumn23/mark_scheme/q09.png", "sha256": "7c70eb1c41efdf43528634ac48130a048852b8a20decca8f40028f2f392aad62"}`
+- `{"exists": true, "path": "p3/32winter23/mark_scheme/q09.png", "sha256": "7c70eb1c41efdf43528634ac48130a048852b8a20decca8f40028f2f392aad62"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0002", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0003", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0005", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0006", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0007", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0008", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0009", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0010", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0011", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0012", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0013", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0014", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0015", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0016", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0017", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0018", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0019", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0020", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0021", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q09_me0022", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0002", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0003", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0005", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0006", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0007", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0008", "mark_code": "DM1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0009", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0010", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0011", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0012", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0013", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0014", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0015", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0016", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0017", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0018", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0019", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0020", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0021", "mark_code": "DM1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q09_me0022", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1114,7 +1114,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 16. `32autumn21_q06` / `32autumn21_q06_a`
+### 16. `32winter21_q06` / `32winter21_q06_a`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Trigonometry appears inside integration or area work; verify it is not only supporting method context.
@@ -1122,10 +1122,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:32autumn21_q06:32autumn21_q06_a`
-- Question ID: `32autumn21_q06`
-- Part/subpart: `a` / `32autumn21_q06_a`
-- Paper/session/variant: `32autumn21` / `November` / `2`
+- Queue ID: `p3_exact_skill_review_queue:v1:32winter21_q06:32winter21_q06_a`
+- Question ID: `32winter21_q06`
+- Part/subpart: `a` / `32winter21_q06_a`
+- Paper/session/variant: `32winter21` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -1142,26 +1142,26 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: trigonometry.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_integration", "9709_p3_topic_trigonometry"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32autumn21_q06:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32autumn21_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn21_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32autumn21_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32autumn21_q06_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn21_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn21_q06_me0006", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32autumn21_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "32autumn21_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32autumn21/mark_scheme/q06.png", "sha256": "a87311d58080dbca6f6862059e1631439910835d58bf1b942b060e8fa0ccb658"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32autumn21/questions/q06.png", "sha256": "e29a3203f9573cae5b16ec96f661912ba42536b5e5169fc1160de20d332cfa21"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32autumn21_q06:32autumn21_q06_a", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_32autumn21_q06_a", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_integration", "9709_p3_topic_trigonometry"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:32winter21_q06:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "32winter21_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter21_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "32winter21_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "32winter21_q06_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter21_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter21_q06_me0006", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "32winter21_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "32winter21_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/32winter21/mark_scheme/q06.png", "sha256": "a87311d58080dbca6f6862059e1631439910835d58bf1b942b060e8fa0ccb658"}], "source_question_asset_refs": [{"exists": true, "path": "p3/32winter21/questions/q06.png", "sha256": "e29a3203f9573cae5b16ec96f661912ba42536b5e5169fc1160de20d332cfa21"}], "source_queue_id": "p3_exact_skill_review_queue:v1:32winter21_q06:32winter21_q06_a", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_32winter21_q06_a", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `question_crop_not_high_confidence`, `mark_scheme_crop_not_high_confidence`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `defer_ambiguous_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32autumn21/questions/q06.png", "sha256": "e29a3203f9573cae5b16ec96f661912ba42536b5e5169fc1160de20d332cfa21"}`
+- `{"exists": true, "path": "p3/32winter21/questions/q06.png", "sha256": "e29a3203f9573cae5b16ec96f661912ba42536b5e5169fc1160de20d332cfa21"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32autumn21/mark_scheme/q06.png", "sha256": "a87311d58080dbca6f6862059e1631439910835d58bf1b942b060e8fa0ccb658"}`
+- `{"exists": true, "path": "p3/32winter21/mark_scheme/q06.png", "sha256": "a87311d58080dbca6f6862059e1631439910835d58bf1b942b060e8fa0ccb658"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0006", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn21_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0004", "mark_code": "B1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0006", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter21_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1181,7 +1181,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 17. `33autumn22_q10` / `33autumn22_q10_a`
+### 17. `33winter22_q10` / `33winter22_q10_a`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Log/exponential algebra appears inside differential-equation evidence; verify the assessed target skill.
@@ -1189,10 +1189,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a`
-- Question ID: `33autumn22_q10`
-- Part/subpart: `a` / `33autumn22_q10_a`
-- Paper/session/variant: `33autumn22` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_a`
+- Question ID: `33winter22_q10`
+- Part/subpart: `a` / `33winter22_q10_a`
+- Paper/session/variant: `33winter22` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Suggested candidate status: `fallback_only`
 - Suggested review priority: `6_fallback_only`
@@ -1209,28 +1209,28 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"], "candidate_topic_ids": ["9709_p3_topic_differential_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33autumn22_q10:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33autumn22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33autumn22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "33autumn22_q10", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33autumn22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33autumn22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_a", "supporting_skill_ids": ["9709_p1_functions_domain_range_one_one"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn22_q10_a", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 1}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"], "candidate_topic_ids": ["9709_p3_topic_differential_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33winter22_q10:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33winter22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33winter22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "33winter22_q10", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33winter22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33winter22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_a", "supporting_skill_ids": ["9709_p1_functions_domain_range_one_one"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_33winter22_q10_a", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 1}`
 - Proposed blockers: `mark_events_advisory_only`, `question_crop_not_high_confidence`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `defer_visual_dependency`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}`
+- `{"exists": true, "path": "p3/33winter22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}`
+- `{"exists": true, "path": "p3/33winter22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1250,7 +1250,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 18. `33autumn22_q10` / `33autumn22_q10_b`
+### 18. `33winter22_q10` / `33winter22_q10_b`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Log/exponential algebra appears inside differential-equation evidence; verify the assessed target skill.
@@ -1258,10 +1258,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b`
-- Question ID: `33autumn22_q10`
-- Part/subpart: `b` / `33autumn22_q10_b`
-- Paper/session/variant: `33autumn22` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_b`
+- Question ID: `33winter22_q10`
+- Part/subpart: `b` / `33winter22_q10_b`
+- Paper/session/variant: `33winter22` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_2_log_exponential_equations`
 - Suggested candidate status: `fallback_only`
 - Suggested review priority: `6_fallback_only`
@@ -1278,28 +1278,28 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: logarithms_and_exponentials.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"], "candidate_topic_ids": ["9709_p3_topic_differential_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33autumn22_q10:b", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33autumn22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33autumn22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "33autumn22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["b"], "proposed_part_id": "b", "proposed_subpart_id": null, "question_id": "33autumn22_q10", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33autumn22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33autumn22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn22_q10:33autumn22_q10_b", "supporting_skill_ids": ["9709_p1_functions_domain_range_one_one"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn22_q10_b", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_2_log_exponential_equations"], "candidate_topic_ids": ["9709_p3_topic_differential_equations"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33winter22_q10:b", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33winter22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33winter22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}, {"event_id": "33winter22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}], "part_path": ["b"], "proposed_part_id": "b", "proposed_subpart_id": null, "question_id": "33winter22_q10", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33winter22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33winter22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33winter22_q10:33winter22_q10_b", "supporting_skill_ids": ["9709_p1_functions_domain_range_one_one"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_33winter22_q10_b", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
 - Proposed blockers: `mark_events_advisory_only`, `question_crop_not_high_confidence`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `defer_visual_dependency`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}`
+- `{"exists": true, "path": "p3/33winter22/questions/q10.png", "sha256": "7aed56b1cf4ce1612c84f6b741d46b97ba3608a494de787138af91b25b5eb440"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}`
+- `{"exists": true, "path": "p3/33winter22/mark_scheme/q10.png", "sha256": "fe3fdb597c0d9064437178c8dd3d3f0c1a7a32bb03ecd251433466781c0df179"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0002", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0003", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0004", "mark_code": "A1FT", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0008", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter22_q10_me0009", "mark_code": "B1", "part_path": ["c"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1319,7 +1319,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 19. `31autumn23_q06` / `31autumn23_q06_a`
+### 19. `31winter23_q06` / `31winter23_q06_a`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Derivative-rule context may be mistaken for parametric or implicit differentiation.
@@ -1327,10 +1327,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:31autumn23_q06:31autumn23_q06_a`
-- Question ID: `31autumn23_q06`
-- Part/subpart: `a` / `31autumn23_q06_a`
-- Paper/session/variant: `31autumn23` / `November` / `1`
+- Queue ID: `p3_exact_skill_review_queue:v1:31winter23_q06:31winter23_q06_a`
+- Question ID: `31winter23_q06`
+- Part/subpart: `a` / `31winter23_q06_a`
+- Paper/session/variant: `31winter23` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Suggested candidate status: `conflict_candidate`
 - Suggested review priority: `5_conflict_candidate`
@@ -1348,24 +1348,24 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Only one side of candidate topic or topic-routing context is available.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.; Method-critical mismatch flagged; do not treat this as ordinary supporting-topic context.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_31autumn23_q06_a", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31winter23_q06_a", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`, `weak_parametric_equation_evidence_missing_parameter`
 - Reconciliation flags: none
 - Recommended review action: `verify_parametric_equation_parameter`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/31autumn23/questions/q06.png", "sha256": "2d960d858de2ea4b6ef938656e30013fe4209a6faf718ab5e59b3f3cc5bf0027"}`
+- `{"exists": true, "path": "p3/31winter23/questions/q06.png", "sha256": "2d960d858de2ea4b6ef938656e30013fe4209a6faf718ab5e59b3f3cc5bf0027"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/31autumn23/mark_scheme/q06.png", "sha256": "08fb37b732fd16c8131a17df3bdc1493ce79e0ec3ba27225e69cf1bb0dcac644"}`
+- `{"exists": true, "path": "p3/31winter23/mark_scheme/q06.png", "sha256": "08fb37b732fd16c8131a17df3bdc1493ce79e0ec3ba27225e69cf1bb0dcac644"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1385,7 +1385,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 20. `31autumn23_q06` / `31autumn23_q06_b`
+### 20. `31winter23_q06` / `31winter23_q06_b`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Derivative-rule context may be mistaken for parametric or implicit differentiation.
@@ -1393,10 +1393,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:31autumn23_q06:31autumn23_q06_b`
-- Question ID: `31autumn23_q06`
-- Part/subpart: `b` / `31autumn23_q06_b`
-- Paper/session/variant: `31autumn23` / `November` / `1`
+- Queue ID: `p3_exact_skill_review_queue:v1:31winter23_q06:31winter23_q06_b`
+- Question ID: `31winter23_q06`
+- Part/subpart: `b` / `31winter23_q06_b`
+- Paper/session/variant: `31winter23` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_4_parametric_implicit_differentiation`
 - Suggested candidate status: `conflict_candidate`
 - Suggested review priority: `5_conflict_candidate`
@@ -1414,24 +1414,24 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Only one side of candidate topic or topic-routing context is available.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: parametric_equations.; Method-critical mismatch flagged; do not treat this as ordinary supporting-topic context.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_31autumn23_q06_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31winter23_q06_b", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 3}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`, `weak_parametric_equation_evidence_missing_parameter`
 - Reconciliation flags: none
 - Recommended review action: `verify_parametric_equation_parameter`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/31autumn23/questions/q06.png", "sha256": "2d960d858de2ea4b6ef938656e30013fe4209a6faf718ab5e59b3f3cc5bf0027"}`
+- `{"exists": true, "path": "p3/31winter23/questions/q06.png", "sha256": "2d960d858de2ea4b6ef938656e30013fe4209a6faf718ab5e59b3f3cc5bf0027"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/31autumn23/mark_scheme/q06.png", "sha256": "08fb37b732fd16c8131a17df3bdc1493ce79e0ec3ba27225e69cf1bb0dcac644"}`
+- `{"exists": true, "path": "p3/31winter23/mark_scheme/q06.png", "sha256": "08fb37b732fd16c8131a17df3bdc1493ce79e0ec3ba27225e69cf1bb0dcac644"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0001", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0002", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0004", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0005", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1521,7 +1521,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 22. `32autumn23_q03` / `32autumn23_q03_whole`
+### 22. `32winter23_q03` / `32winter23_q03_whole`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Polynomial/remainder theorem evidence may be supporting work rather than the target skill.
@@ -1529,10 +1529,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `whole_question`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:32autumn23_q03:32autumn23_q03_whole`
-- Question ID: `32autumn23_q03`
-- Part/subpart: `whole` / `32autumn23_q03_whole`
-- Paper/session/variant: `32autumn23` / `November` / `2`
+- Queue ID: `p3_exact_skill_review_queue:v1:32winter23_q03:32winter23_q03_whole`
+- Question ID: `32winter23_q03`
+- Part/subpart: `whole` / `32winter23_q03_whole`
+- Paper/session/variant: `32winter23` / `November` / `2`
 - Candidate P3 skill IDs: `9709_p3_3_1_polynomial_division_factor_remainder`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -1550,23 +1550,23 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: polynomials.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_32autumn23_q03_whole", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 5}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_32winter23_q03_whole", "generation_gate_block_reasons": ["mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 5}`
 - Proposed blockers: `mark_events_advisory_only`, `mark_scheme_crop_not_high_confidence`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/32autumn23/questions/q03.png", "sha256": "9825707e28246c49b900b6956e1dbf8c10088f5840eea34b68b0df7f8e9f6b88"}`
+- `{"exists": true, "path": "p3/32winter23/questions/q03.png", "sha256": "9825707e28246c49b900b6956e1dbf8c10088f5840eea34b68b0df7f8e9f6b88"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/32autumn23/mark_scheme/q03.png", "sha256": "cd417883cecd17e3fa9b1f65b6ee25179acac8b801262a8c49fc80498334934f"}`
+- `{"exists": true, "path": "p3/32winter23/mark_scheme/q03.png", "sha256": "cd417883cecd17e3fa9b1f65b6ee25179acac8b801262a8c49fc80498334934f"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "32autumn23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q03_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "32autumn23_q03_me0005", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q03_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q03_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q03_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q03_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "32winter23_q03_me0005", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1664,7 +1664,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 24. `31autumn21_q01` / `31autumn21_q01_whole`
+### 24. `31winter21_q01` / `31winter21_q01_whole`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Whole-question candidate likely contains only one part matching the proposed skill.
@@ -1672,10 +1672,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `whole_question`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:31autumn21_q01:31autumn21_q01_whole`
-- Question ID: `31autumn21_q01`
-- Part/subpart: `whole` / `31autumn21_q01_whole`
-- Paper/session/variant: `31autumn21` / `November` / `1`
+- Queue ID: `p3_exact_skill_review_queue:v1:31winter21_q01:31winter21_q01_whole`
+- Question ID: `31winter21_q01`
+- Part/subpart: `whole` / `31winter21_q01_whole`
+- Paper/session/variant: `31winter21` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_1_modulus_equations_inequalities`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -1693,26 +1693,26 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Candidate skill/topic and topic-routing context differ but may describe different stages of one solution.; Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: modulus.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_31autumn21_q01_whole", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31winter21_q01_whole", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 8}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `question_crop_not_high_confidence`
 - Reconciliation flags: none
 - Recommended review action: `defer_ambiguous_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/31autumn21/questions/q01.png", "sha256": "d2fe27d2f528f404a8a41dea157e004006286c129a7b114f13039cad25033bd3"}`
+- `{"exists": true, "path": "p3/31winter21/questions/q01.png", "sha256": "d2fe27d2f528f404a8a41dea157e004006286c129a7b114f13039cad25033bd3"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/31autumn21/mark_scheme/q01.png", "sha256": "797aad9d00db4376ab538f3d4913ae536f6307658fa7de4fe23bfdced7e5993e"}`
+- `{"exists": true, "path": "p3/31winter21/mark_scheme/q01.png", "sha256": "797aad9d00db4376ab538f3d4913ae536f6307658fa7de4fe23bfdced7e5993e"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0005", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0006", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0007", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q01_me0008", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0001", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0002", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0003", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0004", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0005", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0006", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0007", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q01_me0008", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -1732,7 +1732,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 25. `31autumn21_q04` / `31autumn21_q04_whole`
+### 25. `31winter21_q04` / `31winter21_q04_whole`
 
 - Selection category: `known_failure_mode_probe`
 - Selection reason: Whole-question candidate likely contains only one part matching the proposed skill.
@@ -1740,10 +1740,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `whole_question`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:31autumn21_q04:31autumn21_q04_whole`
-- Question ID: `31autumn21_q04`
-- Part/subpart: `whole` / `31autumn21_q04_whole`
-- Paper/session/variant: `31autumn21` / `November` / `1`
+- Queue ID: `p3_exact_skill_review_queue:v1:31winter21_q04:31winter21_q04_whole`
+- Question ID: `31winter21_q04`
+- Part/subpart: `whole` / `31winter21_q04_whole`
+- Paper/session/variant: `31winter21` / `November` / `1`
 - Candidate P3 skill IDs: `9709_p3_3_5_standard_integration`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -1761,24 +1761,24 @@ Cross-topic reviewer checklist:
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: integration.
 Part-level decomposition candidates:
 - None
-- Content Lab blocker context: `{"candidate_id": "content_lab_31autumn21_q04_whole", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_31winter21_q04_whole", "generation_gate_block_reasons": ["question_quality_gate_blocks_content_lab_generation", "mapping_or_subpart_not_reviewed_or_approved", "mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "blocked_until_reviewed", "role_statuses": {"field_guide_source": "block", "generated_warmup_pattern_source": "block", "guardian_candidate": "block", "mixed_review_source": "blocked_until_reviewed", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 6}`
 - Proposed blockers: `mixed_or_ambiguous_topic`, `mark_events_advisory_only`, `question_crop_not_high_confidence`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `defer_ambiguous_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/31autumn21/questions/q04.png", "sha256": "ad5427ac36cf4c78ff3cb2f8939815d36b9e38c43ea9f18cae27a6afdff967c1"}`
+- `{"exists": true, "path": "p3/31winter21/questions/q04.png", "sha256": "ad5427ac36cf4c78ff3cb2f8939815d36b9e38c43ea9f18cae27a6afdff967c1"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/31autumn21/mark_scheme/q04.png", "sha256": "b907f807c2fc1c8435b226e171fc2256e4daf6cb327f81cd24d8c6e9e883b461"}`
+- `{"exists": true, "path": "p3/31winter21/mark_scheme/q04.png", "sha256": "b907f807c2fc1c8435b226e171fc2256e4daf6cb327f81cd24d8c6e9e883b461"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0004", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0005", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "31autumn21_q04_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0001", "mark_code": "B1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0002", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0003", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0004", "mark_code": "M1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0005", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "31winter21_q04_me0006", "mark_code": "A1", "part_path": [], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.
@@ -2154,7 +2154,7 @@ Cross-topic reviewer checklist:
 - [ ] Avoid promoting broad whole-question evidence when the exact skill belongs only to one part.
 - [ ] Do not use supporting skill context as mastery evidence unless reviewed directly.
 
-### 31. `33autumn23_q06` / `33autumn23_q06_a`
+### 31. `33winter23_q06` / `33winter23_q06_a`
 
 - Selection category: `reliable_pattern_confirmation`
 - Selection reason: Trig identities/equations were reliable when they were the target skill; confirm clean target-vs-support separation.
@@ -2162,10 +2162,10 @@ Cross-topic reviewer checklist:
 - Review scope level: `part_level`
 - Related reviewed registry evidence exists: `False`
 - Related reviewed evidence IDs: none
-- Queue ID: `p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_a`
-- Question ID: `33autumn23_q06`
-- Part/subpart: `a` / `33autumn23_q06_a`
-- Paper/session/variant: `33autumn23` / `November` / `3`
+- Queue ID: `p3_exact_skill_review_queue:v1:33winter23_q06:33winter23_q06_a`
+- Question ID: `33winter23_q06`
+- Part/subpart: `a` / `33winter23_q06_a`
+- Paper/session/variant: `33winter23` / `November` / `3`
 - Candidate P3 skill IDs: `9709_p3_3_3_identities_compound_double_angle_equations`
 - Suggested candidate status: `cross_topic_candidate`
 - Suggested review priority: `2_cross_topic_candidate`
@@ -2182,27 +2182,27 @@ Cross-topic reviewer checklist:
 - Recommended scope: `subpart_level`
 - Cross-topic notes: Supporting candidate skills are review context only, not mastery evidence.; Source topic hint: trigonometry.
 Part-level decomposition candidates:
-- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_trigonometry"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33autumn23_q06:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33autumn23_q06_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33autumn23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33autumn23_q06_me0008", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "33autumn23_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33autumn23/mark_scheme/q06.png", "sha256": "e76fca79346f0e4a08a6e64d9af661a1b74cf178d41edf3f20f796f889e928c8"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33autumn23/questions/q06.png", "sha256": "2e16cf3fcb03cac37635d4e5cce9219699bb03f82a230c454976719defe69c23"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33autumn23_q06:33autumn23_q06_a", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
-- Content Lab blocker context: `{"candidate_id": "content_lab_33autumn23_q06_a", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
+- `{"blockers": ["uses_whole_question_images_for_part_review"], "candidate_source_skill_ids": ["9709_p3_3_3_identities_compound_double_angle_equations"], "candidate_topic_ids": ["9709_p3_topic_trigonometry"], "confidence": "medium", "decomposition_id": "p3_part_decomp:v1:33winter23_q06:a", "decomposition_status": "already_part_scoped", "evidence_signals": {"mark_event_part_match": true, "mark_scheme_method_signal": true, "part_label_signal": true, "skill_mapping_signal": true, "topic_assignment_signal": true}, "matching_mark_event_refs": [{"event_id": "33winter23_q06_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}], "other_part_mark_event_refs": [{"event_id": "33winter23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}, {"event_id": "33winter23_q06_me0008", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}], "part_path": ["a"], "proposed_part_id": "a", "proposed_subpart_id": null, "question_id": "33winter23_q06", "recommended_review_action": "review_part_scope_and_skill", "source_mark_scheme_asset_refs": [{"exists": true, "path": "p3/33winter23/mark_scheme/q06.png", "sha256": "e76fca79346f0e4a08a6e64d9af661a1b74cf178d41edf3f20f796f889e928c8"}], "source_question_asset_refs": [{"exists": true, "path": "p3/33winter23/questions/q06.png", "sha256": "2e16cf3fcb03cac37635d4e5cce9219699bb03f82a230c454976719defe69c23"}], "source_queue_id": "p3_exact_skill_review_queue:v1:33winter23_q06:33winter23_q06_a", "supporting_skill_ids": ["9709_p1_trigonometry_equations_intervals"], "warning": "This is a decomposition candidate, not reviewed evidence."}`
+- Content Lab blocker context: `{"candidate_id": "content_lab_33winter23_q06_a", "generation_gate_block_reasons": ["mark_events_not_reviewed_or_approved", "missing_source_skill_ids"], "generation_gate_blocked": true, "generation_gate_status": "blocked_until_reviewed", "review_status": "machine_candidate", "role_statuses": {"field_guide_source": "allow", "generated_warmup_pattern_source": "block", "guardian_candidate": "allow", "mixed_review_source": "block", "prerequisite_repair_source": "block", "quick_check_source": "block"}, "source_mark_event_count": 4}`
 - Proposed blockers: `mark_events_advisory_only`, `text_or_ocr_not_authoritative`, `visual_dependency`
 - Reconciliation flags: none
 - Recommended review action: `review_assets_and_skill`
 
 Question asset refs:
-- `{"exists": true, "path": "p3/33autumn23/questions/q06.png", "sha256": "2e16cf3fcb03cac37635d4e5cce9219699bb03f82a230c454976719defe69c23"}`
+- `{"exists": true, "path": "p3/33winter23/questions/q06.png", "sha256": "2e16cf3fcb03cac37635d4e5cce9219699bb03f82a230c454976719defe69c23"}`
 
 Mark-scheme asset refs:
-- `{"exists": true, "path": "p3/33autumn23/mark_scheme/q06.png", "sha256": "e76fca79346f0e4a08a6e64d9af661a1b74cf178d41edf3f20f796f889e928c8"}`
+- `{"exists": true, "path": "p3/33winter23/mark_scheme/q06.png", "sha256": "e76fca79346f0e4a08a6e64d9af661a1b74cf178d41edf3f20f796f889e928c8"}`
 
 Advisory-only mark-event refs:
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
-- `{"advisory_only": true, "event_id": "33autumn23_q06_me0008", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0001", "mark_code": "M1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0002", "mark_code": "B1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0003", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0004", "mark_code": "A1", "part_path": ["a"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0005", "mark_code": "M1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0006", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0007", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
+- `{"advisory_only": true, "event_id": "33winter23_q06_me0008", "mark_code": "A1", "part_path": ["b"], "review_status": "advisory"}`
 
 Reviewer checklist:
 - [ ] Inspect the canonical question image.

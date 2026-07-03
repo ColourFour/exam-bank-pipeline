@@ -96,7 +96,7 @@ Course readiness is uneven. P3 is the most developed exam-bank path, while P1, M
 
 Subpart marks are incomplete. In the dated export evidence above, the Asterion projection has `968` records with labeled subparts, and `48` records have missing subpart marks. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
 
-The source set is missing the mark scheme for `9709_2025_November_33`. This accounts for `11` records with missing mark-scheme image paths, including `33autumn25_q01` through `33autumn25_q11`. These records must remain blocked or review-only until the source companion mark scheme is added and the export is regenerated and validated.
+The source set is missing the mark scheme for `9709_2025_November_33`. This accounts for `11` records with missing mark-scheme image paths, including `33winter25_q01` through `33winter25_q11`. These records must remain blocked or review-only until the source companion mark scheme is added and the export is regenerated and validated.
 
 Mark events and generated warmup pattern metadata are not reviewed content. They are machine candidates unless reviewed or approved status is present and the candidate generation gate allows use.
 

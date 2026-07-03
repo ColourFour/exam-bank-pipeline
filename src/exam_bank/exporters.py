@@ -13,6 +13,7 @@ from . import __version__
 from .atomic_json import write_atomic_json
 from .config import AppConfig
 from .core.paper_identity import paper_identity_from_parts
+from .missing_mark_scheme import is_known_missing_mark_scheme_companion
 from .models import QuestionRecord
 from .ocr import OCR_ENGINE
 from .output_layout import (
@@ -28,6 +29,7 @@ from .trust import CropConfidence
 QUESTION_BANK_SCHEMA_NAME = "exam_bank.question_bank"
 QUESTION_BANK_SCHEMA_VERSION = 2
 QUESTION_BANK_RUN_MANIFEST_VERSION = 1
+MISSING_MARK_SCHEME_IMAGE_REASON = "missing_mark_scheme_image_path"
 
 
 def export_records(records: list[QuestionRecord], config: AppConfig, basename: str | None = None) -> Path:
@@ -40,7 +42,7 @@ def export_records(records: list[QuestionRecord], config: AppConfig, basename: s
 
 def records_to_output_questions(records: list[QuestionRecord], output_root: str | Path | None = None) -> list[dict[str, Any]]:
     root = Path(output_root) if output_root is not None else None
-    return [_record_to_output_dict(record, root) for record in records]
+    return _finalize_question_payload_contract([_record_to_output_dict(record, root) for record in records])
 
 
 def write_question_bank_payload(
@@ -50,12 +52,15 @@ def write_question_bank_payload(
     run_manifest: dict[str, Any] | None = None,
 ) -> Path:
     output_path = Path(output_path)
+    question_payload = _finalize_question_payload_contract(question_payload)
+    manifest = dict(run_manifest) if run_manifest else _build_payload_run_manifest(question_payload, output_path=output_path)
+    manifest["qa_summary"] = _payload_qa_summary(question_payload)
     write_atomic_json(
         {
             "schema_name": QUESTION_BANK_SCHEMA_NAME,
             "schema_version": QUESTION_BANK_SCHEMA_VERSION,
             "record_count": len(question_payload),
-            "run_manifest": run_manifest or _build_payload_run_manifest(question_payload, output_path=output_path),
+            "run_manifest": manifest,
             "questions": question_payload,
         },
         output_path,
@@ -109,7 +114,7 @@ def _build_run_manifest(
             "version": OUTPUT_LAYOUT_VERSION,
             "profile": output_profile_for_root(output_root or output_path.parent.parent),
         },
-        "qa_summary": _qa_summary(records, question_payload),
+        "qa_summary": _payload_qa_summary(question_payload),
     }
 
 
@@ -222,32 +227,90 @@ def _artifact_root_value(output_root: Path | None, output_path: Path) -> str:
     return str(root)
 
 
-def _qa_summary(records: list[QuestionRecord], question_payload: list[dict[str, Any]]) -> dict[str, Any]:
+def _payload_qa_summary(question_payload: list[dict[str, Any]]) -> dict[str, Any]:
     return {
-        "record_count": len(records),
+        "record_count": len(question_payload),
         "paper_family_counts": _counts(question.get("paper_family", "") for question in question_payload),
-        "validation_status_counts": _counts(record.validation.validation_status for record in records),
-        "mapping_status_counts": _counts(record.mark_scheme.mapping_status for record in records),
-        "scope_quality_status_counts": _counts(record.validation.scope_quality_status for record in records),
-        "text_fidelity_status_counts": _counts(record.validation.text_fidelity_status for record in records),
-        "visual_curation_status_counts": _counts(record.validation.visual_curation_status for record in records),
-        "text_only_status_counts": _counts(record.validation.text_only_status for record in records),
+        "validation_status_counts": _counts(_note_value(question, "validation_status") for question in question_payload),
+        "mapping_status_counts": _counts(_note_value(question, "mapping_status") for question in question_payload),
+        "scope_quality_status_counts": _counts(_note_value(question, "scope_quality_status") for question in question_payload),
+        "text_fidelity_status_counts": _counts(_note_value(question, "text_fidelity_status") for question in question_payload),
+        "visual_curation_status_counts": _counts(_note_value(question, "visual_curation_status") for question in question_payload),
+        "text_only_status_counts": _counts(_note_value(question, "text_only_status") for question in question_payload),
         "question_crop_confidence_counts": _counts(
-            record.images.question_crop_confidence
-            or (CropConfidence.LOW if record.images.crop_uncertain else CropConfidence.HIGH)
-            for record in records
+            _note_value(question, "question_crop_confidence") or CropConfidence.HIGH
+            for question in question_payload
         ),
-        "mark_scheme_crop_confidence_counts": _counts(record.mark_scheme.crop_confidence for record in records),
+        "mark_scheme_crop_confidence_counts": _counts(_note_value(question, "mark_scheme_crop_confidence") for question in question_payload),
         "ocr_summary": {
-            "ran_count": sum(1 for record in records if record.extraction.ocr_ran),
-            "selected_count": sum(1 for record in records if record.extraction.ocr_selected),
-            "engine_counts": _counts(record.extraction.ocr_engine for record in records if record.extraction.ocr_engine),
+            "ran_count": sum(1 for question in question_payload if _truthy(_field_or_note_value(question, "ocr_ran"))),
+            "selected_count": sum(1 for question in question_payload if _truthy(_field_or_note_value(question, "ocr_selected"))),
+            "engine_counts": _counts(
+                str(_field_or_note_value(question, "ocr_engine") or "")
+                for question in question_payload
+                if _field_or_note_value(question, "ocr_engine")
+            ),
         },
         "artifact_path_counts": {
-            "missing_question_image_path": sum(1 for record in records if not record.images.screenshot_path),
-            "missing_mark_scheme_image_path": sum(1 for record in records if not record.mark_scheme.image_path),
+            "missing_question_image_path": sum(1 for question in question_payload if _blank(question.get("question_image_path"))),
+            "missing_mark_scheme_image_path": sum(1 for question in question_payload if _blank(question.get("mark_scheme_image_path"))),
         },
     }
+
+
+def _note_value(question: dict[str, Any], field: str) -> Any:
+    notes = question.get("notes") if isinstance(question.get("notes"), dict) else {}
+    return notes.get(field)
+
+
+def _field_or_note_value(question: dict[str, Any], field: str) -> Any:
+    if field in question:
+        return question.get(field)
+    return _note_value(question, field)
+
+
+def _truthy(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().lower() in {"1", "true", "yes"}
+
+
+def _blank(value: Any) -> bool:
+    return not str(value or "").strip()
+
+
+def _finalize_question_payload_contract(question_payload: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [_finalize_question_record_contract(question) for question in question_payload]
+
+
+def _finalize_question_record_contract(question: dict[str, Any]) -> dict[str, Any]:
+    finalized = dict(question)
+    notes = dict(finalized.get("notes") if isinstance(finalized.get("notes"), dict) else {})
+    finalized["notes"] = notes
+    if not _blank(finalized.get("mark_scheme_image_path")):
+        return finalized
+    if is_known_missing_mark_scheme_companion(finalized):
+        if _blank(notes.get("missing_mark_scheme_reason")):
+            notes["missing_mark_scheme_reason"] = "known_missing_mark_scheme_companion"
+        return finalized
+
+    if _blank(notes.get("missing_mark_scheme_reason")):
+        notes["missing_mark_scheme_reason"] = MISSING_MARK_SCHEME_IMAGE_REASON
+    if _blank(notes.get("mapping_failure_reason")):
+        notes["mapping_failure_reason"] = MISSING_MARK_SCHEME_IMAGE_REASON
+    if str(notes.get("mapping_status") or "").lower() in {"", "pass"}:
+        notes["mapping_status"] = "fail"
+    if str(notes.get("validation_status") or "").lower() in {"", "pass"}:
+        notes["validation_status"] = "fail"
+    notes["validation_flags"] = _append_unique_flag(notes.get("validation_flags"), MISSING_MARK_SCHEME_IMAGE_REASON)
+    return finalized
+
+
+def _append_unique_flag(value: Any, flag: str) -> list[Any]:
+    flags = list(value) if isinstance(value, list) else ([] if _blank(value) else [value])
+    if flag not in flags:
+        flags.append(flag)
+    return flags
 
 
 def _counts(values: Any) -> dict[str, int]:
@@ -279,13 +342,7 @@ def _build_payload_run_manifest(question_payload: list[dict[str, Any]], *, outpu
             "profile": output_profile_for_root(output_path.parent.parent),
         },
         "qa_summary": {
-            "record_count": len(question_payload),
-            "paper_family_counts": _counts(question.get("paper_family", "") for question in question_payload),
-            "validation_status_counts": _counts(
-                (question.get("notes") or {}).get("validation_status", "unknown")
-                for question in question_payload
-                if isinstance(question.get("notes") or {}, dict)
-            ),
+            **_payload_qa_summary(question_payload),
         },
     }
 

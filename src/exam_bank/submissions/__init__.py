@@ -1,5 +1,6 @@
 """Local-first assignment submission tracking."""
 
+from exam_bank.submissions.answer_check import build_submission_answer_check, load_answer_check_results
 from exam_bank.submissions.draft_grading import build_submission_draft_grades, create_draft_grading_result
 from exam_bank.submissions.email_identity import match_student_for_email
 from exam_bank.submissions.email_models import (
@@ -71,6 +72,8 @@ __all__ = [
     "OutgoingEmailSummary",
     "ingest_assignment_submissions",
     "build_submission_review_queue",
+    "build_submission_answer_check",
+    "load_answer_check_results",
     "extract_submission_pdf",
     "create_draft_grading_result",
     "build_submission_draft_grades",

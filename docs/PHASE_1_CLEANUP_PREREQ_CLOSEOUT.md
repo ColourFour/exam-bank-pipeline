@@ -85,7 +85,7 @@ Output integrity:
 - Question image paths are required, relative, and must exist.
 - Nonblank mark-scheme image paths must be relative and must exist.
 - Missing mark-scheme paths are limited to the documented `9709_2025_November_33` exception.
-- Current missing mark-scheme records are exactly `33autumn25_q01` through `33autumn25_q11`.
+- Current missing mark-scheme records are exactly `33winter25_q01` through `33winter25_q11`.
 - Unexpected missing mark schemes fail.
 - The audit does not claim visual crop correctness, OCR correctness, mark-scheme semantic alignment, or topic accuracy.
 

@@ -1237,7 +1237,7 @@ def test_ai_assisted_accepts_deepseek_smoke_shape_with_null_strict_filter_reason
     taxonomy = _taxonomy()
     raw = _ai_payload(
         _ai_item(
-            question_id="11autumn21_q01",
+            question_id="11winter21_q01",
             ai_difficulty_factors="Binomial expansion with fractional term",
             common_mistakes="Sign errors",
             exam_techniques="Apply binomial expansion formula carefully",
@@ -1253,11 +1253,11 @@ def test_ai_assisted_accepts_deepseek_smoke_shape_with_null_strict_filter_reason
     parsed = deepseek_enrich.parse_ai_assisted_model_json(
         raw,
         taxonomy=taxonomy,
-        expected_records=[_record("11autumn21_q01")],
+        expected_records=[_record("11winter21_q01")],
     )
 
     item = parsed["items"][0]
-    assert item["question_id"] == "11autumn21_q01"
+    assert item["question_id"] == "11winter21_q01"
     assert item["subpart_id"] is None
     assert item["ai_difficulty_factors"] == ["Binomial expansion with fractional term"]
     assert item["common_mistakes"] == ["Sign errors"]

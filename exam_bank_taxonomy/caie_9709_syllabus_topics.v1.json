@@ -462,7 +462,9 @@
               "subtopic_label": "Modulus equations and inequalities",
               "canonical_subtopic_id": "9709_p3_subtopic_modulus_equations_inequalities",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Modulus inequalities"
+              ],
               "keywords": [
                 "modulus",
                 "absolute value",
@@ -539,7 +541,11 @@
               "subtopic_label": "Logarithmic and exponential equations",
               "canonical_subtopic_id": "9709_p3_subtopic_log_exponential_equations",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Exponential equations",
+                "Logarithmic and exponential rearrangement",
+                "exponential_graphs"
+              ],
               "keywords": [
                 "ln",
                 "log",
@@ -556,7 +562,10 @@
               "subtopic_label": "Linearising logarithmic relationships",
               "canonical_subtopic_id": "9709_p3_subtopic_linearising_log_relationships",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Exponential models and logarithmic linearisation",
+                "logarithmic_linearisation"
+              ],
               "keywords": [
                 "linear form",
                 "ln y",
@@ -600,7 +609,13 @@
               "subtopic_label": "Identities, compound angles and trigonometric equations",
               "canonical_subtopic_id": "9709_p3_subtopic_identities_compound_double_angle_equations",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Trigonometric identities and graphs",
+                "trigonometric identities and equations",
+                "double_angle_identities_and_trigonometric_integration",
+                "double_angle_formulae_and_trig_equations",
+                "compound_angle_identities_and_trig_graphs"
+              ],
               "keywords": [
                 "prove",
                 "identity",
@@ -619,7 +634,9 @@
               "subtopic_label": "R sin(x plus alpha) and R cos(x plus alpha) form",
               "canonical_subtopic_id": "9709_p3_subtopic_rsin_rcos_form",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Trigonometric equations and R sin(x-a) form"
+              ],
               "keywords": [
                 "R sin",
                 "R cos",
@@ -649,7 +666,9 @@
               "subtopic_label": "Derivative rules for P3 functions",
               "canonical_subtopic_id": "9709_p3_subtopic_derivative_rules",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "curve gradients"
+              ],
               "keywords": [
                 "differentiate",
                 "f′",
@@ -667,7 +686,9 @@
               "subtopic_label": "Parametric and implicit differentiation",
               "canonical_subtopic_id": "9709_p3_subtopic_parametric_implicit_differentiation",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "implicit differentiation"
+              ],
               "keywords": [
                 "parametric",
                 "parameter",
@@ -712,7 +733,9 @@
               "subtopic_label": "Standard integration",
               "canonical_subtopic_id": "9709_p3_subtopic_standard_integration",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "numerical integration"
+              ],
               "keywords": [
                 "integrate",
                 "integral",
@@ -729,7 +752,10 @@
               "packet_eligible": true,
               "aliases": [
                 "integration_by_substitution",
-                "integration_by_parts"
+                "integration_by_parts",
+                "integration_by_parts_with_exponential_functions",
+                "area_by_substitution",
+                "substitution_definite_integrals"
               ],
               "keywords": [
                 "substitution",
@@ -745,7 +771,14 @@
               "subtopic_label": "Trigonometric and partial-fraction integration",
               "canonical_subtopic_id": "9709_p3_subtopic_trig_and_partial_fraction_integration",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Trigonometric integrals",
+                "trigonometric integration",
+                "substitution_and_parts; trig_and_partial_fraction_integration",
+                "substitution_and_partial_fraction_integration",
+                "partial_fractions_and_rational_integrals",
+                "partial_fractions_and_definite_integrals"
+              ],
               "keywords": [
                 "partial fractions",
                 "hence find ∫",
@@ -791,7 +824,9 @@
               "subtopic_label": "Root location and uniqueness evidence",
               "canonical_subtopic_id": "9709_p3_subtopic_root_location",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "root_location; fixed_point_iteration"
+              ],
               "keywords": [
                 "root lies between",
                 "verify by calculation",
@@ -895,7 +930,11 @@
               "subtopic_label": "Separable differential equations",
               "canonical_subtopic_id": "9709_p3_subtopic_separable_differential_equations",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "Separable differential equations and modelling",
+                "separable_differential_equations; initial_conditions_models",
+                "separable_differential_equations_with_trigonometric_functions"
+              ],
               "keywords": [
                 "differential equation",
                 "dy/dx",
@@ -937,7 +976,9 @@
               "subtopic_label": "Complex arithmetic, modulus, argument and polar form",
               "canonical_subtopic_id": "9709_p3_subtopic_complex_arithmetic_polar_form",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "complex algebra"
+              ],
               "keywords": [
                 "complex number",
                 "complex numbers",
@@ -979,7 +1020,9 @@
               "subtopic_label": "Complex roots and polynomial equations",
               "canonical_subtopic_id": "9709_p3_subtopic_complex_roots_polynomials",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "complex roots of polynomials"
+              ],
               "keywords": [
                 "root of the equation",
                 "complex roots",
@@ -1228,7 +1271,8 @@
           "paper_code_group": "Paper 4",
           "deprecated_aliases": [
             "work_energy_power",
-            "power_and_resistance"
+            "power_and_resistance",
+            "connected_particles_energy"
           ],
           "subtopics": [
             {
@@ -1325,7 +1369,9 @@
               "subtopic_label": "Histograms and frequency density",
               "canonical_subtopic_id": "9709_s1_subtopic_data_histograms",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "data_histograms; data_mean_variance_coding"
+              ],
               "keywords": [
                 "histogram",
                 "frequency density",
@@ -1383,7 +1429,10 @@
               "subtopic_label": "Permutations and arrangements with restrictions",
               "canonical_subtopic_id": "9709_s1_subtopic_permutations_repeated_arrangements",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "combinations and arrangements with restrictions",
+                "permutations_repeated_arrangements; combinations_selections"
+              ],
               "keywords": [
                 "arrangements",
                 "letters",
@@ -1400,7 +1449,9 @@
               "subtopic_label": "Combinations and selections with restrictions",
               "canonical_subtopic_id": "9709_s1_subtopic_combinations_selections",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "combinations_selections; permutations_repeated_arrangements"
+              ],
               "keywords": [
                 "selections",
                 "chosen",
@@ -1492,7 +1543,9 @@
               "subtopic_label": "Discrete random variable distributions",
               "canonical_subtopic_id": "9709_s1_subtopic_discrete_random_variables_distribution",
               "packet_eligible": true,
-              "aliases": [],
+              "aliases": [
+                "discrete_random_variables_distribution; discrete_random_variables_expectation_variance"
+              ],
               "keywords": [
                 "random variable",
                 "probability distribution",
@@ -1544,7 +1597,9 @@
           "canonical_topic_id": "9709_s1_topic_the_normal_distribution",
           "official_section_code": "5.5",
           "paper_code_group": "Paper 5",
-          "deprecated_aliases": [],
+          "deprecated_aliases": [
+            "normal_distribution"
+          ],
           "subtopics": [
             {
               "subtopic_id": "normal_distribution_probabilities",

@@ -305,7 +305,7 @@ MATH_MANGLING_RE = re.compile(
 MERGED_PROSE_RE = re.compile(
     r"\b(?:Findthe|findthe|showthat|Showthat|Givethe|Giveyour|answerintheform|whereaandbare|Thediagram|thediagram|thegraph|formgraph|straightof|andshows|solvethe|intheform)\b"
 )
-PAPER_RE = re.compile(r"^(?P<component>\d{2})(?P<season>spring|summer|autumn)(?P<yy>\d{2})$", re.IGNORECASE)
+PAPER_RE = re.compile(r"^(?P<component>\d{2})(?P<season>spring|summer|autumn|winter)(?P<yy>\d{2})$", re.IGNORECASE)
 
 
 class FieldResolver:
@@ -351,7 +351,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--input", default="output/json/question_bank.json", help="Path to question_bank.json.")
     parser.add_argument("--baseline", default="", help="Optional baseline question_bank.json.")
     parser.add_argument("--artifact-root", default="", help="Optional root used to verify relative question and mark-scheme image paths.")
-    parser.add_argument("--out-dir", required=True, help="Directory for audit reports.")
+    parser.add_argument("--out-dir", default="output/reports/question_bank_readiness_audit", help="Directory for audit reports.")
     return parser
 
 
@@ -1386,8 +1386,7 @@ def build_summary(
     mark_summary = build_mark_total_summary(records, resolver, subpart_rows)
     mapping_summary = build_mapping_summary(mapping_validation_rows)
     topic_difficulty_summary = build_topic_difficulty_summary(records, resolver, baseline_records)
-    run_metadata = {field: payload.get(field) for field in RUN_METADATA_FIELDS}
-    run_metadata_missing = [field for field in RUN_METADATA_FIELDS if field not in payload]
+    run_metadata, run_metadata_missing = run_metadata_values(payload)
     ocr_selected_count = sum(1 for row in ocr_rows if as_bool(row.get("ocr_selected")))
     ocr_ran_count = sum(1 for row in ocr_rows if as_bool(row.get("ocr_ran")))
 
@@ -1460,6 +1459,14 @@ def build_summary(
     }
     summary["next_iteration_recommendations"] = recommend_next_iteration(summary, crop_quality_rows, false_negative_rows, subpart_rows)
     return summary
+
+
+def run_metadata_values(payload: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
+    run_manifest = payload.get("run_manifest") if isinstance(payload.get("run_manifest"), dict) else {}
+    metadata_source = run_manifest if run_manifest else payload
+    values = {field: metadata_source.get(field) for field in RUN_METADATA_FIELDS}
+    missing = [field for field in RUN_METADATA_FIELDS if field not in metadata_source]
+    return values, missing
 
 
 def build_mark_total_summary(records: list[dict[str, Any]], resolver: FieldResolver, subpart_rows: list[dict[str, Any]]) -> dict[str, Any]:

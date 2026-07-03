@@ -389,7 +389,7 @@ def test_current_output_integrity_allows_documented_missing_mark_scheme_companio
     artifact_root = tmp_path / "output"
     question_path = "p1/12spring24/questions/q01.png"
     mark_scheme_path = "p1/12spring24/mark_scheme/q01.png"
-    known_missing_question_path = "p3/33autumn25/questions/q01.png"
+    known_missing_question_path = "p3/33winter25/questions/q01.png"
     _write_file(artifact_root / question_path)
     _write_file(artifact_root / mark_scheme_path)
     _write_file(artifact_root / known_missing_question_path)
@@ -403,8 +403,8 @@ def test_current_output_integrity_allows_documented_missing_mark_scheme_companio
             mark_scheme_image_path=mark_scheme_path,
         ),
         _integrity_record(
-            "33autumn25_q01",
-            paper="33autumn25",
+            "33winter25_q01",
+            paper="33winter25",
             question_number="1",
             question_image_path=known_missing_question_path,
             mark_scheme_image_path="",
@@ -427,10 +427,10 @@ def test_current_output_integrity_allows_documented_missing_mark_scheme_companio
     assert report["known_missing_mark_scheme_companions"] == [
         {
             "source_companion": "9709_2025_November_33",
-            "paper": "33autumn25",
+            "paper": "33winter25",
             "reason": "The source mark scheme PDF for 9709 Mathematics November 2025 Paper 33 is missing.",
             "observed_missing_count": 1,
-            "observed_question_ids": ["33autumn25_q01"],
+            "observed_question_ids": ["33winter25_q01"],
         }
     ]
     assert json.loads(output_path.read_text(encoding="utf-8")) == report

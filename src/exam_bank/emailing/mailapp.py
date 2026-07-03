@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+import re
+import shutil
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -183,6 +186,66 @@ class MailAppEmailProvider:
             raise MailAppProviderError(_classify_mailapp_error(result.stderr))
         return [Path(line.strip()) for line in result.stdout.splitlines() if line.strip()]
 
+    def export_student_pdf_attachments(
+        self,
+        *,
+        query: str,
+        target_dir: Path,
+        roster_email_to_student_id: dict[str, str],
+        teacher_email: str | None = None,
+        since: datetime | None = None,
+        limit: int = 50,
+    ) -> list[Path]:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        roster_lookup = {email.strip().lower(): student_id for email, student_id in roster_email_to_student_id.items() if email.strip() and student_id.strip()}
+        if not roster_lookup:
+            return []
+        scratch_dir = target_dir / ".mailapp_import_tmp"
+        if scratch_dir.exists():
+            shutil.rmtree(scratch_dir)
+        scratch_dir.mkdir(parents=True, exist_ok=True)
+        result = self._runner(
+            build_mailapp_export_roster_pdf_attachment_records_script(
+                sender_emails=sorted(roster_lookup),
+                target_dir=scratch_dir,
+                limit=limit,
+            )
+        )
+        if result.returncode != 0:
+            shutil.rmtree(scratch_dir, ignore_errors=True)
+            raise MailAppProviderError(_classify_mailapp_error(result.stderr))
+
+        teacher = (teacher_email or self.requested_from_address or "").strip().lower()
+        imported: list[Path] = []
+        try:
+            for line in result.stdout.splitlines():
+                fields = line.split("\t")
+                if len(fields) < 2:
+                    continue
+                sender, saved_path = fields[:2]
+                date_text = fields[4] if len(fields) > 4 else ""
+                received_at = _parse_mailapp_date(date_text)
+                if since is not None and received_at is not None and received_at < since:
+                    continue
+                sender_email = _extract_email_address(sender)
+                if not sender_email or (teacher and sender_email == teacher):
+                    continue
+                student_id = roster_lookup.get(sender_email)
+                if not student_id:
+                    continue
+                source = Path(saved_path)
+                if not source.is_file():
+                    continue
+                target = _unique_path(target_dir / f"{_safe_filename_token(student_id)}__{_safe_filename_token(source.name)}")
+                shutil.move(source.as_posix(), target.as_posix())
+                if received_at is not None:
+                    timestamp = received_at.timestamp()
+                    os.utime(target, (timestamp, timestamp))
+                imported.append(target)
+        finally:
+            shutil.rmtree(scratch_dir, ignore_errors=True)
+        return imported
+
 
 class MailAppProviderError(RuntimeError):
     pass
@@ -356,9 +419,134 @@ end tell
 """.strip()
 
 
+def build_mailapp_export_pdf_attachment_records_script(*, query: str, target_dir: Path, limit: int = 50) -> str:
+    safe_limit = max(1, min(int(limit), 200))
+    target = str(target_dir.resolve()) + "/"
+    return f"""
+tell application "Mail"
+    set oldDelimiters to AppleScript's text item delimiters
+    set AppleScript's text item delimiters to linefeed
+    set queryText to {_as_applescript_string(query)}
+    set targetFolder to POSIX file {_as_applescript_string(target)} as alias
+    set savedLines to {{}}
+    set savedCount to 0
+    repeat with eachAccount in accounts
+        repeat with eachMailbox in mailboxes of eachAccount
+            try
+                set foundMessages to messages of eachMailbox whose subject contains queryText
+                repeat with eachMessage in foundMessages
+                    if savedCount is greater than or equal to {safe_limit} then exit repeat
+                    repeat with eachAttachment in mail attachments of eachMessage
+                        try
+                            set attachmentName to name of eachAttachment as text
+                            if attachmentName ends with ".pdf" or attachmentName ends with ".PDF" then
+                                set savedCount to savedCount + 1
+                                set saveFile to ((targetFolder as text) & (savedCount as text) & "_" & attachmentName)
+                                save eachAttachment in file saveFile
+                                set AppleScript's text item delimiters to tab
+                                set lineFields to {{sender of eachMessage as text, POSIX path of saveFile, subject of eachMessage as text, message id of eachMessage as text}}
+                                set end of savedLines to lineFields as text
+                                set AppleScript's text item delimiters to linefeed
+                            end if
+                        end try
+                        if savedCount is greater than or equal to {safe_limit} then exit repeat
+                    end repeat
+                end repeat
+            on error
+            end try
+            if savedCount is greater than or equal to {safe_limit} then exit repeat
+        end repeat
+        if savedCount is greater than or equal to {safe_limit} then exit repeat
+    end repeat
+    set outputText to savedLines as text
+    set AppleScript's text item delimiters to oldDelimiters
+    return outputText
+end tell
+""".strip()
+
+
+def build_mailapp_export_roster_pdf_attachment_records_script(*, sender_emails: list[str], target_dir: Path, limit: int = 50) -> str:
+    safe_limit = max(1, min(int(limit), 500))
+    target = str(target_dir.resolve()) + "/"
+    sender_list = _as_applescript_list(sender_emails)
+    return f"""
+tell application "Mail"
+    set oldDelimiters to AppleScript's text item delimiters
+    set AppleScript's text item delimiters to linefeed
+    set senderQueries to {sender_list}
+    set targetFolder to POSIX file {_as_applescript_string(target)} as alias
+    set savedLines to {{}}
+    set savedCount to 0
+    repeat with eachAccount in accounts
+        repeat with eachMailbox in mailboxes of eachAccount
+            try
+                repeat with eachSenderQuery in senderQueries
+                    if savedCount is greater than or equal to {safe_limit} then exit repeat
+                    set foundMessages to messages of eachMailbox whose sender contains (eachSenderQuery as text)
+                    repeat with eachMessage in foundMessages
+                        if savedCount is greater than or equal to {safe_limit} then exit repeat
+                        repeat with eachAttachment in mail attachments of eachMessage
+                            try
+                                set attachmentName to name of eachAttachment as text
+                                if attachmentName ends with ".pdf" or attachmentName ends with ".PDF" then
+                                    set savedCount to savedCount + 1
+                                    set saveFile to ((targetFolder as text) & (savedCount as text) & "_" & attachmentName)
+                                    save eachAttachment in file saveFile
+                                    set AppleScript's text item delimiters to tab
+                                    set lineFields to {{sender of eachMessage as text, POSIX path of saveFile, subject of eachMessage as text, message id of eachMessage as text, date received of eachMessage as text}}
+                                    set end of savedLines to lineFields as text
+                                    set AppleScript's text item delimiters to linefeed
+                                end if
+                            end try
+                            if savedCount is greater than or equal to {safe_limit} then exit repeat
+                        end repeat
+                    end repeat
+                end repeat
+            on error
+            end try
+            if savedCount is greater than or equal to {safe_limit} then exit repeat
+        end repeat
+        if savedCount is greater than or equal to {safe_limit} then exit repeat
+    end repeat
+    set outputText to savedLines as text
+    set AppleScript's text item delimiters to oldDelimiters
+    return outputText
+end tell
+""".strip()
+
+
 def _as_applescript_string(value: str) -> str:
     escaped = value.replace("\\", "\\\\").replace('"', '\\"').replace("\r", "\\r").replace("\n", "\\n")
     return f'"{escaped}"'
+
+
+def _as_applescript_list(values: list[str]) -> str:
+    return "{" + ", ".join(_as_applescript_string(value) for value in values) + "}"
+
+
+def _extract_email_address(value: str) -> str:
+    match = re.search(r"<([^<>@\s]+@[^<>\s]+)>", value)
+    if match:
+        return match.group(1).strip().lower()
+    match = re.search(r"([A-Za-z0-9._%+\-']+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,})", value)
+    return match.group(1).strip().lower() if match else ""
+
+
+def _safe_filename_token(value: str) -> str:
+    cleaned = re.sub(r"[^A-Za-z0-9._-]+", "_", value.strip()).strip("._")
+    return cleaned or "attachment"
+
+
+def _unique_path(path: Path) -> Path:
+    if not path.exists():
+        return path
+    stem = path.stem
+    suffix = path.suffix
+    for index in range(2, 1000):
+        candidate = path.with_name(f"{stem}_{index}{suffix}")
+        if not candidate.exists():
+            return candidate
+    raise FileExistsError(f"Could not choose unique path for {path}")
 
 
 def _classify_mailapp_error(stderr: str) -> str:

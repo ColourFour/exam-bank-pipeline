@@ -161,6 +161,19 @@ def render_mark_scheme_images(
         block.anchor
         for block in sorted(legacy_fallback_blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))
     ]
+    formulaic_fallback_blocks = _build_formulaic_mark_scheme_blocks(
+        mark_scheme_pdf,
+        layouts,
+        words,
+        config,
+        expected_numbers,
+        question_marks=question_marks,
+        question_subparts=question_subparts,
+    )
+    formulaic_fallback_anchors = [
+        block.anchor
+        for block in sorted(formulaic_fallback_blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))
+    ]
     with fitz.open(mark_scheme_pdf) as doc:
         rendered_pages = {}
         ordered_anchors = sorted(anchors, key=lambda item: (item.page_number, item.y0))
@@ -215,6 +228,26 @@ def render_mark_scheme_images(
                         crop_method=legacy_block.method,
                     )
                     if output_path is None:
+                        formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                            doc,
+                            fitz,
+                            mark_scheme_pdf,
+                            number,
+                            canonical_number,
+                            identity,
+                            formulaic_fallback_blocks,
+                            formulaic_fallback_anchors,
+                            rendered_pages,
+                            layouts,
+                            config,
+                            words,
+                            question_subpart_values,
+                            question_marks_total,
+                            prior_debug_paths=debug_paths,
+                        )
+                        if formulaic_result is not None:
+                            output[number] = formulaic_result
+                            continue
                         output[number] = MarkSchemeImageResult(
                             question_number=number,
                             **identity_fields,
@@ -263,6 +296,26 @@ def render_mark_scheme_images(
                     )
                     continue
 
+                formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                    doc,
+                    fitz,
+                    mark_scheme_pdf,
+                    number,
+                    canonical_number,
+                    identity,
+                    formulaic_fallback_blocks,
+                    formulaic_fallback_anchors,
+                    rendered_pages,
+                    layouts,
+                    config,
+                    words,
+                    question_subpart_values,
+                    question_marks_total,
+                )
+                if formulaic_result is not None:
+                    output[number] = formulaic_result
+                    continue
+
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
@@ -306,6 +359,25 @@ def render_mark_scheme_images(
             )
             flags.extend(validation_flags)
             if not regions:
+                formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                    doc,
+                    fitz,
+                    mark_scheme_pdf,
+                    number,
+                    canonical_number,
+                    identity,
+                    formulaic_fallback_blocks,
+                    formulaic_fallback_anchors,
+                    rendered_pages,
+                    layouts,
+                    config,
+                    words,
+                    question_subpart_values,
+                    question_marks_total,
+                )
+                if formulaic_result is not None:
+                    output[number] = formulaic_result
+                    continue
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
@@ -346,6 +418,26 @@ def render_mark_scheme_images(
                 crop_method="table_grid",
             )
             if output_path is None:
+                formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                    doc,
+                    fitz,
+                    mark_scheme_pdf,
+                    number,
+                    canonical_number,
+                    identity,
+                    formulaic_fallback_blocks,
+                    formulaic_fallback_anchors,
+                    rendered_pages,
+                    layouts,
+                    config,
+                    words,
+                    question_subpart_values,
+                    question_marks_total,
+                    prior_debug_paths=debug_paths,
+                )
+                if formulaic_result is not None:
+                    output[number] = formulaic_result
+                    continue
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
@@ -459,6 +551,7 @@ def _render_mark_scheme_crops(
     words_by_page: dict[int, list[MarkSchemeWord]] | None = None,
     crop_method: str = "fallback",
 ) -> tuple[Path | None, list[str]]:
+    regions = _normalize_mark_scheme_crop_regions(regions, layouts, config, flags)
     crops = []
     debug_paths: list[str] = []
     validation = _validate_mark_scheme_crop_before_save(
@@ -541,6 +634,32 @@ def _render_mark_scheme_crops(
     return output_path, debug_paths
 
 
+def _normalize_mark_scheme_crop_regions(
+    regions: list[MarkSchemeCropRegion],
+    layouts: list[PageLayout],
+    config: AppConfig,
+    flags: list[str],
+) -> list[MarkSchemeCropRegion]:
+    normalized: list[MarkSchemeCropRegion] = []
+    adjusted = False
+    for region in regions:
+        layout = _layout_by_number(layouts, region.page_number)
+        box = _normalize_crop_boundary_text_cuts(region.bbox, layout, config)
+        if box != region.bbox:
+            adjusted = True
+        normalized.append(
+            MarkSchemeCropRegion(
+                page_number=region.page_number,
+                bbox=box,
+                table_detected=region.table_detected,
+                continuation_rows_included=region.continuation_rows_included,
+            )
+        )
+    if adjusted:
+        flags.append("markscheme_crop_boundary_text_snap")
+    return normalized
+
+
 def _validate_mark_scheme_crop_before_save(
     question_number: str,
     mark_scheme_pdf: Path,
@@ -576,7 +695,7 @@ def _validate_mark_scheme_crop_before_save(
             return _CropValidation(False, labels, "page_header_footer_text")
         if _crop_cuts_through_text_line(region, layout):
             return _CropValidation(False, labels, "cuts_through_text_line")
-        if len(regions) == 1 and len(labels) <= 1 and region.bbox.y1 - region.bbox.y0 > layout.height * 0.78:
+        if len(regions) == 1 and len(labels) <= 1 and region.bbox.y1 - region.bbox.y0 > layout.height * 0.86:
             return _CropValidation(False, labels, "suspicious_full_page_crop")
         if len(regions) == 1 and region.bbox.y1 - region.bbox.y0 > layout.height * 0.92:
             return _CropValidation(False, labels, "suspicious_full_page_crop")
@@ -676,6 +795,49 @@ def _crop_cuts_through_text_line(region: MarkSchemeCropRegion, layout: PageLayou
         if top_inside or bottom_inside:
             return True
     return False
+
+
+def _normalize_crop_boundary_text_cuts(box: BoundingBox, layout: PageLayout, config: AppConfig) -> BoundingBox:
+    y0 = box.y0
+    y1 = box.y1
+    min_y = config.detection.crop_top_margin
+    max_y = layout.height - config.detection.bottom_margin
+    tolerance = 1.5
+    for _ in range(3):
+        changed = False
+        for block in layout.blocks:
+            if block.bbox.x1 < box.x0 or block.bbox.x0 > box.x1:
+                continue
+            top_inside = block.bbox.y0 + tolerance < y0 < block.bbox.y1 - tolerance
+            bottom_inside = block.bbox.y0 + tolerance < y1 < block.bbox.y1 - tolerance
+            if not top_inside and not bottom_inside:
+                continue
+            if _is_boundary_excludable_mark_scheme_text(block, layout, config):
+                if top_inside:
+                    y0 = min(max_y, block.bbox.y1 + 2.0)
+                    changed = True
+                if bottom_inside:
+                    y1 = max(min_y, block.bbox.y0 - 2.0)
+                    changed = True
+            else:
+                if top_inside:
+                    y0 = max(min_y, block.bbox.y0 - 2.0)
+                    changed = True
+                if bottom_inside:
+                    y1 = min(max_y, block.bbox.y1 + 2.0)
+                    changed = True
+        if not changed:
+            break
+    return BoundingBox(box.x0, y0, box.x1, y1)
+
+
+def _is_boundary_excludable_mark_scheme_text(block: TextBlock, layout: PageLayout, config: AppConfig) -> bool:
+    return (
+        _is_footer_or_header_box(block.bbox, layout, config)
+        or _is_mark_scheme_boilerplate(block.text)
+        or _is_mark_scheme_page_header_text(block.text)
+        or _is_mark_scheme_header_text(block.text)
+    )
 
 
 def _write_mark_scheme_crop_debug_record(
@@ -786,6 +948,19 @@ def _render_legacy_mark_scheme_images(
         _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
 
     ordered_anchors = [block.anchor for block in sorted(blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))]
+    formulaic_fallback_blocks = _build_formulaic_mark_scheme_blocks(
+        mark_scheme_pdf,
+        layouts,
+        words,
+        config,
+        expected_numbers,
+        question_marks=question_marks,
+        question_subparts=question_subparts,
+    )
+    formulaic_fallback_anchors = [
+        block.anchor
+        for block in sorted(formulaic_fallback_blocks.values(), key=lambda item: (item.anchor.page_number, item.anchor.y0))
+    ]
     output: dict[str, MarkSchemeImageResult] = {}
     with fitz.open(mark_scheme_pdf) as doc:
         rendered_pages = {}
@@ -811,6 +986,25 @@ def _render_legacy_mark_scheme_images(
                 )
                 continue
             if block is None:
+                formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                    doc,
+                    fitz,
+                    mark_scheme_pdf,
+                    number,
+                    canonical_number,
+                    identity,
+                    formulaic_fallback_blocks,
+                    formulaic_fallback_anchors,
+                    rendered_pages,
+                    layouts,
+                    config,
+                    words,
+                    question_subpart_values,
+                    question_marks_total,
+                )
+                if formulaic_result is not None:
+                    output[number] = formulaic_result
+                    continue
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
@@ -848,6 +1042,26 @@ def _render_legacy_mark_scheme_images(
                 crop_method=block.method,
             )
             if output_path is None:
+                formulaic_result = _render_formulaic_mark_scheme_fallback_result(
+                    doc,
+                    fitz,
+                    mark_scheme_pdf,
+                    number,
+                    canonical_number,
+                    identity,
+                    formulaic_fallback_blocks,
+                    formulaic_fallback_anchors,
+                    rendered_pages,
+                    layouts,
+                    config,
+                    words,
+                    question_subpart_values,
+                    question_marks_total,
+                    prior_debug_paths=debug_paths,
+                )
+                if formulaic_result is not None:
+                    output[number] = formulaic_result
+                    continue
                 output[number] = MarkSchemeImageResult(
                     question_number=number,
                     **identity_fields,
@@ -895,6 +1109,72 @@ def _render_legacy_mark_scheme_images(
                 confidence_score=block.confidence_score,
             )
     return output
+
+
+def _render_formulaic_mark_scheme_fallback_result(
+    doc,
+    fitz,
+    mark_scheme_pdf: Path,
+    original_number: str,
+    canonical_number: str,
+    identity: PaperIdentity,
+    formulaic_blocks: dict[str, MarkSchemeBlock],
+    formulaic_anchors: list[MarkSchemeAnchor],
+    rendered_pages: dict[int, tuple["Image.Image", float]],
+    layouts: list[PageLayout],
+    config: AppConfig,
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    question_subpart_values: list[str],
+    question_marks_total: int | None,
+    *,
+    prior_debug_paths: list[str] | None = None,
+) -> MarkSchemeImageResult | None:
+    block = formulaic_blocks.get(canonical_number)
+    if block is None:
+        return None
+    flags = list(block.review_flags)
+    output_path, debug_paths = _render_mark_scheme_crops(
+        doc,
+        fitz,
+        mark_scheme_pdf,
+        canonical_number,
+        identity,
+        block.regions,
+        flags,
+        rendered_pages,
+        layouts,
+        {},
+        formulaic_anchors,
+        config,
+        words_by_page=words_by_page,
+        crop_method=block.method,
+    )
+    debug_paths = [*(prior_debug_paths or []), *debug_paths]
+    if output_path is None:
+        return None
+    return MarkSchemeImageResult(
+        question_number=original_number,
+        image_path=output_path,
+        **_mark_scheme_identity_fields(identity, config),
+        page_numbers=[region.page_number for region in block.regions],
+        markscheme_question_number=canonical_number,
+        crop_confidence=_mark_scheme_crop_confidence(block.regions, layouts, flags),
+        mapping_method=block.method,
+        table_detected=False,
+        detected_anchor_pages=[block.anchor.page_number],
+        nearby_anchors=_nearby_anchor_labels(formulaic_anchors, block.anchor),
+        debug_paths=debug_paths,
+        review_flags=sorted(set(flags)),
+        table_header_ok=False,
+        continuation_rows_included=any(region.continuation_rows_included for region in block.regions),
+        question_subparts=question_subpart_values,
+        markscheme_subparts=block.subparts,
+        question_marks_total=question_marks_total,
+        markscheme_marks_total=block.mark_total,
+        mapping_status=MappingStatus.PASS,
+        block_ids=[block.block_id],
+        confidence_score=block.confidence_score,
+    )
 
 
 def _build_legacy_mark_scheme_blocks(
@@ -982,6 +1262,233 @@ def _build_legacy_mark_scheme_blocks(
             review_flags=sorted(set(["legacy_markscheme_segmentation", "markscheme_relaxed_anchor_detection", *flags])),
         )
     return blocks
+
+
+def _build_formulaic_mark_scheme_blocks(
+    mark_scheme_pdf: str | Path,
+    layouts: list[PageLayout],
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    config: AppConfig,
+    expected_numbers: list[str] | None,
+    *,
+    question_marks: dict[str, int | None],
+    question_subparts: dict[str, list[str]],
+) -> dict[str, MarkSchemeBlock]:
+    expected = [normalize_question_id(number) for number in (expected_numbers or []) if normalize_question_id(number)]
+    if not expected:
+        return {}
+    anchors = _detect_formulaic_left_margin_mark_scheme_anchors(layouts, words_by_page, config)
+    if not anchors:
+        return {}
+
+    blocks: dict[str, MarkSchemeBlock] = {}
+    for index, anchor in enumerate(anchors):
+        canonical_number = parent_question_id(anchor.question_number)
+        if canonical_number not in expected:
+            continue
+        next_anchor = _next_formulaic_top_level_anchor(anchors, index, canonical_number)
+        regions, flags = _formulaic_left_margin_regions_for_question(
+            layouts,
+            words_by_page,
+            anchor,
+            next_anchor,
+            config,
+        )
+        text_blocks = _blocks_for_crop_regions(layouts, regions, config) if regions else []
+        text = "\n".join(block.text for block in text_blocks if block.text.strip()).strip()
+        mark_total = _legacy_mark_total_from_text(text, question_marks.get(canonical_number))
+        subparts = _legacy_subparts_from_text(text)
+        if question_marks.get(canonical_number) is not None and mark_total is not None and mark_total != question_marks.get(canonical_number):
+            flags.append("formulaic_mark_total_mismatch_review")
+        if question_subparts.get(canonical_number) and subparts and any(
+            part not in subparts for part in question_subparts.get(canonical_number, [])
+        ):
+            flags.append("formulaic_subpart_mismatch_review")
+        if not regions:
+            flags.append("markscheme_image_missing")
+        blocks[canonical_number] = MarkSchemeBlock(
+            question_number=canonical_number,
+            block_id=_legacy_mark_scheme_block_id(mark_scheme_pdf, canonical_number),
+            anchor=anchor,
+            next_anchor=next_anchor,
+            text=text,
+            regions=regions,
+            mark_total=mark_total,
+            subparts=subparts,
+            confidence_score=_legacy_confidence_score(
+                regions=regions,
+                text=text,
+                mark_total=mark_total,
+                expected_total=question_marks.get(canonical_number),
+                subparts=subparts,
+                expected_subparts=question_subparts.get(canonical_number, []),
+                flags=flags,
+            ),
+            method="formulaic_left_margin_anchor_fallback",
+            review_flags=sorted(set(["formulaic_caie_markscheme_segmentation", *flags])),
+        )
+    return blocks
+
+
+def _detect_formulaic_left_margin_mark_scheme_anchors(
+    layouts: list[PageLayout],
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    config: AppConfig,
+) -> list[MarkSchemeAnchor]:
+    candidates: list[MarkSchemeAnchor] = []
+    seen: set[tuple[str, int, int]] = set()
+    for layout in layouts:
+        if _is_preliminary_mark_scheme_notes_page(layout):
+            continue
+        body_top = _formulaic_body_top(layout, config)
+        body_bottom = _formulaic_body_bottom(layout, config)
+        left_zone_right = min(82.0, layout.width * 0.16)
+        words = [
+            word
+            for word in words_by_page.get(layout.page_number, [])
+            if body_top <= word.bbox.y0 <= body_bottom
+            and word.bbox.x0 <= left_zone_right
+            and not _is_mark_scheme_boilerplate(word.text)
+        ]
+        for row in _group_words_by_row(words, tolerance=5.0):
+            row_box = _union_boxes([word.bbox for word in row])
+            if row_box.x0 > left_zone_right:
+                continue
+            label = _row_question_label_from_words(row)
+            if not label or label != parent_question_id(label):
+                continue
+            parent = _formulaic_anchor_parent(label)
+            if parent is None or not 1 <= parent <= 11:
+                continue
+            key = (label, layout.page_number, round(row_box.y0))
+            if key in seen:
+                continue
+            seen.add(key)
+            candidates.append(
+                MarkSchemeAnchor(
+                    question_number=label,
+                    page_number=layout.page_number,
+                    y0=row_box.y0,
+                    y1=row_box.y1,
+                    x0=row_box.x0,
+                    text=" ".join(word.text for word in row).strip(),
+                    table=None,
+                )
+            )
+    return _filter_out_of_sequence_mark_scheme_anchors(candidates)
+
+
+def _next_formulaic_top_level_anchor(
+    anchors: list[MarkSchemeAnchor],
+    index: int,
+    canonical_number: str,
+) -> MarkSchemeAnchor | None:
+    current_parent = _formulaic_anchor_parent(canonical_number)
+    for candidate in anchors[index + 1 :]:
+        candidate_parent = _formulaic_anchor_parent(parent_question_id(candidate.question_number))
+        if candidate_parent is None:
+            continue
+        if current_parent is None or candidate_parent > current_parent:
+            return candidate
+    return None
+
+
+def _formulaic_left_margin_regions_for_question(
+    layouts: list[PageLayout],
+    words_by_page: dict[int, list[MarkSchemeWord]],
+    anchor: MarkSchemeAnchor,
+    next_anchor: MarkSchemeAnchor | None,
+    config: AppConfig,
+) -> tuple[list[MarkSchemeCropRegion], list[str]]:
+    regions: list[MarkSchemeCropRegion] = []
+    flags = ["formulaic_markscheme_left_margin_crop"]
+    end_page = next_anchor.page_number if next_anchor else layouts[-1].page_number
+    for layout in layouts:
+        if not anchor.page_number <= layout.page_number <= end_page:
+            continue
+        body_top = _formulaic_body_top(layout, config)
+        body_bottom = _formulaic_body_bottom(layout, config)
+        top = max(body_top, anchor.y0 - 18.0) if layout.page_number == anchor.page_number else body_top
+        bottom = body_bottom
+        if next_anchor and layout.page_number == next_anchor.page_number:
+            bottom = min(bottom, next_anchor.y0 - 6.0)
+        if bottom <= top + 4:
+            continue
+        if next_anchor and layout.page_number == next_anchor.page_number and layout.page_number != anchor.page_number:
+            if bottom <= body_top + max(45.0, config.detection.min_crop_height * 1.5):
+                continue
+
+        text_boxes = [
+            block.bbox
+            for block in layout.blocks
+            if block.bbox.y1 >= top
+            and block.bbox.y0 <= bottom
+            and top - 2 <= _box_center_y(block.bbox) <= bottom + 2
+            and not _is_footer_or_header_box(block.bbox, layout, config)
+            and not _is_mark_scheme_boilerplate(block.text)
+            and not _is_mark_scheme_page_header_text(block.text)
+        ]
+        graphic_boxes = [
+            graphic
+            for graphic in layout.graphics
+            if graphic.y1 >= top
+            and graphic.y0 <= bottom
+            and not _is_footer_or_header_box(graphic, layout, config)
+        ]
+        boxes = text_boxes + graphic_boxes
+        if not boxes:
+            continue
+        content_box = _union_boxes(boxes).padded(4.0, layout.width, layout.height)
+        crop_box = BoundingBox(
+            max(config.detection.crop_left_margin, content_box.x0),
+            max(body_top, content_box.y0),
+            min(layout.width - config.detection.crop_right_margin, content_box.x1),
+            min(body_bottom, bottom, content_box.y1),
+        )
+        crop_box = _trim_formulaic_crop_boundary_cuts(crop_box, layout)
+        if crop_box.y1 <= crop_box.y0 + 4 or crop_box.x1 <= crop_box.x0 + 4:
+            continue
+        regions.append(
+            MarkSchemeCropRegion(
+                layout.page_number,
+                crop_box,
+                table_detected=False,
+                continuation_rows_included=layout.page_number != anchor.page_number,
+            )
+        )
+    if len(regions) > 1:
+        flags.append("markscheme_image_stitched")
+    return regions, flags
+
+
+def _formulaic_body_top(layout: PageLayout, config: AppConfig) -> float:
+    del layout
+    return max(config.detection.crop_top_margin, config.detection.min_question_start_y)
+
+
+def _trim_formulaic_crop_boundary_cuts(box: BoundingBox, layout: PageLayout) -> BoundingBox:
+    y0 = box.y0
+    y1 = box.y1
+    tolerance = 1.5
+    for block in layout.blocks:
+        if block.bbox.x1 < box.x0 or block.bbox.x0 > box.x1:
+            continue
+        if block.bbox.y0 + tolerance < y0 < block.bbox.y1 - tolerance:
+            y0 = max(y0, block.bbox.y1 + 2.0)
+        if block.bbox.y0 + tolerance < y1 < block.bbox.y1 - tolerance:
+            y1 = min(y1, block.bbox.y0 - 2.0)
+    return BoundingBox(box.x0, y0, box.x1, y1)
+
+
+def _formulaic_body_bottom(layout: PageLayout, config: AppConfig) -> float:
+    return layout.height - max(config.detection.bottom_margin, config.detection.crop_bottom_margin, 65.0)
+
+
+def _formulaic_anchor_parent(value: str) -> int | None:
+    try:
+        return int(parent_question_id(value))
+    except (TypeError, ValueError):
+        return None
 
 
 def _legacy_table_grid_row_bands(
@@ -3118,6 +3625,7 @@ def _is_mark_scheme_boilerplate(text: str) -> bool:
     cleaned = " ".join(text.split())
     patterns = [
         r"^©\s*UCLES\b",
+        r"^©\s*Cambridge University Press & Assessment\b",
         r"^UCLES\b",
         r"^Cambridge International",
         r"^Cambridge International AS/A Level",

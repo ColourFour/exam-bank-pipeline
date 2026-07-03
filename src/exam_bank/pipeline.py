@@ -36,6 +36,7 @@ from .trust import (
     derive_visual_curation_status as _derive_visual_curation_status,
     polluted_pass_signal_groups as _polluted_pass_signal_groups,
     refine_validation_status as _refine_validation_status,
+    references_source_visual as _references_source_visual,
     text_source_profile as _text_source_profile,
     visual_reason_flags as _visual_reason_flags,
 )
@@ -758,6 +759,7 @@ def _build_question_record(
             visual_reason_flags=visual_reason_flags,
         )
         missing_image_reason = _missing_question_image_reason(
+            question_text=question_text,
             visual_required=visual_required,
             visual_reason_flags=visual_reason_flags,
             crop_diagnostics=render_result.crop_diagnostics,
@@ -1341,11 +1343,18 @@ def _paper_total_focus(records: list[QuestionRecord]) -> dict[str, object]:
 
 def _missing_question_image_reason(
     *,
+    question_text: str = "",
     visual_required: bool,
     visual_reason_flags: list[str],
     crop_diagnostics: dict[str, Any],
 ) -> str:
     if not visual_required:
+        return ""
+    source_visual_referenced = _references_source_visual(question_text)
+    existing_reason = str(crop_diagnostics.get("missing_image_reason") or "")
+    if existing_reason and (source_visual_referenced or not str(question_text or "").strip()):
+        return existing_reason
+    if not source_visual_referenced:
         return ""
     figure_like_flags = {
         "contains_graph_or_diagram_prompt",

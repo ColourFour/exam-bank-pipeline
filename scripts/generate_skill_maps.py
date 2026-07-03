@@ -1048,8 +1048,8 @@ LEGACY_SKILL_REDIRECTS = {
 }
 
 
-QUESTION_RE = re.compile(r"^(\d{2})(spring|summer|autumn)(\d{2})$")
-SESSION_NAMES = {"spring": "March", "summer": "June", "autumn": "November"}
+QUESTION_RE = re.compile(r"^(\d{2})(spring|summer|autumn|winter)(\d{2})$")
+SESSION_NAMES = {"spring": "March", "summer": "June", "autumn": "November", "winter": "November"}
 ALLOWED_REVIEW = {"reviewed", "needs_review", "machine_candidate", "rejected", "deprecated"}
 ALLOWED_SOURCE = {
     "human_reviewed",

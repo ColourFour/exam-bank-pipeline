@@ -14,6 +14,7 @@ import fitz
 from exam_bank.emailing.mailapp import MailAppEmailProvider
 from exam_bank.emailing.providers import EmailProvider
 from exam_bank.mupdf_tools import quiet_mupdf
+from exam_bank.submissions.answer_check import build_submission_answer_check
 from exam_bank.submissions.ingest import ingest_assignment_submissions, load_assignment, load_roster, parse_datetime
 
 quiet_mupdf(fitz)
@@ -101,6 +102,7 @@ def add_assignment(
         "title": title,
         "class_id": class_id,
         "due_at": due_at.isoformat(),
+        "send_at": send_at.isoformat(),
         "timezone": timezone_name,
         "accepted_file_types": ["pdf"],
         "max_files_per_student": 1,
@@ -290,15 +292,24 @@ def ingest_class_assignment(
     import_from_mailapp: bool = False,
     mail_query: str | None = None,
     mail_limit: int = 50,
+    run_answer_check: bool = True,
 ) -> dict[str, object]:
     paths = class_paths(class_id, classes_root=classes_root)
     assignment_dir = paths.assignments_dir / _safe_segment(assignment_id)
+    assignment_path = assignment_dir / "assignment.json"
+    assignment = load_assignment(assignment_path)
+    assignment_payload = json.loads(assignment_path.read_text(encoding="utf-8"))
+    roster = [student for student in load_roster(paths.roster_path) if student.class_id == class_id and student.active]
     imported_attachments: list[Path] = []
     if import_from_mailapp:
         mail_provider = provider if isinstance(provider, MailAppEmailProvider) else MailAppEmailProvider(requested_from_address=from_address)
-        imported_attachments = mail_provider.export_pdf_attachments(
-            query=mail_query or assignment_id,
+        roster_email_to_student_id = {student.email: student.student_id for student in roster if student.email}
+        imported_attachments = mail_provider.export_student_pdf_attachments(
+            query=mail_query or _assignment_label(assignment.title, assignment_id),
             target_dir=assignment_dir / "inbox",
+            roster_email_to_student_id=roster_email_to_student_id,
+            teacher_email=from_address,
+            since=_mail_import_since(assignment_payload, assignment.due_at),
             limit=mail_limit,
         )
     result = ingest_assignment_submissions(
@@ -320,6 +331,14 @@ def ingest_class_assignment(
         completion_report=Path(result["completion_report"]),
         completion_summary=summary_path,
     )
+    answer_check: dict[str, object] = {}
+    if run_answer_check:
+        answer_check = build_submission_answer_check(
+            assignment_id=assignment_id,
+            assignment_path=assignment_path,
+            submission_output_root=output_root,
+            reports_root=reports_root,
+        )
     ack_result = {"sent": 0, "failed": 0}
     if send_acknowledgements:
         ack_result = send_submission_acknowledgements(
@@ -338,6 +357,9 @@ def ingest_class_assignment(
         "accepted_count": len(result["accepted"]),
         "rejected_count": len(result["rejected"]),
         "imported_attachments": [path.as_posix() for path in imported_attachments],
+        "answer_check_results": answer_check.get("result_path", ""),
+        "answer_check_csv": answer_check.get("csv_path", ""),
+        "answer_check_summary": answer_check.get("summary", {}),
         "acknowledgements": ack_result,
     }
 
@@ -379,6 +401,20 @@ def write_completion_summary(*, assignment_id: str, output_root: Path, reports_r
                 }
             )
     return path
+
+
+def _mail_import_since(assignment_payload: dict[str, object], due_at: datetime | None) -> datetime | None:
+    for key in ("send_at", "created_at", "generated_at"):
+        value = str(assignment_payload.get(key) or "").strip()
+        if not value:
+            continue
+        try:
+            return parse_datetime(value) - timedelta(hours=1)
+        except ValueError:
+            continue
+    if due_at is not None:
+        return due_at - timedelta(days=7)
+    return None
 
 
 def update_class_roster_from_completion(

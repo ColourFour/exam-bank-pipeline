@@ -1,0 +1,119 @@
+{
+  "type": "object",
+  "required": [
+    "priority_lane",
+    "selected_goal",
+    "why_this_now",
+    "repo_evidence",
+    "current_metric_or_sample",
+    "visual_evidence_to_review",
+    "topic_evidence_to_review",
+    "json_fields_to_verify",
+    "files_likely_to_change",
+    "files_protected",
+    "acceptance_criteria",
+    "test_expectations",
+    "verification_commands",
+    "implementation_boundaries",
+    "stop_conditions",
+    "repo_hygiene_risk",
+    "rollback_plan",
+    "done_when"
+  ],
+  "properties": {
+    "priority_lane": {
+      "enum": [
+        "clear_output_images",
+        "correct_topic_content",
+        "correct_question_json_data"
+      ]
+    },
+    "selected_goal": {
+      "type": "string"
+    },
+    "why_this_now": {
+      "type": "string"
+    },
+    "repo_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "current_metric_or_sample": {
+      "type": "string"
+    },
+    "visual_evidence_to_review": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "topic_evidence_to_review": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "json_fields_to_verify": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_likely_to_change": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_protected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_expectations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "implementation_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repo_hygiene_risk": {
+      "type": "string"
+    },
+    "rollback_plan": {
+      "type": "string"
+    },
+    "done_when": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

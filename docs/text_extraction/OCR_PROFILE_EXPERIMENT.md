@@ -50,18 +50,18 @@ Large gains appeared on fixtures where OCR recovered missing anchors, mark brack
 
 - `52spring22_q06`: all OCR profiles improved by +100 over the baseline fixture score.
 - `35summer25_q04`: all OCR profiles improved by +80.
-- `33autumn25_q07`: all OCR profiles improved by +60.
-- `33summer24_q03`, `13autumn25_q09`, `43autumn21_q06`, and `41summer23_q06`: most OCR profiles improved by +40.
+- `33winter25_q07`: all OCR profiles improved by +60.
+- `33summer24_q03`, `13winter25_q09`, `43winter21_q06`, and `41summer23_q06`: most OCR profiles improved by +40.
 - `12summer23_q01`: `formula_heavy` and `table_preserving` improved by +25.
 
 ## Regressions
 
 Regressions are material and are the main reason not to promote any profile directly into production selection:
 
-- Integral fixtures such as `33autumn21_q04` lost the expected integral sign under every OCR profile.
-- Theta/math-symbol fixtures such as `33autumn21_q05` and `11summer23_q01` regressed under every OCR profile.
+- Integral fixtures such as `33winter21_q04` lost the expected integral sign under every OCR profile.
+- Theta/math-symbol fixtures such as `33winter21_q05` and `11summer23_q01` regressed under every OCR profile.
 - Several P3 algebra/calculus fixtures introduced likely math-symbol loss, including `32spring23_q04`, `32summer21_q01`, `32spring23_q03`, and `31summer23_q09`.
-- `table_preserving` missed question anchors on `31summer22_q09`, `42autumn21_q01`, and `33summer21_q07`.
+- `table_preserving` missed question anchors on `31summer22_q09`, `42winter21_q01`, and `33summer21_q07`.
 
 ## Conclusion
 

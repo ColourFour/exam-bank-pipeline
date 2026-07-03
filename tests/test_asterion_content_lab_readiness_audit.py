@@ -252,7 +252,7 @@ def test_loop004_blocker_classification_and_same_sample_outputs() -> None:
         "content_lab_32summer22_q06_b",
         "content_lab_32spring25_q05_whole",
         "content_lab_32summer23_q10_b",
-        "content_lab_33autumn21_q02_a",
+        "content_lab_33winter21_q02_a",
     }
 
 

@@ -13,7 +13,7 @@ from email.policy import default
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from exam_bank.classroom import (
@@ -28,6 +28,7 @@ from exam_bank.classroom import (
     send_submission_acknowledgements,
 )
 from exam_bank.emailing.mailapp import MailAppEmailProvider
+from exam_bank.submissions.answer_check import load_answer_check_results
 from exam_bank.submissions.ingest import load_assignment, parse_datetime
 
 
@@ -84,6 +85,8 @@ class ClassroomDashboardApp:
                 return self._json({"reports": self._list_reports()})
 
             parts = [unquote(part) for part in path.strip("/").split("/") if part]
+            if len(parts) == 5 and parts[0] == "api" and parts[1] == "submissions" and parts[3] == "files" and method == "GET":
+                return self._serve_submission_file(parts[2], parts[4])
             if len(parts) >= 3 and parts[0] == "api" and parts[1] == "classes":
                 class_id = parts[2]
                 if len(parts) == 3 and method == "GET":
@@ -131,6 +134,8 @@ class ClassroomDashboardApp:
                         return self._upload_submissions(class_id, assignment_id, form)
                     if len(parts) == 6 and parts[5] == "ingest-submissions" and method == "POST":
                         return self._ingest_submissions(class_id, assignment_id, _json_body(body))
+                    if len(parts) == 6 and parts[5] == "sync-submissions" and method == "POST":
+                        return self._sync_submissions(class_id, assignment_id, _json_body(body))
                     if len(parts) == 6 and parts[5] == "preview-acknowledgements" and method == "POST":
                         return self._preview_acknowledgements(class_id, assignment_id)
                     if len(parts) == 6 and parts[5] == "confirm-acknowledgements-later" and method == "POST":
@@ -380,6 +385,7 @@ class ClassroomDashboardApp:
         meta = _read_json(assignment_dir / "assignment.json", default={"assignment_id": assignment_id, "class_id": class_id})
         schedule = _read_json(assignment_dir / "message_schedule.json", default=[])
         completion = _completion_counts(assignment_id, reports_root=self.config.reports_root)
+        answer_check = load_answer_check_results(assignment_id, submission_output_root=self.config.output_root)
         pdf = assignment_dir / "assignment.pdf"
         return {
             "assignment": meta,
@@ -388,6 +394,12 @@ class ClassroomDashboardApp:
             "schedule": schedule,
             "dispatch_status": _email_status(schedule),
             "submission_status": completion,
+            "submission_rows": self._submission_rows(class_id, assignment_id, answer_check=answer_check),
+            "answer_check": {
+                "summary": answer_check.get("summary", {}) if isinstance(answer_check, dict) else {},
+                "questions": answer_check.get("questions", []) if isinstance(answer_check, dict) else [],
+                "question_set_missing": bool(answer_check.get("question_set_missing")) if isinstance(answer_check, dict) else False,
+            },
             "reports": _assignment_report_links(assignment_id, reports_root=self.config.reports_root),
             "email_preview": self._email_preview(class_id, assignment_id),
         }
@@ -475,10 +487,24 @@ class ClassroomDashboardApp:
             output_root=self.config.output_root,
             reports_root=self.config.reports_root,
             import_from_mailapp=bool(payload.get("from_mailapp")),
-            mail_query=str(payload.get("mail_query") or assignment_id),
+            mail_query=str(payload.get("mail_query") or "") or None,
             from_address=str(payload.get("from_address") or self._class_teacher_email(class_id)),
         )
         self._audit("submissions_ingested", class_id=class_id, assignment_id=assignment_id, status="ingested")
+        return self._json({"ok": True, "result": _jsonable(result), "assignment": self._assignment_detail(class_id, assignment_id)})
+
+    def _sync_submissions(self, class_id: str, assignment_id: str, payload: dict[str, object]) -> DashboardResponse:
+        result = ingest_class_assignment(
+            class_id=class_id,
+            assignment_id=assignment_id,
+            classes_root=self.config.classes_root,
+            output_root=self.config.output_root,
+            reports_root=self.config.reports_root,
+            import_from_mailapp=True,
+            mail_query=str(payload.get("mail_query") or "") or None,
+            from_address=str(payload.get("from_address") or self._class_teacher_email(class_id)),
+        )
+        self._audit("submissions_synced", class_id=class_id, assignment_id=assignment_id, status="synced")
         return self._json({"ok": True, "result": _jsonable(result), "assignment": self._assignment_detail(class_id, assignment_id)})
 
     def _preview_acknowledgements(self, class_id: str, assignment_id: str) -> DashboardResponse:
@@ -644,6 +670,74 @@ class ClassroomDashboardApp:
         if class_dir not in target.parents and target != class_dir:
             raise DashboardError("invalid_file_path", "Invalid file path", status=400)
         return self._file_response(target, _guess_type(target.name))
+
+    def _serve_submission_file(self, assignment_id: str, filename: str) -> DashboardResponse:
+        safe_assignment_id = _safe_segment(assignment_id)
+        safe_filename = _safe_filename(filename)
+        accepted_dir = (self.config.output_root / safe_assignment_id / "accepted_pdfs").resolve()
+        target = (accepted_dir / safe_filename).resolve()
+        if accepted_dir not in target.parents and target != accepted_dir:
+            raise DashboardError("invalid_file_path", "Invalid file path", status=400)
+        return self._file_response(target, _guess_type(target.name))
+
+    def _submission_rows(self, class_id: str, assignment_id: str, *, answer_check: dict[str, object]) -> list[dict[str, object]]:
+        roster = [row for row in self._read_roster(class_id) if _is_active(row)]
+        completion_by_student = {row.get("student_id", ""): row for row in _completion_rows(assignment_id, reports_root=self.config.reports_root)}
+        questions = [item for item in answer_check.get("questions", []) if isinstance(item, dict)] if isinstance(answer_check, dict) else []
+        checked_students = answer_check.get("students", []) if isinstance(answer_check, dict) else []
+        checks_by_student = {
+            str(item.get("student_id") or ""): item
+            for item in checked_students
+            if isinstance(item, dict)
+        } if isinstance(checked_students, list) else {}
+        rows: list[dict[str, object]] = []
+        for student in sorted(roster, key=lambda item: item.get("student_id", "")):
+            student_id = student.get("student_id", "")
+            completion = completion_by_student.get(student_id, {})
+            check = checks_by_student.get(student_id, {})
+            status = completion.get("status", "missing") if completion else "missing"
+            row_questions = check.get("questions") if isinstance(check, dict) else []
+            if not isinstance(row_questions, list):
+                row_questions = []
+            if not row_questions and questions:
+                row_questions = [
+                    {
+                        "question_id": str(question.get("question_id") or ""),
+                        "question_label": str(question.get("question_label") or ""),
+                        "display_label": str(question.get("display_label") or question.get("question_label") or ""),
+                        "status": "not_submitted" if status == "missing" else "review_needed",
+                        "score": "",
+                        "max_score": 1,
+                    }
+                    for question in questions
+                ]
+            stored_pdf_path = str(check.get("stored_pdf_path") or completion.get("stored_pdf_path") or "")
+            notes = _compact_notes(
+                [
+                    completion.get("notes", ""),
+                    completion.get("rejection_reasons", ""),
+                    *(check.get("notes", []) if isinstance(check.get("notes"), list) else [str(check.get("notes") or "")]),
+                ]
+            )
+            rows.append(
+                {
+                    "student_id": student_id,
+                    "display_name": student.get("display_name", ""),
+                    "email": student.get("email", ""),
+                    "submission_state": status,
+                    "source_filename": str(check.get("source_filename") or completion.get("source_filename") or ""),
+                    "submitted_at": str(check.get("submitted_at") or completion.get("submitted_at") or ""),
+                    "stored_pdf_path": stored_pdf_path,
+                    "stored_pdf_url": _submission_file_url(assignment_id, stored_pdf_path),
+                    "total_answered": check.get("total_answered", "") if check else "",
+                    "total_expected": check.get("total_expected", len(questions) if status != "missing" else ""),
+                    "questions": row_questions,
+                    "notes": notes,
+                    "teacher_review_required": True,
+                    "student_facing": False,
+                }
+            )
+        return rows
 
     def _list_reports(self) -> list[dict[str, str]]:
         reports = []
@@ -877,6 +971,29 @@ def _assignment_report_links(assignment_id: str, *, reports_root: Path) -> list[
         if path.is_file():
             links.append({"name": path.name, "path": path.as_posix(), "url": f"/reports/{path.as_posix()}"})
     return links
+
+
+def _submission_file_url(assignment_id: str, stored_pdf_path: str) -> str:
+    if not stored_pdf_path:
+        return ""
+    filename = Path(stored_pdf_path).name
+    if not filename:
+        return ""
+    return f"/api/submissions/{quote(_safe_segment(assignment_id))}/files/{quote(filename)}"
+
+
+def _compact_notes(values: list[object]) -> str:
+    notes: list[str] = []
+    for value in values:
+        if isinstance(value, list):
+            candidates = value
+        else:
+            candidates = str(value or "").split(";")
+        for candidate in candidates:
+            note = str(candidate or "").strip()
+            if note and note not in notes:
+                notes.append(note)
+    return "; ".join(notes)
 
 
 def _first_schedule_time(schedule: object, message_type: str) -> str:

@@ -82,12 +82,35 @@ def _record(
 
 def test_visual_required_figure_without_detected_image_is_hard_failure_reason() -> None:
     reason = _missing_question_image_reason(
+        question_text="The diagram shows a sector.",
         visual_required=True,
         visual_reason_flags=["contains_graph_or_diagram_prompt"],
         crop_diagnostics={"detected_figure_count": 0},
     )
 
     assert reason == "detection_failure"
+
+
+def test_student_generated_diagram_prompt_is_not_missing_source_image_failure() -> None:
+    reason = _missing_question_image_reason(
+        question_text="Draw a fully labelled tree diagram to represent this information.",
+        visual_required=True,
+        visual_reason_flags=["contains_graph_or_diagram_prompt"],
+        crop_diagnostics={"detected_figure_count": 0},
+    )
+
+    assert reason == ""
+
+
+def test_abstract_inequality_prompt_is_not_missing_source_image_failure() -> None:
+    reason = _missing_question_image_reason(
+        question_text="Solve 4 sin theta tan theta = 1 + 5 cos theta for -180 < theta < 180.",
+        visual_required=True,
+        visual_reason_flags=["contains_inequality_or_region_prompt", "contains_trig_expression"],
+        crop_diagnostics={"detected_figure_count": 0},
+    )
+
+    assert reason == ""
 
 
 def test_missing_image_repair_report_splits_legacy_and_modern_records() -> None:

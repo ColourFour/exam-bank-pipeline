@@ -1,0 +1,893 @@
+{
+  "schema_name": "exam_bank.topic_bank_reviewed_decisions.winter_normalization_report",
+  "generated_at": "2026-06-28T00:00:00+08:00",
+  "source_path": "data/review/topic_bank_reviewed_decisions.v1.json",
+  "question_bank_path": "output/json/question_bank.json",
+  "source_record_count": 1301,
+  "kept_record_count": 1125,
+  "dropped_unknown_question_count": 176,
+  "duplicate_question_count": 0,
+  "dropped_unknown_questions": [
+    {
+      "question_id": "12spring21_q01",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring21_q02",
+      "action": "relabel",
+      "reviewed_topic": "quadratics"
+    },
+    {
+      "question_id": "12spring21_q03",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring21_q04",
+      "action": "keep",
+      "reviewed_topic": "quadratics"
+    },
+    {
+      "question_id": "12spring21_q05",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring21_q06",
+      "action": "relabel",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring21_q07",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring21_q08",
+      "action": "relabel",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring21_q09",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring21_q10",
+      "action": "keep",
+      "reviewed_topic": "circular_measure"
+    },
+    {
+      "question_id": "12spring21_q11",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring22_q01",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring22_q02",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring22_q03",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring22_q04",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring22_q05",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring22_q06",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring22_q07",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring22_q08",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring22_q09",
+      "action": "relabel",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring22_q10",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring22_q11",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring23_q01",
+      "action": "keep",
+      "reviewed_topic": "quadratics"
+    },
+    {
+      "question_id": "12spring23_q02",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring23_q03",
+      "action": "relabel",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring23_q04",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring23_q05",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring23_q06",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring23_q07",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring23_q08",
+      "action": "keep",
+      "reviewed_topic": "circular_measure"
+    },
+    {
+      "question_id": "12spring23_q09",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring23_q10",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring23_q11",
+      "action": "keep",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring24_q01",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring24_q02",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring24_q03",
+      "action": "keep",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring24_q04",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring24_q05",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring24_q06",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring24_q07",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring24_q08",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring24_q09",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "12spring24_q10",
+      "action": "keep",
+      "reviewed_topic": "circular_measure"
+    },
+    {
+      "question_id": "12spring24_q11",
+      "action": "keep",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "12spring25_q01",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring25_q02",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring25_q03",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring25_q04",
+      "action": "keep",
+      "reviewed_topic": "circular_measure"
+    },
+    {
+      "question_id": "12spring25_q05",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring25_q06",
+      "action": "keep",
+      "reviewed_topic": "coordinate_geometry"
+    },
+    {
+      "question_id": "12spring25_q07",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "12spring25_q08",
+      "action": "keep",
+      "reviewed_topic": "series"
+    },
+    {
+      "question_id": "12spring25_q09",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring25_q10",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "12spring25_q11",
+      "action": "keep",
+      "reviewed_topic": "functions"
+    },
+    {
+      "question_id": "32spring21_q01",
+      "action": "keep",
+      "reviewed_topic": "logarithmic_and_exponential_functions"
+    },
+    {
+      "question_id": "32spring21_q02",
+      "action": "keep",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring21_q03",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring21_q04",
+      "action": "relabel",
+      "reviewed_topic": "differential_equations"
+    },
+    {
+      "question_id": "32spring21_q05",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring21_q06",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring21_q07",
+      "action": "keep",
+      "reviewed_topic": "vectors"
+    },
+    {
+      "question_id": "32spring21_q08",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring21_q09",
+      "action": "keep",
+      "reviewed_topic": "numerical_solution_of_equations"
+    },
+    {
+      "question_id": "32spring21_q10",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring22_q01",
+      "action": "keep",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring22_q02",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring22_q03",
+      "action": "keep",
+      "reviewed_topic": "logarithmic_and_exponential_functions"
+    },
+    {
+      "question_id": "32spring22_q04",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring22_q05",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring22_q06",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring22_q07",
+      "action": "keep",
+      "reviewed_topic": "numerical_solution_of_equations"
+    },
+    {
+      "question_id": "32spring22_q08",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring22_q09",
+      "action": "relabel",
+      "reviewed_topic": "differential_equations"
+    },
+    {
+      "question_id": "32spring22_q10",
+      "action": "keep",
+      "reviewed_topic": "vectors"
+    },
+    {
+      "question_id": "32spring22_q11",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring23_q01",
+      "action": "keep",
+      "reviewed_topic": "logarithmic_and_exponential_functions"
+    },
+    {
+      "question_id": "32spring23_q02",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring23_q03",
+      "action": "keep",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring23_q04",
+      "action": "relabel",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring23_q05",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring23_q06",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring23_q07",
+      "action": "keep",
+      "reviewed_topic": "numerical_solution_of_equations"
+    },
+    {
+      "question_id": "32spring23_q08",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring23_q09",
+      "action": "relabel",
+      "reviewed_topic": "differential_equations"
+    },
+    {
+      "question_id": "32spring23_q10",
+      "action": "keep",
+      "reviewed_topic": "vectors"
+    },
+    {
+      "question_id": "32spring23_q11",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring24_q01",
+      "action": "keep",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring24_q02",
+      "action": "relabel",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring24_q03",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring24_q04",
+      "action": "keep",
+      "reviewed_topic": "logarithmic_and_exponential_functions"
+    },
+    {
+      "question_id": "32spring24_q05",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring24_q06",
+      "action": "keep",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring24_q07",
+      "action": "keep",
+      "reviewed_topic": "numerical_solution_of_equations"
+    },
+    {
+      "question_id": "32spring24_q08",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring24_q09",
+      "action": "keep",
+      "reviewed_topic": "vectors"
+    },
+    {
+      "question_id": "32spring24_q10",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring24_q11",
+      "action": "keep",
+      "reviewed_topic": "differential_equations"
+    },
+    {
+      "question_id": "32spring25_q01",
+      "action": "keep",
+      "reviewed_topic": "logarithmic_and_exponential_functions"
+    },
+    {
+      "question_id": "32spring25_q02",
+      "action": "relabel",
+      "reviewed_topic": "differentiation"
+    },
+    {
+      "question_id": "32spring25_q03",
+      "action": "keep",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring25_q04",
+      "action": "keep",
+      "reviewed_topic": "trigonometry"
+    },
+    {
+      "question_id": "32spring25_q05",
+      "action": "relabel",
+      "reviewed_topic": "complex_numbers"
+    },
+    {
+      "question_id": "32spring25_q06",
+      "action": "keep",
+      "reviewed_topic": "differential_equations"
+    },
+    {
+      "question_id": "32spring25_q07",
+      "action": "keep",
+      "reviewed_topic": "numerical_solution_of_equations"
+    },
+    {
+      "question_id": "32spring25_q08",
+      "action": "keep",
+      "reviewed_topic": "vectors"
+    },
+    {
+      "question_id": "32spring25_q09",
+      "action": "keep",
+      "reviewed_topic": "algebra"
+    },
+    {
+      "question_id": "32spring25_q10",
+      "action": "relabel",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "32spring25_q11",
+      "action": "keep",
+      "reviewed_topic": "integration"
+    },
+    {
+      "question_id": "42spring21_q01",
+      "action": "keep",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring21_q02",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring21_q03",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring21_q04",
+      "action": "relabel",
+      "reviewed_topic": "newtons_laws_of_motion"
+    },
+    {
+      "question_id": "42spring21_q05",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring21_q06",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring21_q07",
+      "action": "relabel",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring22_q01",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring22_q02",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring22_q03",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring22_q04",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring22_q05",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring22_q06",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring22_q07",
+      "action": "keep",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring23_q01",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring23_q02",
+      "action": "relabel",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring23_q03",
+      "action": "relabel",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring23_q04",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring23_q05",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring23_q06",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring23_q07",
+      "action": "keep",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring24_q01",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring24_q02",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring24_q03",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring24_q04",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring24_q05",
+      "action": "relabel",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring24_q06",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring24_q07",
+      "action": "relabel",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring25_q01",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring25_q02",
+      "action": "keep",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "42spring25_q03",
+      "action": "keep",
+      "reviewed_topic": "energy_work_and_power"
+    },
+    {
+      "question_id": "42spring25_q04",
+      "action": "keep",
+      "reviewed_topic": "newtons_laws_of_motion"
+    },
+    {
+      "question_id": "42spring25_q05",
+      "action": "keep",
+      "reviewed_topic": "momentum"
+    },
+    {
+      "question_id": "42spring25_q06",
+      "action": "keep",
+      "reviewed_topic": "forces_and_equilibrium"
+    },
+    {
+      "question_id": "42spring25_q07",
+      "action": "relabel",
+      "reviewed_topic": "kinematics_of_motion_in_a_straight_line"
+    },
+    {
+      "question_id": "52spring21_q02",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring21_q03",
+      "action": "relabel",
+      "reviewed_topic": "the_normal_distribution"
+    },
+    {
+      "question_id": "52spring21_q04",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring21_q05",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring21_q06",
+      "action": "keep",
+      "reviewed_topic": "permutations_and_combinations"
+    },
+    {
+      "question_id": "52spring21_q07",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring22_q01",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring22_q02",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring22_q03",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring22_q04",
+      "action": "relabel",
+      "reviewed_topic": "the_normal_distribution"
+    },
+    {
+      "question_id": "52spring22_q05",
+      "action": "keep",
+      "reviewed_topic": "permutations_and_combinations"
+    },
+    {
+      "question_id": "52spring22_q06",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring23_q01",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring23_q02",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring23_q03",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring23_q04",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring23_q05",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring23_q06",
+      "action": "relabel",
+      "reviewed_topic": "the_normal_distribution"
+    },
+    {
+      "question_id": "52spring23_q07",
+      "action": "keep",
+      "reviewed_topic": "permutations_and_combinations"
+    },
+    {
+      "question_id": "52spring24_q01",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring24_q02",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring24_q03",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring24_q04",
+      "action": "relabel",
+      "reviewed_topic": "the_normal_distribution"
+    },
+    {
+      "question_id": "52spring24_q05",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring24_q06",
+      "action": "keep",
+      "reviewed_topic": "permutations_and_combinations"
+    },
+    {
+      "question_id": "52spring25_q01",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring25_q02",
+      "action": "keep",
+      "reviewed_topic": "discrete_random_variables"
+    },
+    {
+      "question_id": "52spring25_q03",
+      "action": "keep",
+      "reviewed_topic": "representation_of_data"
+    },
+    {
+      "question_id": "52spring25_q04",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    },
+    {
+      "question_id": "52spring25_q05",
+      "action": "relabel",
+      "reviewed_topic": "the_normal_distribution"
+    },
+    {
+      "question_id": "52spring25_q06",
+      "action": "keep",
+      "reviewed_topic": "permutations_and_combinations"
+    },
+    {
+      "question_id": "52spring21_q01",
+      "action": "keep",
+      "reviewed_topic": "probability"
+    }
+  ],
+  "duplicate_questions": []
+}

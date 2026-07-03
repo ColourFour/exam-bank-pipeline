@@ -1,0 +1,2716 @@
+{
+  "batch_id": "topic_review_0237b41ffe91_slice_36",
+  "decision_schema": {
+    "properties": {
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "current_syllabus_status": {
+        "enum": [
+          "ambiguous",
+          "current_relevant",
+          "legacy_but_relevant",
+          "not_in_2026_syllabus",
+          "outdated_not_relevant"
+        ]
+      },
+      "decision_action": {
+        "enum": [
+          "exclude",
+          "keep",
+          "pending",
+          "relabel"
+        ]
+      },
+      "decision_version": {
+        "const": "topic_review_auto_decision_v1"
+      },
+      "evidence_refs": {
+        "type": "array"
+      },
+      "explanation": {
+        "type": "string"
+      },
+      "prompt_version": {
+        "const": "topic_review_9709_2026_2027_v1"
+      },
+      "question_id": {
+        "type": "string"
+      },
+      "release_override": {
+        "type": "boolean"
+      },
+      "review_source": {
+        "const": "automated_agentic_review"
+      },
+      "reviewed_skill": {
+        "type": "string"
+      },
+      "reviewed_subtopic": {
+        "type": "string"
+      },
+      "reviewed_topic": {
+        "type": "string"
+      },
+      "reviewer_model": {
+        "type": "string"
+      },
+      "risk_flags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "decision_version",
+      "review_source",
+      "question_id",
+      "decision_action",
+      "reviewed_topic",
+      "current_syllabus_status",
+      "release_override",
+      "confidence",
+      "evidence_refs",
+      "risk_flags",
+      "explanation",
+      "reviewer_model",
+      "prompt_version"
+    ],
+    "type": "object"
+  },
+  "manifest": {
+    "batch_id": "topic_review_0237b41ffe91",
+    "confidence_threshold": 0.9,
+    "created_at": "2026-06-29T03:29:57+00:00",
+    "dry_run": false,
+    "prompt_version": "topic_review_9709_2026_2027_v1",
+    "review_required_input_count": 2572,
+    "schema_name": "exam_bank.topic_review.auto_review_batch",
+    "schema_version": 1,
+    "selected_count": 2265,
+    "skipped_count": 307,
+    "skipped_reason_counts": {
+      "already_reviewed": 306,
+      "unknown_question_id": 1
+    },
+    "slice_end_index": 1080,
+    "slice_number": 36,
+    "slice_row_count": 30,
+    "slice_start_index": 1051,
+    "source_batch_path": "data/review/topic_review_batches/topic_review_batch.json",
+    "source_files": {
+      "artifact_root": "output",
+      "canonical_taxonomy_root": "exam_bank_taxonomy/canonical",
+      "question_bank": "output/json/question_bank.json",
+      "reviewed_decisions": "data/review/topic_bank_reviewed_decisions.v1.json",
+      "taxonomy": "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json",
+      "topic_routing": "data/topic_routing/question_bank.topic_routing.v1.json"
+    },
+    "syllabus_baseline": {
+      "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+      "syllabus_code": "9709",
+      "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+      "valid_for": [
+        "2026",
+        "2027"
+      ]
+    }
+  },
+  "reviewer_prompt": "You are reviewing CAIE 9709 Mathematics topic routing for printable topic packets. Use the 2026-2027 syllabus as the current baseline. Inspect the canonical question image and mark-scheme image. Choose exactly one decision_action: keep, relabel, exclude, or pending. Use keep only when the current topic is correct for the normalized paper family. Use relabel only when another supplied allowed topic is clearly correct. Use exclude when the question is outdated or not relevant to the 2026-2027 syllabus. Use pending for ambiguity, poor image evidence, mixed-topic uncertainty, or any curriculum doubt. Set release_override true only when both canonical images were inspected and are usable. Return JSON matching the supplied schema. Do not invent topic IDs.",
+  "rows": [
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1051,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4 (i) Stateddxt = 1\u2212sec^{2}t, or equivalent  B1\nUse chain rule  M1\nObtain ddyt = \u2212(sint)/(cost) , or equivalent  A1\nUse ddyx = ddyt \u00f7ddxt M1\nObtain the given answer correctly.  A1  5\n(ii) State or imply t = tan^{\u2212}1(1_{2}) B1\nObtain answer x = \u22120.0364  B1  2\n\u00a9 Cambridge International Examinations 2014\nGCE A LEVEL \u2013 May/June 2014  9709  32",
+      "ocr_text": "4 The parametric equations of a curve are x=f-tant, y=In(cosf), 1 1 for gh <t< 50. (i) Show that / = cott. [5] (ii) Hence find the x-coordinate of the point on the curve at which the gradient is equal to 2. Give your answer correct to 3 significant figures. [2]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q04",
+      "question_number": "4",
+      "question_text": "4 The parametric equations of a curve are x = t -tan t, y = ln(cost), for -1_{2}0 < t < 1_{2}0. (i) Show that ddyx = cott. [5] (ii) Hence find the x-coordinate of thepoint onthe curve at which the gradient isequal to 2. Give your answer correct to 3 significant figures. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1052,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_algebra",
+      "current_packet_topic": "algebra",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5 (i) Differentiate f(x) and obtain f\u2032(x) = (x\u22122)^{2}g\u2032(x) + 2(x\u22122)g(x) B1\nConclude that (x \u2013 2) is a factor of f\u2032(x) B1  2\n(ii)  EITHER: Substitute x = 2, equate to zero andstate a correct equation,\ne.g. 32 + 16a + 24 + 4b + a = 0  B1\nDifferentiate polynomial, substitute x = 2 and equate to zero or divide by\n(x\u22122) and equate constant remainder to zero  M1*\nObtain a correct equation, e.g. 80 + 32a + 36 + 4b = 0  A1\nOR1: Identify given polynomial with (x\u22122)^{2}(x^{3} _{+} Ax^{2} _{+} Bx + C) and obtain an\nequation in a and/or b  M1*\nObtain a correct equation, e.g.  ^{1}_{4}a\u22124(4 + a) + 4 = 3 A1\nObtain a second correct equation, e.g. \u2212 3_{4}a + 4(4 + a) = b A1\nOR2:  Divide given polynomial by (x\u22122)^{2} and obtain an equation in a and b  M1*\nObtain a correct equation, e.g. 29 + 8a + b + 0 A1\nObtain a second correct equation, e.g. 176 + 47a + 4b = 0 A1\nSolve for a or for b  M1(dep*)\nObtain a = \u22124 and b = 3  A1  5",
+      "ocr_text": "5 (i) The polynomial f(x) is of the form (x \u2014 2)?g(x), where g(x) is another polynomial. Show that (x \u2014 2) is a factor of f\u2019(x). [2] (ii) The polynomial x\u00b0 + ax* + 3x\u00b0 + bx\u201d + a, where a and b are constants, has a factor (x \u2014 2)\u2019. Using the factor theorem and the result of part (i), or otherwise, find the values of aand b. [5]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q05",
+      "question_number": "5",
+      "question_text": "5 (i) The(x -2polynomial) is a factor of ff(x)is_{\u2032}(xof). theform(x -2)^{2}g(x),whereg(x)isanother polynomial. Show that[2] (ii) The polynomial x^{5} + ax^{4} + 3x^{3} + bx^{2} + a, wherea andb are constants, has a factor (x -2)^{2}. Using the factor theorem and the result of part (i), or otherwise, find the values of a and b. [5]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_algebra"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1053,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "current_packet_topic": "numerical_solution_of_equations",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6 (i) Use correct arc formula and form an equation in r and x M1\nObtain a correct equation in any form  A1\nRearrange in the given form  A1  3\n(ii) Consider sign of a relevant expression at x = 1 and x = 1.5, or compare values of relevant\nexpressions at x = 1 and x = 5.1 M1\nComplete the argument correctly with correct calculated values  A1  2\n(iii) Use the iterative formula correctly at least once  M1\nObtain final answer 1.21  A1\nShow sufficient iterations to 4 d.p. to justify 1.21 to 2 d.p., or show there is a sign change\nin the interval (1.205,1.215)  A1  3",
+      "ocr_text": "In the diagram, A is a point on the circumference of a circle with centre O and radius r. A circular arc with centre A meets the circumference at B and C. The angle OAB is equal to x radians. The shaded region is bounded by AB, AC and the circular arc with centre A joining B and C. The perimeter of the shaded region is equal to half the circumference of the circle. ~- - if uN In the diagram, A is a point on the circumference of a circle with centre O and radius r. A circular arc with centre A meets the circumference at B and C. The angle OAB is equal to x radians. The shaded region is bounded by AB, AC and the circular arc with centre A joining B and C. The perimeter of the shaded region is equal to half the circumference of the circle. . 1 t at x = cos . 3 (i) Show that x = cos (5 =) [3] (ii) Verify by calculation that x lies between 1 and 1.5. [2] (iii) Use the iterative formula x = cos\u201d! ( x ) nel 4+ 4x, to determine the value of x correct to 2 decimal places. Give the result of each iteration to A decimal nlaces. 13]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q06",
+      "question_number": "6",
+      "question_text": "6 In the diagram, A is a point on the circumference of a circle with centre O and radius r. A circular arc with centre A meets the circumference at B and C. The angle OAB is equal to x radians. The shaded region isbounded by AB, ACand the circular arc with centre Ajoining B and C. The perimeter of the shaded region is equal to half the circumference of the circle. (i) Show that x = cos^{-}1 0(0 1)/(4 + 4x). [3] (ii) Verify by calculation that x lies between 1 and 1.5. [2] (iii) Use the iterative formula x_{n}^{+}1 = cos^{-}1(4 +0 4x_{n}) to determine the value of x correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_numerical_solution_of_equations"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1054,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_complex_numbers",
+      "current_packet_topic": "complex_numbers",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (a)  EITHER: Substitute and expand(\u22121 + )i 5^{3} completely  M1\nUse i^{2} = \u22121correctly at least once  M1\nObtain a = \u221212  A1\nState that the other complex root is \u22121\u2212 i 5 B1\nOR1:  State that the other complex root is \u22121\u2212 i 5 B1\nState the quadratic factor z^{2} + 2z + 6 B1\nDivide the cubic by a 3-term quadratic, equate remainder to zero and solve for\na or, using a 3-term quadratic, factorise the cubic and determine a  M1\nObtain a = \u221212  A1\nOR2: State that the other complex root is \u22121\u2212 i5 B1\nState or show the third root is 2  B1\nUse a valid method to determine a M1\nObtain a = \u201312  A1\nOR3: Substitute and use De Moivre to cube  6cis(114.1^{o}), or equivalent  M1\nFind the real and imaginary parts of the expression  M1\nObtain a = \u201312  A1\nState that the other complex root is \u22121\u2212 i5 B1  4\n\u00a9 Cambridge International Examinations 2014\nGCE A LEVEL \u2013 May/June 2014  9709  32\n(b)  EITHER: Substitutew = cos 2\u03b8 + i sin 2\u03b8in the given expression  B1\nUse double angle formulae throughout  M1\nExpress numerator and denominator in terms of cos \u03b8and sin \u03b8only  A1\nObtain given answer correctly  A1\nOR: Substitute w = e^{2}i\u03b8 in the given expression  B1\nDivide numerator and denominator by e^{i}\u03b8, or equivalent  M1\nExpress numerator and denominator in terms of cos \u03b8and sin \u03b8 only  A1\nObtain the given answer correctly  A1  4",
+      "ocr_text": "7 (a) _Itis given that \u20141 + (/5)i is a root of the equation z\u2019 + 2z + a = 0, where a is real. Showing your working, find the value of a, and write down the other complex root of this equation. [4] w-1 i =itand. [4] (b) The complex number w has modulus | and argument 26 radians. Show that",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q07",
+      "question_number": "7",
+      "question_text": "7 (a) It is given that -1 + (\u00ef5)i is a root of the equation \u00cf^{3} + 2\u00cf + a = 0, where a is real. Showing your working, find the value of a, and write down the other complex root of this equation. [4] (b) The complex number w has modulus 1 and argument 21 radians. Show that (w -1)/(w + 1) = i tan \u03b8. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_complex_numbers"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1055,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q08_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "8  (i) Use product rule  M1\nObtain derivative in any correct form  A1\nDifferentiate first derivative using the product rule  M1\nObtain second derivative in any correct form, e.g. \u2212 1_{2} sin 1_{2}x\u2212 1_{4}x cos ^{1}_{2}x\u2212 1_{2} sin 1_{2}x A1\nVerify the given statement  A1  5\n(ii) Integrate and reach kx sin 1_{2}^{x} + l\u222bsin 1_{2}^{x}^{d }_{x} M1*\nObtain ^{2}_{x} sin 1_{2}^{x}\u22122\u222bsin 1_{2}^{x}^{d }_{x}, or equivalent  A1\nObtain indefinite integral 2x sin ^{1}_{2}x + 4 cos ^{1}_{2}x A1\nUse correct limits x = 0, x = \u03c0correctly  M1(dep*)\nObtain answer 2\u03c0 \u22124, or exact equivalent  A1  5\n9  (i) State or implyddNt = kN1(\u2212.001N) and obtain the given answer k = 0.02  B1  1",
+      "ocr_text": "x O a The diagram shows the curve y = xcos 4x forO<x<z. woo Wo Ady and (i) Find ax and show that 452 +y+4sin aX = 0. [5] (ii) Find the exact value of the area of the region enclosed by this part of the curve and the x-axis. [5]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q08",
+      "question_number": "8",
+      "question_text": "8 The diagram shows the curve y = x cos_{2}^{1}x for 0 \u2264 x \u2264 0. (i) Find ddyx and show that 4ddx^{2}y_{2} + y + 4 sin^{1}_{2}x = 0. [5] (ii) Find the exact value of the area of the region enclosed by this part of the curve and the x-axis.",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1056,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q09_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q09_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differential_equations",
+      "current_packet_topic": "differential_equations",
+      "image_evidence_available": true,
+      "mark_scheme_text": "9  (i) State or implyddNt = kN1(\u2212.001N) and obtain the given answer k = 0.02  B1  1\n(ii) Separate variables and attempt integration of at least one side  M1\nIntegrate and obtain term 0.02t, or equivalent  A1\nCarry out a relevant method to obtain A or B such that  1 \u2261 A + B , or\nN1(\u2212.001N) N 1\u2212.001N\nequivalent  M1*\nObtain A =1 and B = 0.01, or equivalent  A1\nIntegrate and obtain termslnN\u2212ln(1\u2212.001N), or equivalent  A1\nEvaluate a constant or use limits t = 0, N = 20 in a solution with terms  a ln Nand\nbln(1\u2212.001N), ab \u2260 0   M1(dep*)\nObtain correct answer in any form, e.g. ln N\u2212ln(1\u2212.001N) = .002t + ln 25 A1\nRearrange and obtaint = 50ln(4N/(100\u2212N)), or equivalent  A1  8\n(iii) Substitute N = 40 and obtain t = 49.0  B1  1\n\u00a9 Cambridge International Examinations 2014\nGCE A LEVEL \u2013 May/June 2014  9709  32",
+      "ocr_text": "9 The population of a country at time \u00a2 years is N millions. At any time, N is assumed to increase at a dN rate proportional to the product of N and (1 \u20140.01N). When \u00a2 = 0, N = 20 and a 0.32. (i) Treating N and f\u00a2 as continuous variables, show that they satisfy the differential equation dN \u2014 =0.02N(1 -0.01N). [1] dt (ii) Solve the differential equation, obtaining an expression for \u00a2 in terms of NV. [8] (iii) Find the time at which the population will be double its value at \u00a2 = 0. [1]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q09",
+      "question_number": "9",
+      "question_text": "9 The population of a country at time t years is Nmillions. At any time, Nis assumed to increase at a rate proportional to the product of Nand (1 -0.01N). When t = 0, N = 20 and ddNt = 0.32. (i) Treating Nand t as continuous variables, show that they satisfy the differential equation ddNt = 0.02N(1 -0.01N). 1 (ii) Solve the differential equation, obtaining an expression for t in terms of N. [8] (iii) Find the time at which the population will be double its value at t = 0. [1]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differential_equations"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1057,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2014_s14_32_ms_q10_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2014_s14_32_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_vectors",
+      "current_packet_topic": "vectors",
+      "image_evidence_available": true,
+      "mark_scheme_text": "10  (i)  EITHER: State or imply AB and AC  correctly in component form  B1\nUsing the correct processes evaluate the scalar productAB.AC, or equivalent  M1\nUsing the correct process for the moduli divide the scalar product by the\nproduct of the moduli  M1\nObtain answer2021 A1\nOR: Use correct method to find lengths of all sides of triangle ABC M1\nApply cosine rule correctly to find the cosine of angle BAC M1\nObtain answer2021 A1  4\n(ii) State an exact value for the sine of angle BAC, e.g.  41/21 B1\nUse correct area formula to find the area of triangle ABC M1\nObtain answer  ^{1}_{2} 41, or exact equivalent  A1  3\n[SR: Allow use of a vector product, e.g.  AB\u00d7AC = \u22126i + 2j\u2212k B1 . Using correct\nprocess for the modulus, divide the modulus by 2 M1. Obtain answer  ^{1}_{2} 41 A1.]\n(iii) EITHER: State or obtain b = 0  B1\nEquate scalar product of normal vector and BC(or CB)to zero M1\nObtain a + b\u2212 4c = 0 (or a \u2212 4c = 0)  A1\nSubstitute a relevant point in 4x + z = d and evaluate d  M1\nObtain answer 4x + z  = 9, or equivalent  A1\nOR1:  Attempt to calculate vector product of relevant vectors, e.g. (j)\u00d7(i + j \u2013 4k)  M1\nObtain two correct components of the product  A1\nObtain correct product, e.g. \u22124i \u2212 k  A1\nSubstitute a relevant point in 4x + z = d and evaluate d  M1\nObtain 4x + z = 9, or equivalent  A1\nOR2:  Attempt to form 2-parameter equation for the plane with relevant vectors  M1\nState a correct equation, e.g. r = 2i +4j + k + \u03bb(j) + \u00b5(i + j \u2013 4k) A1\nState 3 equations in x, y, z, \u03bband \u00b5 A1\nEliminate \u00b5 M1\nObtain answer 4x + z = 9, or equivalent  A1\nOR3:  State or obtain b = 0  B1\nSubstitute for B and C in the plane equation and obtain 2a  +  c  =  d and\n3a \u2013 3c = d (or 2a + 4b + c = d and 3a + 5b \u20133c = d)  B1\nSolve for one ratio, e.g. a : d  M1\nObtain a : c : d, or equivalent  M1\nObtain answer 4x + z = 9, or equivalent  A1\nOR4: Attempt to form a determinant equation for the plane with relevant vectors  M1\nx\u22122 y\u22124 z\u22121\nState a correct equation, e.g.  0 1 0 = 0 A1\n1 1 \u22124\nAttempt to use a correct method to expand the determinant  M1\nObtain two correct terms of a 3-term expansion, or equivalent  A1\nObtain answer 4x + z = 9, or equivalent  A1  5\n\u00a9 Cambridge International Examinations 2014",
+      "ocr_text": "10 Referred to the origin O, the points A, B and C have position vectors given by \u2014 _\u2014 \u2014. OA =i+2j+3k, OB=2i+4j+k and OC=3i+5j-3k. (i) Find the exact value of the cosine of angle BAC. [4] (ii) Hence find the exact value of the area of triangle ABC. [3] (iii) Find the equation of the plane which is parallel to the y-axis and contains the line through B and C. Give your answer in the form ax + by + cz = d. [5]",
+      "paper": "32summer14",
+      "paper_family": "p3",
+      "question_id": "32summer14_q10",
+      "question_number": "10",
+      "question_text": "10 Referred to the origin O, the points A, B and C have position vectors given by \u2014 _\u2014 \u2014. OA =i+2j+3k, OB=2i+4j+k and OC=3i+5j-3k. (i) Find the exact value of the cosine of angle BAC. [4] (ii) Hence find the exact value of the area of triangle ABC. [3] (iii) Find the equation of the plane which is parallel to the y-axis and contains the line through B and C. Give your answer in the form ax + by + cz = d. [5]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_vectors"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1058,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  State or imply ordinates 0, 0.405465\u2026, 0.623810\u2026, 0.693147\u2026   B1\nUse correct formula, or equivalent, with h = 1 \u03c0and four ordinates   M1\n6\nObtain answer 0.72   A1  [3]",
+      "ocr_text": "Use the trapezium rule with three intervals to estimate the value of Nie J In(1 + sin x) dx, 0 giving your answer correct to 2 decimal places. [3]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q01",
+      "question_number": "1",
+      "question_text": "1 Use the trapezium rule with three intervals to estimate the value of \u222b_{0}^{1}_{2}^{0} ln(1 + sin x) dx, giving your answer correct to 2 decimal places. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1059,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_algebra",
+      "current_packet_topic": "algebra",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  Use laws of indices correctly and solve for u M1\nObtain u in any correct form, e.g. u = 16 A1\n16\u22121\nUse correct method for solving an equation of the form 4^{x} = a, where a > 0   M1\nObtain answer x = 0.0466   A1  [4]",
+      "ocr_text": "2 Using the substitution u = 4*, solve the equation 4* + 47 = 4**?, giving your answer correct to 3 significant figures. [4]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q02",
+      "question_number": "2",
+      "question_text": "2 3 significant figures. Using the substitution u = 4^{x}, solve the equation 4^{x} + 4^{2} = 4^{x}_{+}2, giving your answer correct[4]to",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_algebra"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1060,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3  EITHER: Use correct product rule  M1\nObtain correct derivative in any form, e.g. \u2212sin x cos 2x\u22122 cos x sin 2x A1\nUse the correct double angle formulae to express derivative in cos x and sin x,\nor cos 2x and sin x  M1\nOR1:  Use correct double angle formula to express y in terms of cos x and attempt\ndifferentiation  M1\nUse chain rule correctly  M1\nObtain correct derivative in any form, e.g. \u22126 cos^{2}x sin x + sin x A1\nOR2:  Use correct factor formula and attempt differentiation  M1\nObtain correct derivative in any form, e.g. \u2212 3 sin 3x \u2212 1 sin x A1\n2 2\nUse correct trig formulae to express derivative in terms of cos x and sin x, or sin x M1\nEquate derivative to zero and obtain an equation in one trig function  M1\nObtain 6 cos^{2}x = 1, 6 sin^{2}x = 5, tan^{2}x = 5 or 3 cos 2x = \u22122 A1\nObtain answer x = 1.15 (or 65.9\u00b0) and no other in the given interval  A1  [6]\n[Ignore answers outside the given interval.]\n[SR: Solution attempts following the EITHER scheme for the first two marks can earn the\nsecond and third method marks as follows:\nEquate derivative to zero and obtain an equation in tan 2x and tan x M1\nUse correct double angle formula to obtain an equation in tan x M1]",
+      "ocr_text": "3 Accurve has equation y = cos xcos 2x. Find the x-coordinate of the stationary point on the curve in the interval 0 <x < 4m, giving your answer correct to 3 significant figures. [6]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q03",
+      "question_number": "3",
+      "question_text": "3 Athe interval 0curve has equation < x < 1_{2}0 y, giving your answer correct to 3 significant figures.= cos x cos 2x. Find the x-coordinate of thestationary point on the curve in[6]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1061,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4  (i) State R = 13 B1\nUse trig formula to find \u03b1 M1\nObtain \u03b1= 33.69\u00b0 with no errors seen   A1  [3]\n(ii) Evaluate sin^{\u2212}11(/ 13)to at least 1 d.p. (16.10\u00b0 to 2 d.p )   B1\nCarry out an appropriate method to find a value of \u03b8in the interval 0\u00b0 < \u03b8 < 180\u00b0 M1\nObtain answer \u03b8= 130.2\u00b0 and no other in the given interval   A1  [3]\n[Ignore answers outside the given interval.]\n[Treat answers in radians as a misread and deduct A1 from the marks for the angles.]",
+      "ocr_text": "4 (i) Express 3 sin 6 + 2 cos 0 in the form R sin(@ + a), where R > 0 and 0\u00b0 < a < 90\u00b0, stating the exact value of R and giving the value of @ correct to 2 decimal places. [3] (ii) Hence solve the equation 3sin0+2cosd=1, for 0\u00b0 < 8 < 180\u00b0. [3]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q04",
+      "question_number": "4",
+      "question_text": "4 (i) value of Express 3 sin R and giving the value of 1 + 2 cos \u03b8 in the form ! R correct to 2 decimal places. sin(\u03b8 + !), where R > 0 and 0\u00b0 < ! < 90\u00b0, stating the exact[3] (ii) Hence solve the equation 3 sin \u03b8 + 2 cos \u03b8 = 1, for 0\u00b0 < \u03b8 < 180\u00b0. [3]",
+      "review_reasons": [
+        "topic_confidence_not_high_or_medium",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "low",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_trigonometry"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1062,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "current_packet_topic": "numerical_solution_of_equations",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5  (i) State or implyAT = r tan xor BT = r tan x B1\nUse correct arc formula and form an equation in r and x   M1\nRearrange in the given form   A1  [3]\n(ii) Calculate values of a relevant expression or expressions at x = 1 and x = 1.3   M1\nComplete the argument correctly with correct calculated values   A1  [2]\n\u00a9 Cambridge International Examinations 2015\n(iii)   Use the iterative formula correctly at least once           M1\nObtain final answer 1.11   A1\nShow sufficient iterations to 4 d.p. to justify 1.11 to 2 d.p., or show there is a sign change in\nthe interval (1.105, 1.115)  A1  [3]\n6  (i) State or implydu = \u221221xdx, or equivalent   B1",
+      "ocr_text": "The diagram shows a circle with centre O and radius r. The tangents to the circle at the points A and B meet at T, and the angle AOB is 2x radians. The shaded region is bounded by the tangents AT and BT, and by the minor arc AB. The perimeter of the shaded region is equal to the circumference of the circle. (i) Show that x satisfies the equation tanx =1-x. [3] (ii) This equation has one root in the interval 0 < x < An. Verify by calculation that this root lies between | and 1.3. [2] (iii) Use the iterative formula -1 X,4, = tan\u201d (a \u2014-x,) to determine the root correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q05",
+      "question_number": "5",
+      "question_text": "5 The diagram shows a circle with centre O and radius r. The tangents to the circle at the points A and B meet at T, and the angle AOB is 2x radians. The shaded region is bounded by the tangents ATand BT, and by the minor arc AB. The perimeter of the shaded region is equal to the circumference of the (i) Show that x satisfies the equation tan x = 0 -x. 3 (ii) between 1 and 1.3. Thisequationhasonerootintheinterval0 < x < 1_{2}0. Verifybycalculationthatthisrootlies[2] (iii) Use the iterative formula x_{n}_{+}1 = tan^{-}1(0 -x_{n}) to determine the root correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_numerical_solution_of_equations"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1063,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i) State or implydu = \u221221xdx, or equivalent   B1\nSubstitute for x and dx throughout   M1\nObtain integrand \u00b1 2(2\u2212u)^{2} , or equivalent   A1\nu\nShow correct working to justify the change in limits and obtain the given answer with\nno errors seen  A1  [4]\n(ii) Integrate and obtain at least two terms of the form alnu ,bu ,and cu^{2} M1*\nObtain indefinite integral 8lnu\u22128u + u^{2}, or equivalent   A1\nSubstitute limits correctly   M1(dep*)\nObtain the given answer correctly having shown sufficient working   A1  [4]",
+      "ocr_text": "1 6 LetI= VX ay. } 2- x (i) Using the substitution u = 2 \u2014 x, show that J = J 1 * 92 - uy? Uu du. [4] (ii) Hence show that J = 8In2-5. [4]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q06",
+      "question_number": "6",
+      "question_text": "6 Let I = \u222b_{0}^{1}2 -xxdx. (i) Using the substitution u = 2 -x, show that I = \u222b_{1}^{2}2(2 -uu)^{2} du. [4] (ii) Hence show that I = 8 ln 2 -5. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1064,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_complex_numbers",
+      "current_packet_topic": "complex_numbers",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i) Square x + iy and equate real and imaginary parts to \u22121 and 4 3 M1\nObtainx^{2}\u2212y^{2} = \u22121and 2xy = 4 3 A1\nEliminate one unknown and find an equation in the other   M1\nObtain x^{4} + x^{2}\u221212 = 0 or y^{4}\u2212y^{2}\u221212 = 0, or three term equivalent   A1\nObtain answers  \u00b1 ( 3 + )i2 A1  [5]\n[If the equations are solved by inspection, give B2 for the answers and B1 for justifying them]\n(ii) Show a circle with centre \u22121 + 4 3in a relatively correct position   B1\nShow a circle with radius 1 and centre not at the origin  B1\nCarry out a complete method for calculating the greatest value of arg z M1\nObtainanswer 1.86 or 106.4\u00b0 A1  [4]\n8  (i) State or imply the form(A)/(3\u22122x) + (Bx + C)/(x^{2} + 4) B1",
+      "ocr_text": "7 Thecomplex number u is given by u = -1 + (4V3)i. (i) Without using a calculator and showing all your working, find the two square roots of u. Give your answers in the form a + ib, where the real numbers a and Db are exact. [5] (ii) On an Argand diagram, sketch the locus of points representing complex numbers z satisfying the relation |z \u2014 u| = 1. Determine the greatest value of arg z for points on this locus. [4]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q07",
+      "question_number": "7",
+      "question_text": "7 The complex number u is given by u = -1 + (4\u00ef3)i. (i) Without usinga calculator and showing all your working, find the two square roots of u. Give your answers in the form a + ib, where the real numbers a and b are exact. [5] (ii) the relationOnan Argand |\u00cf -diagram,u| = 1. Determine the greatest value of argsketchthelocusofpointsrepresenting \u00cf for points on this locus.complexnumbers\u00cf satisfying[4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_complex_numbers"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1065,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q08_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_algebra",
+      "current_packet_topic": "algebra",
+      "image_evidence_available": true,
+      "mark_scheme_text": "8  (i) State or imply the form(A)/(3\u22122x) + (Bx + C)/(x^{2} + 4) B1\nUse a relevant method to determine a constant   M1\nObtain one of the values A = 3, B = \u22121, C = \u22122   A1\nObtain a second value A1\nObtain the third value   A1  [5]\n(ii) Use correct method to find the first two terms of the expansion of (3\u22122x)^{\u2212}1, (1\u2212 2 x)^{\u2212}1,\n3\n(4 + x^{2})^{\u2212}1 or (1 + 1 x^{2})^{\u2212}1 M1\n4\nObtain correct unsimplified expansions up to the term in x^{2} of each partial fraction  A1 +A1\nMultiply out up to the term in x^{2} by Bx +C, where BC\u2260 0   M1\nObtain final answer ^{1} + 5 x + 41 x^{2}, or equivalent   A1  [5]\n2 12 72\n\u00a9 Cambridge International Examinations 2015\n[Symbolic coefficients, e.g.\uf8ec(\uf8eb\u22121)/(2)\uf8ec\uf8ed \uf8f6\uf8f7\uf8f7\uf8f8are not sufficient for the first M1.The f.t. is on A, B, C.]\n[In the case of an attempt to expand (5x^{2} + x + 6)(3\u22122x)^{\u2212}1(x^{2} + 4)^{\u2212}1, give\nM1A1A1for the expansions, M1 for multiplying out fully, and A1 for the final answer.]",
+      "ocr_text": "2 (3 \u2014 2x)(x? + 4) (i) Express f(x) in partial fractions. [5] (ii) Hence obtain the expansion of f(x) in ascending powers of x, up to and including the term in x\u2019. [5]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q08",
+      "question_number": "8",
+      "question_text": "8 Let f(x) = ((5x^{2} x 6)/(3 2x x 4) - +)( +2 + ). (i) Express f(x) in partial fractions. [5] (ii) Hence obtain the expansion of f(x) in ascending powers of x, up to and including the term in x[5]^{2}.",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_algebra"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1066,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q09_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q09_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differential_equations",
+      "current_packet_topic": "differential_equations",
+      "image_evidence_available": true,
+      "mark_scheme_text": "9  (i) Separate variables correctly and attempt integration of one side   B1\nObtain term ln x   B1\nObtain term of the form aln(k + e^{\u2212}t) M1\nObtain term \u2212ln(k + e^{\u2212}t) A1\nEvaluate a constant or use limits x = 10, t = 0 in a solution containing terms aln(k + e^{\u2212}t)\nand blnx M1*\nObtain correct solution in any form, e.g.ln x\u2212ln 10 = \u2212ln(k + e^{\u2212}t) + ln(k + )1 A1  [6]\n(ii)  Substitute x = 20, t = 1 and solve for k   M1(dep*)\nObtain the given answer   A1  [2]\n(iii) Using e^{\u2212}t \u21920and the given value of k, find the limiting value of x M1\nJustify the given answer   A1  [2]\n\u00a9 Cambridge International Examinations 2015",
+      "ocr_text": "The number of organisms in a population at time fis denoted by x. Treating x as a continuous variable, the differential equation satisfied by x and \u00a2 is dx xe\u201c dt k+e\u2122\u2019 where k is a positive constant. (i) Given that x = 10 when \u00a2 = 0, solve the differential equation, obtaining a relation between x, k and t. [6] 2 (ii) Given also that x = 20 when \u00a2 = 1, show that k = 1 \u2014 . [2] (iii) Show that the number of organisms never reaches 48, however large t becomes. [2]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q09",
+      "question_number": "9",
+      "question_text": "9 The number of organisms in a population at time t is denoted by x. Treating x as a continuous variable, the differential equation satisfied by x and t is where k is a positive constant. ddxt = k +xe e^{-}t_{-}t, (i) Given thatand t. x = 10 when t = 0, solve the differential equation,obtaining a relation between x[6], k (ii) Given also that x = 20 when t = 1, show that k = 1 -2e . [2] (iii) Show that the number of organisms never reaches 48, however large t becomes. [2]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differential_equations"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1067,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2015_s15_32_ms_q10_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2015_s15_32_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_vectors",
+      "current_packet_topic": "vectors",
+      "image_evidence_available": true,
+      "mark_scheme_text": "10 (i) Carry out a correct method for finding a vector equation for AB M1\nObtain r = 2i\u2212j + 3k + \u03bb(\u2212i + 2j + 2k), or equivalent   A1\nEquate at least two pairs of components of general points on AB and l and solve for \u03bbor\nfor \u00b5 M1\nObtain correct answer for \u03bb or \u00b5, e.g. \u03bb = 1 or \u00b5= 0; \u03bb = \u2212 4or \u00b5 = 3;\n5 5\nor \u03bb = 1  or \u00b5= \u2212 3 A1\n4 2\nVerify that not all three pairs of equations are satisfied and that the lines fail to intersect   A1  [5]\n(ii)  EITHER: Obtain a vector parallel to the plane and not parallel to l, e.g.i\u22122j + k B1\nUse scalar product to obtain an equation in a, b and c, e.g. 3a + b\u2212c = 0   B1\nForm a second relevant equation, e.g. a \u2013 2b + c = 0 and solve for one ratio,\ne.g. a : b M1\nObtain final answer a : b : c = 1 : 4 : 7 A1\nUse coordinates of a relevant point and values of a, b and c in general equation\nand find d   M1\nObtain answer x + 4y + 7z = 19, or equivalent   A1\nOR1:  Obtain a vector parallel to the plane and not parallel to l, e.g.i\u22122j + k B1\nObtain a second relevant vector parallel to the plane and attempt to calculate\ntheir vector product, e.g. (i\u22122j + k)\u00d7(3i + j\u2212k) M1\nObtain two correct components   A1\nObtain correct answer, e.g. i + 4j + 7k A1\nSubstitute coordinates of a relevant point in x + 4y + 7z = d, or equivalent,\nand find d M1\nObtain answer x + 4y + 7z = 19, or equivalent   A1\nOR2:  Obtain a vector parallel to the plane and not parallel to l, e.g.i\u22122j + k B1\nUsing a relevant point and second relevant vector, form a 2-parameter equation\nfor the plane   M1\nState a correct equation, e.g.r = 2i\u2212j + 3k + s(i\u22122j + k) + t(3i + j\u2212k) A1\nState 3 correct equations in x, y, z, s and t   A1\nEliminate s and t M1\nObtain answer x + 4y + 7z = 19, or equivalent   A1\nOR3:  Using the coordinates of A and two points on l, state three simultaneous\nequations in a, b, c and d, e.g. a + b + 2c = d, 2a \u2212b + 3c = d and 4a + 2b + c = d B1\nSolve and find one ratio, e.g. a : b   M1\nState one correct ratio A1\nObtain a correct ratio of three of the unknowns, e.g. a : b : c = 1 : 4 : 7,\nor equivalent   A1\nEither use coordinates of a relevant point and the found ratio to find the fourth\nunknown, e.g. d, or find the ratio a : b : c : d   M1\nObtain answer x + 4y + 7z = 19, or equivalent   A1\nOR4:  Obtain a vector parallel to the plane and not parallel to l, e.g.i\u22122j + k B1\nUsing a relevant point and second relevant vector, form a determinant equation\nfor the plane   M1\nx\u22122 y + 1 z\u22123\nState a correct equation, e.g.  1 \u22122 1 = 0 A1\n3 1 \u22121\nAttempt to expand the determinant   M1\nObtain or imply two correct cofactors   A1\nObtain answer x + 4y +7z =19, or equivalent   A1  [6]\n\u00a9 Cambridge International Examinations 2015",
+      "ocr_text": "10 The points A and B have position vectors given by OA = 2i-j+3k and OB =i+j+5k. The line / has equation r =i+j+2k+yu(3i+j\u2014k). (i) Show that / does not intersect the line passing through A and B. [5] (ii) Find the equation of the plane containing the line / and the point A. Give your answer in the form ax + by+cz=d. [6]",
+      "paper": "32summer15",
+      "paper_family": "p3",
+      "question_id": "32summer15_q10",
+      "question_number": "10",
+      "question_text": "10 has equation The points A r and = i B + have position vectors given by j + 2k + -(3i + j -k). --\u2192OA = 2i -j + 3k and--\u2192OB = i + j + 5k. The line l (i) Show that l does not intersect the line passing through A and B. [5] (ii) Find theequationoftheplanecontainingthelinelandthepointA. Give your answer in the form ax + by + c\u00cf = d. [6]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_vectors"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1068,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  Use law of the log arithm of a power, quotient or product   M1\nRemove log arithms and obtain a correct equation in x, e.g. x^{2} + 4 = 4x^{2} A1\nObtain final answer x = 2 / 3, or exact equivalent   A1 [3]",
+      "ocr_text": "1 Solve the equation In(x? +4) =21nx+1n4, giving your answer in an exact form. [3]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q01",
+      "question_number": "1",
+      "question_text": "1 Solve the equation ln(x^{2} + 4) = 2 ln x + ln 4, giving your answer in an exact form. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1069,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_algebra",
+      "current_packet_topic": "algebra",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2  Use tan(A \u00b1 B) formula and obtain an equation in tan \u03b8 M1\nUsing tan 45\u00b0 =1, obtain a horizontal equation in tan \u03b8 in any correct form   A1\nReduce the equation to 7 tan^{2}\u03b8\u22122 tan \u03b8\u2212=1 0, or equivalent   A1\nSolve a 3-term quadratic for tan \u03b8 M1\nObtain a correct answer, e.g. \u03b8 = 28.7\u00b0 A1\nObtain a second answer, e.g. \u03b8 = 165.4\u00b0 , and no others   A1 [6]\n[Ignore answers outside the given interval. Treat answers in radians as a misread (0.500, 2.89).]",
+      "ocr_text": "2 Express the equation tan(@ + 45\u00b0) \u2014 2 tan(@ \u2014 45\u00b0) = 4 as a quadratic equation in tan 6. Hence solve this equation for 0\u00b0 < @ < 180\u00b0. [6]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q02",
+      "question_number": "2",
+      "question_text": "2 Express the equation tanthis equation for 0\u00b0 \u2264 \u03b8 \u2264(1180 + 45\u00b0.\u00b0) -2 tan(\u03b8 -45\u00b0) = 4 as a quadratic equation in tan \u03b8. Hence solve[6]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_algebra"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1070,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q03_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+      "current_packet_topic": "numerical_solution_of_equations",
+      "image_evidence_available": true,
+      "mark_scheme_text": "3 (i) Consider sign of x^{5}\u22123x^{3} + x^{2}\u22124 at x = 1 and x = 2, or equivalent   M1\nComplete the argument correctly with correct calculated values   A1 [2]\n(ii) Rearrange the given quintic equation in the given form, or work vice versa   B1 [1]\n(iii) Use the iterative formula correctly at least once   M1\nObtain final answer 1.78   A1\nShow sufficient iterations to 4 d.p. to justify 1.78 to 2 d.p., or show there is a sign change\nin the interval (1.775, 1.785)   A1  [3]",
+      "ocr_text": "3. The equation x \u2014 3x3 +27 \u2014 4 = 0 has one positive root. (i) Verify by calculation that this root lies between 1| and 2. [2] (ii) Show that the equation can be rearranged in the form 4 x=4|(3r+5-1). [1] x (iii) Use an iterative formula based on this rearrangement to determine the positive root correct to 92 decimal nlaces. Give the result of each iteration to 4 decimal pnlaces. 13]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q03",
+      "question_number": "3",
+      "question_text": "3 The equation x^{5}-3x^{3} + x^{2}-4 = 0 has one positive root. (i) Verify by calculation that this root lies between 1 and 2. [2] (ii) Show that the equation can be rearranged in the form x = O(_{3} 3x + x4_{2} -1). [1] (iii) Useaniterativeformulabasedonthisrearrangementtodeterminethepositiverootcorrectto 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_numerical_solution_of_equations"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1071,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_algebra",
+      "current_packet_topic": "algebra",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4  (i) Substitute x = \u22121_{2} and equate to zero, or divide by (2x + 1)and equate constant remainder\nto zero   M1\nObtain a = 3   A1 [2]\n(ii) (a) Commence division by (2x + 1) reaching a partial quotient of 2x^{2} + kx M1\nObtain factorisation(2x + 1)(2x^{2}\u2212x + 2) A1 [2]\n[The M1 is earned if inspection reaches an unknown factor 2x^{2} + Bx + Cand an\nequation in B and/or C, or an unknown factor Ax^{2} + Bx + 2and an equation in\nA and/or B.]\n(b) State or imply critical value x = \u22121_{2} B1\nShow that 2x^{2}\u2212x + 2is always positive, or that the gradient of4x^{3} + 3x + 2is always\npositive   B1*\nJustify final answer x > \u22121_{2} B1(dep*) [3]",
+      "ocr_text": "4 The polynomial 4x\u00b0 + ax + 2, where a is a constant, is denoted by p(x). It is given that (2x + 1) isa factor of p(x). (i) Find the value of a. [2] (ii) When a has this value, (a) factorise p(x), [2] (b) solve the inequality p(x) > 0, justifying your answer. [3]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q04",
+      "question_number": "4",
+      "question_text": "4 The polynomial 4factor of p(x). x^{3} + ax + 2, where a is a constant, is denoted by p(x). It is given that (2x + 1) is a (i) Find the value of a. [2] (ii) When a has this value, (a) factorise p(x), [2] (b) solve the in equal it y p(x) > 0, justifying your answer. [3]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_algebra"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1072,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q05_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "5 (i) State or imply dx = 3 sec^{2}\u03b8 d\u03b8 B1\nSubstitute for x and dx throughout   M1\nObtain the given answer correctly   A1  [3]\n\u00a9 Cambridge International Examinations 2016\n(ii) Replace integrand by  ^{1}_{2} cos 2\u03b8 + 1_{2} B1\nObtain integral  ^{1}_{4} sin 2\u03b8 + 1_{2}\u03b8 B1\nSubstitute limits correctly in an integral of the form c sin 2\u03b8 + b\u03b8, where cb\u2260 0   M1\nObtain answer _{12}^{1} 3\u03c0 + 8^{3}, or exact equivalent   A1 [4]\n[The f.t. is on integrands of the form a cos 2\u03b8 + b, where ab\u2260 0.]",
+      "ocr_text": "1 5 Letr= | \u20142 Sar. 9 (3 +27) (i) Using the substitution x = (v3) tan 0, show that J = V3 [i 0 cos? 6d8. [3] (ii) Hence find the exact value of J. [4]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q05",
+      "question_number": "5",
+      "question_text": "5 Let I = \u222b_{0}^{1}(3 +9 x^{2})2dx. (i) Using the substitution x = (\u00ef3) tan \u03b8, show that I = \u00ef3 \u222b_{0}^{1}_{6}^{0} cos^{2} \u03b8 d1. [3] (ii) Hence find the exact value of \u03b8. [4]",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1073,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q06_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "6  (i) EITHER: State correct derivative of sin y with respect to x   B1\nUse product rule to differentiate the LHS   M1\nObtain correct derivative of the LHS   A1\nObtain a complete and correct derived equation in any form   A1\nObtain a correct expression forddyx in any form   A1\nOR:   State correct derivative of sin y with respect to x   B1\nRearrange the given equation as sin y = x/ (ln x + 2)and attempt to differentiate\nboth sides   B1\nUse quotient or product rule to differentiate the RHS   M1\nObtain correct derivative of the RHS   A1\nObtain a correct expression forddyxin any form   A1 [5]\n(ii) Equateddyxto zero and obtain a horizontal equation in ln x or sin y M1\nSolve for ln x   M1\nObtain final answerx = 1/ e, or exact equivalent   A1 [3]",
+      "ocr_text": "A curve has equation sinyInx =x -2siny, 1 1 for -5% <y < 50. d (i) Find = in terms of x and y. [5] (ii) Hence find the exact x-coordinate of the point on the curve at which the tangent is parallel to the X-axis. [3]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q06",
+      "question_number": "6",
+      "question_text": "6 A curve has equation for -1_{2}0 \u2264 y \u2264 1_{2}0. sin y ln x = x -2 sin y, (i) Find ddyx in terms of x and y. [5] (ii) Hence find the exact x-coordinate of the point on the curve at which the tangent is parallel to the",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1074,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q07_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "7  (i) Separate variables and attempt integration of one side   M1\nObtain term \u2212e^{\u2212}y A1\nIntegratexe^{x} by parts reaching x^{e}^{x} _{\u00b1} \u222be^{x}_{ d}_{x} M1\nObtain integral xe^{x}\u2212e^{x} A1\nEvaluate a constant, or use limits x = 0, y = 0   M1\nObtain correct solution in any form   A1\nObtain final answer y= \u2212ln(e^{x}(1\u2212x)), or equivalent   A1 [7]\n(ii) Justify the given statement   B1 [1]\n\u00a9 Cambridge International Examinations 2016",
+      "ocr_text": "7 The variables x and y satisfy the differential equation d - & = xe? ; and it is given that y = 0 when x = 0. (i) Solve the differential equation and obtain an expression for y in terms of x. [7] (ii) Explain briefly why x can only take values less than 1. [1]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q07",
+      "question_number": "7",
+      "question_text": "7 The variables x and y satisfy the di\ufb00erential equation ddyx = xe^{x}_{+}y, and it is given that y = 0 when x = 0. (i) Solve the di\ufb00erential equation and obtain an expression for y in terms of x. [7] (ii) Explain briefly why x can only take values less than 1. [1] ` 1a ` 2a ` 2a",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1075,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q08_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q08_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_vectors",
+      "current_packet_topic": "vectors",
+      "image_evidence_available": true,
+      "mark_scheme_text": "8  (i) EITHER: Substitute for r in the given equation of p and expand scalar product   M1\nObtain equation in \u03bbin any correct form   A1\nVerify this is not satisfied for any value of \u03bb A1\nOR1:  Substitute coordinates of a general point of l in the Cartesian equation of plane p   M1\nObtain equation in \u03bbin any correct form   A1\nVerify this is not satisfied for any value of \u03bb A1\nOR2:  Expand scalar product of the normal to p and the direction vector of l   M1\nVerify scalar product is zero   A1\nVerify that one point of l does not lie in the plane   A1\nOR3:  Use correct method to find the perpendicular distance of a general point\nof l from p M1\nObtain a correct unsimplified expression in terms of \u03bb A1\nShow that the perpendicular distance is 5 / 6 , or equivalent, for all \u03bb A1\nOR4:  Use correct method to find the perpendicular distance of a particular point\nof l from p M1\nShow that the perpendicular distance is 5 / 6 , or equivalent   A1\nShow that the perpendicular distance of a second point is also5 / 6 , or\nequivalent   A1  [3]\n(ii) EITHER: Calling the unknown direction vector ai + bj + ck state equation 2a + b + 3c = 0 B1\nState equation 2a\u2212b\u2212c = 0 B1\nSolve for one ratio, e.g. a : b   M1\nObtain ratio a : b : c = 1 : 4 : \u2212 2, or equivalent   A1\nOR:   Attempt to calculate the vector product of the direction vector of l and the normal\nvector of the plane p, e.g. (2i + j + 3k)\u00d7(2i\u2212\u2212j k) M2\nObtain two correct components of the product   A1\nObtain answer 2i + 8j\u22124k , or equivalent   A1\nForm line equation with relevant vectors   M1\nObtain answer r = 5i + 3j + k + \u00b5(i + 4j\u22122k), or equivalent   A1 [6]",
+      "ocr_text": "1 2 2 8 The line / has equation r = ( 2 | + of 1 } The plane p has equation r. ( -1 =6. -1 3 -1 (i) Show that / is parallel to p. [3] (ii) A line m lies in the plane p and is perpendicular to /. The line m passes through the point with coordinates (5, 3, 1). Find a vector equation for m. [6]",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q08",
+      "question_number": "8",
+      "question_text": "8 The line l has equation r = -21 + , 13 . The plane p has equation r. --11 = 6. (i) Show that l is parallel to p. [3] (ii) A line m lies in the plane p and is perpendicular to l. The line m passes through the point with coordinates (5,3,1). Find a vector equation for m. [6]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_vectors"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1076,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q09_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q09_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "9  (i) State or obtain A = 3   B1\nUse a relevant method to find a constant   M1\nObtain one of B = \u22124, C = 4 and D = 0   A1\nObtain a second value   A1\nObtain the third value   A1 [5]\n(ii) Integrate and obtain 3x\u22124lnx B1\nIntegrate and obtain term of the form kln(x^{2} + 2) M1\nObtain term 2ln(x^{2} + 2) A1\nSubstitute limits in an integral of the form ax + blnx + cln(x^{2} + 2), where abc\u2260 0   M1\nObtain given answer 3\u2212ln 4after full and correct working   A1 [5]",
+      "ocr_text": "3x3 + 6x \u2014 8 9 Let f(x) = >=. x(x\" + 2) Cx+D (i) Express f(x) in the form A + < a) . [5] x +2 2 (ii) Show that J f(x) dx = 3 \u2014-In4. [5] 1",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q09",
+      "question_number": "9",
+      "question_text": "9 Let f(x) = (3x^{3} 6x 8)/(x x^{2} 2)( + + -) . (i) Express f(x) in the form A + Bx + Cxx^{2} ++ 2 D. [5] (ii) Show that \u222b_{1} f(x) dx = 3 -ln 4. [5]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1077,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2016_m16_32_ms_q10_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2016_m16_32_qp_q10_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_complex_numbers",
+      "current_packet_topic": "complex_numbers",
+      "image_evidence_available": true,
+      "mark_scheme_text": "10 (a) Substitute and obtain a correct equation in x and y   B1\nUse i^{2}= \u22121 and equate real and imaginary parts   M1\nObtain two correct equations, e.g. x + 2y +1 = 0 and y + 2x = 0   A1\nSolve for x or for y   M1\nObtain answer z = 1_{3}\u2212 2_{3} i A1  [5]\n\u00a9 Cambridge International Examinations 2016\n(b) (i) Show a circle with centre \u2212+1 3 i B1\nShow a circle with radius 1   B1\nShow the line Im z = 3   B1\nShade the correct region   B1 [4]\n(ii) Carry out a complete method to calculate the relevant angle   M1\nObtain answer 0.588 radians (accept 33.7\u00b0)   A1  [2]\n\u00a9 Cambridge International Examinations 2016",
+      "ocr_text": "10 (a) Find the complex number z satisfying the equation z* + 1 = 2iz, where z* denotes the complex conjugate of z. Give your answer in the form x + iy, where x and y are real. [5] (b) (i) On a sketch of an Argand diagram, shade the region whose points represent complex numbers satisfying the inequalities |z + 1 \u2014 3i] < 1 and Imz 2 3, where Imz denotes the imaginary part of z. [4] (ii) Determine the difference between the greatest and least values of arg z for points lying in this region. [2] \u00a9 UCLES 2016 9709/32/F/M/16",
+      "paper": "32summer16",
+      "paper_family": "p3",
+      "question_id": "32summer16_q10",
+      "question_number": "10",
+      "question_text": "10 (a) Find the complex numberconjugate of z. Give your answer in the form z satisfying the equation x + iy, where z^{*} +(1 2iz)/(x and y) = ,where are real. z^{*} denotes the complex[5] (b) (i) On a sketch of an Argand diagram, shade the region whose points represent complex imaginary part of(numberssatisfyingtheinequalities z)/(z). | + 1 -3i| \u2264 1andIm z \u2265 3, whereIm zdenotesthe[4] (ii) Determinethedi\ufb00erence between the greatest andleastvalues ofarg zfor pointslyingin AIICL OCC Onda amNO/2,/C MAME",
+      "review_reasons": [
+        "mapping_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_complex_numbers"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1078,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2017_m17_32_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2017_m17_32_qp_q01_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+      "current_packet_topic": "logarithmic_and_exponential_functions",
+      "image_evidence_available": true,
+      "mark_scheme_text": "1  Remove log arithm and obtain 1 + 2^{x} = e^{2} B1\nUse correct method to solve an equation of the form 2^{x} = a , where a > 0  M1\nObtain answer x = 2.676  A1\nTotal:  3\nQuestion  Answer  Marks",
+      "ocr_text": "1 Solve the equation In(1 +2* ) = 2, giving your answer correct to 3 decimal places. [3]",
+      "paper": "32summer17",
+      "paper_family": "p3",
+      "question_id": "32summer17_q01",
+      "question_number": "1",
+      "question_text": "1 Solve the equation ln(1 + 2^{x}) = 2, giving your answer correct to 3 decimal places. [3]",
+      "review_reasons": [
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_logarithmic_and_exponential_functions"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1079,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2017_m17_32_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2017_m17_32_qp_q02_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_differentiation",
+      "current_packet_topic": "differentiation",
+      "image_evidence_available": true,
+      "mark_scheme_text": "2 EITHER:\nState or imply non-modular inequality(x\u22124)^{2} < (2(3x + 1))^{2}, or corresponding  (B1\nquadratic equation, or pair of linear equations x\u22124= \u00b12(3x + 1)\nMake reasonable solution attempt at a 3-term quadratic, or solve two linear  M1\nequations for x\nObtain critical values x= \u22126_{5} and x = 7^{2} A1\nState final answer x< \u22126_{5}, x > 7^{2} A1)\nOR:\nObtain critical value x= \u22126_{5} from a graphical method, or by inspection, or by  (B1\nsolving a linear equation or inequality\nObtain critical value x = 7^{2} similarly  B2\nState final answer x< \u22126_{5}, x > 7^{2} B1)\nTotal: 4\nQuestion  Answer  Marks",
+      "ocr_text": "2 Solve the inequality |x \u2014 4| < 2|3x + 1]. [4]",
+      "paper": "32summer17",
+      "paper_family": "p3",
+      "question_id": "32summer17_q02",
+      "question_number": "2",
+      "question_text": "2 Solve the in equal it y |x -4| < 2|3x + 1|. [4]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "medium",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_differentiation"
+        }
+      ]
+    },
+    {
+      "allowed_topics": [
+        {
+          "canonical_topic_id": "9709_p3_topic_algebra",
+          "topic_id": "algebra",
+          "topic_label": "Algebra"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_complex_numbers",
+          "topic_id": "complex_numbers",
+          "topic_label": "Complex numbers"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differential_equations",
+          "topic_id": "differential_equations",
+          "topic_label": "Differential equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "differentiation",
+          "topic_label": "Differentiation"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_integration",
+          "topic_id": "integration",
+          "topic_label": "Integration"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_logarithmic_and_exponential_functions",
+          "topic_id": "logarithmic_and_exponential_functions",
+          "topic_label": "Logarithmic and exponential functions"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_numerical_solution_of_equations",
+          "topic_id": "numerical_solution_of_equations",
+          "topic_label": "Numerical solution of equations"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_trigonometry",
+          "topic_id": "trigonometry",
+          "topic_label": "Trigonometry"
+        },
+        {
+          "canonical_topic_id": "9709_p3_topic_vectors",
+          "topic_id": "vectors",
+          "topic_label": "Vectors"
+        }
+      ],
+      "batch_id": "topic_review_0237b41ffe91",
+      "batch_index": 1080,
+      "canonical_mark_scheme_image_path": "output/pm3/pm3_2017_m17_32_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/pm3/pm3_2017_m17_32_qp_q04_question.png",
+      "current_canonical_topic_id": "9709_p3_topic_trigonometry",
+      "current_packet_topic": "trigonometry",
+      "image_evidence_available": true,
+      "mark_scheme_text": "4(i)  State R = 17  B1\nUse trig formula to find \u03b1 M1\nObtain \u03b1= 61.93\u00b0 with no errors seen  A1\nTotal: 3\n4(ii)  Evaluate cos^{\u2212}1(4 /17)to at least 1d.p. (76.39\u00b0 to 2 d.p.)  B1\nUse a correct method to find a value of x in the interval 0\u00b0 < x < 180\u00b0 M1\nObtain answer, e.g. x = 7.2\u00b0 A1\nObtain second answer, e.g. x = 110.8\u00b0and no others  A1\n[Ignore answers outside the given interval.]\n[Treat answers in radians as a misread.]\nTotal: 4\nQuestion  Answer  Marks",
+      "ocr_text": "4 (i) Express 8 cos 6 \u2014 15 sin @ in the form Rcos(@ + a), where R > 0 and 0\u00b0 < a < 90\u00b0, stating the exact value of R and giving the value of a correct to 2 decimal places. [3] (ii) Hence solve the equation 8 cos 2x \u2014 15 sin 2x = 4, for 0\u00b0 <x < 180\u00b0. [4]",
+      "paper": "32summer17",
+      "paper_family": "p3",
+      "question_id": "32summer17_q04",
+      "question_number": "4",
+      "question_text": "4 (i) exact value ofExpress8 cos \u03b8 R - and giving the value of 15 sin 1in the form R ! cos correct to 2 decimal places.(1 + !),whereR > 0and0\u00b0 < ! < 90\u00b0,statingthe[3] (ii) Hence solve the equation 8 cos 2x -15 sin 2x = 4, for 0\u00b0 < x < 180\u00b0. [4]",
+      "review_reasons": [
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready",
+        "text_only_status_fail"
+      ],
+      "route_confidence": "high",
+      "route_paper_family": "p3",
+      "routing_source": "deterministic_topic_packet_normalization",
+      "selection_eligibility": {
+        "eligible_for_auto_approval": true,
+        "reasons": []
+      },
+      "syllabus_baseline": {
+        "reference": "Cambridge International AS & A Level Mathematics 9709 syllabus for 2026 and 2027",
+        "topic_map_root": "exam_bank_taxonomy/canonical",
+        "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf"
+      },
+      "topic_distribution": [
+        {
+          "fit_percent": 100,
+          "topic_id": "9709_p3_topic_trigonometry"
+        }
+      ]
+    }
+  ],
+  "schema_name": "exam_bank.topic_review.auto_review_batch",
+  "schema_version": 1,
+  "skipped_rows": []
+}
