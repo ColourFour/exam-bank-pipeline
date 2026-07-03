@@ -678,6 +678,48 @@ def test_topic_overlap_sidecar_relabels_primary_and_counts_secondary_coverage(tm
     assert summary["topic_overlap_reviews_applied"] == 1
 
 
+def test_topic_overlap_family_override_participates_in_paper_family_filter(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q1": {
+                "paper": "11summer24",
+                "paper_family": "pm1",
+                "topic": "integration",
+                "notes": {"source_paper_code": "11"},
+            }
+        },
+    )
+    overlap = _write_topic_overlap_review(
+        tmp_path,
+        [
+            {
+                "question_id": "q1",
+                "paper": "11summer24",
+                "primary": "quadratics",
+                "rationale": "Synthetic P1 rescue for a raw topic that otherwise routes outside P1.",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        topic_overlap_review_path=overlap,
+        paper_family="p1",
+    )
+
+    manifest = json.loads((paths["output"] / "p1" / "quadratics" / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["included_question_ids"] == ["q1"]
+    assert manifest["included_records"][0]["primary_topic_id"] == "quadratics"
+    assert summary["per_topic_included_counts"] == {"p1/quadratics": 1}
+    assert summary["topic_overlap_reviews_loaded"] == 1
+    assert summary["topic_overlap_reviews_applied"] == 1
+
+
 def test_topic_overlap_sidecar_restored_split_question_counts_as_coverage_only(tmp_path: Path) -> None:
     paths = _fixture(tmp_path)
     overlap = _write_topic_overlap_review(

@@ -1,0 +1,54 @@
+paper,question_number,question_id,current_topic,proposed_primary_topic,proposed_secondary_topics,coverage_topics,status,rationale
+01summer08,1,01summer08_q01,algebra,trigonometry,,trigonometry,relabel_primary,Sine-rule triangle problem using exact trigonometric values; the source algebra label is not the assessed topic.
+01summer08,2,01summer08_q02,trigonometry,trigonometry,,trigonometry,keep,Trigonometric identity and equation in cos theta.
+01summer08,3,01summer08_q03,series,series,,series,keep,Binomial expansion and coefficient extraction.
+01summer08,4,01summer08_q04,differentiation,quadratics,differentiation,"quadratics,differentiation",relabel_primary_add_secondary,"Line-curve intersection is a 4-mark quadratic solve, followed by a 3-mark stationary-point differentiation check."
+01summer08,5,01summer08_q05,differentiation,circular_measure,,circular_measure,relabel_primary,"Arc length, sector area, and tangent-circle geometry; no calculus is assessed."
+01summer08,6,01summer08_q06,functions,functions,differentiation,"functions,differentiation",add_secondary_topic,"Inverse/domain work is dominant, with a mark-bearing derivative used to prove the function is increasing."
+01summer08,7,01summer08_q07,series,series,,series,keep,"Geometric progression, sum to infinity, and arithmetic progression."
+01summer08,8,01summer08_q08,quadratics,quadratics,functions,"quadratics,functions",add_secondary_topic,Composite-function equation is assessed through discriminant/equal-roots work; the functions context is substantial.
+01summer08,9,01summer08_q09,integration,integration,,integration,keep,Reverse differentiation and area by integration.
+01summer08,10,01summer08_q10,functions,exclude_current_syllabus,,,exclude_current_syllabus,"3D vectors and scalar product are not current P1 packet topics, so this should not be counted as functions coverage."
+01summer08,11,01summer08_q11,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,"Straight-line gradients, perpendicularity, reflection, and coordinate distance."
+01summer09,1,01summer09_q01,trigonometry,trigonometry,,trigonometry,keep,Trigonometric identity proof.
+01summer09,2,01summer09_q02,trigonometry,quadratics,,quadratics,relabel_primary,The assessment is forming a quadratic from a line-curve intersection and using the discriminant for two distinct roots.
+01summer09,3,01summer09_q03,series,series,,series,keep,Binomial expansion and coefficient condition.
+01summer09,4,01summer09_q04,trigonometry,trigonometry,,trigonometry,keep,Sine-graph parameters and trigonometric equation in radians.
+01summer09,5,01summer09_q05,circular_measure,circular_measure,,circular_measure,keep,Arc/sector perimeter and area in radians.
+01summer09,6,01summer09_q06,functions,exclude_current_syllabus,,,exclude_current_syllabus,"3D vectors and scalar product are not current P1 packet topics, so this should not be counted as functions coverage."
+01summer09,7,01summer09_q07,series,series,,series,keep,Geometric and arithmetic progression sums.
+01summer09,8,01summer09_q08,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,Straight-line perpendicularity and coordinate construction.
+01summer09,9,01summer09_q09,differentiation,integration,differentiation,"integration,differentiation",relabel_primary_add_secondary,The volume of revolution is the larger task; differentiating the curve for the gradient is a substantial preliminary part.
+01summer09,10,01summer09_q10,functions,functions,quadratics,"functions,quadratics",add_secondary_topic,Function inverse/range work is primary; completing the square and quadratic range reasoning are substantial.
+01summer09,11,01summer09_q11,differentiation,differentiation,integration,"differentiation,integration",add_secondary_topic,"Stationary points and normal are differentiation-led, with a substantial exact area integral."
+01winter08,1,01winter08_q01,series,series,,series,keep,Binomial coefficient extraction.
+01winter08,2,01winter08_q02,trigonometry,trigonometry,,trigonometry,keep,Trigonometric identity proof.
+01winter08,3,01winter08_q03,series,series,,series,keep,Arithmetic progression term and sum equation.
+01winter08,4,01winter08_q04,coordinate_geometry,exclude_current_syllabus,,,exclude_current_syllabus,"3D vectors and scalar product are not current P1 packet topics, so this should not be counted as coordinate geometry coverage."
+01winter08,5,01winter08_q05,functions,trigonometry,,trigonometry,relabel_primary,"Trigonometric function parameters, equation solving, and graph sketching dominate; the functions notation is incidental."
+01winter08,6,01winter08_q06,circular_measure,circular_measure,,circular_measure,keep,"Arc length, tangent length, sector area, and shaded area in radians."
+01winter08,7,01winter08_q07,coordinate_geometry,differentiation,,differentiation,relabel_primary,The main assessed task is optimizing the derived area expression by differentiation.
+01winter08,8,01winter08_q08,differentiation,differentiation,coordinate_geometry,"differentiation,coordinate_geometry",add_secondary_topic,"Normal-line equation, second intersection, and distance are substantial coordinate-geometry work after differentiation."
+01winter08,9,01winter08_q09,integration,integration,differentiation,"integration,differentiation",add_secondary_topic,"Area/volume by integration is primary, with a substantial tangent-gradient angle part."
+01winter08,10,01winter08_q10,functions,functions,quadratics,"functions,quadratics",add_secondary_topic,Function composition and inverse work are primary; quadratic maximum/completing-square work is substantial.
+11summer10,1,11summer10_q01,trigonometry,trigonometry,,trigonometry,keep,Trigonometric angle transformations and exact expression for sin x.
+11summer10,2,11summer10_q02,series,series,,series,keep,Binomial expansion and coefficient extraction.
+11summer10,3,11summer10_q03,series,series,,series,keep,Arithmetic progression term and sum work.
+11summer10,4,11summer10_q04,integration,integration,,integration,keep,Area between curve and line by integration.
+11summer10,5,11summer10_q05,trigonometry,trigonometry,,trigonometry,keep,"Trigonometric identity, extrema, and equation solving."
+11summer10,6,11summer10_q06,differentiation,integration,differentiation,"integration,differentiation",relabel_primary_add_secondary,Reverse differentiation to recover the curve is the larger part; stationary-point differentiation is also assessed.
+11summer10,7,11summer10_q07,differentiation,differentiation,,differentiation,keep,Differentiation to form the normal and find an intercept length.
+11summer10,8,11summer10_q08,coordinate_geometry,coordinate_geometry,,coordinate_geometry,keep,"Straight-line gradients, intersections, and perpendicular bisector."
+11summer10,9,11summer10_q09,functions,quadratics,functions,"quadratics,functions",relabel_primary_add_secondary,"Completing the square, quadratic inequality, and discriminant dominate; function notation supplies context."
+11summer10,10,11summer10_q10,trigonometry,exclude_current_syllabus,,,exclude_current_syllabus,"3D vectors and scalar product are not current P1 packet topics, so this should not be counted as trigonometry coverage."
+11summer11,1,11summer11_q01,series,series,,series,keep,Binomial coefficient extraction.
+11summer11,2,11summer11_q02,coordinate_geometry,differentiation,,differentiation,relabel_primary,Related rates using dV/dr and dV/dt; not coordinate geometry.
+11summer11,3,11summer11_q03,integration,integration,,integration,keep,Volume of revolution by integration.
+11summer11,4,11summer11_q04,series,exclude_current_syllabus,,,exclude_current_syllabus,"3D vectors and scalar product are not current P1 packet topics, so this should not be counted as series coverage."
+11summer11,5,11summer11_q05,trigonometry,trigonometry,,trigonometry,keep,Trigonometric identity and equation solving.
+11summer11,6,11summer11_q06,functions,differentiation,,differentiation,relabel_primary,Stationary-value optimization by differentiation; the variables context is not a functions topic.
+11summer11,7,11summer11_q07,differentiation,integration,differentiation,"integration,differentiation",relabel_primary_add_secondary,Reverse differentiation to find the curve is primary; the gradient inequality is a substantial differentiation part.
+11summer11,8,11summer11_q08,series,series,,series,keep,Arithmetic and geometric progression models.
+11summer11,9,11summer11_q09,circular_measure,circular_measure,,circular_measure,keep,"Arc/tangent geometry, sector area, and perimeter in radians."
+11summer11,10,11summer11_q10,coordinate_geometry,coordinate_geometry,quadratics,"coordinate_geometry,quadratics",add_secondary_topic,"Coordinate line/point work is primary, with completing square and quadratic intersection also substantial."
+11summer11,11,11summer11_q11,functions,functions,quadratics,"functions,quadratics",add_secondary_topic,Function composition/inverses are primary; solving quadratic equalities and inverse quadratic work are substantial.

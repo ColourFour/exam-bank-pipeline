@@ -396,7 +396,16 @@ def generate_topic_packets(
     )
     if paper_family:
         paper_family = normalize_paper_family(paper_family)
-        records = [r for r in records if _packet_family_for_record(r, taxonomy) == paper_family]
+        records = [
+            r
+            for r in records
+            if _record_matches_paper_family_filter(
+                r,
+                paper_family=paper_family,
+                taxonomy=taxonomy,
+                topic_overlap_reviews=topic_overlap_reviews,
+            )
+        ]
     if limit is not None:
         records = records[:limit]
     pdf_options = _pdf_image_optimization_options(
@@ -3145,6 +3154,20 @@ def _packet_topic_normalization_for_record(record: dict[str, Any], taxonomy: dic
 def _packet_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> str:
     normalization = _packet_topic_normalization_for_record(record, taxonomy)
     return normalization.expected_family if normalization.resolved else normalization.current_family
+
+
+def _record_matches_paper_family_filter(
+    record: dict[str, Any],
+    *,
+    paper_family: str,
+    taxonomy: dict[str, Any],
+    topic_overlap_reviews: dict[str, TopicOverlapReviewDecision],
+) -> bool:
+    if _packet_family_for_record(record, taxonomy) == paper_family:
+        return True
+    question_id = str(record.get("question_id", "")).strip()
+    overlap_decision = topic_overlap_reviews.get(question_id)
+    return overlap_decision is not None and overlap_decision.paper_family == paper_family
 
 
 def _reviewed_decision_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> str:

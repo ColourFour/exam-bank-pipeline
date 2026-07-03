@@ -1,0 +1,1639 @@
+{
+  "schema_name": "exam_bank.p3_topic_overlap_review_batch",
+  "schema_version": 1,
+  "generated_at": "2026-07-03T00:00:00+08:00",
+  "source": "manual_codex_review_from_question_and_mark_scheme_artifacts",
+  "batch_id": "p3_topic_overlap_review_batch_005_2026_07_03",
+  "review_policy": {
+    "primary_topic": "Dominant assessed topic by marks and prompt intent.",
+    "secondary_topics": "Substantial mark-bearing cross-topic skills that should count for paper coverage without erasing the primary topic.",
+    "coverage_topics": "primary_topic plus secondary_topics; used for at-least-one-topic paper coverage checks.",
+    "ordinary_de_integration_policy": "Routine integration inside a separable differential-equation question is not counted as a separate integration overlap unless the prompt separately assesses an integration topic outside the DE objective.",
+    "batch_storage_policy": "This batch stores changed, excluded, or secondary-coverage decisions only; unchanged labels remain inherited from the current packet manifests."
+  },
+  "topics": [
+    "algebra",
+    "logarithmic_and_exponential_functions",
+    "trigonometry",
+    "differentiation",
+    "integration",
+    "numerical_solution_of_equations",
+    "vectors",
+    "differential_equations",
+    "complex_numbers"
+  ],
+  "papers": [
+    "32winter14",
+    "32winter15",
+    "32winter16",
+    "32winter17",
+    "32winter18",
+    "32winter19",
+    "32winter20",
+    "32winter21",
+    "32winter23",
+    "32winter25",
+    "33summer10",
+    "33summer11",
+    "33summer12",
+    "33summer13",
+    "33summer14"
+  ],
+  "summary": [
+    {
+      "paper": "32winter14",
+      "current_relevant_questions": 8,
+      "excluded_current_syllabus": [
+        "32winter14_q02"
+      ],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry",
+        "integration",
+        "complex_numbers"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 1,
+        "numerical_solution_of_equations": 0,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter15",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "logarithmic_and_exponential_functions",
+        "integration"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter16",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "integration",
+        "differential_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter17",
+      "current_relevant_questions": 9,
+      "excluded_current_syllabus": [
+        "32winter17_q01"
+      ],
+      "missing_using_current_single_topic_counts": [
+        "integration",
+        "differential_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 2,
+        "integration": 0,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 2,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter18",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "integration",
+        "differential_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 2,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter19",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "integration",
+        "differential_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter20",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "integration",
+        "differential_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter21",
+      "current_relevant_questions": 11,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "integration"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 2,
+        "differentiation": 1,
+        "integration": 0,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 2
+      },
+      "coverage_counts": {
+        "algebra": 3,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 2
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter23",
+      "current_relevant_questions": 11,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 0,
+        "trigonometry": 1,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 2
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 2
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "32winter25",
+      "current_relevant_questions": 11,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 0,
+        "differentiation": 1,
+        "integration": 3,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 3,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 2,
+        "differentiation": 2,
+        "integration": 3,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "33summer10",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "numerical_solution_of_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 0,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 2,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "33summer11",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry",
+        "integration",
+        "complex_numbers"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "33summer12",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry",
+        "integration"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 2,
+        "integration": 1,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "33summer13",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry",
+        "integration"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 0,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 2,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    },
+    {
+      "paper": "33summer14",
+      "current_relevant_questions": 10,
+      "excluded_current_syllabus": [],
+      "missing_using_current_single_topic_counts": [
+        "trigonometry",
+        "integration",
+        "numerical_solution_of_equations"
+      ],
+      "missing_after_coverage_topics": [],
+      "primary_counts": {
+        "algebra": 1,
+        "logarithmic_and_exponential_functions": 1,
+        "trigonometry": 1,
+        "differentiation": 1,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "coverage_counts": {
+        "algebra": 2,
+        "logarithmic_and_exponential_functions": 3,
+        "trigonometry": 3,
+        "differentiation": 2,
+        "integration": 2,
+        "numerical_solution_of_equations": 1,
+        "vectors": 1,
+        "differential_equations": 1,
+        "complex_numbers": 1
+      },
+      "over3_coverage": {}
+    }
+  ],
+  "records": [
+    {
+      "paper": "32winter14",
+      "question_id": "32winter14_q02",
+      "question_number": "2",
+      "current_topic": "differentiation",
+      "primary": "exclude_current_syllabus",
+      "secondary": [],
+      "status": "exclude_current_syllabus",
+      "rationale": "Trapezium-rule numerical integration is no longer current-syllabus P3 content.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": []
+    },
+    {
+      "paper": "32winter14",
+      "question_id": "32winter14_q05",
+      "question_number": "5",
+      "current_topic": "differentiation",
+      "primary": "complex_numbers",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The question is complex-number algebra, not differentiation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "complex_numbers"
+      ]
+    },
+    {
+      "paper": "32winter14",
+      "question_id": "32winter14_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "integration",
+      "secondary": [
+        "numerical_solution_of_equations",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The integral equation is the dominant setup, with iteration and logarithms also assessed.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "integration",
+        "numerical_solution_of_equations",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter14",
+      "question_id": "32winter14_q08",
+      "question_number": "8",
+      "current_topic": "differentiation",
+      "primary": "trigonometry",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The triple-angle identity and trigonometric substitution/cubic solution are the assessed topic.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter15",
+      "question_id": "32winter15_q01",
+      "question_number": "1",
+      "current_topic": "differentiation",
+      "primary": "algebra",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "This is a modulus inequality; no calculus is assessed.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "algebra"
+      ]
+    },
+    {
+      "paper": "32winter15",
+      "question_id": "32winter15_q02",
+      "question_number": "2",
+      "current_topic": "differentiation",
+      "primary": "logarithmic_and_exponential_functions",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "This is an exponential equation solved by substitution and logarithms.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter15",
+      "question_id": "32winter15_q05",
+      "question_number": "5",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Differentiation is primary, with a tangent identity used to complete the square and locate the least gradient.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter15",
+      "question_id": "32winter15_q08",
+      "question_number": "8",
+      "current_topic": "differential_equations",
+      "primary": "differential_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The differential equation is primary, with a sine-squared trigonometric integral central to the solution.",
+      "current_topic_from_manifest": "differential_equations",
+      "coverage_topics": [
+        "differential_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter15",
+      "question_id": "32winter15_q10",
+      "question_number": "10",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The area equation is integration primary, after a maximum-point differentiation setup and logarithmic antiderivative.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter16",
+      "question_id": "32winter16_q01",
+      "question_number": "1",
+      "current_topic": "algebra",
+      "primary": "logarithmic_and_exponential_functions",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "This is an exponential equation solved using logarithms, not general algebra.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter16",
+      "question_id": "32winter16_q05",
+      "question_number": "5",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "integration",
+      "secondary": [
+        "logarithmic_and_exponential_functions",
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The exact integral is primary, with a trigonometric identity and logarithmic answer.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "integration",
+        "logarithmic_and_exponential_functions",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter16",
+      "question_id": "32winter16_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with a cosecant equation as substantial trigonometric context.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter16",
+      "question_id": "32winter16_q07",
+      "question_number": "7",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The area by integration is primary, after differentiating an exponential curve to find the maximum.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter16",
+      "question_id": "32winter16_q10",
+      "question_number": "10",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "differential_equations",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The logistic disease model is a differential equation; logarithms appear in the solution method.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "differential_equations"
+      ]
+    },
+    {
+      "paper": "32winter17",
+      "question_id": "32winter17_q01",
+      "question_number": "1",
+      "current_topic": "differentiation",
+      "primary": "exclude_current_syllabus",
+      "secondary": [],
+      "status": "exclude_current_syllabus",
+      "rationale": "Trapezium-rule numerical integration is no longer current-syllabus P3 content.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": []
+    },
+    {
+      "paper": "32winter17",
+      "question_id": "32winter17_q04",
+      "question_number": "4",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Stationary-point differentiation is primary, with secant/tangent trigonometric structure throughout.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter17",
+      "question_id": "32winter17_q05",
+      "question_number": "5",
+      "current_topic": "differentiation",
+      "primary": "differential_equations",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The prompt asks to solve a differential equation; the current differentiation label is too narrow.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differential_equations"
+      ]
+    },
+    {
+      "paper": "32winter17",
+      "question_id": "32winter17_q09",
+      "question_number": "9",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "integration",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is the endpoint, while the fixed-point equation is derived from an integration-by-parts result involving ln x.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "integration",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter18",
+      "question_id": "32winter18_q01",
+      "question_number": "1",
+      "current_topic": "differentiation",
+      "primary": "algebra",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "This is a modulus inequality; no calculus is assessed.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "algebra"
+      ]
+    },
+    {
+      "paper": "32winter18",
+      "question_id": "32winter18_q03",
+      "question_number": "3",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "integration",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "This is an integration-by-parts question with ln x as the integrand context.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "integration",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter18",
+      "question_id": "32winter18_q05",
+      "question_number": "5",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with a derivative condition on an x ln(8-x) curve used to form the equation.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter18",
+      "question_id": "32winter18_q06",
+      "question_number": "6",
+      "current_topic": "differentiation",
+      "primary": "differential_equations",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The prompt explicitly asks to set up and solve a differential equation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differential_equations"
+      ]
+    },
+    {
+      "paper": "32winter18",
+      "question_id": "32winter18_q07",
+      "question_number": "7",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "integration",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Stationary-point differentiation is primary, with a follow-on integral and trig context also assessed.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter19",
+      "question_id": "32winter19_q06",
+      "question_number": "6",
+      "current_topic": "algebra",
+      "primary": "differential_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The problem is a differential equation in trigonometric variables, not algebra.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "differential_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter19",
+      "question_id": "32winter19_q08",
+      "question_number": "8",
+      "current_topic": "algebra",
+      "primary": "integration",
+      "secondary": [
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Partial fractions support a definite integral whose exact answer is logarithmic.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "integration",
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter19",
+      "question_id": "32winter19_q09",
+      "question_number": "9",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "integration",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with the fixed-point equation derived from a trigonometric integration-by-parts result.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter20",
+      "question_id": "32winter20_q05",
+      "question_number": "5",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Parametric differentiation is primary, with trigonometric functions throughout the gradient expression.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter20",
+      "question_id": "32winter20_q07",
+      "question_number": "7",
+      "current_topic": "differentiation",
+      "primary": "differential_equations",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The prompt asks to solve a differential equation; differentiation is not the dominant topic.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differential_equations"
+      ]
+    },
+    {
+      "paper": "32winter20",
+      "question_id": "32winter20_q09",
+      "question_number": "9",
+      "current_topic": "algebra",
+      "primary": "integration",
+      "secondary": [
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Partial fractions support an exact definite integral with logarithmic terms.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "integration",
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter20",
+      "question_id": "32winter20_q10",
+      "question_number": "10",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "differentiation",
+        "integration",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, but the question also includes a derivative condition and a volume integral for a trigonometric curve.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "differentiation",
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter21",
+      "question_id": "32winter21_q03",
+      "question_number": "3",
+      "current_topic": "algebra",
+      "primary": "complex_numbers",
+      "secondary": [
+        "algebra"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Complex conjugate algebra and solving a complex equation dominate; algebra is supporting work.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "complex_numbers",
+        "algebra"
+      ]
+    },
+    {
+      "paper": "32winter21",
+      "question_id": "32winter21_q06",
+      "question_number": "6",
+      "current_topic": "trigonometry",
+      "primary": "trigonometry",
+      "secondary": [
+        "integration"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The trigonometric identity is primary, with the follow-on exact integral adding integration coverage.",
+      "current_topic_from_manifest": "trigonometry",
+      "coverage_topics": [
+        "trigonometry",
+        "integration"
+      ]
+    },
+    {
+      "paper": "32winter21",
+      "question_id": "32winter21_q11",
+      "question_number": "11",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "differentiation",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, after differentiating a tangent curve and solving a trigonometric equation.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter23",
+      "question_id": "32winter23_q02",
+      "question_number": "2",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Parametric differentiation is primary, with logarithmic/exponential functions defining the curve.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter23",
+      "question_id": "32winter23_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with a cotangent equation as substantial trigonometric context.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter23",
+      "question_id": "32winter23_q09",
+      "question_number": "9",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "integration",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Maximum-point differentiation is primary, with a trigonometric area integral also assessed.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter23",
+      "question_id": "32winter23_q11",
+      "question_number": "11",
+      "current_topic": "differential_equations",
+      "primary": "differential_equations",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The differential equation is primary, with logarithmic terms in the exact solution.",
+      "current_topic_from_manifest": "differential_equations",
+      "coverage_topics": [
+        "differential_equations",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "32winter25",
+      "question_id": "32winter25_q05",
+      "question_number": "5",
+      "current_topic": "algebra",
+      "primary": "algebra",
+      "secondary": [
+        "differentiation"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The repeated-factor polynomial problem is algebra primary, with differentiation used to justify the factor of f prime.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "algebra",
+        "differentiation"
+      ]
+    },
+    {
+      "paper": "32winter25",
+      "question_id": "32winter25_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with a cotangent/trigonometric equation used to define the root.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter25",
+      "question_id": "32winter25_q08",
+      "question_number": "8",
+      "current_topic": "integration",
+      "primary": "integration",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The exact integral is primary, with a trigonometric identity used to transform the integrand.",
+      "current_topic_from_manifest": "integration",
+      "coverage_topics": [
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "32winter25",
+      "question_id": "32winter25_q09",
+      "question_number": "9",
+      "current_topic": "integration",
+      "primary": "integration",
+      "secondary": [
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Partial fractions support a definite integral with a logarithmic exact answer.",
+      "current_topic_from_manifest": "integration",
+      "coverage_topics": [
+        "integration",
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer10",
+      "question_id": "33summer10_q01",
+      "question_number": "1",
+      "current_topic": "differentiation",
+      "primary": "algebra",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "This is a modulus inequality; no calculus is assessed.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "algebra"
+      ]
+    },
+    {
+      "paper": "33summer10",
+      "question_id": "33summer10_q05",
+      "question_number": "5",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The area calculation is integration primary, after differentiating the exponential curve to find the maximum.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer10",
+      "question_id": "33summer10_q06",
+      "question_number": "6",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Iteration is primary, with a stationary-point derivative equation involving logarithms.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer10",
+      "question_id": "33summer10_q07",
+      "question_number": "7",
+      "current_topic": "integration",
+      "primary": "integration",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The exact integral is primary, with a triple-angle identity used to transform the integrand.",
+      "current_topic_from_manifest": "integration",
+      "coverage_topics": [
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q02",
+      "question_number": "2",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "differentiation",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Stationary-point differentiation is primary; logarithms define the curve.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q03",
+      "question_number": "3",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "This is an integration-by-parts question involving an exponential integrand.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q04",
+      "question_number": "4",
+      "current_topic": "differentiation",
+      "primary": "trigonometry",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The tangent addition identity and trigonometric equation solving are the assessed topic.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q05",
+      "question_number": "5",
+      "current_topic": "differentiation",
+      "primary": "algebra",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The factor/remainder theorem polynomial problem is algebra, not differentiation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "algebra"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with a cotangent equation as substantial trigonometric context.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q07",
+      "question_number": "7",
+      "current_topic": "algebra",
+      "primary": "complex_numbers",
+      "secondary": [
+        "algebra"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The polynomial equation is used to find and verify complex roots; complex numbers are primary.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "complex_numbers",
+        "algebra"
+      ]
+    },
+    {
+      "paper": "33summer11",
+      "question_id": "33summer11_q08",
+      "question_number": "8",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The area by substitution is primary, with maximum-point differentiation and trigonometric curve context.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer12",
+      "question_id": "33summer12_q03",
+      "question_number": "3",
+      "current_topic": "differentiation",
+      "primary": "differentiation",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Parametric differentiation is primary, with trigonometric simplification used to reach the given derivative.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer12",
+      "question_id": "33summer12_q06",
+      "question_number": "6",
+      "current_topic": "differentiation",
+      "primary": "trigonometry",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The tangent triple-angle equation is trigonometry, not differentiation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer12",
+      "question_id": "33summer12_q07",
+      "question_number": "7",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "integration",
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, with the fixed-point equation derived from a trigonometric integral.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer12",
+      "question_id": "33summer12_q08",
+      "question_number": "8",
+      "current_topic": "algebra",
+      "primary": "integration",
+      "secondary": [
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Partial fractions support a definite integral whose exact value is logarithmic.",
+      "current_topic_from_manifest": "algebra",
+      "coverage_topics": [
+        "integration",
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer13",
+      "question_id": "33summer13_q03",
+      "question_number": "3",
+      "current_topic": "differentiation",
+      "primary": "trigonometry",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The equation tan 2x = 5 cot x is a trigonometric equation, not differentiation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer13",
+      "question_id": "33summer13_q04",
+      "question_number": "4",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The exact integral is primary, with R cos form used to transform the integrand.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer13",
+      "question_id": "33summer13_q06",
+      "question_number": "6",
+      "current_topic": "numerical_solution_of_equations",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "Iteration is primary, after derivative matching and logarithmic rearrangement form the equation.",
+      "current_topic_from_manifest": "numerical_solution_of_equations",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "differentiation",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer13",
+      "question_id": "33summer13_q09",
+      "question_number": "9",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The area by substitution is primary, with maximum-point differentiation and trigonometric curve context.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer14",
+      "question_id": "33summer14_q03",
+      "question_number": "3",
+      "current_topic": "differentiation",
+      "primary": "trigonometry",
+      "secondary": [],
+      "status": "relabel_primary",
+      "rationale": "The tangent equation is trigonometry, not differentiation.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer14",
+      "question_id": "33summer14_q04",
+      "question_number": "4",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "numerical_solution_of_equations",
+      "secondary": [
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Iteration/root finding is primary, with logarithmic/exponential rearrangement used to define the fixed point.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "numerical_solution_of_equations",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer14",
+      "question_id": "33summer14_q05",
+      "question_number": "5",
+      "current_topic": "differential_equations",
+      "primary": "differential_equations",
+      "secondary": [
+        "trigonometry"
+      ],
+      "status": "add_secondary_topic",
+      "rationale": "The differential equation is primary, with secant/tangent integration in the solution.",
+      "current_topic_from_manifest": "differential_equations",
+      "coverage_topics": [
+        "differential_equations",
+        "trigonometry"
+      ]
+    },
+    {
+      "paper": "33summer14",
+      "question_id": "33summer14_q08",
+      "question_number": "8",
+      "current_topic": "logarithmic_and_exponential_functions",
+      "primary": "integration",
+      "secondary": [
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "Partial fractions support a definite integral whose exact value is logarithmic.",
+      "current_topic_from_manifest": "logarithmic_and_exponential_functions",
+      "coverage_topics": [
+        "integration",
+        "algebra",
+        "logarithmic_and_exponential_functions"
+      ]
+    },
+    {
+      "paper": "33summer14",
+      "question_id": "33summer14_q09",
+      "question_number": "9",
+      "current_topic": "differentiation",
+      "primary": "integration",
+      "secondary": [
+        "differentiation",
+        "trigonometry"
+      ],
+      "status": "relabel_primary_add_secondary",
+      "rationale": "The exact area integral is primary, with maximum-point differentiation and trigonometric curve context.",
+      "current_topic_from_manifest": "differentiation",
+      "coverage_topics": [
+        "integration",
+        "differentiation",
+        "trigonometry"
+      ]
+    }
+  ]
+}
