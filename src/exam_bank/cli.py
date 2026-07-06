@@ -20,7 +20,7 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_review_loop, topic_routing
+from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_review_loop, topic_routing, visual_topic_audit
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .mark_scheme_regeneration import regenerate_mark_scheme_pngs_from_question_bank
 from .output_management import (
@@ -332,6 +332,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     topic_review_loop.add_topic_review_merge_cli_arguments(topic_review_merge)
     topic_review_merge.set_defaults(func=cmd_topic_review_merge)
+
+    visual_topic = subparsers.add_parser(
+        "visual-topic-audit",
+        help="Build, run, and import image-backed topic anomaly audit decisions.",
+    )
+    visual_topic_audit.add_visual_topic_audit_cli_arguments(visual_topic)
+    visual_topic.set_defaults(func=cmd_visual_topic_audit)
 
     topic_packet = subparsers.add_parser(
         "topic-packets",
@@ -1148,6 +1155,12 @@ def cmd_topic_review_merge(args: argparse.Namespace) -> int:
     report = topic_review_loop.merge_topic_review_decisions_from_args(args)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report.get("ok") else 2
+
+
+def cmd_visual_topic_audit(args: argparse.Namespace) -> int:
+    report = visual_topic_audit.run_visual_topic_audit_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report.get("ok", True) else 2
 
 
 def cmd_topic_packets(args: argparse.Namespace) -> int:

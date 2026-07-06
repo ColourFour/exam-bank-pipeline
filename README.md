@@ -71,7 +71,7 @@ Deterministic advisory-evidence commands use local examiner-report and grade-thr
 
 ## Command Atlas
 
-Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, mark-event evidence, advisory evidence, difficulty index generation, Asterion and Content Lab projections, topic packets, topic routing, AI enrichment, AI sidecar audit, auto-triage, output inventory, cleanup planning, export summary diffs, taxonomy generation safety, and test commands.
+Use [`docs/COMMAND_ATLAS.md`](docs/COMMAND_ATLAS.md) as the current command map. It covers standard and OCR extraction, resume behavior, audits, mark-event evidence, advisory evidence, difficulty index generation, Asterion and Content Lab projections, topic packets and visual topic audits, topic routing/review loops, AI enrichment, AI sidecar audit, auto-triage, classroom/submission workflows, controlled email smoke tests, output inventory, cleanup planning, export summary diffs, taxonomy generation safety, and test commands.
 
 AI-heavy workflows are long-running and sidecar-only. They require provider credentials and must not be treated as canonical extraction truth.
 
@@ -282,13 +282,14 @@ Content Lab exports are review material only. `asterion_content_lab_candidates_v
 
 Topic packets are image-first downstream projections. They build printable PDFs from canonical question and mark-scheme crops, not reconstructed OCR/native/AI text.
 
-The normal packet workflow generates broad CAIE 9709 major-topic packets by paper family and topic:
+The normal packet workflow generates broad CAIE 9709 major-topic packets by paper family and topic. It can apply reviewed topic-bank decisions and topic-overlap review decisions; overlap coverage affects packet summaries/audits without duplicating a question into multiple PDFs.
 
 ```bash
 .venv/bin/python -m exam_bank.cli topic-packets \
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
   --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
+  --topic-overlap-review data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json \
   --artifact-root output \
   --strict-syllabus
 ```
@@ -305,7 +306,19 @@ Preview the full pass without writing PDFs or manifests:
   --dry-run
 ```
 
-Default outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `topic_packet.pdf` and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed. Weak text/OCR/topic/crop signals are warnings, not blockers; invalid topics, missing question images, mapping failures, and validation failures remain hard exclusions unless explicitly included for review.
+Default outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `<paper_family>_<topic>_packet.pdf` and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Approved questions and review-required questions are separated inside the combined packet. Add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed. Weak text/OCR/topic/crop signals are warnings, not blockers; missing question images and invalid taxonomy paths are hard exclusions, while mapping/validation/scope/visual-risk records with usable assets are routed to review-required packet sections.
+
+The visual topic audit loop builds image-backed review batches from packet coverage anomalies, runs optional AI-assisted decisions, and imports reviewed primary/secondary/exclusion decisions into the topic-overlap sidecar:
+
+```bash
+.venv/bin/python -m exam_bank.cli visual-topic-audit build-batch
+.venv/bin/python -m exam_bank.cli visual-topic-audit run \
+  --batch data/review/visual_topic_audit_2026_07_06/visual_topic_audit_batch.json \
+  --out data/review/visual_topic_audit_2026_07_06/visual_topic_audit_decisions.jsonl
+.venv/bin/python -m exam_bank.cli visual-topic-audit import-decisions \
+  --batch data/review/visual_topic_audit_2026_07_06/visual_topic_audit_batch.json \
+  --decisions data/review/visual_topic_audit_2026_07_06/visual_topic_audit_decisions.jsonl
+```
 
 ## Downstream Use
 
@@ -326,6 +339,9 @@ Records with failed mapping, failed validation, failed scope, missing image path
 - [Difficulty index contract](docs/DIFFICULTY_INDEX_CONTRACT.md)
 - [Submission tracking contract](docs/SUBMISSION_TRACKING_CONTRACT.md)
 - [Submission privacy boundaries](docs/SUBMISSION_PRIVACY_BOUNDARIES.md)
+- [Submission email intake contract](docs/SUBMISSION_EMAIL_INTAKE_CONTRACT.md)
+- [Submission outgoing email contract](docs/SUBMISSION_OUTGOING_EMAIL_CONTRACT.md)
+- [Submission live email connector contract](docs/SUBMISSION_LIVE_EMAIL_CONNECTOR_CONTRACT.md)
 - [AI-assisted enrichment](docs/AI_ASSISTED_ENRICHMENT.md)
 - [Triage workflow](docs/TRIAGE_WORKFLOW.md)
 - [Auto-triage workflow](docs/AUTO_TRIAGE.md)

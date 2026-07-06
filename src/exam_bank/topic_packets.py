@@ -33,6 +33,10 @@ REVIEWED_DECISION_MARKERS = {
     "relabel": "Relabeled",
     "exclude": "Excluded from student version",
 }
+SPECIAL_MARKED_MARKER = "Special Marked"
+P3_VECTOR_PLANE_REMOVED_REASON = "p3_vectors_plane_removed_from_current_syllabus"
+P3_VECTOR_PLANE_REMOVED_STATUS = "not_in_2026_syllabus"
+PLANE_TEXT_PATTERN = re.compile(r"planes?", re.IGNORECASE)
 PDF_PROFILE_DEFAULTS: dict[str, dict[str, int | None]] = {
     "screen": {"image_dpi": 144, "jpeg_quality": 82, "max_image_width": 1600, "max_image_height": 2400},
     "print": {"image_dpi": 200, "jpeg_quality": 88, "max_image_width": 2200, "max_image_height": 3200},
@@ -557,6 +561,8 @@ def generate_topic_packets(
                 taxonomy=taxonomy,
             )
             applied_topic_overlap_counts.update([overlap_decision.status])
+
+        assignment = apply_special_syllabus_markers(record, assignment)
 
         if topic and assignment.topic_id != topic:
             skipped.append(
@@ -3014,6 +3020,37 @@ def _as_review_assignment(assignment: Assignment, review_reasons: Sequence[str] 
         topic_overlap_review_rationale=assignment.topic_overlap_review_rationale,
         topic_overlap_review_source=assignment.topic_overlap_review_source,
     )
+
+
+def apply_special_syllabus_markers(record: dict[str, Any], assignment: Assignment) -> Assignment:
+    if not _is_p3_vector_plane_removed_from_current_syllabus(record, assignment):
+        return assignment
+    reasons = list(assignment.review_reasons)
+    if P3_VECTOR_PLANE_REMOVED_REASON not in reasons:
+        reasons.append(P3_VECTOR_PLANE_REMOVED_REASON)
+    marker = assignment.review_status_marker
+    if marker:
+        if SPECIAL_MARKED_MARKER not in marker:
+            marker = f"{marker}; {SPECIAL_MARKED_MARKER}"
+    else:
+        marker = SPECIAL_MARKED_MARKER
+    return replace(
+        assignment,
+        strict_release_safe=False,
+        review_reasons=tuple(reasons),
+        review_status_marker=marker,
+        current_syllabus_status=P3_VECTOR_PLANE_REMOVED_STATUS,
+    )
+
+
+def _is_p3_vector_plane_removed_from_current_syllabus(record: dict[str, Any], assignment: Assignment) -> bool:
+    if assignment.paper_family != "p3" or assignment.topic_id != "vectors":
+        return False
+    text = " ".join(
+        str(record.get(field) or "")
+        for field in ("question_text", "ocr_text")
+    )
+    return bool(PLANE_TEXT_PATTERN.search(text))
 
 
 def _with_review_decision(

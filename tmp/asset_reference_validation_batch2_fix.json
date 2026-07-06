@@ -1,0 +1,175 @@
+{
+  "schema_name": "exam_bank.asset_reference_validation",
+  "schema_version": 1,
+  "ok": false,
+  "errors": [
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "canonical_question_artifact",
+        "path": "pm1/pm1_2011_w11_13_qp_q06_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "question_image_path",
+        "path": "pm1/pm1_2011_w11_13_qp_q06_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "canonical_mark_scheme_artifact",
+        "path": "pm1/pm1_2011_w11_13_ms_q06_markscheme.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "mark_scheme_image_path",
+        "path": "pm1/pm1_2011_w11_13_ms_q06_markscheme.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "question_image_paths",
+        "path": "pm1/pm1_2011_w11_13_qp_q06_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "13winter11_q06",
+        "field": "mark_scheme_image_paths",
+        "path": "pm1/pm1_2011_w11_13_ms_q06_markscheme.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "canonical_question_artifact",
+        "path": "pm3/pm3_2016_s16_31_qp_q05_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "question_image_path",
+        "path": "pm3/pm3_2016_s16_31_qp_q05_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "canonical_mark_scheme_artifact",
+        "path": "pm3/pm3_2016_s16_31_ms_q05_markscheme.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "mark_scheme_image_path",
+        "path": "pm3/pm3_2016_s16_31_ms_q05_markscheme.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "question_image_paths",
+        "path": "pm3/pm3_2016_s16_31_qp_q05_question.png"
+      }
+    },
+    {
+      "code": "missing_question_bank_manifest_path",
+      "source": "output/json/question_bank.json",
+      "message": "Question-bank image path is not indexed by asset manifest.",
+      "detail": {
+        "question_id": "31summer16_q05",
+        "field": "mark_scheme_image_paths",
+        "path": "pm3/pm3_2016_s16_31_ms_q05_markscheme.png"
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "code": "missing_optional_validation_input",
+      "source": "output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
+      "message": "Missing asterion_exam_bank_catalog input.",
+      "detail": {
+        "label": "asterion_exam_bank_catalog"
+      }
+    },
+    {
+      "code": "missing_optional_validation_input",
+      "source": "output/asterion/exports/latest/asterion_question_bank_v1.json",
+      "message": "Missing asterion_question_bank input.",
+      "detail": {
+        "label": "asterion_question_bank"
+      }
+    },
+    {
+      "code": "missing_optional_validation_input",
+      "source": "output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
+      "message": "Missing content_lab_candidates input.",
+      "detail": {
+        "label": "content_lab_candidates"
+      }
+    }
+  ],
+  "summary": {
+    "manifest_asset_count": 7094,
+    "manifest_source": "file",
+    "question_bank_records": 3548,
+    "asterion_catalog_records": 0,
+    "asterion_records": 0,
+    "content_lab_candidates": 0,
+    "topic_routing": {
+      "schema_name": "exam_bank.topic_routing_sidecar",
+      "schema_version": 1,
+      "generated_at": "2026-06-27T12:56:16+00:00",
+      "total_records": 3549,
+      "attempted_records": 3549,
+      "successful_records": 3549,
+      "failed_records": 0,
+      "review_required_records": 2569,
+      "provider_failure_records": 0,
+      "strict_filter_records": 980,
+      "failures_by_reason": {},
+      "safe_for_strict_filters": true
+    }
+  }
+}

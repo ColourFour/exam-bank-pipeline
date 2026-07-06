@@ -120,6 +120,35 @@ def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path)
     assert (paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf").is_file()
 
 
+def test_p3_vector_plane_questions_are_special_marked_as_removed_syllabus(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q1": {
+                "topic": "vectors",
+                "question_text": "The plane p has equation 2x + y - z = 3. Find a vector equation for the line.",
+                "ocr_text": "The plane p has equation 2x + y - z = 3.",
+            }
+        },
+    )
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "vectors" / "manifest.json").read_text(encoding="utf-8"))
+    record = manifest["included_records"][0]
+    assert record["question_id"] == "q1"
+    assert record["section"] == "review_required"
+    assert record["review_status_marker"] == "Special Marked"
+    assert record["current_syllabus_status"] == "not_in_2026_syllabus"
+    assert "p3_vectors_plane_removed_from_current_syllabus" in record["review_reasons"]
+
+
 @pytest.mark.parametrize(
     ("question_id", "component", "stored_family", "raw_topic", "expected_family", "expected_topic"),
     [

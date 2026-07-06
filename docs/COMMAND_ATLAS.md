@@ -24,9 +24,13 @@ Long-running commands write status under `output/run_status/` unless a command-s
 | Asterion export | `asterion-export` | Standard projection | Fast to medium | Yes |
 | Content Lab candidates | `asterion-content-lab-candidates` | Standard projection | Fast to medium | Yes |
 | Topic packets | `topic-packets` | Standard projection | Fast to medium | Yes |
+| Visual topic audit | `visual-topic-audit` | Review/audit sidecar | Fast to long | Review artifacts |
 | Topic routing | `topic-route-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
+| Topic review loop | `topic-review-*`, `topic-confidence-rescore` | Review/audit sidecar | Fast to long | Review artifacts |
 | AI enrichment | `enrich-ai` | AI-heavy, audit/sidecar | Long-running | Sidecar only |
 | AI sidecar audit | `ai-sidecar-audit` | Audit-only | Fast | No |
+| Quiz packet and B/M/A grading | `quiz-packet`, `grade-quiz-bma` | Local teacher workflow | Fast to medium | Yes, under submission roots |
+| Email provider checks | `email-check`, `email-*-test` | Controlled email smoke test | Fast to medium | Reports/audit writes |
 | Classroom dashboard | `classroom`, `class-*` | Local teacher workflow | Interactive | Yes, under class/submission roots |
 | Output inventory | `output-inventory` | Audit-only | Fast to medium | Optional report writes |
 | Output cleanup plan | `output-cleanup-plan` | Audit-only | Fast to medium | Optional report writes |
@@ -380,7 +384,7 @@ Purpose: generate image-first printable CAIE 9709 major-topic packets from canon
 
 Input: `output/json/question_bank.json`, `exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`, artifacts under `output/`
 
-Output: `output/topic_packets/<paper_family>/<major_topic>/<paper_family>_<major_topic>_packet.pdf`, `manifest.json`, and `output/topic_packets/topic_packet_summary.json`
+Output: `output/topic_packets/<paper_family>/<major_topic>/<paper_family>_<major_topic>_packet.pdf`, `manifest.json`, optional legacy split PDFs, and `output/topic_packets/topic_packet_summary.json`
 
 Category/runtime: standard projection, fast to medium
 
@@ -390,7 +394,9 @@ Compatibility: add `--split-question-answer-pdfs` when legacy `questions.pdf` an
 
 Layout options: `--page-size a4|letter`, `--orientation portrait|landscape`, `--layout compact|one-per-page`, and `--answer-placement end|inline`. Use `--layout one-per-page --answer-placement inline` for the previous paired page-heavy packet ordering.
 
-Release packets are quality-first: records must have `mapping_status=pass`, `validation_status=pass`, `scope_quality_status=clean`, `question_crop_confidence=high`, and `visual_curation_status=ready`. Records with valid topics but risky visual status are written under `output/topic_packets/review_required/...` with review reasons. Weak topic/text signals can remain manifest warnings when the visual source is release-safe.
+Release packets are quality-first: records with release-safe visual and validation signals are placed in the approved section. Records with usable assets but mapping, validation, scope, crop, or visual-curation risk are placed in review-required packet sections with review reasons. Weak topic/text signals can remain manifest warnings when the visual source is release-safe. Missing question images and invalid taxonomy paths are hard exclusions.
+
+Reviewed topic-bank decisions can keep, relabel, or exclude records. Topic-overlap review decisions can adjust primary topics, add secondary/coverage topics for audit summaries, or exclude records from the current syllabus. Coverage topics affect summary and audit counts without duplicating a question into multiple generated PDFs.
 
 Dry run:
 
@@ -409,6 +415,8 @@ Full generation:
 .venv/bin/python -m exam_bank.cli topic-packets \
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
+  --topic-overlap-review data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json \
   --artifact-root output \
   --strict-syllabus \
   --pdf-profile print \
@@ -423,13 +431,14 @@ Targeted major-topic generation:
 .venv/bin/python -m exam_bank.cli topic-packets \
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --topic-overlap-review data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json \
   --artifact-root output \
   --paper-family p3 \
   --topic integration \
   --strict-syllabus
 ```
 
-Permissive review runs can include hard-failure categories explicitly:
+Compatibility flags remain accepted for older operator notes, but mapping and validation failures with usable assets now route to review-required sections:
 
 ```bash
 .venv/bin/python -m exam_bank.cli topic-packets \
@@ -440,6 +449,47 @@ Permissive review runs can include hard-failure categories explicitly:
   --include-mapping-failures \
   --include-validation-failures
 ```
+
+### Visual Topic Audit
+
+Purpose: build image-backed review batches from packet coverage anomalies, optionally run AI-assisted visual decisions, and import reviewed corrections into a topic-overlap sidecar.
+
+Input: `output/json/question_bank.json`, `reports/topic_packet_paper_topic_audit_20260706.json`, `output/topic_packets/topic_packet_summary.json`, taxonomy, canonical image assets, existing topic-overlap sidecar
+
+Output: `data/review/visual_topic_audit_2026_07_06/visual_topic_audit_batch.{json,md}`, decisions JSONL, and merged topic-overlap review JSON
+
+Category/runtime: review/audit sidecar; build/import are fast, AI-assisted review can be long
+
+Build the review batch:
+
+```bash
+.venv/bin/python -m exam_bank.cli visual-topic-audit build-batch \
+  --question-bank output/json/question_bank.json \
+  --packet-audit reports/topic_packet_paper_topic_audit_20260706.json \
+  --packet-summary output/topic_packets/topic_packet_summary.json \
+  --artifact-root output \
+  --queue both
+```
+
+Run optional AI-assisted decisions:
+
+```bash
+.venv/bin/python -m exam_bank.cli visual-topic-audit run \
+  --batch data/review/visual_topic_audit_2026_07_06/visual_topic_audit_batch.json \
+  --out data/review/visual_topic_audit_2026_07_06/visual_topic_audit_decisions.jsonl \
+  --model gpt-5-mini
+```
+
+Import reviewed decisions:
+
+```bash
+.venv/bin/python -m exam_bank.cli visual-topic-audit import-decisions \
+  --batch data/review/visual_topic_audit_2026_07_06/visual_topic_audit_batch.json \
+  --decisions data/review/visual_topic_audit_2026_07_06/visual_topic_audit_decisions.jsonl \
+  --out data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json
+```
+
+Use `--dry-run` on build/import for inspection without writes. Imported statuses support primary relabels, secondary topic additions, current-syllabus exclusions, pending decisions, and genuine exceptions.
 
 ## AI Sidecars
 
@@ -517,6 +567,87 @@ Category/runtime: audit-only, fast
 .venv/bin/python -m exam_bank.cli ai-sidecar-audit \
   --input output/json/question_bank.ai_assisted.v2.json
 ```
+
+## Local Teacher Workflows
+
+Submission and classroom commands are private local workflows. Real class data belongs under ignored roots such as `data/classes/`, `data/submissions/`, `output/submissions/`, and `reports/submissions/`. They must not mutate canonical exam-bank extraction outputs or Asterion exports.
+
+### Quiz Packet Workflow
+
+Purpose: run the local quiz packet workflow from a folder containing `assignment.pdf` and `scans/`, then optionally build draft grading artifacts.
+
+Input: quiz folder, assignment PDF, scans
+
+Output: generated assignment/submission artifacts under `output/submissions/` and reports under `reports/submissions/`
+
+Category/runtime: local teacher workflow, fast to medium
+
+```bash
+.venv/bin/python -m exam_bank.cli quiz-packet \
+  --quiz-dir path/to/quiz_folder \
+  --course-id p3 \
+  --assignment-id <assignment_id> \
+  --class-id <class_id>
+```
+
+Use `--no-grade` to skip draft grading and `--open-report` to open the teacher report when the local environment supports it.
+
+### B/M/A Grading Matrix
+
+Purpose: build evidence-based B/M/A visual-first grading matrix artifacts for a local quiz packet. This is teacher-facing review output, not final automated grading.
+
+Input: assignment artifacts under `output/submissions/<assignment_id>/`
+
+Output: reports under `reports/submissions/`
+
+Category/runtime: local teacher workflow, fast to medium
+
+```bash
+.venv/bin/python -m exam_bank.cli grade-quiz-bma \
+  --assignment-id <assignment_id> \
+  --mode visual-first
+```
+
+### Email Provider Smoke Tests
+
+Purpose: check configured email transport and run controlled smoke tests without using real student assignment data.
+
+Input: provider configuration outside the repository; optional smoke-test attachment
+
+Output: JSON status and audit/report records under submission report roots
+
+Category/runtime: controlled email smoke test, fast to medium
+
+Check provider status:
+
+```bash
+.venv/bin/python -m exam_bank.cli email-check \
+  --provider outlook-cn \
+  --from teacher@example.edu
+```
+
+Dry-run exactly one smoke-test send:
+
+```bash
+.venv/bin/python -m exam_bank.cli email-send-test \
+  --provider outlook-cn \
+  --from teacher@example.edu \
+  --to teacher@example.edu \
+  --subject "Smoke Test - Exam Bank" \
+  --body "Smoke Test only." \
+  --dry-run
+```
+
+Run the full controlled smoke test:
+
+```bash
+.venv/bin/python -m exam_bank.cli email-smoke-test \
+  --provider outlook-cn \
+  --from teacher@example.edu \
+  --to teacher@example.edu
+```
+
+Smoke commands reject unsafe assignment/roster/score attachments and require explicit flags for non-smoke subjects or default Mail.app account fallback. They do not grant permission for automatic student-facing sends.
 
 ## Classroom Dashboard
 
@@ -835,11 +966,33 @@ These help surfaces were checked while creating this atlas:
 .venv/bin/python -m exam_bank.cli output-integrity-audit --help
 .venv/bin/python -m exam_bank.cli asterion-export --help
 .venv/bin/python -m exam_bank.cli asterion-content-lab-candidates --help
+.venv/bin/python -m exam_bank.cli topic-packets --help
+.venv/bin/python -m exam_bank.cli visual-topic-audit --help
+.venv/bin/python -m exam_bank.cli visual-topic-audit build-batch --help
+.venv/bin/python -m exam_bank.cli visual-topic-audit run --help
+.venv/bin/python -m exam_bank.cli visual-topic-audit import-decisions --help
+.venv/bin/python -m exam_bank.cli topic-confidence-rescore --help
+.venv/bin/python -m exam_bank.cli topic-review-batch --help
+.venv/bin/python -m exam_bank.cli topic-review-run --help
+.venv/bin/python -m exam_bank.cli topic-review-import --help
+.venv/bin/python -m exam_bank.cli topic-review-merge --help
 .venv/bin/python -m exam_bank.cli topic-route-ai --help
 .venv/bin/python -m exam_bank.cli enrich-ai --help
 .venv/bin/python -m exam_bank.cli ai-sidecar-audit --help
+.venv/bin/python -m exam_bank.cli quiz-packet --help
+.venv/bin/python -m exam_bank.cli grade-quiz-bma --help
+.venv/bin/python -m exam_bank.cli email-check --help
+.venv/bin/python -m exam_bank.cli email-send-test --help
+.venv/bin/python -m exam_bank.cli email-receive-test --help
+.venv/bin/python -m exam_bank.cli email-smoke-test --help
+.venv/bin/python -m exam_bank.cli classroom --help
+.venv/bin/python -m exam_bank.cli class-init --help
+.venv/bin/python -m exam_bank.cli class-add-assignment --help
+.venv/bin/python -m exam_bank.cli class-dispatch-due --help
+.venv/bin/python -m exam_bank.cli class-ingest-submissions --help
 .venv/bin/python -m exam_bank.cli output-inventory --help
 .venv/bin/python -m exam_bank.cli output-cleanup-plan --help
+.venv/bin/python -m exam_bank.cli output-normalize-structure --help
 .venv/bin/python -m exam_bank.cli export-summary-diff --help
 .venv/bin/python scripts/audit_ocr_candidates.py --help
 .venv/bin/python scripts/audit_difficulty.py --help

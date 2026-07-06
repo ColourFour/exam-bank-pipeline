@@ -53,4 +53,4 @@ Disable a connector by removing or renaming the private connector config, removi
 
 ## Provider Status
 
-Phase 5B implements the provider-neutral interface, fake connector, and local-export connector. Direct mailbox providers are deferred until credential handling and first-run evidence justify adding them.
+Phase 5B implements the provider-neutral interface, fake connector, and local-export connector. Operational email provider checks and controlled smoke-test commands exist for configured providers, but assignment intake must still use scoped dry-run/apply flows and the Phase 4 intake path. Broad mailbox scans, credential storage in the repo, and automatic student-facing sends remain out of scope.

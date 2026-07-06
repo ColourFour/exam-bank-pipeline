@@ -1,6 +1,6 @@
 # Submission Email Intake Contract
 
-This contract defines the Phase 4 readiness boundary for inbound email intake. It adds identity, provenance, quarantine, duplicate/resend, and dry-run rules before any live mailbox integration exists.
+This contract defines the Phase 4 boundary for inbound email intake. It controls identity, provenance, quarantine, duplicate/resend, and dry-run behavior for fixture-backed intake and scoped connector-backed handoff.
 
 ## Phase 4 Purpose
 
@@ -8,11 +8,11 @@ Phase 4 is inbound email intake for PDF assignment submissions only. Its job is 
 
 Phase 4 does not replace Phase 1 PDF validation, duplicate handling, late handling, review queues, or draft grading. It should feed those workflows only after intake decisions are explicit and auditable.
 
-## Fixture-Backed Implementation Status
+## Implementation Status
 
-Phase 4 fixture-backed intake is implemented for synthetic local message fixtures only. It does not connect to a live mailbox, does not require email credentials, and does not send outgoing email. Accepted PDF attachments are copied into an ignored private staging folder and then passed through the Phase 1 local submission tracker, which remains responsible for PDF validation, duplicate-file handling, late policy, completion CSVs, and accepted/rejected submission records.
+Phase 4 fixture-backed intake is implemented for synthetic local message fixtures. Scoped live-connector handoff is implemented as a transport layer that converts mailbox/export records into the same internal message and attachment models. Email intake itself does not send outgoing email. Accepted PDF attachments are copied into an ignored private staging folder and then passed through the Phase 1 local submission tracker, which remains responsible for PDF validation, duplicate-file handling, late policy, completion CSVs, and accepted/rejected submission records.
 
-Email intake writes private artifacts under `output/submissions/<assignment_id>/email_intake/`, including message decisions, quarantine records, draft-only acknowledgement/resend records, and provenance linking each staged Phase 1 filename back to the original synthetic message and attachment. Quarantined messages remain teacher-review territory. A live mailbox connector is intentionally deferred.
+Email intake writes private artifacts under `output/submissions/<assignment_id>/email_intake/`, including message decisions, quarantine records, draft-only acknowledgement/resend records, and provenance linking each staged Phase 1 filename back to the original message and attachment. Quarantined messages remain teacher-review territory. Live connector apply mode must enter through this same intake path.
 
 ## Non-Goals
 

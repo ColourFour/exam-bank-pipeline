@@ -45,7 +45,7 @@ The following work is implemented and should be treated as current infrastructur
 - Legacy ingestion support for `2008-2020` via the PastPapers.co ingress path.
 - `PaperIdentity`-based canonical paper IDs, question IDs, mark-scheme pairing, and asset paths.
 - OCR-enabled production-style export with run manifest, QA rollups, artifact root, and output-layout metadata.
-- Standard CLI commands for extraction, audit, output integrity, Asterion export, Content Lab candidates, topic packets, AI sidecars, triage, auto-triage, output inventory, cleanup planning, and export summary diffs.
+- Standard CLI commands for extraction, audit, output integrity, Asterion export, Content Lab candidates, topic packets, visual topic audit, AI sidecars, topic review loops, triage, auto-triage, classroom/submission workflows, controlled email smoke tests, output inventory, cleanup planning, and export summary diffs.
 - Generator safety for taxonomy scripts: `--help` is safe and `--dry-run` reports planned writes.
 - Atomic JSON write helpers and tests.
 - Output inventory and dry-run cleanup planning.
@@ -55,7 +55,11 @@ The following work is implemented and should be treated as current infrastructur
 - Deterministic mark-event sidecar and validation report.
 - Deterministic advisory evidence sidecar from examiner reports and grade thresholds.
 - Advisory difficulty index sidecar and reports.
-- Image-first topic packet generation under `output/topic_packets/`.
+- Image-first topic packet generation under `output/topic_packets/`, including compact combined question/answer PDFs, review-required sections, reviewed topic-bank decisions, topic-overlap coverage metadata, and PDF image optimization profiles.
+- Image-backed visual topic audit batches and decision imports for packet coverage anomalies.
+- Local classroom dashboard and CLI workflow for class workspaces, assignment PDFs, scheduled dispatch, intentional resend confirmation, and submission ingestion.
+- Local quiz-packet workflow and evidence-based B/M/A grading matrix artifacts for teacher review.
+- Submission email intake, live inbound connector scaffolding, controlled outgoing queues, and provider smoke-test commands with dry-run and approval gates.
 - Auto-triage planning, runbook, comparison, and decision files.
 - Text-extraction failure audit, bad-text fixture manifest, crop/context signal audit, OCR profile experiments, normalized text candidate contract, and text-fidelity review queue.
 
@@ -198,7 +202,25 @@ Acceptance:
 - `safe_for_strict_filters=true` is only set when the sidecar actually qualifies.
 - Downstream consumers can fail closed from sidecar metadata.
 
-### 7. Output Hygiene
+### 7. Topic Packet Coverage Review
+
+Goal: keep printable topic packets aligned with the current CAIE 9709 syllabus while preserving the image-first source-of-truth policy.
+
+Work:
+
+- Use packet summaries and `reports/topic_packet_paper_topic_audit_20260706.json` to find missing-topic and high-overlap paper/topic anomalies.
+- Build visual topic audit batches with `visual-topic-audit build-batch`.
+- Import reviewed decisions into the topic-overlap sidecar and regenerate packets with `--topic-overlap-review`.
+- Keep coverage topics as summary/audit metadata unless a primary topic change is explicitly reviewed.
+
+Acceptance:
+
+- Packet generation uses reviewed topic-bank and topic-overlap decisions where available.
+- Questions are not duplicated into multiple PDFs just to satisfy coverage counts.
+- Records outside the current syllabus are explicitly excluded or routed to review-required outputs.
+- Packet summary movement is explained by a tracked decision artifact or report.
+
+### 8. Output Hygiene
 
 Goal: keep generated outputs understandable and safe to clean.
 
@@ -214,26 +236,26 @@ Acceptance:
 - Archive decisions are documented.
 - No current export or image tree is deleted during doc or hygiene work.
 
-### 8. Automated Assignment Submission / Grading Assets
+### 9. Automated Assignment Submission / Grading Assets
 
 Purpose: prepare a local-first path for assignment submission tracking and later teacher-reviewed grading without coupling private student data to canonical exam-bank generation, Asterion exports, or student-runtime content.
 
-Current readiness status: the repo has strong reusable assets for canonical question/mark-scheme images, topic metadata, PDF handling, advisory mark events, reviewed-rubric gating, JSON sidecars, CSV-style reports, and audit patterns. It does not yet have roster, assignment, submission, email intake, reminder, feedback-draft, per-student grading-result, or outgoing-message audit models. See `reports/AUTOMATED_GRADING_READINESS_REVIEW_2026_06_22.md` for the readiness review.
+Current readiness status: the repo now has local class/assignment/submission models, local ingestion, fixture-backed and connector-backed inbound email intake, controlled outgoing queue artifacts, teacher review queues, draft grading artifacts, a classroom dashboard, local quiz-packet automation, and evidence-based B/M/A grading matrices. These remain private local workflows and are intentionally separate from canonical exam-bank generation, Asterion exports, and topic packets. See `reports/AUTOMATED_GRADING_READINESS_REVIEW_2026_06_22.md` as the historical readiness baseline.
 
 Implementation phases:
 
 - Phase 0 - Contracts and privacy guardrails: add a submission-tracking contract doc, confirm ignored private storage roots, and define fixture rules with fake names, fake emails, and no real submissions.
-- Phase 1 - Local submission tracker v1: support assignment JSON, roster CSV/JSON, local folder PDF ingest, PDF validation, student matching, submitted/missing/rejected/late status, CSV completion export, JSONL audit log, and draft acknowledgement/resend/reminder text only.
+- Phase 1 - Local submission tracker v1: implemented; supports assignment JSON, roster CSV/JSON, local folder PDF ingest, PDF validation, student matching, submitted/missing/rejected/late status, CSV completion export, JSONL audit log, and draft acknowledgement/resend/reminder text only.
 - Phase 2 - Teacher review and grading preparation: implemented; adds a submission review queue, placeholder grading-result model, and manual teacher notes without sending student-facing grade emails.
 - Phase 3 - Draft automated grading: implemented as a draft-only layer; performs safe native PDF extraction, writes teacher-facing draft grading artifacts, audits legacy salvage decisions, and fails closed with null scores when extraction, reviewed-rubric, question, or deterministic answer mapping is weak.
-- Phase 4 - Email intake: add inbound email connector support, attachment validation, duplicate/resend handling, and acknowledgement draft generation; do not live-send messages until explicitly approved.
-- Phase 5 - Controlled outgoing email: add a teacher-approved outgoing queue for reminder emails, submission acknowledgements, and individual feedback emails with a full outgoing audit log.
-- Phase 6 - High-confidence automation: allow auto-send only for explicitly allowed cases, keep low-confidence items teacher-review-only, and route mistake summaries into Asterion repair lanes when appropriate.
+- Phase 4 - Email intake: implemented for fixture-compatible intake and scoped live connector handoff; preserves provenance, attachment validation, quarantine, duplicate/resend handling, and draft acknowledgement generation.
+- Phase 5 - Controlled outgoing email: implemented for approval-gated outgoing queues, dry-run reports, and fake-adapter delivery records; classroom live sends require explicit teacher confirmation or CLI `--send-live`.
+- Phase 6 - High-confidence automation: future; no auto-send, final grade delivery, or student-facing automated feedback is enabled by default.
 
 Explicit v1 non-goals:
 
-- No live email sending.
-- No Gmail, Outlook, SMTP, or IMAP integration.
+- No automatic live email sending.
+- No full-inbox scans or unscoped mailbox import.
 - No OCR for submission scoring.
 - No final or student-facing automated grading.
 - No real student data in fixtures or committed artifacts.

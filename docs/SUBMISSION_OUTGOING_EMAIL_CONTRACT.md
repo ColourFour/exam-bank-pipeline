@@ -6,7 +6,7 @@ This contract defines Phase 5A: the controlled outgoing email queue for assignme
 
 Phase 5A collects draft-only acknowledgement, resend, reminder, notice, and teacher-approved feedback messages created by earlier submission phases. It normalizes those drafts into a single outgoing draft format, creates a teacher approval template, builds a queue only from explicitly approved safe drafts, records audit events, and supports dry-run delivery reporting.
 
-Phase 5A does not send real email by default. It does not require live credentials, does not connect to live mail services, and does not change canonical exam-bank extraction, OCR, grading, or Asterion export behavior.
+Phase 5A does not send real email by default. It does not require live credentials for queue building or dry-run reporting and does not change canonical exam-bank extraction, OCR, grading, or Asterion export behavior. Classroom assignment dispatch has a separate explicit confirmation/`--send-live` path; that path must still honor roster privacy, audit logging, and teacher intent.
 
 ## Allowed Message Types
 
@@ -55,15 +55,15 @@ Dry-run must not send email, open network connections, require credentials, or m
 
 ## Sender Adapter Rules
 
-Phase 5A includes a fake adapter only. It may run only with an explicit `--use-fake-adapter` flag and writes local JSONL records under:
+Phase 5A queue delivery tests include a fake adapter. It may run only with an explicit `--use-fake-adapter` flag and writes local JSONL records under:
 
 ```text
 output/submissions/<assignment_id>/outgoing_email/fake_sent_messages.jsonl
 ```
 
-The fake adapter must not use credentials or network requests. Live sending is deferred. Any future live sender adapter must be disabled by default, require an explicit command-line flag, use a non-test adapter, and preserve all approval and audit gates.
+The fake adapter must not use credentials or network requests. Live sender adapters for the outgoing queue remain disabled by default unless a later contract explicitly enables them. Any future live sender adapter must require an explicit command-line flag, use a non-test adapter, and preserve all approval and audit gates.
 
-The Phase 5B live email connector is inbound transport only. It does not grant permission to send outgoing email, auto-send acknowledgements, or bypass this approval gate.
+The Phase 5B live email connector is inbound transport only. It does not grant permission to send outgoing email, auto-send acknowledgements, or bypass this approval gate. Email provider smoke-test commands are operational checks, not student-message workflows.
 
 ## Audit Log Requirements
 

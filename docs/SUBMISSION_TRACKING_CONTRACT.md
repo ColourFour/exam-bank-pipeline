@@ -20,14 +20,14 @@ The system is not part of canonical CAIE 9709 exam-bank extraction. Student subm
 - Phase 1 - local submission tracker: validate teacher-provided assignment metadata, a teacher-provided roster, and a local folder of PDFs; produce completion reports, audit logs, and draft text only.
 - Phase 2 - teacher review/grading preparation: add review queues, grading-prep records, and manual teacher notes without sending grade or feedback messages.
 - Phase 3 - draft automated grading: experiment with draft marks only, with confidence flags and teacher approval gates.
-- Phase 4 - email intake: add controlled inbound email/attachment intake after the local workflow is stable.
-- Phase 5 - controlled outgoing email: add a teacher-approved outgoing queue and full outgoing audit log.
+- Phase 4 - email intake: controlled inbound email/attachment intake after the local workflow is stable.
+- Phase 5 - controlled outgoing email: teacher-approved outgoing queue, explicit live-dispatch gates, and full outgoing audit logs.
 
-Phase 4 is currently implemented as fixture-backed intake only. It reads synthetic local message fixtures, stages accepted PDFs under ignored private submission roots, and reuses Phase 1 for validation, duplicate handling, late policy, completion CSVs, and accepted/rejected records. It has no live mailbox connector, no outgoing email, and no student-facing feedback. Quarantine remains a teacher-review workflow, and live mailbox integration is deferred.
+Phase 4 is implemented for fixture-compatible intake and scoped connector handoff. It reads synthetic local message fixtures or scoped connector exports, stages accepted PDFs under ignored private submission roots, and reuses Phase 1 for validation, duplicate handling, late policy, completion CSVs, and accepted/rejected records. Quarantine remains a teacher-review workflow. Connector apply mode must preserve Phase 4 provenance and quarantine rules.
 
-Phase 5A is implemented as a controlled outgoing email queue and approval gate. It normalizes existing draft acknowledgement, resend, reminder, notice, and teacher-approved feedback records; writes an approval template; queues only explicitly approved safe drafts; writes outgoing audit logs; and defaults to dry-run delivery reporting. Phase 5A includes a fake local adapter only, behind an explicit flag. Live sending is deferred. AI draft grades and Phase 3 draft-auto grading feedback cannot be sent as final feedback.
+Phase 5A is implemented as a controlled outgoing email queue and approval gate. It normalizes existing draft acknowledgement, resend, reminder, notice, and teacher-approved feedback records; writes an approval template; queues only explicitly approved safe drafts; writes outgoing audit logs; and defaults to dry-run delivery reporting. Phase 5A includes a fake local adapter behind an explicit flag. Classroom live dispatch exists separately and requires explicit teacher confirmation or CLI `--send-live`. AI draft grades and Phase 3 draft-auto grading feedback cannot be sent as final feedback.
 
-Phase 5B adds a read-only live email connector scaffold. The connector is transport only: it converts scoped mailbox messages into the same internal Phase 4 intake models. Fixture-backed intake remains the test source, real mailbox import defaults to dry-run, and apply mode must reuse Phase 4 and Phase 1 rather than bypassing quarantine or validation. Phase 6 high-confidence automation requires evidence from successful real runs.
+Phase 5B adds a read-only live email connector scaffold. The connector is transport only: it converts scoped mailbox messages into the same internal Phase 4 intake models. Fixture-backed intake remains the primary test source, real mailbox import defaults to dry-run, and apply mode must reuse Phase 4 and Phase 1 rather than bypassing quarantine or validation. Provider checks and controlled smoke-test commands exist for operational validation, but they do not authorize broad scans or automatic student messaging. Phase 6 high-confidence automation requires evidence from successful real runs.
 
 ## Phase 1 Allowed Scope
 
@@ -92,9 +92,9 @@ Phase 3 may not send emails, may not create student-facing feedback, may not fin
 
 ## Phase 4 Readiness
 
-Email identity, message provenance, attachment provenance, quarantine, duplicate/resend, and dry-run contracts must be defined before live inbound email intake. Phase 4 must preserve all Phase 0-3 safety rules: private data stays under ignored submission roots, all outgoing messages remain drafts, and no OCR, grading, final scores, or student-facing feedback may be introduced by email intake.
+Email identity, message provenance, attachment provenance, quarantine, duplicate/resend, and dry-run contracts are the controlling boundary for live inbound email intake. Phase 4 must preserve all Phase 0-3 safety rules: private data stays under ignored submission roots, all outgoing messages remain drafts, and no OCR, grading, final scores, or student-facing feedback may be introduced by email intake.
 
-Live mailbox integration is not required for Phase 4 tests. Tests should use synthetic local fixtures and reserved email domains, and filename matching must become a fallback rather than the primary identity source when email metadata is available.
+Live mailbox integration is not required for Phase 4 tests. Tests should use synthetic local fixtures, fake/local connector exports, and reserved email domains. Filename matching must become a fallback rather than the primary identity source when email metadata is available.
 
 ## Phase 5A Controlled Outgoing Queue
 
@@ -102,7 +102,7 @@ Phase 5A may collect previously generated draft-only messages and convert teache
 
 Allowed Phase 5A message types are acknowledgement, resend request, missing-submission reminder, late notice, teacher-review notice, and generic teacher-approved feedback. Final grades, AI-generated score feedback, and draft-auto grading feedback remain blocked. Phase 3 draft grades are not final grades and must not become student-facing feedback.
 
-Phase 5A includes a fake adapter only. It writes local JSONL under ignored output roots and requires an explicit flag. Live sender adapters remain future work and must require a separate contract update, focused tests, explicit flags, and non-test credentials outside the test suite.
+Phase 5A includes a fake adapter for queue delivery tests. It writes local JSONL under ignored output roots and requires an explicit flag. Live sender behavior outside the classroom dispatch path must require a separate contract update, focused tests, explicit flags, and non-test credentials outside the test suite.
 
 ## Phase 5B Live Email Connector
 

@@ -104,6 +104,28 @@ Ingest uploaded or inbox submissions:
   --assignment-id <assignment_id>
 ```
 
+## Local Quiz Packet Shortcut
+
+For a local quiz folder with `assignment.pdf` and a `scans/` folder, use the one-command workflow:
+
+```bash
+.venv/bin/python -m exam_bank.cli quiz-packet \
+  --quiz-dir path/to/quiz_folder \
+  --course-id p3 \
+  --assignment-id <assignment_id> \
+  --class-id <class_id>
+```
+
+This creates private submission artifacts and teacher reports under the configured submission roots. Add `--no-grade` when you only want intake/report artifacts.
+
+Build the evidence-based B/M/A matrix after the quiz packet has created submission artifacts:
+
+```bash
+.venv/bin/python -m exam_bank.cli grade-quiz-bma \
+  --assignment-id <assignment_id> \
+  --mode visual-first
+```
+
 ## Apply
 
 Apply only after reviewing the dry-run output and mailbox scope:
@@ -146,4 +168,12 @@ Run the focused classroom checks after changing dashboard layout, assignment ema
 .venv/bin/python -m pytest \
   tests/test_classroom.py \
   tests/test_classroom_dashboard.py
+```
+
+Run the focused quiz and B/M/A checks after changing local quiz packet or grading-matrix code:
+
+```bash
+.venv/bin/python -m pytest \
+  tests/test_quiz_packet.py \
+  tests/test_bma_grading.py
 ```

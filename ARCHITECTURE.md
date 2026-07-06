@@ -10,6 +10,8 @@ This repository is an image-first CAIE 9709 exam-bank pipeline. Question crops a
 4. The same export path writes `output/asterion/exports/latest/asterion_question_bank_v1.json`, the reviewed/safe student-runtime subset derived from the catalog.
 5. `src/exam_bank/asterion_export.py` also builds `asterion_content_lab_candidates_v1.json`, which is review-only candidate metadata. It is not student runtime.
 6. `src/exam_bank/asterion_student_runtime_safe.py` audits P3 Content Lab candidates for an explicit student-runtime-safe candidate export. This remains P3-specific review infrastructure.
+7. `src/exam_bank/topic_packets.py` builds image-first printable topic packets from canonical question and mark-scheme crops. Reviewed topic-bank decisions and topic-overlap review decisions can change packet placement and coverage summaries, but they do not rewrite canonical extraction records.
+8. `src/exam_bank/visual_topic_audit.py` creates image-backed audit batches for topic coverage anomalies, runs optional AI-assisted review, and imports reviewed decisions into topic-overlap sidecars for packet generation.
 
 Canonical asset paths use `PaperIdentity` names such as `pm1/pm1_2024_m24_12_qp_q06_question.png` and `mechanics/mechanics_2025_w25_52_ms_q05_markscheme.png`. Older nested paths like `output/p1/<paper>/questions/q01.png` are legacy compatibility inputs for normalization, not the active output layout.
 
@@ -63,6 +65,16 @@ Do not reuse P3 records for P1, M1, or S1 empty states.
 Question and mark-scheme images remain canonical. OCR text, native text, AI labels, topic-routing labels, difficulty labels, mark-event candidates, and broad skill mappings are advisory unless a separate reviewed contract explicitly promotes them.
 
 Content Lab candidates are review material only. They may contain useful blocker diagnostics and source-artifact references, but they must not be loaded as student runtime records and must not create generated student-facing practice content.
+
+Topic packets are downstream classroom/review projections. They use image assets as student-facing content and may route uncertain or visually risky records into review-required sections. Packet summaries and visual-topic audit decisions are review evidence; they are not canonical question-bank edits.
+
+## Submission And Classroom Boundary
+
+The assignment-submission workflow is private, local-first infrastructure separate from exam-bank extraction. Class rosters, assignment PDFs, submission PDFs, live-email connector config, outgoing-email queues, draft grades, and classroom dashboard state live under ignored roots such as `data/classes/`, `data/submissions/`, `output/submissions/`, and `reports/submissions/`.
+
+Submission tools may build local quiz packets, ingest local or scoped email-derived PDFs, prepare teacher review queues, create draft-only grading artifacts, build evidence-based B/M/A matrices, and queue controlled outgoing messages behind explicit approval gates. They must not mutate `output/json/question_bank.json`, canonical image trees, Asterion exports, topic-routing sidecars, or topic packets, and they must not commit real student data.
+
+The current live email boundary is transport-focused: provider checks and controlled smoke tests exist, inbound connectors default to dry-run and scoped assignment import, and classroom live sends require explicit teacher confirmation or `--send-live`. Draft-auto grading output remains teacher-facing and cannot become final student feedback without a later reviewed contract.
 
 ## P3-Specific Assumptions
 

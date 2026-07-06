@@ -21572,22 +21572,16 @@
       "component_name": "Pure Mathematics 1"
     },
     "12summer19_q02": {
-      "primary_topic_id": "9709_p1_topic_functions",
+      "primary_topic_id": "9709_p1_topic_coordinate_geometry",
       "topic_distribution": [
         {
-          "topic_id": "9709_p1_topic_functions",
+          "topic_id": "9709_p1_topic_coordinate_geometry",
           "fit_percent": 100
         }
       ],
       "confidence": "high",
-      "review_required": true,
-      "review_reasons": [
-        "mapping_status_not_pass",
-        "validation_status_not_pass",
-        "question_crop_confidence_not_high",
-        "visual_curation_status_not_ready",
-        "text_only_status_fail"
-      ],
+      "review_required": false,
+      "review_reasons": [],
       "evidence_used": [
         "mark_scheme_text",
         "ocr_text",
@@ -21605,11 +21599,11 @@
       "evidence_packet_hash": "c15c773ed8b008cf42e67861b57bf004838e3b44f24d68a2274dd0adef2f869c",
       "source_record_hash": "c0f4725776f11db0f21e9466026f5b95d1a0ac8495a11c38afdd25927e34e114",
       "packet_family": "p1",
-      "packet_topic_id": "functions",
-      "raw_topic": "functions",
+      "packet_topic_id": "coordinate_geometry",
+      "raw_topic": "coordinate_geometry",
       "source_component": "12",
       "normalization_status": "resolved",
-      "normalization_reason": "topic_valid_for_component_family",
+      "normalization_reason": "manual_visual_review_corrected_stale_march_asset",
       "course_id": "p1",
       "component_name": "Pure Mathematics 1"
     },
@@ -21898,20 +21892,16 @@
       "component_name": "Pure Mathematics 1"
     },
     "12summer19_q10": {
-      "primary_topic_id": "9709_p1_topic_differentiation",
+      "primary_topic_id": "9709_p1_topic_series",
       "topic_distribution": [
         {
-          "topic_id": "9709_p1_topic_differentiation",
+          "topic_id": "9709_p1_topic_series",
           "fit_percent": 100
         }
       ],
       "confidence": "high",
-      "review_required": true,
-      "review_reasons": [
-        "mapping_status_not_pass",
-        "question_crop_confidence_not_high",
-        "visual_curation_status_not_ready"
-      ],
+      "review_required": false,
+      "review_reasons": [],
       "evidence_used": [
         "mark_scheme_text",
         "ocr_text",
@@ -21929,11 +21919,11 @@
       "evidence_packet_hash": "fa06029e92998b13cf1d488975bf4908bd27a3c4b080ed4f3ff727bb4c124a30",
       "source_record_hash": "8a008c02525c584bd7b5c45c432f27c28ab2c1f598d951c9d28a7649e8fc4953",
       "packet_family": "p1",
-      "packet_topic_id": "differentiation",
-      "raw_topic": "differentiation",
+      "packet_topic_id": "series",
+      "raw_topic": "series_and_sequences",
       "source_component": "12",
       "normalization_status": "resolved",
-      "normalization_reason": "topic_valid_for_component_family",
+      "normalization_reason": "manual_visual_review_corrected_stale_march_asset",
       "course_id": "p1",
       "component_name": "Pure Mathematics 1"
     },
@@ -42854,19 +42844,16 @@
       "component_name": "Pure Mathematics 1"
     },
     "13winter19_q10": {
-      "primary_topic_id": "9709_p1_topic_coordinate_geometry",
+      "primary_topic_id": "9709_p3_topic_vectors",
       "topic_distribution": [
         {
-          "topic_id": "9709_p1_topic_coordinate_geometry",
+          "topic_id": "9709_p3_topic_vectors",
           "fit_percent": 100
         }
       ],
       "confidence": "high",
-      "review_required": true,
-      "review_reasons": [
-        "question_crop_confidence_not_high",
-        "visual_curation_status_not_ready"
-      ],
+      "review_required": false,
+      "review_reasons": [],
       "evidence_used": [
         "mark_scheme_text",
         "ocr_text",
@@ -42883,14 +42870,14 @@
       "question_number": "10",
       "evidence_packet_hash": "7019c4f5b2a4959d20471143d799060f99361abb5e1f8bfe77b59000b2032014",
       "source_record_hash": "51cae323a62988f2cd39e63a6e04c58e98c7e7ef85f2b2fea8a429a54eb7b4c8",
-      "packet_family": "p1",
-      "packet_topic_id": "coordinate_geometry",
-      "raw_topic": "coordinate_geometry",
+      "packet_family": "p3",
+      "packet_topic_id": "vectors",
+      "raw_topic": "vectors",
       "source_component": "13",
       "normalization_status": "resolved",
-      "normalization_reason": "topic_valid_for_component_family",
-      "course_id": "p1",
-      "component_name": "Pure Mathematics 1"
+      "normalization_reason": "manual_visual_review_vector_not_coordinate_geometry",
+      "course_id": "p3",
+      "component_name": "Pure Mathematics 3"
     },
     "13winter19_q11": {
       "primary_topic_id": "9709_p1_topic_integration",
@@ -63627,41 +63614,38 @@
       "component_name": "Pure Mathematics 3"
     },
     "32summer19_q06": {
-      "primary_topic_id": "9709_p3_topic_differentiation",
+      "primary_topic_id": "9709_p3_topic_numerical_solution_of_equations",
       "topic_distribution": [
         {
-          "topic_id": "9709_p3_topic_differentiation",
+          "topic_id": "9709_p3_topic_numerical_solution_of_equations",
           "fit_percent": 100
         }
       ],
-      "confidence": "medium",
-      "review_required": true,
-      "review_reasons": [
-        "question_crop_confidence_not_high",
-        "visual_curation_status_not_ready"
-      ],
+      "confidence": "high",
+      "review_required": false,
+      "review_reasons": [],
       "evidence_used": [
+        "question_text",
         "mark_scheme_text",
-        "ocr_text",
-        "question_text"
+        "manual_visual_review"
       ],
       "llm_provider": null,
       "llm_model": null,
       "llm_prompt_version": "topic_routing_v1",
       "llm_run_timestamp": null,
-      "routing_source": "deterministic_topic_packet_normalization",
-      "routing_refreshed_at": "2026-06-27T12:56:16+00:00",
+      "routing_source": "manual_visual_review",
+      "routing_refreshed_at": "2026-07-06T00:00:00+08:00",
       "paper": "32summer19",
       "paper_family": "p3",
       "question_number": "6",
-      "evidence_packet_hash": "429be24389d02ade8a6a66da9468d54854ee07c511f2ef960e861f6458a5803c",
-      "source_record_hash": "012ba73e36afa36343efe20f9e7b2757f2e157ae90188c650faae9e5c92ba3e8",
+      "evidence_packet_hash": "75c898d46a399c160f87f7237631e04eca0009dff3a05c43a0a94936fabfe324",
+      "source_record_hash": "4658250eab156afe0d31cc90fd349e2078c5445b095abf4ff597156b8ea4f7ab",
       "packet_family": "p3",
-      "packet_topic_id": "differentiation",
-      "raw_topic": "parametric_equations",
+      "packet_topic_id": "numerical_solution_of_equations",
+      "raw_topic": "numerical_methods",
       "source_component": "32",
       "normalization_status": "resolved",
-      "normalization_reason": "topic_valid_for_component_family",
+      "normalization_reason": "manual correction from stale March asset to June numerical-methods question",
       "course_id": "p3",
       "component_name": "Pure Mathematics 3"
     },
