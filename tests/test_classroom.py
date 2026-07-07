@@ -58,7 +58,7 @@ def test_add_assignment_builds_distribution_and_reminder_schedule(tmp_path: Path
         pdf_path=assignment_pdf,
         assignment_id="hw1",
         title="Homework 1",
-        due_at=datetime(2026, 6, 30, 17, 0, tzinfo=timezone.utc),
+        due_at=datetime(2999, 6, 30, 17, 0, tzinfo=timezone.utc),
         send_at=datetime(2026, 6, 24, 9, 0, tzinfo=timezone.utc),
         classes_root=classes_root,
     )
@@ -81,7 +81,7 @@ def test_dispatch_due_messages_dry_run_preserves_schedule(tmp_path: Path) -> Non
         pdf_path=assignment_pdf,
         assignment_id="hw1",
         title="Homework 1",
-        due_at=datetime(2026, 6, 30, 17, 0, tzinfo=timezone.utc),
+        due_at=datetime(2999, 6, 30, 17, 0, tzinfo=timezone.utc),
         send_at=datetime(2026, 6, 24, 9, 0, tzinfo=timezone.utc),
         classes_root=classes_root,
     )
@@ -113,7 +113,7 @@ def test_ingest_class_assignment_updates_roster_with_completion_and_questions(tm
         pdf_path=assignment_pdf,
         assignment_id="hw1",
         title="Homework 1",
-        due_at=datetime(2026, 6, 30, 17, 0, tzinfo=timezone.utc),
+        due_at=datetime(2999, 6, 30, 17, 0, tzinfo=timezone.utc),
         send_at=datetime(2026, 6, 24, 9, 0, tzinfo=timezone.utc),
         classes_root=classes_root,
     )

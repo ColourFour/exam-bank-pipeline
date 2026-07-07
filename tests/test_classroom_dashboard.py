@@ -100,7 +100,7 @@ def _create_assignment(
     assignment_id: str = "hw1",
     title: str = "test 1 - topic - content",
     send_at: str = "2026-06-24T09:00",
-    due_at: str = "2026-06-30T17:00",
+    due_at: str = "2999-06-30T17:00",
     pdf: bytes | None = None,
 ) -> object:
     headers, body = _multipart(
@@ -257,6 +257,25 @@ def test_non_pdf_upload_is_rejected(tmp_path: Path) -> None:
 
     assert response.status == 400
     assert _json(response)["error"] == "invalid_assignment_pdf"
+
+
+def test_report_file_route_rejects_non_report_paths() -> None:
+    response = ClassroomDashboardApp().handle("GET", "/reports/pyproject.toml")
+
+    assert response.status == 404
+    assert b"exam-bank-pipeline" not in response.body
+
+
+def test_report_file_route_serves_configured_report_roots(tmp_path: Path) -> None:
+    app = _app(tmp_path)
+    report = tmp_path / "reports" / "submissions" / "hw1_completion.csv"
+    report.parent.mkdir(parents=True)
+    report.write_text("student_id,status\nS0001,submitted\n", encoding="utf-8")
+
+    response = app.handle("GET", f"/reports/{report.as_posix()}")
+
+    assert response.status == 200
+    assert response.body == b"student_id,status\nS0001,submitted\n"
 
 
 def test_preview_dispatch_does_not_send_email(tmp_path: Path) -> None:

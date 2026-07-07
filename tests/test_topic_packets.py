@@ -98,6 +98,53 @@ def test_major_topic_grouping_ignores_subtopic_and_manifest_shape(tmp_path: Path
     assert summary["generated_pdfs"] == [str(packet_pdf)]
 
 
+def test_topic_packet_can_annotate_problem_headers_with_difficulty_rank(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path, record_overrides={"q2": {"notes": {"question_crop_confidence": "low"}}})
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+    sidecar = tmp_path / "difficulty.json"
+    sidecar.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.topic_packet_difficulty_review",
+                "schema_version": 1,
+                "complete": True,
+                "expected_record_count": 2,
+                "records": [
+                    _difficulty_record("q1", 1, 100),
+                    _difficulty_record("q2", 2, 50),
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        topic_difficulty_review_path=sidecar,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    packet_pdf = paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf"
+    with fitz.open(packet_pdf) as doc:
+        text = "\n".join(page.get_text() for page in doc)
+    assert manifest["topic_difficulty_review_path"] == str(sidecar)
+    assert manifest["topic_difficulty_review_applied_count"] == 2
+    assert [record["question_id"] for record in manifest["included_records"]] == ["q2", "q1"]
+    assert manifest["topic_assignment_confidence_trust_status"][0]["topic_difficulty"]["packet_rank"] == 2
+    assert "Problem 1 - 2024 June P31 Question 2 - 4 marks - Integration - Difficulty 2/2" in text
+    assert "Problem 2 - 2024 June P31 Question 1 - 4 marks - Integration - Difficulty 1/2" in text
+
+
 def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
     paths = _fixture(
         tmp_path,
@@ -1627,6 +1674,17 @@ def _automated_decision(
         "risk_flags": [],
         "reviewer_model": "gpt-5-mini",
         "prompt_version": "topic_review_9709_2026_2027_v1",
+    }
+
+
+def _difficulty_record(question_id: str, rank: int, percentile: int) -> dict[str, object]:
+    return {
+        "question_id": question_id,
+        "packet_rank": rank,
+        "difficulty_percentile_0_100": percentile,
+        "visual_difficulty_score_0_100": percentile,
+        "confidence": "high",
+        "rationale": "Fixture difficulty review.",
     }
 
 

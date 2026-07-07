@@ -1,0 +1,77 @@
+# Topic Packet Difficulty Review Batch
+
+- Packet: `p1_quadratics_363191a8`
+- Topic: `p1/quadratics`
+- Questions: `69`
+
+## Rows
+
+- `13summer17_q03` problem `1` section `approved` marks `4` images `True`
+- `13winter17_q02` problem `2` section `approved` marks `4` images `True`
+- `12summer18_q02` problem `3` section `approved` marks `5` images `True`
+- `13summer18_q01` problem `4` section `approved` marks `3` images `True`
+- `11winter20_q01` problem `5` section `approved` marks `3` images `True`
+- `12winter20_q03` problem `6` section `approved` marks `5` images `True`
+- `13winter20_q04` problem `7` section `approved` marks `5` images `True`
+- `12winter22_q06` problem `8` section `approved` marks `9` images `True`
+- `11summer23_q05` problem `9` section `approved` marks `5` images `True`
+- `13summer23_q02` problem `10` section `approved` marks `4` images `True`
+- `11winter23_q02` problem `11` section `approved` marks `4` images `True`
+- `01summer08_q04` problem `12` section `review_required` marks `7` images `True`
+- `01summer08_q08` problem `13` section `review_required` marks `7` images `True`
+- `01summer09_q02` problem `14` section `review_required` marks `4` images `True`
+- `11summer10_q09` problem `15` section `review_required` marks `11` images `True`
+- `12winter10_q06` problem `16` section `review_required` marks `7` images `True`
+- `12summer11_q03` problem `17` section `review_required` marks `5` images `True`
+- `13summer11_q02` problem `18` section `review_required` marks `5` images `True`
+- `12winter11_q04` problem `19` section `review_required` marks `7` images `True`
+- `13winter11_q03` problem `20` section `review_required` marks `5` images `True`
+- `11summer12_q05` problem `21` section `review_required` marks `6` images `True`
+- `12winter12_q03` problem `22` section `review_required` marks `5` images `True`
+- `11summer13_q07` problem `23` section `review_required` marks `9` images `True`
+- `12summer13_q03` problem `24` section `review_required` marks `5` images `True`
+- `12winter13_q06` problem `25` section `review_required` marks `7` images `True`
+- `12winter13_q10` problem `26` section `review_required` marks `10` images `True`
+- `13winter13_q01` problem `27` section `review_required` marks `3` images `True`
+- `11summer14_q02` problem `28` section `review_required` marks `4` images `True`
+- `13summer14_q08` problem `29` section `review_required` marks `8` images `True`
+- `13summer14_q09` problem `30` section `review_required` marks `8` images `True`
+- `11winter14_q05` problem `31` section `review_required` marks `5` images `True`
+- `11winter14_q06` problem `32` section `review_required` marks `7` images `True`
+- `13winter14_q07` problem `33` section `review_required` marks `8` images `True`
+- `13summer15_q05` problem `34` section `review_required` marks `7` images `True`
+- `11winter15_q03` problem `35` section `review_required` marks `4` images `True`
+- `13winter15_q01` problem `36` section `review_required` marks `3` images `True`
+- `11summer16_q05` problem `37` section `review_required` marks `6` images `True`
+- `11summer16_q10` problem `38` section `review_required` marks `10` images `True`
+- `11winter16_q01` problem `39` section `review_required` marks `4` images `True`
+- `12winter16_q03` problem `40` section `review_required` marks `9` images `True`
+- `13winter16_q01` problem `41` section `review_required` marks `3` images `True`
+- `12summer17_q01` problem `42` section `review_required` marks `4` images `True`
+- `11winter18_q01` problem `43` section `review_required` marks `3` images `True`
+- `11winter18_q02` problem `44` section `review_required` marks `4` images `True`
+- `13winter18_q09` problem `45` section `review_required` marks `8` images `True`
+- `11summer19_q02` problem `46` section `review_required` marks `5` images `True`
+- `13summer19_q01` problem `47` section `review_required` marks `5` images `True`
+- `13winter19_q03` problem `48` section `review_required` marks `4` images `True`
+- `11summer20_q05` problem `49` section `review_required` marks `6` images `True`
+- `13summer20_q01` problem `50` section `review_required` marks `4` images `True`
+- `11summer21_q06` problem `51` section `review_required` marks `5` images `True`
+- `12summer21_q01` problem `52` section `review_required` marks `4` images `True`
+- `11winter21_q02` problem `53` section `review_required` marks `5` images `True`
+- `11summer22_q01` problem `54` section `review_required` marks `4` images `True`
+- `12summer22_q05` problem `55` section `review_required` marks `9` images `True`
+- `11winter22_q01` problem `56` section `review_required` marks `3` images `True`
+- `12winter22_q03` problem `57` section `review_required` marks `5` images `True`
+- `12summer23_q03` problem `58` section `review_required` marks `3` images `True`
+- `12summer23_q04` problem `59` section `review_required` marks `3` images `True`
+- `12winter23_q06` problem `60` section `review_required` marks `8` images `True`
+- `13winter23_q06` problem `61` section `review_required` marks `7` images `True`
+- `11summer24_q01` problem `62` section `review_required` marks `5` images `True`
+- `11winter24_q04` problem `63` section `review_required` marks `5` images `True`
+- `12winter24_q09` problem `64` section `review_required` marks `10` images `True`
+- `11summer25_q06` problem `65` section `review_required` marks `9` images `True`
+- `11winter25_q01` problem `66` section `review_required` marks `4` images `True`
+- `12winter25_q01` problem `67` section `review_required` marks `5` images `True`
+- `15winter25_q03` problem `68` section `review_required` marks `3` images `True`
+- `15winter25_q05` problem `69` section `review_required` marks `3` images `True`

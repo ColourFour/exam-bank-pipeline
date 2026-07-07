@@ -145,7 +145,7 @@ class ClassroomDashboardApp:
                 if len(parts) >= 5 and parts[3] == "files" and method == "GET":
                     return self._serve_class_file(class_id, parts[4:])
             if path.startswith("/reports/") and method == "GET":
-                return self._file_response(Path(path.removeprefix("/")), _guess_type(path))
+                return self._serve_report_file(path.removeprefix("/reports/"))
             return self._json({"ok": False, "error": "not_found"}, status=404)
         except DashboardError as exc:
             return self._json({"ok": False, "error": exc.code, "message": str(exc)}, status=exc.status)
@@ -680,6 +680,14 @@ class ClassroomDashboardApp:
             raise DashboardError("invalid_file_path", "Invalid file path", status=400)
         return self._file_response(target, _guess_type(target.name))
 
+    def _serve_report_file(self, raw_path: str) -> DashboardResponse:
+        requested = Path(unquote(raw_path))
+        target = requested.resolve() if requested.is_absolute() else (Path(".") / requested).resolve()
+        allowed_roots = [self.config.reports_root.resolve(), self.config.audit_path.parent.resolve()]
+        if not any(root == target or root in target.parents for root in allowed_roots):
+            return self._json({"ok": False, "error": "not_found"}, status=404)
+        return self._file_response(target, _guess_type(target.name))
+
     def _submission_rows(self, class_id: str, assignment_id: str, *, answer_check: dict[str, object]) -> list[dict[str, object]]:
         roster = [row for row in self._read_roster(class_id) if _is_active(row)]
         completion_by_student = {row.get("student_id", ""): row for row in _completion_rows(assignment_id, reports_root=self.config.reports_root)}
@@ -745,7 +753,7 @@ class ClassroomDashboardApp:
             if not root.exists():
                 continue
             for path in sorted(item for item in root.glob("*") if item.is_file()):
-                reports.append({"name": path.name, "path": path.as_posix(), "url": f"/reports/{path.relative_to(Path('.')).as_posix()}" if not path.is_absolute() else ""})
+                reports.append({"name": path.name, "path": path.as_posix(), "url": f"/reports/{path.as_posix()}"})
         return reports
 
     def _class_teacher_email(self, class_id: str) -> str:

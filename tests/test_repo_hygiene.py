@@ -48,6 +48,13 @@ def test_package_metadata_matches_extraction_only_runtime() -> None:
     assert '"reportlab>=4.0.0"' not in pyproject
 
 
+def test_package_data_includes_runtime_and_dashboard_assets() -> None:
+    pyproject = PYPROJECT_PATH.read_text(encoding="utf-8")
+
+    assert '"runtime_profile.json"' in pyproject
+    assert '"classroom_dashboard/static/*"' in pyproject
+
+
 def test_generated_inventory_files_are_ignored() -> None:
     gitignore = Path(".gitignore").read_text(encoding="utf-8")
 

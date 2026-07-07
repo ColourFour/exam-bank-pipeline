@@ -251,6 +251,12 @@ def add_topic_packet_cli_arguments(parser: argparse.ArgumentParser) -> None:
             "Coverage topics affect summary/audit counts without duplicating question PDFs."
         ),
     )
+    parser.add_argument(
+        "--topic-difficulty-review",
+        type=Path,
+        default=None,
+        help="Optional topic-packet difficulty review sidecar used to annotate packet problem headers.",
+    )
     parser.add_argument("--paper-family", choices=["p1", "p3", "p4", "p5"], default=None)
     parser.add_argument("--topic", default=None, help="Packet taxonomy topic ID, e.g. integration.")
     parser.add_argument(
@@ -325,6 +331,7 @@ def run_topic_packets_from_args(args: argparse.Namespace) -> dict[str, Any]:
         artifact_root=args.artifact_root,
         reviewed_decisions_path=args.reviewed_decisions,
         topic_overlap_review_path=args.topic_overlap_review,
+        topic_difficulty_review_path=args.topic_difficulty_review,
         paper_family=args.paper_family,
         topic=args.topic,
         subtopic=args.subtopic,
@@ -359,6 +366,7 @@ def generate_topic_packets(
     artifact_root: str | Path | None = None,
     reviewed_decisions_path: str | Path | None = None,
     topic_overlap_review_path: str | Path | None = None,
+    topic_difficulty_review_path: str | Path | None = None,
     paper_family: str | None = None,
     topic: str | None = None,
     subtopic: str | None = None,
@@ -398,6 +406,7 @@ def generate_topic_packets(
         records=all_records,
         taxonomy=taxonomy,
     )
+    topic_difficulty_records = load_topic_difficulty_review_records(topic_difficulty_review_path)
     if paper_family:
         paper_family = normalize_paper_family(paper_family)
         records = [
@@ -638,9 +647,9 @@ def generate_topic_packets(
     empty_packets_skipped: list[dict[str, str]] = []
 
     for key in sorted(packets, key=lambda k: (k.mode, k.paper_family, k.topic_id, k.subtopic_id)):
-        packet_records = sorted(
+        packet_records = sort_packet_records(
             packets[key],
-            key=lambda item: (PACKET_SECTION_ORDER.index(assignment_section(item[1])), _record_sort_key(item[0])),
+            topic_difficulty_records=topic_difficulty_records,
         )
         if not packet_records:
             empty_packets_skipped.append(key.__dict__)
@@ -655,6 +664,8 @@ def generate_topic_packets(
             dry_run=dry_run,
             pdf_options=pdf_options,
             layout_options=layout_options,
+            topic_difficulty_records=topic_difficulty_records,
+            topic_difficulty_review_path=Path(topic_difficulty_review_path) if topic_difficulty_review_path else None,
         )
         if not dry_run:
             packet_dir.mkdir(parents=True, exist_ok=True)
@@ -667,6 +678,7 @@ def generate_topic_packets(
                 review=key.mode == "review",
                 pdf_options=pdf_options,
                 layout_options=layout_options,
+                topic_difficulty_records=topic_difficulty_records,
             )
             page_count = _pdf_page_count(topic_pdf)
             manifest["pdf_path"] = str(topic_pdf)
@@ -689,6 +701,7 @@ def generate_topic_packets(
                     kind="questions",
                     review=key.mode == "review",
                     pdf_options=pdf_options,
+                    topic_difficulty_records=topic_difficulty_records,
                 )
                 answer_stats = write_packet_pdf(
                     answer_pdf,
@@ -698,6 +711,7 @@ def generate_topic_packets(
                     kind="answers",
                     review=key.mode == "review",
                     pdf_options=pdf_options,
+                    topic_difficulty_records=topic_difficulty_records,
                 )
                 manifest["pdf_outputs"]["questions"] = question_stats.to_manifest()
                 manifest["pdf_outputs"]["answers"] = answer_stats.to_manifest()
@@ -1081,6 +1095,66 @@ def load_topic_overlap_review_decisions(
             coverage_only=coverage_only,
         )
     return decisions
+
+
+def load_topic_difficulty_review_records(path: str | Path | None) -> dict[str, dict[str, Any]]:
+    if path is None:
+        return {}
+    review_path = Path(path)
+    if not review_path.exists():
+        raise TopicPacketError(f"Topic difficulty review sidecar not found: {review_path}")
+    payload = json.loads(review_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TopicPacketError("Topic difficulty review sidecar must be a JSON object.")
+    if payload.get("schema_name") != "exam_bank.topic_packet_difficulty_review":
+        raise TopicPacketError("Topic difficulty review sidecar has an invalid schema_name.")
+    if payload.get("complete") is not True:
+        raise TopicPacketError("Topic difficulty review sidecar must be complete before packet annotation.")
+    raw_records = payload.get("records")
+    if not isinstance(raw_records, list):
+        raise TopicPacketError("Topic difficulty review sidecar must contain records[].")
+    expected_count = int(payload.get("expected_record_count") or len(raw_records))
+    by_question: dict[str, dict[str, Any]] = {}
+    for index, raw in enumerate(raw_records, start=1):
+        if not isinstance(raw, dict):
+            raise TopicPacketError(f"Topic difficulty record #{index} must be an object.")
+        question_id = str(raw.get("question_id") or "").strip()
+        if not question_id:
+            raise TopicPacketError(f"Topic difficulty record #{index} is missing question_id.")
+        if question_id in by_question:
+            raise TopicPacketError(f"Duplicate topic difficulty record for question_id: {question_id}")
+        rank = _int_or_none(raw.get("packet_rank"))
+        if rank is None or rank < 1:
+            raise TopicPacketError(f"Topic difficulty record for {question_id} has invalid packet_rank.")
+        raw = dict(raw)
+        raw["expected_record_count"] = expected_count
+        by_question[question_id] = raw
+    if len(by_question) != expected_count:
+        raise TopicPacketError(
+            f"Topic difficulty sidecar record count {len(by_question)} does not match expected count {expected_count}."
+        )
+    return by_question
+
+
+def sort_packet_records(
+    packet_records: Sequence[tuple[dict[str, Any], Assignment]],
+    *,
+    topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
+) -> list[tuple[dict[str, Any], Assignment]]:
+    difficulty_records = topic_difficulty_records or {}
+    if difficulty_records and all(str(record.get("question_id") or "") in difficulty_records for record, _ in packet_records):
+        return sorted(
+            packet_records,
+            key=lambda item: (
+                -(_int_or_none(difficulty_records[str(item[0].get("question_id") or "")].get("packet_rank")) or 0),
+                PACKET_SECTION_ORDER.index(assignment_section(item[1])),
+                _record_sort_key(item[0]),
+            ),
+        )
+    return sorted(
+        packet_records,
+        key=lambda item: (PACKET_SECTION_ORDER.index(assignment_section(item[1])), _record_sort_key(item[0])),
+    )
 
 
 def _topic_overlap_topic_list(value: Any) -> tuple[str, ...]:
@@ -1581,7 +1655,10 @@ def build_packet_manifest(
     dry_run: bool,
     pdf_options: PdfImageOptimizationOptions,
     layout_options: PdfLayoutOptions,
+    topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
+    topic_difficulty_review_path: Path | None = None,
 ) -> dict[str, Any]:
+    topic_difficulty_records = topic_difficulty_records or {}
     first_assignment = packet_records[0][1]
     included_ids = [str(record.get("question_id", "")) for record, _ in packet_records]
     unique_ids = sorted(set(included_ids))
@@ -1605,6 +1682,7 @@ def build_packet_manifest(
             assignment,
             artifact_root=artifact_root,
             fallback_root=question_bank_path.parent,
+            topic_difficulty_records=topic_difficulty_records,
         )
         for index, (record, assignment) in enumerate(packet_records, start=1)
     ]
@@ -1702,6 +1780,10 @@ def build_packet_manifest(
         "pdf_outputs": {},
         "warning_counts": _counts(warning for record, _ in packet_records for warning in _record_warnings(record)),
         "topic_assignment_source": _counts(a.source for _, a in packet_records),
+        "topic_difficulty_review_path": str(topic_difficulty_review_path or ""),
+        "topic_difficulty_review_applied_count": sum(
+            1 for record, _ in packet_records if str(record.get("question_id") or "") in topic_difficulty_records
+        ),
         "topic_assignment_confidence_trust_status": [
             {
                 "question_id": str(record.get("question_id", "")),
@@ -1714,6 +1796,7 @@ def build_packet_manifest(
                 "secondary_topic_ids": list(assignment.secondary_topic_ids),
                 "coverage_topic_ids": list(_coverage_topic_ids(assignment)),
                 "topic_overlap_review_status": assignment.topic_overlap_review_status,
+                "topic_difficulty": _difficulty_manifest_record(record, topic_difficulty_records),
             }
             for record, assignment in packet_records
         ],
@@ -1728,6 +1811,7 @@ def _included_record_manifest(
     *,
     artifact_root: Path,
     fallback_root: Path,
+    topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     question_paths = _question_image_paths(record)
     answer_paths = resolve_answer_image_paths(record, artifact_root=artifact_root, fallback_root=fallback_root)
@@ -1761,6 +1845,7 @@ def _included_record_manifest(
         "topic_overlap_review_status": assignment.topic_overlap_review_status,
         "topic_overlap_review_rationale": assignment.topic_overlap_review_rationale,
         "topic_overlap_review_source": assignment.topic_overlap_review_source,
+        "topic_difficulty": _difficulty_manifest_record(record, topic_difficulty_records or {}),
         "reviewed_topic": assignment.reviewed_topic,
         "reviewed_subtopic": assignment.reviewed_subtopic,
         "reviewed_skill": assignment.reviewed_skill,
@@ -1778,8 +1863,10 @@ def write_packet_pdf(
     kind: str,
     review: bool,
     pdf_options: PdfImageOptimizationOptions | None = None,
+    topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
 ) -> PdfWriteStats:
     pdf_options = pdf_options or _pdf_image_optimization_options(enabled=False)
+    topic_difficulty_records = topic_difficulty_records or {}
     doc = fitz.open()
     image_stats: list[dict[str, Any]] = []
     warnings: list[str] = []
@@ -1800,7 +1887,7 @@ def write_packet_pdf(
         width = max(612.0, float(image_info["original_width"]) * 0.75 + 72.0)
         height = max(792.0, float(image_info["original_height"]) * 0.75 + 104.0)
         page = doc.new_page(width=width, height=height)
-        header = _page_header(record, assignment)
+        header = _page_header(record, assignment, difficulty_text=_difficulty_text(record, topic_difficulty_records))
         page.insert_text((36, 24), header, fontsize=8, color=(0.15, 0.15, 0.15))
         rect = fitz.Rect(36, 46, width - 36, height - 46)
         if image_info["stream"] is None:
@@ -1844,6 +1931,7 @@ def write_topic_packet_pdf(
     review: bool,
     pdf_options: PdfImageOptimizationOptions | None = None,
     layout_options: PdfLayoutOptions | None = None,
+    topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
 ) -> PdfWriteStats:
     pdf_options = pdf_options or _pdf_image_optimization_options(enabled=False)
     layout_options = layout_options or PdfLayoutOptions()
@@ -1859,6 +1947,7 @@ def write_topic_packet_pdf(
         review=review,
         pdf_options=pdf_options,
         layout_options=layout_options,
+        topic_difficulty_records=topic_difficulty_records or {},
         image_stats=image_stats,
         warnings=warnings,
     )
@@ -1891,6 +1980,7 @@ def _write_flow_topic_packet_pdf(
     review: bool,
     pdf_options: PdfImageOptimizationOptions,
     layout_options: PdfLayoutOptions,
+    topic_difficulty_records: dict[str, dict[str, Any]],
     image_stats: list[dict[str, Any]],
     warnings: list[str],
 ) -> dict[str, Any]:
@@ -1932,6 +2022,7 @@ def _write_flow_topic_packet_pdf(
         marks = _marks(record)
         mark_text = f" - {marks} marks" if marks not in ("", None) else ""
         section = assignment_section(assignment)
+        difficulty_text = _difficulty_text(record, topic_difficulty_records)
         question_blocks.append(
             {
                 "kind": "question",
@@ -1939,7 +2030,7 @@ def _write_flow_topic_packet_pdf(
                 "problem_number": problem_number,
                 "record": record,
                 "assignment": assignment,
-                "header": _problem_header(problem_number, source_label, mark_text, assignment),
+                "header": _problem_header(problem_number, source_label, mark_text, assignment, difficulty_text=difficulty_text),
                 "image_values": _question_image_paths(record),
                 "note": "",
             }
@@ -1957,18 +2048,35 @@ def _write_flow_topic_packet_pdf(
             }
         )
 
-    ordered_blocks = _with_section_heading_blocks(question_blocks, page_section="Questions")
+    preserve_difficulty_order = bool(topic_difficulty_records) and all(
+        str(block["record"].get("question_id") or "") in topic_difficulty_records for block in question_blocks
+    )
+    ordered_blocks = _with_section_heading_blocks(
+        question_blocks,
+        page_section="Questions",
+        preserve_block_order=preserve_difficulty_order,
+    )
     if layout_options.answer_placement == "inline":
         answer_by_problem = {block["problem_number"]: block for block in answer_blocks}
         ordered_blocks = []
-        for section in PACKET_SECTION_ORDER:
-            section_questions = [block for block in question_blocks if block["section"] == section]
-            if not section_questions:
-                continue
-            ordered_blocks.append(_section_heading_block(section, page_section="Questions"))
-            for question_block in section_questions:
+        if preserve_difficulty_order:
+            last_section = ""
+            for question_block in question_blocks:
+                section = str(question_block["section"])
+                if section != last_section:
+                    ordered_blocks.append(_section_heading_block(section, page_section="Questions"))
+                    last_section = section
                 ordered_blocks.append(question_block)
                 ordered_blocks.append(answer_by_problem[question_block["problem_number"]])
+        else:
+            for section in PACKET_SECTION_ORDER:
+                section_questions = [block for block in question_blocks if block["section"] == section]
+                if not section_questions:
+                    continue
+                ordered_blocks.append(_section_heading_block(section, page_section="Questions"))
+                for question_block in section_questions:
+                    ordered_blocks.append(question_block)
+                    ordered_blocks.append(answer_by_problem[question_block["problem_number"]])
 
     for block in ordered_blocks:
         if block["kind"] == "answer" and layout_options.answer_placement == "end":
@@ -2006,7 +2114,11 @@ def _write_flow_topic_packet_pdf(
     if layout_options.answer_placement == "end":
         page = new_page("Answers / Mark Schemes", heading="Answers / Mark Schemes")
         answers_start_page = page.number + 1
-        for block in _with_section_heading_blocks(answer_blocks, page_section="Answers / Mark Schemes"):
+        for block in _with_section_heading_blocks(
+            answer_blocks,
+            page_section="Answers / Mark Schemes",
+            preserve_block_order=preserve_difficulty_order,
+        ):
             page, current_y, scaled = _place_flow_block(
                 doc,
                 page,
@@ -2438,8 +2550,22 @@ def _packet_title(packet_records: Sequence[tuple[dict[str, Any], Assignment]]) -
     return f"{assignment.paper_family.upper()} {assignment.topic_label}"
 
 
-def _with_section_heading_blocks(blocks: Sequence[dict[str, Any]], *, page_section: str) -> list[dict[str, Any]]:
+def _with_section_heading_blocks(
+    blocks: Sequence[dict[str, Any]],
+    *,
+    page_section: str,
+    preserve_block_order: bool = False,
+) -> list[dict[str, Any]]:
     ordered: list[dict[str, Any]] = []
+    if preserve_block_order:
+        last_section = ""
+        for block in blocks:
+            section = str(block.get("section") or "")
+            if section != last_section:
+                ordered.append(_section_heading_block(section, page_section=page_section))
+                last_section = section
+            ordered.append(block)
+        return ordered
     for section in PACKET_SECTION_ORDER:
         section_blocks = [block for block in blocks if block.get("section") == section]
         if not section_blocks:
@@ -2459,10 +2585,42 @@ def _section_heading_block(section: str, *, page_section: str) -> dict[str, Any]
     }
 
 
-def _problem_header(problem_number: int, source_label: str, mark_text: str, assignment: Assignment) -> str:
+def _problem_header(
+    problem_number: int,
+    source_label: str,
+    mark_text: str,
+    assignment: Assignment,
+    *,
+    difficulty_text: str = "",
+) -> str:
     review_marker = _review_marker_text(assignment)
     marker = f" - {review_marker}" if review_marker else ""
-    return f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}{marker}"
+    difficulty_marker = f" - {difficulty_text}" if difficulty_text else ""
+    return f"Problem {problem_number} - {source_label}{mark_text} - {assignment.topic_label}{difficulty_marker}{marker}"
+
+
+def _difficulty_text(record: dict[str, Any], difficulty_records: dict[str, dict[str, Any]]) -> str:
+    row = difficulty_records.get(str(record.get("question_id") or ""))
+    if not row:
+        return ""
+    rank = _int_or_none(row.get("packet_rank"))
+    total = _int_or_none(row.get("expected_record_count")) or len(difficulty_records)
+    if rank is None or total <= 0:
+        return ""
+    return f"Difficulty {rank}/{total}"
+
+
+def _difficulty_manifest_record(record: dict[str, Any], difficulty_records: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    row = difficulty_records.get(str(record.get("question_id") or ""))
+    if not row:
+        return {}
+    return {
+        "packet_rank": row.get("packet_rank"),
+        "difficulty_percentile_0_100": row.get("difficulty_percentile_0_100"),
+        "visual_difficulty_score_0_100": row.get("visual_difficulty_score_0_100"),
+        "confidence": row.get("confidence"),
+        "rationale": row.get("rationale"),
+    }
 
 
 def _rounded_average(values: Iterable[int]) -> float:
@@ -3244,7 +3402,7 @@ def _default_artifact_root(question_bank_path: Path) -> Path:
     return Path(artifact_root) if artifact_root else question_bank_path.parent.parent
 
 
-def _page_header(record: dict[str, Any], assignment: Assignment) -> str:
+def _page_header(record: dict[str, Any], assignment: Assignment, *, difficulty_text: str = "") -> str:
     notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
     source = notes.get("source_pdf") or record.get("paper") or ""
     qno = record.get("question_number") or ""
@@ -3254,9 +3412,10 @@ def _page_header(record: dict[str, Any], assignment: Assignment) -> str:
         topic = f"{topic} / {assignment.subtopic_label}"
     review_marker = _review_marker_text(assignment)
     marker = f" | {review_marker}" if review_marker else ""
+    difficulty_marker = f" | {difficulty_text}" if difficulty_text else ""
     return (
         f"{record.get('question_id', '')} | {source} | Q{qno} | "
-        f"{marks} marks | {topic}{marker}"
+        f"{marks} marks | {topic}{difficulty_marker}{marker}"
     )
 
 
@@ -3370,6 +3529,18 @@ def _float_or_none(value: Any) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _int_or_none(value: Any) -> int | None:
+    if value in ("", None):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        try:
+            return int(float(str(value)))
+        except (TypeError, ValueError):
+            return None
 
 
 def _status_value(record: dict[str, Any], key: str) -> str:

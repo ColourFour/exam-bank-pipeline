@@ -25,11 +25,14 @@ dev = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-exam_bank = ["runtime_profile.json"]
+exam_bank = [
+  "runtime_profile.json",
+  "classroom_dashboard/static/*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = [
   "integration: slower tests that exercise PDF/sample-pipeline flows against repository fixtures.",
   "rendering: image and crop rendering behavior tests.",

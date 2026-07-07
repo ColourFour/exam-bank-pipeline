@@ -1,0 +1,94 @@
+# Topic Packet Difficulty Review Batch
+
+- Packet: `p5_the_normal_distribution_5cca0d3a`
+- Topic: `p5/the_normal_distribution`
+- Questions: `86`
+
+## Rows
+
+- `51summer20_q06` problem `1` section `approved` marks `9` images `True`
+- `52summer20_q03` problem `2` section `approved` marks `7` images `True`
+- `53summer20_q03` problem `3` section `approved` marks `5` images `True`
+- `53winter20_q01` problem `4` section `approved` marks `6` images `True`
+- `62summer10_q02` problem `5` section `approved` marks `5` images `True`
+- `62summer10_q04` problem `6` section `approved` marks `6` images `True`
+- `63summer11_q05` problem `7` section `approved` marks `11` images `True`
+- `62winter11_q07` problem `8` section `approved` marks `11` images `True`
+- `63winter11_q01` problem `9` section `approved` marks `6` images `True`
+- `62summer12_q07` problem `10` section `approved` marks `13` images `True`
+- `63summer12_q06` problem `11` section `approved` marks `12` images `True`
+- `63winter12_q05` problem `12` section `approved` marks `12` images `True`
+- `63summer13_q03` problem `13` section `approved` marks `7` images `True`
+- `63winter13_q05` problem `14` section `approved` marks `7` images `True`
+- `61summer14_q01` problem `15` section `approved` marks `4` images `True`
+- `61summer14_q02` problem `16` section `approved` marks `5` images `True`
+- `61winter14_q06` problem `17` section `approved` marks `10` images `True`
+- `63summer15_q01` problem `18` section `approved` marks `3` images `True`
+- `61summer16_q01` problem `19` section `approved` marks `3` images `True`
+- `61winter16_q01` problem `20` section `approved` marks `3` images `True`
+- `61winter16_q04` problem `21` section `approved` marks `8` images `True`
+- `62summer17_q07` problem `22` section `approved` marks `13` images `True`
+- `63summer17_q04` problem `23` section `approved` marks `6` images `True`
+- `61winter17_q07` problem `24` section `approved` marks `13` images `True`
+- `62winter17_q07` problem `25` section `approved` marks `12` images `True`
+- `61summer18_q04` problem `26` section `approved` marks `8` images `True`
+- `62summer18_q07` problem `27` section `approved` marks `8` images `True`
+- `63summer18_q06` problem `28` section `approved` marks `8` images `True`
+- `51winter20_q05` problem `29` section `review_required` marks `9` images `True`
+- `52winter20_q03` problem `30` section `review_required` marks `9` images `True`
+- `51summer25_q01` problem `31` section `review_required` marks `3` images `True`
+- `51summer25_q04` problem `32` section `review_required` marks `12` images `True`
+- `06summer08_q04` problem `33` section `review_required` marks `7` images `True`
+- `06winter08_q03` problem `34` section `review_required` marks `6` images `True`
+- `06summer09_q01` problem `35` section `review_required` marks `5` images `True`
+- `61winter09_q03` problem `36` section `review_required` marks `7` images `True`
+- `62winter09_q01` problem `37` section `review_required` marks `4` images `True`
+- `62winter09_q07` problem `38` section `review_required` marks `11` images `True`
+- `61summer10_q03` problem `39` section `review_required` marks `5` images `True`
+- `63summer10_q07` problem `40` section `review_required` marks `11` images `True`
+- `61winter10_q03` problem `41` section `review_required` marks `7` images `True`
+- `62winter10_q05` problem `42` section `review_required` marks `7` images `True`
+- `63winter10_q01` problem `43` section `review_required` marks `2` images `True`
+- `63winter10_q07` problem `44` section `review_required` marks `14` images `True`
+- `62summer11_q06` problem `45` section `review_required` marks `9` images `True`
+- `61winter11_q05` problem `46` section `review_required` marks `9` images `True`
+- `61winter12_q03` problem `47` section `review_required` marks `6` images `True`
+- `62winter12_q02` problem `48` section `review_required` marks `7` images `True`
+- `62winter12_q04` problem `49` section `review_required` marks `9` images `True`
+- `63winter12_q01` problem `50` section `review_required` marks `3` images `True`
+- `61summer13_q04` problem `51` section `review_required` marks `7` images `True`
+- `62summer13_q01` problem `52` section `review_required` marks `3` images `True`
+- `62summer13_q03` problem `53` section `review_required` marks `6` images `True`
+- `61winter13_q01` problem `54` section `review_required` marks `3` images `True`
+- `61winter13_q05` problem `55` section `review_required` marks `9` images `True`
+- `62winter13_q01` problem `56` section `review_required` marks `3` images `True`
+- `62winter13_q03` problem `57` section `review_required` marks `5` images `True`
+- `63winter13_q02` problem `58` section `review_required` marks `5` images `True`
+- `62summer14_q07` problem `59` section `review_required` marks `11` images `True`
+- `63summer14_q05` problem `60` section `review_required` marks `8` images `True`
+- `62winter14_q05` problem `61` section `review_required` marks `8` images `True`
+- `63winter14_q01` problem `62` section `review_required` marks `3` images `True`
+- `63winter14_q05` problem `63` section `review_required` marks `9` images `True`
+- `61summer15_q01` problem `64` section `review_required` marks `4` images `True`
+- `62summer15_q07` problem `65` section `review_required` marks `12` images `True`
+- `63summer15_q05` problem `66` section `review_required` marks `9` images `True`
+- `61winter15_q02` problem `67` section `review_required` marks `4` images `True`
+- `62winter15_q07` problem `68` section `review_required` marks `13` images `True`
+- `63winter15_q04` problem `69` section `review_required` marks `7` images `True`
+- `62summer16_q07` problem `70` section `review_required` marks `11` images `True`
+- `63summer16_q05` problem `71` section `review_required` marks `8` images `True`
+- `62winter16_q04` problem `72` section `review_required` marks `9` images `True`
+- `63winter16_q06` problem `73` section `review_required` marks `10` images `True`
+- `61summer17_q06` problem `74` section `review_required` marks `11` images `True`
+- `63winter17_q07` problem `75` section `review_required` marks `12` images `True`
+- `63summer18_q02` problem `76` section `review_required` marks `6` images `True`
+- `61winter18_q04` problem `77` section `review_required` marks `8` images `True`
+- `62winter18_q07` problem `78` section `review_required` marks `12` images `True`
+- `63winter18_q05` problem `79` section `review_required` marks `8` images `True`
+- `63winter18_q06` problem `80` section `review_required` marks `8` images `True`
+- `61summer19_q07` problem `81` section `review_required` marks `10` images `True`
+- `62summer19_q03` problem `82` section `review_required` marks `6` images `True`
+- `63summer19_q01` problem `83` section `review_required` marks `6` images `True`
+- `61winter19_q07` problem `84` section `review_required` marks `10` images `True`
+- `62winter19_q06` problem `85` section `review_required` marks `9` images `True`
+- `63winter19_q04` problem `86` section `review_required` marks `7` images `True`

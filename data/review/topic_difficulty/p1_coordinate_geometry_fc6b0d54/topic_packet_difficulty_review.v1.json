@@ -1,0 +1,5109 @@
+{
+  "allow_incomplete": false,
+  "batch_id": "topic_difficulty_348ab6648e72",
+  "complete": true,
+  "draft": false,
+  "expected_record_count": 102,
+  "generated_at": "2026-07-06T07:13:40+00:00",
+  "import_report": {
+    "errors": [],
+    "pending": [],
+    "rejected": [],
+    "warnings": []
+  },
+  "interpretation": {
+    "difficulty_percentile_0_100": "Higher means harder within this topic packet.",
+    "packet_rank": "Rank 1 is hardest within this topic packet; larger ranks are easier.",
+    "student_use": "v1 does not enable student-facing sequencing."
+  },
+  "packet": {
+    "approved_count": 11,
+    "manifest_path": "output/topic_packets/p1/coordinate_geometry/manifest.json",
+    "packet_level": "major_topic",
+    "packet_mode": "combined",
+    "paper_family": "p1",
+    "pdf_path": "output/topic_packets/p1/coordinate_geometry/p1_coordinate_geometry_packet.pdf",
+    "review_required_count": 91,
+    "subtopic_id": "",
+    "subtopic_label": "",
+    "topic_id": "coordinate_geometry",
+    "topic_label": "Coordinate geometry",
+    "total_questions": 102
+  },
+  "packet_id": "p1_coordinate_geometry_fc6b0d54",
+  "record_count": 102,
+  "records": [
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 100.0,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_m23_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_m23_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 13,
+      "packet_rank": 1,
+      "packet_section": "review_required",
+      "paper": "12summer23",
+      "problem_number": 85,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer23_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 13-mark item; multiple linked parts; methods: show that, circle, tangent, normal; long mark scheme. Score 98.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 June P12 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 85,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 98.0
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 99.01,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_w20_13_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_w20_13_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 12,
+      "packet_rank": 2,
+      "packet_section": "approved",
+      "paper": "13winter20",
+      "problem_number": 6,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter20_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 12-mark item; multiple linked parts; methods: hence, exact, show that, circle; long mark scheme; large visual setup. Score 94.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 November P13 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 6,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 93.982
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 98.02,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_w21_13_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_w21_13_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 12,
+      "packet_rank": 3,
+      "packet_section": "review_required",
+      "paper": "13winter21",
+      "problem_number": 79,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter21_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 12-mark item; multiple linked parts; methods: hence, exact, all values, circle; long mark scheme. Score 91.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 November P13 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 79,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 91.868
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 97.03,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_m20_12_qp_q12_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_m20_12_ms_q12_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 4,
+      "packet_section": "review_required",
+      "paper": "12summer20",
+      "problem_number": 68,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer20_q12",
+      "question_number": "12",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: hence, show that, diagram, circle; long mark scheme; large visual setup. Score 90.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_fail",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 June P12 Question 12",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 68,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 90.74
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 96.04,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_w20_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_w20_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 5,
+      "packet_section": "review_required",
+      "paper": "12winter20",
+      "problem_number": 71,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter20_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: hence, show that, circle, tangent; long mark scheme; large visual setup. Score 90.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 November P12 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 71,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 90.145
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 95.05,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_w25_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_w25_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 6,
+      "packet_section": "review_required",
+      "paper": "12winter25",
+      "problem_number": 100,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter25_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: circle, tangent, intersect, gradient; long mark scheme. Score 84.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 November P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 100,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 84.585
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 94.06,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_m23_11_qp_q12_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_m23_11_ms_q12_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 7,
+      "packet_section": "approved",
+      "paper": "11summer23",
+      "problem_number": 8,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer23_q12",
+      "question_number": "12",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: hence, diagram, circle, tangent; long mark scheme; large visual setup. Score 84.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 June P11 Question 12",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 8,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 84.053
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 93.07,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_w23_12_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_w23_12_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 8,
+      "packet_section": "approved",
+      "paper": "12winter23",
+      "problem_number": 9,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter23_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: constant, circle, tangent, perpendicular; long mark scheme; large visual setup. Score 83.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 November P12 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 9,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 83.945
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 92.08,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_m21_13_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_m21_13_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 9,
+      "packet_section": "review_required",
+      "paper": "13summer21",
+      "problem_number": 76,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer21_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: hence, show that, diagram, circle; long mark scheme; large visual setup. Score 83.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 June P13 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 76,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 83.08
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 91.09,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_m25_15_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_m25_15_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 10,
+      "packet_section": "review_required",
+      "paper": "15summer25",
+      "problem_number": 98,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "15summer25_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, circle, tangent, perpendicular; long mark scheme. Score 82.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 June P15 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 98,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 82.819
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 90.1,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_w22_11_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_w22_11_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 11,
+      "packet_section": "review_required",
+      "paper": "11winter22",
+      "problem_number": 83,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter22_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: diagram, circle, tangent, normal; long mark scheme; large visual setup. Score 82.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 November P11 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 83,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 82.755
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 89.11,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_w24_12_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_w24_12_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 12,
+      "packet_section": "review_required",
+      "paper": "12winter24",
+      "problem_number": 92,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter24_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: constant, circle, tangent, normal; long mark scheme; large visual setup. Score 82.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 November P12 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 92,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 82.477
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 88.12,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_w12_11_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_w12_11_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 12,
+      "packet_rank": 13,
+      "packet_section": "review_required",
+      "paper": "11winter12",
+      "problem_number": 28,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter12_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 12-mark item; multiple linked parts; methods: diagram, tangent, normal, intersect; large visual setup. Score 81.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_low_topic_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_topic_uncertain",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 November P11 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 28,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "differentiation"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 81.161
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required",
+        "high_visual_complexity"
+      ],
+      "difficulty_percentile_0_100": 87.13,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2017_w17_13_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2017_w17_13_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 14,
+      "packet_section": "review_required",
+      "paper": "13winter17",
+      "problem_number": 56,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter17_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: diagram, tangent, perpendicular, intersect; long mark scheme; large visual setup. Score 80.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2017 November P13 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 56,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 80.81
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 86.14,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2009_w09_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2009_w09_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 13,
+      "packet_rank": 15,
+      "packet_section": "review_required",
+      "paper": "12winter09",
+      "problem_number": 14,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter09_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 13-mark item; multiple linked parts; methods: diagram, tangent, intersect, coordinates of; long mark scheme; large visual setup. Score 79.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2009 November P12 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 14,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "differentiation",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 79.576
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 85.15,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_s20_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_s20_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 16,
+      "packet_section": "review_required",
+      "paper": "11summer20",
+      "problem_number": 67,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer20_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: circle, tangent, normal, gradient. Score 79.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 June P11 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 67,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 79.271
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 84.16,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_w25_13_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_w25_13_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 17,
+      "packet_section": "review_required",
+      "paper": "13winter25",
+      "problem_number": 101,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter25_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: exact, circle, tangent, normal; long mark scheme. Score 76.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 November P13 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 101,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 76.896
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 83.17,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_w24_13_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_w24_13_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 18,
+      "packet_section": "review_required",
+      "paper": "13winter24",
+      "problem_number": 93,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter24_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, circle, normal, perpendicular; long mark scheme. Score 75.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 November P13 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 93,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 75.127
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 82.18,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2017_m17_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2017_m17_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 19,
+      "packet_section": "review_required",
+      "paper": "12summer17",
+      "problem_number": 54,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer17_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: tangent, normal, intersect, gradient; long mark scheme; large visual setup. Score 74.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2017 June P12 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 54,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 74.295
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 81.19,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_w22_13_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_w22_13_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 20,
+      "packet_section": "approved",
+      "paper": "13winter22",
+      "problem_number": 7,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter22_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: constant, circle, perpendicular, coordinates of; long mark scheme. Score 74.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 November P13 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 7,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 74.232
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 80.2,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_w21_12_qp_q12_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_w21_12_ms_q12_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 21,
+      "packet_section": "review_required",
+      "paper": "12winter21",
+      "problem_number": 78,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter21_q12",
+      "question_number": "12",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: exact, diagram, circle, tangent; long mark scheme; large visual setup. Score 73.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 November P12 Question 12",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 78,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 73.868
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 79.21,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_m25_13_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_m25_13_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 22,
+      "packet_section": "review_required",
+      "paper": "13summer25",
+      "problem_number": 96,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer25_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, constant, circle, tangent; long mark scheme. Score 73.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 June P13 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 96,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 73.361
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 78.22,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_w23_11_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_w23_11_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 23,
+      "packet_section": "review_required",
+      "paper": "11winter23",
+      "problem_number": 87,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter23_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: diagram, circle, tangent, gradient; long mark scheme; large visual setup. Score 72.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 November P11 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 87,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 72.906
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 77.23,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_m22_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_m22_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 24,
+      "packet_section": "review_required",
+      "paper": "11summer22",
+      "problem_number": 80,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer22_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: hence, constant, find the set, distinct; long mark scheme. Score 70.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 June P11 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 80,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 70.149
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 76.24,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_m21_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_m21_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 25,
+      "packet_section": "review_required",
+      "paper": "11summer21",
+      "problem_number": 72,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer21_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: circle, tangent, perpendicular, intersect; long mark scheme. Score 67.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 June P11 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 72,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 67.604
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 75.25,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_w20_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_w20_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 26,
+      "packet_section": "review_required",
+      "paper": "11winter20",
+      "problem_number": 70,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter20_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: diagram, circle, tangent, intersect; large visual setup. Score 67.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_low_topic_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_topic_uncertain",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 November P11 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 70,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 67.203
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 74.26,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_w18_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_w18_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 27,
+      "packet_section": "review_required",
+      "paper": "12winter18",
+      "problem_number": 60,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter18_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: constant, find the set, perpendicular, intersect; long mark scheme; large visual setup. Score 67.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 November P12 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 60,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 67.015
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 73.27,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_w12_13_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_w12_13_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 28,
+      "packet_section": "review_required",
+      "paper": "13winter12",
+      "problem_number": 31,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter12_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: show that, constant, tangent, intersect; large visual setup. Score 66.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 November P13 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 31,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 66.86
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 72.28,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_m22_12_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_m22_12_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 29,
+      "packet_section": "review_required",
+      "paper": "12summer22",
+      "problem_number": 81,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer22_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: hence, circle, tangent, gradient; long mark scheme. Score 65.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 June P12 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 81,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 65.353
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 71.29,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_w11_13_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_w11_13_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 30,
+      "packet_section": "review_required",
+      "paper": "13winter11",
+      "problem_number": 24,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter11_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: hence, or otherwise, tangent, gradient; long mark scheme. Score 64.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 November P13 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 24,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 64.637
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 70.3,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_m24_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_m24_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 31,
+      "packet_section": "review_required",
+      "paper": "12summer24",
+      "problem_number": 89,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer24_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: constant, circle, tangent, perpendicular; long mark scheme. Score 63.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 June P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 89,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 63.527
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 69.31,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_s16_13_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_s16_13_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 12,
+      "packet_rank": 32,
+      "packet_section": "review_required",
+      "paper": "13summer16",
+      "problem_number": 50,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer16_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 12-mark item; multiple linked parts; methods: exact, show that, perpendicular, gradient; long mark scheme. Score 62.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_topic_confidence",
+        "batch_warning_topic_uncertain",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 June P13 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 50,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 62.636
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 68.32,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_s11_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_s11_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 33,
+      "packet_section": "review_required",
+      "paper": "11summer11",
+      "problem_number": 19,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer11_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: hence, intersect, gradient, equation of the line; large visual setup. Score 61.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 June P11 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 19,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 61.63
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 67.33,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_w21_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_w21_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 34,
+      "packet_section": "review_required",
+      "paper": "11winter21",
+      "problem_number": 77,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter21_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: exact, circle, intersect; long mark scheme. Score 60.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 November P11 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 77,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 60.742
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 66.34,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2009_w09_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2009_w09_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 11,
+      "packet_rank": 35,
+      "packet_section": "review_required",
+      "paper": "12winter09",
+      "problem_number": 13,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter09_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 11-mark item; multiple linked parts; methods: diagram, gradient, coordinates of; long mark scheme; large visual setup. Score 60.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_low_topic_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_topic_uncertain",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2009 November P12 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 13,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 60.018
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 65.35,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2008_s08_01_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2008_s08_01_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 36,
+      "packet_section": "approved",
+      "paper": "01summer08",
+      "problem_number": 1,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "01summer08_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: diagram, perpendicular, gradient, coordinates of; long mark scheme; large visual setup. Score 59.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2008 June P01 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 1,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 59.529
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 64.36,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_m24_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_m24_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 37,
+      "packet_section": "review_required",
+      "paper": "11summer24",
+      "problem_number": 88,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer24_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; two-part structure; methods: or otherwise, circle, tangent, perpendicular; long mark scheme. Score 59.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 June P11 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 88,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 59.107
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 63.37,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2020_s20_13_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2020_s20_13_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 38,
+      "packet_section": "review_required",
+      "paper": "13summer20",
+      "problem_number": 69,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer20_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, circle, perpendicular, gradient. Score 58.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2020 June P13 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 69,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 58.62
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 62.38,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_m24_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_m24_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 39,
+      "packet_section": "approved",
+      "paper": "12summer24",
+      "problem_number": 11,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer24_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: perpendicular, midpoint, gradient; long mark scheme; large visual setup. Score 58.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 June P12 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 11,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "differentiation"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 58.295
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 61.39,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2010_s10_11_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2010_s10_11_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 40,
+      "packet_section": "review_required",
+      "paper": "11summer10",
+      "problem_number": 15,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer10_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: constant, diagram, perpendicular, gradient; large visual setup. Score 58.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2010 June P11 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 15,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 58.148
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 60.4,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_w11_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_w11_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 41,
+      "packet_section": "review_required",
+      "paper": "11winter11",
+      "problem_number": 22,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter11_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: constant, tangent, intersect, coordinates of; large visual setup. Score 57.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 November P11 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 22,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 57.882
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 59.41,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_s12_13_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_s12_13_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 42,
+      "packet_section": "review_required",
+      "paper": "13summer12",
+      "problem_number": 27,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer12_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: constant, find the set, distinct, perpendicular. Score 57.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 June P13 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 27,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 57.356
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 58.42,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2019_s19_12_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2019_s19_12_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 10,
+      "packet_rank": 43,
+      "packet_section": "review_required",
+      "paper": "12summer19",
+      "problem_number": 63,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer19_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 10-mark item; multiple linked parts; methods: show that. Score 54.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2019 June P12 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 63,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "differentiation",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 54.225
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 57.43,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_m25_15_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_m25_15_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 44,
+      "packet_section": "review_required",
+      "paper": "15summer25",
+      "problem_number": 97,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "15summer25_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: perpendicular, gradient, coordinates of; long mark scheme; large visual setup. Score 54.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 June P15 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 97,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 54.074
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 56.44,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2019_s19_13_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2019_s19_13_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 45,
+      "packet_section": "review_required",
+      "paper": "13summer19",
+      "problem_number": 64,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer19_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, coordinates of; long mark scheme; large visual setup. Score 53.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2019 June P13 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 64,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 53.145
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 55.45,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_m22_13_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_m22_13_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 46,
+      "packet_section": "review_required",
+      "paper": "13summer22",
+      "problem_number": 82,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer22_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: hence, exact, diagram, circle; large visual setup. Score 52.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 June P13 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 82,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 52.566
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 54.46,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_m24_13_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_m24_13_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 47,
+      "packet_section": "review_required",
+      "paper": "13summer24",
+      "problem_number": 90,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer24_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; two-part structure; methods: circle, tangent, intersect, gradient; long mark scheme. Score 52.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 June P13 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 90,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 51.997
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 53.47,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_s12_11_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_s12_11_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 48,
+      "packet_section": "review_required",
+      "paper": "11summer12",
+      "problem_number": 25,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer12_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, perpendicular, gradient, coordinates of. Score 51.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 June P11 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 25,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 51.755
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 52.48,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2010_s10_13_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2010_s10_13_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 49,
+      "packet_section": "review_required",
+      "paper": "13summer10",
+      "problem_number": 16,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer10_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: diagram, perpendicular, gradient, coordinates of; large visual setup. Score 51.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2010 June P13 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 16,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 51.471
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 51.49,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_m21_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_m21_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 50,
+      "packet_section": "review_required",
+      "paper": "12summer21",
+      "problem_number": 75,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer21_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: show that, circle, tangent, perpendicular; long mark scheme. Score 51.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 June P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 75,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 51.12
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 50.5,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_w11_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_w11_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 51,
+      "packet_section": "review_required",
+      "paper": "12winter11",
+      "problem_number": 23,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter11_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: diagram, intersect, midpoint, gradient; large visual setup. Score 48.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 November P12 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 23,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 48.849
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 49.5,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2015_w15_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2015_w15_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 52,
+      "packet_section": "review_required",
+      "paper": "11winter15",
+      "problem_number": 45,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter15_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: show that, constant, tangent, intersect. Score 48.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2015 November P11 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 45,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 48.318
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 48.51,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_w25_11_qp_q10_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_w25_11_ms_q10_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 53,
+      "packet_section": "review_required",
+      "paper": "11winter25",
+      "problem_number": 99,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter25_q10",
+      "question_number": "10",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: hence, circle, intersect, coordinates of. Score 48.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 November P11 Question 10",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 99,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 48.078
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 47.52,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2019_s19_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2019_s19_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 54,
+      "packet_section": "review_required",
+      "paper": "11summer19",
+      "problem_number": 62,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer19_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: hence, diagram, normal, gradient; long mark scheme; large visual setup. Score 47.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2019 June P11 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 62,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 47.074
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 46.53,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_m25_11_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_m25_11_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 55,
+      "packet_section": "review_required",
+      "paper": "11summer25",
+      "problem_number": 94,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer25_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; two-part structure; methods: circle, tangent, intersect, gradient; long mark scheme. Score 46.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 June P11 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 94,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 46.885
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 45.54,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2017_w17_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2017_w17_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 56,
+      "packet_section": "review_required",
+      "paper": "11winter17",
+      "problem_number": 55,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter17_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: show that, perpendicular, gradient, distance. Score 46.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_fail",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2017 November P11 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 55,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 46.494
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 44.55,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2013_w13_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2013_w13_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 57,
+      "packet_section": "review_required",
+      "paper": "11winter13",
+      "problem_number": 33,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter13_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: hence, perpendicular, coordinates of, distance. Score 44.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2013 November P11 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 33,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 44.715
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 43.56,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_w14_12_qp_q09_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_w14_12_ms_q09_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 58,
+      "packet_section": "review_required",
+      "paper": "12winter14",
+      "problem_number": 40,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter14_q09",
+      "question_number": "9",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: diagram, coordinates of; large visual setup. Score 44.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_fail",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 November P12 Question 9",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 40,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 44.695
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 42.57,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_m23_13_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_m23_13_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 59,
+      "packet_section": "review_required",
+      "paper": "13summer23",
+      "problem_number": 86,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer23_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: circle, intersect, coordinates of, diameter. Score 44.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 June P13 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 86,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 44.39
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "long_scheme",
+        "multi_part",
+        "late_paper",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 41.58,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2017_s17_13_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2017_s17_13_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 60,
+      "packet_section": "approved",
+      "paper": "13summer17",
+      "problem_number": 3,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer17_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: constant, gradient, coordinates of; long mark scheme. Score 44.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2017 June P13 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 3,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 44.248
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "multi_part",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 40.59,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_s18_13_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_s18_13_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 61,
+      "packet_section": "approved",
+      "paper": "13summer18",
+      "problem_number": 5,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer18_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: constant, perpendicular, gradient, coordinates of; long mark scheme. Score 42.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 June P13 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 5,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 42.661
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 39.6,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2017_w17_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2017_w17_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 62,
+      "packet_section": "approved",
+      "paper": "12winter17",
+      "problem_number": 4,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter17_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: constant, find the set, midpoint. Score 42.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2017 November P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 4,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "differentiation",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 42.25
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 38.61,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2015_w15_12_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2015_w15_12_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 63,
+      "packet_section": "review_required",
+      "paper": "12winter15",
+      "problem_number": 46,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter15_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: constant, perpendicular, intersect, coordinates of. Score 40.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2015 November P12 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 46,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 40.267
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 37.62,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2013_s13_13_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2013_s13_13_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 64,
+      "packet_section": "review_required",
+      "paper": "13summer13",
+      "problem_number": 32,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer13_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: diagram, perpendicular, coordinates of; large visual setup. Score 40.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2013 June P13 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 32,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 40.0
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 36.63,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2015_s15_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2015_s15_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 65,
+      "packet_section": "review_required",
+      "paper": "11summer15",
+      "problem_number": 42,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer15_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: show that, perpendicular, intersect, midpoint. Score 39.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2015 June P11 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 42,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 39.564
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 35.64,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2015_s15_13_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2015_s15_13_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 66,
+      "packet_section": "review_required",
+      "paper": "13summer15",
+      "problem_number": 44,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer15_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: hence, constant, perpendicular, gradient. Score 38.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2015 June P13 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 44,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 38.168
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 34.65,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2022_w22_12_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2022_w22_12_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 67,
+      "packet_section": "review_required",
+      "paper": "12winter22",
+      "problem_number": 84,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter22_q01",
+      "question_number": "1",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: circle, perpendicular, gradient; long mark scheme. Score 37.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2022 November P12 Question 1",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 84,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 37.515
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 33.66,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_w14_13_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_w14_13_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 68,
+      "packet_section": "review_required",
+      "paper": "13winter14",
+      "problem_number": 41,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter14_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: constant, perpendicular, gradient, distance. Score 37.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_fail",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 November P13 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 41,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 37.134
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 32.67,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2024_w24_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2024_w24_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 69,
+      "packet_section": "review_required",
+      "paper": "11winter24",
+      "problem_number": 91,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter24_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: circle, distance. Score 37.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2024 November P11 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 91,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 36.959
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 31.68,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2019_w19_11_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2019_w19_11_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 70,
+      "packet_section": "review_required",
+      "paper": "11winter19",
+      "problem_number": 65,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter19_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; two-part structure; methods: tangent, gradient, coordinates of, touches. Score 36.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2019 November P11 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 65,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 36.676
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 30.69,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_m16_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_m16_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 8,
+      "packet_rank": 71,
+      "packet_section": "review_required",
+      "paper": "12summer16",
+      "problem_number": 49,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer16_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 8-mark item; multiple linked parts; methods: perpendicular, gradient, distance. Score 36.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 June P12 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 49,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 36.506
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 29.7,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_s18_11_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_s18_11_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 72,
+      "packet_section": "review_required",
+      "paper": "11summer18",
+      "problem_number": 57,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer18_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: diagram, gradient, coordinates of; long mark scheme; large visual setup. Score 35.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 June P11 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 57,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 35.655
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 28.71,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_w12_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_w12_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 73,
+      "packet_section": "review_required",
+      "paper": "12winter12",
+      "problem_number": 30,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter12_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: exact, diagram, gradient, coordinates of; large visual setup. Score 35.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 November P12 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 30,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 35.543
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "many_marks",
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 27.72,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_s14_13_qp_q11_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_s14_13_ms_q11_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 9,
+      "packet_rank": 74,
+      "packet_section": "review_required",
+      "paper": "13summer14",
+      "problem_number": 38,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer14_q11",
+      "question_number": "11",
+      "rationale": "Local visual packet score for coordinate geometry based on 9-mark item; multiple linked parts; methods: diagram, coordinates of; large visual setup. Score 35.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 June P13 Question 11",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 38,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 35.432
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 26.73,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2010_w10_12_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2010_w10_12_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 75,
+      "packet_section": "review_required",
+      "paper": "12winter10",
+      "problem_number": 17,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter10_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: diagram, coordinates of; large visual setup. Score 35.3/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2010 November P12 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 17,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 35.269
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 25.74,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_w18_13_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_w18_13_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 76,
+      "packet_section": "review_required",
+      "paper": "13winter18",
+      "problem_number": 61,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter18_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: perpendicular, intersect, gradient, distance. Score 34.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 November P13 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 61,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 34.579
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 24.75,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_s11_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_s11_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 77,
+      "packet_section": "review_required",
+      "paper": "12summer11",
+      "problem_number": 20,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer11_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: perpendicular, gradient, coordinates of, distance. Score 33.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 June P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 20,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 33.91
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 23.76,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2015_s15_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2015_s15_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 78,
+      "packet_section": "review_required",
+      "paper": "12summer15",
+      "problem_number": 43,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer15_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: perpendicular, midpoint, coordinates of. Score 33.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2015 June P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 43,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 33.223
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 22.77,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_w16_13_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_w16_13_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 79,
+      "packet_section": "review_required",
+      "paper": "13winter16",
+      "problem_number": 53,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter16_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: constant, perpendicular, coordinates of. Score 33.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 November P13 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 53,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 33.069
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 21.78,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_s18_12_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_s18_12_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 80,
+      "packet_section": "review_required",
+      "paper": "12summer18",
+      "problem_number": 58,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer18_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; two-part structure; methods: constant, perpendicular, midpoint, gradient; long mark scheme. Score 31.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 June P12 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 58,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 31.03
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "late_paper",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 20.79,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_s16_11_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_s16_11_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 81,
+      "packet_section": "review_required",
+      "paper": "11summer16",
+      "problem_number": 48,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer16_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: tangent, perpendicular, gradient. Score 30.8/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 June P11 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 48,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 30.839
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 19.8,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_w12_12_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_w12_12_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 82,
+      "packet_section": "review_required",
+      "paper": "12winter12",
+      "problem_number": 29,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter12_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: constant, tangent, coordinates of. Score 30.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 November P12 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 29,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 30.621
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "late_paper",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 18.81,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2009_s09_01_qp_q08_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2009_s09_01_ms_q08_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 83,
+      "packet_section": "review_required",
+      "paper": "01summer09",
+      "problem_number": 12,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "01summer09_q08",
+      "question_number": "8",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: diagram, perpendicular, gradient, coordinates of; large visual setup. Score 29.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2009 June P01 Question 8",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 12,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 29.226
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 17.82,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2023_w23_13_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2023_w23_13_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 84,
+      "packet_section": "approved",
+      "paper": "13winter23",
+      "problem_number": 10,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter23_q02",
+      "question_number": "2",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; multiple linked parts; methods: circle, intersect, coordinates of, diameter. Score 26.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2023 November P13 Question 2",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 10,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 26.88
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 16.83,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_w16_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_w16_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 85,
+      "packet_section": "review_required",
+      "paper": "11winter16",
+      "problem_number": 51,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter16_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: perpendicular, equation of the line, distance. Score 25.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 November P11 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 51,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 25.855
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 15.84,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2013_w13_13_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2013_w13_13_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 86,
+      "packet_section": "review_required",
+      "paper": "13winter13",
+      "problem_number": 35,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter13_q03",
+      "question_number": "3",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: perpendicular, gradient, equation of the line, distance. Score 25.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2013 November P13 Question 3",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 35,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 25.684
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 14.85,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_s16_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_s16_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 87,
+      "packet_section": "review_required",
+      "paper": "11summer16",
+      "problem_number": 47,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer16_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: constant, intersect; large visual setup. Score 25.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 June P11 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 47,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 25.458
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 13.86,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_m21_12_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_m21_12_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 88,
+      "packet_section": "review_required",
+      "paper": "12summer21",
+      "problem_number": 73,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer21_q03",
+      "question_number": "3",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; multiple linked parts; methods: exact, gradient; large visual setup. Score 23.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 June P12 Question 3",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 73,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 23.545
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms"
+      ],
+      "difficulty_percentile_0_100": 12.87,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2013_s13_12_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2013_s13_12_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 89,
+      "packet_section": "approved",
+      "paper": "12summer13",
+      "problem_number": 2,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer13_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: perpendicular, gradient, coordinates of. Score 22.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_text_only_review"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2013 June P12 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 2,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 22.684
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 11.88,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2018_w18_11_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2018_w18_11_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 90,
+      "packet_section": "review_required",
+      "paper": "11winter18",
+      "problem_number": 59,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter18_q03",
+      "question_number": "3",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: constant, gradient, equation of the line. Score 22.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2018 November P11 Question 3",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 59,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 22.595
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 10.89,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_w25_15_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_w25_15_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 91,
+      "packet_section": "review_required",
+      "paper": "15winter25",
+      "problem_number": 102,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "15winter25_q01",
+      "question_number": "1",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: circle. Score 21.5/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 November P15 Question 1",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 102,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 21.477
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 9.9,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2013_w13_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2013_w13_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 7,
+      "packet_rank": 92,
+      "packet_section": "review_required",
+      "paper": "12winter13",
+      "problem_number": 34,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter13_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 7-mark item; multiple linked parts; methods: diagram, coordinates of; large visual setup. Score 20.7/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2013 November P12 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 34,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 20.7
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 8.91,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2016_w16_12_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2016_w16_12_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 93,
+      "packet_section": "review_required",
+      "paper": "12winter16",
+      "problem_number": 52,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter16_q05",
+      "question_number": "5",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: constant, intersect, distance. Score 20.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2016 November P12 Question 5",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 52,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 20.074
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 7.92,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_s14_11_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_s14_11_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 94,
+      "packet_section": "review_required",
+      "paper": "11summer14",
+      "problem_number": 36,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11summer14_q07",
+      "question_number": "7",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: constant, gradient, coordinates of, distance. Score 18.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 June P11 Question 7",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 36,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 18.884
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 6.93,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2021_m21_12_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2021_m21_12_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 95,
+      "packet_section": "review_required",
+      "paper": "12summer21",
+      "problem_number": 74,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer21_q06",
+      "question_number": "6",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; two-part structure; methods: perpendicular, gradient, coordinates of; long mark scheme. Score 18.4/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2021 June P12 Question 6",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 74,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 18.421
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 5.94,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_w14_11_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_w14_11_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 96,
+      "packet_section": "review_required",
+      "paper": "11winter14",
+      "problem_number": 39,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "11winter14_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: constant, coordinates of. Score 15.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_fail",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 November P11 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 39,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 15.586
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 4.95,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2010_w10_13_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2010_w10_13_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 97,
+      "packet_section": "review_required",
+      "paper": "13winter10",
+      "problem_number": 18,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13winter10_q02",
+      "question_number": "2",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; multiple linked parts; methods: perpendicular, equation of the line, coordinates of; short mark scheme. Score 14.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2010 November P13 Question 2",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 18,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 14.593
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 3.96,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2012_s12_12_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2012_s12_12_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 6,
+      "packet_rank": 98,
+      "packet_section": "review_required",
+      "paper": "12summer12",
+      "problem_number": 26,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer12_q04",
+      "question_number": "4",
+      "rationale": "Local visual packet score for coordinate geometry based on 6-mark item; multiple linked parts; methods: perpendicular, gradient. Score 13.9/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2012 June P12 Question 4",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 26,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 13.926
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "diagram",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 2.97,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2019_w19_12_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2019_w19_12_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 99,
+      "packet_section": "review_required",
+      "paper": "12winter19",
+      "problem_number": 66,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12winter19_q02",
+      "question_number": "2",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; two-part structure; methods: midpoint, gradient, equation of the line; large visual setup. Score 12.2/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2019 November P12 Question 2",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 66,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 12.198
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "long_scheme",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 1.98,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2025_m25_12_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2025_m25_12_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 4,
+      "packet_rank": 100,
+      "packet_section": "review_required",
+      "paper": "12summer25",
+      "problem_number": 95,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer25_q02",
+      "question_number": "2",
+      "rationale": "Local visual packet score for coordinate geometry based on 4-mark item; two-part structure; methods: intersect, coordinates of; long mark scheme. Score 8.6/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_low_topic_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_topic_uncertain",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2025 June P12 Question 2",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 95,
+        "coverage_topic_ids": [
+          "coordinate_geometry",
+          "quadratics"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 8.577
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 0.99,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2011_s11_13_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2011_s11_13_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 101,
+      "packet_section": "review_required",
+      "paper": "13summer11",
+      "problem_number": 21,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "13summer11_q03",
+      "question_number": "3",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: constant, gradient, distance. Score 8.1/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_degraded_text",
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_text_only_review",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2011 June P13 Question 3",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 21,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 8.086
+    },
+    {
+      "confidence": "medium",
+      "difficulty_factors": [
+        "multi_part",
+        "topic_terms",
+        "review_required"
+      ],
+      "difficulty_percentile_0_100": 0.0,
+      "evidence_refs": [
+        {
+          "path": "output/pm1/pm1_2014_s14_12_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/pm1/pm1_2014_s14_12_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "marks": 5,
+      "packet_rank": 102,
+      "packet_section": "review_required",
+      "paper": "12summer14",
+      "problem_number": 37,
+      "prompt_version": "topic_packet_difficulty_9709_v1",
+      "question_id": "12summer14_q01",
+      "question_number": "1",
+      "rationale": "Local visual packet score for coordinate geometry based on 5-mark item; multiple linked parts; methods: perpendicular, gradient, coordinates of. Score 8.0/100.",
+      "reviewer_model": "gpt-5_codex_local_visual_pass",
+      "risk_flags": [
+        "batch_warning_low_question_crop_confidence",
+        "batch_warning_visual_review",
+        "review_required_packet_section"
+      ],
+      "source": "local_visual_packet_pass:gpt-5_codex",
+      "source_label": "2014 June P12 Question 1",
+      "source_packet_metadata": {
+        "batch_id": "topic_difficulty_348ab6648e72",
+        "batch_index": 37,
+        "coverage_topic_ids": [
+          "coordinate_geometry"
+        ],
+        "packet_id": "p1_coordinate_geometry_fc6b0d54",
+        "primary_topic_id": "coordinate_geometry"
+      },
+      "visual_difficulty_score_0_100": 8.0
+    }
+  ],
+  "safe_for_student_sequencing": false,
+  "safe_for_teacher_filtering": true,
+  "schema_name": "exam_bank.topic_packet_difficulty_review",
+  "schema_version": 1,
+  "source_files": {
+    "batch": "data/review/topic_difficulty/p1_coordinate_geometry_fc6b0d54/topic_packet_difficulty_batch.json",
+    "decisions": "data/review/topic_difficulty/p1_coordinate_geometry_fc6b0d54/topic_packet_difficulty_decisions.jsonl",
+    "manifest": "output/topic_packets/p1/coordinate_geometry/manifest.json"
+  }
+}

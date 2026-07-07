@@ -20,7 +20,15 @@ from .auto_triage import (
     write_status_report,
 )
 from .config import AppConfig, load_config
-from . import deepseek_enrich, topic_confidence_rescoring, topic_packets, topic_review_loop, topic_routing, visual_topic_audit
+from . import (
+    deepseek_enrich,
+    topic_confidence_rescoring,
+    topic_difficulty_review,
+    topic_packets,
+    topic_review_loop,
+    topic_routing,
+    visual_topic_audit,
+)
 from .export_summary_diff import ExportSummaryDiffError, compare_export_summaries, render_export_summary_diff
 from .mark_scheme_regeneration import regenerate_mark_scheme_pngs_from_question_bank
 from .output_management import (
@@ -339,6 +347,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     visual_topic_audit.add_visual_topic_audit_cli_arguments(visual_topic)
     visual_topic.set_defaults(func=cmd_visual_topic_audit)
+
+    topic_difficulty = subparsers.add_parser(
+        "topic-difficulty-review",
+        help="Build, run, and import image-backed topic-packet difficulty rankings.",
+    )
+    topic_difficulty_review.add_topic_difficulty_review_cli_arguments(topic_difficulty)
+    topic_difficulty.set_defaults(func=cmd_topic_difficulty_review)
 
     topic_packet = subparsers.add_parser(
         "topic-packets",
@@ -1159,6 +1174,12 @@ def cmd_topic_review_merge(args: argparse.Namespace) -> int:
 
 def cmd_visual_topic_audit(args: argparse.Namespace) -> int:
     report = visual_topic_audit.run_visual_topic_audit_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report.get("ok", True) else 2
+
+
+def cmd_topic_difficulty_review(args: argparse.Namespace) -> int:
+    report = topic_difficulty_review.run_topic_difficulty_review_from_args(args)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report.get("ok", True) else 2
 

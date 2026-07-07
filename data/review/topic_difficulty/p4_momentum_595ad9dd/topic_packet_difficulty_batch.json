@@ -1,0 +1,1991 @@
+{
+  "batch_id": "topic_difficulty_bd2c80b2b831",
+  "created_at": "2026-07-06T07:25:38+00:00",
+  "decision_schema": {
+    "additionalProperties": true,
+    "properties": {
+      "confidence": {
+        "enum": [
+          "high",
+          "low",
+          "medium"
+        ]
+      },
+      "decision_version": {
+        "const": "topic_packet_difficulty_decision_v1"
+      },
+      "difficulty_factors": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "evidence_refs": {
+        "type": "array"
+      },
+      "prompt_version": {
+        "const": "topic_packet_difficulty_9709_v1"
+      },
+      "question_id": {
+        "type": "string"
+      },
+      "rationale": {
+        "type": "string"
+      },
+      "reviewer_model": {
+        "type": "string"
+      },
+      "risk_flags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "source": {
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "accepted",
+          "pending"
+        ]
+      },
+      "visual_difficulty_score_0_100": {
+        "maximum": 100,
+        "minimum": 0,
+        "type": "number"
+      }
+    },
+    "required": [
+      "decision_version",
+      "question_id",
+      "status",
+      "visual_difficulty_score_0_100",
+      "confidence",
+      "rationale",
+      "difficulty_factors",
+      "risk_flags",
+      "evidence_refs",
+      "source",
+      "prompt_version"
+    ],
+    "type": "object"
+  },
+  "decision_version": "topic_packet_difficulty_decision_v1",
+  "dry_run": false,
+  "packet": {
+    "approved_count": 10,
+    "manifest_path": "output/topic_packets/p4/momentum/manifest.json",
+    "packet_level": "major_topic",
+    "packet_mode": "combined",
+    "paper_family": "p4",
+    "pdf_path": "output/topic_packets/p4/momentum/p4_momentum_packet.pdf",
+    "review_required_count": 28,
+    "subtopic_id": "",
+    "subtopic_label": "",
+    "topic_id": "momentum",
+    "topic_label": "Momentum",
+    "total_questions": 38
+  },
+  "packet_id": "p4_momentum_595ad9dd",
+  "prompt_version": "topic_packet_difficulty_9709_v1",
+  "review_policy": "Rank this packet only. Use canonical question and mark-scheme images as authoritative evidence. Rank 1 is hardest; higher difficulty percentile means harder.",
+  "reviewer_prompt": "You are ranking one CAIE 9709 topic packet by difficulty using canonical images. Inspect both the question image and mark-scheme image. Score difficulty within this topic packet only, not globally across the syllabus. Higher score means harder. Consider conceptual demand, algebraic load, method dependencies, number of steps, abstraction, unusual wording, and mark-scheme complexity. Return JSON matching the schema. Use status=pending if image evidence is unclear or incomplete.",
+  "rows": [
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 1,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2014_s14_42_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2014_s14_42_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2014_s14_42_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2014_s14_42_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer14",
+      "primary_topic_id": "momentum",
+      "problem_number": 1,
+      "question_id": "42summer14_q02",
+      "question_number": "2",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2014 June P42 Question 2",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 2,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_m20_42_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_m20_42_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_m20_42_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_m20_42_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer20",
+      "primary_topic_id": "momentum",
+      "problem_number": 2,
+      "question_id": "42summer20_q06",
+      "question_number": "6",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2020 June P42 Question 6",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 3,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_s20_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_s20_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_s20_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_s20_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 3,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer20",
+      "primary_topic_id": "momentum",
+      "problem_number": 3,
+      "question_id": "43summer20_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_topic_confidence",
+        "topic_uncertain",
+        "degraded_text",
+        "text_only_review"
+      ],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2020 June P43 Question 1",
+      "warnings": [
+        "low_topic_confidence",
+        "topic_uncertain",
+        "degraded_text",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 4,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_w20_41_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_w20_41_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_w20_41_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_w20_41_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter20",
+      "primary_topic_id": "momentum",
+      "problem_number": 4,
+      "question_id": "41winter20_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "degraded_text",
+        "text_only_review"
+      ],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2020 November P41 Question 1",
+      "warnings": [
+        "degraded_text",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 5,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_w20_42_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_w20_42_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_w20_42_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_w20_42_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 3,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter20",
+      "primary_topic_id": "momentum",
+      "problem_number": 5,
+      "question_id": "42winter20_q01",
+      "question_number": "1",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2020 November P42 Question 1",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 6,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_w20_43_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_w20_43_qp_q04_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_w20_43_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_w20_43_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 6,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43winter20",
+      "primary_topic_id": "momentum",
+      "problem_number": 6,
+      "question_id": "43winter20_q04",
+      "question_number": "4",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2020 November P43 Question 4",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 7,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2023_m23_41_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2023_m23_41_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2023_m23_41_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2023_m23_41_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 4,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer23",
+      "primary_topic_id": "momentum",
+      "problem_number": 7,
+      "question_id": "41summer23_q01",
+      "question_number": "1",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2023 June P41 Question 1",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 8,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2023_m23_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2023_m23_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2023_m23_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2023_m23_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 3,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer23",
+      "primary_topic_id": "momentum",
+      "problem_number": 8,
+      "question_id": "43summer23_q01",
+      "question_number": "1",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2023 June P43 Question 1",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 9,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2023_w23_42_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2023_w23_42_qp_q05_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2023_w23_42_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2023_w23_42_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 8,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter23",
+      "primary_topic_id": "momentum",
+      "problem_number": 9,
+      "question_id": "42winter23_q05",
+      "question_number": "5",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2023 November P42 Question 5",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 10,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_m24_41_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_m24_41_qp_q07_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_m24_41_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_m24_41_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 10,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer24",
+      "primary_topic_id": "momentum",
+      "problem_number": 10,
+      "question_id": "41summer24_q07",
+      "question_number": "7",
+      "review_reasons": [],
+      "secondary_topic_ids": [],
+      "section": "approved",
+      "source_label": "2024 June P41 Question 7",
+      "warnings": []
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 11,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2019_w19_42_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2019_w19_42_qp_q05_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2019_w19_42_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2019_w19_42_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 7,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter19",
+      "primary_topic_id": "momentum",
+      "problem_number": 11,
+      "question_id": "42winter19_q05",
+      "question_number": "5",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2019 November P42 Question 5",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 12,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2020_s20_41_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2020_s20_41_qp_q07_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2020_s20_41_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2020_s20_41_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 10,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer20",
+      "primary_topic_id": "momentum",
+      "problem_number": 12,
+      "question_id": "41summer20_q07",
+      "question_number": "7",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2020 June P41 Question 7",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 13,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2021_m21_41_ms_q03_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2021_m21_41_qp_q03_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2021_m21_41_qp_q03_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2021_m21_41_ms_q03_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 6,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer21",
+      "primary_topic_id": "momentum",
+      "problem_number": 13,
+      "question_id": "41summer21_q03",
+      "question_number": "3",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2021 June P41 Question 3",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 14,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2021_m21_42_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2021_m21_42_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2021_m21_42_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2021_m21_42_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 8,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer21",
+      "primary_topic_id": "momentum",
+      "problem_number": 14,
+      "question_id": "42summer21_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "visual_review",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2021 June P42 Question 6",
+      "warnings": [
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 15,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2021_m21_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2021_m21_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2021_m21_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2021_m21_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 4,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer21",
+      "primary_topic_id": "momentum",
+      "problem_number": 15,
+      "question_id": "43summer21_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2021 June P43 Question 1",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 16,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2021_w21_41_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2021_w21_41_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2021_w21_41_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2021_w21_41_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter21",
+      "primary_topic_id": "momentum",
+      "problem_number": 16,
+      "question_id": "41winter21_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "mapping_status_not_pass",
+        "validation_status_not_pass",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2021 November P41 Question 2",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 17,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2021_w21_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2021_w21_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2021_w21_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2021_w21_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43winter21",
+      "primary_topic_id": "momentum",
+      "problem_number": 17,
+      "question_id": "43winter21_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_topic_confidence",
+        "topic_uncertain",
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2021 November P43 Question 1",
+      "warnings": [
+        "low_topic_confidence",
+        "topic_uncertain",
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 18,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2022_m22_41_ms_q07_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2022_m22_41_qp_q07_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2022_m22_41_qp_q07_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2022_m22_41_ms_q07_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer22",
+      "primary_topic_id": "momentum",
+      "problem_number": 18,
+      "question_id": "41summer22_q07",
+      "question_number": "7",
+      "review_reasons": [
+        "visual_review",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2022 June P41 Question 7",
+      "warnings": [
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 19,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2022_m22_42_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2022_m22_42_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2022_m22_42_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2022_m22_42_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer22",
+      "primary_topic_id": "momentum",
+      "problem_number": 19,
+      "question_id": "42summer22_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2022 June P42 Question 1",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 20,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2022_m22_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2022_m22_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2022_m22_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2022_m22_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 4,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer22",
+      "primary_topic_id": "momentum",
+      "problem_number": 20,
+      "question_id": "43summer22_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2022 June P43 Question 1",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 21,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2022_w22_41_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2022_w22_41_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2022_w22_41_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2022_w22_41_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter22",
+      "primary_topic_id": "momentum",
+      "problem_number": 21,
+      "question_id": "41winter22_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2022 November P41 Question 2",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 22,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2022_w22_42_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2022_w22_42_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2022_w22_42_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2022_w22_42_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter22",
+      "primary_topic_id": "momentum",
+      "problem_number": 22,
+      "question_id": "42winter22_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2022 November P42 Question 6",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 23,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2023_m23_42_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2023_m23_42_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2023_m23_42_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2023_m23_42_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 4,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer23",
+      "primary_topic_id": "momentum",
+      "problem_number": 23,
+      "question_id": "42summer23_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2023 June P42 Question 2",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 24,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2023_w23_41_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2023_w23_41_qp_q04_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2023_w23_41_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2023_w23_41_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter23",
+      "primary_topic_id": "momentum",
+      "problem_number": 24,
+      "question_id": "41winter23_q04",
+      "question_number": "4",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2023 November P41 Question 4",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 25,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_m24_42_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_m24_42_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_m24_42_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_m24_42_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 11,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer24",
+      "primary_topic_id": "momentum",
+      "problem_number": 25,
+      "question_id": "42summer24_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2024 June P42 Question 6",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 26,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_m24_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_m24_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_m24_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_m24_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 3,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer24",
+      "primary_topic_id": "momentum",
+      "problem_number": 26,
+      "question_id": "43summer24_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2024 June P43 Question 1",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 27,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_w24_41_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_w24_41_qp_q05_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_w24_41_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_w24_41_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 10,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter24",
+      "primary_topic_id": "momentum",
+      "problem_number": 27,
+      "question_id": "41winter24_q05",
+      "question_number": "5",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2024 November P41 Question 5",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 28,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_w24_42_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_w24_42_qp_q05_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_w24_42_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_w24_42_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter24",
+      "primary_topic_id": "momentum",
+      "problem_number": 28,
+      "question_id": "42winter24_q05",
+      "question_number": "5",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2024 November P42 Question 5",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 29,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2024_w24_43_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2024_w24_43_qp_q04_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2024_w24_43_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2024_w24_43_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 6,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43winter24",
+      "primary_topic_id": "momentum",
+      "problem_number": 29,
+      "question_id": "43winter24_q04",
+      "question_number": "4",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2024 November P43 Question 4",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 30,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_m25_41_ms_q05_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_m25_41_qp_q05_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_m25_41_qp_q05_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_m25_41_ms_q05_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 7,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41summer25",
+      "primary_topic_id": "momentum",
+      "problem_number": 30,
+      "question_id": "41summer25_q05",
+      "question_number": "5",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 June P41 Question 5",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 31,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_m25_42_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_m25_42_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_m25_42_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_m25_42_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 4,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42summer25",
+      "primary_topic_id": "momentum",
+      "problem_number": 31,
+      "question_id": "42summer25_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 June P42 Question 2",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 32,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_m25_43_ms_q01_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_m25_43_qp_q01_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_m25_43_qp_q01_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_m25_43_ms_q01_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43summer25",
+      "primary_topic_id": "momentum",
+      "problem_number": 32,
+      "question_id": "43summer25_q01",
+      "question_number": "1",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 June P43 Question 1",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 33,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_m25_45_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_m25_45_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_m25_45_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_m25_45_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "45summer25",
+      "primary_topic_id": "momentum",
+      "problem_number": 33,
+      "question_id": "45summer25_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 June P45 Question 2",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 34,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_w25_41_ms_q02_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_w25_41_qp_q02_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_w25_41_qp_q02_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_w25_41_ms_q02_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 5,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter25",
+      "primary_topic_id": "momentum",
+      "problem_number": 34,
+      "question_id": "41winter25_q02",
+      "question_number": "2",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 November P41 Question 2",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 35,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_w25_41_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_w25_41_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_w25_41_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_w25_41_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 6,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "41winter25",
+      "primary_topic_id": "momentum",
+      "problem_number": 35,
+      "question_id": "41winter25_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 November P41 Question 6",
+      "warnings": [
+        "degraded_text",
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 36,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_w25_42_ms_q04_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_w25_42_qp_q04_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_w25_42_qp_q04_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_w25_42_ms_q04_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 9,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "42winter25",
+      "primary_topic_id": "momentum",
+      "problem_number": 36,
+      "question_id": "42winter25_q04",
+      "question_number": "4",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 November P42 Question 4",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 37,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_w25_43_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_w25_43_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_w25_43_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_w25_43_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 7,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "43winter25",
+      "primary_topic_id": "momentum",
+      "problem_number": 37,
+      "question_id": "43winter25_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 November P43 Question 6",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    },
+    {
+      "batch_id": "topic_difficulty_bd2c80b2b831",
+      "batch_index": 38,
+      "canonical_mark_scheme_image_path": "output/stats/stats_2025_w25_45_ms_q06_markscheme.png",
+      "canonical_question_image_path": "output/stats/stats_2025_w25_45_qp_q06_question.png",
+      "coverage_topic_ids": [
+        "momentum"
+      ],
+      "evidence_refs": [
+        {
+          "path": "output/stats/stats_2025_w25_45_qp_q06_question.png",
+          "type": "canonical_question_image"
+        },
+        {
+          "path": "output/stats/stats_2025_w25_45_ms_q06_markscheme.png",
+          "type": "canonical_mark_scheme_image"
+        }
+      ],
+      "image_evidence_available": true,
+      "marks": 8,
+      "packet_context": {
+        "packet_level": "major_topic",
+        "packet_mode": "combined",
+        "paper_family": "p4",
+        "subtopic_id": "",
+        "topic_id": "momentum",
+        "topic_label": "Momentum",
+        "total_questions": 38
+      },
+      "packet_id": "p4_momentum_595ad9dd",
+      "paper": "45winter25",
+      "primary_topic_id": "momentum",
+      "problem_number": 38,
+      "question_id": "45winter25_q06",
+      "question_number": "6",
+      "review_reasons": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review",
+        "validation_status_not_pass",
+        "scope_quality_status_not_clean",
+        "question_crop_confidence_not_high",
+        "visual_curation_status_not_ready"
+      ],
+      "secondary_topic_ids": [],
+      "section": "review_required",
+      "source_label": "2025 November P45 Question 6",
+      "warnings": [
+        "low_question_crop_confidence",
+        "visual_review",
+        "text_only_review"
+      ]
+    }
+  ],
+  "schema_name": "exam_bank.topic_packet_difficulty_review.batch",
+  "schema_version": 1,
+  "selection": {
+    "missing_mark_scheme_image_count": 0,
+    "missing_question_image_count": 0,
+    "question_count": 38,
+    "section_counts": {
+      "approved": 10,
+      "review_required": 28
+    }
+  },
+  "source_files": {
+    "artifact_root": "output",
+    "manifest": "output/topic_packets/p4/momentum/manifest.json"
+  }
+}

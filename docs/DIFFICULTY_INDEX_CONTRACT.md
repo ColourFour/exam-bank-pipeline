@@ -4,6 +4,8 @@ This contract covers the deterministic advisory difficulty sidecar generated at 
 
 The sidecar is advisory metadata only. Canonical question images and mark-scheme images remain the source of truth. The difficulty index must not replace official source material, strict topic routing, Asterion role gates, or human review.
 
+Topic-packet visual difficulty review is a separate reviewed sidecar workflow documented in `docs/TOPIC_PACKET_DIFFICULTY_REVIEW_CONTRACT.md`. It ranks questions within one generated topic packet and must not be treated as a replacement for this deterministic paper-relative difficulty index.
+
 ## Outputs
 
 Primary sidecar:
