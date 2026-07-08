@@ -1,0 +1,843 @@
+{
+  "allow_incomplete": false,
+  "batch_id": "topic_packet_visual_audit_45f68f8cf459",
+  "bug_records": [
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2019_s19_11_ms_q03_markscheme.png",
+          "pm1/pm1_2015_s15_12_ms_q02_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0001.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2019_s19_11_qp_q03_question.png",
+          "pm1/pm1_2015_s15_12_qp_q02_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0001.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0001",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "12summer15_q02 remains clipped/truncated in the source question image; upstream PNG regeneration is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0001.png",
+      "page_number": 1,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "12summer15_q02 remains clipped/truncated in the source question image; upstream PNG regeneration is required.",
+      "related_problem_numbers": [
+        1,
+        2
+      ],
+      "related_question_ids": [
+        "11summer19_q03",
+        "12summer15_q02"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0001",
+      "seed_bug_refs": [
+        {
+          "question_id": "12summer15_q02",
+          "type": "problem",
+          "user_label": "2015 June P12 Q2"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2020_s20_13_ms_q05_markscheme.png",
+          "pm1/pm1_2011_w11_13_ms_q06_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0002.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2020_s20_13_qp_q05_question.png",
+          "pm1/pm1_2011_w11_13_qp_q06_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0002.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0002.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0002",
+      "categories": [
+        "wrong_topic_packet",
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "topic_routing_review",
+      "generalization_decision": "targeted_exception",
+      "likely_root_cause": "13summer20_q05 renders correctly, but the same page also contains 13winter11_q06, which is a vector-topic seed with source spillover; the page remains triaged for that seed only.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0002.png",
+      "page_number": 2,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "13summer20_q05 renders correctly, but the same page also contains 13winter11_q06, which is a vector-topic seed with source spillover; the page remains triaged for that seed only.",
+      "related_problem_numbers": [
+        3,
+        4
+      ],
+      "related_question_ids": [
+        "13summer20_q05",
+        "13winter11_q06"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0002",
+      "seed_bug_refs": [
+        {
+          "question_id": "13summer20_q05",
+          "type": "problem",
+          "user_label": "2020 June P13 Q5"
+        },
+        {
+          "question_id": "13winter11_q06",
+          "type": "problem",
+          "user_label": "2011 November P13 Q6"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {
+        "13summer20_q05": "fixed",
+        "13winter11_q06": "waived_with_reason"
+      },
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2013_w13_12_ms_q02_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0006.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2013_w13_12_qp_q02_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0006.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0006",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "12winter13_q02 source question image duplicates figures/text; upstream crop regeneration is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0006.png",
+      "page_number": 6,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "12winter13_q02 source question image duplicates figures/text; upstream crop regeneration is required.",
+      "related_problem_numbers": [
+        12
+      ],
+      "related_question_ids": [
+        "12winter13_q02"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0006",
+      "seed_bug_refs": [
+        {
+          "question_id": "12winter13_q02",
+          "type": "problem",
+          "user_label": "2013 November P12 Q2"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2012_s12_12_ms_q06_markscheme.png",
+          "pm1/pm1_2014_w14_11_ms_q08_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0024.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2012_s12_12_qp_q06_question.png",
+          "pm1/pm1_2014_w14_11_qp_q08_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0024.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0024",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "12summer12_q06 has visible source crop artifacts/spillover; upstream crop cleanup is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0024.png",
+      "page_number": 24,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "12summer12_q06 has visible source crop artifacts/spillover; upstream crop cleanup is required.",
+      "related_problem_numbers": [
+        45,
+        46
+      ],
+      "related_question_ids": [
+        "12summer12_q06",
+        "11winter14_q08"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0024",
+      "seed_bug_refs": [
+        {
+          "question_id": "12summer12_q06",
+          "type": "problem",
+          "user_label": "2012 June P12 Q6"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2021_m21_13_ms_q05_markscheme.png",
+          "pm1/pm1_2024_m24_13_ms_q03_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0025.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2021_m21_13_qp_q05_question.png",
+          "pm1/pm1_2024_m24_13_qp_q03_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0025.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0025",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "13summer24_q03 m24 source renders with black bar artifacts; source image cleanup is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0025.png",
+      "page_number": 25,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "13summer24_q03 m24 source renders with black bar artifacts; source image cleanup is required.",
+      "related_problem_numbers": [
+        47,
+        48
+      ],
+      "related_question_ids": [
+        "13summer21_q05",
+        "13summer24_q03"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0025",
+      "seed_bug_refs": [
+        {
+          "question_id": "13summer24_q03",
+          "type": "problem",
+          "user_label": "2024 June P13 Q3"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2019_s19_13_ms_q03_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0027.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2019_s19_13_qp_q03_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0027.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0027.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0027",
+      "categories": [],
+      "decision_status": "pass",
+      "fix_owner_area": "unknown",
+      "generalization_decision": "not_applicable",
+      "likely_root_cause": "Rendered page is readable with no visual blocker in the packet artifact.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0027.png",
+      "page_number": 27,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "Previously flagged seed page renders acceptably after regeneration.",
+      "related_problem_numbers": [
+        50
+      ],
+      "related_question_ids": [
+        "13summer19_q03"
+      ],
+      "resolution_status": "fixed",
+      "row_id": "p1_circular_measure_page_0027",
+      "seed_bug_refs": [
+        {
+          "question_id": "13summer19_q03",
+          "type": "problem",
+          "user_label": "2019 June P13 Q3"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2013_w13_13_ms_q06_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0032.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2013_w13_13_qp_q06_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0032.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0032",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "13winter13_q06 source image duplicates diagram/text content; upstream crop regeneration is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0032.png",
+      "page_number": 32,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "13winter13_q06 source image duplicates diagram/text content; upstream crop regeneration is required.",
+      "related_problem_numbers": [
+        59
+      ],
+      "related_question_ids": [
+        "13winter13_q06"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0032",
+      "seed_bug_refs": [
+        {
+          "question_id": "13winter13_q06",
+          "type": "problem",
+          "user_label": "2013 November P13 Q6"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2019_w19_12_ms_q04_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0044.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2019_w19_12_qp_q04_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0044.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0044",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "12winter19_q04 source repeats the question intro before the working lines; upstream crop regeneration is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0044.png",
+      "page_number": 44,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "12winter19_q04 source repeats the question intro before the working lines; upstream crop regeneration is required.",
+      "related_problem_numbers": [
+        77
+      ],
+      "related_question_ids": [
+        "12winter19_q04"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0044",
+      "seed_bug_refs": [
+        {
+          "question_id": "12winter19_q04",
+          "type": "problem",
+          "user_label": "2019 November P12 Q4"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2022_w22_12_ms_q10_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0046.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2022_w22_12_qp_q10_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0046.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0046.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0046",
+      "categories": [],
+      "decision_status": "pass",
+      "fix_owner_area": "unknown",
+      "generalization_decision": "not_applicable",
+      "likely_root_cause": "Rendered page is readable with no visual blocker in the packet artifact.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0046.png",
+      "page_number": 46,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "Previously flagged seed page renders acceptably after regeneration.",
+      "related_problem_numbers": [
+        79
+      ],
+      "related_question_ids": [
+        "12winter22_q10"
+      ],
+      "resolution_status": "fixed",
+      "row_id": "p1_circular_measure_page_0046",
+      "seed_bug_refs": [
+        {
+          "question_id": "12winter22_q10",
+          "type": "problem",
+          "user_label": "2022 November P12 Q10"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2019_w19_11_ms_q08_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0048.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2019_w19_11_qp_q08_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0048.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0048.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0048",
+      "categories": [],
+      "decision_status": "pass",
+      "fix_owner_area": "unknown",
+      "generalization_decision": "not_applicable",
+      "likely_root_cause": "Rendered page is readable with no visual blocker in the packet artifact.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0048.png",
+      "page_number": 48,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "Previously flagged seed page renders acceptably after regeneration.",
+      "related_problem_numbers": [
+        81
+      ],
+      "related_question_ids": [
+        "11winter19_q08"
+      ],
+      "resolution_status": "fixed",
+      "row_id": "p1_circular_measure_page_0048",
+      "seed_bug_refs": [
+        {
+          "question_id": "11winter19_q08",
+          "type": "problem",
+          "user_label": "2019 November P11 Q8"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2023_w23_13_ms_q10_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0057.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2023_w23_13_qp_q10_question.png"
+        ]
+      },
+      "after_evidence": [],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0057.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0057",
+      "categories": [
+        "question_crop"
+      ],
+      "decision_status": "bug",
+      "fix_owner_area": "question_png_regeneration",
+      "generalization_decision": "needs_more_evidence",
+      "likely_root_cause": "13winter23_q10 source includes duplicated/clipped prompt text; upstream crop regeneration is required.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0057.png",
+      "page_number": 57,
+      "page_section": "Questions",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "13winter23_q10 source includes duplicated/clipped prompt text; upstream crop regeneration is required.",
+      "related_problem_numbers": [
+        92
+      ],
+      "related_question_ids": [
+        "13winter23_q10"
+      ],
+      "resolution_status": "waived_with_reason",
+      "row_id": "p1_circular_measure_page_0057",
+      "seed_bug_refs": [
+        {
+          "question_id": "13winter23_q10",
+          "type": "problem",
+          "user_label": "2023 November P13 Q10"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2019_s19_11_ms_q03_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0067.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2019_s19_11_qp_q03_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0067.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0067.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0067",
+      "categories": [],
+      "decision_status": "pass",
+      "fix_owner_area": "unknown",
+      "generalization_decision": "not_applicable",
+      "likely_root_cause": "Rendered page is readable with no visual blocker in the packet artifact.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0067.png",
+      "page_number": 67,
+      "page_section": "Answers / Mark Schemes",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "Previously flagged seed page renders acceptably after regeneration.",
+      "related_problem_numbers": [
+        1
+      ],
+      "related_question_ids": [
+        "11summer19_q03"
+      ],
+      "resolution_status": "fixed",
+      "row_id": "p1_circular_measure_page_0067",
+      "seed_bug_refs": [
+        {
+          "question_id": "11summer19_q03",
+          "type": "mark_scheme",
+          "user_label": "2019 June P11 Q3 mark scheme"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    },
+    {
+      "affected_artifacts": {
+        "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+        "mark_scheme_image_paths": [
+          "pm1/pm1_2018_s18_13_ms_q05_markscheme.png"
+        ],
+        "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0077.png",
+        "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+        "question_image_paths": [
+          "pm1/pm1_2018_s18_13_qp_q05_question.png"
+        ]
+      },
+      "after_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0077.png"
+      ],
+      "before_evidence": [
+        "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0077.png"
+      ],
+      "bug_id": "tpva_p1_circular_measure_page_0077",
+      "categories": [],
+      "decision_status": "pass",
+      "fix_owner_area": "unknown",
+      "generalization_decision": "not_applicable",
+      "likely_root_cause": "Rendered page is readable with no visual blocker in the packet artifact.",
+      "manifest_path": "output/topic_packets/p1/circular_measure/manifest.json",
+      "packet_id": "p1_circular_measure",
+      "page_image_path": "output/audits/topic_packet_visual_audit_2026_07_07/p1_circular_measure/page_0077.png",
+      "page_number": 77,
+      "page_section": "Answers / Mark Schemes",
+      "paper_family": "p1",
+      "pdf_path": "output/topic_packets/p1/circular_measure/p1_circular_measure_packet.pdf",
+      "rationale": "Previously flagged seed page renders acceptably after regeneration.",
+      "related_problem_numbers": [
+        22
+      ],
+      "related_question_ids": [
+        "13summer18_q05"
+      ],
+      "resolution_status": "fixed",
+      "row_id": "p1_circular_measure_page_0077",
+      "seed_bug_refs": [
+        {
+          "question_id": "13summer18_q05",
+          "type": "mark_scheme",
+          "user_label": "2018 June P13 Q5 mark scheme"
+        }
+      ],
+      "seed_resolution_status_by_question_id": {},
+      "source": "manual_local_regenerated_visual_review",
+      "topic_id": "circular_measure",
+      "verification_result": {}
+    }
+  ],
+  "complete": true,
+  "decision_version": "topic_packet_visual_audit_decision_v1",
+  "errors": [],
+  "generated_at": "2026-07-07T07:22:11+00:00",
+  "prompt_version": "topic_packet_visual_audit_9709_v1",
+  "rejected": [],
+  "schema_name": "exam_bank.topic_packet_visual_audit.registry",
+  "schema_version": 1,
+  "seed_bug_status": [
+    {
+      "question_id": "12summer15_q02",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2015 June P12 Q2"
+    },
+    {
+      "question_id": "13summer20_q05",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "problem",
+      "user_label": "2020 June P13 Q5"
+    },
+    {
+      "question_id": "13winter11_q06",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2011 November P13 Q6"
+    },
+    {
+      "question_id": "12winter13_q02",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2013 November P12 Q2"
+    },
+    {
+      "question_id": "12summer12_q06",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2012 June P12 Q6"
+    },
+    {
+      "question_id": "13summer24_q03",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2024 June P13 Q3"
+    },
+    {
+      "question_id": "13summer19_q03",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "problem",
+      "user_label": "2019 June P13 Q3"
+    },
+    {
+      "question_id": "13winter13_q06",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2013 November P13 Q6"
+    },
+    {
+      "question_id": "12winter19_q04",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2019 November P12 Q4"
+    },
+    {
+      "question_id": "12winter22_q10",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "problem",
+      "user_label": "2022 November P12 Q10"
+    },
+    {
+      "question_id": "11winter19_q08",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "problem",
+      "user_label": "2019 November P11 Q8"
+    },
+    {
+      "question_id": "13winter23_q10",
+      "record_count": 1,
+      "resolution_status": "waived_with_reason",
+      "type": "problem",
+      "user_label": "2023 November P13 Q10"
+    },
+    {
+      "question_id": "11summer19_q03",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "mark_scheme",
+      "user_label": "2019 June P11 Q3 mark scheme"
+    },
+    {
+      "question_id": "13summer18_q05",
+      "record_count": 1,
+      "resolution_status": "fixed",
+      "type": "mark_scheme",
+      "user_label": "2018 June P13 Q5 mark scheme"
+    }
+  ],
+  "source_files": {
+    "batch": "data/review/topic_packet_visual_audit_2026_07_07/topic_packet_visual_audit_batch.json",
+    "decisions": "data/review/topic_packet_visual_audit_2026_07_07/topic_packet_visual_audit_decisions.jsonl",
+    "out": "data/review/topic_packet_visual_audit_2026_07_07/topic_packet_visual_bug_registry.v1.json"
+  },
+  "summary": {
+    "accepted_decision_count": 121,
+    "batch_page_count": 121,
+    "bug_record_count": 13,
+    "category_counts": {
+      "question_crop": 8,
+      "wrong_topic_packet": 1
+    },
+    "decision_status_counts": {
+      "bug": 8,
+      "pass": 113
+    },
+    "error_count": 0,
+    "resolution_status_counts": {
+      "fixed": 5,
+      "waived_with_reason": 8
+    },
+    "seed_bug_record_count": 13,
+    "warning_count": 0
+  },
+  "warnings": []
+}

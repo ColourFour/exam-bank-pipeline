@@ -137,12 +137,76 @@ def test_topic_packet_can_annotate_problem_headers_with_difficulty_rank(tmp_path
     packet_pdf = paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf"
     with fitz.open(packet_pdf) as doc:
         text = "\n".join(page.get_text() for page in doc)
+    normalized_text = " ".join(text.split())
     assert manifest["topic_difficulty_review_path"] == str(sidecar)
     assert manifest["topic_difficulty_review_applied_count"] == 2
     assert [record["question_id"] for record in manifest["included_records"]] == ["q2", "q1"]
     assert manifest["topic_assignment_confidence_trust_status"][0]["topic_difficulty"]["packet_rank"] == 2
-    assert "Problem 1 - 2024 June P31 Question 2 - 4 marks - Integration - Difficulty 2/2" in text
+    assert "Problem 1 - 2024 June P31 Question 2 - 4 marks - Integration - Difficulty 2/2" in normalized_text
+    assert "Review Required - verify topic/routing before classroom use." in normalized_text
     assert "Problem 2 - 2024 June P31 Question 1 - 4 marks - Integration - Difficulty 1/2" in text
+    assert "Review Required Questions" not in text
+
+
+def test_exact_topic_difficulty_review_controls_packet_membership_and_order(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        include_q3=True,
+        record_overrides={
+            "q2": {"notes": {"question_crop_confidence": "low"}},
+            "q3": {"topic": "vectors", "notes": {"question_crop_confidence": "low"}},
+        },
+    )
+    sidecar = tmp_path / "difficulty.json"
+    sidecar.write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.topic_packet_difficulty_review",
+                "schema_version": 1,
+                "complete": True,
+                "expected_record_count": 2,
+                "packet": {
+                    "paper_family": "p3",
+                    "topic_id": "integration",
+                    "topic_label": "Integration",
+                    "packet_level": "major_topic",
+                    "subtopic_id": "",
+                    "subtopic_label": "",
+                    "review_required_count": 2,
+                    "total_questions": 2,
+                },
+                "records": [
+                    _difficulty_record("q1", 1, 100) | {"packet_section": "review_required"},
+                    _difficulty_record("q3", 2, 50) | {"packet_section": "review_required"},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+        topic_difficulty_review_path=sidecar,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    packet_pdf = paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf"
+    with fitz.open(packet_pdf) as doc:
+        text = "\n".join(page.get_text() for page in doc)
+
+    assert manifest["topic_difficulty_review_applied_count"] == 2
+    assert manifest["included_question_ids"] == ["q3", "q1"]
+    assert manifest["review_required_question_ids"] == ["q3", "q1"]
+    assert manifest["topic_assignment_confidence_trust_status"][0]["source"] == "topic_difficulty_review_packet"
+    assert manifest["included_records"][0]["topic_difficulty"]["packet_rank"] == 2
+    assert "q2" not in manifest["included_question_ids"]
+    assert "Review Required Questions" not in text
 
 
 def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
@@ -1468,6 +1532,25 @@ def test_oversized_image_warning_is_recorded(tmp_path: Path) -> None:
     assert manifest["blocks_scaled_to_fit_count"] >= 1
     assert manifest["oversized_block_warnings"]
     assert summary["oversized_block_warning_count"] >= 1
+
+
+def test_oversized_answer_image_is_split_instead_of_scaled_below_legibility(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    _png(paths["artifact_root"] / "p3" / "paper" / "mark_scheme" / "q1.png", size=(2360, 4857))
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
+    topic_warnings = manifest["pdf_outputs"]["topic_packet"]["warnings"]
+    assert any(warning.startswith("oversized_block_split_across_pages:answer:1") for warning in topic_warnings)
+    assert not any("oversized_block_scaled_below_legibility:answer:1" in warning for warning in manifest["oversized_block_warnings"])
+    assert manifest["included_records"][0]["answer_start_page"] is not None
 
 
 def test_cli_help_exits_cleanly() -> None:

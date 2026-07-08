@@ -5,18 +5,21 @@ import pytest
 from exam_bank.config import AppConfig
 from exam_bank.image_rendering import (
     CropRegion,
+    _anchor_is_current_question_diagram_label,
     _crop_diagnostics,
     _dedupe_crop_regions,
     _detect_prompt_regions,
     _graphics_for_segment,
+    _page_furniture_box_label,
     _same_page_diagram_union_regions,
     _single_page_union_regions,
     _trim_permission_footer_from_regions,
+    _trim_regions_at_foreign_question_boundaries,
     _trim_vertical_furniture_from_regions,
 )
 from exam_bank.core.asset_paths import AssetPath
 from exam_bank.core.paper_identity import PaperIdentity
-from exam_bank.models import BoundingBox, PageLayout, QuestionSpan, TextBlock
+from exam_bank.models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, TextBlock
 
 
 pytestmark = pytest.mark.rendering
@@ -39,6 +42,20 @@ def span() -> QuestionSpan:
         blocks=[],
         full_question_label="10",
     )
+
+
+def test_top_right_diagonal_papacambridge_banner_is_watermark_furniture() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    banner = BoundingBox(394, 0, 595, 200)
+
+    assert _page_furniture_box_label(banner, layout, AppConfig(), []) == "watermark"
+
+
+def test_inset_full_page_graphic_is_background_furniture() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    page_box = BoundingBox(41.58, 0, 595.28, 841.89)
+
+    assert _page_furniture_box_label(page_box, layout, AppConfig(), []) == "page_background"
 
 
 def test_formula_rule_graphics_do_not_create_diagram_regions() -> None:
@@ -226,6 +243,232 @@ def test_prompt_regions_drop_trailing_foreign_question_after_missed_anchor() -> 
     assert "foreign_question_region_removed" in flags
     assert all(region.bbox.y1 < foreign_number.bbox.y0 for region in regions)
     assert "Find the next answer" not in rendered_text
+
+
+def test_single_page_union_trims_accidental_later_question_tail() -> None:
+    config = AppConfig()
+    current_question = [
+        TextBlock(page_number=1, text="8 The function is defined for x.", bbox=BoundingBox(50, 120, 360, 138)),
+        TextBlock(page_number=1, text="(i) Find the inverse. [3]", bbox=BoundingBox(72, 180, 340, 196)),
+    ]
+    foreign_number = TextBlock(page_number=1, text="9", bbox=BoundingBox(50, 260, 60, 276))
+    foreign_prompt = TextBlock(page_number=1, text="The equation of a curve is y = x^3. [3]", bbox=BoundingBox(72, 260, 430, 276))
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[*current_question, foreign_number, foreign_prompt],
+    )
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s15_qp_11.pdf"),
+        paper_name="9709_s15_qp_11",
+        question_number="8",
+        start_page=1,
+        start_y=120,
+        end_page=1,
+        end_y=300,
+        page_numbers=[1],
+        blocks=[*current_question, foreign_number, foreign_prompt],
+        full_question_label="8",
+    )
+    regions = [
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(40, 112, 450, 280),
+            text_blocks=[*current_question, foreign_number, foreign_prompt],
+            region_kind="text",
+        ),
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(90, 150, 260, 170),
+            graphics=[BoundingBox(90, 150, 260, 170)],
+            region_kind="figure",
+        )
+    ]
+
+    union_regions, flags = _single_page_union_regions(regions, test_span, [layout], config)
+
+    assert union_regions is not None
+    assert "foreign_question_boundary_trimmed" in flags
+    assert union_regions[0].bbox.y1 < foreign_number.bbox.y0
+
+
+def test_region_boundary_trim_uses_later_question_anchor_below_span_end() -> None:
+    config = AppConfig()
+    current_question = [
+        TextBlock(page_number=1, text="8 The function is defined for x.", bbox=BoundingBox(50, 120, 360, 138)),
+        TextBlock(page_number=1, text="(i) Find the inverse. [3]", bbox=BoundingBox(72, 180, 340, 196)),
+    ]
+    foreign_number = TextBlock(page_number=1, text="9", bbox=BoundingBox(50, 260, 60, 276))
+    foreign_prompt = TextBlock(page_number=1, text="The equation of a curve is y = x^3. [3]", bbox=BoundingBox(72, 260, 430, 276))
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[*current_question, foreign_number, foreign_prompt],
+    )
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s15_qp_11.pdf"),
+        paper_name="9709_s15_qp_11",
+        question_number="8",
+        start_page=1,
+        start_y=120,
+        end_page=1,
+        end_y=220,
+        page_numbers=[1],
+        blocks=[*current_question, foreign_number, foreign_prompt],
+        full_question_label="8",
+    )
+    region = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(40, 112, 450, 280),
+        text_blocks=[*current_question, foreign_number, foreign_prompt],
+        graphics=[BoundingBox(90, 150, 260, 170)],
+        region_kind="figure",
+    )
+
+    trimmed, flags = _trim_regions_at_foreign_question_boundaries([region], test_span, [layout], config)
+
+    assert "foreign_question_boundary_trimmed" in flags
+    assert trimmed[0].bbox.y1 < foreign_number.bbox.y0
+
+
+def test_later_question_sentence_near_graphic_is_not_diagram_label() -> None:
+    config = AppConfig()
+    graphic = BoundingBox(35, 418, 560, 585)
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[], graphics=[graphic])
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s15_qp_11.pdf"),
+        paper_name="9709_s15_qp_11",
+        question_number="8",
+        start_page=1,
+        start_y=424,
+        end_page=1,
+        end_y=550,
+        page_numbers=[1],
+        blocks=[],
+        full_question_label="8",
+    )
+    foreign_anchor = QuestionStart(
+        question_number="9",
+        page_number=1,
+        y0=575,
+        x0=49,
+        label="The equation of a curve is y = x^3 + px^2, where p is a positive constant.",
+        block_index=0,
+        bbox=BoundingBox(49, 575, 402, 589),
+        confidence=0.9,
+    )
+
+    assert not _anchor_is_current_question_diagram_label(foreign_anchor, test_span, layout, config)
+
+
+def test_later_bare_question_number_near_graphic_is_not_diagram_label() -> None:
+    config = AppConfig()
+    graphic = BoundingBox(35, 418, 560, 585)
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[], graphics=[graphic])
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s15_qp_11.pdf"),
+        paper_name="9709_s15_qp_11",
+        question_number="8",
+        start_page=1,
+        start_y=424,
+        end_page=1,
+        end_y=550,
+        page_numbers=[1],
+        blocks=[],
+        full_question_label="8",
+    )
+    foreign_anchor = QuestionStart(
+        question_number="9",
+        page_number=1,
+        y0=575,
+        x0=49,
+        label="9",
+        block_index=0,
+        bbox=BoundingBox(49, 575, 402, 589),
+        confidence=0.9,
+    )
+
+    assert not _anchor_is_current_question_diagram_label(foreign_anchor, test_span, layout, config)
+
+
+def test_later_numeric_graph_label_outside_anchor_column_is_diagram_label() -> None:
+    config = AppConfig()
+    graphic = BoundingBox(54, 96, 560, 277)
+    prompt = text_block("The diagram shows the velocity-time graph for a train.", 247, x=72, width=470)
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[], graphics=[graphic])
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s18_qp_43.pdf"),
+        paper_name="9709_s18_qp_43",
+        question_number="1",
+        start_page=1,
+        start_y=65,
+        end_page=1,
+        end_y=635,
+        page_numbers=[1],
+        blocks=[prompt],
+        full_question_label="1",
+    )
+    graph_label_anchor = QuestionStart(
+        question_number="16",
+        page_number=1,
+        y0=110,
+        x0=124,
+        label="16",
+        block_index=0,
+        bbox=BoundingBox(124, 110, 136, 121),
+        confidence=0.76,
+    )
+
+    assert _anchor_is_current_question_diagram_label(graph_label_anchor, test_span, layout, config)
+
+
+def test_single_page_union_trims_accidental_previous_question_head() -> None:
+    config = AppConfig()
+    previous_tail = TextBlock(page_number=1, text="(iv) Find the value of k. [2]", bbox=BoundingBox(70, 92, 360, 108))
+    current_question = [
+        TextBlock(page_number=1, text="10 Functions f and g are defined by", bbox=BoundingBox(50, 160, 360, 176)),
+        TextBlock(page_number=1, text="(i) Evaluate fg(2). [2]", bbox=BoundingBox(72, 245, 330, 261)),
+    ]
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[previous_tail, *current_question],
+    )
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_s11_qp_13.pdf"),
+        paper_name="9709_s11_qp_13",
+        question_number="10",
+        start_page=1,
+        start_y=160,
+        end_page=1,
+        end_y=320,
+        page_numbers=[1],
+        blocks=[previous_tail, *current_question],
+        full_question_label="10",
+    )
+    regions = [
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(40, 82, 450, 300),
+            text_blocks=[previous_tail, *current_question],
+            region_kind="text",
+        ),
+        CropRegion(
+            page_number=1,
+            bbox=BoundingBox(90, 190, 260, 220),
+            graphics=[BoundingBox(90, 190, 260, 220)],
+            region_kind="figure",
+        )
+    ]
+
+    union_regions, flags = _single_page_union_regions(regions, test_span, [layout], config)
+
+    assert union_regions is not None
+    assert "crop_header_padding_trimmed" in flags
+    assert union_regions[0].bbox.y0 >= test_span.start_y - 24.0
 
 
 def test_vertical_furniture_trim_removes_centered_header_without_cutting_top_diagram() -> None:

@@ -16,6 +16,14 @@ EDGE_FURNITURE_MAX_BAND_HEIGHT_RATIO = 0.08
 EDGE_FURNITURE_MAX_BAND_WIDTH_RATIO = 0.18
 EDGE_FURNITURE_MIN_GAP_PX = 28
 EDGE_FURNITURE_CENTER_TOLERANCE_RATIO = 0.12
+BARCODE_BAND_MIN_WIDTH_RATIO = 0.18
+BARCODE_BAND_MAX_WIDTH_RATIO = 0.72
+BARCODE_BAND_MAX_HEIGHT_RATIO = 0.12
+BARCODE_BAND_MIN_DARK_RATIO = 0.075
+BARCODE_BAND_PADDING_PX = 3
+EDGE_WATERMARK_MIN_WIDTH_RATIO = 0.12
+EDGE_WATERMARK_MIN_HEIGHT_RATIO = 0.09
+EDGE_WATERMARK_COMPONENT_DOWNSAMPLE = 4
 
 
 def render_pdf_area(
@@ -133,7 +141,273 @@ def trim_excess_render_whitespace(
 
 
 def clean_rendered_crop_image(image: Any) -> Any:
-    return trim_excess_render_whitespace(trim_isolated_edge_furniture(image))
+    cleaned = trim_isolated_edge_furniture(image)
+    cleaned = remove_dense_horizontal_furniture_bands(cleaned)
+    cleaned = remove_isolated_edge_marks(cleaned)
+    cleaned = remove_edge_watermark_fragments(cleaned)
+    return trim_excess_render_whitespace(cleaned)
+
+
+def remove_dense_horizontal_furniture_bands(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 80,
+    min_width_ratio: float = BARCODE_BAND_MIN_WIDTH_RATIO,
+    max_width_ratio: float = BARCODE_BAND_MAX_WIDTH_RATIO,
+    max_height_ratio: float = BARCODE_BAND_MAX_HEIGHT_RATIO,
+    min_dark_ratio: float = BARCODE_BAND_MIN_DARK_RATIO,
+    padding_px: int = BARCODE_BAND_PADDING_PX,
+) -> Any:
+    """White out narrow barcode-like bands that appear inside rendered crops."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+        return image
+
+    grayscale = image.convert("L")
+    dark_rows: list[tuple[int, int, int]] = []
+    for y in range(height):
+        row = grayscale.crop((0, y, width, y + 1))
+        mask = row.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+        bbox = mask.getbbox()
+        if bbox is None:
+            continue
+        x0, _top, x1, _bottom = bbox
+        band_width = x1 - x0
+        dark_count = sum(1 for pixel in row.tobytes() if pixel < nonwhite_threshold)
+        dark_ratio = dark_count / width
+        if min_width_ratio * width <= band_width <= max_width_ratio * width and dark_ratio >= min_dark_ratio:
+            dark_rows.append((y, x0, x1))
+
+    bands: list[tuple[int, int, int, int]] = []
+    start: int | None = None
+    end = 0
+    xs: list[int] = []
+    xe: list[int] = []
+    previous_y: int | None = None
+    for y, x0, x1 in dark_rows:
+        if start is None or previous_y is None or y > previous_y + 1:
+            if start is not None:
+                bands.append((start, end, min(xs), max(xe)))
+            start, end, xs, xe = y, y + 1, [x0], [x1]
+        else:
+            end = y + 1
+            xs.append(x0)
+            xe.append(x1)
+        previous_y = y
+    if start is not None:
+        bands.append((start, end, min(xs), max(xe)))
+
+    candidates = [
+        (y0, y1, x0, x1)
+        for y0, y1, x0, x1 in bands
+        if y0 <= max(4, int(height * 0.12))
+        and (y1 - y0) <= max(3, int(height * max_height_ratio))
+        and _band_has_repeating_vertical_bars(
+            grayscale,
+            y0=y0,
+            y1=y1,
+            x0=x0,
+            x1=x1,
+            nonwhite_threshold=nonwhite_threshold,
+        )
+    ]
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for y0, y1, x0, x1 in candidates:
+        draw.rectangle(
+            (
+                max(0, x0 - padding_px),
+                max(0, y0 - padding_px),
+                min(width, x1 + padding_px),
+                min(height, y1 + padding_px),
+            ),
+            fill="white",
+        )
+    return output
+
+
+def _band_has_repeating_vertical_bars(
+    grayscale: Any,
+    *,
+    y0: int,
+    y1: int,
+    x0: int,
+    x1: int,
+    nonwhite_threshold: int,
+) -> bool:
+    band_height = max(1, y1 - y0)
+    band_width = max(1, x1 - x0)
+    if band_height < 2 or band_width < 40:
+        return False
+    vertical_bar_columns = 0
+    runs = 0
+    in_run = False
+    pixels = grayscale.load()
+    for x in range(x0, x1):
+        dark_rows = 0
+        for y in range(y0, y1):
+            if pixels[x, y] < nonwhite_threshold:
+                dark_rows += 1
+        is_bar_column = dark_rows / band_height >= 0.64
+        if is_bar_column:
+            vertical_bar_columns += 1
+            if not in_run:
+                runs += 1
+                in_run = True
+        else:
+            in_run = False
+    return vertical_bar_columns >= max(12, int(band_width * 0.18)) and runs >= 12
+
+
+def remove_isolated_edge_marks(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 80,
+    max_width_ratio: float = 0.07,
+    max_height_ratio: float = 0.10,
+    edge_ratio: float = 0.08,
+) -> Any:
+    """White out small, dense scan marks that sit alone near page edges."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+        return image
+
+    grayscale = image.convert("L")
+    mask = grayscale.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    pixels = mask.load()
+    visited: set[tuple[int, int]] = set()
+    candidates: list[tuple[int, int, int, int]] = []
+
+    for y in range(height):
+        for x in range(width):
+            if (x, y) in visited or not pixels[x, y]:
+                continue
+            stack = [(x, y)]
+            visited.add((x, y))
+            x0 = x1 = x
+            y0 = y1 = y
+            count = 0
+            while stack:
+                cx, cy = stack.pop()
+                count += 1
+                x0 = min(x0, cx)
+                x1 = max(x1, cx)
+                y0 = min(y0, cy)
+                y1 = max(y1, cy)
+                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):
+                    if nx < 0 or nx >= width or ny < 0 or ny >= height:
+                        continue
+                    if (nx, ny) in visited or not pixels[nx, ny]:
+                        continue
+                    visited.add((nx, ny))
+                    stack.append((nx, ny))
+
+            component_width = x1 - x0 + 1
+            component_height = y1 - y0 + 1
+            touches_side_zone = x0 <= width * edge_ratio or x1 >= width * (1 - edge_ratio)
+            if not touches_side_zone:
+                continue
+            if component_width > width * max_width_ratio or component_height > height * max_height_ratio:
+                continue
+            if component_width < 8 or component_height < 8:
+                continue
+            density = count / max(1, component_width * component_height)
+            if density < 0.75:
+                continue
+            candidates.append((x0, y0, x1 + 1, y1 + 1))
+
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle((max(0, x0 - 3), max(0, y0 - 3), min(width, x1 + 3), min(height, y1 + 3)), fill="white")
+    return output
+
+
+def remove_edge_watermark_fragments(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 235,
+    component_downsample: int = EDGE_WATERMARK_COMPONENT_DOWNSAMPLE,
+    min_width_ratio: float = EDGE_WATERMARK_MIN_WIDTH_RATIO,
+    min_height_ratio: float = EDGE_WATERMARK_MIN_HEIGHT_RATIO,
+) -> Any:
+    """White out large connected diagonal watermark fragments at crop edges."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+        return image
+
+    scale = max(1, component_downsample)
+    probe_width = max(1, width // scale)
+    probe_height = max(1, height // scale)
+    from PIL import Image, ImageDraw
+
+    probe = image.convert("L").resize((probe_width, probe_height), Image.Resampling.NEAREST)
+    mask = probe.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    pixels = mask.load()
+    visited: set[tuple[int, int]] = set()
+    candidates: list[tuple[int, int, int, int]] = []
+    x_floor = int(probe_width * 0.48)
+
+    for y in range(probe_height):
+        for x in range(x_floor, probe_width):
+            if (x, y) in visited or not pixels[x, y]:
+                continue
+            stack = [(x, y)]
+            visited.add((x, y))
+            x0 = x1 = x
+            y0 = y1 = y
+            count = 0
+            while stack:
+                cx, cy = stack.pop()
+                count += 1
+                x0 = min(x0, cx)
+                x1 = max(x1, cx)
+                y0 = min(y0, cy)
+                y1 = max(y1, cy)
+                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):
+                    if nx < x_floor or nx >= probe_width or ny < 0 or ny >= probe_height:
+                        continue
+                    if (nx, ny) in visited or not pixels[nx, ny]:
+                        continue
+                    visited.add((nx, ny))
+                    stack.append((nx, ny))
+
+            component_width = x1 - x0 + 1
+            component_height = y1 - y0 + 1
+            touches_edge = x1 >= probe_width - 2 or y0 <= 1
+            if not touches_edge:
+                continue
+            if component_width < probe_width * min_width_ratio or component_height < probe_height * min_height_ratio:
+                continue
+            density = count / max(1, component_width * component_height)
+            if density > 0.65:
+                continue
+            candidates.append((x0 * scale, y0 * scale, min(width, (x1 + 1) * scale), min(height, (y1 + 1) * scale)))
+
+    if not candidates:
+        return image
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle((max(0, x0 - 12), max(0, y0 - 12), min(width, x1 + 12), min(height, y1 + 12)), fill="white")
+    return output
 
 
 def trim_isolated_edge_furniture(

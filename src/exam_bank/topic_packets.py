@@ -43,6 +43,7 @@ PDF_PROFILE_DEFAULTS: dict[str, dict[str, int | None]] = {
     "archive": {"image_dpi": None, "jpeg_quality": 92, "max_image_width": None, "max_image_height": None},
 }
 FLOW_BLOCK_HEADER_FONT_SIZE = 8.5
+ANSWER_IMAGE_SPLIT_SCALE_THRESHOLD = 0.72
 
 
 class TopicPacketError(ValueError):
@@ -440,6 +441,12 @@ def generate_topic_packets(
     subtopic = _resolve_subtopic_filter(subtopic, paper_family, topic, taxonomy)
     if major_topics_only:
         subtopic = None
+    topic_difficulty_target_packet = topic_difficulty_review_target_packet(
+        topic_difficulty_records,
+        paper_family=paper_family,
+        topic=topic,
+        subtopic=subtopic,
+    )
     assignments = load_assignment_index(canonical_taxonomy_root, taxonomy)
     artifact_root_path = Path(artifact_root) if artifact_root is not None else _default_artifact_root(question_bank_path)
     if _should_clean_output_root(
@@ -477,6 +484,9 @@ def generate_topic_packets(
 
     for record in records:
         question_id = str(record.get("question_id", "")).strip()
+        difficulty_record = topic_difficulty_records.get(question_id)
+        if topic_difficulty_target_packet is not None and difficulty_record is None:
+            continue
         decision = reviewed_decisions.get(question_id)
         overlap_decision = topic_overlap_reviews.get(question_id)
         record_family = _paper_family(record)
@@ -525,7 +535,13 @@ def generate_topic_packets(
             missing_question_images.append(question_id)
             continue
 
-        if major_topics_only:
+        if topic_difficulty_target_packet is not None and difficulty_record is not None:
+            assignment, reasons = topic_difficulty_review_assignment(
+                record,
+                difficulty_record,
+                taxonomy=taxonomy,
+            )
+        elif major_topics_only:
             assignment, reasons = choose_major_topic_assignment(record, taxonomy)
         else:
             assignment, reasons = choose_assignment(
@@ -641,6 +657,18 @@ def generate_topic_packets(
             continue
         warning_counts.update(_record_warnings(record))
         packets[key].append((record, assignment))
+
+    if topic_difficulty_target_packet is not None:
+        included_ids = {
+            str(record.get("question_id") or "")
+            for record, _ in packets.get(topic_difficulty_target_packet, [])
+        }
+        missing_ids = sorted(set(topic_difficulty_records) - included_ids)
+        if missing_ids:
+            raise TopicPacketError(
+                "Topic difficulty review sidecar records were not included in the generated packet: "
+                + ", ".join(missing_ids)
+            )
 
     generated: list[dict[str, Any]] = []
     generated_pdfs: list[str] = []
@@ -1114,6 +1142,7 @@ def load_topic_difficulty_review_records(path: str | Path | None) -> dict[str, d
     if not isinstance(raw_records, list):
         raise TopicPacketError("Topic difficulty review sidecar must contain records[].")
     expected_count = int(payload.get("expected_record_count") or len(raw_records))
+    packet_metadata = payload.get("packet") if isinstance(payload.get("packet"), dict) else {}
     by_question: dict[str, dict[str, Any]] = {}
     for index, raw in enumerate(raw_records, start=1):
         if not isinstance(raw, dict):
@@ -1128,12 +1157,97 @@ def load_topic_difficulty_review_records(path: str | Path | None) -> dict[str, d
             raise TopicPacketError(f"Topic difficulty record for {question_id} has invalid packet_rank.")
         raw = dict(raw)
         raw["expected_record_count"] = expected_count
+        if packet_metadata:
+            raw["_topic_difficulty_packet"] = {
+                "paper_family": str(packet_metadata.get("paper_family") or "").strip(),
+                "topic_id": str(packet_metadata.get("topic_id") or "").strip(),
+                "topic_label": str(packet_metadata.get("topic_label") or "").strip(),
+                "subtopic_id": str(packet_metadata.get("subtopic_id") or "").strip(),
+                "subtopic_label": str(packet_metadata.get("subtopic_label") or "").strip(),
+            }
         by_question[question_id] = raw
     if len(by_question) != expected_count:
         raise TopicPacketError(
             f"Topic difficulty sidecar record count {len(by_question)} does not match expected count {expected_count}."
         )
     return by_question
+
+
+def topic_difficulty_review_target_packet(
+    topic_difficulty_records: dict[str, dict[str, Any]],
+    *,
+    paper_family: str | None,
+    topic: str | None,
+    subtopic: str | None,
+) -> PacketKey | None:
+    if not topic_difficulty_records:
+        return None
+    if not paper_family or not topic:
+        return None
+    packets = {
+        (
+            str(row.get("_topic_difficulty_packet", {}).get("paper_family") or "").strip(),
+            str(row.get("_topic_difficulty_packet", {}).get("topic_id") or "").strip(),
+            str(row.get("_topic_difficulty_packet", {}).get("subtopic_id") or "").strip(),
+        )
+        for row in topic_difficulty_records.values()
+        if isinstance(row.get("_topic_difficulty_packet"), dict)
+    }
+    if not packets:
+        return None
+    if len(packets) != 1:
+        raise TopicPacketError("Topic difficulty review sidecar contains records from multiple packets.")
+    packet_family, packet_topic, packet_subtopic = next(iter(packets))
+    if packet_family != paper_family or packet_topic != topic or packet_subtopic != (subtopic or ""):
+        raise TopicPacketError(
+            "Topic difficulty review sidecar does not match the requested packet: "
+            f"{packet_family}/{packet_topic}/{packet_subtopic or '<major>'} != "
+            f"{paper_family}/{topic}/{subtopic or '<major>'}."
+        )
+    return PacketKey("combined", packet_family, packet_topic, packet_subtopic)
+
+
+def topic_difficulty_review_assignment(
+    record: dict[str, Any],
+    difficulty_record: dict[str, Any],
+    *,
+    taxonomy: dict[str, Any],
+) -> tuple[Assignment | None, list[str]]:
+    packet = difficulty_record.get("_topic_difficulty_packet")
+    if not isinstance(packet, dict):
+        return None, ["missing_topic_difficulty_packet"]
+    paper_family = str(packet.get("paper_family") or "").strip()
+    topic_id = str(packet.get("topic_id") or "").strip()
+    subtopic_id = str(packet.get("subtopic_id") or "").strip()
+    topic_ref = taxonomy["topics"].get((paper_family, topic_id))
+    if topic_ref is None:
+        return None, ["invalid_topic_difficulty_packet_topic"]
+    subtopic_label = ""
+    if subtopic_id:
+        subtopic_ref = taxonomy["subtopics"].get((paper_family, topic_id, subtopic_id))
+        if subtopic_ref is None:
+            return None, ["invalid_topic_difficulty_packet_subtopic"]
+        subtopic_label = subtopic_ref.subtopic_label
+    review_reasons = list(_record_warnings(record))
+    if str(record.get("topic") or "").strip() != topic_id and "topic_difficulty_review_packet_member" not in review_reasons:
+        review_reasons.append("topic_difficulty_review_packet_member")
+    packet_section = str(difficulty_record.get("packet_section") or "review_required").strip()
+    return (
+        Assignment(
+            question_id=str(record.get("question_id", "")).strip(),
+            paper_family=paper_family,
+            topic_id=topic_id,
+            topic_label=str(topic_ref["topic_label"]),
+            subtopic_id=subtopic_id,
+            subtopic_label=subtopic_label,
+            source="topic_difficulty_review_packet",
+            confidence=_topic_confidence_score(record),
+            trust_status=_status_value(record, "topic_trust_status"),
+            strict_release_safe=packet_section == "approved",
+            review_reasons=tuple(review_reasons),
+        ),
+        [],
+    )
 
 
 def sort_packet_records(
@@ -2051,21 +2165,16 @@ def _write_flow_topic_packet_pdf(
     preserve_difficulty_order = bool(topic_difficulty_records) and all(
         str(block["record"].get("question_id") or "") in topic_difficulty_records for block in question_blocks
     )
-    ordered_blocks = _with_section_heading_blocks(
-        question_blocks,
-        page_section="Questions",
-        preserve_block_order=preserve_difficulty_order,
+    ordered_blocks = (
+        list(question_blocks)
+        if preserve_difficulty_order
+        else _with_section_heading_blocks(question_blocks, page_section="Questions")
     )
     if layout_options.answer_placement == "inline":
         answer_by_problem = {block["problem_number"]: block for block in answer_blocks}
         ordered_blocks = []
         if preserve_difficulty_order:
-            last_section = ""
             for question_block in question_blocks:
-                section = str(question_block["section"])
-                if section != last_section:
-                    ordered_blocks.append(_section_heading_block(section, page_section="Questions"))
-                    last_section = section
                 ordered_blocks.append(question_block)
                 ordered_blocks.append(answer_by_problem[question_block["problem_number"]])
         else:
@@ -2099,7 +2208,7 @@ def _write_flow_topic_packet_pdf(
         blocks_scaled_to_fit_count += int(scaled)
         if block["kind"] == "section_heading":
             continue
-        start_page = page.number + 1
+        start_page = int(block.get("placed_start_page") or page.number + 1)
         problem_number = int(block["problem_number"])
         if block["kind"] == "question":
             records_metadata[problem_number]["question_start_page"] = start_page
@@ -2114,11 +2223,12 @@ def _write_flow_topic_packet_pdf(
     if layout_options.answer_placement == "end":
         page = new_page("Answers / Mark Schemes", heading="Answers / Mark Schemes")
         answers_start_page = page.number + 1
-        for block in _with_section_heading_blocks(
-            answer_blocks,
-            page_section="Answers / Mark Schemes",
-            preserve_block_order=preserve_difficulty_order,
-        ):
+        answer_section_blocks = (
+            list(answer_blocks)
+            if preserve_difficulty_order
+            else _with_section_heading_blocks(answer_blocks, page_section="Answers / Mark Schemes")
+        )
+        for block in answer_section_blocks:
             page, current_y, scaled = _place_flow_block(
                 doc,
                 page,
@@ -2137,7 +2247,7 @@ def _write_flow_topic_packet_pdf(
             blocks_scaled_to_fit_count += int(scaled)
             if block["kind"] == "section_heading":
                 continue
-            start_page = page.number + 1
+            start_page = int(block.get("placed_start_page") or page.number + 1)
             problem_number = int(block["problem_number"])
             records_metadata[problem_number]["answer_start_page"] = start_page
             records_metadata[problem_number]["answer_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
@@ -2288,6 +2398,7 @@ def _place_flow_block(
         page = doc.new_page(width=page.rect.width, height=page.rect.height)
         page_sections.append(section)
         current_y = metrics["content_top"]
+    block["placed_start_page"] = page.number + 1
 
     render_scale = 1.0
     scaled = False
@@ -2302,7 +2413,24 @@ def _place_flow_block(
         render_scale = min(1.0, target_scalable / scalable) if scalable else 1.0
         if render_scale < 1.0:
             scaled = True
-        if render_scale < 0.55:
+        split_answer_image = (
+            block["kind"] == "answer"
+            and len(prepared_images) == 1
+            and render_scale < ANSWER_IMAGE_SPLIT_SCALE_THRESHOLD
+        )
+        if split_answer_image or render_scale < 0.55:
+            if split_answer_image:
+                return _place_split_flow_image_block(
+                    doc,
+                    page,
+                    current_y,
+                    block,
+                    prepared_images[0],
+                    page_sections,
+                    section,
+                    metrics,
+                    warnings,
+                )
             warning = (
                 f"oversized_block_scaled_below_legibility:"
                 f"{block['kind']}:{block['problem_number']}:scale={render_scale:.2f}"
@@ -2343,6 +2471,62 @@ def _place_flow_block(
     return page, y, scaled
 
 
+def _place_split_flow_image_block(
+    doc: fitz.Document,
+    page: fitz.Page,
+    current_y: float,
+    block: dict[str, Any],
+    image_info: dict[str, Any],
+    page_sections: list[str],
+    section: str,
+    metrics: dict[str, float],
+    warnings: list[str],
+) -> tuple[fitz.Page, float, bool]:
+    content_width = metrics["right"] - metrics["left"]
+    header = str(block.get("header") or "")
+    render_width = _rendered_image_width(image_info, content_width)
+    image_path = Path(str(image_info["path"]))
+    segment_count = 0
+    with Image.open(image_path) as source:
+        source.load()
+        source_width, source_height = source.size
+        points_per_pixel = render_width / max(1, source_width)
+        y_pixel = 0
+        while y_pixel < source_height:
+            if segment_count > 0:
+                page = doc.new_page(width=page.rect.width, height=page.rect.height)
+                page_sections.append(section)
+                current_y = metrics["content_top"]
+            continued_block = dict(block)
+            if segment_count > 0:
+                continued_block["header"] = f"{header} (continued)"
+            current_header_height = _flow_block_header_height(continued_block, content_width, metrics)
+            page.insert_textbox(
+                fitz.Rect(metrics["left"], current_y, metrics["right"], current_y + current_header_height),
+                str(continued_block["header"]),
+                fontsize=FLOW_BLOCK_HEADER_FONT_SIZE,
+                color=(0.1, 0.1, 0.1),
+            )
+            y = current_y + current_header_height
+            available_points = max(1.0, metrics["content_bottom"] - y - metrics["block_bottom_gap"])
+            available_pixels = max(1, int(available_points / points_per_pixel))
+            next_y_pixel = min(source_height, y_pixel + available_pixels)
+            if next_y_pixel <= y_pixel:
+                next_y_pixel = min(source_height, y_pixel + 1)
+            crop = source.crop((0, y_pixel, source_width, next_y_pixel))
+            stream = io.BytesIO()
+            crop = _flatten_for_pdf(crop)
+            crop.save(stream, format="PNG", optimize=True)
+            render_height = crop.height * points_per_pixel
+            rect = fitz.Rect(metrics["left"], y, metrics["left"] + render_width, y + render_height)
+            page.insert_image(rect, stream=stream.getvalue(), keep_proportion=True)
+            y_pixel = next_y_pixel
+            current_y = y + render_height + metrics["block_bottom_gap"]
+            segment_count += 1
+    warnings.append(f"oversized_block_split_across_pages:{block['kind']}:{block['problem_number']}:segments={segment_count}")
+    return page, current_y, False
+
+
 def _flow_block_height(
     block: dict[str, Any],
     prepared_images: Sequence[dict[str, Any]],
@@ -2360,7 +2544,7 @@ def _flow_block_height(
 
 def _flow_block_header_height(block: dict[str, Any], content_width: float, metrics: dict[str, float]) -> float:
     line_count = _wrapped_line_count(str(block.get("header") or ""), content_width, FLOW_BLOCK_HEADER_FONT_SIZE)
-    wrapped_height = line_count * metrics["block_header_line_height"] + metrics["block_header_vertical_padding"]
+    wrapped_height = (line_count + 1) * metrics["block_header_line_height"] + metrics["block_header_vertical_padding"]
     return max(metrics["block_header_min_height"], wrapped_height)
 
 
@@ -2554,18 +2738,8 @@ def _with_section_heading_blocks(
     blocks: Sequence[dict[str, Any]],
     *,
     page_section: str,
-    preserve_block_order: bool = False,
 ) -> list[dict[str, Any]]:
     ordered: list[dict[str, Any]] = []
-    if preserve_block_order:
-        last_section = ""
-        for block in blocks:
-            section = str(block.get("section") or "")
-            if section != last_section:
-                ordered.append(_section_heading_block(section, page_section=page_section))
-                last_section = section
-            ordered.append(block)
-        return ordered
     for section in PACKET_SECTION_ORDER:
         section_blocks = [block for block in blocks if block.get("section") == section]
         if not section_blocks:

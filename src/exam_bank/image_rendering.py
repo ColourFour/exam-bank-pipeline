@@ -434,12 +434,13 @@ def _single_page_union_regions(
         layout,
         config,
     )
-    if _box_height(padded) > layout.height * config.detection.max_crop_height_ratio:
-        return None, ["single_page_union_skipped_too_tall"]
-    if _contains_other_question_start(content_box, span, layout, config):
-        return None, ["single_page_union_skipped_neighbor_question"]
     padded, top_flags = _trim_crop_top_to_current_anchor(padded, content_box, span, layout)
     padded, boundary_flags = _trim_crop_at_next_question_anchor(padded, content_box, span, layout, config)
+    trimmed_content_box = _content_box_within_crop(content_box, padded)
+    if _box_height(padded) > layout.height * config.detection.max_crop_height_ratio:
+        return None, ["single_page_union_skipped_too_tall"]
+    if _contains_other_question_start(trimmed_content_box, span, layout, config):
+        return None, ["single_page_union_skipped_neighbor_question"]
 
     content_area = sum(_box_area(box) for box in content_boxes)
     sparse_ratio = _box_area(padded) / max(1.0, content_area)
@@ -548,12 +549,13 @@ def _union_regions_for_page(
         layout,
         config,
     )
-    if _box_height(padded) > layout.height * config.detection.max_crop_height_ratio:
-        return None, f"{kind}_skipped_too_tall"
-    if _contains_other_question_start(content_box, span, layout, config):
-        return None, f"{kind}_skipped_neighbor_question"
     padded, _top_flags = _trim_crop_top_to_current_anchor(padded, content_box, span, layout)
     padded, _boundary_flags = _trim_crop_at_next_question_anchor(padded, content_box, span, layout, config)
+    trimmed_content_box = _content_box_within_crop(content_box, padded)
+    if _box_height(padded) > layout.height * config.detection.max_crop_height_ratio:
+        return None, f"{kind}_skipped_too_tall"
+    if _contains_other_question_start(trimmed_content_box, span, layout, config):
+        return None, f"{kind}_skipped_neighbor_question"
 
     content_area = sum(_box_area(box) for box in content_boxes)
     sparse_ratio = _box_area(padded) / max(1.0, content_area)
@@ -577,6 +579,15 @@ def _union_regions_for_page(
     ), f"{kind}_used"
 
 
+def _content_box_within_crop(content_box: BoundingBox, crop_box: BoundingBox) -> BoundingBox:
+    return BoundingBox(
+        content_box.x0,
+        max(content_box.y0, crop_box.y0),
+        content_box.x1,
+        min(content_box.y1, crop_box.y1),
+    )
+
+
 def _trim_crop_top_to_current_anchor(
     crop_box: BoundingBox,
     content_box: BoundingBox,
@@ -585,10 +596,10 @@ def _trim_crop_top_to_current_anchor(
 ) -> tuple[BoundingBox, list[str]]:
     if layout.page_number != span.start_page:
         return crop_box, []
-    if content_box.y0 < span.start_y - 1.0:
-        return crop_box, []
-    safe_top = max(crop_box.y0, span.start_y - 2.0)
+    safe_top = max(crop_box.y0, span.start_y - 24.0)
     if safe_top <= crop_box.y0 + 1.0:
+        return crop_box, []
+    if safe_top >= min(crop_box.y1 - 1.0, content_box.y1 - 1.0):
         return crop_box, []
     return BoundingBox(crop_box.x0, safe_top, crop_box.x1, crop_box.y1), ["crop_header_padding_trimmed"]
 
@@ -605,7 +616,7 @@ def _trim_crop_at_next_question_anchor(
         return crop_box, []
 
     safe_bottom = boundary_y - 1.0
-    if safe_bottom <= max(content_box.y1 + 1.0, crop_box.y0 + config.detection.min_crop_height):
+    if safe_bottom <= crop_box.y0 + config.detection.min_crop_height:
         return crop_box, ["foreign_question_boundary_trim_skipped_protected_content", "crop_uncertain"]
 
     return BoundingBox(crop_box.x0, crop_box.y0, crop_box.x1, safe_bottom), ["foreign_question_boundary_trimmed"]
@@ -618,7 +629,7 @@ def _next_foreign_question_anchor_y(span: QuestionSpan, layout: PageLayout, conf
             continue
         if not _anchor_is_later_foreign_question(anchor.question_number, span.question_number):
             continue
-        if anchor.x0 > config.detection.question_start_max_x + 20 and _anchor_is_current_question_diagram_label(anchor, span, layout, config):
+        if _anchor_is_current_question_diagram_label(anchor, span, layout, config):
             continue
         if layout.page_number == span.start_page and anchor.y0 <= span.start_y + config.detection.anchor_y_tolerance:
             continue
@@ -785,8 +796,6 @@ def _foreign_question_anchors_for_span_page(
             continue
         if layout.page_number == span.start_page and anchor.y0 <= span.start_y + config.detection.anchor_y_tolerance:
             continue
-        if layout.page_number == span.end_page and anchor.y0 >= span.end_y + config.detection.anchor_y_tolerance:
-            continue
         if anchor.confidence < max(0.52, config.detection.anchor_min_confidence - 0.08):
             continue
         anchors.append(anchor)
@@ -801,6 +810,12 @@ def _anchor_is_current_question_diagram_label(
 ) -> bool:
     if not _span_has_figure_prompt(span) or anchor.bbox is None:
         return False
+    if anchor.question_number != span.question_number:
+        label = _clean_text_line(anchor.label)
+        if label == anchor.question_number and anchor.x0 <= config.detection.question_start_max_x:
+            return False
+        if not _looks_like_diagram_axis_or_label_text(label):
+            return False
     answer_rule_bands = _answer_rule_y_bands(layout)
     for graphic in layout.graphics:
         if _page_furniture_box_label(graphic, layout, config, answer_rule_bands):
@@ -2319,6 +2334,8 @@ def _page_furniture_box_label(
     config: AppConfig,
     answer_rule_bands: list[float],
 ) -> str | None:
+    if _is_full_page_background_graphic(box, layout):
+        return "page_background"
     if _is_watermark_like_box(box, layout):
         return "watermark"
     if _is_full_height_page_edge_furniture_box(box, layout):
@@ -2357,12 +2374,29 @@ def _is_scan_edge_box(box: BoundingBox, layout: PageLayout) -> bool:
     return near_edge and (width <= 8 or height <= 8)
 
 
+def _is_full_page_background_graphic(box: BoundingBox, layout: PageLayout) -> bool:
+    width = max(0.0, box.x1 - box.x0)
+    height = max(0.0, box.y1 - box.y0)
+    touches_page_edge = box.x0 <= 4 or box.x1 >= layout.width - 4 or box.y0 <= 4 or box.y1 >= layout.height - 4
+    return touches_page_edge and width >= layout.width * 0.82 and height >= layout.height * 0.75
+
+
 def _is_watermark_like_box(box: BoundingBox, layout: PageLayout) -> bool:
     width = max(0.0, box.x1 - box.x0)
     height = max(0.0, box.y1 - box.y0)
+    touches_page_edge = box.x0 <= 4 or box.x1 >= layout.width - 4 or box.y0 <= 4 or box.y1 >= layout.height - 4
+    if (
+        touches_page_edge
+        and box.x0 >= layout.width * 0.55
+        and box.y0 <= layout.height * 0.08
+        and width >= layout.width * 0.20
+        and height >= layout.height * 0.16
+    ):
+        return True
     if width < layout.width * 0.82 or height < layout.height * 0.12:
         return False
-    touches_page_edge = box.x0 <= 4 or box.x1 >= layout.width - 4 or box.y0 <= 4 or box.y1 >= layout.height - 4
+    if height >= layout.height * 0.75:
+        return False
     if not touches_page_edge:
         return False
     near_top_or_bottom = box.y0 <= layout.height * 0.18 or box.y1 >= layout.height * 0.82
@@ -2374,7 +2408,12 @@ def _is_full_height_page_edge_furniture_box(box: BoundingBox, layout: PageLayout
     height = max(0.0, box.y1 - box.y0)
     touches_page_side = box.x0 <= 4 or box.x1 >= layout.width - 4
     spans_page_height = box.y0 <= 4 and box.y1 >= layout.height - 4
-    return touches_page_side and spans_page_height and height >= layout.height * 0.82 and width >= layout.width * 0.12
+    return (
+        touches_page_side
+        and spans_page_height
+        and height >= layout.height * 0.82
+        and layout.width * 0.12 <= width <= layout.width * 0.65
+    )
 
 
 def _is_answer_rule_like(box: BoundingBox, layout: PageLayout) -> bool:

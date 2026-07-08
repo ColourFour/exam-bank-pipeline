@@ -24,6 +24,7 @@ from . import (
     deepseek_enrich,
     topic_confidence_rescoring,
     topic_difficulty_review,
+    topic_packet_visual_audit,
     topic_packets,
     topic_review_loop,
     topic_routing,
@@ -354,6 +355,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     topic_difficulty_review.add_topic_difficulty_review_cli_arguments(topic_difficulty)
     topic_difficulty.set_defaults(func=cmd_topic_difficulty_review)
+
+    topic_packet_visual = subparsers.add_parser(
+        "topic-packet-visual-audit",
+        help="Build, run, and import rendered page-level topic-packet visual QA decisions.",
+    )
+    topic_packet_visual_audit.add_topic_packet_visual_audit_cli_arguments(topic_packet_visual)
+    topic_packet_visual.set_defaults(func=cmd_topic_packet_visual_audit)
 
     topic_packet = subparsers.add_parser(
         "topic-packets",
@@ -1180,6 +1188,12 @@ def cmd_visual_topic_audit(args: argparse.Namespace) -> int:
 
 def cmd_topic_difficulty_review(args: argparse.Namespace) -> int:
     report = topic_difficulty_review.run_topic_difficulty_review_from_args(args)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report.get("ok", True) else 2
+
+
+def cmd_topic_packet_visual_audit(args: argparse.Namespace) -> int:
+    report = topic_packet_visual_audit.run_topic_packet_visual_audit_from_args(args)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report.get("ok", True) else 2
 
