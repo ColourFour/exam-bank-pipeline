@@ -1520,7 +1520,7 @@ def test_oversized_image_warning_is_recorded(tmp_path: Path) -> None:
     paths = _fixture(tmp_path)
     _png(paths["artifact_root"] / "p3" / "paper" / "questions" / "q1.png", size=(800, 3000))
 
-    summary = generate_topic_packets(
+    generate_topic_packets(
         question_bank_path=paths["bank"],
         taxonomy_path=paths["taxonomy"],
         canonical_taxonomy_root=paths["canonical_root"],
@@ -1529,9 +1529,9 @@ def test_oversized_image_warning_is_recorded(tmp_path: Path) -> None:
     )
 
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
-    assert manifest["blocks_scaled_to_fit_count"] >= 1
-    assert manifest["oversized_block_warnings"]
-    assert summary["oversized_block_warning_count"] >= 1
+    topic_warnings = manifest["pdf_outputs"]["topic_packet"]["warnings"]
+    assert any(warning.startswith("oversized_block_split_across_pages:question:1") for warning in topic_warnings)
+    assert not any("oversized_block_scaled_below_legibility:question:1" in warning for warning in manifest["oversized_block_warnings"])
 
 
 def test_oversized_answer_image_is_split_instead_of_scaled_below_legibility(tmp_path: Path) -> None:

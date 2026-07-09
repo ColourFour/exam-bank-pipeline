@@ -15,6 +15,15 @@ pytestmark = [pytest.mark.integration, pytest.mark.rendering]
 
 REPO_S08_P1_MS = Path("input/pastpapers/9709/2008/mark_schemes/9709_s08_ms_1.pdf")
 REPO_W08_P1_MS = Path("input/pastpapers/9709/2008/mark_schemes/9709_w08_ms_1.pdf")
+REPO_S17_P33_MS = Path("input/pastpapers/9709/2017/mark_schemes/9709_s17_ms_33.pdf")
+REPO_W17_P31_MS = Path("input/pastpapers/9709/2017/mark_schemes/9709_w17_ms_31.pdf")
+REPO_W17_P33_MS = Path("input/pastpapers/9709/2017/mark_schemes/9709_w17_ms_33.pdf")
+REPO_W18_P32_MS = Path("input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_32.pdf")
+REPO_S19_P33_MS = Path("input/pastpapers/9709/2019/mark_schemes/9709_s19_ms_33.pdf")
+REPO_S20_P31_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_31.pdf")
+REPO_S20_P33_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_33.pdf")
+REPO_M21_P32_MS = Path("input/pastpapers/9709/2021/mark_schemes/9709_m21_ms_32.pdf")
+REPO_M25_P32_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_m25_ms_32.pdf")
 REPO_W25_P35_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_35.pdf")
 
 
@@ -205,3 +214,363 @@ def test_modern_2025_q08_mark_scheme_keeps_all_subparts_without_neighbors(tmp_pa
         width, height = image.size
     assert width > 2200
     assert 1300 < height < 1550
+
+
+def test_modern_2025_p32_q08_mark_scheme_preserves_guidance_column(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_M25_P32_MS.exists():
+        pytest.skip("Repo 2025 P32 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "8": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2025",
+            session="m25",
+            component="32",
+            question_number="8",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_M25_P32_MS,
+        config,
+        ["8"],
+        question_marks={"8": 7},
+        question_subparts={"8": []},
+        question_identities=identities,
+    )["8"]
+
+    assert result.mapping_status == "pass"
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "32summer25_q08")
+    assert debug["validation_passed"] is True
+    assert debug["detected_primary_questions_in_left_column"] == ["8"]
+    assert debug["page_numbers"] == [18]
+
+    with Image.open(result.image_path) as image:
+        grayscale = image.convert("L")
+        mask = grayscale.point(lambda pixel: 255 if pixel < 245 else 0, mode="1")
+        content_box = mask.getbbox()
+        assert content_box is not None
+        assert content_box[2] > image.width * 0.9
+
+
+def test_modern_2020_p31_q05_ignores_generic_misread_policy_row(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_S20_P31_MS.exists():
+        pytest.skip("Repo 2020 P31 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "5": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2020",
+            session="s20",
+            component="31",
+            question_number="5",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_S20_P31_MS,
+        config,
+        ["5"],
+        question_marks={"5": 8},
+        question_subparts={"5": ["a", "b"]},
+        question_identities=identities,
+    )["5"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [8]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "31summer20_q05")
+    assert debug["validation_passed"] is True
+    assert debug["crop_box"][0]["y1"] - debug["crop_box"][0]["y0"] > 250
+
+    with Image.open(result.image_path) as image:
+        assert image.height > 700
+
+
+def test_modern_2020_p31_q01_ignores_mathematics_specific_policy_row(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_S20_P31_MS.exists():
+        pytest.skip("Repo 2020 P31 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "1": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2020",
+            session="s20",
+            component="31",
+            question_number="1",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_S20_P31_MS,
+        config,
+        ["1"],
+        question_marks={"1": 4},
+        question_subparts={"1": []},
+        question_identities=identities,
+    )["1"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [6]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "31summer20_q01")
+    assert debug["validation_passed"] is True
+    assert debug["crop_box"][0]["y1"] - debug["crop_box"][0]["y0"] > 100
+
+    with Image.open(result.image_path) as image:
+        assert image.height > 350
+
+
+def test_modern_2020_p33_q01_includes_label_column_outside_answer_grid(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_S20_P33_MS.exists():
+        pytest.skip("Repo 2020 P33 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "1": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2020",
+            session="s20",
+            component="33",
+            question_number="1",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_S20_P33_MS,
+        config,
+        ["1"],
+        question_marks={"1": 4},
+        question_subparts={"1": []},
+        question_identities=identities,
+    )["1"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [6]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "33summer20_q01")
+    assert debug["validation_passed"] is True
+    assert debug["detected_primary_questions_in_left_column"] == ["1"]
+    assert debug["crop_box"][0]["x0"] < 110
+
+    with Image.open(result.image_path) as image:
+        assert image.height > 650
+
+
+def test_modern_2021_p32_q04_preserves_marks_and_guidance_columns(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_M21_P32_MS.exists():
+        pytest.skip("Repo 2021 P32 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "4": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2021",
+            session="m21",
+            component="32",
+            question_number="4",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_M21_P32_MS,
+        config,
+        ["4"],
+        question_marks={"4": 5},
+        question_subparts={"4": []},
+        question_identities=identities,
+    )["4"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [8, 9]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "32summer21_q04")
+    assert debug["validation_passed"] is True
+    assert debug["crop_box"][0]["x1"] - debug["crop_box"][0]["x0"] > 700
+
+    with Image.open(result.image_path) as image:
+        assert image.width > 2100
+        assert image.height > 1400
+
+
+def test_modern_2018_p32_q03_stops_before_following_table_header(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_W18_P32_MS.exists():
+        pytest.skip("Repo 2018 P32 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "3": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2018",
+            session="w18",
+            component="32",
+            question_number="3",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_W18_P32_MS,
+        config,
+        ["3"],
+        question_marks={"3": 5},
+        question_subparts={"3": ["i", "ii"]},
+        question_identities=identities,
+    )["3"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [7, 8]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "32winter18_q03")
+    assert debug["validation_passed"] is True
+    assert debug["detected_primary_questions_in_left_column"] == ["3(i)", "3(ii)"]
+    assert debug["crop_box"][1]["y1"] < 210
+
+    with Image.open(result.image_path) as image:
+        assert image.width > 2200
+        assert 850 < image.height < 1000
+
+
+def test_modern_2019_p33_q03_stops_before_following_table_header(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_S19_P33_MS.exists():
+        pytest.skip("Repo 2019 P33 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "3": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2019",
+            session="s19",
+            component="33",
+            question_number="3",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_S19_P33_MS,
+        config,
+        ["3"],
+        question_marks={"3": 7},
+        question_subparts={"3": ["i", "ii"]},
+        question_identities=identities,
+    )["3"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [7]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "33summer19_q03")
+    assert debug["validation_passed"] is True
+    assert debug["detected_primary_questions_in_left_column"] == ["3(i)", "3(ii)"]
+    assert debug["crop_box"][0]["y1"] < 330
+
+    with Image.open(result.image_path) as image:
+        assert image.width > 2200
+        assert 740 < image.height < 840
+
+
+@pytest.mark.parametrize(
+    ("source_pdf", "component", "question_id"),
+    [
+        (REPO_W17_P31_MS, "31", "31winter17_q08"),
+        (REPO_W17_P33_MS, "33", "33winter17_q08"),
+    ],
+)
+def test_modern_2017_winter_q08_stops_before_three_column_table_header(
+    tmp_path: Path, source_pdf: Path, component: str, question_id: str
+) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not source_pdf.exists():
+        pytest.skip(f"Repo 2017 winter P{component} mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "8": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2017",
+            session="w17",
+            component=component,
+            question_number="8",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        source_pdf,
+        config,
+        ["8"],
+        question_marks={"8": 9},
+        question_subparts={"8": ["i", "ii"]},
+        question_identities=identities,
+    )["8"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [7]
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), question_id)
+    assert debug["validation_passed"] is True
+    assert debug["detected_primary_questions_in_left_column"] == ["8"]
+    assert debug["crop_box"][0]["y1"] < 395
+
+    with Image.open(result.image_path) as image:
+        assert image.width > 1500
+        assert 850 < image.height < 1050
+
+
+def test_modern_2017_p33_q04_formulaic_fallback_stops_before_q05(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    Image = pytest.importorskip("PIL.Image")
+    if not REPO_S17_P33_MS.exists():
+        pytest.skip("Repo 2017 P33 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identities = {
+        "4": paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="pm3",
+            year="2017",
+            session="s17",
+            component="33",
+            question_number="4",
+        )
+    }
+
+    result = render_mark_scheme_images(
+        REPO_S17_P33_MS,
+        config,
+        ["4"],
+        question_marks={"4": 4},
+        question_subparts={"4": []},
+        question_identities=identities,
+    )["4"]
+
+    assert result.mapping_status == "pass"
+    assert result.page_numbers == [5]
+    assert result.image_path and result.image_path.exists()
+
+    with Image.open(result.image_path) as image:
+        assert 250 < image.height < 700

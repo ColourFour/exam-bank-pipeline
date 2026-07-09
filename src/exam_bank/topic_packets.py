@@ -2413,13 +2413,12 @@ def _place_flow_block(
         render_scale = min(1.0, target_scalable / scalable) if scalable else 1.0
         if render_scale < 1.0:
             scaled = True
-        split_answer_image = (
-            block["kind"] == "answer"
-            and len(prepared_images) == 1
-            and render_scale < ANSWER_IMAGE_SPLIT_SCALE_THRESHOLD
+        split_single_image = len(prepared_images) == 1 and (
+            (block["kind"] == "answer" and render_scale < ANSWER_IMAGE_SPLIT_SCALE_THRESHOLD)
+            or render_scale < 0.55
         )
-        if split_answer_image or render_scale < 0.55:
-            if split_answer_image:
+        if split_single_image or render_scale < 0.55:
+            if split_single_image:
                 return _place_split_flow_image_block(
                     doc,
                     page,

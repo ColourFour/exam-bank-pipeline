@@ -21,8 +21,8 @@ BARCODE_BAND_MAX_WIDTH_RATIO = 0.72
 BARCODE_BAND_MAX_HEIGHT_RATIO = 0.12
 BARCODE_BAND_MIN_DARK_RATIO = 0.075
 BARCODE_BAND_PADDING_PX = 3
-EDGE_WATERMARK_MIN_WIDTH_RATIO = 0.12
-EDGE_WATERMARK_MIN_HEIGHT_RATIO = 0.09
+EDGE_WATERMARK_MIN_WIDTH_RATIO = 0.03
+EDGE_WATERMARK_MIN_HEIGHT_RATIO = 0.035
 EDGE_WATERMARK_COMPONENT_DOWNSAMPLE = 4
 
 
@@ -141,11 +141,276 @@ def trim_excess_render_whitespace(
 
 
 def clean_rendered_crop_image(image: Any) -> Any:
+    cleaned = _clean_rendered_crop_image_once(image)
+    return _clean_rendered_crop_image_once(cleaned)
+
+
+def _clean_rendered_crop_image_once(image: Any) -> Any:
+    cleaned = _remove_rendered_crop_furniture(image)
+    trimmed = trim_excess_render_whitespace(cleaned)
+    if trimmed is cleaned:
+        return trimmed
+    return trim_excess_render_whitespace(_remove_rendered_crop_furniture(trimmed))
+
+
+def _remove_rendered_crop_furniture(image: Any) -> Any:
     cleaned = trim_isolated_edge_furniture(image)
+    cleaned = remove_centered_top_page_number_marks(cleaned)
     cleaned = remove_dense_horizontal_furniture_bands(cleaned)
+    cleaned = remove_edge_touching_scan_marks(cleaned)
+    cleaned = remove_isolated_top_bottom_edge_marks(cleaned)
+    cleaned = remove_light_top_bottom_rule_fragments(cleaned)
     cleaned = remove_isolated_edge_marks(cleaned)
     cleaned = remove_edge_watermark_fragments(cleaned)
-    return trim_excess_render_whitespace(cleaned)
+    return cleaned
+
+
+def remove_centered_top_page_number_marks(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 180,
+    top_edge_px: int = 10,
+    min_inner_gap_px: int = 18,
+    max_width_ratio: float = 0.08,
+    max_height_ratio: float = 0.07,
+    center_tolerance_ratio: float = 0.14,
+    padding_px: int = 3,
+) -> Any:
+    """White out small centered page numbers clipped at the top of a crop."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
+        return image
+
+    mask = image.convert("L").point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    components = _connected_components(mask)
+    candidates: list[tuple[int, int, int, int]] = []
+    top_limit = max(top_edge_px, int(height * 0.015))
+    for x0, y0, x1, y1, count in components:
+        component_width = x1 - x0
+        component_height = y1 - y0
+        if y0 > top_limit:
+            continue
+        if component_width > width * max_width_ratio or component_height > height * max_height_ratio:
+            continue
+        if component_width < 3 or component_height < 5 or count < 8:
+            continue
+        center = (x0 + x1) / 2
+        if abs(center - width / 2) > width * center_tolerance_ratio:
+            continue
+        if not _edge_component_has_clear_inner_gap(
+            image.convert("L"),
+            width=width,
+            height=height,
+            y0=y0,
+            y1=y1,
+            min_gap_px=min_inner_gap_px,
+            nonwhite_threshold=nonwhite_threshold,
+        ):
+            continue
+        candidates.append((x0, y0, x1, y1))
+
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle(
+            (max(0, x0 - padding_px), max(0, y0 - padding_px), min(width, x1 + padding_px), min(height, y1 + padding_px)),
+            fill="white",
+        )
+    return output
+
+
+def remove_edge_touching_scan_marks(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 180,
+    max_width_ratio: float = 0.05,
+    max_height_ratio: float = 0.12,
+    padding_px: int = 4,
+) -> Any:
+    """White out small dense marks that touch the actual crop edge."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
+        return image
+
+    mask = image.convert("L").point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    candidates: list[tuple[int, int, int, int]] = []
+    for x0, y0, x1, y1, count in _connected_components(mask):
+        component_width = x1 - x0
+        component_height = y1 - y0
+        touches_crop_edge = x0 <= 1 or x1 >= width - 1
+        if not touches_crop_edge:
+            continue
+        if component_width > width * max_width_ratio or component_height > height * max_height_ratio:
+            continue
+        if component_width < 4 or component_height < 8:
+            continue
+        density = count / max(1, component_width * component_height)
+        if density < 0.35:
+            continue
+        candidates.append((x0, y0, x1, y1))
+
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle(
+            (max(0, x0 - padding_px), max(0, y0 - padding_px), min(width, x1 + padding_px), min(height, y1 + padding_px)),
+            fill="white",
+        )
+    return output
+
+
+def remove_isolated_top_bottom_edge_marks(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 180,
+    max_width_px: int = 26,
+    max_height_px: int = 18,
+    max_skinny_height_px: int = 45,
+    edge_px: int = 2,
+    min_gap_px: int = 18,
+    padding_px: int = 4,
+) -> Any:
+    """White out tiny isolated page-number fragments clipped at crop top/bottom edges."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
+        return image
+
+    grayscale = image.convert("L")
+    mask = grayscale.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    candidates: list[tuple[int, int, int, int]] = []
+    for x0, y0, x1, y1, count in _connected_components(mask):
+        component_width = x1 - x0
+        component_height = y1 - y0
+        touches_top_or_bottom = y0 <= edge_px or y1 >= height - edge_px
+        if not touches_top_or_bottom:
+            continue
+        skinny_edge_rule = component_width <= 4 and component_height <= max_skinny_height_px
+        if component_width > max_width_px or (component_height > max_height_px and not skinny_edge_rule):
+            continue
+        if component_width < 2 or component_height < 5 or count < 5:
+            continue
+        if not _edge_component_has_clear_inner_gap(
+            grayscale,
+            width=width,
+            height=height,
+            y0=y0,
+            y1=y1,
+            min_gap_px=min_gap_px,
+            nonwhite_threshold=nonwhite_threshold,
+        ):
+            continue
+        candidates.append((x0, y0, x1, y1))
+
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle(
+            (max(0, x0 - padding_px), max(0, y0 - padding_px), min(width, x1 + padding_px), min(height, y1 + padding_px)),
+            fill="white",
+        )
+    return output
+
+
+def remove_light_top_bottom_rule_fragments(
+    image: Any,
+    *,
+    nonwhite_threshold: int = 235,
+    max_width_px: int = 4,
+    max_height_px: int = 45,
+    edge_px: int = 2,
+    min_gap_px: int = 18,
+    padding_px: int = 4,
+) -> Any:
+    """White out faint skinny rule fragments clipped at top/bottom crop edges."""
+
+    width = int(getattr(image, "width", 0) or 0)
+    height = int(getattr(image, "height", 0) or 0)
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
+        return image
+
+    grayscale = image.convert("L")
+    mask = grayscale.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1")
+    candidates: list[tuple[int, int, int, int]] = []
+    for x0, y0, x1, y1, count in _connected_components(mask):
+        component_width = x1 - x0
+        component_height = y1 - y0
+        if y0 > edge_px and y1 < height - edge_px:
+            continue
+        if component_width > max_width_px or component_height > max_height_px:
+            continue
+        if component_width < 1 or component_height < 8 or count < 5:
+            continue
+        if not _edge_component_has_clear_inner_gap(
+            grayscale,
+            width=width,
+            height=height,
+            y0=y0,
+            y1=y1,
+            min_gap_px=min_gap_px,
+            nonwhite_threshold=nonwhite_threshold,
+        ):
+            continue
+        candidates.append((x0, y0, x1, y1))
+
+    if not candidates:
+        return image
+
+    from PIL import ImageDraw
+
+    output = image.copy()
+    draw = ImageDraw.Draw(output)
+    for x0, y0, x1, y1 in candidates:
+        draw.rectangle(
+            (max(0, x0 - padding_px), max(0, y0 - padding_px), min(width, x1 + padding_px), min(height, y1 + padding_px)),
+            fill="white",
+        )
+    return output
+
+
+def _edge_component_has_clear_inner_gap(
+    grayscale: Any,
+    *,
+    width: int,
+    height: int,
+    y0: int,
+    y1: int,
+    min_gap_px: int,
+    nonwhite_threshold: int,
+) -> bool:
+    if y0 <= 2:
+        probe_top = y1
+        probe_bottom = min(height, y1 + min_gap_px)
+    elif y1 >= height - 2:
+        probe_top = max(0, y0 - min_gap_px)
+        probe_bottom = y0
+    else:
+        return False
+    for y in range(probe_top, probe_bottom):
+        row = grayscale.crop((0, y, width, y + 1))
+        if row.point(lambda pixel: 255 if pixel < nonwhite_threshold else 0, mode="1").getbbox() is not None:
+            return False
+    return True
 
 
 def remove_dense_horizontal_furniture_bands(
@@ -162,7 +427,7 @@ def remove_dense_horizontal_furniture_bands(
 
     width = int(getattr(image, "width", 0) or 0)
     height = int(getattr(image, "height", 0) or 0)
-    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
         return image
 
     grayscale = image.convert("L")
@@ -202,8 +467,16 @@ def remove_dense_horizontal_furniture_bands(
     candidates = [
         (y0, y1, x0, x1)
         for y0, y1, x0, x1 in bands
-        if y0 <= max(4, int(height * 0.12))
-        and (y1 - y0) <= max(3, int(height * max_height_ratio))
+        if (y1 - y0) <= max(14, int(height * max_height_ratio))
+        and _is_dense_furniture_band_position(
+            width=width,
+            height=height,
+            y0=y0,
+            y1=y1,
+            x0=x0,
+            x1=x1,
+        )
+        and _top_dense_band_is_safe_to_remove(grayscale, width=width, height=height, y0=y0, y1=y1)
         and _band_has_repeating_vertical_bars(
             grayscale,
             y0=y0,
@@ -231,6 +504,82 @@ def remove_dense_horizontal_furniture_bands(
             fill="white",
         )
     return output
+
+
+def _top_dense_band_is_safe_to_remove(
+    grayscale: Any,
+    *,
+    width: int,
+    height: int,
+    y0: int,
+    y1: int,
+) -> bool:
+    if y0 <= max(3, int(height * 0.01)):
+        return True
+    required_gap = max(16, int(height * 0.04))
+    probe_top = max(0, y0 - required_gap)
+    for y in range(probe_top, y0):
+        row = grayscale.crop((0, y, width, y + 1))
+        if row.point(lambda pixel: 255 if pixel < 80 else 0, mode="1").getbbox() is not None:
+            return False
+    probe_bottom = min(height, y1 + required_gap)
+    for y in range(y1, probe_bottom):
+        row = grayscale.crop((0, y, width, y + 1))
+        if row.point(lambda pixel: 255 if pixel < 80 else 0, mode="1").getbbox() is not None:
+            return False
+    return True
+
+
+def _connected_components(mask: Any) -> list[tuple[int, int, int, int, int]]:
+    width, height = mask.size
+    pixels = mask.load()
+    visited: set[tuple[int, int]] = set()
+    components: list[tuple[int, int, int, int, int]] = []
+
+    for y in range(height):
+        for x in range(width):
+            if (x, y) in visited or not pixels[x, y]:
+                continue
+            stack = [(x, y)]
+            visited.add((x, y))
+            x0 = x1 = x
+            y0 = y1 = y
+            count = 0
+            while stack:
+                cx, cy = stack.pop()
+                count += 1
+                x0 = min(x0, cx)
+                x1 = max(x1, cx)
+                y0 = min(y0, cy)
+                y1 = max(y1, cy)
+                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):
+                    if nx < 0 or nx >= width or ny < 0 or ny >= height:
+                        continue
+                    if (nx, ny) in visited or not pixels[nx, ny]:
+                        continue
+                    visited.add((nx, ny))
+                    stack.append((nx, ny))
+            components.append((x0, y0, x1 + 1, y1 + 1, count))
+
+    return components
+
+
+def _is_dense_furniture_band_position(
+    *,
+    width: int,
+    height: int,
+    y0: int,
+    y1: int,
+    x0: int,
+    x1: int,
+) -> bool:
+    top_edge_margin = max(16, int(height * 0.06))
+    horizontal_edge_margin = max(8, int(width * 0.02))
+    if y0 <= top_edge_margin:
+        return True
+    if x0 <= horizontal_edge_margin and (x1 - x0) >= int(width * BARCODE_BAND_MIN_WIDTH_RATIO):
+        return True
+    return False
 
 
 def _band_has_repeating_vertical_bars(
@@ -278,7 +627,7 @@ def remove_isolated_edge_marks(
 
     width = int(getattr(image, "width", 0) or 0)
     height = int(getattr(image, "height", 0) or 0)
-    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
         return image
 
     grayscale = image.convert("L")
@@ -349,7 +698,7 @@ def remove_edge_watermark_fragments(
 
     width = int(getattr(image, "width", 0) or 0)
     height = int(getattr(image, "height", 0) or 0)
-    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < WHITESPACE_TRIM_MIN_DIMENSION_PX:
+    if width < WHITESPACE_TRIM_MIN_DIMENSION_PX or height < 48:
         return image
 
     scale = max(1, component_downsample)

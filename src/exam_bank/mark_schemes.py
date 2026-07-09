@@ -9,7 +9,7 @@ from .config import AppConfig
 from .core.asset_paths import AssetPath, AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import parse_filename_metadata
-from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
+from .image_limits import cap_image_pixels, render_pdf_area, trim_excess_render_whitespace
 from .identifiers import normalize_question_id, parent_question_id
 from .mark_scheme_models import (
     HeaderGeometry,
@@ -629,7 +629,7 @@ def _render_mark_scheme_crops(
         source_file=mark_scheme_pdf,
         context=f"markscheme_output:{question_number}",
     )
-    stitched = clean_rendered_crop_image(stitched)
+    stitched = trim_excess_render_whitespace(stitched)
     stitched.save(output_path)
     return output_path, debug_paths
 
@@ -645,6 +645,7 @@ def _normalize_mark_scheme_crop_regions(
     for region in regions:
         layout = _layout_by_number(layouts, region.page_number)
         box = _normalize_crop_boundary_text_cuts(region.bbox, layout, config)
+        box = _trim_trailing_mark_scheme_table_header(box, layout, config)
         if box != region.bbox:
             adjusted = True
         normalized.append(
@@ -658,6 +659,23 @@ def _normalize_mark_scheme_crop_regions(
     if adjusted:
         flags.append("markscheme_crop_boundary_text_snap")
     return normalized
+
+
+def _trim_trailing_mark_scheme_table_header(box: BoundingBox, layout: PageLayout, config: AppConfig) -> BoundingBox:
+    min_height = max(24.0, config.detection.min_crop_height * 0.75)
+    candidates = [
+        block
+        for block in layout.blocks
+        if _is_mark_scheme_table_header_row(block.text)
+        and block.bbox.y0 > box.y0 + min_height
+        and block.bbox.y0 < box.y1 - 1.0
+        and block.bbox.x1 >= box.x0
+        and block.bbox.x0 <= box.x1
+    ]
+    if not candidates:
+        return box
+    header = min(candidates, key=lambda item: item.bbox.y0)
+    return BoundingBox(box.x0, box.y0, box.x1, max(box.y0 + min_height, header.bbox.y0 - 16.0))
 
 
 def _validate_mark_scheme_crop_before_save(
@@ -837,6 +855,7 @@ def _is_boundary_excludable_mark_scheme_text(block: TextBlock, layout: PageLayou
         or _is_mark_scheme_boilerplate(block.text)
         or _is_mark_scheme_page_header_text(block.text)
         or _is_mark_scheme_header_text(block.text)
+        or _is_mark_scheme_table_header_row(block.text)
     )
 
 
@@ -1355,7 +1374,7 @@ def _detect_formulaic_left_margin_mark_scheme_anchors(
             if row_box.x0 > left_zone_right:
                 continue
             label = _row_question_label_from_words(row)
-            if not label or label != parent_question_id(label):
+            if not label:
                 continue
             parent = _formulaic_anchor_parent(label)
             if parent is None or not 1 <= parent <= 11:
@@ -1376,6 +1395,32 @@ def _detect_formulaic_left_margin_mark_scheme_anchors(
                 )
             )
     return _filter_out_of_sequence_mark_scheme_anchors(candidates)
+
+
+def _is_generic_mark_scheme_policy_row(text: str) -> bool:
+    cleaned = " ".join(text.replace("\u00a0", " ").split()).lower()
+    if not cleaned:
+        return False
+    policy_phrases = [
+        "unless a particular method has been specified",
+        "no marks will be awarded for a scale drawing",
+        "unless specified in the question, answers may be given",
+        "ignore superfluous zeros",
+        "allow alternative conventions for notation",
+        "marks once gained cannot subsequently be lost",
+        "wrong working following a correct form of answer is ignored",
+        "recovery within working is allowed",
+        "misread a number",
+        "deduct just 1 mark for the misread",
+        "does not alter the difficulty",
+        "method required, award all marks earned",
+    ]
+    return any(phrase in cleaned for phrase in policy_phrases)
+
+
+def _is_mark_scheme_table_header_row(text: str) -> bool:
+    tokens = set(re.findall(r"[a-z]+", text.lower()))
+    return {"question", "answer", "marks"}.issubset(tokens)
 
 
 def _next_formulaic_top_level_anchor(
@@ -1506,14 +1551,20 @@ def _legacy_table_grid_row_bands(
         for top, bottom in zip(grid.horizontal_rules, grid.horizontal_rules[1:]):
             if bottom <= top + max(18.0, config.detection.min_crop_height * 0.7):
                 continue
+            left_scan = max(0.0, min(grid.bbox.x0, layout.width * 0.06))
             band_words = [
                 word
                 for word in words_by_page.get(layout.page_number, [])
                 if word.bbox.y1 >= top - 2
                 and word.bbox.y0 <= bottom + 2
-                and grid.bbox.x0 - 3 <= word.bbox.x0 <= grid.bbox.x1 + 3
+                and left_scan - 3 <= word.bbox.x0 <= grid.bbox.x1 + 3
             ]
             if not band_words:
+                continue
+            band_text = " ".join(word.text for word in sorted(band_words, key=lambda item: (item.bbox.y0, item.bbox.x0)))
+            if _is_mark_scheme_table_header_row(band_text):
+                continue
+            if _is_generic_mark_scheme_policy_row(band_text):
                 continue
             label_zone_right = min(grid.question_col_right, grid.bbox.x0 + 38.0)
             label_words = [word for word in band_words if word.bbox.x0 <= label_zone_right]
@@ -1522,12 +1573,15 @@ def _legacy_table_grid_row_bands(
                 label = _row_question_label_from_words(row)
                 if label:
                     break
+            band_x0 = grid.bbox.x0
+            if label_words:
+                band_x0 = min(band_x0, min(word.bbox.x0 for word in label_words))
             bands.append(
                 _LegacyRowBand(
                     page_number=layout.page_number,
                     y0=top,
                     y1=bottom,
-                    x0=grid.bbox.x0,
+                    x0=max(0.0, band_x0 - 4.0),
                     x1=grid.bbox.x1,
                     question_col_right=grid.question_col_right,
                     question_label=label,
@@ -2542,6 +2596,9 @@ def _detect_table_question_anchors_from_words(
         tolerance=5.0,
     )
     for row in rows:
+        row_text = " ".join(word.text for word in row)
+        if _is_generic_mark_scheme_policy_row(row_text):
+            continue
         label_zone_right = _question_label_zone_right(table)
         question_words = [
             word

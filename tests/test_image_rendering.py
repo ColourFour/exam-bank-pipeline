@@ -10,12 +10,22 @@ from exam_bank.image_rendering import (
     _dedupe_crop_regions,
     _detect_prompt_regions,
     _graphics_for_segment,
+    _is_answer_space_text,
+    _is_figure_label_or_current_anchor_block,
+    _is_prompt_text_block,
+    _is_unit_diagram_label_block,
     _page_furniture_box_label,
     _same_page_diagram_union_regions,
     _single_page_union_regions,
+    _trim_content_top_padding_from_regions,
+    _trim_text_bottom_padding_from_regions,
+    _trim_text_only_bottom_padding,
+    _trim_text_only_top_padding,
+    _trim_union_trailing_answer_rule_padding,
     _trim_permission_footer_from_regions,
     _trim_regions_at_foreign_question_boundaries,
     _trim_vertical_furniture_from_regions,
+    _watermark_box_looks_like_current_question_diagram,
 )
 from exam_bank.core.asset_paths import AssetPath
 from exam_bank.core.paper_identity import PaperIdentity
@@ -51,6 +61,57 @@ def test_top_right_diagonal_papacambridge_banner_is_watermark_furniture() -> Non
     assert _page_furniture_box_label(banner, layout, AppConfig(), []) == "watermark"
 
 
+def test_right_edge_diagonal_papacambridge_fragment_is_watermark_furniture() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    fragment = BoundingBox(498, 325, 595, 430)
+
+    assert _page_furniture_box_label(fragment, layout, AppConfig(), []) == "watermark"
+
+
+def test_top_left_watermark_fragment_is_watermark_furniture() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    fragment = BoundingBox(0, 10.9, 250, 132.4)
+
+    assert _page_furniture_box_label(fragment, layout, AppConfig(), []) == "watermark"
+
+
+def test_bottom_edge_footer_graphic_is_furniture() -> None:
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    footer = BoundingBox(2, 782, 592, 842)
+
+    assert _page_furniture_box_label(footer, layout, AppConfig(), []) == "header_footer"
+
+
+def test_broad_top_watermark_over_plain_text_is_not_current_diagram() -> None:
+    config = AppConfig()
+    blocks = [
+        text_block("10 The complex number w is given by w = -1/2 + i sqrt(3)/2.", 55, x=49, width=496),
+        text_block("(i) Find the modulus and argument of w.", 102, x=72, width=300),
+        text_block("(iii) Hence explain why, in an Argand diagram, the points represent z, wz and z/w.", 145, x=72, width=470),
+    ]
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_w08_qp_3.pdf"),
+        paper_name="9709_w08_qp_3",
+        question_number="10",
+        start_page=1,
+        start_y=45,
+        end_page=1,
+        end_y=284,
+        page_numbers=[1],
+        blocks=blocks,
+        full_question_label="10",
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=blocks, graphics=[BoundingBox(64, 0, 595, 208)])
+
+    assert not _watermark_box_looks_like_current_question_diagram(
+        BoundingBox(64, 0, 595, 208),
+        test_span,
+        blocks,
+        layout,
+        config,
+    )
+
+
 def test_inset_full_page_graphic_is_background_furniture() -> None:
     layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
     page_box = BoundingBox(41.58, 0, 595.28, 841.89)
@@ -78,6 +139,372 @@ def test_formula_rule_graphics_do_not_create_diagram_regions() -> None:
     assert BoundingBox(150, 300, 235, 300.5) not in graphics
     assert BoundingBox(250, 330, 350, 440) in graphics
     assert {"label": "barcode", "bbox": {"x0": 145, "y0": 80, "x1": 230, "y1": 80.5}} in excluded
+
+
+def test_non_visual_prompt_ignores_broad_nearby_graphic() -> None:
+    config = AppConfig()
+    prompt = text_block("4 Find the possible values of alpha and beta. [6]", 396, x=49, width=496)
+    broad_artifact = BoundingBox(20, 377, 595, 416)
+    test_span = span()
+    test_span.question_number = "4"
+    test_span.blocks = [prompt]
+    test_span.start_y = 396
+    test_span.end_y = 465
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[broad_artifact])
+
+    regions, _flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert len(regions) == 1
+    assert regions[0].region_kind == "text"
+    assert not regions[0].graphics
+    assert regions[0].bbox.y0 > broad_artifact.y0
+
+
+def test_scan_junk_after_dotted_answer_line_is_answer_space() -> None:
+    assert _is_answer_space_text("." * 120 + "ĬÕĊ®Ġ´íÈõÏĪ°Ċàù·þ×")
+
+
+def test_top_page_text_only_crop_trims_padding_that_can_contain_barcode() -> None:
+    config = AppConfig()
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[])
+    crop = BoundingBox(40, 55, 555, 89)
+    text = BoundingBox(50, 65, 545, 79)
+
+    trimmed = _trim_text_only_top_padding(crop, text, layout, config)
+
+    assert trimmed.y0 == pytest.approx(63)
+    assert trimmed.y1 == crop.y1
+
+
+def test_text_only_crop_trims_bottom_padding_that_can_contain_answer_rule() -> None:
+    config = AppConfig()
+    crop = BoundingBox(40, 62, 555, 90)
+    text = BoundingBox(50, 65, 545, 79)
+
+    trimmed = _trim_text_only_bottom_padding(crop, text, config)
+
+    assert trimmed.y1 == pytest.approx(81)
+    assert trimmed.y0 == crop.y0
+
+
+def test_text_region_postpass_trims_bottom_spillover_padding() -> None:
+    config = AppConfig()
+    question = text_block("(iii) Find the values of t. [4]", 570, x=72)
+    spillover = text_block("9 The next question starts here.", 620, x=62)
+    region = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(62, 434, 592, 627),
+        text_blocks=[question],
+        text_bbox=BoundingBox(72, 570, 545, 595),
+        region_kind="text",
+    )
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question, spillover])
+
+    trimmed, flags = _trim_text_bottom_padding_from_regions([region], [layout], config)
+
+    assert "text_bottom_padding_trimmed" in flags
+    assert trimmed[0].bbox.y1 < 600
+    assert trimmed[0].bbox.y1 > region.text_bbox.y1
+
+
+def test_union_crop_trims_trailing_answer_rule_padding() -> None:
+    config = AppConfig()
+    dotted_rule = TextBlock(page_number=1, text="................................................", bbox=BoundingBox(80, 276, 530, 277))
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[dotted_rule],
+        graphics=[],
+    )
+    crop = BoundingBox(35, 55, 560, 286)
+    content = BoundingBox(49, 65, 545, 263)
+
+    trimmed, flags = _trim_union_trailing_answer_rule_padding(crop, content, layout, config)
+
+    assert "trailing_answer_rule_trimmed" in flags
+    assert trimmed.y1 < 276
+    assert trimmed.y1 >= content.y1
+
+
+def test_union_crop_trims_trailing_graphic_answer_rule_padding() -> None:
+    config = AppConfig()
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[],
+        graphics=[BoundingBox(80, 276, 530, 277)],
+    )
+    crop = BoundingBox(35, 55, 560, 286)
+    content = BoundingBox(49, 65, 545, 263)
+
+    trimmed, flags = _trim_union_trailing_answer_rule_padding(crop, content, layout, config)
+
+    assert "trailing_answer_rule_trimmed" in flags
+    assert trimmed.y1 < 276
+
+
+def test_text_only_prompt_splits_across_answer_rule_band() -> None:
+    config = AppConfig()
+    blocks = [
+        text_block("10 (a) Find the quotient and remainder. [2]", 80, x=50, width=500),
+        text_block("(b) Find the exact value of the integral. [6]", 150, x=50, width=500),
+    ]
+    test_span = span()
+    test_span.blocks = blocks
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=blocks,
+        graphics=[BoundingBox(55, 122, 540, 122.5)],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert len(regions) == 2
+    assert regions[0].bbox.y1 < 122
+    assert regions[1].bbox.y0 > 122
+    assert "crop_split_prompt_regions" in flags
+
+
+def test_text_only_prompt_splits_across_dotted_answer_space_text() -> None:
+    config = AppConfig()
+    blocks = [
+        text_block("(c) Prove the stated result. [2]", 80, x=50, width=500),
+        text_block("(d) Hence find the exact value. [3]", 150, x=50, width=500),
+    ]
+    dotted_rule = TextBlock(
+        page_number=1,
+        text="................................................",
+        bbox=BoundingBox(60, 122, 540, 123),
+    )
+    test_span = span()
+    test_span.blocks = blocks
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[*blocks, dotted_rule], graphics=[])
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert len(regions) == 2
+    assert regions[0].bbox.y1 < dotted_rule.bbox.y0
+    assert regions[1].bbox.y0 > dotted_rule.bbox.y1
+    assert "crop_split_prompt_regions" in flags
+
+
+def test_figure_separated_text_does_not_restore_answer_rule_top_padding() -> None:
+    config = AppConfig()
+    dotted_rule = TextBlock(
+        page_number=1,
+        text="................................................................................",
+        bbox=BoundingBox(95, 308, 545, 323),
+    )
+    part = TextBlock(
+        page_number=1,
+        text="(d) Using your answers to part (b), prove the identity. [3]",
+        bbox=BoundingBox(72, 327, 545, 357),
+    )
+    formula_graphic = BoundingBox(330, 329, 360, 355)
+    test_span = span()
+    test_span.blocks = [part]
+    test_span.start_y = 300
+    test_span.end_y = 370
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[dotted_rule, part], graphics=[formula_graphic])
+
+    regions, _flags = _detect_prompt_regions(test_span, [layout], config)
+
+    text_regions = [region for region in regions if region.region_kind == "text"]
+    assert text_regions
+    assert min(region.bbox.y0 for region in text_regions) > dotted_rule.bbox.y1
+
+
+def test_text_crop_trims_top_padding_when_answer_space_text_sits_above_part() -> None:
+    config = AppConfig()
+    part_a = text_block("10 (a) Find the quotient and remainder. [2]", 64, x=50, width=495)
+    answer_line = text_block("." * 120, 546, x=95, width=450)
+    part_b = text_block("(b) Find the exact value of the integral. [6]", 554, x=72, width=470)
+    test_span = span()
+    test_span.blocks = [part_a, answer_line, part_b]
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[part_a, answer_line, part_b], graphics=[])
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert len(regions) == 2
+    assert regions[1].bbox.y0 >= part_b.bbox.y0 - 3
+    assert "crop_split_prompt_regions" in flags
+
+
+def test_full_sentence_question_start_is_not_a_figure_label() -> None:
+    config = AppConfig()
+    block = text_block("8 The diagram shows the graph of y = sec x. [3]", 265, x=72, width=300)
+    test_span = span()
+    test_span.question_number = "8"
+
+    assert not _is_figure_label_or_current_anchor_block(block, test_span, config)
+
+
+def test_unit_bearing_angle_label_is_figure_label() -> None:
+    config = AppConfig()
+    block = text_block("x rad", 154, x=320, width=24)
+    test_span = span()
+
+    assert _is_unit_diagram_label_block(block, test_span, config)
+
+
+def test_oversized_graphic_is_trimmed_before_repeated_prompt_prose() -> None:
+    config = AppConfig()
+    label = text_block("8 y", 65, x=50, width=190)
+    axis = text_block("O 1_{2}0 x", 225, x=240, width=130)
+    prose = text_block("The diagram shows the graph of y = sec x for 0 <= x < 1/2 pi.", 264, x=72, width=270)
+    part = text_block("(i) Use the trapezium rule with 2 intervals. [3]", 300, x=80, width=460)
+    test_span = span()
+    test_span.question_number = "8"
+    test_span.blocks = [label, axis, prose, part]
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[label, axis, prose, part],
+        graphics=[BoundingBox(65, 94, 348, 296)],
+    )
+    text_box = BoundingBox(49, 65, 545, 326)
+
+    graphics, _excluded = _graphics_for_segment(text_box, layout, config, span=test_span, segment=test_span.blocks)
+
+    assert graphics
+    assert graphics[0].y1 < prose.bbox.y0
+    assert graphics[0].y1 > axis.bbox.y1
+
+
+def test_duplicate_axis_label_is_removed_from_following_text_region() -> None:
+    config = AppConfig()
+    label = text_block("8 y", 65, x=50, width=190)
+    axis = text_block("O 1_{2}0 x", 225, x=240, width=130)
+    prose = text_block("The diagram shows the graph of y = sec x for 0 <= x < 1/2 pi.", 264, x=72, width=270)
+    part = text_block("(i) Use the trapezium rule with 2 intervals. [3]", 300, x=80, width=460)
+    test_span = span()
+    test_span.question_number = "8"
+    test_span.start_y = 65
+    test_span.end_y = 340
+    test_span.blocks = [label, axis, prose, part]
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[label, axis, prose, part],
+        graphics=[BoundingBox(65, 94, 348, 296)],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+    text_blocks = [block.text for region in regions if region.region_kind == "text" for block in region.text_blocks]
+    figure_regions = [region for region in regions if region.graphics]
+
+    assert "duplicate_figure_label_block_excluded" in flags
+    assert figure_regions[0].bbox.y1 < prose.bbox.y0
+    assert "O 1_{2}0 x" not in text_blocks
+    assert any("The diagram shows" in text for text in text_blocks)
+
+
+def test_mark_bearing_text_below_formula_is_not_removed_after_figure_trim() -> None:
+    config = AppConfig()
+    intro = text_block("7 (a) Use the substitution u = x^2 - 3 to show that", 65, x=50, width=250)
+    formula = text_block("integral expression equals transformed integral,", 98, x=220, width=160)
+    where = text_block("where a and b are values to be found. [4]", 145, x=95, width=450)
+    test_span = span()
+    test_span.question_number = "7"
+    test_span.start_y = 64
+    test_span.end_y = 170
+    test_span.blocks = [intro, formula, where]
+    layout = PageLayout(
+        page_number=1,
+        width=595,
+        height=842,
+        blocks=[intro, formula, where],
+        graphics=[BoundingBox(225, 98, 378, 129), BoundingBox(337, 114, 348, 125)],
+    )
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+    rendered_text = "\n".join(block.text for region in regions for block in region.text_blocks)
+
+    assert "where a and b" in rendered_text
+    assert "text_region_removed_after_figure_trim" not in flags
+
+
+def test_numeric_leading_body_continuation_is_not_foreign_question_start() -> None:
+    config = AppConfig()
+    continuation = TextBlock(
+        page_number=1,
+        text="2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+        bbox=BoundingBox(96.36, 290, 545, 302),
+    )
+    test_span = span()
+    test_span.question_number = "3"
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[continuation])
+
+    assert _is_prompt_text_block(continuation, test_span, layout, config)
+
+
+def test_wide_text_crop_expands_to_preserve_right_edge_glyphs() -> None:
+    config = AppConfig()
+    prompt = TextBlock(
+        page_number=1,
+        text="1 Use logarithms to solve the equation, giving your answer correct to 3 significant figures.",
+        bbox=BoundingBox(49.32, 60.3, 545.41, 90.32),
+    )
+    test_span = span()
+    test_span.question_number = "1"
+    test_span.start_y = 60
+    test_span.end_y = 102
+    test_span.blocks = [prompt]
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[])
+
+    regions, _flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert len(regions) == 1
+    assert regions[0].bbox.x1 > 590
+
+
+def test_wide_text_crop_does_not_expand_into_right_side_panel() -> None:
+    config = AppConfig()
+    prompt = TextBlock(
+        page_number=1,
+        text="1 Solve the inequality |3x + 2| < 3|2x - 1|.",
+        bbox=BoundingBox(49.64, 66.66, 545.73, 78.17),
+    )
+    side_panel = BoundingBox(574.5, -9.92, 595.5, 854.65)
+    test_span = span()
+    test_span.question_number = "1"
+    test_span.start_y = 60
+    test_span.end_y = 90
+    test_span.blocks = [prompt]
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[side_panel])
+
+    regions, flags = _detect_prompt_regions(test_span, [layout], config)
+
+    assert "side_panel_excluded" in flags
+    assert len(regions) == 1
+    assert regions[0].bbox.x1 <= 560
+
+
+def test_source_pagination_note_is_not_rendered_as_question_text() -> None:
+    config = AppConfig()
+    question = text_block("(iii) Find the value of k. [4]", 690, x=72)
+    note = TextBlock(
+        page_number=1,
+        text="[Question 10 is printed on the next page.]",
+        bbox=BoundingBox(190, 755, 410, 768),
+    )
+    test_span = span()
+    test_span.blocks = [question, note]
+    test_span.start_y = 680
+    test_span.end_y = 780
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[question, note], graphics=[])
+
+    regions, _flags = _detect_prompt_regions(test_span, [layout], config)
+    rendered_text = "\n".join(block.text for region in regions for block in region.text_blocks)
+
+    assert "printed on the next page" not in rendered_text
+    assert regions[0].bbox.y1 < note.bbox.y0
 
 
 def test_full_height_page_edge_graphic_is_treated_as_furniture() -> None:
@@ -175,6 +602,27 @@ def test_crop_region_dedupe_removes_stale_duplicate_fragment() -> None:
 
     assert len(deduped) == 1
     assert deduped[0].region_kind == "page_diagram_union"
+    assert "stale_crop_fragment_removed" in flags
+
+
+def test_crop_region_dedupe_removes_lower_overlapping_figure_fragment() -> None:
+    current = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(39, 199, 438, 434),
+        graphics=[BoundingBox(39, 199, 438, 434)],
+        region_kind="figure",
+    )
+    stale_answer_axes = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(35, 309, 560, 434),
+        graphics=[BoundingBox(35, 309, 560, 434)],
+        text_blocks=[text_block("O", 319, x=304, width=12), text_block("x", 319, x=438, width=12)],
+        region_kind="figure",
+    )
+
+    deduped, flags = _dedupe_crop_regions([current, stale_answer_axes])
+
+    assert deduped == [current]
     assert "stale_crop_fragment_removed" in flags
 
 
@@ -666,6 +1114,81 @@ def test_question_context_infers_figure_below_diagram_prompt() -> None:
 
     assert any(region.region_kind == "context_inferred_figure" for region in regions)
     assert "question_context_figure_inference_used" in flags
+
+
+def test_question_context_does_not_infer_tiny_square_furniture_as_figure() -> None:
+    config = AppConfig()
+    prompt = text_block("6 On an Argand diagram shade the region. [5]", 80, x=60, width=450)
+    continuation = text_block("(b) Calculate the greatest value of arg z. [2]", 420, x=72, width=430)
+    square = BoundingBox(544, 40, 560, 56)
+    test_span = QuestionSpan(
+        source_pdf=Path("9709_m24_qp_33.pdf"),
+        paper_name="9709_m24_qp_33",
+        question_number="6",
+        start_page=1,
+        start_y=70,
+        end_page=2,
+        end_y=450,
+        page_numbers=[1, 2],
+        blocks=[prompt, continuation],
+        full_question_label="6",
+    )
+    layout_1 = PageLayout(page_number=1, width=595, height=842, blocks=[prompt], graphics=[])
+    layout_2 = PageLayout(page_number=2, width=595, height=842, blocks=[continuation], graphics=[square])
+
+    regions, flags = _detect_prompt_regions(test_span, [layout_1, layout_2], config)
+
+    assert not any(region.region_kind == "context_inferred_figure" for region in regions)
+    assert "question_context_figure_inference_used" not in flags
+
+
+def test_text_only_top_padding_trims_sparse_fragments_above_prompt() -> None:
+    config = AppConfig()
+    crop_box = BoundingBox(35, 45, 560, 220)
+    text_box = BoundingBox(50, 112, 545, 190)
+    layout = PageLayout(page_number=1, width=595, height=842, blocks=[], graphics=[])
+
+    trimmed = _trim_text_only_top_padding(crop_box, text_box, layout, config)
+
+    assert trimmed.y0 > 100
+    assert trimmed.y1 == crop_box.y1
+
+
+def test_region_content_top_padding_trim_handles_union_crops() -> None:
+    config = AppConfig()
+    region = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(35, 45, 560, 260),
+        text_blocks=[text_block("4 The complex number u is defined by", 120)],
+        graphics=[BoundingBox(220, 170, 360, 190)],
+        region_kind="single_page_union",
+        text_bbox=BoundingBox(50, 120, 545, 210),
+        figure_bbox=BoundingBox(220, 170, 360, 190),
+    )
+
+    trimmed, flags = _trim_content_top_padding_from_regions([region], config)
+
+    assert trimmed[0].bbox.y0 > 100
+    assert trimmed[0].bbox.y1 == region.bbox.y1
+    assert "crop_top_padding_trimmed" in flags
+
+
+def test_region_content_top_padding_preserves_diagram_above_text() -> None:
+    config = AppConfig()
+    region = CropRegion(
+        page_number=1,
+        bbox=BoundingBox(35, 45, 560, 260),
+        text_blocks=[text_block("The diagram shows a curve.", 180)],
+        graphics=[BoundingBox(180, 58, 420, 145)],
+        region_kind="page_diagram_union",
+        text_bbox=BoundingBox(50, 180, 545, 220),
+        figure_bbox=BoundingBox(180, 58, 420, 145),
+    )
+
+    trimmed, flags = _trim_content_top_padding_from_regions([region], config)
+
+    assert trimmed[0].bbox.y0 < region.figure_bbox.y0
+    assert trimmed[0].bbox.y1 == region.bbox.y1
 
 
 def test_text_only_graph_axis_labels_are_rendered_as_single_diagram_region() -> None:

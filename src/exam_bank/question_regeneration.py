@@ -12,7 +12,7 @@ from .core.asset_paths import AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .identifiers import normalize_question_id
 from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
-from .image_rendering import render_question_image
+from .image_rendering import _answer_rule_y_bands, _page_furniture_box_label, render_question_image
 from .models import BoundingBox, RenderResult
 from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
@@ -70,7 +70,7 @@ def regenerate_question_pngs_from_question_bank(
         for record in records:
             span = spans.get(record.question_number)
             if span is None:
-                rendered = _render_from_saved_crop_diagnostics(record, config)
+                rendered = _render_from_saved_crop_diagnostics(record, config, layouts)
                 if rendered is None:
                     outputs.append(_failed_output(record, "span_not_found"))
                     continue
@@ -124,7 +124,7 @@ def _failed_output(record: _SelectedRecord, reason: str) -> dict[str, Any]:
     }
 
 
-def _render_from_saved_crop_diagnostics(record: _SelectedRecord, config: AppConfig) -> RenderResult | None:
+def _render_from_saved_crop_diagnostics(record: _SelectedRecord, config: AppConfig, layouts: list[Any]) -> RenderResult | None:
     diagnostics = record.row.get("notes", {}).get("question_crop_diagnostics")
     if not isinstance(diagnostics, dict):
         return None
@@ -152,6 +152,9 @@ def _render_from_saved_crop_diagnostics(record: _SelectedRecord, config: AppConf
             bbox = _bbox_from_mapping(item.get("final_crop_bbox") or item.get("original_crop_bbox"))
             if page_number < 1 or page_number > len(doc) or bbox is None or bbox.x1 <= bbox.x0 or bbox.y1 <= bbox.y0:
                 continue
+            if _saved_crop_region_is_stale_furniture(item, bbox, page_number, layouts, config):
+                continue
+            bbox = _trim_saved_union_crop_stale_full_width_figure(item, bbox, page_number, layouts, config)
             page = doc[page_number - 1]
             rect = fitz.Rect(bbox.x0, bbox.y0, bbox.x1, bbox.y1)
             image, _used_zoom = render_pdf_area(
@@ -222,6 +225,58 @@ def _render_from_saved_crop_diagnostics(record: _SelectedRecord, config: AppConf
         ocr_text_trust=ocr_result.ocr_text_trust,
         ocr_failure_reason=ocr_result.ocr_failure_reason,
         ocr_text_role=ocr_result.ocr_text_role,
+    )
+
+
+def _saved_crop_region_is_stale_furniture(
+    item: dict[str, Any],
+    bbox: BoundingBox,
+    page_number: int,
+    layouts: list[Any],
+    config: AppConfig,
+) -> bool:
+    region_kind = str(item.get("region_kind") or "")
+    if region_kind not in {"context_inferred_figure"}:
+        return False
+    layout = next((layout for layout in layouts if getattr(layout, "page_number", None) == page_number), None)
+    if layout is None:
+        return False
+    answer_rule_bands = _answer_rule_y_bands(layout)
+    candidate_boxes = [bbox]
+    if original_bbox := _bbox_from_mapping(item.get("original_crop_bbox")):
+        candidate_boxes.append(original_bbox)
+    return any(
+        _page_furniture_box_label(candidate, layout, config, answer_rule_bands)
+        in {"watermark", "page_background", "header_footer", "barcode", "scan_edge", "page_edge_furniture"}
+        for candidate in candidate_boxes
+    )
+
+
+def _trim_saved_union_crop_stale_full_width_figure(
+    item: dict[str, Any],
+    bbox: BoundingBox,
+    page_number: int,
+    layouts: list[Any],
+    config: AppConfig,
+) -> BoundingBox:
+    region_kind = str(item.get("region_kind") or "")
+    if region_kind not in {"single_page_union", "page_diagram_union"}:
+        return bbox
+    layout = next((layout for layout in layouts if getattr(layout, "page_number", None) == page_number), None)
+    text_bbox = _bbox_from_mapping(item.get("text_bbox"))
+    figure_bbox = _bbox_from_mapping(item.get("figure_bbox"))
+    if layout is None or text_bbox is None or figure_bbox is None:
+        return bbox
+    figure_width = figure_bbox.x1 - figure_bbox.x0
+    figure_height = figure_bbox.y1 - figure_bbox.y0
+    if figure_width < layout.width * 0.9 or figure_height > layout.height * 0.08:
+        return bbox
+    padding = max(2.0, config.detection.crop_padding * 0.2)
+    return BoundingBox(
+        max(0.0, min(bbox.x0, text_bbox.x0 - config.detection.crop_padding)),
+        max(0.0, text_bbox.y0 - padding),
+        min(layout.width, max(bbox.x1, text_bbox.x1 + config.detection.crop_padding)),
+        min(layout.height, text_bbox.y1 + padding),
     )
 
 
