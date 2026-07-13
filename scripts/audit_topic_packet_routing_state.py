@@ -20,8 +20,8 @@ from exam_bank.topic_packets import _packet_family_for_component
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_QUESTION_BANK = ROOT / "output/json/question_bank.json"
 DEFAULT_TAXONOMY = ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json"
-DEFAULT_REVIEWED_DECISIONS = ROOT / "data/review/topic_bank_reviewed_decisions.v1.json"
-DEFAULT_OVERLAP_REVIEW = ROOT / "data/review/topic_overlap_review_current.v1.json"
+DEFAULT_REVIEWED_DECISIONS = ROOT / "data/review/canonical/topic/topic_bank_reviewed_decisions.v1.json"
+DEFAULT_OVERLAP_REVIEW = ROOT / "data/review/canonical/topic/topic_overlap_review_current.v1.json"
 DEFAULT_PACKETS_ROOT = ROOT / "output/topic_packets"
 SCHEMA_NAME = "exam_bank.topic_packet_routing_state_audit"
 SCHEMA_VERSION = 1

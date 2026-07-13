@@ -19,6 +19,7 @@ from .question_detection_furniture import (
     is_footer_or_header_block as _is_footer_or_header_block,
     is_margin_furniture_text as _is_margin_furniture_text,
 )
+from .question_detection_graphics import is_answer_rule_like as _is_answer_rule_like
 from .question_detection_patterns import (
     MARK_RE,
     QUESTION_START_RE,
@@ -768,12 +769,6 @@ def _lined_answer_region_start(
             if len(text_after) <= 1:
                 return run[0]
     return None
-
-
-def _is_answer_rule_like(box: BoundingBox, layout: PageLayout) -> bool:
-    width = max(0.0, box.x1 - box.x0)
-    height = max(0.0, box.y1 - box.y0)
-    return height <= 2.5 and width >= layout.width * 0.28
 
 
 def _is_in_answer_rule_band(box: BoundingBox, bands: list[float]) -> bool:

@@ -24,7 +24,7 @@ Filename: S0001_p3_quiz_2026_06_23.pdf
 ## Dry Run
 
 ```bash
-.venv/bin/python scripts/import_live_email_submissions.py \
+exam-bank email import-live \
   --assignment data/submissions/p3_quiz_2026_06_23/assignment.json \
   --roster data/submissions/p3_quiz_2026_06_23/roster.csv \
   --connector-config data/submissions/p3_quiz_2026_06_23/email_connector_config.json \
@@ -131,7 +131,7 @@ Build the evidence-based B/M/A matrix after the quiz packet has created submissi
 Apply only after reviewing the dry-run output and mailbox scope:
 
 ```bash
-.venv/bin/python scripts/import_live_email_submissions.py \
+exam-bank email import-live \
   --assignment data/submissions/p3_quiz_2026_06_23/assignment.json \
   --roster data/submissions/p3_quiz_2026_06_23/roster.csv \
   --connector-config data/submissions/p3_quiz_2026_06_23/email_connector_config.json \
@@ -147,9 +147,9 @@ Review quarantine and intake artifacts under `output/submissions/<assignment_id>
 Build teacher review queue, draft grades, and outgoing approval queue only after intake is reviewed:
 
 ```bash
-.venv/bin/python scripts/build_submission_review_queue.py --assignment-id <assignment_id>
-.venv/bin/python scripts/build_submission_draft_grades.py --assignment-id <assignment_id>
-.venv/bin/python scripts/build_outgoing_email_queue.py --assignment-id <assignment_id>
+exam-bank classroom review-submissions --assignment-id <assignment_id>
+exam-bank classroom draft-grades --assignment-id <assignment_id>
+exam-bank email build-outgoing --assignment-id <assignment_id>
 ```
 
 Approve outgoing messages by editing `output/submissions/<assignment_id>/outgoing_email/approval_template.csv` into a private approval CSV, then rebuild the outgoing queue with `--approval-csv`. Dry-run delivery before any future sending path.

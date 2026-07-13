@@ -23,7 +23,7 @@ output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
 The reviewed registry was not edited:
 
 ```text
-data/review/p3_exact_skill_reviewed_decisions.v1.json
+data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json
 ```
 
 ## Current Pipeline State

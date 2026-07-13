@@ -9,6 +9,7 @@ from .config import AppConfig
 from .core.asset_paths import AssetPath, AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import parse_filename_metadata
+from .image_operations import stitch_images as _stitch_images
 from .image_limits import cap_image_pixels, render_pdf_area, trim_excess_render_whitespace
 from .identifiers import normalize_question_id, parent_question_id
 from .mark_scheme_models import (
@@ -22,6 +23,9 @@ from .mark_scheme_models import (
     MarkSchemeWord,
 )
 from .mark_scheme_pairing import find_mark_scheme
+from .mark_scheme_labels import top_level_mark_scheme_text_label
+from .mark_scheme_validation import table_header_ok as _table_header_ok
+from .mark_scheme_validation import validate_mark_scheme_mapping as _validate_mark_scheme_mapping
 from .models import BoundingBox, PageLayout, QuestionStart, TextBlock
 from .mupdf_tools import quiet_mupdf
 from .pdf_extract import _visual_box_from_rect
@@ -645,6 +649,7 @@ def _normalize_mark_scheme_crop_regions(
     for region in regions:
         layout = _layout_by_number(layouts, region.page_number)
         box = _normalize_crop_boundary_text_cuts(region.bbox, layout, config)
+        box = _trim_overlapping_page_furniture(box, layout, config)
         box = _trim_trailing_mark_scheme_table_header(box, layout, config)
         if box != region.bbox:
             adjusted = True
@@ -659,6 +664,22 @@ def _normalize_mark_scheme_crop_regions(
     if adjusted:
         flags.append("markscheme_crop_boundary_text_snap")
     return normalized
+
+
+def _trim_overlapping_page_furniture(box: BoundingBox, layout: PageLayout, config: AppConfig) -> BoundingBox:
+    """Remove even sub-point overlaps with headers/footers at crop edges."""
+    top = box.y0
+    bottom = box.y1
+    for block in layout.blocks:
+        if block.bbox.x1 < box.x0 or block.bbox.x0 > box.x1:
+            continue
+        if not _is_boundary_excludable_mark_scheme_text(block, layout, config):
+            continue
+        if block.bbox.y0 < top < block.bbox.y1 or (block.bbox.y0 <= top + 2 and block.bbox.y1 > top):
+            top = min(bottom, block.bbox.y1 + 2.0)
+        if block.bbox.y0 < bottom <= block.bbox.y1 or (block.bbox.y0 < bottom and block.bbox.y0 >= bottom - 2):
+            bottom = max(top, block.bbox.y0 - 2.0)
+    return BoundingBox(box.x0, top, box.x1, bottom)
 
 
 def _trim_trailing_mark_scheme_table_header(box: BoundingBox, layout: PageLayout, config: AppConfig) -> BoundingBox:
@@ -1249,6 +1270,7 @@ def _build_legacy_mark_scheme_blocks(
             else _blocks_for_legacy_anchor_bounds(layouts, anchor, next_anchor, config)
         )
         text = "\n".join(block.text for block in text_blocks if block.text.strip()).strip()
+        text = _trim_mark_scheme_text_to_question(text, canonical_number, set(expected))
         mark_total = _legacy_mark_total_from_text(text, question_marks.get(canonical_number))
         subparts = _legacy_subparts_from_text(text)
         if question_marks.get(canonical_number) is not None and mark_total is not None and mark_total != question_marks.get(canonical_number):
@@ -1315,6 +1337,7 @@ def _build_formulaic_mark_scheme_blocks(
         )
         text_blocks = _blocks_for_crop_regions(layouts, regions, config) if regions else []
         text = "\n".join(block.text for block in text_blocks if block.text.strip()).strip()
+        text = _trim_mark_scheme_text_to_question(text, canonical_number, set(expected))
         mark_total = _legacy_mark_total_from_text(text, question_marks.get(canonical_number))
         subparts = _legacy_subparts_from_text(text)
         if question_marks.get(canonical_number) is not None and mark_total is not None and mark_total != question_marks.get(canonical_number):
@@ -1800,10 +1823,59 @@ def _legacy_table_grid_regions_for_question(
         continuation_rows_included = any(not _legacy_row_band_question_label(band, anchors) for band in page_bands[1:])
         regions.append(MarkSchemeCropRegion(int(page_number), box, table_detected=True, continuation_rows_included=continuation_rows_included))
 
+    regions = _clamp_legacy_regions_to_anchor_bounds(regions, canonical_number, anchors)
     flags = ["legacy_markscheme_table_grid_crop"]
     if len(regions) > 1:
         flags.append("markscheme_image_stitched")
     return regions, flags
+
+
+def _clamp_legacy_regions_to_anchor_bounds(
+    regions: list[MarkSchemeCropRegion],
+    canonical_number: str,
+    anchors: list[MarkSchemeAnchor],
+) -> list[MarkSchemeCropRegion]:
+    ordered = sorted(anchors, key=lambda item: (item.page_number, item.y0, item.x0))
+    anchor_index, anchor = _anchor_for_question(ordered, canonical_number)
+    if anchor is None or anchor_index is None:
+        return regions
+    next_anchor = _next_boundary_anchor(ordered, anchor_index, canonical_number)
+    clamped: list[MarkSchemeCropRegion] = []
+    for region in regions:
+        if region.page_number < anchor.page_number:
+            continue
+        if next_anchor is not None and region.page_number > next_anchor.page_number:
+            continue
+        top = max(region.bbox.y0, anchor.y0 - 2.0) if region.page_number == anchor.page_number else region.bbox.y0
+        bottom = min(region.bbox.y1, next_anchor.y0) if next_anchor is not None and region.page_number == next_anchor.page_number else region.bbox.y1
+        if bottom <= top + 4:
+            continue
+        clamped.append(
+            MarkSchemeCropRegion(
+                region.page_number,
+                BoundingBox(region.bbox.x0, top, region.bbox.x1, bottom),
+                table_detected=region.table_detected,
+                continuation_rows_included=region.continuation_rows_included,
+            )
+        )
+    return clamped
+
+
+def _trim_mark_scheme_text_to_question(text: str, canonical_number: str, expected: set[str]) -> str:
+    lines = text.splitlines()
+    labeled = [
+        (index, label)
+        for index, line in enumerate(lines)
+        if (label := top_level_mark_scheme_text_label(" ".join(line.replace("\u00a0", " ").split()))) in expected
+    ]
+    current_indices = [index for index, label in labeled if label == canonical_number]
+    start = current_indices[0] if current_indices else 0
+    end = len(lines)
+    for index, label in labeled:
+        if index > start and label != canonical_number:
+            end = index
+            break
+    return "\n".join(lines[start:end]).strip()
 
 
 def _legacy_row_band_question_label(band: _LegacyRowBand, anchors: list[MarkSchemeAnchor]) -> str | None:
@@ -1865,6 +1937,18 @@ def _legacy_left_column_regions_for_question(
     for row in rows[start_index:]:
         label = row[4]
         if label and parent_question_id(label) != canonical_number:
+            # Display-math fragments can sit a few points above the printed
+            # next-question label (for example the numerator of dy/dx). They
+            # are grouped as an unlabeled row, but belong to the next answer.
+            # Remove only the adjacent overlapping fragments before closing
+            # the current question's crop.
+            while (
+                selected
+                and selected[-1][0] == row[0]
+                and selected[-1][4] is None
+                and selected[-1][2] >= row[1] - 16.0
+            ):
+                selected.pop()
             break
         selected.append(row)
     if not selected:
@@ -2944,10 +3028,6 @@ def _nearby_anchor_labels(anchors: list[MarkSchemeAnchor], anchor: MarkSchemeAnc
     return [item.question_number for item in anchors[max(0, index - 2) : index + 3]]
 
 
-def _table_header_ok(table: MarkSchemeTable | None) -> bool:
-    return bool(table and table.header_detected == ["Question", "Answer", "Marks", "Guidance"])
-
-
 def _detected_subparts_for_question(anchors: list[MarkSchemeAnchor], anchor_index: int, parent: str) -> list[str]:
     subparts: list[str] = []
     for item in anchors[anchor_index:]:
@@ -3244,118 +3324,6 @@ def _marks_from_marks_cell(text: str) -> list[int]:
     return []
 
 
-def _validate_mark_scheme_mapping(
-    canonical_number: str,
-    question_subparts: list[str],
-    markscheme_subparts: list[str],
-    question_marks_total: int | None,
-    markscheme_marks_total: int | None,
-    anchor: MarkSchemeAnchor | None,
-    next_anchor: MarkSchemeAnchor | None,
-    regions: list[MarkSchemeCropRegion],
-    flags: list[str],
-    question_validation_flags: list[str] | None = None,
-) -> tuple[list[str], str]:
-    validation_flags: list[str] = []
-    question_validation_flags = question_validation_flags or []
-    if not anchor or not _table_header_ok(anchor.table):
-        validation_flags.append("invalid_table_header")
-        return validation_flags, "invalid_table_header"
-    if "invalid_table_header" in flags:
-        validation_flags.append("invalid_table_header")
-        return validation_flags, "invalid_table_header"
-    if not regions:
-        validation_flags.append("partial_question_block")
-        return validation_flags, "partial_question_block"
-    if next_anchor and parent_question_id(next_anchor.question_number) == canonical_number:
-        validation_flags.append("partial_question_block")
-        return validation_flags, "partial_question_block"
-    candidate_reasons = _mapping_failure_candidates(
-        canonical_number=canonical_number,
-        question_subparts=question_subparts,
-        markscheme_subparts=markscheme_subparts,
-        question_marks_total=question_marks_total,
-        markscheme_marks_total=markscheme_marks_total,
-        anchor=anchor,
-        next_anchor=next_anchor,
-        regions=regions,
-        question_validation_flags=question_validation_flags,
-    )
-    failure_reason = _select_mapping_failure_reason(candidate_reasons)
-    if failure_reason:
-        validation_flags.append(failure_reason)
-        return validation_flags, failure_reason
-    return validation_flags, ""
-
-
-def _mapping_failure_candidates(
-    *,
-    canonical_number: str,
-    question_subparts: list[str],
-    markscheme_subparts: list[str],
-    question_marks_total: int | None,
-    markscheme_marks_total: int | None,
-    anchor: MarkSchemeAnchor,
-    next_anchor: MarkSchemeAnchor | None,
-    regions: list[MarkSchemeCropRegion],
-    question_validation_flags: list[str],
-) -> list[str]:
-    candidates: list[str] = []
-    if "question_scope_contaminated" in question_validation_flags:
-        candidates.append("question_scope_contaminated")
-    if any(part not in markscheme_subparts for part in question_subparts):
-        candidates.append("mark_scheme_part_structure_mismatch")
-    if any(part not in question_subparts for part in markscheme_subparts):
-        candidates.append("question_subparts_incomplete")
-    if "missing_terminal_mark_total" in question_validation_flags and (markscheme_subparts or question_subparts):
-        candidates.append("missing_terminal_mark_total")
-    if question_marks_total is None and markscheme_marks_total is not None:
-        candidates.append("question_mark_total_missing")
-    if question_marks_total is not None and markscheme_marks_total is not None and question_marks_total != markscheme_marks_total:
-        candidates.append("question_mark_total_mismatch")
-    if "likely_truncated_question_crop" in question_validation_flags:
-        candidates.append("likely_truncated_question_crop")
-    if "weak_question_anchor" in question_validation_flags:
-        candidates.append("weak_question_anchor")
-    if _block_contains_adjacent_question(canonical_number, regions, anchor, next_anchor):
-        candidates.append("adjacent_question_block_selected")
-    return candidates
-
-
-def _select_mapping_failure_reason(candidates: list[str]) -> str:
-    priority = [
-        "question_scope_contaminated",
-        "mark_scheme_part_structure_mismatch",
-        "question_subparts_incomplete",
-        "missing_terminal_mark_total",
-        "question_mark_total_missing",
-        "question_mark_total_mismatch",
-        "likely_truncated_question_crop",
-        "weak_question_anchor",
-        "adjacent_question_block_selected",
-    ]
-    for reason in priority:
-        if reason in candidates:
-            return reason
-    return ""
-
-
-def _block_contains_adjacent_question(
-    canonical_number: str,
-    regions: list[MarkSchemeCropRegion],
-    anchor: MarkSchemeAnchor,
-    next_anchor: MarkSchemeAnchor | None,
-) -> bool:
-    if next_anchor is None:
-        return False
-    for region in regions:
-        if region.page_number != next_anchor.page_number:
-            continue
-        if region.bbox.y1 > next_anchor.y0 + 2 and parent_question_id(next_anchor.question_number) != canonical_number:
-            return True
-    return False
-
-
 def _blocks_between(
     layouts: list[PageLayout],
     start_page: int,
@@ -3650,19 +3618,6 @@ def _pdf_box_to_pixel_box(box: BoundingBox, zoom: float, image_size: tuple[int, 
     right = max(left + 1, min(width, int(box.x1 * zoom)))
     bottom = max(top + 1, min(height, int(box.y1 * zoom)))
     return (left, top, right, bottom)
-
-
-def _stitch_images(images: list["Image.Image"], gap_px: int) -> "Image.Image":
-    from PIL import Image
-
-    width = max(image.width for image in images)
-    height = sum(image.height for image in images) + gap_px * max(0, len(images) - 1)
-    stitched = Image.new("RGB", (width, height), "white")
-    y = 0
-    for image in images:
-        stitched.paste(image, (0, y))
-        y += image.height + gap_px
-    return stitched
 
 
 def _union_boxes(boxes: list[BoundingBox]) -> BoundingBox:

@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import argparse
 import base64
-from collections import Counter
-from datetime import datetime, timezone
 import hashlib
 import json
 import mimetypes
 import os
+from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
 
 from .atomic_json import write_atomic_json
-
+from .topic_packet_contracts import packet_projection_fingerprint
 
 TOPIC_DIFFICULTY_BATCH_SCHEMA = "exam_bank.topic_packet_difficulty_review.batch"
 TOPIC_DIFFICULTY_BATCH_SCHEMA_VERSION = 1
@@ -952,27 +952,6 @@ def _batch_row(
             "total_questions": manifest.get("total_questions"),
         },
     }
-
-
-def packet_projection_fingerprint(manifest: dict[str, Any]) -> str:
-    projection = {
-        "schema_version": manifest.get("schema_version"),
-        "paper_family": manifest.get("paper_family"),
-        "topic_id": manifest.get("topic_id"),
-        "subtopic_id": manifest.get("subtopic_id") or "",
-        "records": [
-            {
-                "question_id": row.get("question_id"),
-                "primary_topic_id": row.get("primary_topic_id"),
-                "secondary_topic_ids": row.get("secondary_topic_ids") or [],
-                "section": row.get("section"),
-            }
-            for row in sorted(_included_records(manifest), key=lambda item: str(item.get("question_id") or ""))
-        ],
-        "routing_provenance": manifest.get("routing_provenance") or {},
-    }
-    raw = json.dumps(projection, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
 def _packet_key(payload: dict[str, Any]) -> tuple[str, str, str]:

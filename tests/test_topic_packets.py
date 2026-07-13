@@ -10,6 +10,7 @@ import fitz
 import pytest
 from PIL import Image
 
+from exam_bank.topic_difficulty_review import reconcile_topic_difficulty
 from exam_bank.topic_packets import (
     PacketKey,
     TopicPacketError,
@@ -20,8 +21,6 @@ from exam_bank.topic_packets import (
     resolve_answer_image_paths,
     validate_packet_key,
 )
-from exam_bank.topic_difficulty_review import reconcile_topic_difficulty
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -255,6 +254,91 @@ def test_global_packet_generation_discovers_reconciled_difficulty_sidecar(tmp_pa
     assert manifest["difficulty_ranking_complete"] is True
     assert manifest["topic_difficulty_review_applied_count"] == 2
     assert summary["difficulty_ranking_complete"] is True
+
+
+def test_legacy_difficulty_fingerprint_accepts_unchanged_semantic_projection(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+        topic_difficulty_root=None,
+    )
+    difficulty_root = tmp_path / "difficulty"
+    reconcile_topic_difficulty(
+        packets_root=paths["output"],
+        difficulty_root=difficulty_root,
+        difficulty_index_path=tmp_path / "missing-index.json",
+        artifact_root=paths["artifact_root"],
+        reports_dir=tmp_path / "reports",
+        auto_review=False,
+    )
+    sidecar_path = next(difficulty_root.glob("*/topic_packet_difficulty_review.v2.json"))
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    sidecar["projection_fingerprint"] = "legacy-provenance-sensitive-fingerprint"
+    sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
+
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+        topic_difficulty_root=difficulty_root,
+    )
+
+    manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text())
+    assert manifest["difficulty_projection_fingerprint_status"] == "legacy_semantic_match"
+    assert "legacy_difficulty_projection_fingerprint_accepted" in manifest["warnings"]
+
+
+def test_legacy_difficulty_fingerprint_rejects_changed_packet_section(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+        topic_difficulty_root=None,
+    )
+    difficulty_root = tmp_path / "difficulty"
+    reconcile_topic_difficulty(
+        packets_root=paths["output"],
+        difficulty_root=difficulty_root,
+        difficulty_index_path=tmp_path / "missing-index.json",
+        artifact_root=paths["artifact_root"],
+        reports_dir=tmp_path / "reports",
+        auto_review=False,
+    )
+    sidecar_path = next(difficulty_root.glob("*/topic_packet_difficulty_review.v2.json"))
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    sidecar["projection_fingerprint"] = "legacy-provenance-sensitive-fingerprint"
+    current_section = str(sidecar["records"][0].get("packet_section") or "")
+    sidecar["records"][0]["packet_section"] = (
+        "review_required" if current_section == "approved" else "approved"
+    )
+    sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
+
+    with pytest.raises(TopicPacketError, match="Reconciled difficulty sidecar is stale"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=paths["output"],
+            artifact_root=paths["artifact_root"],
+            paper_family="p3",
+            topic="integration",
+            topic_difficulty_root=difficulty_root,
+        )
 
 
 def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
@@ -1730,6 +1814,10 @@ def test_oversized_image_warning_is_recorded(tmp_path: Path) -> None:
     topic_warnings = manifest["pdf_outputs"]["topic_packet"]["warnings"]
     assert any(warning.startswith("oversized_block_split_across_pages:question:1") for warning in topic_warnings)
     assert not any("oversized_block_scaled_below_legibility:question:1" in warning for warning in manifest["oversized_block_warnings"])
+    first_record = manifest["included_records"][0]
+    assert first_record["question_end_page"] > first_record["question_start_page"]
+    for page_number in range(first_record["question_start_page"], first_record["question_end_page"] + 1):
+        assert manifest["problems_per_page_summary"]["questions"][str(page_number)] >= 1
 
 
 def test_oversized_answer_image_is_split_instead_of_scaled_below_legibility(tmp_path: Path) -> None:
@@ -1748,7 +1836,12 @@ def test_oversized_answer_image_is_split_instead_of_scaled_below_legibility(tmp_
     topic_warnings = manifest["pdf_outputs"]["topic_packet"]["warnings"]
     assert any(warning.startswith("oversized_block_split_across_pages:answer:1") for warning in topic_warnings)
     assert not any("oversized_block_scaled_below_legibility:answer:1" in warning for warning in manifest["oversized_block_warnings"])
-    assert manifest["included_records"][0]["answer_start_page"] is not None
+    first_record = manifest["included_records"][0]
+    assert first_record["answer_start_page"] is not None
+    assert first_record["answer_end_page"] > first_record["answer_start_page"]
+    assert manifest["answers_section_page_range"][1] == manifest["page_count"]
+    for page_number in range(first_record["answer_start_page"], first_record["answer_end_page"] + 1):
+        assert manifest["problems_per_page_summary"]["answers"][str(page_number)] >= 1
 
 
 def test_cli_help_exits_cleanly() -> None:

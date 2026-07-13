@@ -17,7 +17,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch-id", default=DEFAULT_BATCH_ID)
     parser.add_argument("--batch-dir", type=Path, default=Path("data/review/p3_exact_skill_batches"))
     parser.add_argument("--queue", type=Path, default=Path("reports/p3_exact_skill_review_queue.v1.json"))
-    parser.add_argument("--reviewed-registry", type=Path, default=Path("data/review/p3_exact_skill_reviewed_decisions.v1.json"))
+    parser.add_argument("--reviewed-registry", type=Path, default=Path("data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json"))
     parser.add_argument("--output-json", type=Path, default=Path(DEFAULT_OUTPUT_JSON_PATH))
     parser.add_argument("--output-report", type=Path, default=Path(DEFAULT_OUTPUT_REPORT_PATH))
     parser.add_argument("--dry-run", action="store_true")

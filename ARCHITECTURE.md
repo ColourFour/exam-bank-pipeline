@@ -1,81 +1,59 @@
 # Architecture
 
-This repository is an image-first CAIE 9709 exam-bank pipeline. Question crops and mark-scheme crops are canonical. JSON records, OCR/native text, topic routing, difficulty labels, mark events, Asterion projections, and Content Lab candidates are metadata over those images.
+## Product boundary
 
-## Data Flow
+The canonical product is schema-v2 `question_bank.json` plus question and
+mark-scheme images derived from one `PaperIdentity` contract. A record cannot
+pass mapping or downstream release gates when a required mark-scheme asset is
+missing. Text and AI metadata never replace visual evidence.
 
-1. Source PDFs under `input/` are processed into `output/json/question_bank.json` plus flat canonical image assets under `output/pm1/`, `output/pm3/`, `output/stats/`, and `output/mechanics/`.
-2. Sidecars add advisory evidence without mutating the canonical bank: topic routing, mark events, advisory examiner-report/grade-threshold links, difficulty indexes, and AI-assisted review/debug outputs.
-3. `src/exam_bank/asterion_export.py` builds `output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json`, the broad all-course static-site catalog with canonical image references, asset IDs, integrity metadata, quality gates, subparts, role gates, course fields, and blocked/review states preserved.
-4. The same export path writes `output/asterion/exports/latest/asterion_question_bank_v1.json`, the reviewed/safe student-runtime subset derived from the catalog.
-5. `src/exam_bank/asterion_export.py` also builds `asterion_content_lab_candidates_v1.json`, which is review-only candidate metadata. It is not student runtime.
-6. `src/exam_bank/asterion_student_runtime_safe.py` audits P3 Content Lab candidates for an explicit student-runtime-safe candidate export. This remains P3-specific review infrastructure.
-7. `src/exam_bank/topic_packets.py` builds image-first printable topic packets from canonical question and mark-scheme crops. Reviewed topic-bank decisions and topic-overlap review decisions can change packet placement and coverage summaries, but they do not rewrite canonical extraction records.
-8. `src/exam_bank/visual_topic_audit.py` creates image-backed audit batches for topic coverage anomalies, runs optional AI-assisted review, and imports reviewed decisions into topic-overlap sidecars for packet generation.
-
-Canonical asset paths use `PaperIdentity` names such as `pm1/pm1_2024_m24_12_qp_q06_question.png` and `mechanics/mechanics_2025_w25_52_ms_q05_markscheme.png`. Older nested paths like `output/p1/<paper>/questions/q01.png` are legacy compatibility inputs for normalization, not the active output layout.
-
-## Course Contract
-
-The static 9709 study site should use the course-aware contract in `src/exam_bank/asterion_course_contract.py`.
-
-Supported course IDs:
-
-- `p1`: Pure Mathematics 1, sourced from paper family `p1`
-- `p3`: Pure Mathematics 3, sourced from paper family `p3`
-- `m1`: Mechanics 1, sourced from paper family `p4`
-- `s1`: Probability & Statistics 1, sourced from paper family `p5`
-
-The Asterion all-course catalog adds these fields to each record:
-
-- `course_id`
-- `component_name`
-- `topic_id`, when already available
-- `source_exam`
-- `question_image_path`
-- `mark_scheme_image_path`
-- `student_runtime_safe`
-- `review_status`
-
-The helper layer filters by `course_id`, paper, and component name; returns empty arrays for scaffolded courses; and fails closed for invalid course IDs. P3 legacy runtime behavior is preserved by treating `usage_roles.canonical_practice=allow` as `student_runtime_safe=true` for P3 records. P1, M1, and S1 require explicit reviewed/safe promotion before they can enter student runtime.
-
-Course IDs and canonical asset subject-family folders are related but not interchangeable. Asterion course routing uses the reviewed course contract, while asset storage uses the `PaperIdentity` subject family (`pm1`, `pm3`, `stats`, `mechanics`) embedded in each canonical path.
-
-`asterion_exam_bank_catalog_v1.json` may include reviewed, needs-review, blocked, and candidate-state records. Its metadata includes course and component counts for P1, P3, M1, and S1. `asterion_question_bank_v1.json` is the student-facing subset and should contain only reviewed/safe records.
-
-## Student Runtime Boundary
-
-Student-facing exam-bank pages should load only records with:
-
-- `student_runtime_safe=true`
-- `review_status=reviewed`
-- valid `course_id` in `p1 | p3 | m1 | s1`
-- canonical question and mark-scheme image paths where the image-first policy requires them
-
-If P1, M1, or S1 has no reviewed records, the static site should show:
-
-```text
-No reviewed exam-bank records available yet.
+```mermaid
+flowchart LR
+  M["Corpus manifest"] --> H["Checksum hydration"]
+  H --> R["Document registry + PaperIdentity"]
+  R --> Q["Question detection and rendering"]
+  R --> A["Mark-scheme segmentation and rendering"]
+  Q --> B["Question bank schema v2"]
+  A --> B
+  B --> I["Integrity and release gates"]
+  I --> T["Topic packets and review"]
+  I --> S["Asterion exports"]
+  I --> C["Classroom and autograding"]
 ```
 
-Do not reuse P3 records for P1, M1, or S1 empty states.
+The corpus manifest identifies each source document by canonical local path,
+identity fields, document type, source and mirror URLs, SHA-256, and byte size.
+`input/` is a hydrated cache, not repository source.
 
-## Advisory Boundaries
+## Advisory layers
 
-Question and mark-scheme images remain canonical. OCR text, native text, AI labels, topic-routing labels, difficulty labels, mark-event candidates, and broad skill mappings are advisory unless a separate reviewed contract explicitly promotes them.
+Topic routing, taxonomy, difficulty, examiner evidence, mark events, OCR, and AI
+enrichment are sidecars. Promoted review decisions live only under
+`data/review/canonical/` and carry authority, source-run provenance, source
+artifact hash, reviewer identity, and timestamp. Review runs and visual evidence
+remain ignored working state.
 
-Content Lab candidates are review material only. They may contain useful blocker diagnostics and source-artifact references, but they must not be loaded as student runtime records and must not create generated student-facing practice content.
+Topic packets and Asterion are downstream projections. They may filter or group
+canonical records but do not rewrite extraction truth. Student runtime requires
+explicit reviewed/safe status and valid canonical assets.
 
-Topic packets are downstream classroom/review projections. They use image assets as student-facing content and may route uncertain or visually risky records into review-required sections. Packet summaries and visual-topic audit decisions are review evidence; they are not canonical question-bank edits.
+## Private platform boundary
 
-## Submission And Classroom Boundary
+Rosters, student work, live email state, classroom state, draft grades, and
+submission reports are local-only and ignored. They are excluded from corpus
+hydration, fixtures, releases, and promoted review decisions. Autograding and
+student-facing exports remain fail-closed when required visual or reviewed
+evidence is absent.
 
-The assignment-submission workflow is private, local-first infrastructure separate from exam-bank extraction. Class rosters, assignment PDFs, submission PDFs, live-email connector config, outgoing-email queues, draft grades, and classroom dashboard state live under ignored roots such as `data/classes/`, `data/submissions/`, `output/submissions/`, and `reports/submissions/`.
+## Execution boundary
 
-Submission tools may build local quiz packets, ingest local or scoped email-derived PDFs, prepare teacher review queues, create draft-only grading artifacts, build evidence-based B/M/A matrices, and queue controlled outgoing messages behind explicit approval gates. They must not mutate `output/json/question_bank.json`, canonical image trees, Asterion exports, topic-routing sidecars, or topic packets, and they must not commit real student data.
+`exam-bank` exposes lazy-loaded domain namespaces so top-level help does not
+import PDF, OCR, AI, email, and classroom stacks. Extraction resume keys include
+source-document hashes, the effective configuration, pipeline version, and OCR
+profile. Final records are sorted by canonical identity and written atomically.
 
-The current live email boundary is transport-focused: provider checks and controlled smoke tests exist, inbound connectors default to dry-run and scoped assignment import, and classroom live sends require explicit teacher confirmation or `--send-live`. Draft-auto grading output remains teacher-facing and cannot become final student feedback without a later reviewed contract.
-
-## P3-Specific Assumptions
-
-The current P3 runtime/review path still has P3-only region names, P3 exact-skill IDs, P3 reviewed-decision inputs, and P3 Content Lab audit outputs. Those assumptions are intentionally contained in P3 review modules. Future P1/M1/S1 work should add official topic maps first, then map existing exam-bank records where image-backed evidence exists.
+`exam-bank extract run --workers N` is opt-in paper-level parallelism. Each
+worker renders into an isolated staging root. The parent atomically promotes
+artifacts, merges deterministic JSONL diagnostics, sorts records by canonical
+identity, and writes the final JSON. Debug overlay mode remains single-worker
+because its additional diagnostic streams are not yet partitioned.

@@ -17,8 +17,8 @@ DEFAULT_CATALOG_PATH = Path("output/asterion/exports/latest/asterion_exam_bank_c
 DEFAULT_RUNTIME_PATH = Path("output/asterion/exports/latest/asterion_question_bank_v1.json")
 DEFAULT_CONTENT_LAB_PATH = Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json")
 DEFAULT_VALIDATION_REPORT_PATH = Path("/tmp/asterion_export_release_provenance_pr15_validation.json")
-DEFAULT_EXPECTED_PROVENANCE_PATH = Path("reports/asterion_export_release_provenance_pr15_2026_06_11.json")
-DEFAULT_OUTPUT_PATH = Path("reports/asterion_export_release_manifest_pr16_2026_06_11.json")
+DEFAULT_EXPECTED_PROVENANCE_PATH = Path("manifests/releases/asterion_export_release_provenance.v1.json")
+DEFAULT_OUTPUT_PATH = Path("manifests/releases/asterion_export_release_manifest.v1.json")
 
 ARTIFACT_KEYS = {
     "catalog": DEFAULT_CATALOG_PATH,

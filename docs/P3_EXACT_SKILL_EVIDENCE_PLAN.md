@@ -15,7 +15,7 @@ The P3 exact-skill workflow is currently a review-diagnostics system, not a runt
 The reviewed-decision registry lives at:
 
 ```text
-data/review/p3_exact_skill_reviewed_decisions.v1.json
+data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json
 ```
 
 It is the only current artifact allowed to assert reviewed route status. The registry remains deliberately fail-closed: the current seed has `0` clean records, `1` thin record, `1` blocked record, and `1` review-needed record. The validator is still the gate for this curated input.
@@ -57,7 +57,7 @@ Asterion can safely consume this workflow now only as Content Lab, admin, or rev
 Phase 1 adds the reviewed-decision input contract that a future P3 exact-skill evidence sidecar can consume. The manual registry lives at:
 
 ```text
-data/review/p3_exact_skill_reviewed_decisions.v1.json
+data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json
 ```
 
 This path is intentionally under `data/review/` because it is curated review input, not generated output. It is not the Asterion sidecar and does not create or update:
@@ -135,7 +135,7 @@ data/review/p3_exact_skill_batches/batch_0001_manifest.v1.json
 
 The review packet Markdown is the reviewer-facing checklist. For each selected item it includes the queue ID, question and part/subpart scope, paper/session/variant, candidate P3 skill IDs, prerequisite/support skill context, candidate region/topic, topic-routing context, Content Lab blocker context, canonical question and mark-scheme asset refs, advisory-only mark-event refs, proposed blockers, recommended review action, and an exact checklist for inspecting images and deciding scope, skill, blockers, route status, allowed use cases, and evidence basis.
 
-The decision template is deliberately not the reviewed-decision registry schema. It uses `exam_bank.p3_exact_skill.review_batch_template` so it cannot be confused with final reviewed evidence. Each generated record defaults to `route_status: review_needed`, `blockers: ["pending_human_review"]`, empty `reviewed_source_skill_ids`, a separate `suggested_source_skill_ids` draft field, empty reviewer fields, empty `evidence_basis`, and all allowed use cases set to `false`. A reviewer must manually inspect the source images, decide the exact skill and safe scope, write project-wording evidence basis, and then copy or merge approved records into `data/review/p3_exact_skill_reviewed_decisions.v1.json`.
+The decision template is deliberately not the reviewed-decision registry schema. It uses `exam_bank.p3_exact_skill.review_batch_template` so it cannot be confused with final reviewed evidence. Each generated record defaults to `route_status: review_needed`, `blockers: ["pending_human_review"]`, empty `reviewed_source_skill_ids`, a separate `suggested_source_skill_ids` draft field, empty reviewer fields, empty `evidence_basis`, and all allowed use cases set to `false`. A reviewer must manually inspect the source images, decide the exact skill and safe scope, write project-wording evidence basis, and then copy or merge approved records into `data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json`.
 
 The manifest records the queue and registry paths used, filters, selected and skipped counts, selected queue/question IDs, and an estimated sparse-skill coverage delta. It also warns that the batch is not reviewed evidence and is not the final Asterion sidecar.
 
@@ -177,7 +177,7 @@ This response file is a draft human-review note artifact only. It is not the rev
 
 Asset refs are resolved against the repo root. If a ref such as `p3/...` is not present directly under the repo root, the builder also checks `output/p3/...`, which matches the current canonical crop layout. Existing assets are linked with relative paths from the HTML file so the packet can be opened locally without copying images. Missing assets are shown as visible warnings beside the review item.
 
-This visual packet is still not reviewed evidence. It does not edit `data/review/p3_exact_skill_reviewed_decisions.v1.json`, does not promote any candidate, does not change the decision template, and does not create:
+This visual packet is still not reviewed evidence. It does not edit `data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json`, does not promote any candidate, does not change the decision template, and does not create:
 
 ```text
 output/asterion/exports/latest/p3_exact_skill_evidence_v1.json
@@ -207,7 +207,7 @@ The differential-equation vs parametric/implicit guard remains a special known-r
 
 ### Ambiguity Reduction Is Triage, Not Trust Promotion
 
-The review queue now uses sharper candidate statuses so broad `ambiguous_candidate` records are not all handled the same way. This does not make any record reviewed evidence and does not increase allowed use cases. Only `data/review/p3_exact_skill_reviewed_decisions.v1.json`, after manual review and validation, can assert clean evidence.
+The review queue now uses sharper candidate statuses so broad `ambiguous_candidate` records are not all handled the same way. This does not make any record reviewed evidence and does not increase allowed use cases. Only `data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json`, after manual review and validation, can assert clean evidence.
 
 The queue statuses are review categories:
 

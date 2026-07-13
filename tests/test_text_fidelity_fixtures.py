@@ -80,7 +80,7 @@ def test_build_fixture_report_can_include_advisory_normalized_candidates() -> No
     assert report["normalized_advisory_candidates_included"] is True
     assert report["normalization_summary"]["measurable_improvement_count"] >= 10
     candidate = next(record for record in report["records"] if record["record_id"] == "35summer25_q04")
-    assert candidate["selected_text_raw"] == "4 Find the exact coordinates of the stationary point of the curve with equation y = 3x^{3} ln x^{4}, for x20."
+    assert candidate["selected_text_raw"] == "4 Find the exact coordinates of the stationary point of the curve with equation y = 3x^{3} ln x^{4}, for x20. [5]"
     assert candidate["native_pdf_text_raw"] == ""
     assert candidate["ocr_text_raw"].startswith("4 Find the exact coordinates")
     assert "for x > 0" in candidate["question_text_normalized"]

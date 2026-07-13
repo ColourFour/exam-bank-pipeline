@@ -19,7 +19,7 @@ Review outputs:
 ## Build Commands
 
 ```bash
-.venv/bin/python scripts/build_mark_events.py \
+exam-bank marks build \
   --question-bank output/json/question_bank.json \
   --artifact-root output \
   --out output/json/question_bank.mark_events.v1.json \
@@ -28,7 +28,7 @@ Review outputs:
 ```
 
 ```bash
-.venv/bin/python scripts/validate_mark_events.py \
+exam-bank marks validate \
   --question-bank output/json/question_bank.json \
   --mark-events output/json/question_bank.mark_events.v1.json \
   --artifact-root output \

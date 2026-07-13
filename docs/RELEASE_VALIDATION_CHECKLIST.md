@@ -147,7 +147,7 @@ Warning:
 Before regenerating Asterion projections, validate advisory sidecars that the export or downstream release notes may reference:
 
 ```bash
-.venv/bin/python scripts/validate_mark_events.py \
+exam-bank marks validate \
   --question-bank output/json/question_bank.json \
   --mark-events output/json/question_bank.mark_events.v1.json \
   --artifact-root output \
@@ -155,14 +155,14 @@ Before regenerating Asterion projections, validate advisory sidecars that the ex
 ```
 
 ```bash
-.venv/bin/python scripts/validate_advisory_evidence.py \
+exam-bank advisory validate \
   --advisory-root output/advisory_evidence \
   --question-bank output/json/question_bank.json \
   --output output/advisory_evidence/validation.v1.json
 ```
 
 ```bash
-.venv/bin/python scripts/generate_difficulty_index.py --dry-run
+exam-bank topic difficulty-index --dry-run
 ```
 
 Expected evidence:

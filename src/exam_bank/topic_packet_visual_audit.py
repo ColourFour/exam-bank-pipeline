@@ -2,20 +2,19 @@ from __future__ import annotations
 
 import argparse
 import base64
-from collections import Counter
-from datetime import datetime, timezone
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+from collections import Counter
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Iterable, Sequence
 
 import fitz
 
 from .atomic_json import write_atomic_json
-
 
 TOPIC_PACKET_VISUAL_AUDIT_BATCH_SCHEMA = "exam_bank.topic_packet_visual_audit.batch"
 TOPIC_PACKET_VISUAL_AUDIT_BATCH_SCHEMA_VERSION = 1
@@ -633,9 +632,9 @@ def _related_records(manifest: dict[str, Any], *, page_number: int, page_section
             continue
         problem_number = record.get("problem_number")
         question_id = str(record.get("question_id") or "")
-        if record.get("question_start_page") == page_number:
+        if _record_spans_page(record, prefix="question", page_number=page_number):
             related.append(_related_record(record, kind="question", problem_number=problem_number, question_id=question_id, artifact_root=artifact_root))
-        if record.get("answer_start_page") == page_number:
+        if _record_spans_page(record, prefix="answer", page_number=page_number):
             related.append(_related_record(record, kind="answer", problem_number=problem_number, question_id=question_id, artifact_root=artifact_root))
     if related:
         return related
@@ -643,9 +642,19 @@ def _related_records(manifest: dict[str, Any], *, page_number: int, page_section
         return [
             _related_record(record, kind="question", problem_number=record.get("problem_number"), question_id=str(record.get("question_id") or ""), artifact_root=artifact_root)
             for record in manifest.get("included_records") or []
-            if isinstance(record, dict) and record.get("question_start_page") == page_number
+            if isinstance(record, dict) and _record_spans_page(record, prefix="question", page_number=page_number)
         ]
     return []
+
+
+def _record_spans_page(record: dict[str, Any], *, prefix: str, page_number: int) -> bool:
+    start = record.get(f"{prefix}_start_page")
+    if not isinstance(start, int):
+        return False
+    end = record.get(f"{prefix}_end_page")
+    if not isinstance(end, int):
+        end = start
+    return start <= page_number <= end
 
 
 def _related_record(record: dict[str, Any], *, kind: str, problem_number: Any, question_id: str, artifact_root: Path) -> dict[str, Any]:

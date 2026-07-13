@@ -11,8 +11,8 @@ P3_EXACT_SKILL_REVIEWED_MARK_EVENTS_VALIDATION_SCHEMA = (
 )
 P3_EXACT_SKILL_REVIEWED_MARK_EVENTS_SCHEMA_VERSION = 1
 
-DEFAULT_REVIEWED_DECISIONS_PATH = "data/review/p3_exact_skill_reviewed_decisions.v1.json"
-DEFAULT_REVIEWED_MARK_EVENTS_PATH = "data/review/p3_exact_skill_reviewed_mark_events.v1.json"
+DEFAULT_REVIEWED_DECISIONS_PATH = "data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json"
+DEFAULT_REVIEWED_MARK_EVENTS_PATH = "data/review/canonical/p3_exact_skill/reviewed_mark_events.v1.json"
 DEFAULT_P3_SKILL_MAP_PATH = "exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json"
 DEFAULT_P3_SKILL_MAPPINGS_PATH = (
     "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json"

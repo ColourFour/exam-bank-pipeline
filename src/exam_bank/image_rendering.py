@@ -10,12 +10,14 @@ from .config import AppConfig
 from .core.asset_paths import AssetPath, AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .document_metadata import parse_filename_metadata
+from .image_operations import stitch_images as _stitch_images
 from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
 from .models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, RenderResult, TextBlock
 from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
 from .question_detection_layout import looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text
 from .question_detection import detect_question_anchor_candidates, extract_text_from_blocks, parse_question_start
+from .question_detection_graphics import is_answer_rule_like as _is_answer_rule_like
 from .trust import references_source_visual
 
 
@@ -2075,7 +2077,12 @@ def _dedupe_crop_regions(regions: list[CropRegion]) -> tuple[list[CropRegion], l
         if any(region.page_number == other.page_number and _region_is_stale_fragment(region, other) for other in kept):
             flags.append("stale_crop_fragment_removed")
             continue
-        if any(region.page_number == other.page_number and _boxes_duplicate(region.bbox, other.bbox) for other in kept):
+        if any(
+            region.page_number == other.page_number
+            and _boxes_duplicate(region.bbox, other.bbox)
+            and _region_content_is_subsumed(region, other)
+            for other in kept
+        ):
             flags.append("duplicate_crop_region_removed")
             continue
         kept.append(region)
@@ -2111,11 +2118,28 @@ def _region_is_stale_fragment(candidate: CropRegion, current: CropRegion) -> boo
     overlap_ratio = _intersection_area(candidate.bbox, current.bbox) / max(1.0, _box_area(candidate.bbox))
     if overlap_ratio < 0.9:
         return False
+    if candidate.graphics and not current.graphics:
+        # A text crop can geometrically contain a detected figure crop without
+        # carrying that figure in its payload. Retain the visual region so the
+        # canonical image does not silently lose the diagram.
+        return False
     if candidate.region_kind == current.region_kind == "text":
-        candidate_text = {_clean_text_line(block.text) for block in candidate.text_blocks if _clean_text_line(block.text)}
-        current_text = {_clean_text_line(block.text) for block in current.text_blocks if _clean_text_line(block.text)}
-        return bool(candidate_text) and candidate_text <= current_text
+        return _region_content_is_subsumed(candidate, current)
     return True
+
+
+def _region_content_is_subsumed(candidate: CropRegion, current: CropRegion) -> bool:
+    """Return true only when dropping a region cannot discard text or graphics."""
+    candidate_text = {_clean_text_line(block.text) for block in candidate.text_blocks if _clean_text_line(block.text)}
+    current_text = {_clean_text_line(block.text) for block in current.text_blocks if _clean_text_line(block.text)}
+    if candidate_text and not candidate_text <= current_text:
+        return False
+    if candidate.graphics and not all(
+        any(_boxes_duplicate(graphic, retained) for retained in current.graphics)
+        for graphic in candidate.graphics
+    ):
+        return False
+    return bool(candidate_text or candidate.graphics)
 
 
 def _is_lower_overlapping_figure_fragment(candidate: CropRegion, current: CropRegion) -> bool:
@@ -3051,12 +3075,6 @@ def _is_full_height_page_edge_furniture_box(box: BoundingBox, layout: PageLayout
     )
 
 
-def _is_answer_rule_like(box: BoundingBox, layout: PageLayout) -> bool:
-    width = max(0.0, box.x1 - box.x0)
-    height = max(0.0, box.y1 - box.y0)
-    return height <= 2.5 and width >= layout.width * 0.28
-
-
 def _is_formula_rule_box(box: BoundingBox, layout: PageLayout) -> bool:
     width = max(0.0, box.x1 - box.x0)
     height = max(0.0, box.y1 - box.y0)
@@ -3163,19 +3181,6 @@ def _text_from_regions(regions: list[CropRegion]) -> str:
             continue
         blocks.extend(region.text_blocks)
     return extract_text_from_blocks(blocks)
-
-
-def _stitch_images(images: list["Image.Image"], gap_px: int) -> "Image.Image":
-    from PIL import Image
-
-    width = max(image.width for image in images)
-    height = sum(image.height for image in images) + gap_px * max(0, len(images) - 1)
-    stitched = Image.new("RGB", (width, height), "white")
-    y = 0
-    for image in images:
-        stitched.paste(image, (0, y))
-        y += image.height + gap_px
-    return stitched
 
 
 def _question_identity_from_span(span: QuestionSpan) -> PaperIdentity | None:

@@ -9,11 +9,12 @@ from exam_bank.p3_exact_skill.reviewed_mark_events import (
 )
 
 
-def test_populated_reviewed_mark_event_artifact_validates() -> None:
+def test_populated_reviewed_mark_event_artifact_validates(tmp_path: Path) -> None:
+    paths = _validated_fixture(tmp_path)
     report = validate_reviewed_mark_events(
-        reviewed_mark_events_path="data/review/p3_exact_skill_reviewed_mark_events.v1.json",
-        question_bank_path="output/json/question_bank.json",
-        mark_events_path="output/json/question_bank.mark_events.v1.json",
+        reviewed_mark_events_path=paths["reviewed"],
+        question_bank_path=paths["question_bank"],
+        mark_events_path=paths["mark_events"],
     )
 
     assert report["ok"] is True
@@ -113,11 +114,12 @@ def test_question_and_image_references_are_checked(tmp_path: Path) -> None:
     assert any("question_image_path_not_found:missing-question.png" in error for error in errors)
 
 
-def test_validator_cli_accepts_populated_fixture() -> None:
+def test_validator_cli_accepts_populated_fixture(tmp_path: Path) -> None:
+    paths = _validated_fixture(tmp_path)
     report = validate_reviewed_mark_events(
-        reviewed_mark_events_path=Path("data/review/p3_exact_skill_reviewed_mark_events.v1.json"),
-        question_bank_path=Path("output/json/question_bank.json"),
-        mark_events_path=Path("output/json/question_bank.mark_events.v1.json"),
+        reviewed_mark_events_path=paths["reviewed"],
+        question_bank_path=paths["question_bank"],
+        mark_events_path=paths["mark_events"],
     )
 
     assert json.dumps(report)
@@ -160,3 +162,37 @@ def _decision(
         "rationale": "Fixture rationale.",
         "notes": [],
     }
+
+
+def _validated_fixture(tmp_path: Path) -> dict[str, Path]:
+    decisions = [
+        _decision(
+            tmp_path,
+            decision_id=f"decision-{index}",
+            event_id=f"q{index}_me0001",
+            source_question_id=f"q{index}",
+        )
+        for index in range(11)
+    ]
+    paths = {
+        "reviewed": tmp_path / "reviewed.json",
+        "question_bank": tmp_path / "question_bank.json",
+        "mark_events": tmp_path / "mark_events.json",
+    }
+    paths["reviewed"].write_text(json.dumps(_payload(*decisions)), encoding="utf-8")
+    paths["question_bank"].write_text(
+        json.dumps({"questions": [{"question_id": f"q{index}"} for index in range(11)]}),
+        encoding="utf-8",
+    )
+    paths["mark_events"].write_text(
+        json.dumps(
+            {
+                "records": [
+                    {"mark_events": [{"event_id": f"q{index}_me0001"}]}
+                    for index in range(11)
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    return paths

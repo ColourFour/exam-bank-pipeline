@@ -1,9 +1,26 @@
+import hashlib
+import json
+from dataclasses import dataclass
 from pathlib import Path
 
+from exam_bank import pipeline
 from exam_bank.config import AppConfig
 from exam_bank.document_metadata import DocumentMetadata, parse_filename_metadata, reconcile_document_metadata
 from exam_bank.document_registry import build_document_registry
-from exam_bank import pipeline
+
+
+@dataclass
+class _WorkerRecord:
+    paper_name: str
+    question_number: str
+    full_question_label: str
+    screenshot_path: str
+    syllabus_code: str
+    paper_family: str
+    year: str
+    session: str
+    component: str
+    source_paper_code: str
 
 
 def touch_pdf(path: Path) -> Path:
@@ -176,3 +193,81 @@ def test_process_registry_routes_only_question_papers_to_question_extraction(tmp
             ],
         }
     ]
+
+
+def test_parallel_workers_match_single_worker_order_content_and_artifact_hashes(tmp_path: Path, monkeypatch) -> None:
+    touch_pdf(tmp_path / "9709 Mathematics November 2025 Question Paper 13.pdf")
+    touch_pdf(tmp_path / "9709 Mathematics November 2025 Question Paper 12.pdf")
+    registry = build_document_registry(tmp_path)
+
+    def fake_build_records(question_pdf, config, **_kwargs):
+        metadata = parse_filename_metadata(question_pdf)
+        artifact = config.output.root_dir() / "p1" / f"{metadata.component}.bin"
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_bytes(f"artifact-{metadata.component}".encode())
+        return [
+            _WorkerRecord(
+                paper_name=f"{metadata.component}{metadata.normalized_session_key}",
+                question_number="1",
+                full_question_label="1",
+                screenshot_path=str(artifact),
+                syllabus_code="9709",
+                paper_family="p1",
+                year=metadata.year,
+                session=metadata.session,
+                component=metadata.component,
+                source_paper_code=metadata.component,
+            )
+        ]
+
+    def fake_export(records, config):
+        output = config.output.json_dir / config.naming.json_name
+        output.parent.mkdir(parents=True, exist_ok=True)
+        payload = [
+            {
+                "paper": record.paper_name,
+                "question_number": record.question_number,
+                "artifact": Path(record.screenshot_path).relative_to(config.output.root_dir()).as_posix(),
+            }
+            for record in records
+        ]
+        output.write_text(json.dumps(payload, sort_keys=True), encoding="utf-8")
+        return output
+
+    monkeypatch.setattr(pipeline, "build_records_for_pdf", fake_build_records)
+    monkeypatch.setattr(pipeline, "export_records", fake_export)
+    monkeypatch.setattr(pipeline, "_write_missing_image_repair_report", lambda *_args, **_kwargs: None)
+
+    single_config = AppConfig()
+    single_config.output.apply_root(tmp_path / "single")
+    multi_config = AppConfig()
+    multi_config.output.apply_root(tmp_path / "multi")
+    single = pipeline._process_registry_entries(registry, single_config, workers=1)
+    multi = pipeline._process_registry_entries(registry, multi_config, workers=2)
+
+    assert single.json_path.read_text(encoding="utf-8") == multi.json_path.read_text(encoding="utf-8")
+    assert [(row.paper_name, row.question_number) for row in single.records] == [
+        (row.paper_name, row.question_number) for row in multi.records
+    ]
+    assert _artifact_hashes(single_config.output.root_dir()) == _artifact_hashes(multi_config.output.root_dir())
+    assert not (multi_config.output.root_dir() / ".workers").exists()
+
+
+def test_parallel_workers_reject_debug_mode(tmp_path: Path) -> None:
+    config = AppConfig()
+    config.output.apply_root(tmp_path / "output")
+    config.debug.enabled = True
+
+    try:
+        pipeline._process_registry_entries(build_document_registry(tmp_path), config, workers=2)
+    except ValueError as exc:
+        assert "debug mode" in str(exc)
+    else:
+        raise AssertionError("workers > 1 should reject shared debug mode")
+
+
+def _artifact_hashes(root: Path) -> dict[str, str]:
+    return {
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(root.rglob("*.bin"))
+    }

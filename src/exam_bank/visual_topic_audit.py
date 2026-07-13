@@ -13,6 +13,8 @@ from typing import Any, Iterable, Sequence
 
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import load_question_bank
+from .paper_components import normalize_component_code as _normalize_component_code
+from .paper_components import packet_family_for_component as _packet_family_for_component
 from .topic_packets import (
     DEFAULT_QUESTION_BANK_PATH,
     DEFAULT_TAXONOMY_PATH,
@@ -931,18 +933,6 @@ def _packet_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) 
     return normalization.expected_family if normalization.resolved else normalization.current_family
 
 
-def _packet_family_for_component(component_code: str) -> str:
-    if component_code in {"01", "11", "12", "13", "15"}:
-        return "p1"
-    if component_code in {"03", "31", "32", "33", "35"}:
-        return "p3"
-    if component_code in {"04", "41", "42", "43", "45"}:
-        return "p4"
-    if component_code in {"06", "61", "62", "63", "65", "51", "52", "53", "55"}:
-        return "p5"
-    return ""
-
-
 def _source_paper_code(record: dict[str, Any]) -> str:
     for value in (
         record.get("source_paper_code"),
@@ -956,15 +946,6 @@ def _source_paper_code(record: dict[str, Any]) -> str:
         if match:
             return _normalize_component_code(match.group(1))
     return ""
-
-
-def _normalize_component_code(value: Any) -> str:
-    text = str(value or "").strip().lower().removeprefix("p")
-    match = re.search(r"\d+", text)
-    if not match:
-        return ""
-    code = match.group(0)
-    return code.zfill(2) if len(code) == 1 else code
 
 
 def _question_image_paths(record: dict[str, Any]) -> list[str]:

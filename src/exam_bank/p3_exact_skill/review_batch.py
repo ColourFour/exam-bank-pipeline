@@ -787,7 +787,7 @@ def build_decision_template(
         "reviewed_registry_path": str(reviewed_path),
         "warning": (
             "This is not the reviewed-decision registry and must not be consumed as clean evidence. "
-            "Approved records must be manually converted into data/review/p3_exact_skill_reviewed_decisions.v1.json."
+            "Approved records must be manually converted into data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json."
         ),
         "record_count": len(records),
         "records": records,

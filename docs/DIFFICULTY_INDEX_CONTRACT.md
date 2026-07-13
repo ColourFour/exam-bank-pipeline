@@ -21,7 +21,7 @@ Review reports:
 ## Build Command
 
 ```bash
-.venv/bin/python scripts/generate_difficulty_index.py \
+exam-bank topic difficulty-index \
   --input output/json/question_bank.json \
   --output output/json/question_bank.difficulty_index.v1.json \
   --reports-dir reports \

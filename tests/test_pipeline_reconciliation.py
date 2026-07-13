@@ -8,7 +8,6 @@ from exam_bank.pipeline import (
     _expected_paper_total,
     _missing_question_image_reason,
     _paper_total_check,
-    _polluted_pass_signal_groups,
     _reconcile_paper_topics,
     _reconcile_question_mark_total_mismatches,
     _refine_validation_status,
@@ -16,6 +15,7 @@ from exam_bank.pipeline import (
     build_missing_image_repair_report,
 )
 from exam_bank.trust import MappingStatus, PaperTotalStatus, RescanResult, ValidationStatus
+from exam_bank.trust import polluted_pass_signal_groups as _polluted_pass_signal_groups
 
 
 def _record(

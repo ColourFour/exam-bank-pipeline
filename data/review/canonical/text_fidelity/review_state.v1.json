@@ -1,0 +1,24 @@
+{
+  "promotion": {
+    "decision_authority": "automated_review",
+    "reviewed_at": "2026-07-13T03:37:27Z",
+    "reviewed_by": "legacy-artifact-migration",
+    "schema_name": "exam_bank.review_promotion",
+    "schema_version": 1,
+    "source_artifact_path": "data/review/text_fidelity_review_state.json",
+    "source_artifact_sha256": "19bb33cbf6c4449986a594057755dd253219bd5634ff25feaa3004979903361e",
+    "source_run_id": "legacy-migration-2026-07-13"
+  },
+  "records": [],
+  "schema_name": "exam_bank.text_fidelity.review_state",
+  "schema_version": 1,
+  "source_of_truth_note": "Reviewer state is advisory metadata only. Canonical question and mark-scheme images remain the source of truth.",
+  "statuses": [
+    "unresolved",
+    "accepted_text",
+    "needs_fixture",
+    "needs_crop_fix",
+    "needs_ocr_profile",
+    "false_positive"
+  ]
+}

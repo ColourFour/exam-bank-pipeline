@@ -134,8 +134,8 @@ def run_runtime_safe_audit(
     artifact_root: Path,
     out_dir: Path,
     target_pass_rate: float = 0.50,
-    reviewed_source_skills_path: Path | None = Path("data/review/p3_exact_skill_reviewed_decisions.v1.json"),
-    reviewed_mark_events_path: Path | None = Path("data/review/p3_exact_skill_reviewed_mark_events.v1.json"),
+    reviewed_source_skills_path: Path | None = Path("data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json"),
+    reviewed_mark_events_path: Path | None = Path("data/review/canonical/p3_exact_skill/reviewed_mark_events.v1.json"),
     skill_map_path: Path | None = Path("exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json"),
     question_skill_mappings_path: Path | None = Path(
         "exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json"

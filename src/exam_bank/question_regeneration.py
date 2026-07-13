@@ -11,6 +11,7 @@ from .config import AppConfig
 from .core.asset_paths import AssetPathResolver
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
 from .identifiers import normalize_question_id
+from .image_operations import stitch_images as _stitch_images
 from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
 from .image_rendering import _answer_rule_y_bands, _page_furniture_box_label, render_question_image
 from .models import BoundingBox, RenderResult
@@ -18,6 +19,8 @@ from .mupdf_tools import quiet_mupdf
 from .ocr import run_question_crop_ocr
 from .pdf_extract import extract_pdf_layout
 from .question_detection import detect_question_spans
+from .regeneration_selection import normalize_lookup_key as _normalize_lookup_key
+from .regeneration_selection import normalize_requested_ids as _normalize_requested_ids
 
 
 @dataclass(frozen=True)
@@ -289,19 +292,6 @@ def _bbox_from_mapping(value: Any) -> BoundingBox | None:
         return None
 
 
-def _stitch_images(images: list[Any], gap_px: int) -> Any:
-    from PIL import Image
-
-    width = max(image.width for image in images)
-    height = sum(image.height for image in images) + gap_px * max(0, len(images) - 1)
-    stitched = Image.new("RGB", (width, height), "white")
-    y = 0
-    for image in images:
-        stitched.paste(image, (0, y))
-        y += image.height + gap_px
-    return stitched
-
-
 def _load_question_rows(question_bank_path: str | Path) -> list[dict[str, Any]]:
     path = Path(question_bank_path)
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -382,16 +372,6 @@ def _identity_parts_from_question_artifact(row: dict[str, Any]) -> dict[str, str
     return {}
 
 
-def _normalize_requested_ids(values: Iterable[str]) -> set[str]:
-    normalized: set[str] = set()
-    for value in values:
-        for part in str(value or "").replace("\n", ",").split(","):
-            cleaned = _normalize_lookup_key(part)
-            if cleaned:
-                normalized.add(cleaned)
-    return normalized
-
-
 def _record_match_keys(row: dict[str, Any]) -> set[str]:
     keys = {_normalize_lookup_key(row.get("question_id"))}
     for field in ("canonical_question_artifact", "question_image_path"):
@@ -404,15 +384,6 @@ def _record_match_keys(row: dict[str, Any]) -> set[str]:
         keys.add(_normalize_lookup_key(stem.removesuffix("_question")))
         keys.add(_normalize_lookup_key(path.name))
     return {key for key in keys if key}
-
-
-def _normalize_lookup_key(value: Any) -> str:
-    text = str(value or "").strip()
-    if not text:
-        return ""
-    text = Path(text).name if "/" in text else text
-    text = text.removesuffix(".png")
-    return text.strip()
 
 
 def _int_or_none(value: Any) -> int | None:

@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 import fitz
-from PIL import Image, ImageDraw
 import pytest
+from PIL import Image, ImageDraw
 
 from exam_bank.topic_packet_visual_audit import (
     TOPIC_PACKET_VISUAL_AUDIT_DECISION_VERSION,
@@ -50,6 +50,30 @@ def test_build_topic_packet_visual_audit_batch_maps_pages_to_problems_and_seed_b
     assert answer_page["related_question_ids"] == ["q1", "q2"]
     assert answer_page["seed_bug_refs"][0]["user_label"] == "Fixture Q2 mark scheme"
     assert "oversized_block_scaled_below_legibility:answer:1:scale=0.31" in answer_page["layout_warnings"]
+
+
+def test_build_topic_packet_visual_audit_maps_split_answer_continuation_page(tmp_path: Path) -> None:
+    paths = _packet_fixture(tmp_path)
+    manifest_path = paths["packet_dir"] / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["page_count"] = 4
+    manifest["answers_section_page_range"] = [3, 4]
+    manifest["included_records"][0]["answer_end_page"] = 4
+    _pdf(Path(manifest["pdf_path"]), ["Problem 1", "Problem 2", "Answers", "Answer 1 continued"])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    batch = build_topic_packet_visual_audit_batch(
+        packets_root=paths["packets_root"],
+        artifact_root=paths["artifact_root"],
+        render_root=paths["render_root"],
+        out_dir=paths["review_dir"],
+        seed_bugs=[],
+    )
+
+    continuation_page = batch["rows"][3]
+    assert continuation_page["page_section"] == "Answers / Mark Schemes"
+    assert continuation_page["related_question_ids"] == ["q1"]
+    assert continuation_page["related_records"][0]["kind"] == "answer"
 
 
 def test_import_topic_packet_visual_audit_decisions_tracks_seed_bugs_as_fixed(tmp_path: Path) -> None:

@@ -10,6 +10,7 @@ from typing import Any, Iterable
 from PIL import Image, UnidentifiedImageError
 
 from .missing_mark_scheme import KNOWN_MISSING_MARK_SCHEME_COMPANIONS, source_companion_key, source_companion_key_from_paper
+from .mark_scheme_labels import top_level_mark_scheme_text_label
 
 
 _CANDIDATE_FIELDS = [
@@ -718,30 +719,13 @@ def _mark_scheme_text_foreign_question_labels(
         line = " ".join(raw_line.replace("\u00a0", " ").split())
         if not line:
             continue
-        label = _top_level_mark_scheme_text_label(line)
+        label = top_level_mark_scheme_text_label(line)
         if label is None or label == current_number:
             continue
         if known_question_numbers and label not in known_question_numbers:
             continue
         findings.append({"question_number": label, "line": line})
     return findings
-
-
-def _top_level_mark_scheme_text_label(line: str) -> str | None:
-    match = re.match(r"^(?P<number>\d{1,2})(?P<rest>.*)$", line)
-    if not match:
-        return None
-    number = str(int(match.group("number")))
-    rest = match.group("rest")
-    if not rest:
-        return None
-    if re.match(r"^\([a-zivx]+\)", rest, re.IGNORECASE):
-        return number
-    if re.match(r"^\s+\([a-zivx]+\)", rest, re.IGNORECASE):
-        return number
-    if re.match(r"^\s{2,}\([a-zivx]+\)", rest, re.IGNORECASE):
-        return number
-    return None
 
 
 def parent_question_number(value: str) -> str:

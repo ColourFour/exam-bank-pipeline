@@ -115,8 +115,8 @@ The approved reviewed-rubric workflow is:
 4. Run the completion checker with `scripts/check_auto_grade_rubric_review_completion.py`.
 5. Promote only already approved rubrics into `output/auto_grade/reviewed_rubrics.v1.json` with `scripts/promote_auto_grade_reviewed_rubrics.py`.
 6. Validate the live registry with `scripts/validate_auto_grade_reviewed_rubrics.py --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json`.
-7. Rebuild eligible items with `scripts/build_auto_grade_eligible_items.py --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json`.
-8. Validate eligible items with `scripts/validate_auto_grade_eligible_items.py`.
+7. Rebuild eligible items with `exam-bank autograde build --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json`.
+8. Validate eligible items with `exam-bank autograde validate`.
 9. Confirm only `teacher_beta` changed and `student_self_check_beta` plus `student_ready` remain zero.
 
 The eligibility artifact records the reviewed-rubrics registry path and hash used at build time. Eligibility validation defaults to the recorded source path when present. Validation must fail closed when teacher-beta promotions are checked against an empty, missing, mismatched, or hash-mismatched reviewed-rubrics source.

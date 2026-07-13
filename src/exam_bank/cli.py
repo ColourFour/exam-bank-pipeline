@@ -105,6 +105,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     process.add_argument("--ocr-language", default="", help="Optional Tesseract language override, e.g. eng.")
     process.add_argument("--tesseract-cmd", default="", help="Optional path to the tesseract binary.")
+    process.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Paper-level workers. Values above 1 use isolated staging and require debug mode to be disabled.",
+    )
     _add_run_tracking_arguments(process)
     process.set_defaults(func=cmd_process)
 
@@ -268,12 +274,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     content_lab.add_argument(
         "--reviewed-source-skills",
-        default="data/review/p3_exact_skill_reviewed_decisions.v1.json",
+        default="data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json",
         help="Reviewed exact-skill decision artifact used for Content Lab source-skill and mapping gating.",
     )
     content_lab.add_argument(
         "--reviewed-mark-events",
-        default="data/review/p3_exact_skill_reviewed_mark_events.v1.json",
+        default="data/review/canonical/p3_exact_skill/reviewed_mark_events.v1.json",
         help="Reviewed mark-event decision artifact used for Content Lab generation gating.",
     )
     content_lab.add_argument(
@@ -749,13 +755,14 @@ def cmd_process(args: argparse.Namespace) -> int:
     tracker.start(phase="scanning_inputs")
     resume_batches = completed_batch_ids(tracker.status_dir) if getattr(args, "resume", False) else set()
     try:
-        result = process_inputs(
-            args.input,
-            config,
-            progress=tracker,
-            resume_completed_batch_ids=resume_batches,
-            force_rerun=bool(getattr(args, "force_rerun", False)),
-        )
+        process_kwargs = {
+            "progress": tracker,
+            "resume_completed_batch_ids": resume_batches,
+            "force_rerun": bool(getattr(args, "force_rerun", False)),
+        }
+        if int(getattr(args, "workers", 1)) != 1:
+            process_kwargs["workers"] = int(args.workers)
+        result = process_inputs(args.input, config, **process_kwargs)
         tracker.finish("completed")
     except KeyboardInterrupt:
         tracker.finish("interrupted", error_summary="KeyboardInterrupt")

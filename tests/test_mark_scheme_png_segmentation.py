@@ -25,6 +25,7 @@ REPO_S20_P33_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_33.p
 REPO_M21_P32_MS = Path("input/pastpapers/9709/2021/mark_schemes/9709_m21_ms_32.pdf")
 REPO_M25_P32_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_m25_ms_32.pdf")
 REPO_W25_P35_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_35.pdf")
+REPO_W09_P32_MS = Path("input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_32.pdf")
 
 
 def _config(tmp_path: Path) -> AppConfig:
@@ -42,6 +43,35 @@ def _debug_records(config: AppConfig) -> list[dict]:
 
 def _record(records: list[dict], question_id: str) -> dict:
     return next(item for item in records if item["question_id"] == question_id)
+
+
+def test_legacy_formula_fragment_before_next_label_is_not_cross_question_contamination(tmp_path: Path) -> None:
+    pytest.importorskip("fitz")
+    if not REPO_W09_P32_MS.exists():
+        pytest.skip("Repo 2009 P32 mark scheme PDF is not available.")
+
+    config = _config(tmp_path)
+    identity = paper_identity_from_parts(
+        syllabus="9709",
+        subject_family="pm3",
+        year="2009",
+        session="w09",
+        component="32",
+        question_number="2",
+    )
+    result = render_mark_scheme_images(
+        REPO_W09_P32_MS,
+        config,
+        ["2"],
+        question_marks={"2": 5},
+        question_subparts={"2": ["i", "ii"]},
+        question_identities={"2": identity},
+    )["2"]
+
+    assert result.mapping_status == "pass"
+    assert result.image_path and result.image_path.exists()
+    debug = _record(_debug_records(config), "32winter09_q02")
+    assert debug["detected_primary_questions_in_left_column"] == ["2"]
 
 
 def test_legacy_2008_q01_mark_scheme_uses_single_table_row_block(tmp_path: Path) -> None:

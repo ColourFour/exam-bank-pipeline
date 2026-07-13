@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -12,6 +13,7 @@ from typing import Any
 from . import __version__
 from .atomic_json import write_atomic_json
 from .config import AppConfig
+from .corpus import DEFAULT_CORPUS_MANIFEST
 from .core.paper_identity import paper_identity_from_parts
 from .missing_mark_scheme import is_known_missing_mark_scheme_companion
 from .models import QuestionRecord
@@ -109,6 +111,8 @@ def _build_run_manifest(
         "model_versions": _model_versions(records, config),
         "ocr_engine_version": _ocr_engine_version(records, config),
         "input_manifest_sha256": input_manifest_sha256,
+        "corpus_manifest_sha256": _corpus_manifest_sha256(),
+        "configuration_sha256": _configuration_sha256(config),
         "artifact_root": _artifact_root_value(output_root, output_path),
         "output_layout": {
             "version": OUTPUT_LAYOUT_VERSION,
@@ -157,6 +161,16 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _corpus_manifest_sha256() -> str:
+    return _sha256_file(DEFAULT_CORPUS_MANIFEST) if DEFAULT_CORPUS_MANIFEST.is_file() else ""
+
+
+def _configuration_sha256(config: AppConfig | None) -> str:
+    effective = config or AppConfig()
+    encoded = json.dumps(asdict(effective), sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _git_commit() -> str:
@@ -336,6 +350,8 @@ def _build_payload_run_manifest(question_payload: list[dict[str, Any]], *, outpu
         "model_versions": {},
         "ocr_engine_version": "",
         "input_manifest_sha256": payload_hash,
+        "corpus_manifest_sha256": _corpus_manifest_sha256(),
+        "configuration_sha256": _configuration_sha256(None),
         "artifact_root": _artifact_root_value(None, output_path),
         "output_layout": {
             "version": OUTPUT_LAYOUT_VERSION,

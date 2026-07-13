@@ -47,13 +47,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--reviewed-source-skills",
         type=Path,
-        default=Path("data/review/p3_exact_skill_reviewed_decisions.v1.json"),
+        default=Path("data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json"),
         help="Reviewed exact/source skill decisions.",
     )
     parser.add_argument(
         "--reviewed-mark-events",
         type=Path,
-        default=Path("data/review/p3_exact_skill_reviewed_mark_events.v1.json"),
+        default=Path("data/review/canonical/p3_exact_skill/reviewed_mark_events.v1.json"),
         help="Reviewed mark-event decisions.",
     )
     parser.add_argument("--artifact-root", type=Path, default=Path("output"), help="Root for relative canonical artifacts.")

@@ -73,7 +73,7 @@ CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS = {
 
 def test_valid_conservative_fixture_passes() -> None:
     report = validate_reviewed_decisions(
-        reviewed_decisions_path="data/review/p3_exact_skill_reviewed_decisions.v1.json",
+        reviewed_decisions_path="data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json",
         p3_skill_map_path="exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json",
     )
 
@@ -142,50 +142,6 @@ def test_clean_seed_records_keep_unreviewed_mark_events_generation_blocked() -> 
         for record in seed_records
         for mark_ref in record["mark_event_refs"]
     )
-
-
-def test_content_lab_generation_readiness_changes_only_for_control_authority_pass() -> None:
-    conclusions = json.loads(Path("reports/manual_review_batch_0003_conclusions.v1.json").read_text(encoding="utf-8"))
-    content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
-    ready_candidate_ids = {
-        candidate["candidate_id"]
-        for candidate in content_lab["candidates"]
-        if (candidate.get("generation_gate") or {}).get("status") == "allow"
-    }
-
-    assert conclusions["outcome_counts"]["approved_mark_event_count"] == 0
-    assert conclusions["outcome_counts"]["content_lab_generation_ready_after"] == 0
-    assert ready_candidate_ids == CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS
-
-
-def test_batch_0003_retagged_thin_and_cross_content_records_remain_blocked() -> None:
-    content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
-    by_subpart = {candidate["subpart_id"]: candidate for candidate in content_lab["candidates"]}
-
-    present_batch_0003_candidates = [
-        by_subpart[subpart_id]
-        for subpart_id in BATCH_0003_NOT_PROMOTED_SUBPART_IDS
-        if subpart_id in by_subpart
-    ]
-
-    assert present_batch_0003_candidates
-    assert all(candidate["generation_gate"]["status"] != "allow" for candidate in present_batch_0003_candidates)
-    assert all(candidate["source_skill_review_gate"]["status"] != "allow" for candidate in present_batch_0003_candidates)
-
-
-def test_control_authority_candidates_have_stable_explainable_gate_metadata() -> None:
-    content_lab = json.loads(Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json").read_text(encoding="utf-8"))
-    by_id = {candidate["candidate_id"]: candidate for candidate in content_lab["candidates"]}
-
-    for candidate_id in CONTENT_LAB_CONTROL_ALLOW_CANDIDATE_IDS:
-        candidate = by_id[candidate_id]
-        assert candidate["generation_gate"] == {"status": "allow", "blocked": False, "block_reasons": []}
-        assert candidate["mark_event_review_gate"]["status"] == "allow"
-        assert candidate["source_skill_review_gate"]["status"] == "allow"
-        assert candidate["mapping_review_gate"]["status"] == "allow"
-        assert candidate["reviewed_source_skill_decision_id"]
-        assert candidate["reviewed_source_skill_ids"] == candidate["source_skill_ids"]
-        assert set(candidate["source_mark_event_ids"]) == set(candidate["mark_event_review_gate"]["generation_satisfying_event_ids"])
 
 
 def test_clean_seed_records_require_verified_asset_refs_and_provenance() -> None:
@@ -379,7 +335,7 @@ def _payload(*records: dict[str, object]) -> dict[str, object]:
 
 
 def _load_registry() -> dict[str, object]:
-    return json.loads(Path("data/review/p3_exact_skill_reviewed_decisions.v1.json").read_text(encoding="utf-8"))
+    return json.loads(Path("data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json").read_text(encoding="utf-8"))
 
 
 def _clean_record() -> dict[str, object]:

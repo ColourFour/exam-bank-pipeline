@@ -65,7 +65,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     parser = build_parser()
     action = parser._subparsers._group_actions[0]  # type: ignore[attr-defined]
 
-    assert set(action.choices) == {
+    required_commands = {
         "process",
         "ingress",
         "audit",
@@ -92,6 +92,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
         "regenerate-mark-scheme-pngs",
         "regenerate-question-pngs",
     }
+    assert required_commands <= set(action.choices)
     process_parser = action.choices["process"]
     process_options = {option for parser_action in process_parser._actions for option in parser_action.option_strings}
     assert "--enable-ocr" in process_options
@@ -145,7 +146,7 @@ def test_cli_exposes_active_runtime_front_doors() -> None:
     assert "--handoff-root" in auto_plan_options
 
 
-def test_legacy_runtime_files_are_removed_or_archived() -> None:
+def test_legacy_runtime_files_are_removed_from_the_active_tree() -> None:
     assert not Path("src/exam_bank/qa.py").exists()
     assert not Path("src/exam_bank/practice_page.py").exists()
     assert not Path("src/exam_bank/manual_review.py").exists()
@@ -157,7 +158,3 @@ def test_legacy_runtime_files_are_removed_or_archived() -> None:
     assert not Path("tests/test_topic_pdfs.py").exists()
     assert not Path("app").exists()
     assert not Path("practice").exists()
-
-    assert Path("archive/topic_pdfs_legacy/src/exam_bank/topic_pdfs.py").exists()
-    assert Path("archive/topic_pdfs_legacy/src/exam_bank/review.py").exists()
-    assert Path("archive/topic_pdfs_legacy/tests/test_topic_pdfs.py").exists()

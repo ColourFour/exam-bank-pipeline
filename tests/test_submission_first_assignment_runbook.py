@@ -18,7 +18,7 @@ def test_live_email_connector_contract_and_runbook_exist() -> None:
     assert "fixture-backed intake remains the test source" in contract_text.lower()
     assert "--dry-run" in runbook_text
     assert "--apply" in runbook_text
-    assert "build_outgoing_email_queue.py" in runbook_text
+    assert "exam-bank email build-outgoing" in runbook_text
     assert "Do not commit real config" in runbook_text
 
 

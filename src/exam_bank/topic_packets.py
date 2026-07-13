@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
-from dataclasses import dataclass, replace
-from datetime import datetime, timezone
-import hashlib
 import io
 import json
 import re
 import shutil
+from collections import Counter, defaultdict
+from dataclasses import dataclass, replace
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -17,7 +16,13 @@ from PIL import Image, ImageChops
 
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import canonical_component_for_paper_family, load_question_bank
-
+from .paper_components import normalize_component_code as _normalize_component_code
+from .paper_components import packet_family_for_component as _packet_family_for_component
+from .topic_packet_contracts import (
+    PACKET_PROJECTION_FINGERPRINT_VERSION,
+    packet_projection_fingerprint,
+    path_provenance,
+)
 
 TOPIC_PACKET_SCHEMA_NAME = "exam_bank.topic_packets"
 TOPIC_PACKET_SCHEMA_VERSION = 1
@@ -712,10 +717,17 @@ def generate_topic_packets(
             reviewed_decisions_path=Path(reviewed_decisions_path) if reviewed_decisions_path else None,
         )
         if discovered and discovered[2] and discovered[2] != manifest.get("projection_fingerprint"):
-            raise TopicPacketError(
-                f"Reconciled difficulty sidecar is stale for {key.paper_family}/{key.topic_id}; "
-                "run topic-difficulty-review reconcile before regenerating packets."
-            )
+            if not _legacy_difficulty_projection_matches_manifest(key_difficulty_records, manifest):
+                raise TopicPacketError(
+                    f"Reconciled difficulty sidecar is stale for {key.paper_family}/{key.topic_id}; "
+                    "run topic-difficulty-review reconcile before regenerating packets."
+                )
+            manifest["difficulty_projection_fingerprint_status"] = "legacy_semantic_match"
+            manifest["warnings"] = list(manifest["warnings"]) + [
+                "legacy_difficulty_projection_fingerprint_accepted"
+            ]
+        elif discovered and discovered[2]:
+            manifest["difficulty_projection_fingerprint_status"] = "exact"
         if not dry_run:
             packet_dir.mkdir(parents=True, exist_ok=True)
             topic_pdf = packet_pdf_path(packet_dir, key)
@@ -1763,27 +1775,6 @@ def _resolve_topic_across_families(value: str, taxonomy: dict[str, Any]) -> list
     return sorted(set(matches))
 
 
-def _normalize_component_code(value: Any) -> str:
-    text = str(value or "").strip().lower().removeprefix("p")
-    match = re.search(r"\d+", text)
-    if not match:
-        return ""
-    code = match.group(0)
-    return code.zfill(2) if len(code) == 1 else code
-
-
-def _packet_family_for_component(component_code: str) -> str:
-    if component_code in {"01", "11", "12", "13", "15"}:
-        return "p1"
-    if component_code in {"03", "31", "32", "33", "35"}:
-        return "p3"
-    if component_code in {"04", "41", "42", "43", "45"}:
-        return "p4"
-    if component_code in {"06", "61", "62", "63", "65", "51", "52", "53", "55"}:
-        return "p5"
-    return ""
-
-
 def _resolve_reviewed_topic(value: str, paper_family: str, taxonomy: dict[str, Any]) -> str | None:
     text = str(value or "").strip()
     if not text:
@@ -1908,15 +1899,16 @@ def build_packet_manifest(
         if str(row.get("difficulty_status") or "reviewed") != "reviewed"
     )
     routing_provenance = {
-        "question_bank": _path_provenance(question_bank_path),
-        "taxonomy": _path_provenance(taxonomy_path),
-        "reviewed_decisions": _path_provenance(reviewed_decisions_path),
-        "topic_overlap_review": _path_provenance(topic_overlap_review_path),
+        "question_bank": path_provenance(question_bank_path),
+        "taxonomy": path_provenance(taxonomy_path),
+        "reviewed_decisions": path_provenance(reviewed_decisions_path),
+        "topic_overlap_review": path_provenance(topic_overlap_review_path),
         "generator_schema_version": TOPIC_PACKET_SCHEMA_VERSION,
     }
     manifest = {
         "schema_name": TOPIC_PACKET_SCHEMA_NAME,
         "schema_version": TOPIC_PACKET_SCHEMA_VERSION,
+        "projection_fingerprint_version": PACKET_PROJECTION_FINGERPRINT_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "dry_run": dry_run,
         "paper_family": key.paper_family,
@@ -2017,41 +2009,29 @@ def build_packet_manifest(
         ],
         "warnings": ["review_only_watermark"] if key.mode == "review" else [],
     }
-    manifest["projection_fingerprint"] = _packet_projection_fingerprint(manifest)
+    manifest["projection_fingerprint"] = packet_projection_fingerprint(manifest)
     if topic_difficulty_records and difficulty_pending_ids:
         manifest["warnings"] = list(manifest["warnings"]) + ["difficulty_ranking_incomplete"]
     return manifest
 
 
-def _path_provenance(path: Path | None) -> dict[str, Any]:
-    if path is None:
-        return {"path": "", "sha256": ""}
-    candidate = Path(path)
-    digest = hashlib.sha256(candidate.read_bytes()).hexdigest() if candidate.is_file() else ""
-    return {"path": str(candidate), "sha256": digest}
-
-
-def _packet_projection_fingerprint(manifest: dict[str, Any]) -> str:
-    projection = {
-        "schema_version": manifest.get("schema_version"),
-        "paper_family": manifest.get("paper_family"),
-        "topic_id": manifest.get("topic_id"),
-        "subtopic_id": manifest.get("subtopic_id") or "",
-        "records": [
-            {
-                "question_id": row.get("question_id"),
-                "primary_topic_id": row.get("primary_topic_id"),
-                "secondary_topic_ids": row.get("secondary_topic_ids") or [],
-                "section": row.get("section"),
-            }
-            for row in sorted(
-                manifest.get("included_records") or [], key=lambda item: str(item.get("question_id") or "")
-            )
-        ],
-        "routing_provenance": manifest.get("routing_provenance") or {},
+def _legacy_difficulty_projection_matches_manifest(
+    difficulty_records: dict[str, dict[str, Any]],
+    manifest: dict[str, Any],
+) -> bool:
+    included = {
+        str(row.get("question_id") or ""): row
+        for row in manifest.get("included_records") or []
+        if str(row.get("question_id") or "")
     }
-    raw = json.dumps(projection, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    if set(difficulty_records) != set(included):
+        return False
+    for question_id, difficulty in difficulty_records.items():
+        current = included[question_id]
+        previous_section = str(difficulty.get("packet_section") or "").strip()
+        if previous_section and previous_section != str(current.get("section") or "").strip():
+            return False
+    return True
 
 
 def _included_record_manifest(
@@ -2345,15 +2325,19 @@ def _write_flow_topic_packet_pdf(
         if block["kind"] == "section_heading":
             continue
         start_page = int(block.get("placed_start_page") or page.number + 1)
+        placed_pages = [int(value) for value in block.get("placed_pages") or [start_page]]
+        end_page = max(placed_pages)
         problem_number = int(block["problem_number"])
         if block["kind"] == "question":
             records_metadata[problem_number]["question_start_page"] = start_page
+            records_metadata[problem_number]["question_end_page"] = end_page
             records_metadata[problem_number]["question_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
-            question_counts_by_page[start_page] += 1
+            question_counts_by_page.update(placed_pages)
         else:
             records_metadata[problem_number]["answer_start_page"] = start_page
+            records_metadata[problem_number]["answer_end_page"] = end_page
             records_metadata[problem_number]["answer_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
-            answer_counts_by_page[start_page] += 1
+            answer_counts_by_page.update(placed_pages)
 
     answers_start_page: int | None = None
     if layout_options.answer_placement == "end":
@@ -2384,10 +2368,13 @@ def _write_flow_topic_packet_pdf(
             if block["kind"] == "section_heading":
                 continue
             start_page = int(block.get("placed_start_page") or page.number + 1)
+            placed_pages = [int(value) for value in block.get("placed_pages") or [start_page]]
+            end_page = max(placed_pages)
             problem_number = int(block["problem_number"])
             records_metadata[problem_number]["answer_start_page"] = start_page
+            records_metadata[problem_number]["answer_end_page"] = end_page
             records_metadata[problem_number]["answer_block_height_estimate"] = round(float(block.get("height_estimate") or 0), 2)
-            answer_counts_by_page[start_page] += 1
+            answer_counts_by_page.update(placed_pages)
 
     question_pages = sorted(question_counts_by_page)
     answer_pages = sorted(answer_counts_by_page)
@@ -2603,6 +2590,8 @@ def _place_flow_block(
     y += metrics["block_bottom_gap"]
     if layout_options.layout == "one-per-page":
         y = metrics["content_bottom"]
+    block["placed_end_page"] = page.number + 1
+    block["placed_pages"] = [page.number + 1]
     return page, y, scaled
 
 
@@ -2622,6 +2611,7 @@ def _place_split_flow_image_block(
     render_width = _rendered_image_width(image_info, content_width)
     image_path = Path(str(image_info["path"]))
     segment_count = 0
+    placed_pages: list[int] = []
     with Image.open(image_path) as source:
         source.load()
         source_width, source_height = source.size
@@ -2655,10 +2645,13 @@ def _place_split_flow_image_block(
             render_height = crop.height * points_per_pixel
             rect = fitz.Rect(metrics["left"], y, metrics["left"] + render_width, y + render_height)
             page.insert_image(rect, stream=stream.getvalue(), keep_proportion=True)
+            placed_pages.append(page.number + 1)
             y_pixel = next_y_pixel
             current_y = y + render_height + metrics["block_bottom_gap"]
             segment_count += 1
     warnings.append(f"oversized_block_split_across_pages:{block['kind']}:{block['problem_number']}:segments={segment_count}")
+    block["placed_end_page"] = max(placed_pages, default=page.number + 1)
+    block["placed_pages"] = placed_pages or [page.number + 1]
     return page, current_y, False
 
 

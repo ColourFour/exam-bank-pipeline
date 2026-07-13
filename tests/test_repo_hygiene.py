@@ -1,5 +1,6 @@
-import subprocess
 from pathlib import Path
+import re
+import subprocess
 
 
 README_PATH = Path("README.md")
@@ -17,15 +18,10 @@ JUNK_PATHS = [
 ]
 
 
-def test_readme_centers_supported_process_command() -> None:
+def test_readme_centers_supported_namespaced_process_command() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
 
-    assert (
-        ".venv/bin/python -m exam_bank.cli process \\\n"
-        "  --input input/pastpapers/9709 \\\n"
-        "  --output output \\\n"
-        "  --enable-ocr"
-    ) in readme
+    assert "exam-bank extract run --input input/pastpapers/9709 --output output" in readme
     assert "process-folder" not in readme
     assert "topic-pdfs" not in readme
     assert "practice-page" not in readme
@@ -40,10 +36,10 @@ def test_config_yaml_only_advertises_active_operational_sections() -> None:
         assert section not in config_yaml
 
 
-def test_package_metadata_matches_extraction_only_runtime() -> None:
+def test_package_metadata_matches_full_local_platform() -> None:
     pyproject = PYPROJECT_PATH.read_text(encoding="utf-8")
 
-    assert 'description = "CAIE 9709 question-paper and mark-scheme extraction pipeline."' in pyproject
+    assert 'description = "Image-first CAIE 9709 exam-bank extraction and local teaching platform."' in pyproject
     assert '"pandas>=2.0.0"' not in pyproject
     assert '"reportlab>=4.0.0"' not in pyproject
 
@@ -98,8 +94,8 @@ def test_generated_agent_and_report_artifacts_are_ignored() -> None:
             "git",
             "check-ignore",
             "--no-index",
-            "reports/asterion_export_release_manifest_pr16_2026_06_11.json",
-            "reports/asterion_export_release_provenance_pr15_2026_06_11.json",
+            "manifests/releases/asterion_export_release_manifest.v1.json",
+            "manifests/releases/asterion_export_release_provenance.v1.json",
         ],
         capture_output=True,
         text=True,
@@ -184,3 +180,64 @@ def test_os_and_python_cache_junk_is_absent_and_ignored() -> None:
     ignored_paths = set(check_ignore.stdout.splitlines())
 
     assert ignored_paths == set(JUNK_PATHS)
+
+
+def test_generated_and_external_data_are_not_tracked() -> None:
+    tracked = subprocess.run(
+        ["git", "ls-files"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+
+    forbidden = [
+        path
+        for path in tracked
+        if path.startswith(("input/", "tmp/", "agent_handoffs/"))
+        or (path.startswith("data/review/") and not path.startswith("data/review/canonical/"))
+        or (path.startswith("reports/") and path != "reports/.gitkeep")
+        or (path.startswith("output/") and path not in {"output/json/.gitkeep", "output/submissions/.gitkeep"})
+    ]
+    assert forbidden == []
+
+
+def test_large_tracked_files_are_confined_to_explicit_data_contracts() -> None:
+    tracked = subprocess.run(
+        ["git", "ls-files"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    allowed_prefixes = (
+        "data/review/canonical/",
+        "data/topic_routing/",
+        "exam_bank_taxonomy/",
+        "tests/fixtures/",
+    )
+    unexpected = [
+        path
+        for path in tracked
+        if Path(path).is_file()
+        and Path(path).stat().st_size > 1024 * 1024
+        and not path.startswith(allowed_prefixes)
+    ]
+    assert unexpected == []
+
+
+def test_thin_top_level_script_wrappers_do_not_return() -> None:
+    thin_scripts = [
+        path.as_posix()
+        for path in Path("scripts").glob("*.py")
+        if len(path.read_text(encoding="utf-8").splitlines()) <= 20
+    ]
+    assert thin_scripts == []
+
+
+def test_tests_do_not_skip_when_live_output_or_reports_are_absent() -> None:
+    live_state_skip = re.compile(r"if\s+not\s+Path\([\"'](?:output|reports)/.*?pytest\.skip", re.DOTALL)
+    offenders = [
+        path.as_posix()
+        for path in Path("tests").glob("test_*.py")
+        if live_state_skip.search(path.read_text(encoding="utf-8"))
+    ]
+    assert offenders == []

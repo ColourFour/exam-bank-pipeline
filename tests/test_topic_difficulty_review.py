@@ -101,8 +101,11 @@ def test_reconcile_automatic_review_replaces_provisional_record(tmp_path: Path, 
         Path(out_path).write_text("\n".join(json.dumps(row) for row in decisions) + "\n", encoding="utf-8")
         return {"pending_count": len(decisions)}
 
-    monkeypatch.setattr("exam_bank.topic_difficulty_review.run_topic_difficulty_reviews", fake_runner)
-    reconcile_topic_difficulty(
+    # Patch the exact globals dictionary used by the imported callable. Some
+    # CLI safety tests intentionally reload modules, so a string-based patch can
+    # otherwise target a newer module object than this collected test uses.
+    monkeypatch.setitem(reconcile_topic_difficulty.__globals__, "run_topic_difficulty_reviews", fake_runner)
+    report = reconcile_topic_difficulty(
         packets_root=packets_root,
         difficulty_root=difficulty_root,
         difficulty_index_path=difficulty_index,
@@ -110,7 +113,10 @@ def test_reconcile_automatic_review_replaces_provisional_record(tmp_path: Path, 
         reports_dir=tmp_path / "reports",
     )
 
-    sidecar = json.loads(next(difficulty_root.glob("*/topic_packet_difficulty_review.v2.json")).read_text(encoding="utf-8"))
+    packet_report = report["packets"][0]
+    sidecar_path = difficulty_root / packet_report["packet_id"] / "topic_packet_difficulty_review.v2.json"
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    assert report["pending_count"] == 0, report
     assert sidecar["difficulty_ranking_complete"] is True
     assert sidecar["pending_question_ids"] == []
     assert {row["difficulty_status"] for row in sidecar["records"]} == {"reviewed"}

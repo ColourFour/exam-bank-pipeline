@@ -17,17 +17,17 @@ inventory -> extract native text -> parse -> link -> signals -> validate -> repo
 Commands:
 
 ```bash
-.venv/bin/python scripts/build_advisory_inventory.py
-.venv/bin/python scripts/extract_advisory_text.py
-.venv/bin/python scripts/parse_examiner_reports.py
-.venv/bin/python scripts/parse_grade_thresholds.py
-.venv/bin/python scripts/link_advisory_evidence.py
-.venv/bin/python scripts/build_advisory_topic_evidence.py
-.venv/bin/python scripts/build_examiner_report_difficulty.py
-.venv/bin/python scripts/build_grade_threshold_context.py
-.venv/bin/python scripts/validate_advisory_evidence.py
-.venv/bin/python scripts/build_advisory_review_reports.py
-.venv/bin/python scripts/build_advisory_evidence_sidecar.py
+exam-bank advisory inventory
+exam-bank advisory extract
+exam-bank advisory parse-examiner
+exam-bank advisory parse-thresholds
+exam-bank advisory link
+exam-bank advisory topic-evidence
+exam-bank advisory examiner-difficulty
+exam-bank advisory threshold-context
+exam-bank advisory validate
+exam-bank advisory reports
+exam-bank advisory sidecar
 ```
 
 Every command that writes stage output also supports `--dry-run`, except validation, which reads existing outputs and exits non-zero when validation fails.
@@ -79,7 +79,7 @@ No advisory evidence should be used for strict topic filtering, mastery decision
 
 ## Validation Rules
 
-`scripts/validate_advisory_evidence.py` checks:
+`exam-bank advisory validate` checks:
 
 - advisory schemas are present and expected
 - link statuses use the allowed enum

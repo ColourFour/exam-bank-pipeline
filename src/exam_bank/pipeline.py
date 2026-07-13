@@ -1,46 +1,90 @@
 from __future__ import annotations
 
-from copy import deepcopy
-from dataclasses import dataclass
+import hashlib
 import json
-from pathlib import Path
+import os
 import re
+import shutil
+import tempfile
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
+from copy import deepcopy
+from dataclasses import asdict, dataclass, fields, is_dataclass
+from pathlib import Path
 from typing import Any
 
-from .classification import classify_question, classify_question_parts, infer_source_paper_code, _explicit_primary_topic_from_text
+from . import __version__
 from .atomic_json import write_atomic_json
+from .classification import (
+    _explicit_primary_topic_from_text,
+    classify_question,
+    classify_question_parts,
+    infer_source_paper_code,
+)
 from .config import AppConfig
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts, session_for_source_path
-from .document_metadata import DocumentMetadata, parse_filename_metadata, parse_internal_document_metadata, reconcile_document_metadata
+from .document_metadata import (
+    DocumentMetadata,
+    parse_filename_metadata,
+    parse_internal_document_metadata,
+    reconcile_document_metadata,
+)
 from .document_registry import DocumentRegistry, build_document_registry, build_document_registry_from_paths
 from .examiner_reports import examiner_report_topic_evidence
 from .exporters import export_records, records_to_output_questions, write_question_bank_payload
 from .extraction_structure import build_structured_question_text
 from .image_rendering import render_question_image
-from .mark_schemes import MarkSchemeImageResult, extract_mark_scheme_answers, find_mark_scheme, render_mark_scheme_images
+from .mark_schemes import (
+    MarkSchemeImageResult,
+    extract_mark_scheme_answers,
+    find_mark_scheme,
+    render_mark_scheme_images,
+)
 from .models import ClassificationResult, PageLayout, QuestionRecord, QuestionSpan
 from .ocr import select_text_candidate
+from .output_layout import paper_family_dir_name, paper_instance_id
 from .pdf_extract import extract_pdf_layout
-from .question_detection import detect_question_anchor_candidates, detect_question_spans, extract_marks_from_text, extract_question_total_from_text
+from .question_detection import (
+    detect_question_anchor_candidates,
+    detect_question_spans,
+    extract_question_total_from_text,
+)
 from .trust import (
     CropConfidence,
     MappingStatus,
     PaperTotalStatus,
     RescanResult,
     ValidationStatus,
+)
+from .trust import (
     assess_text_fidelity as _assess_text_fidelity,
+)
+from .trust import (
     derive_question_text_semantics as _derive_question_text_semantics,
+)
+from .trust import (
     derive_scope_quality_status as _derive_scope_quality_status,
-    derive_topic_trust_status as _derive_topic_trust_status,
+)
+from .trust import (
     derive_text_only_status as _derive_text_only_status,
+)
+from .trust import (
+    derive_topic_trust_status as _derive_topic_trust_status,
+)
+from .trust import (
     derive_visual_curation_status as _derive_visual_curation_status,
-    polluted_pass_signal_groups as _polluted_pass_signal_groups,
-    refine_validation_status as _refine_validation_status,
+)
+from .trust import (
     references_source_visual as _references_source_visual,
+)
+from .trust import (
+    refine_validation_status as _refine_validation_status,
+)
+from .trust import (
     text_source_profile as _text_source_profile,
+)
+from .trust import (
     visual_reason_flags as _visual_reason_flags,
 )
-from .output_layout import paper_family_dir_name, paper_instance_id
 
 
 @dataclass(frozen=True)
@@ -59,6 +103,7 @@ def process_inputs(
     progress: Any | None = None,
     resume_completed_batch_ids: set[str] | None = None,
     force_rerun: bool = False,
+    workers: int = 1,
 ) -> PipelineResult:
     config.ensure_output_dirs()
     if progress:
@@ -70,10 +115,11 @@ def process_inputs(
         progress=progress,
         resume_completed_batch_ids=resume_completed_batch_ids,
         force_rerun=force_rerun,
+        workers=workers,
     )
 
 
-def process_batch(config: AppConfig) -> PipelineResult:
+def process_batch(config: AppConfig, *, workers: int = 1) -> PipelineResult:
     config.ensure_output_dirs()
     active_document_types = set(config.runtime.input_document_types)
     source_paths: list[Path] = []
@@ -85,13 +131,13 @@ def process_batch(config: AppConfig) -> PipelineResult:
         source_paths,
         allowed_document_types=active_document_types,
     )
-    return _process_registry_entries(registry, config)
+    return _process_registry_entries(registry, config, workers=workers)
 
 
-def process_folder(folder: str | Path, config: AppConfig) -> PipelineResult:
+def process_folder(folder: str | Path, config: AppConfig, *, workers: int = 1) -> PipelineResult:
     config.ensure_output_dirs()
     registry = build_document_registry(folder, allowed_document_types=set(config.runtime.input_document_types))
-    return _process_registry_entries(registry, config)
+    return _process_registry_entries(registry, config, workers=workers)
 
 
 def _process_registry_entries(
@@ -101,7 +147,22 @@ def _process_registry_entries(
     progress: Any | None = None,
     resume_completed_batch_ids: set[str] | None = None,
     force_rerun: bool = False,
+    workers: int = 1,
 ) -> PipelineResult:
+    if workers < 1:
+        raise ValueError("workers must be at least 1")
+    if workers > 1:
+        if config.debug.enabled:
+            raise ValueError("workers > 1 is incompatible with debug mode until debug streams are isolated")
+        return _process_registry_entries_parallel(
+            registry,
+            config,
+            progress=progress,
+            resume_completed_batch_ids=resume_completed_batch_ids,
+            force_rerun=force_rerun,
+            workers=workers,
+        )
+
     records: list[QuestionRecord] = []
     question_payloads: list[dict[str, Any]] = []
     entries = registry.question_paper_entries()
@@ -115,19 +176,22 @@ def _process_registry_entries(
         batch_id = progress_context["batch_id"]
         paper = progress_context["paper"]
         paper_family = progress_context["paper_family"]
+        cache_key = _extraction_batch_cache_key(entry, config)
         if progress and not force_rerun and batch_id in resume_completed_batch_ids:
-            cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
-            if not isinstance(cached_questions, list):
-                cached_questions = [item for item in existing_output_questions if item.get("paper") == paper]
-            if isinstance(cached_questions, list) and cached_questions:
-                question_payloads.extend(cached_questions)
-                progress.skip_batch(
-                    batch_id=batch_id,
-                    paper=paper,
-                    paper_family=paper_family,
-                    record_count=len(cached_questions),
-                )
-                continue
+            cached_key = progress.read_batch_artifact(batch_id, "cache_key.json")
+            if isinstance(cached_key, dict) and cached_key.get("cache_key") == cache_key:
+                cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
+                if not isinstance(cached_questions, list):
+                    cached_questions = [item for item in existing_output_questions if item.get("paper") == paper]
+                if isinstance(cached_questions, list) and cached_questions:
+                    question_payloads.extend(cached_questions)
+                    progress.skip_batch(
+                        batch_id=batch_id,
+                        paper=paper,
+                        paper_family=paper_family,
+                        record_count=len(cached_questions),
+                    )
+                    continue
 
         question_metadata = entry.metadata_by_path.get(str(entry.question_paper))
         if progress:
@@ -166,6 +230,7 @@ def _process_registry_entries(
         if progress:
             paper_payload = records_to_output_questions(paper_records, config.output.root_dir())
             progress.write_batch_artifact(batch_id, "questions.json", paper_payload)
+            progress.write_batch_artifact(batch_id, "cache_key.json", {"cache_key": cache_key})
             question_payloads.extend(paper_payload)
             progress.complete_batch(
                 batch_id=batch_id,
@@ -174,8 +239,205 @@ def _process_registry_entries(
                 record_count=len(paper_records),
                 successful_records=len(paper_records),
             )
+    return _finalize_registry_result(records, question_payloads, config, progress=progress)
+
+
+def _process_registry_entries_parallel(
+    registry: DocumentRegistry,
+    config: AppConfig,
+    *,
+    progress: Any | None,
+    resume_completed_batch_ids: set[str] | None,
+    force_rerun: bool,
+    workers: int,
+) -> PipelineResult:
+    entries = registry.question_paper_entries()
+    resume_completed_batch_ids = resume_completed_batch_ids or set()
+    existing_output_questions = _load_existing_output_questions(config.output.json_dir / config.naming.json_name)
+    question_payloads: list[dict[str, Any]] = []
+    results_by_index: dict[int, list[QuestionRecord]] = {}
     if progress:
-        progress.update_phase("writing_outputs", output_path=config.output.json_dir / config.naming.json_name, force_render=True)
+        progress.set_totals(total_batches=len(entries))
+
+    stage_parent = config.output.root_dir() / ".workers"
+    stage_parent.mkdir(parents=True, exist_ok=True)
+    futures: dict[Future[tuple[list[QuestionRecord], Path]], tuple[int, Any, dict[str, str], str]] = {}
+    try:
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="exam-bank-paper") as executor:
+            for index, entry in enumerate(entries):
+                assert entry.question_paper is not None
+                context = _entry_progress_context(entry)
+                batch_id = context["batch_id"]
+                cache_key = _extraction_batch_cache_key(entry, config)
+                if progress and not force_rerun and batch_id in resume_completed_batch_ids:
+                    cached_key = progress.read_batch_artifact(batch_id, "cache_key.json")
+                    if isinstance(cached_key, dict) and cached_key.get("cache_key") == cache_key:
+                        cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
+                        if not isinstance(cached_questions, list):
+                            cached_questions = [
+                                item for item in existing_output_questions if item.get("paper") == context["paper"]
+                            ]
+                        if isinstance(cached_questions, list) and cached_questions:
+                            question_payloads.extend(cached_questions)
+                            progress.skip_batch(
+                                batch_id=batch_id,
+                                paper=context["paper"],
+                                paper_family=context["paper_family"],
+                                record_count=len(cached_questions),
+                            )
+                            continue
+                if progress:
+                    progress.start_batch(
+                        batch_id=batch_id,
+                        paper=context["paper"],
+                        paper_family=context["paper_family"],
+                        phase="parsing_pdfs",
+                        session=context["session"],
+                        component=context["component"],
+                    )
+                future = executor.submit(_build_registry_entry_in_stage, entry, config, stage_parent, context)
+                futures[future] = (index, entry, context, cache_key)
+
+            for future in as_completed(futures):
+                index, _entry, context, cache_key = futures[future]
+                try:
+                    paper_records, stage_root = future.result()
+                    _promote_worker_artifacts(stage_root, config.output.root_dir(), paper_records)
+                except Exception as exc:
+                    if progress:
+                        progress.fail_batch(
+                            batch_id=context["batch_id"],
+                            paper=context["paper"],
+                            paper_family=context["paper_family"],
+                            error_message=f"{exc.__class__.__name__}: {exc}",
+                        )
+                    raise
+                results_by_index[index] = paper_records
+                if progress:
+                    paper_payload = records_to_output_questions(paper_records, config.output.root_dir())
+                    progress.write_batch_artifact(context["batch_id"], "questions.json", paper_payload)
+                    progress.write_batch_artifact(context["batch_id"], "cache_key.json", {"cache_key": cache_key})
+                    question_payloads.extend(paper_payload)
+                    progress.complete_batch(
+                        batch_id=context["batch_id"],
+                        paper=context["paper"],
+                        paper_family=context["paper_family"],
+                        record_count=len(paper_records),
+                        successful_records=len(paper_records),
+                    )
+    finally:
+        shutil.rmtree(stage_parent, ignore_errors=True)
+
+    records = [record for index in sorted(results_by_index) for record in results_by_index[index]]
+    return _finalize_registry_result(records, question_payloads, config, progress=progress)
+
+
+def _build_registry_entry_in_stage(
+    entry: Any,
+    config: AppConfig,
+    stage_parent: Path,
+    context: dict[str, str],
+) -> tuple[list[QuestionRecord], Path]:
+    stage_root = Path(tempfile.mkdtemp(prefix=f"{context['batch_id']}-", dir=stage_parent))
+    worker_config = deepcopy(config)
+    worker_config.output.apply_root(stage_root)
+    worker_config.ensure_output_dirs()
+    question_metadata = entry.metadata_by_path.get(str(entry.question_paper))
+    try:
+        records = build_records_for_pdf(
+            entry.question_paper,
+            worker_config,
+            mark_scheme_pdf=entry.mark_scheme,
+            examiner_report_paths=entry.examiner_reports,
+            filename_metadata=question_metadata,
+            registry_warnings=entry.warnings,
+        )
+    except Exception:
+        shutil.rmtree(stage_root, ignore_errors=True)
+        raise
+    return records, stage_root
+
+
+def _promote_worker_artifacts(stage_root: Path, output_root: Path, records: list[QuestionRecord]) -> None:
+    for source in sorted(path for path in stage_root.rglob("*") if path.is_file()):
+        destination = output_root / source.relative_to(stage_root)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if source.suffix == ".jsonl" and destination.exists():
+            _merge_jsonl_artifacts(destination, source)
+            continue
+        staged_destination = destination.with_name(f".{destination.name}.worker-{stage_root.name}")
+        os.replace(source, staged_destination)
+        os.replace(staged_destination, destination)
+    for record in records:
+        _rebase_record_artifact_paths(record, stage_root, output_root)
+    shutil.rmtree(stage_root, ignore_errors=True)
+
+
+def _merge_jsonl_artifacts(destination: Path, source: Path) -> None:
+    lines = {
+        line
+        for path in (destination, source)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+    staged = destination.with_name(f".{destination.name}.merge")
+    staged.write_text("".join(f"{line}\n" for line in sorted(lines)), encoding="utf-8")
+    os.replace(staged, destination)
+
+
+def _normalize_debug_jsonl_files(debug_dir: Path) -> None:
+    if not debug_dir.is_dir():
+        return
+    for path in sorted(debug_dir.rglob("*.jsonl")):
+        lines = {line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()}
+        staged = path.with_name(f".{path.name}.normalize")
+        staged.write_text("".join(f"{line}\n" for line in sorted(lines)), encoding="utf-8")
+        os.replace(staged, path)
+
+
+def _rebase_record_artifact_paths(record: QuestionRecord, old_root: Path, new_root: Path) -> None:
+    if not is_dataclass(record):
+        return
+    replacements = [
+        (str(old_root.resolve()), str(new_root.resolve())),
+        (_display_path(old_root), _display_path(new_root)),
+    ]
+    for field_info in fields(record):
+        value = getattr(record, field_info.name)
+        setattr(record, field_info.name, _rebase_artifact_value(value, replacements))
+
+
+def _rebase_artifact_value(value: Any, replacements: list[tuple[str, str]]) -> Any:
+    if isinstance(value, str):
+        for old, new in replacements:
+            if value == old:
+                return new
+            prefix = old.rstrip("/") + "/"
+            if value.startswith(prefix):
+                return new.rstrip("/") + "/" + value[len(prefix) :]
+        return value
+    if isinstance(value, list):
+        return [_rebase_artifact_value(item, replacements) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_rebase_artifact_value(item, replacements) for item in value)
+    if isinstance(value, dict):
+        return {key: _rebase_artifact_value(item, replacements) for key, item in value.items()}
+    return value
+
+
+def _finalize_registry_result(
+    records: list[QuestionRecord],
+    question_payloads: list[dict[str, Any]],
+    config: AppConfig,
+    *,
+    progress: Any | None,
+) -> PipelineResult:
+    records = sorted(records, key=_canonical_record_sort_key)
+    _normalize_debug_jsonl_files(config.output.debug_dir)
+    if progress:
+        progress.update_phase(
+            "writing_outputs", output_path=config.output.json_dir / config.naming.json_name, force_render=True
+        )
     if question_payloads and len(question_payloads) != len(records):
         json_path = write_question_bank_payload(
             _dedupe_question_payloads(question_payloads),
@@ -195,6 +457,21 @@ def _process_registry_entries(
     return PipelineResult(records, json_path, config.output.root_dir(), question_count=question_count, paper_count=len(papers))
 
 
+def _canonical_record_sort_key(record: QuestionRecord) -> tuple[str, str]:
+    try:
+        identity = paper_identity_from_parts(
+            syllabus=record.syllabus_code or "9709",
+            subject_family=record.paper_family,
+            year=record.year,
+            session=record.session,
+            component=record.component or record.source_paper_code,
+            question_number=record.question_number,
+        )
+        return identity.question_id, record.full_question_label
+    except (IdentityError, ValueError):
+        return f"{record.paper_name}:{record.question_number}", record.full_question_label
+
+
 def process_sample(question_pdf: str | Path, config: AppConfig, mark_scheme_pdf: str | Path | None = None) -> PipelineResult:
     config.ensure_output_dirs()
     records = build_records_for_pdf(question_pdf, config, mark_scheme_pdf=mark_scheme_pdf)
@@ -209,6 +486,35 @@ def process_sample(question_pdf: str | Path, config: AppConfig, mark_scheme_pdf:
 def _entry_progress_identity(entry) -> tuple[str, str, str]:
     context = _entry_progress_context(entry)
     return context["batch_id"], context["paper"], context["paper_family"]
+
+
+def _extraction_batch_cache_key(entry: Any, config: AppConfig) -> str:
+    source_paths = [entry.question_paper, entry.mark_scheme, *(entry.examiner_reports or [])]
+    sources = []
+    for path_value in sorted({str(path) for path in source_paths if path is not None}):
+        path = Path(path_value)
+        sources.append(
+            {
+                "path": path_value,
+                "sha256": _file_sha256(path) if path.is_file() else "missing",
+            }
+        )
+    payload = {
+        "pipeline_version": __version__,
+        "configuration": asdict(config),
+        "ocr_profile": asdict(config.ocr),
+        "sources": sources,
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _entry_progress_context(entry) -> dict[str, str]:
@@ -1660,7 +1966,6 @@ def _record_is_reconciliation_candidate(record: QuestionRecord, candidate_topics
     details = record.topic_evidence_details or {}
     score_breakdown = details.get("topic_score_breakdown", {})
     current_breakdown = score_breakdown.get(record.topic, {})
-    clear_local_win = _score_gap_is_clear_winner(record.topic, score_breakdown)
     extraction_weak = record.extraction_quality_score < 0.68 or "likely_needs_visual_review" in record.extraction_quality_flags
     meaningful_alternatives = [topic for topic in candidate_topics if topic and topic != record.topic]
     has_meaningful_alternative = bool(meaningful_alternatives)

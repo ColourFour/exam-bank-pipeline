@@ -225,7 +225,7 @@ def test_draft_grading_appends_phase3_audit_events(tmp_path: Path) -> None:
 
 
 def test_salvage_audit_report_documents_decisions() -> None:
-    report = Path("reports/SUBMISSION_DRAFT_GRADING_SALVAGE_AUDIT_2026_06_22.md")
+    report = Path("docs/history/SUBMISSION_DRAFT_GRADING_SALVAGE_AUDIT_2026_06_22.md")
     text = report.read_text(encoding="utf-8")
 
     assert "src/exam_bank/auto_grade/schemas.py" in text

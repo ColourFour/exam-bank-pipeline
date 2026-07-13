@@ -11,6 +11,8 @@ from .config import AppConfig
 from .core.paper_identity import IdentityError, PaperIdentity, paper_identity_from_parts
 from .identifiers import normalize_question_id
 from .mark_schemes import render_mark_scheme_images
+from .regeneration_selection import normalize_lookup_key as _normalize_lookup_key
+from .regeneration_selection import normalize_requested_ids as _normalize_requested_ids
 
 
 @dataclass(frozen=True)
@@ -173,16 +175,6 @@ def _identity_parts_from_mark_scheme_artifact(row: dict[str, Any]) -> dict[str, 
     return {}
 
 
-def _normalize_requested_ids(values: Iterable[str]) -> set[str]:
-    normalized: set[str] = set()
-    for value in values:
-        for part in str(value or "").replace("\n", ",").split(","):
-            cleaned = _normalize_lookup_key(part)
-            if cleaned:
-                normalized.add(cleaned)
-    return normalized
-
-
 def _record_match_keys(row: dict[str, Any]) -> set[str]:
     keys = {_normalize_lookup_key(row.get("question_id"))}
     for value in _record_mark_scheme_artifact_values(row):
@@ -210,15 +202,6 @@ def _record_mark_scheme_artifact_values(row: dict[str, Any]) -> list[str]:
     asset_identity = detected.get("asset_identity") if isinstance(detected.get("asset_identity"), dict) else {}
     values.append(str(asset_identity.get("canonical_path") or ""))
     return values
-
-
-def _normalize_lookup_key(value: Any) -> str:
-    text = str(value or "").strip()
-    if not text:
-        return ""
-    text = Path(text).name if "/" in text else text
-    text = text.removesuffix(".png")
-    return text.strip()
 
 
 def _int_or_none(value: Any) -> int | None:

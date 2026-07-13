@@ -8,10 +8,16 @@ from pathlib import Path
 from tests.test_auto_grade_eligibility import _write_fixture
 
 
-def test_scripts_help_exits_successfully() -> None:
+def test_autograde_commands_and_specialist_scripts_help_exit_successfully() -> None:
+    for command in [
+        [sys.executable, "-m", "exam_bank.command", "autograde", "build", "--help"],
+        [sys.executable, "-m", "exam_bank.command", "autograde", "validate", "--help"],
+    ]:
+        result = subprocess.run(command, cwd=Path.cwd(), text=True, capture_output=True)
+        assert result.returncode == 0
+        assert "usage:" in result.stdout
+
     for script in [
-        "scripts/build_auto_grade_eligible_items.py",
-        "scripts/validate_auto_grade_eligible_items.py",
         "scripts/build_auto_grade_rubric_review_batch.py",
         "scripts/check_auto_grade_rubric_review_completion.py",
         "scripts/promote_auto_grade_reviewed_rubrics.py",
@@ -32,7 +38,10 @@ def test_build_and_validate_scripts_run_on_fixture_without_mutating_input(tmp_pa
     build = subprocess.run(
         [
             sys.executable,
-            "scripts/build_auto_grade_eligible_items.py",
+            "-m",
+            "exam_bank.command",
+            "autograde",
+            "build",
             "--question-bank",
             str(paths["question_bank"]),
             "--output",
@@ -61,7 +70,10 @@ def test_build_and_validate_scripts_run_on_fixture_without_mutating_input(tmp_pa
     validate = subprocess.run(
         [
             sys.executable,
-            "scripts/validate_auto_grade_eligible_items.py",
+            "-m",
+            "exam_bank.command",
+            "autograde",
+            "validate",
             "--eligible-items",
             str(paths["eligible"]),
             "--question-bank",

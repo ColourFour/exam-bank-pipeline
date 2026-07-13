@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "exam-bank-pipeline"
 version = "0.1.0"
-description = "CAIE 9709 question-paper and mark-scheme extraction pipeline."
+description = "Image-first CAIE 9709 exam-bank extraction and local teaching platform."
 requires-python = ">=3.10"
 dependencies = [
   "PyMuPDF>=1.24.0",
@@ -19,7 +19,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0.0",
+  "ruff>=0.12.0",
 ]
+
+[project.scripts]
+exam-bank = "exam_bank.command:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -38,3 +42,24 @@ markers = [
   "rendering: image and crop rendering behavior tests.",
   "sample_pipeline: repository sample-pipeline regression tests, usually also integration.",
 ]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+include = [
+  "src/exam_bank/command.py",
+  "src/exam_bank/commands/*.py",
+  "src/exam_bank/corpus.py",
+  "src/exam_bank/image_operations.py",
+  "src/exam_bank/mark_scheme_validation.py",
+  "src/exam_bank/mark_scheme_labels.py",
+  "src/exam_bank/mark_scheme_repair.py",
+  "src/exam_bank/paper_components.py",
+  "src/exam_bank/pipeline.py",
+  "src/exam_bank/question_detection_graphics.py",
+  "src/exam_bank/regeneration_selection.py",
+  "src/exam_bank/review_promotion.py",
+]
+
+[tool.ruff.lint]
+select = ["E9", "F", "I"]

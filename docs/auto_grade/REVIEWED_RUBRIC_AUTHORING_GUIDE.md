@@ -90,7 +90,7 @@ Leave the rubric as `needs_human_review` when any evidence needs checking, any m
 7. Rebuild eligible items from the live registry:
 
 ```bash
-.venv/bin/python scripts/build_auto_grade_eligible_items.py \
+exam-bank autograde build \
   --question-bank output/json/question_bank.json \
   --reviewed-rubrics output/auto_grade/reviewed_rubrics.v1.json \
   --output output/auto_grade/eligible_items.v1.json
@@ -99,7 +99,7 @@ Leave the rubric as `needs_human_review` when any evidence needs checking, any m
 8. Validate eligible items:
 
 ```bash
-.venv/bin/python scripts/validate_auto_grade_eligible_items.py \
+exam-bank autograde validate \
   --eligible-items output/auto_grade/eligible_items.v1.json \
   --question-bank output/json/question_bank.json
 ```

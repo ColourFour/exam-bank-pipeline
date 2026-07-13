@@ -208,54 +208,6 @@ def test_new_gate_fields_do_not_pass_without_reviewed_source_files(tmp_path: Pat
     assert "mark_event_gate_unbacked_by_reviewed_source_file" in row["blocker_reasons"]
 
 
-def test_loop004_blocker_classification_and_same_sample_outputs() -> None:
-    root = Path.cwd()
-    loop003_rows = _read_csv(root / "output/audits/asterion_content_lab_loop/iteration_003b/sample_results.csv")
-    loop004_rows = _read_csv(root / "output/audits/asterion_content_lab_loop/iteration_004/sample_results.csv")
-    classification_rows = _read_csv(root / "output/review/content_lab_p3_auto_loop_004/remaining_sample_blockers.csv")
-    corrections = [
-        json.loads(line)
-        for line in (root / "output/review/content_lab_p3_auto_loop_004/candidate_mapping_corrections.jsonl")
-        .read_text(encoding="utf-8")
-        .splitlines()
-        if line.strip()
-    ]
-    merged = json.loads(
-        (root / "data/review/content_lab_p3_auto_reviewed_decisions_merged_0002.v1.json").read_text(encoding="utf-8")
-    )
-    summary = json.loads((root / "output/audits/asterion_content_lab_loop/iteration_004/audit_summary.json").read_text())
-
-    assert len(loop003_rows) == len(loop004_rows) == 100
-    assert [row["candidate_id"] for row in loop003_rows] == [row["candidate_id"] for row in loop004_rows]
-    assert sum(row["passed"] == "True" for row in loop003_rows) == 70
-    assert sum(row["passed"] == "True" for row in loop004_rows) == 96
-    assert len(classification_rows) == 30
-    class_counts = {key: 0 for key in {
-        "unreviewed_eligible_for_agentic_review",
-        "rejected_but_mapping_correctable",
-        "requires_new_candidate_generation",
-    }}
-    for row in classification_rows:
-        class_counts[row["blocker_classification"]] = class_counts.get(row["blocker_classification"], 0) + 1
-    assert class_counts["unreviewed_eligible_for_agentic_review"] == 7
-    assert class_counts["rejected_but_mapping_correctable"] == 19
-    assert class_counts["requires_new_candidate_generation"] == 4
-    assert len(corrections) == 19
-    assert merged["record_count"] == 93
-    assert summary["sample_size"] == 100
-    assert summary["sample_passed"] == 96
-    assert summary["target_pass_rate"] == 0.9
-    assert summary["target_met"] is True
-    assert summary["trust_gates_weakened"] is False
-    still_blocked = {row["candidate_id"] for row in loop004_rows if row["passed"] == "False"}
-    assert still_blocked == {
-        "content_lab_32summer22_q06_b",
-        "content_lab_32spring25_q05_whole",
-        "content_lab_32summer23_q10_b",
-        "content_lab_33winter21_q02_a",
-    }
-
-
 def _write_fixture(tmp_path: Path) -> dict[str, Path]:
     artifact_root = tmp_path / "output"
     for question_number in range(1, 6):

@@ -325,6 +325,8 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
         "model_versions",
         "ocr_engine_version",
         "input_manifest_sha256",
+        "corpus_manifest_sha256",
+        "configuration_sha256",
         "artifact_root",
         "output_layout",
         "qa_summary",
@@ -341,6 +343,8 @@ def test_question_bank_export_contract_includes_required_metadata_and_question_f
     }
     assert manifest["ocr_engine_version"] == ""
     assert re.fullmatch(r"[0-9a-f]{64}", manifest["input_manifest_sha256"])
+    assert re.fullmatch(r"[0-9a-f]{64}", manifest["corpus_manifest_sha256"])
+    assert re.fullmatch(r"[0-9a-f]{64}", manifest["configuration_sha256"])
     assert manifest["artifact_root"] == str(tmp_path / "output")
     assert manifest["output_layout"] == {"version": 1, "profile": CANONICAL_LAYOUT_PROFILE}
     assert manifest["qa_summary"]["record_count"] == 1

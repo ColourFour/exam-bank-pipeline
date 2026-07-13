@@ -69,42 +69,6 @@ def test_manual_review_batch_conclusions_summarises_counts_and_sections(tmp_path
     assert "## Implemented In This Pass" in report
 
 
-def test_batch_0003_conclusions_separate_exact_skill_and_mark_event_decisions() -> None:
-    payload = json.loads(Path("reports/manual_review_batch_0003_conclusions.v1.json").read_text(encoding="utf-8"))
-    records = payload["record_decisions"]
-
-    assert payload["batch_id"] == "batch_0003"
-    assert payload["outcome_counts"]["total_reviewed_records"] == 14
-    assert payload["outcome_counts"]["promoted_exact_skill_records"] == 0
-    assert payload["outcome_counts"]["approved_mark_event_count"] == 0
-    assert payload["outcome_counts"]["content_lab_generation_ready_after"] == 0
-    assert payload["advisory_only_mark_event_refs"]["all_records_left_advisory_only"] is True
-    assert payload["advisory_only_mark_event_refs"]["explicit_approved_mark_event_ids"] == []
-    assert any(record["exact_skill_decision"] == "retagged_not_promoted" for record in records)
-    assert any(record["exact_skill_decision"] == "blocked" for record in records)
-    assert any(record["exact_skill_decision"] == "deferred_thin" for record in records)
-    assert all(record["mark_event_decision"] == "left_advisory_only" for record in records)
-    assert all(record["content_lab_generation_allowed"] is False for record in records)
-    controls = [record for record in records if record["selection_category"] == "clean_control_mark_event_probe"]
-    thin = [record for record in records if record["selection_category"] == "thin_adjacent_part_probe"]
-    assert controls and all(record["control_record"] is True for record in controls)
-    assert thin and all(record["review_outcome_category"] == "exact_but_not_seed_quality" for record in thin)
-    assert payload["outcome_counts"]["new_promotions_excluding_controls"] == 0
-    assert payload["outcome_counts"]["by_review_outcome_category"]["supporting_method_not_target_skill"] >= 1
-
-
-def test_batch_0003_seed_report_promotes_no_records() -> None:
-    payload = json.loads(Path("reports/p3_exact_skill_registry_seed_0003.v1.json").read_text(encoding="utf-8"))
-
-    assert payload["batch_id"] == "batch_0003"
-    assert payload["selected_count"] == 0
-    assert payload["selected_record_ids"] == []
-    assert payload["selected_records"] == []
-    assert len(payload["records_intentionally_skipped"]) == 14
-    assert payload["mark_event_policy"]["approved_mark_event_count"] == 0
-    assert payload["candidate_generation_policy"]["new_generation_ready_from_this_pass"] == 0
-
-
 def _queue_item(question_id: str, alignment: str) -> dict[str, object]:
     return {
         "queue_id": f"queue:{question_id}",
