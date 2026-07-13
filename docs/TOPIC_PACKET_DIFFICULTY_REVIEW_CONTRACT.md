@@ -45,6 +45,22 @@ Import validated decisions and write ranked sidecar plus reports:
   --artifact-root output
 ```
 
+Reconcile every current packet after routing or review inputs change:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-difficulty-review reconcile \
+  --packets-root output/topic_packets \
+  --difficulty-root data/review/topic_difficulty \
+  --difficulty-index output/json/question_bank.difficulty_index.v1.json \
+  --artifact-root output \
+  --model gpt-5-mini
+```
+
+Reconciliation preserves reviewed evidence for questions that remain in the same packet. Questions moved from another
+packet preserve their previous packet percentile provisionally; questions with no packet history use the deterministic
+difficulty-index percentile. Both groups are automatically submitted for focused visual review. Provider or credential
+failures leave explicit provisional records and do not abort reconciliation.
+
 ## Interpretation
 
 `packet_rank` is relative to the topic packet only:
@@ -99,6 +115,25 @@ Accepted decisions are sorted hardest first by:
 
 Ranks are then assigned uniquely from `1..n`.
 
+Packet PDFs consume ranks in reverse order, so larger/easier ranks appear first and rank 1 appears last. A packet with
+provisional or missing records remains deterministically ordered but exposes `difficulty_ranking_complete=false`.
+
+## Reconciliation and freshness
+
+Difficulty never determines topic routing or packet membership. Current reviewed routing produces the packet membership;
+the difficulty workflow only annotates and orders those records. Each packet manifest and reconciled v2 sidecar stores a
+projection fingerprint covering membership, primary/secondary placement, packet section, routing input hashes, taxonomy,
+and generator schema version. A mismatch blocks ranked regeneration and instructs the operator to reconcile.
+
+Reconciled records use these statuses:
+
+- `reviewed`: reusable evidence from the same packet or a completed focused review
+- `provisional_topic_changed`: prior packet percentile carried into a new topic pending review
+- `provisional_new_member`: deterministic difficulty-index percentile pending review
+- `missing`: no reusable or deterministic evidence; ordered at the pending tail
+
+Removed questions are excluded from active ranks and retained under `removed_records` for provenance and possible reuse.
+
 ## Forbidden Uses
 
 Do not use topic packet difficulty review to:
@@ -107,5 +142,5 @@ Do not use topic packet difficulty review to:
 - compare difficulty across unrelated packets
 - override canonical extraction, topic routing, or Asterion role gates
 - repair or replace rendered question or mark-scheme images
-- mutate topic packet manifests or PDFs
-- enable student-facing sequencing in v1
+- use difficulty evidence to change topic routing or packet membership
+- claim that provisional ordering is a completed reviewed ranking

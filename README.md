@@ -289,7 +289,7 @@ The normal packet workflow generates broad CAIE 9709 major-topic packets by pape
   --input output/json/question_bank.json \
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
   --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
-  --topic-overlap-review data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json \
+  --topic-overlap-review data/review/topic_overlap_review_current.v1.json \
   --artifact-root output \
   --strict-syllabus
 ```
@@ -307,6 +307,32 @@ Preview the full pass without writing PDFs or manifests:
 ```
 
 Default outputs are written under `output/topic_packets/<paper_family>/<major_topic>/` with `<paper_family>_<topic>_packet.pdf` and `manifest.json`, plus `output/topic_packets/topic_packet_summary.json`. Approved questions and review-required questions are separated inside the combined packet. Add `--split-question-answer-pdfs` when legacy `questions.pdf` and `answers.pdf` side outputs are needed. Weak text/OCR/topic/crop signals are warnings, not blockers; missing question images and invalid taxonomy paths are hard exclusions, while mapping/validation/scope/visual-risk records with usable assets are routed to review-required packet sections.
+
+After routing changes, reconcile packet-relative difficulty and regenerate. Reconciliation automatically reviews only moved/new questions; if the provider is unavailable it preserves explicit provisional percentile placement and marks the ranking incomplete:
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-difficulty-review reconcile \
+  --packets-root output/topic_packets \
+  --difficulty-root data/review/topic_difficulty \
+  --difficulty-index output/json/question_bank.difficulty_index.v1.json \
+  --artifact-root output
+
+.venv/bin/python -m exam_bank.cli topic-packets \
+  --input output/json/question_bank.json \
+  --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
+  --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
+  --topic-overlap-review data/review/topic_overlap_review_current.v1.json \
+  --topic-difficulty-root data/review/topic_difficulty \
+  --artifact-root output \
+  --strict-syllabus
+```
+
+Audit routing state before or after regeneration when packet outputs and review sidecars may be out of sync:
+
+```bash
+.venv/bin/python scripts/audit_topic_packet_routing_state.py \
+  --topic-overlap-review data/review/topic_overlap_review_current.v1.json
+```
 
 The visual topic audit loop builds image-backed review batches from packet coverage anomalies, runs optional AI-assisted decisions, and imports reviewed primary/secondary/exclusion decisions into the topic-overlap sidecar:
 

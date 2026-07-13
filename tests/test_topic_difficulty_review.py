@@ -11,8 +11,137 @@ from exam_bank.topic_difficulty_review import (
     TOPIC_DIFFICULTY_PROMPT_VERSION,
     build_topic_difficulty_batch,
     import_topic_difficulty_decisions,
+    reconcile_topic_difficulty,
     run_topic_difficulty_reviews,
 )
+
+
+def test_reconcile_preserves_same_packet_and_flags_moved_new_and_removed(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    packets_root = tmp_path / "packets"
+    manifest_path = packets_root / "p3" / "integration" / "manifest.json"
+    manifest = json.loads(paths["manifest"].read_text(encoding="utf-8"))
+    _write_json(manifest_path, manifest)
+    difficulty_root = tmp_path / "difficulty"
+    _write_json(
+        difficulty_root / "p3_integration_old" / "topic_packet_difficulty_review.v1.json",
+        _legacy_sidecar(
+            "p3_integration_old",
+            "integration",
+            [
+                _legacy_record("q1", score=80, percentile=80),
+                _legacy_record("q_removed", score=55, percentile=40),
+            ],
+        ),
+    )
+    _write_json(
+        difficulty_root / "p3_differentiation_old" / "topic_packet_difficulty_review.v1.json",
+        _legacy_sidecar(
+            "p3_differentiation_old",
+            "differentiation",
+            [_legacy_record("q2", score=65, percentile=60)],
+        ),
+    )
+    difficulty_index = tmp_path / "difficulty_index.json"
+    _write_json(
+        difficulty_index,
+        {"records": [{"question_id": "q3", "paper_relative_percentile": 25.0}]},
+    )
+
+    report = reconcile_topic_difficulty(
+        packets_root=packets_root,
+        difficulty_root=difficulty_root,
+        difficulty_index_path=difficulty_index,
+        artifact_root=paths["artifact_root"],
+        reports_dir=tmp_path / "reports",
+        auto_review=False,
+    )
+
+    packet_report = report["packets"][0]
+    sidecar_path = next(difficulty_root.glob("*/topic_packet_difficulty_review.v2.json"))
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    records = {row["question_id"]: row for row in sidecar["records"]}
+    assert packet_report["removed_question_ids"] == ["q_removed"]
+    assert records["q1"]["difficulty_status"] == "reviewed"
+    assert records["q2"]["difficulty_status"] == "provisional_topic_changed"
+    assert records["q2"]["provisional_percentile_0_100"] == 60.0
+    assert records["q2"]["source_packet_id"] == "p3_differentiation_old"
+    assert records["q3"]["difficulty_status"] == "provisional_new_member"
+    assert records["q3"]["provisional_percentile_0_100"] == 25.0
+    assert [row["question_id"] for row in sidecar["records"]] == ["q1", "q2", "q3"]
+    assert sidecar["difficulty_ranking_complete"] is False
+    assert sidecar["pending_question_ids"] == ["q2", "q3"]
+    assert sidecar["projection_fingerprint"]
+
+
+def test_reconcile_automatic_review_replaces_provisional_record(tmp_path: Path, monkeypatch) -> None:
+    paths = _fixture(tmp_path)
+    packets_root = tmp_path / "packets"
+    manifest_path = packets_root / "p3" / "integration" / "manifest.json"
+    _write_json(manifest_path, json.loads(paths["manifest"].read_text(encoding="utf-8")))
+    difficulty_root = tmp_path / "difficulty"
+    _write_json(
+        difficulty_root / "p3_integration_old" / "topic_packet_difficulty_review.v1.json",
+        _legacy_sidecar("p3_integration_old", "integration", [_legacy_record("q1", score=80, percentile=80)]),
+    )
+    difficulty_index = tmp_path / "difficulty_index.json"
+    _write_json(
+        difficulty_index,
+        {
+            "records": [
+                {"question_id": "q2", "paper_relative_percentile": 50.0},
+                {"question_id": "q3", "paper_relative_percentile": 20.0},
+            ]
+        },
+    )
+
+    def fake_runner(*, batch_path, out_path, **_kwargs):
+        batch = json.loads(Path(batch_path).read_text(encoding="utf-8"))
+        decisions = [_decision(row, 70 - index * 10) for index, row in enumerate(batch["rows"])]
+        Path(out_path).write_text("\n".join(json.dumps(row) for row in decisions) + "\n", encoding="utf-8")
+        return {"pending_count": len(decisions)}
+
+    monkeypatch.setattr("exam_bank.topic_difficulty_review.run_topic_difficulty_reviews", fake_runner)
+    reconcile_topic_difficulty(
+        packets_root=packets_root,
+        difficulty_root=difficulty_root,
+        difficulty_index_path=difficulty_index,
+        artifact_root=paths["artifact_root"],
+        reports_dir=tmp_path / "reports",
+    )
+
+    sidecar = json.loads(next(difficulty_root.glob("*/topic_packet_difficulty_review.v2.json")).read_text(encoding="utf-8"))
+    assert sidecar["difficulty_ranking_complete"] is True
+    assert sidecar["pending_question_ids"] == []
+    assert {row["difficulty_status"] for row in sidecar["records"]} == {"reviewed"}
+
+
+def _legacy_sidecar(packet_id: str, topic_id: str, records: list[dict[str, object]]) -> dict[str, object]:
+    return {
+        "schema_name": "exam_bank.topic_packet_difficulty_review",
+        "schema_version": 1,
+        "generated_at": "2026-07-06T00:00:00+00:00",
+        "packet_id": packet_id,
+        "complete": True,
+        "packet": {"paper_family": "p3", "topic_id": topic_id, "subtopic_id": ""},
+        "expected_record_count": len(records),
+        "records": records,
+    }
+
+
+def _legacy_record(question_id: str, *, score: int, percentile: int) -> dict[str, object]:
+    return {
+        "question_id": question_id,
+        "visual_difficulty_score_0_100": score,
+        "difficulty_percentile_0_100": percentile,
+        "packet_rank": 1,
+        "confidence": "high",
+        "rationale": "Reviewed legacy packet evidence.",
+        "difficulty_factors": [],
+        "risk_flags": [],
+        "evidence_refs": [],
+        "source": "legacy-test",
+    }
 
 
 def test_build_topic_difficulty_batch_from_manifest_resolves_images(tmp_path: Path) -> None:

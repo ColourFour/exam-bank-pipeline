@@ -20,6 +20,7 @@ from exam_bank.topic_packets import (
     resolve_answer_image_paths,
     validate_packet_key,
 )
+from exam_bank.topic_difficulty_review import reconcile_topic_difficulty
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,7 +149,7 @@ def test_topic_packet_can_annotate_problem_headers_with_difficulty_rank(tmp_path
     assert "Review Required Questions" not in text
 
 
-def test_exact_topic_difficulty_review_controls_packet_membership_and_order(tmp_path: Path) -> None:
+def test_stale_topic_difficulty_review_cannot_control_packet_membership(tmp_path: Path) -> None:
     paths = _fixture(
         tmp_path,
         include_q3=True,
@@ -184,6 +185,21 @@ def test_exact_topic_difficulty_review_controls_packet_membership_and_order(tmp_
         encoding="utf-8",
     )
 
+    with pytest.raises(TopicPacketError, match="Difficulty membership does not match routed packet"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=paths["output"],
+            artifact_root=paths["artifact_root"],
+            paper_family="p3",
+            topic="integration",
+            topic_difficulty_review_path=sidecar,
+        )
+
+
+def test_global_packet_generation_discovers_reconciled_difficulty_sidecar(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
     generate_topic_packets(
         question_bank_path=paths["bank"],
         taxonomy_path=paths["taxonomy"],
@@ -192,21 +208,53 @@ def test_exact_topic_difficulty_review_controls_packet_membership_and_order(tmp_
         artifact_root=paths["artifact_root"],
         paper_family="p3",
         topic="integration",
-        topic_difficulty_review_path=sidecar,
+        topic_difficulty_root=None,
+    )
+    difficulty_root = tmp_path / "difficulty"
+    legacy_dir = difficulty_root / "p3_integration_legacy"
+    legacy_dir.mkdir(parents=True)
+    (legacy_dir / "topic_packet_difficulty_review.v1.json").write_text(
+        json.dumps(
+            {
+                "schema_name": "exam_bank.topic_packet_difficulty_review",
+                "schema_version": 1,
+                "generated_at": "2026-07-06T00:00:00+00:00",
+                "packet_id": "p3_integration_legacy",
+                "complete": True,
+                "expected_record_count": 2,
+                "packet": {"paper_family": "p3", "topic_id": "integration", "subtopic_id": ""},
+                "records": [
+                    _difficulty_record("q1", 1, 100) | {"difficulty_percentile_0_100": 100.0},
+                    _difficulty_record("q2", 2, 0) | {"difficulty_percentile_0_100": 0.0},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    reconcile_topic_difficulty(
+        packets_root=paths["output"],
+        difficulty_root=difficulty_root,
+        difficulty_index_path=tmp_path / "missing-index.json",
+        artifact_root=paths["artifact_root"],
+        reports_dir=tmp_path / "reports",
+        auto_review=False,
     )
 
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+        topic_difficulty_root=difficulty_root,
+    )
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
-    packet_pdf = paths["output"] / "p3" / "integration" / "p3_integration_packet.pdf"
-    with fitz.open(packet_pdf) as doc:
-        text = "\n".join(page.get_text() for page in doc)
-
+    assert manifest["included_question_ids"] == ["q2", "q1"]
+    assert manifest["difficulty_ranking_complete"] is True
     assert manifest["topic_difficulty_review_applied_count"] == 2
-    assert manifest["included_question_ids"] == ["q3", "q1"]
-    assert manifest["review_required_question_ids"] == ["q3", "q1"]
-    assert manifest["topic_assignment_confidence_trust_status"][0]["source"] == "topic_difficulty_review_packet"
-    assert manifest["included_records"][0]["topic_difficulty"]["packet_rank"] == 2
-    assert "q2" not in manifest["included_question_ids"]
-    assert "Review Required Questions" not in text
+    assert summary["difficulty_ranking_complete"] is True
 
 
 def test_legacy_question_bank_family_aliases_are_packet_eligible(tmp_path: Path) -> None:
@@ -782,6 +830,34 @@ def test_generation_works_with_empty_reviewed_decisions_file(tmp_path: Path) -> 
     assert manifest["included_question_ids"] == ["q1", "q2"]
 
 
+def test_topic_packet_summary_marks_scoped_generation_runs(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+
+    scoped = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+        topic="integration",
+    )
+    global_summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=tmp_path / "global_packets",
+        artifact_root=paths["artifact_root"],
+    )
+
+    assert scoped["run_scope"]["scope_type"] == "scoped"
+    assert scoped["run_scope"]["filters"]["paper_family"] == "p3"
+    assert scoped["run_scope"]["filters"]["topic_id"] == "integration"
+    assert scoped["is_global_run"] is False
+    assert global_summary["run_scope"]["scope_type"] == "global"
+    assert global_summary["is_global_run"] is True
+
+
 def test_topic_overlap_sidecar_relabels_primary_and_counts_secondary_coverage(tmp_path: Path) -> None:
     paths = _fixture(tmp_path)
     overlap = _write_topic_overlap_review(
@@ -864,6 +940,128 @@ def test_topic_overlap_family_override_participates_in_paper_family_filter(tmp_p
     assert summary["per_topic_included_counts"] == {"p1/quadratics": 1}
     assert summary["topic_overlap_reviews_loaded"] == 1
     assert summary["topic_overlap_reviews_applied"] == 1
+
+
+def test_unreviewed_p1_raw_algebra_does_not_route_to_p3_algebra(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q2": {
+                "question_id": "12summer20_q08",
+                "paper": "12summer20",
+                "paper_family": "pm1",
+                "topic": "algebra",
+                "notes": {"source_paper_code": "12"},
+            }
+        },
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+    )
+
+    assert not (paths["output"] / "p3" / "algebra" / "manifest.json").exists()
+    assert summary["skipped_by_reason"] == {"unsafe_cross_family_topic_assignment": 1}
+    assert summary["records_with_unsafe_topic_assignment"][0]["question_id"] == "12summer20_q08"
+
+
+def test_p1_series_overlap_review_routes_12summer20_q08_to_p1_series(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q2": {
+                "question_id": "12summer20_q08",
+                "paper": "12summer20",
+                "paper_family": "pm1",
+                "topic": "algebra",
+                "notes": {"source_paper_code": "12"},
+            }
+        },
+    )
+    overlap = _write_topic_overlap_review(
+        tmp_path,
+        [
+            {
+                "question_id": "12summer20_q08",
+                "paper": "12summer20",
+                "primary": "series",
+                "rationale": "Series is the dominant assessed topic.",
+            }
+        ],
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        topic_overlap_review_path=overlap,
+    )
+
+    series_manifest = json.loads((paths["output"] / "p1" / "series" / "manifest.json").read_text(encoding="utf-8"))
+    assert series_manifest["included_question_ids"] == ["12summer20_q08"]
+    assert series_manifest["included_records"][0]["primary_topic_id"] == "series"
+    assert not (paths["output"] / "p3" / "algebra" / "manifest.json").exists()
+    assert summary["topic_overlap_reviews_applied"] == 1
+    assert summary["per_topic_included_counts"]["p1/series"] == 1
+
+
+def test_paper_family_filter_blocks_unreviewed_p1_to_p3_route_but_allows_reviewed_keep(tmp_path: Path) -> None:
+    paths = _fixture(
+        tmp_path,
+        record_overrides={
+            "q2": {
+                "question_id": "12summer20_q08",
+                "paper": "12summer20",
+                "paper_family": "pm1",
+                "topic": "algebra",
+                "notes": {"source_paper_code": "12"},
+            }
+        },
+    )
+
+    summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=paths["output"],
+        artifact_root=paths["artifact_root"],
+        paper_family="p3",
+    )
+
+    assert summary["total_included"] == 1
+    assert not (paths["output"] / "p3" / "algebra" / "manifest.json").exists()
+
+    reviewed_keep = _write_reviewed_decisions(
+        tmp_path,
+        [
+            _automated_decision(
+                "12summer20_q08",
+                action="keep",
+                reviewed_topic="",
+                release_override=True,
+            )
+        ],
+    )
+    reviewed_summary = generate_topic_packets(
+        question_bank_path=paths["bank"],
+        taxonomy_path=paths["taxonomy"],
+        canonical_taxonomy_root=paths["canonical_root"],
+        output_root=tmp_path / "reviewed_packets",
+        artifact_root=paths["artifact_root"],
+        reviewed_decisions_path=reviewed_keep,
+        paper_family="p3",
+    )
+
+    algebra_manifest = json.loads((tmp_path / "reviewed_packets" / "p3" / "algebra" / "manifest.json").read_text(encoding="utf-8"))
+    assert reviewed_summary["total_included"] == 2
+    assert algebra_manifest["included_question_ids"] == ["12summer20_q08"]
+    assert algebra_manifest["included_records"][0]["review_status_marker"] == "Reviewed"
 
 
 def test_topic_overlap_sidecar_restored_split_question_counts_as_coverage_only(tmp_path: Path) -> None:
@@ -1646,7 +1844,13 @@ def _write_taxonomy(tmp_path: Path) -> Path:
                                         "packet_eligible": True,
                                     }
                                 ],
-                            }
+                            },
+                            {
+                                "topic_id": "series",
+                                "topic_label": "Series",
+                                "canonical_topic_id": "9709_p1_topic_series",
+                                "subtopics": [],
+                            },
                         ],
                     },
                     {
@@ -1685,7 +1889,13 @@ def _write_taxonomy(tmp_path: Path) -> Path:
                                         "packet_eligible": True,
                                     }
                                 ],
-                            }
+                            },
+                            {
+                                "topic_id": "algebra",
+                                "topic_label": "Algebra",
+                                "canonical_topic_id": "9709_p3_topic_algebra",
+                                "subtopics": [],
+                            },
                         ],
                     }
                 ],

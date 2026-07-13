@@ -398,6 +398,16 @@ Release packets are quality-first: records with release-safe visual and validati
 
 Reviewed topic-bank decisions can keep, relabel, or exclude records. Topic-overlap review decisions can adjust primary topics, add secondary/coverage topics for audit summaries, or exclude records from the current syllabus. Coverage topics affect summary and audit counts without duplicating a question into multiple generated PDFs.
 
+After any routing/review change, run packet difficulty reconciliation before the final packet regeneration. It preserves same-packet reviews, carries moved percentiles provisionally, uses the deterministic difficulty-index percentile for new members, and automatically reviews only pending records. Reconciled v2 sidecars are discovered from `data/review/topic_difficulty` during normal packet generation.
+
+```bash
+.venv/bin/python -m exam_bank.cli topic-difficulty-review reconcile \
+  --packets-root output/topic_packets \
+  --difficulty-root data/review/topic_difficulty \
+  --difficulty-index output/json/question_bank.difficulty_index.v1.json \
+  --artifact-root output
+```
+
 Dry run:
 
 ```bash
@@ -417,6 +427,7 @@ Full generation:
   --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json \
   --reviewed-decisions data/review/topic_bank_reviewed_decisions.v1.json \
   --topic-overlap-review data/review/topic_overlap_review_merged_p1_p3_p4_p5_2026_07_06.json \
+  --topic-difficulty-root data/review/topic_difficulty \
   --artifact-root output \
   --strict-syllabus \
   --pdf-profile print \

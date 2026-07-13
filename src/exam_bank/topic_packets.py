@@ -4,6 +4,7 @@ import argparse
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
+import hashlib
 import io
 import json
 import re
@@ -33,6 +34,9 @@ REVIEWED_DECISION_MARKERS = {
     "relabel": "Relabeled",
     "exclude": "Excluded from student version",
 }
+PURE_TOPIC_PACKET_FAMILIES = {"p1", "p3"}
+UNSAFE_RAW_CROSS_FAMILY_REASONS = {"topic_unique_in_packet_taxonomy"}
+UNSAFE_CROSS_FAMILY_REASON = "unsafe_cross_family_topic_assignment"
 SPECIAL_MARKED_MARKER = "Special Marked"
 P3_VECTOR_PLANE_REMOVED_REASON = "p3_vectors_plane_removed_from_current_syllabus"
 P3_VECTOR_PLANE_REMOVED_STATUS = "not_in_2026_syllabus"
@@ -258,6 +262,12 @@ def add_topic_packet_cli_arguments(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="Optional topic-packet difficulty review sidecar used to annotate packet problem headers.",
     )
+    parser.add_argument(
+        "--topic-difficulty-root",
+        type=Path,
+        default=Path("data/review/topic_difficulty"),
+        help="Directory containing reconciled per-packet difficulty v2 sidecars.",
+    )
     parser.add_argument("--paper-family", choices=["p1", "p3", "p4", "p5"], default=None)
     parser.add_argument("--topic", default=None, help="Packet taxonomy topic ID, e.g. integration.")
     parser.add_argument(
@@ -333,6 +343,7 @@ def run_topic_packets_from_args(args: argparse.Namespace) -> dict[str, Any]:
         reviewed_decisions_path=args.reviewed_decisions,
         topic_overlap_review_path=args.topic_overlap_review,
         topic_difficulty_review_path=args.topic_difficulty_review,
+        topic_difficulty_root=args.topic_difficulty_root,
         paper_family=args.paper_family,
         topic=args.topic,
         subtopic=args.subtopic,
@@ -368,6 +379,7 @@ def generate_topic_packets(
     reviewed_decisions_path: str | Path | None = None,
     topic_overlap_review_path: str | Path | None = None,
     topic_difficulty_review_path: str | Path | None = None,
+    topic_difficulty_root: str | Path | None = None,
     paper_family: str | None = None,
     topic: str | None = None,
     subtopic: str | None = None,
@@ -408,6 +420,7 @@ def generate_topic_packets(
         taxonomy=taxonomy,
     )
     topic_difficulty_records = load_topic_difficulty_review_records(topic_difficulty_review_path)
+    reconciled_difficulty = load_reconciled_topic_difficulty_directory(topic_difficulty_root)
     if paper_family:
         paper_family = normalize_paper_family(paper_family)
         records = [
@@ -417,6 +430,7 @@ def generate_topic_packets(
                 r,
                 paper_family=paper_family,
                 taxonomy=taxonomy,
+                reviewed_decisions=reviewed_decisions,
                 topic_overlap_reviews=topic_overlap_reviews,
             )
         ]
@@ -472,6 +486,7 @@ def generate_topic_packets(
     missing_question_images: list[str] = []
     missing_answer_images: list[str] = []
     invalid_topics: list[str] = []
+    unsafe_topic_assignments: list[dict[str, Any]] = []
     mapping_failures: list[str] = []
     validation_failures: list[str] = []
     broad_topic_only: list[str] = []
@@ -484,9 +499,6 @@ def generate_topic_packets(
 
     for record in records:
         question_id = str(record.get("question_id", "")).strip()
-        difficulty_record = topic_difficulty_records.get(question_id)
-        if topic_difficulty_target_packet is not None and difficulty_record is None:
-            continue
         decision = reviewed_decisions.get(question_id)
         overlap_decision = topic_overlap_reviews.get(question_id)
         record_family = _paper_family(record)
@@ -535,13 +547,7 @@ def generate_topic_packets(
             missing_question_images.append(question_id)
             continue
 
-        if topic_difficulty_target_packet is not None and difficulty_record is not None:
-            assignment, reasons = topic_difficulty_review_assignment(
-                record,
-                difficulty_record,
-                taxonomy=taxonomy,
-            )
-        elif major_topics_only:
+        if major_topics_only:
             assignment, reasons = choose_major_topic_assignment(record, taxonomy)
         else:
             assignment, reasons = choose_assignment(
@@ -586,6 +592,12 @@ def generate_topic_packets(
                 taxonomy=taxonomy,
             )
             applied_topic_overlap_counts.update([overlap_decision.status])
+
+        unsafe_assignment = _unsafe_cross_family_assignment(record, assignment, taxonomy)
+        if unsafe_assignment is not None and not _assignment_has_explicit_routing_review(assignment):
+            skipped.append(_skip(record, UNSAFE_CROSS_FAMILY_REASON, **unsafe_assignment))
+            unsafe_topic_assignments.append({"question_id": question_id, **unsafe_assignment})
+            continue
 
         assignment = apply_special_syllabus_markers(record, assignment)
 
@@ -658,26 +670,27 @@ def generate_topic_packets(
         warning_counts.update(_record_warnings(record))
         packets[key].append((record, assignment))
 
-    if topic_difficulty_target_packet is not None:
-        included_ids = {
-            str(record.get("question_id") or "")
-            for record, _ in packets.get(topic_difficulty_target_packet, [])
-        }
-        missing_ids = sorted(set(topic_difficulty_records) - included_ids)
-        if missing_ids:
-            raise TopicPacketError(
-                "Topic difficulty review sidecar records were not included in the generated packet: "
-                + ", ".join(missing_ids)
-            )
-
     generated: list[dict[str, Any]] = []
     generated_pdfs: list[str] = []
     empty_packets_skipped: list[dict[str, str]] = []
 
     for key in sorted(packets, key=lambda k: (k.mode, k.paper_family, k.topic_id, k.subtopic_id)):
+        discovered = reconciled_difficulty.get((key.paper_family, key.topic_id, key.subtopic_id))
+        key_difficulty_records = discovered[0] if discovered else topic_difficulty_records
+        key_difficulty_path = discovered[1] if discovered else (
+            Path(topic_difficulty_review_path) if topic_difficulty_review_path else None
+        )
+        packet_ids = {str(record.get("question_id") or "") for record, _ in packets[key]}
+        if key_difficulty_records and set(key_difficulty_records) != packet_ids:
+            missing = sorted(packet_ids - set(key_difficulty_records))
+            extra = sorted(set(key_difficulty_records) - packet_ids)
+            raise TopicPacketError(
+                f"Difficulty membership does not match routed packet {key.paper_family}/{key.topic_id}: "
+                f"missing={missing[:20]}, extra={extra[:20]}. Run topic-difficulty-review reconcile."
+            )
         packet_records = sort_packet_records(
             packets[key],
-            topic_difficulty_records=topic_difficulty_records,
+            topic_difficulty_records=key_difficulty_records,
         )
         if not packet_records:
             empty_packets_skipped.append(key.__dict__)
@@ -692,9 +705,17 @@ def generate_topic_packets(
             dry_run=dry_run,
             pdf_options=pdf_options,
             layout_options=layout_options,
-            topic_difficulty_records=topic_difficulty_records,
-            topic_difficulty_review_path=Path(topic_difficulty_review_path) if topic_difficulty_review_path else None,
+            topic_difficulty_records=key_difficulty_records,
+            topic_difficulty_review_path=key_difficulty_path,
+            topic_overlap_review_path=Path(topic_overlap_review_path) if topic_overlap_review_path else None,
+            taxonomy_path=taxonomy_path,
+            reviewed_decisions_path=Path(reviewed_decisions_path) if reviewed_decisions_path else None,
         )
+        if discovered and discovered[2] and discovered[2] != manifest.get("projection_fingerprint"):
+            raise TopicPacketError(
+                f"Reconciled difficulty sidecar is stale for {key.paper_family}/{key.topic_id}; "
+                "run topic-difficulty-review reconcile before regenerating packets."
+            )
         if not dry_run:
             packet_dir.mkdir(parents=True, exist_ok=True)
             topic_pdf = packet_pdf_path(packet_dir, key)
@@ -706,7 +727,7 @@ def generate_topic_packets(
                 review=key.mode == "review",
                 pdf_options=pdf_options,
                 layout_options=layout_options,
-                topic_difficulty_records=topic_difficulty_records,
+                topic_difficulty_records=key_difficulty_records,
             )
             page_count = _pdf_page_count(topic_pdf)
             manifest["pdf_path"] = str(topic_pdf)
@@ -729,7 +750,7 @@ def generate_topic_packets(
                     kind="questions",
                     review=key.mode == "review",
                     pdf_options=pdf_options,
-                    topic_difficulty_records=topic_difficulty_records,
+                    topic_difficulty_records=key_difficulty_records,
                 )
                 answer_stats = write_packet_pdf(
                     answer_pdf,
@@ -739,7 +760,7 @@ def generate_topic_packets(
                     kind="answers",
                     review=key.mode == "review",
                     pdf_options=pdf_options,
-                    topic_difficulty_records=topic_difficulty_records,
+                    topic_difficulty_records=key_difficulty_records,
                 )
                 manifest["pdf_outputs"]["questions"] = question_stats.to_manifest()
                 manifest["pdf_outputs"]["answers"] = answer_stats.to_manifest()
@@ -785,6 +806,13 @@ def generate_topic_packets(
             "average_problems_per_question_page": manifest.get("average_problems_per_question_page"),
             "average_answers_per_answer_page": manifest.get("average_answers_per_answer_page"),
             "oversized_block_warning_count": len(manifest.get("oversized_block_warnings") or []),
+            "topic_difficulty_review_path": manifest.get("topic_difficulty_review_path", ""),
+            "topic_difficulty_review_applied_count": manifest.get("topic_difficulty_review_applied_count", 0),
+            "difficulty_ranking_complete": manifest.get("difficulty_ranking_complete", False),
+            "difficulty_status_counts": manifest.get("difficulty_status_counts", {}),
+            "difficulty_pending_count": manifest.get("difficulty_pending_count", 0),
+            "difficulty_pending_question_ids": manifest.get("difficulty_pending_question_ids", []),
+            "projection_fingerprint": manifest.get("projection_fingerprint", ""),
         }
         if packet_stats is not None:
             packet_summary.update(
@@ -807,6 +835,7 @@ def generate_topic_packets(
         missing_question_images=missing_question_images,
         missing_answer_images=missing_answer_images,
         invalid_topics=invalid_topics,
+        unsafe_topic_assignments=unsafe_topic_assignments,
         mapping_failures=mapping_failures,
         validation_failures=validation_failures,
         broad_topic_only=broad_topic_only,
@@ -823,6 +852,13 @@ def generate_topic_packets(
         topic_overlap_coverage_only_records=_topic_overlap_coverage_only_records(topic_overlap_reviews),
         generated_pdfs=generated_pdfs,
         empty_packets_skipped=empty_packets_skipped,
+        run_scope=_topic_packet_run_scope(
+            paper_family=paper_family,
+            topic=topic,
+            subtopic=subtopic,
+            limit=limit,
+            topic_difficulty_target_packet=topic_difficulty_target_packet,
+        ),
         dry_run=dry_run,
     )
     if not dry_run:
@@ -1171,6 +1207,47 @@ def load_topic_difficulty_review_records(path: str | Path | None) -> dict[str, d
             f"Topic difficulty sidecar record count {len(by_question)} does not match expected count {expected_count}."
         )
     return by_question
+
+
+def load_reconciled_topic_difficulty_directory(
+    root: str | Path | None,
+) -> dict[tuple[str, str, str], tuple[dict[str, dict[str, Any]], Path, str]]:
+    if root is None:
+        return {}
+    directory = Path(root)
+    if not directory.exists():
+        return {}
+    result: dict[tuple[str, str, str], tuple[dict[str, dict[str, Any]], Path, str]] = {}
+    for path in sorted(directory.glob("*/topic_packet_difficulty_review.v2.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if payload.get("schema_name") != "exam_bank.topic_packet_difficulty_review":
+            raise TopicPacketError(f"Invalid reconciled difficulty sidecar schema: {path}")
+        packet = payload.get("packet") if isinstance(payload.get("packet"), dict) else {}
+        key = (
+            str(packet.get("paper_family") or "").strip(),
+            str(packet.get("topic_id") or "").strip(),
+            str(packet.get("subtopic_id") or "").strip(),
+        )
+        if not key[0] or not key[1]:
+            raise TopicPacketError(f"Reconciled difficulty sidecar is missing packet identity: {path}")
+        if key in result:
+            raise TopicPacketError(f"Multiple reconciled difficulty sidecars found for {'/'.join(key)}")
+        records: dict[str, dict[str, Any]] = {}
+        for raw in payload.get("records") or []:
+            if not isinstance(raw, dict) or not str(raw.get("question_id") or ""):
+                continue
+            row = dict(raw)
+            row["expected_record_count"] = int(payload.get("expected_record_count") or len(payload.get("records") or []))
+            row["_topic_difficulty_packet"] = {
+                "paper_family": key[0],
+                "topic_id": key[1],
+                "subtopic_id": key[2],
+                "topic_label": str(packet.get("topic_label") or ""),
+                "subtopic_label": str(packet.get("subtopic_label") or ""),
+            }
+            records[str(row["question_id"])] = row
+        result[key] = (records, path, str(payload.get("projection_fingerprint") or ""))
+    return result
 
 
 def topic_difficulty_review_target_packet(
@@ -1771,6 +1848,9 @@ def build_packet_manifest(
     layout_options: PdfLayoutOptions,
     topic_difficulty_records: dict[str, dict[str, Any]] | None = None,
     topic_difficulty_review_path: Path | None = None,
+    topic_overlap_review_path: Path | None = None,
+    taxonomy_path: Path | None = None,
+    reviewed_decisions_path: Path | None = None,
 ) -> dict[str, Any]:
     topic_difficulty_records = topic_difficulty_records or {}
     first_assignment = packet_records[0][1]
@@ -1819,7 +1899,22 @@ def build_packet_manifest(
         for record, _ in packet_records
         for path in resolve_answer_image_paths(record, artifact_root=artifact_root, fallback_root=question_bank_path.parent)
     ]
-    return {
+    difficulty_status_counts = _counts(
+        str(row.get("difficulty_status") or "reviewed") for row in topic_difficulty_records.values()
+    )
+    difficulty_pending_ids = sorted(
+        question_id
+        for question_id, row in topic_difficulty_records.items()
+        if str(row.get("difficulty_status") or "reviewed") != "reviewed"
+    )
+    routing_provenance = {
+        "question_bank": _path_provenance(question_bank_path),
+        "taxonomy": _path_provenance(taxonomy_path),
+        "reviewed_decisions": _path_provenance(reviewed_decisions_path),
+        "topic_overlap_review": _path_provenance(topic_overlap_review_path),
+        "generator_schema_version": TOPIC_PACKET_SCHEMA_VERSION,
+    }
+    manifest = {
         "schema_name": TOPIC_PACKET_SCHEMA_NAME,
         "schema_version": TOPIC_PACKET_SCHEMA_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -1894,10 +1989,16 @@ def build_packet_manifest(
         "pdf_outputs": {},
         "warning_counts": _counts(warning for record, _ in packet_records for warning in _record_warnings(record)),
         "topic_assignment_source": _counts(a.source for _, a in packet_records),
+        "topic_overlap_review_path": str(topic_overlap_review_path or ""),
         "topic_difficulty_review_path": str(topic_difficulty_review_path or ""),
         "topic_difficulty_review_applied_count": sum(
             1 for record, _ in packet_records if str(record.get("question_id") or "") in topic_difficulty_records
         ),
+        "difficulty_ranking_complete": bool(topic_difficulty_records) and not difficulty_pending_ids,
+        "difficulty_status_counts": difficulty_status_counts,
+        "difficulty_pending_count": len(difficulty_pending_ids),
+        "difficulty_pending_question_ids": difficulty_pending_ids,
+        "routing_provenance": routing_provenance,
         "topic_assignment_confidence_trust_status": [
             {
                 "question_id": str(record.get("question_id", "")),
@@ -1916,6 +2017,41 @@ def build_packet_manifest(
         ],
         "warnings": ["review_only_watermark"] if key.mode == "review" else [],
     }
+    manifest["projection_fingerprint"] = _packet_projection_fingerprint(manifest)
+    if topic_difficulty_records and difficulty_pending_ids:
+        manifest["warnings"] = list(manifest["warnings"]) + ["difficulty_ranking_incomplete"]
+    return manifest
+
+
+def _path_provenance(path: Path | None) -> dict[str, Any]:
+    if path is None:
+        return {"path": "", "sha256": ""}
+    candidate = Path(path)
+    digest = hashlib.sha256(candidate.read_bytes()).hexdigest() if candidate.is_file() else ""
+    return {"path": str(candidate), "sha256": digest}
+
+
+def _packet_projection_fingerprint(manifest: dict[str, Any]) -> str:
+    projection = {
+        "schema_version": manifest.get("schema_version"),
+        "paper_family": manifest.get("paper_family"),
+        "topic_id": manifest.get("topic_id"),
+        "subtopic_id": manifest.get("subtopic_id") or "",
+        "records": [
+            {
+                "question_id": row.get("question_id"),
+                "primary_topic_id": row.get("primary_topic_id"),
+                "secondary_topic_ids": row.get("secondary_topic_ids") or [],
+                "section": row.get("section"),
+            }
+            for row in sorted(
+                manifest.get("included_records") or [], key=lambda item: str(item.get("question_id") or "")
+            )
+        ],
+        "routing_provenance": manifest.get("routing_provenance") or {},
+    }
+    raw = json.dumps(projection, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
 def _included_record_manifest(
@@ -2780,7 +2916,9 @@ def _difficulty_text(record: dict[str, Any], difficulty_records: dict[str, dict[
     total = _int_or_none(row.get("expected_record_count")) or len(difficulty_records)
     if rank is None or total <= 0:
         return ""
-    return f"Difficulty {rank}/{total}"
+    status = str(row.get("difficulty_status") or "reviewed")
+    prefix = "Difficulty" if status == "reviewed" else "Provisional difficulty"
+    return f"{prefix} {rank}/{total}"
 
 
 def _difficulty_manifest_record(record: dict[str, Any], difficulty_records: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -2793,6 +2931,12 @@ def _difficulty_manifest_record(record: dict[str, Any], difficulty_records: dict
         "visual_difficulty_score_0_100": row.get("visual_difficulty_score_0_100"),
         "confidence": row.get("confidence"),
         "rationale": row.get("rationale"),
+        "difficulty_status": row.get("difficulty_status", "reviewed"),
+        "difficulty_review_reason": row.get("difficulty_review_reason", ""),
+        "source_packet_id": row.get("source_packet_id", ""),
+        "target_packet_id": row.get("target_packet_id", ""),
+        "provisional_percentile_0_100": row.get("provisional_percentile_0_100"),
+        "difficulty_provenance": row.get("difficulty_provenance", {}),
     }
 
 
@@ -2966,6 +3110,7 @@ def build_summary(
     missing_question_images: Sequence[str],
     missing_answer_images: Sequence[str],
     invalid_topics: Sequence[str],
+    unsafe_topic_assignments: Sequence[dict[str, Any]],
     mapping_failures: Sequence[str],
     validation_failures: Sequence[str],
     broad_topic_only: Sequence[str],
@@ -2982,6 +3127,7 @@ def build_summary(
     topic_overlap_coverage_only_records: Sequence[dict[str, Any]],
     generated_pdfs: Sequence[str],
     empty_packets_skipped: Sequence[dict[str, str]],
+    run_scope: dict[str, Any],
     dry_run: bool,
 ) -> dict[str, Any]:
     included_approved = sum(int(p.get("approved_count") or 0) for p in packets)
@@ -3015,6 +3161,16 @@ def build_summary(
     largest_by_bytes = max(packets, key=lambda p: int(p.get("pdf_file_size_bytes") or 0), default=None)
     total_question_pages = sum(len((p.get("problems_per_page_summary") or {}).get("questions") or {}) for p in packets)
     total_answer_pages = sum(len((p.get("problems_per_page_summary") or {}).get("answers") or {}) for p in packets)
+    difficulty_status_counts: Counter[str] = Counter()
+    for packet in packets:
+        difficulty_status_counts.update(packet.get("difficulty_status_counts") or {})
+    difficulty_pending_ids = sorted(
+        {
+            str(question_id)
+            for packet in packets
+            for question_id in packet.get("difficulty_pending_question_ids") or []
+        }
+    )
     return {
         "schema_name": TOPIC_PACKET_SUMMARY_SCHEMA_NAME,
         "schema_version": TOPIC_PACKET_SCHEMA_VERSION,
@@ -3022,6 +3178,8 @@ def build_summary(
         "source_taxonomy_path": str(taxonomy_path),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "dry_run": dry_run,
+        "run_scope": run_scope,
+        "is_global_run": bool(run_scope.get("is_global")),
         "total_records_scanned": records_scanned,
         "total_included": total_included,
         "total_unique_questions_included": total_unique_questions,
@@ -3034,6 +3192,12 @@ def build_summary(
         "total_included_in_review_packets": included_review,
         "total_skipped": len(skipped),
         "total_major_topic_packets_generated": sum(1 for p in packets if p.get("packet_level") == "major_topic"),
+        "difficulty_ranking_complete": bool(packets) and all(
+            bool(packet.get("difficulty_ranking_complete")) for packet in packets
+        ),
+        "difficulty_status_counts": dict(sorted(difficulty_status_counts.items())),
+        "difficulty_pending_count": len(difficulty_pending_ids),
+        "difficulty_pending_question_ids": difficulty_pending_ids,
         "total_topic_pdfs_generated": len([p for p in packets if p.get("pdf_path")]),
         "total_problems_included": total_included,
         "total_unique_problems_included": total_unique_questions,
@@ -3071,7 +3235,7 @@ def build_summary(
         "records_with_invalid_topics": list(invalid_topics),
         "records_with_mapping_failures": list(mapping_failures),
         "records_with_validation_failures": list(validation_failures),
-        "records_with_unsafe_topic_assignment": [],
+        "records_with_unsafe_topic_assignment": list(unsafe_topic_assignments),
         "records_with_broad_topic_only_assignment": list(broad_topic_only),
         "records_needing_precise_subtopic_review": list(needs_precise_subtopic_review),
         "records_downgraded_to_review": list(quality_downgrades),
@@ -3320,6 +3484,35 @@ def _should_clean_paper_family_output(
     return not dry_run and paper_family is not None and topic is None and subtopic is None and limit is None
 
 
+def _topic_packet_run_scope(
+    *,
+    paper_family: str | None,
+    topic: str | None,
+    subtopic: str | None,
+    limit: int | None,
+    topic_difficulty_target_packet: PacketKey | None,
+) -> dict[str, Any]:
+    filters = {
+        "paper_family": paper_family or "",
+        "topic_id": topic or "",
+        "subtopic_id": subtopic or "",
+        "limit": limit,
+        "topic_difficulty_target_packet": topic_difficulty_target_packet.__dict__ if topic_difficulty_target_packet else None,
+    }
+    is_global = (
+        paper_family is None
+        and topic is None
+        and subtopic is None
+        and limit is None
+        and topic_difficulty_target_packet is None
+    )
+    return {
+        "scope_type": "global" if is_global else "scoped",
+        "is_global": is_global,
+        "filters": filters,
+    }
+
+
 def _as_review_assignment(assignment: Assignment, review_reasons: Sequence[str] | None = None) -> Assignment:
     reasons = list(assignment.review_reasons)
     for reason in review_reasons or ("review_required",):
@@ -3532,18 +3725,73 @@ def _packet_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) 
     return normalization.expected_family if normalization.resolved else normalization.current_family
 
 
+def _safe_packet_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> str:
+    normalization = _packet_topic_normalization_for_record(record, taxonomy)
+    if normalization.resolved and _is_unsafe_raw_cross_family_normalization(normalization):
+        return ""
+    return normalization.expected_family if normalization.resolved else normalization.current_family
+
+
 def _record_matches_paper_family_filter(
     record: dict[str, Any],
     *,
     paper_family: str,
     taxonomy: dict[str, Any],
+    reviewed_decisions: dict[str, TopicBankReviewDecision],
     topic_overlap_reviews: dict[str, TopicOverlapReviewDecision],
 ) -> bool:
-    if _packet_family_for_record(record, taxonomy) == paper_family:
-        return True
     question_id = str(record.get("question_id", "")).strip()
+    decision = reviewed_decisions.get(question_id)
+    if decision is not None and decision.action == "relabel":
+        return _reviewed_decision_family_for_record(record, taxonomy) == paper_family
+    if decision is not None and decision.action == "keep":
+        return _packet_family_for_record(record, taxonomy) == paper_family
     overlap_decision = topic_overlap_reviews.get(question_id)
-    return overlap_decision is not None and overlap_decision.paper_family == paper_family
+    if overlap_decision is not None and overlap_decision.exclude_current_syllabus:
+        return (
+            overlap_decision.paper_family == paper_family
+            or _packet_family_for_record(record, taxonomy) == paper_family
+        )
+    if overlap_decision is not None and overlap_decision.paper_family == paper_family:
+        return True
+    return _safe_packet_family_for_record(record, taxonomy) == paper_family
+
+
+def _is_unsafe_raw_cross_family_normalization(normalization: PacketTopicNormalization) -> bool:
+    component_family = _packet_family_for_component(normalization.source_component)
+    if not component_family or not normalization.expected_family:
+        return False
+    return (
+        normalization.resolved
+        and component_family != normalization.expected_family
+        and component_family in PURE_TOPIC_PACKET_FAMILIES
+        and normalization.expected_family in PURE_TOPIC_PACKET_FAMILIES
+        and normalization.reason in UNSAFE_RAW_CROSS_FAMILY_REASONS
+    )
+
+
+def _unsafe_cross_family_assignment(
+    record: dict[str, Any],
+    assignment: Assignment,
+    taxonomy: dict[str, Any],
+) -> dict[str, Any] | None:
+    normalization = _packet_topic_normalization_for_record(record, taxonomy)
+    if not _is_unsafe_raw_cross_family_normalization(normalization):
+        return None
+    component_family = _packet_family_for_component(normalization.source_component)
+    if assignment.paper_family != normalization.expected_family:
+        return None
+    return {
+        "source_component_family": component_family,
+        "assigned_paper_family": assignment.paper_family,
+        "assigned_topic_id": assignment.topic_id,
+        "raw_topic": normalization.raw_topic,
+        "normalization_reason": normalization.reason,
+    }
+
+
+def _assignment_has_explicit_routing_review(assignment: Assignment) -> bool:
+    return bool(assignment.review_decision_action or assignment.topic_overlap_review_status)
 
 
 def _reviewed_decision_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> str:

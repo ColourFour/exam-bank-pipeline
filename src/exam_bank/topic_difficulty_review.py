@@ -22,6 +22,8 @@ TOPIC_DIFFICULTY_SIDECAR_SCHEMA_VERSION = 1
 TOPIC_DIFFICULTY_PROMPT_VERSION = "topic_packet_difficulty_9709_v1"
 DEFAULT_OUTPUT_ROOT = Path("data/review/topic_difficulty")
 DEFAULT_REPORTS_DIR = Path("reports/topic_difficulty")
+DEFAULT_PACKETS_ROOT = Path("output/topic_packets")
+DEFAULT_DIFFICULTY_INDEX = Path("output/json/question_bank.difficulty_index.v1.json")
 IMAGE_EVIDENCE_TYPES = {"canonical_question_image", "canonical_mark_scheme_image"}
 CONFIDENCE_ORDER = {"high": 3, "medium": 2, "low": 1}
 VALID_STATUSES = {"accepted", "pending"}
@@ -61,6 +63,20 @@ def add_topic_difficulty_review_cli_arguments(parser: argparse.ArgumentParser) -
     import_decisions.add_argument("--allow-incomplete", action="store_true")
     import_decisions.add_argument("--dry-run", action="store_true")
 
+    reconcile = subparsers.add_parser(
+        "reconcile",
+        help="Reconcile packet-relative difficulty after topic-packet routing changes.",
+    )
+    reconcile.add_argument("--packets-root", type=Path, default=DEFAULT_PACKETS_ROOT)
+    reconcile.add_argument("--difficulty-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    reconcile.add_argument("--difficulty-index", type=Path, default=DEFAULT_DIFFICULTY_INDEX)
+    reconcile.add_argument("--artifact-root", type=Path, default=Path("output"))
+    reconcile.add_argument("--reports-dir", type=Path, default=DEFAULT_REPORTS_DIR)
+    reconcile.add_argument("--model", default="gpt-5-mini")
+    reconcile.add_argument("--provider", default="openai")
+    reconcile.add_argument("--no-auto-review", action="store_true")
+    reconcile.add_argument("--dry-run", action="store_true")
+
 
 def run_topic_difficulty_review_from_args(args: argparse.Namespace) -> dict[str, Any]:
     command = args.topic_difficulty_review_command
@@ -90,7 +106,248 @@ def run_topic_difficulty_review_from_args(args: argparse.Namespace) -> dict[str,
             allow_incomplete=bool(args.allow_incomplete),
             dry_run=bool(args.dry_run),
         )
+    if command == "reconcile":
+        return reconcile_topic_difficulty(
+            packets_root=args.packets_root,
+            difficulty_root=args.difficulty_root,
+            difficulty_index_path=args.difficulty_index,
+            artifact_root=args.artifact_root,
+            reports_dir=args.reports_dir,
+            model=args.model,
+            provider=args.provider,
+            auto_review=not bool(args.no_auto_review),
+            dry_run=bool(args.dry_run),
+        )
     raise TopicDifficultyReviewError(f"Unhandled topic difficulty review command: {command}")
+
+
+def reconcile_topic_difficulty(
+    *,
+    packets_root: str | Path = DEFAULT_PACKETS_ROOT,
+    difficulty_root: str | Path = DEFAULT_OUTPUT_ROOT,
+    difficulty_index_path: str | Path = DEFAULT_DIFFICULTY_INDEX,
+    artifact_root: str | Path = Path("output"),
+    reports_dir: str | Path = DEFAULT_REPORTS_DIR,
+    model: str = "gpt-5-mini",
+    provider: str = "openai",
+    auto_review: bool = True,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Reconcile current packet membership with reusable historical difficulty evidence."""
+    packets_root = Path(packets_root)
+    difficulty_root = Path(difficulty_root)
+    artifact_root = Path(artifact_root)
+    reports_dir = Path(reports_dir)
+    manifests = sorted(packets_root.glob("*/*/manifest.json"))
+    history = _difficulty_history(difficulty_root)
+    difficulty_index = _difficulty_index_by_question(Path(difficulty_index_path))
+    packet_reports: list[dict[str, Any]] = []
+
+    for manifest_path in manifests:
+        manifest = _read_json(manifest_path)
+        packet_id = _packet_id(manifest, manifest_path)
+        packet_dir = difficulty_root / packet_id
+        current_key = _packet_key(manifest)
+        fingerprint = packet_projection_fingerprint(manifest)
+        rows = _included_records(manifest)
+        active: list[dict[str, Any]] = []
+        pending_rows: list[dict[str, Any]] = []
+        classifications: Counter[str] = Counter()
+
+        for index, row in enumerate(rows, start=1):
+            question_id = str(row.get("question_id") or "")
+            prior = history.get(question_id, [])
+            latest_prior = prior[0] if prior else None
+            same_packet = latest_prior if latest_prior is not None and latest_prior["packet_key"] == current_key else None
+            same_status = str((same_packet or {}).get("record", {}).get("difficulty_status") or "reviewed")
+            if same_packet is not None and same_status == "reviewed":
+                record = _reconciled_record_from_history(
+                    row, same_packet, packet_id=packet_id, status="reviewed", reason="same_packet_review"
+                )
+            elif same_packet is not None:
+                record = _reconciled_record_from_history(
+                    row,
+                    same_packet,
+                    packet_id=packet_id,
+                    status=same_status,
+                    reason=str(same_packet["record"].get("difficulty_review_reason") or "pending_review"),
+                )
+                pending_rows.append(row)
+            elif latest_prior is not None:
+                source = latest_prior
+                record = _reconciled_record_from_history(
+                    row,
+                    source,
+                    packet_id=packet_id,
+                    status="provisional_topic_changed",
+                    reason="topic_changed",
+                )
+                pending_rows.append(row)
+            else:
+                index_record = difficulty_index.get(question_id, {})
+                percentile = _float_or_none(index_record.get("paper_relative_percentile"))
+                status = "provisional_new_member" if percentile is not None else "missing"
+                record = _provisional_record(
+                    row,
+                    packet_id=packet_id,
+                    status=status,
+                    reason="new_packet_member" if percentile is not None else "no_difficulty_evidence",
+                    percentile=percentile,
+                    source="difficulty_index" if percentile is not None else "missing",
+                )
+                pending_rows.append(row)
+            classifications.update([str(record["difficulty_status"])])
+            active.append(record)
+
+        review_error = ""
+        reviewed_now: dict[str, dict[str, Any]] = {}
+        review_failed_ids: list[str] = []
+        membership_change_counts = dict(sorted(classifications.items()))
+        if pending_rows and auto_review and not dry_run:
+            batch = _focused_reconciliation_batch(
+                manifest=manifest,
+                manifest_path=manifest_path,
+                rows=pending_rows,
+                packet_id=packet_id,
+                artifact_root=artifact_root,
+            )
+            packet_dir.mkdir(parents=True, exist_ok=True)
+            batch_path = packet_dir / "topic_packet_difficulty_reconcile_batch.json"
+            decisions_path = packet_dir / "topic_packet_difficulty_reconcile_decisions.jsonl"
+            write_atomic_json(batch, batch_path, sort_keys=True)
+            try:
+                run_topic_difficulty_reviews(
+                    batch_path=batch_path,
+                    out_path=decisions_path,
+                    model=model,
+                    provider=provider,
+                )
+                reviewed_now, review_failed_ids = _accepted_reconciliation_decisions(
+                    batch=batch,
+                    decisions_path=decisions_path,
+                    artifact_root=artifact_root,
+                )
+            except Exception as exc:
+                review_error = f"{type(exc).__name__}: {exc}"
+
+        if reviewed_now:
+            active = [
+                _reviewed_reconciliation_record(record, reviewed_now[str(record.get("question_id"))])
+                if str(record.get("question_id")) in reviewed_now
+                else record
+                for record in active
+            ]
+            classifications = Counter(str(record["difficulty_status"]) for record in active)
+
+        ranked = _rank_reconciled_records(active)
+        pending_ids = [
+            str(record.get("question_id") or "")
+            for record in ranked
+            if str(record.get("difficulty_status") or "") != "reviewed"
+        ]
+        current_ids = {str(row.get("question_id") or "") for row in rows}
+        historical_ids = {
+            question_id
+            for question_id, items in history.items()
+            if any(item["packet_key"] == current_key for item in items)
+        }
+        removed_ids = sorted(historical_ids - current_ids)
+        removed_records = []
+        for question_id in removed_ids:
+            source = next(
+                (item for item in history.get(question_id, []) if item["packet_key"] == current_key),
+                None,
+            )
+            if source is not None:
+                removed_records.append(
+                    dict(source["record"])
+                    | {
+                        "removed_from_packet_id": packet_id,
+                        "removed_at": _utc_now_iso(),
+                    }
+                )
+        sidecar = {
+            "schema_name": TOPIC_DIFFICULTY_SIDECAR_SCHEMA,
+            "schema_version": 2,
+            "generated_at": _utc_now_iso(),
+            "packet_id": packet_id,
+            "batch_id": f"reconcile_{fingerprint[:12]}",
+            "complete": not pending_ids,
+            "draft": bool(pending_ids),
+            "safe_for_teacher_filtering": not pending_ids,
+            "safe_for_student_sequencing": False,
+            "difficulty_ranking_complete": not pending_ids,
+            "projection_fingerprint": fingerprint,
+            "packet": _packet_metadata(manifest, manifest_path),
+            "record_count": len(ranked),
+            "expected_record_count": len(rows),
+            "difficulty_status_counts": dict(sorted(classifications.items())),
+            "pending_question_ids": pending_ids,
+            "removed_question_ids": removed_ids,
+            "removed_records": removed_records,
+            "records": ranked,
+            "reconciliation": {
+                "auto_review": auto_review,
+                "provider": provider,
+                "model": model,
+                "review_error": review_error,
+                "reviewed_now_count": len(reviewed_now),
+                "review_failed_question_ids": review_failed_ids,
+            },
+        }
+        if not dry_run:
+            packet_dir.mkdir(parents=True, exist_ok=True)
+            write_atomic_json(sidecar, packet_dir / "topic_packet_difficulty_review.v2.json", sort_keys=True)
+            write_topic_difficulty_reports(sidecar, reports_dir=reports_dir)
+        packet_reports.append(
+            {
+                "packet_id": packet_id,
+                "manifest_path": str(manifest_path),
+                "projection_fingerprint": fingerprint,
+                "question_count": len(rows),
+                "difficulty_status_counts": dict(sorted(classifications.items())),
+                "membership_change_counts": membership_change_counts,
+                "pending_question_ids": pending_ids,
+                "removed_question_ids": removed_ids,
+                "review_error": review_error,
+                "review_failed_question_ids": review_failed_ids,
+            }
+        )
+
+    report = {
+        "schema_name": "exam_bank.topic_packet_difficulty_reconciliation",
+        "schema_version": 1,
+        "generated_at": _utc_now_iso(),
+        "ok": True,
+        "dry_run": dry_run,
+        "packet_count": len(packet_reports),
+        "pending_count": sum(len(row["pending_question_ids"]) for row in packet_reports),
+        "removed_count": sum(len(row["removed_question_ids"]) for row in packet_reports),
+        "unchanged_count": sum(
+            int((row.get("membership_change_counts") or {}).get("reviewed", 0)) for row in packet_reports
+        ),
+        "moved_count": sum(
+            int((row.get("membership_change_counts") or {}).get("provisional_topic_changed", 0))
+            for row in packet_reports
+        ),
+        "new_count": sum(
+            int((row.get("membership_change_counts") or {}).get("provisional_new_member", 0))
+            for row in packet_reports
+        ),
+        "missing_count": sum(
+            int((row.get("membership_change_counts") or {}).get("missing", 0)) for row in packet_reports
+        ),
+        "reviewed_now_count": sum(
+            int((row.get("difficulty_status_counts") or {}).get("reviewed", 0))
+            - int((row.get("membership_change_counts") or {}).get("reviewed", 0))
+            for row in packet_reports
+        ),
+        "review_failed_count": sum(len(row.get("review_failed_question_ids") or []) for row in packet_reports),
+        "packets": packet_reports,
+    }
+    if not dry_run:
+        write_atomic_json(report, difficulty_root / "topic_packet_difficulty_reconciliation.json", sort_keys=True)
+    return report
 
 
 def build_topic_difficulty_batch(
@@ -697,6 +954,234 @@ def _batch_row(
     }
 
 
+def packet_projection_fingerprint(manifest: dict[str, Any]) -> str:
+    projection = {
+        "schema_version": manifest.get("schema_version"),
+        "paper_family": manifest.get("paper_family"),
+        "topic_id": manifest.get("topic_id"),
+        "subtopic_id": manifest.get("subtopic_id") or "",
+        "records": [
+            {
+                "question_id": row.get("question_id"),
+                "primary_topic_id": row.get("primary_topic_id"),
+                "secondary_topic_ids": row.get("secondary_topic_ids") or [],
+                "section": row.get("section"),
+            }
+            for row in sorted(_included_records(manifest), key=lambda item: str(item.get("question_id") or ""))
+        ],
+        "routing_provenance": manifest.get("routing_provenance") or {},
+    }
+    raw = json.dumps(projection, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _packet_key(payload: dict[str, Any]) -> tuple[str, str, str]:
+    packet = payload.get("packet") if isinstance(payload.get("packet"), dict) else payload
+    return (
+        str(packet.get("paper_family") or ""),
+        str(packet.get("topic_id") or ""),
+        str(packet.get("subtopic_id") or ""),
+    )
+
+
+def _difficulty_history(root: Path) -> dict[str, list[dict[str, Any]]]:
+    history: dict[str, list[dict[str, Any]]] = {}
+    paths = sorted(root.glob("*/topic_packet_difficulty_review.v*.json"))
+    for path in paths:
+        try:
+            payload = _read_json(path)
+        except (OSError, json.JSONDecodeError, TopicDifficultyReviewError):
+            continue
+        if payload.get("schema_name") != TOPIC_DIFFICULTY_SIDECAR_SCHEMA:
+            continue
+        packet_key = _packet_key(payload)
+        packet_id = str(payload.get("packet_id") or path.parent.name)
+        generated_at = str(payload.get("generated_at") or "")
+        for record in [*(payload.get("records") or []), *(payload.get("removed_records") or [])]:
+            if not isinstance(record, dict) or not str(record.get("question_id") or ""):
+                continue
+            history.setdefault(str(record["question_id"]), []).append(
+                {
+                    "record": record,
+                    "packet_key": packet_key,
+                    "packet_id": packet_id,
+                    "generated_at": generated_at,
+                    "path": str(path),
+                }
+            )
+    for items in history.values():
+        items.sort(key=lambda item: (item["generated_at"], item["path"]), reverse=True)
+    return history
+
+
+def _difficulty_index_by_question(path: Path) -> dict[str, dict[str, Any]]:
+    if not path.is_file():
+        return {}
+    payload = _read_json(path)
+    return {
+        str(row.get("question_id") or ""): row
+        for row in payload.get("records") or []
+        if isinstance(row, dict) and str(row.get("question_id") or "")
+    }
+
+
+def _record_context(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "problem_number": _int_or_none(row.get("problem_number")),
+        "marks": _int_or_none(row.get("marks")),
+        "packet_section": str(row.get("section") or ""),
+        "paper": str(row.get("paper") or ""),
+        "question_number": str(row.get("question_number") or ""),
+        "source_label": str(row.get("source_label") or ""),
+    }
+
+
+def _reconciled_record_from_history(
+    row: dict[str, Any],
+    history: dict[str, Any],
+    *,
+    packet_id: str,
+    status: str,
+    reason: str,
+) -> dict[str, Any]:
+    prior = dict(history["record"])
+    prior_percentile = _float_or_none(prior.get("difficulty_percentile_0_100"))
+    score = _float_or_none(prior.get("visual_difficulty_score_0_100"))
+    effective = score if status == "reviewed" and score is not None else prior_percentile
+    return {
+        **prior,
+        **_record_context(row),
+        "question_id": str(row.get("question_id") or ""),
+        "difficulty_status": status,
+        "difficulty_review_reason": reason,
+        "source_packet_id": history["packet_id"],
+        "target_packet_id": packet_id,
+        "provisional_percentile_0_100": prior_percentile if status != "reviewed" else None,
+        "effective_difficulty_percentile_0_100": effective,
+        "difficulty_provenance": {
+            "kind": "historical_packet_review",
+            "sidecar_path": history["path"],
+            "source_packet_id": history["packet_id"],
+        },
+    }
+
+
+def _provisional_record(
+    row: dict[str, Any],
+    *,
+    packet_id: str,
+    status: str,
+    reason: str,
+    percentile: float | None,
+    source: str,
+) -> dict[str, Any]:
+    # Missing evidence sorts as hardest, which puts it at the tail of an easiest-first PDF.
+    effective = percentile if percentile is not None else 101.0
+    return {
+        "question_id": str(row.get("question_id") or ""),
+        **_record_context(row),
+        "packet_rank": None,
+        "difficulty_percentile_0_100": None,
+        "visual_difficulty_score_0_100": None,
+        "confidence": "low",
+        "rationale": "Provisional placement pending packet-relative visual review.",
+        "difficulty_factors": [],
+        "risk_flags": [reason],
+        "evidence_refs": [],
+        "source": source,
+        "reviewer_model": "",
+        "prompt_version": TOPIC_DIFFICULTY_PROMPT_VERSION,
+        "difficulty_status": status,
+        "difficulty_review_reason": reason,
+        "source_packet_id": "",
+        "target_packet_id": packet_id,
+        "provisional_percentile_0_100": percentile,
+        "effective_difficulty_percentile_0_100": effective,
+        "difficulty_provenance": {"kind": source},
+    }
+
+
+def _focused_reconciliation_batch(
+    *,
+    manifest: dict[str, Any],
+    manifest_path: Path,
+    rows: list[dict[str, Any]],
+    packet_id: str,
+    artifact_root: Path,
+) -> dict[str, Any]:
+    batch_rows = [
+        _batch_row(row, index=index, manifest=manifest, artifact_root=artifact_root, manifest_dir=manifest_path.parent)
+        for index, row in enumerate(rows, start=1)
+    ]
+    batch_id = _batch_id(packet_id, batch_rows)
+    for index, row in enumerate(batch_rows, start=1):
+        row.update({"packet_id": packet_id, "batch_id": batch_id, "batch_index": index})
+    return {
+        "schema_name": TOPIC_DIFFICULTY_BATCH_SCHEMA,
+        "schema_version": TOPIC_DIFFICULTY_BATCH_SCHEMA_VERSION,
+        "batch_id": batch_id,
+        "packet_id": packet_id,
+        "created_at": _utc_now_iso(),
+        "source_files": {"manifest": str(manifest_path), "artifact_root": str(artifact_root)},
+        "packet": _packet_metadata(manifest, manifest_path),
+        "prompt_version": TOPIC_DIFFICULTY_PROMPT_VERSION,
+        "decision_version": TOPIC_DIFFICULTY_DECISION_VERSION,
+        "rows": batch_rows,
+    }
+
+
+def _accepted_reconciliation_decisions(
+    *, batch: dict[str, Any], decisions_path: Path, artifact_root: Path
+) -> tuple[dict[str, dict[str, Any]], list[str]]:
+    rows = {str(row.get("question_id") or ""): row for row in batch.get("rows") or []}
+    accepted: dict[str, dict[str, Any]] = {}
+    attempted: set[str] = set()
+    for decision in _read_decisions(decisions_path):
+        question_id = str(decision.get("question_id") or "")
+        if question_id in rows:
+            attempted.add(question_id)
+        validation_errors = validate_topic_difficulty_decision(decision, batch_rows=rows, artifact_root=artifact_root)
+        if question_id in rows and not validation_errors:
+            accepted[question_id] = decision
+    return accepted, sorted(attempted - set(accepted))
+
+
+def _reviewed_reconciliation_record(record: dict[str, Any], decision: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **record,
+        "visual_difficulty_score_0_100": round(float(decision["visual_difficulty_score_0_100"]), 3),
+        "confidence": str(decision.get("confidence") or "").lower(),
+        "rationale": str(decision.get("rationale") or ""),
+        "difficulty_factors": _strings(decision.get("difficulty_factors")),
+        "risk_flags": _strings(decision.get("risk_flags")),
+        "evidence_refs": decision.get("evidence_refs") or [],
+        "source": str(decision.get("source") or ""),
+        "reviewer_model": str(decision.get("reviewer_model") or ""),
+        "difficulty_status": "reviewed",
+        "difficulty_review_reason": "automatic_visual_review",
+        "provisional_percentile_0_100": None,
+        "effective_difficulty_percentile_0_100": float(decision["visual_difficulty_score_0_100"]),
+        "difficulty_provenance": {"kind": "automatic_visual_review"},
+    }
+
+
+def _rank_reconciled_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked = sorted(
+        records,
+        key=lambda record: (
+            -float(record.get("effective_difficulty_percentile_0_100") or 0),
+            -CONFIDENCE_ORDER.get(str(record.get("confidence") or ""), 0),
+            -(_int_or_none(record.get("marks")) or 0),
+            str(record.get("question_id") or ""),
+        ),
+    )
+    n = len(ranked)
+    for index, record in enumerate(ranked, start=1):
+        record["packet_rank"] = index
+        record["difficulty_percentile_0_100"] = 100.0 if n == 1 else round(100 * (n - index) / (n - 1), 2)
+    return ranked
+
+
 def _included_records(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     records = manifest.get("included_records")
     if not isinstance(records, list):
@@ -749,7 +1234,9 @@ def _existing_decision_question_ids(path: Path) -> set[str]:
     return {
         str(row.get("question_id") or "").strip()
         for row in _read_decisions(path)
-        if isinstance(row, dict) and str(row.get("question_id") or "").strip()
+        if isinstance(row, dict)
+        and _decision_status(row) == "accepted"
+        and str(row.get("question_id") or "").strip()
     }
 
 
