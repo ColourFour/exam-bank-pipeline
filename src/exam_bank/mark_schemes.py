@@ -34,6 +34,10 @@ from .question_detection import parse_question_start
 from .trust import CropConfidence, MappingStatus
 
 
+MARK_SCHEME_WHITESPACE_TRIM_NONWHITE_THRESHOLD = 200
+MARK_SCHEME_WHITESPACE_TRIM_MAX_BLANK_MARGIN_RATIO = 0.40
+
+
 @dataclass(frozen=True)
 class _LegacyTableGrid:
     page_number: int
@@ -633,9 +637,19 @@ def _render_mark_scheme_crops(
         source_file=mark_scheme_pdf,
         context=f"markscheme_output:{question_number}",
     )
-    stitched = trim_excess_render_whitespace(stitched)
+    stitched = _trim_mark_scheme_render_whitespace(stitched)
     stitched.save(output_path)
     return output_path, debug_paths
+
+
+def _trim_mark_scheme_render_whitespace(image):
+    """Trim oversized blank margins without treating faint scan noise as content."""
+
+    return trim_excess_render_whitespace(
+        image,
+        nonwhite_threshold=MARK_SCHEME_WHITESPACE_TRIM_NONWHITE_THRESHOLD,
+        max_blank_margin_ratio=MARK_SCHEME_WHITESPACE_TRIM_MAX_BLANK_MARGIN_RATIO,
+    )
 
 
 def _normalize_mark_scheme_crop_regions(

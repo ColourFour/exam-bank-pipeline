@@ -6,6 +6,7 @@ from exam_bank.image_limits import (
     trim_excess_render_whitespace,
     trim_isolated_edge_furniture,
 )
+from exam_bank.mark_schemes import _trim_mark_scheme_render_whitespace
 
 
 def test_safe_zoom_keeps_normal_a4_render_dpi() -> None:
@@ -61,6 +62,31 @@ def test_trim_excess_render_whitespace_preserves_blank_image() -> None:
     image = Image.new("RGB", (400, 900), "white")
 
     trimmed = trim_excess_render_whitespace(image)
+
+    assert trimmed is image
+
+
+def test_mark_scheme_whitespace_trim_ignores_faint_scan_noise() -> None:
+    from PIL import Image, ImageDraw
+
+    image = Image.new("RGB", (400, 900), "white")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((40, 30, 360, 230), fill="black")
+    draw.point((200, 899), fill=(225, 225, 225))
+
+    trimmed = _trim_mark_scheme_render_whitespace(image)
+
+    assert trimmed.size == (400, 255)
+
+
+def test_mark_scheme_whitespace_trim_preserves_moderate_layout_spacing() -> None:
+    from PIL import Image, ImageDraw
+
+    image = Image.new("RGB", (400, 500), "white")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((40, 80, 360, 340), fill="black")
+
+    trimmed = _trim_mark_scheme_render_whitespace(image)
 
     assert trimmed is image
 
