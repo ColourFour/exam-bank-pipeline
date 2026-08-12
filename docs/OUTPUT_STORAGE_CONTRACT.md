@@ -17,11 +17,11 @@ Older nested paths such as `output/p1/<paper>/questions/q01.png` and `output/p1/
 
 `output/json/question_bank.json` is the canonical metadata index for the current run. `output/json/asset_manifest.v1.json` is an index over canonical image files. The manifest is not a replacement source of truth; it records asset IDs, paths, SHA-256 hashes, sizes, and image dimensions for validation and lookup.
 
-`output/json/question_bank.topic_routing.v1.json` is an ignored generated/local working copy. The durable reviewed refreshed source is `data/topic_routing/question_bank.topic_routing.v1.json`, with `data/topic_routing/question_bank.topic_routing.v1.sha256` as the checksum guard. Restore or verify the local working copy before Asterion export regeneration:
+`output/json/question_bank.topic_routing.v1.json` is an ignored generated/local cache. The durable reviewed source is `data/topic_routing/question_bank.topic_routing.v1.json`. `manifests/releases/question_bank_release_manifest.v1.json` binds that sidecar to the exact canonical question bank by SHA-256, size, schema, count, and question-ID set; the adjacent `.sha256` file remains a compatibility guard. A downstream handoff should rebuild the same manifest as a multi-role bundle containing every consumed sidecar and projection, following [Question-Bank Release Manifest Contract](RELEASE_MANIFEST_CONTRACT.md). Verify the release manifest before Asterion export regeneration, and restore the local cache only for compatibility:
 
 ```bash
-.venv/bin/python -m exam_bank.topic_routing_artifact restore
-.venv/bin/python -m exam_bank.topic_routing_artifact verify
+exam-bank topic verify-release
+exam-bank topic restore-release
 ```
 
 ## Generated And Rebuildable Locations
@@ -41,18 +41,39 @@ The following locations are generated outputs, caches, review aids, or historica
 
 Do not promote files from these locations to canonical evidence without regenerating or validating against canonical images.
 
+`output/` is the only supported generated-output root. A plural `outputs/`
+folder is treated as legacy scratch space, is ignored by Git, and should be
+migrated into a run-specific folder below `output/` or removed after its
+artifacts are verified as rebuildable.
+
+### Run checkpoint retention
+
+Run checkpoints can contain a full `questions.json` payload for every paper, so
+they need bounded retention. The dry-run cleanup planner classifies them using
+these conservative rules:
+
+- keep the latest completed checkpoint;
+- keep interrupted, failed, pending, or running checkpoints until they are
+  resumed or explicitly resolved;
+- keep any checkpoint containing a `.keep` or `PINNED` marker;
+- classify older completed checkpoints for archive review.
+
+The planner does not delete or move checkpoints. Review the plan, confirm that
+no release manifest or active recovery command refers to a checkpoint, and
+then archive or remove it through the normal quarantine-first cleanup process.
+
 Asterion export release handoff is represented by a tracked manifest under `reports/`, not by committing the large generated JSON files. The manifest records the exact ignored export paths, SHA-256 values, byte sizes, validation status, and durable topic-sidecar provenance. Deployment or Asterion handoff must consume export files matching the manifest hashes.
 
 ## App Export And Reference Policy
 
 Downstream JSON should reference canonical assets with one or both of:
 
-- canonical relative paths such as `pm1/pm1_2021_m21_12_qp_q01_question.png`
+- canonical relative paths such as `pm1/pm1_2021_s21_12_qp_q01_question.png`
 - stable asset IDs from `output/json/asset_manifest.v1.json`
 
 Asterion exports preserve path fields for runtime compatibility, but those fields should point at canonical relative paths. New consumers should prefer `canonical_question_asset_id`, `canonical_mark_scheme_asset_id`, and subpart/source artifact `*_asset_id` fields when available, resolving them through the manifest.
 
-The Asterion all-course catalog (`asterion_exam_bank_catalog_v1.json`) carries course-aware fields for the static 9709 site: `course_id`, `component_name`, `topic_id`, `topic_route`, `question_image_path`, `mark_scheme_image_path`, `catalog_visible`, `image_practice_safe`, `advisory_topic_filter_ok`, `reviewed_topic_filter_safe`, `learning_runtime_safe`, `student_runtime_safe`, and `review_status`. Supported course IDs are `p1`, `p3`, `m1`, and `s1`; source paper families `p4` and `p5` map to `m1` and `s1`. These fields do not change the canonical image policy. A student-visible learning-runtime page should load the reviewed/safe runtime export (`asterion_question_bank_v1.json`), resolve and display the canonical image references, and show an empty reviewed-record state when no `learning_runtime_safe=true` records exist for a course. Non-P3 course records may be available for catalog or image-practice use in the catalog, but they are not learning-runtime records until reviewed topic alignment exists.
+The Asterion all-course catalog (`asterion_exam_bank_catalog_v1.json`) carries course-aware fields for the static 9709 site: `course_id`, `component_name`, `topic_id`, `topic_route`, `question_image_path`, `mark_scheme_image_path`, `catalog_visible`, `image_practice_safe`, `advisory_topic_filter_ok`, `reviewed_topic_filter_safe`, `learning_runtime_safe`, `student_runtime_safe`, and `review_status`. Supported course IDs are `p1`, `p3`, `m1`, `s1`, and `s2`. Paper 4 maps to canonical family `mechanics` and course `m1`. Under the current syllabus Papers 5 and 6 share canonical storage family `stats` but split into `s1` and `s2`; before 2020 Paper 6 is S1 and legacy Paper 5 (M2) is unsupported. These fields do not change the canonical image policy. A student-visible learning-runtime page should load the reviewed/safe runtime export (`asterion_question_bank_v1.json`), resolve and display the canonical image references, and show an empty reviewed-record state when no `learning_runtime_safe=true` records exist for a course. Non-P3 course records may be available for catalog or image-practice use in the catalog, but they are not learning-runtime records until reviewed topic alignment exists.
 
 ## Copying And Embedding Policy
 
@@ -84,12 +105,19 @@ Paths remain stable relative paths under the output artifact root. Absolute path
 Before deleting, quarantining, or publishing downstream exports, run:
 
 ```bash
-.venv/bin/python scripts/audit_output_storage.py --dry-run
-.venv/bin/python scripts/audit_output_storage.py --apply-delete
-.venv/bin/python scripts/validate_asset_references.py
-.venv/bin/python -m exam_bank.cli output-integrity-audit --input output/json/question_bank.json --artifact-root output
+.venv/bin/exam-bank data inventory --root output --include-size
+.venv/bin/exam-bank data cleanup-plan --root output --include-size
+.venv/bin/python -m exam_bank.command data build-asset-manifest
+.venv/bin/python -m exam_bank.command data audit-storage --dry-run
+.venv/bin/python -m exam_bank.command data audit-storage --apply
+.venv/bin/python -m exam_bank.command data validate-assets --strict-companion-inputs
+.venv/bin/exam-bank extract integrity --input output/json/question_bank.json --artifact-root output
+.venv/bin/exam-bank topic verify-release
 .venv/bin/python -m pytest -q tests/test_asset_manifest_storage_audit.py tests/test_asterion_export.py tests/test_topic_routing.py
 ```
+
+`--apply` moves only allowlisted exact duplicates into a recoverable quarantine.
+Reserve `--apply-delete` for a separately reviewed deletion manifest.
 
 Validation must confirm:
 
@@ -99,6 +127,6 @@ Validation must confirm:
 - no copied image appears in non-canonical export folders unless explicitly allowlisted
 - canonical image files remain present
 - topic-routing and Content Lab sidecars still have valid counts and schema names
-- the production topic-routing sidecar matches the durable artifact checksum when it is used for Asterion export regeneration
+- the release manifest binds the exact question bank and durable topic-routing sidecar hashes, counts, and question-ID sets
 - course-aware Asterion filters do not expose Content Lab candidates or invalid course IDs to student runtime
 - Asterion release manifests match the ignored export artifact hashes before handoff

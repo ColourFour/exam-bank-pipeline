@@ -6,6 +6,9 @@ import io
 import json
 from pathlib import Path
 
+import pytest
+
+from exam_bank import atomic_json
 from exam_bank.cli import cmd_process
 from exam_bank.config import AppConfig
 from exam_bank.pipeline import PipelineResult
@@ -77,6 +80,33 @@ def _read_json(path: Path) -> dict:
 
 def _read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def test_batch_artifact_write_preserves_previous_file_when_atomic_replace_fails(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    tracker = RunStatusTracker(
+        run_id="atomic-cache",
+        run_type="standard",
+        status_root=tmp_path / "run_status",
+        command="fake command",
+        progress=False,
+    )
+    artifact_path = tracker.write_batch_artifact("batch-a", "records.json", [{"generation": "old"}])
+    real_replace = atomic_json.os.replace
+
+    def fail_artifact_replace(source: str | Path, destination: str | Path) -> None:
+        if Path(destination) == artifact_path:
+            raise OSError("injected atomic replace failure")
+        real_replace(source, destination)
+
+    monkeypatch.setattr(atomic_json.os, "replace", fail_artifact_replace)
+    with pytest.raises(OSError, match="injected atomic replace failure"):
+        tracker.write_batch_artifact("batch-a", "records.json", [{"generation": "new"}])
+
+    assert tracker.read_batch_artifact("batch-a", "records.json") == [{"generation": "old"}]
+    assert not list(artifact_path.parent.glob(f".{artifact_path.name}.*.tmp"))
 
 
 def test_terminal_progress_line_includes_standard_run_context(tmp_path: Path) -> None:
@@ -215,7 +245,12 @@ def test_tracker_writes_status_manifest_batches_and_progress_math(tmp_path: Path
     assert manifest["provider"] == "deepseek"
     assert manifest["model"] == "deepseek-v4-flash"
     assert manifest["prompt_version"] == "prompt-v1"
-    assert [batch["status"] for batch in batches] == ["completed", "failed"]
+    assert [batch["status"] for batch in batches] == [
+        "running",
+        "completed",
+        "running",
+        "failed",
+    ]
     assert completed_batch_ids(tracker.status_dir) == {"batch-a"}
 
 
@@ -276,7 +311,12 @@ def test_standard_process_cli_writes_run_status_during_fake_run(monkeypatch, tmp
     assert status["skipped_records"] == 2
     assert status["percent_complete"] == 100
     assert status["percent_complete_basis"] == "records"
-    assert [batch["status"] for batch in batches] == ["completed", "skipped"]
+    assert [batch["status"] for batch in batches] == [
+        "running",
+        "completed",
+        "running",
+        "skipped",
+    ]
     assert "run ID: standard-test" in summary
     assert "total elapsed time" in summary
     assert str(status_path) in summary
@@ -347,3 +387,25 @@ def test_standard_resume_reads_completed_batches(monkeypatch, tmp_path: Path) ->
     assert exit_code == 0
     assert captured["resume_completed_batch_ids"] == {"p1_12spring24"}
     assert captured["force_rerun"] is False
+
+
+def test_start_batch_supersedes_stale_completed_status(tmp_path: Path) -> None:
+    tracker = RunStatusTracker(
+        run_id="rerun-test",
+        run_type="standard",
+        status_root=tmp_path / "run_status",
+        command="fake command",
+        progress=False,
+    )
+    tracker.start(phase="running", total_batches=1)
+    tracker.start_batch(batch_id="batch-a", paper="12spring24", paper_family="p1")
+    tracker.complete_batch(batch_id="batch-a", paper="12spring24", paper_family="p1")
+    assert completed_batch_ids(tracker.status_dir) == {"batch-a"}
+
+    tracker.start_batch(batch_id="batch-a", paper="12spring24", paper_family="p1")
+
+    latest = _read_jsonl(tracker.batch_status_path)[-1]
+    assert latest["status"] == "running"
+    assert latest["finished_at"] is None
+    assert latest["record_count"] == 0
+    assert completed_batch_ids(tracker.status_dir) == set()

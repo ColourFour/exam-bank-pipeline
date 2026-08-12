@@ -4,7 +4,8 @@
   "generated_from": {
     "audit": "docs/text_extraction/TEXT_EXTRACTION_FAILURE_AUDIT.md",
     "question_bank": "output/json/question_bank.json",
-    "source_of_truth_note": "Canonical question and mark-scheme images remain the source of truth; text fields are advisory fixtures only."
+    "source_of_truth_note": "Canonical question and mark-scheme images remain the source of truth; text fields are advisory fixtures only.",
+    "source_question_bank_sha256": "43919bbda2d3cab55b1a75b9af2e276641610f2180e4c4788d6bd1d354f1a0d5"
   },
   "record_count": 36,
   "records": [
@@ -14,14 +15,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "12",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  12.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_12.pdf"
       },
       "question_number": "3",
-      "question_image_path": "pm1/pm1_2021_m21_12_qp_q03_question.png",
-      "mark_scheme_image_path": "pm1/pm1_2021_m21_12_ms_q03_markscheme.png",
+      "question_image_path": "pm1/pm1_2021_s21_12_qp_q03_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2021_s21_12_ms_q03_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "3 The equation of a curve is y = (x — 3)vx + 1+3. The following points lie on the curve. Non-exact values are rounded to 4 decimal places. A(2,k) —-B(2.9, 2.8025) — C(2.99, 2.9800) —_D(2.999, 2.9980) E(3, 3) (a) Find k, giving your answer correct to 4 decimal places. [1] (b) Find the gradient of AE, giving your answer correct to 4 decimal places. [1] The gradients of BE, CE and DE, rounded to 4 decimal places, are 1.9748, 1.9975 and 1.9997 respectively. (c) State, giving a reason for your answer, what the values of the four gradients suggest about the gradient of the curve at the point E. [2]",
-      "currently_selected_text": "3 The equation of a curve is y = (x — 3)vx + 1+3. The following points lie on the curve. Non-exact values are rounded to 4 decimal places. A(2,k) —-B(2.9, 2.8025) — C(2.99, 2.9800) —_D(2.999, 2.9980) E(3, 3) (a) Find k, giving your answer correct to 4 decimal places. [1] (b) Find the gradient of AE, giving your answer correct to 4 decimal places. [1] The gradients of BE, CE and DE, rounded to 4 decimal places, are 1.9748, 1.9975 and 1.9997 respectively. (c) State, giving a reason for your answer, what the values of the four gradients suggest about the gradient of the curve at the point E. [2]",
+      "currently_selected_text": "3 The equation of a curve is y = (x - 3)√(x) + 1 + 3. The following points lie on the curve. Non-exact values are rounded to 4 decimal places. A(2, k) B(2.9, 2.8025) C(2.99, 2.9800) D(2.999, 2.9980) E(3, 3) (a) Find k, giving your answer correct to 4 decimal places. [1] (b) Find the gradient of AE, giving your answer correct to 4 decimal places. [1] The gradients of BE, CE and DE, rounded to 4 decimal places, are 1.9748, 1.9975 and 1.9997 respectively. (c) State, giving a reason for your answer, what the values of the four gradients suggest about the gradient of the curve at the point E. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -38,7 +39,7 @@
         "ocr_native_disagreement"
       ],
       "review_notes": "OCR-selected/hybrid text corrupts radical/power notation in a visually math-heavy P1 prompt.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -50,14 +51,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "32",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  32.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_32.pdf"
       },
       "question_number": "4",
       "question_image_path": "pm3/pm3_2021_w21_32_qp_q04_question.png",
       "mark_scheme_image_path": "pm3/pm3_2021_w21_32_ms_q04_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "4 Express 4x? — 13x + 13 (2x — 1)(x - 3) in partial fractions. [5]",
-      "currently_selected_text": "4 Express (42xx^{2} - -(13x 13)/(1 x 3))( + - ) in partial fractions. [5]",
+      "currently_selected_text": "4 Express (42xx^{2} - - 113)(xx + - 133) in partial fractions. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -74,11 +75,11 @@
         "ocr_native_disagreement"
       ],
       "review_notes": "Native selected text changes the partial-fractions expression; OCR is different and also imperfect.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
-      "question_text_role": "search_hint",
-      "question_text_trust": "medium"
+      "question_text_role": "readable_text",
+      "question_text_trust": "high"
     },
     {
       "record_id": "33winter21_q04",
@@ -86,14 +87,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_33.pdf"
       },
       "question_number": "4",
       "question_image_path": "pm3/pm3_2021_w21_33_qp_q04_question.png",
       "mark_scheme_image_path": "pm3/pm3_2021_w21_33_ms_q04_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "Te 4 Find the exact value of | xsin 4x dx. 1 3\"",
-      "currently_selected_text": "4 Find the exact value of ∫_{1}_{3}^{π}_{π} x sin^{ 1}_{2}x dx. [5]",
+      "currently_selected_text": "4 Find the exact value of ∫_{(1)/(3)π}^{π} x sin^{ 1}_{2}x dx. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -122,14 +123,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_33.pdf"
       },
       "question_number": "5",
       "question_image_path": "pm3/pm3_2021_w21_33_qp_q05_question.png",
       "mark_scheme_image_path": "pm3/pm3_2021_w21_33_ms_q05_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "5 Solve the equation sin 0 = 3 cos 26 + 2, for 0° < @ < 360°. [5]",
-      "currently_selected_text": "5 Solve the equation sin θ = 3 cos 21 + 2, for 0° ≤ θ ≤ 360°. [5]",
+      "currently_selected_text": "5 Solve the equation sin θ = 3 cos 2θ + 2, for 0° ≤ θ ≤ 360°. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -159,14 +160,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "31",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2022 Question paper  31.pdf"
+        "source_pdf": "input/pastpapers/9709/2022/question_papers/9709_s22_qp_31.pdf"
       },
       "question_number": "9",
-      "question_image_path": "pm3/pm3_2022_m22_31_qp_q09_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2022_m22_31_ms_q09_markscheme.png",
+      "question_image_path": "pm3/pm3_2022_s22_31_qp_q09_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2022_s22_31_ms_q09_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "A N B In the diagram, OABCDEFG is a cuboid in which OA = 2 units, OC = 4 units and OG = 2 units. Unit vectors i, j and k are parallel to OA, OC and OG respectively. The point M is the midpoint of DF. The point N on AB is such that AN = 3NB. (a) Express the vectors OM and MN in terms of i, j and k. [3] (b) Find a vector equation for the line through M and N. [2] (c) Show that the length of the perpendicular from O to the line through M and N is 3. [4]",
-      "currently_selected_text": "9 vectorsIn the diagram, i,j and OABCDEFG k areparallel is a cuboid in whichto OA, OCand OG OA respectively. = 2 units, OC The =point 4 units and Mis the midpoint of OG = 2 units. DF Unit. The point Non AB is such that AN = 3NB. (a) Express the vectors---OM¿and---MN¿in terms of i, j and k. [3] (b) Find a vector equation for the line through Mand N. [2] (c) Show that the length of the perpendicular from O to the line through Mand Nis?53_{6}. [4]",
+      "currently_selected_text": "9 In the diagram, OABCDEFG is a cuboid in which OA = 2 units, OC = 4 units and OG = 2 units. Unit vectors i, j and k are parallel to OA, OC and OG respectively. The point M is the midpoint of DF. The point N on AB is such that AN = 3NB. (a) Express the vectors ---OM¿ and ---MN¿ in terms of i, j and k. [3] (b) Find a vector equation for the line through M and N. [2] (c) Show that the length of the perpendicular from O to the line through M and N is (√(53))/(6). [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -185,13 +186,10 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Cuboid/vector diagram text is interleaved with prose and labels.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "degraded",
       "text_fidelity_flags": [
-        "hybrid_math_text_requires_review",
-        "math_text_corruption_detected",
-        "ocr_noise_fragment_present",
-        "weak_extracted_text"
+        "math_text_corruption_detected"
       ],
       "question_text_role": "untrusted_math_text",
       "question_text_trust": "low"
@@ -202,14 +200,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "32",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2023 Question paper  32.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_32.pdf"
       },
       "question_number": "4",
-      "question_image_path": "pm3/pm3_2023_m23_32_qp_q04_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2023_m23_32_ms_q04_markscheme.png",
+      "question_image_path": "pm3/pm3_2023_s23_32_qp_q04_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2023_s23_32_ms_q04_markscheme.png",
       "native_pdf_text_raw": "4 Solve the equation (5z)/(1 2i) + -zz^{*} + 30 + 10i = 0, giving your answers in the form x + iy, where x and y are real. [5]",
       "ocr_text_raw": "4 Solve the equation 5z x a Tan + 30+ 101 = 0, giving your answers in the form x + iy, where x and y are real. [5]",
-      "currently_selected_text": "4 Solve the equation 2 cos x -cos_{2}^{1}x = 1 for 0 ≤ x ≤ 2π. [5]",
+      "currently_selected_text": "4 Solve the equation 2 cos x - cos((1)/(2)x) = 1 for 0 ≤ x ≤ 2π. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -238,14 +236,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "12",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  12.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_12.pdf"
       },
       "question_number": "1",
-      "question_image_path": "pm1/pm1_2023_m23_12_qp_q01_question.png",
-      "mark_scheme_image_path": "pm1/pm1_2023_m23_12_ms_q01_markscheme.png",
+      "question_image_path": "pm1/pm1_2023_s23_12_qp_q01_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2023_s23_12_ms_q01_markscheme.png",
       "native_pdf_text_raw": "1 (The4,5equation). ofa curve is such that ddyx = (x -43)^{3} forx > 3. Thecurve passes through the point Find the equation of the curve. [3]",
       "ocr_text_raw": ". . d 4 . The equation of a curve is such that cy = for x > 3. The curve passes through the point dx (x-3) (4, 5). Find the equation of the curve. [3]",
-      "currently_selected_text": "1 (The4,5equation). ofa curve is such that ddyx = (x -43)^{3} forx > 3. Thecurve passes through the point Find the equation of the curve. [3]",
+      "currently_selected_text": "1 ((The)/(4, 5)equation). of a curve is such that (dy)/(dx) = (4)/((x - 3)^{3}) for x > 3. The curve passes through the point Find the equation of the curve. [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -275,14 +273,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "13",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  13.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_13.pdf"
       },
       "question_number": "1",
-      "question_image_path": "pm1/pm1_2023_m23_13_qp_q01_question.png",
-      "mark_scheme_image_path": "",
+      "question_image_path": "pm1/pm1_2023_s23_13_qp_q01_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2023_s23_13_ms_q01_markscheme.png",
       "native_pdf_text_raw": "1 lines The diagram A^{′}B^{′} and shows B^{′}C^{′} the form graph the graph of y =off(xy),=whichg(x),consists which is of the result two straight of applying lines a ABsequenceand BCof. Thetwo transformations, in either order, to y = f(x). State fully the two transformations. [4]",
       "ocr_text_raw": "The diagram shows the graph of y = f(x), which consists of the two straight lines AB and BC. The lines A’B’ and B’C’ form the graph of y = g(x), which is the result of applying a sequence of two transformations, in either order, to y = f(x). State fully the two transformations. [4]",
-      "currently_selected_text": "1 lines The diagram A^{′}B^{′} and shows B^{′}C^{′} the form graph the graph of y =off(xy),=whichg(x),consists which is of the result two straight of applying lines a ABsequenceand BCof. Thetwo transformations, in either order, to y = f(x). State fully the two transformations. [4]",
+      "currently_selected_text": "1 The diagram shows the graph of y = f(x), which consists of the two straight lines AB and BC. The lines A^{′}B^{′} and B^{′}C^{′} form the graph of y = g(x), which is the result of applying a sequence of two transformations, in either order, to y = f(x). State fully the two transformations. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -312,11 +310,11 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2024 Question paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2024/question_papers/9709_s24_qp_33.pdf"
       },
       "question_number": "3",
-      "question_image_path": "pm3/pm3_2024_m24_33_qp_q03_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2024_m24_33_ms_q03_markscheme.png",
+      "question_image_path": "pm3/pm3_2024_s24_33_qp_q03_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2024_s24_33_ms_q03_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "3. The square roots of 24—7i can be expressed in the Cartesian form x+1iy, where x and y are real and exact. By first forming a quartic equation in x or y, find the square roots of 24—7i in exact Cartesian form.",
       "currently_selected_text": "3 The square roots of 24 - 7i can be expressed in the Cartesian form x + iy, where x and y are real and exact. By first forming a quartic equation in x or y, find the square roots of 24 - 7i in exact Cartesian form. [5]",
@@ -335,7 +333,7 @@
         "mark_bracket_missing"
       ],
       "review_notes": "Selected text omits mark bracket for a complex-number prompt.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "readable_text",
@@ -347,11 +345,11 @@
       "paper_family": "pm3",
       "session": {
         "component": "35",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2025 Question Paper  35.pdf"
+        "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_s25_qp_35.pdf"
       },
       "question_number": "4",
-      "question_image_path": "pm3/pm3_2025_m25_35_qp_q04_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2025_m25_35_ms_q04_markscheme.png",
+      "question_image_path": "pm3/pm3_2025_s25_35_qp_q04_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2025_s25_35_ms_q04_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "4 Find the exact coordinates of the stationary point of the curve with equation y = 3x7 Inx*, for x > 0. [5]",
       "currently_selected_text": "4 Find the exact coordinates of the stationary point of the curve with equation y = 3x^{3} ln x^{4}, for x20. [5]",
@@ -371,7 +369,7 @@
         "calculus_expression"
       ],
       "review_notes": "Inequality collapsed to x20 and mark bracket is absent.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -383,7 +381,7 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2025 Question Paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_33.pdf"
       },
       "question_number": "7",
       "question_image_path": "pm3/pm3_2025_w25_33_qp_q07_question.png",
@@ -409,7 +407,7 @@
         "truncated_text"
       ],
       "review_notes": "Complex equation appears truncated and loses mark bracket.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -421,14 +419,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "13",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2025 Question Paper  13.pdf"
+        "source_pdf": "input/pastpapers/9709/2025/question_papers/9709_w25_qp_13.pdf"
       },
       "question_number": "9",
       "question_image_path": "pm1/pm1_2025_w25_13_qp_q09_question.png",
       "mark_scheme_image_path": "pm1/pm1_2025_w25_13_ms_q09_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "J, O x The diagram shows part of the curve with equation y = 5x+4 and the line y = 4.5. Find the exact volume of the solid formed when the shaded region is rotated through 360° about the x-axis. [8]",
-      "currently_selected_text": "9 The diagram shows part of the curve with equation y = 12x + 4x and the line y = 4 5. . Find the exact volume of the solid formed when the shaded region is rotated through 360° about the x-axis. [8]",
+      "currently_selected_text": "9 The diagram shows part of the curve with equation y = (1)/(2)x + (4)/(x) and the line y = 4.5. Find the exact volume of the solid formed when the shaded region is rotated through 360° about the x-axis. [8]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -447,7 +445,7 @@
         "truncated_text"
       ],
       "review_notes": "Volume-of-revolution diagram prompt has formula corruption, truncation, and missing mark bracket.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -456,17 +454,17 @@
     {
       "record_id": "43winter21_q06",
       "paper_id": "43winter21",
-      "paper_family": "stats",
+      "paper_family": "mechanics",
       "session": {
         "component": "43",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  43.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_43.pdf"
       },
       "question_number": "6",
-      "question_image_path": "stats/stats_2021_w21_43_qp_q06_question.png",
-      "mark_scheme_image_path": "stats/stats_2021_w21_43_ms_q06_markscheme.png",
+      "question_image_path": "mechanics/mechanics_2021_w21_43_qp_q06_question.png",
+      "mark_scheme_image_path": "mechanics/mechanics_2021_w21_43_ms_q06_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "The diagram shows a particle of mass 5 kg on a rough horizontal table, and two light inextensible strings attached to it passing over smooth pulleys fixed at the edges of the table. Particles of masses 4kg and 6kg hang freely at the ends of the strings. The particle of mass 6kg is 0.5m above the ground. The system is in limiting equilibrium. (a) Show that the coefficient of friction between the 5 kg particle and the table is 0.4. [2] The 6 kg particle is now replaced by a particle of mass 8 kg and the system is released from rest. (b) Find the acceleration of the 4kg particle and the tensions in the strings. [5] (c) In the subsequent motion the 8 kg particle hits the ground and does not rebound. Find the time that elapses after the 8 kg particle hits the ground before the other two particles come to instantaneous rest. (You may assume this occurs before either particle reaches a pulley.) [5]",
-      "currently_selected_text": "The diagram shows a particle of mass 5 kg on a rough horizontal table, and two light inextensible strings attached to it passing over smooth pulleys fixed at the edges of the table. Particles of masses 4kg and 6kg hang freely at the ends of the strings. The particle of mass 6kg is 0.5m above the ground. The system is in limiting equilibrium. (a) Show that the coefficient of friction between the 5 kg particle and the table is 0.4. [2] The 6 kg particle is now replaced by a particle of mass 8 kg and the system is released from rest. (b) Find the acceleration of the 4kg particle and the tensions in the strings. [5] (c) In the subsequent motion the 8 kg particle hits the ground and does not rebound. Find the time that elapses after the 8 kg particle hits the ground before the other two particles come to instantaneous rest. (You may assume this occurs before either particle reaches a pulley.) [5]",
+      "currently_selected_text": "6 The diagram shows a particle of mass 5 kg on a rough horizontal table, and two light inextensible strings attached to it passing over smooth pulleys fixed at the edges of the table. Particles of masses 4 kg and 6 kg hang freely at the ends of the strings. The particle of mass 6 kg is 0.5 m above the ground. The system is in limiting equilibrium. (a) Show that the coefficient of friction between the 5 kg particle and the table is 0.4. [2] The 6 kg particle is now replaced by a particle of mass 8 kg and the system is released from rest. (b) Find the acceleration of the 4 kg particle and the tensions in the strings. [5] (c) In the subsequent motion the 8 kg particle hits the ground and does not rebound. Find the time that elapses after the 8 kg particle hits the ground before the other two particles come to instantaneous rest. (You may assume this occurs before either particle reaches a pulley.) [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -482,7 +480,7 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Selected text starts at the stem and drops the leading question number.",
-      "source_profile": "ocr",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -494,14 +492,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "12",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2022 Question paper  12.pdf"
+        "source_pdf": "input/pastpapers/9709/2022/question_papers/9709_s22_qp_12.pdf"
       },
       "question_number": "8",
-      "question_image_path": "pm1/pm1_2022_m22_12_qp_q08_question.png",
-      "mark_scheme_image_path": "pm1/pm1_2022_m22_12_ms_q08_markscheme.png",
+      "question_image_path": "pm1/pm1_2022_s22_12_qp_q08_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2022_s22_12_ms_q08_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "The diagram shows the circle with equation (x — 2)? + y? = 8. The chord AB of the circle intersects the positive y-axis at A and is parallel to the x-axis. (a) Find, by calculation, the coordinates of A and B. [3] (b) Find the volume of revolution when the shaded segment, bounded by the circle and the chord AB, is rotated through 360° about the x-axis. [5]",
-      "currently_selected_text": "8 The equation of a circle is x^{2} + y^{2} + ax + by -12 = 0. The points A (1, 1)andB (2, -6)lieonthe circle. (a) Find the values of a and b and hence find the coordinates of the centre of the circle. [4] (b) Find the equation of the tangent to the circle at the point A, giving your answer in the form px + qy = k, where p, q and k are integers. [4]",
+      "currently_selected_text": "8 The equation of a circle is x^{2} + y^{2} + ax + by - 12 = 0. The points A(1, 1) and B(2, -6) lie on the circle. (a) Find the values of a and b and hence find the coordinates of the centre of the circle. [4] (b) Find the equation of the tangent to the circle at the point A, giving your answer in the form px + qy = k, where p, q and k are integers. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -519,7 +517,7 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Circle equation powers and leading question anchor are unsafe.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -528,17 +526,17 @@
     {
       "record_id": "52summer22_q06",
       "paper_id": "52summer22",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2022 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2022/question_papers/9709_s22_qp_52.pdf"
       },
       "question_number": "6",
-      "question_image_path": "mechanics/mechanics_2022_m22_52_qp_q06_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2022_m22_52_ms_q06_markscheme.png",
+      "question_image_path": "stats/stats_2022_s22_52_qp_q06_question.png",
+      "mark_scheme_image_path": "stats/stats_2022_s22_52_ms_q06_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "(b) A factory produces chocolates in three flavours: lemon, orange and strawberry in the ratio 3:5: 7 respectively. Nell checks the chocolates on the production line by choosing chocolates randomly one at a time. (a) Find the probability that the first chocolate with lemon flavour that Nell chooses is the 7th chocolate that she checks. [1] Find the probability that the first chocolate with lemon flavour that Nell chooses is after she has checked at least 6 chocolates. [2] ‘Surprise’ boxes of chocolates each contain 15 chocolates: 3 are lemon, 5 are orange and 7 are strawberry. Petra has a box of Surprise chocolates. She chooses 3 chocolates at random from the box. She eats each chocolate before choosing the next one. (c) (d) (e) Find the probability that none of Petra’s 3 chocolates has orange flavour. [2] Find the probability that each of Petra’s 3 chocolates has a different flavour. [3] Find the probability that at least 2 of Petra’s 3 chocolates have strawberry flavour given that none of them has orange flavour. [4]",
-      "currently_selected_text": "6 (a) Find the number of diﬀerent arrangements of the 9 letters in the word CROCODILE. [1] (b) Find thenumberofdiﬀerentarrangementsofthe9lettersinthewordCROCODILEinwhich there is a C at each end and the two Os are not together. [3] (c) Four letters are selected from the 9 letters in the word CROCODILE. Find the number of selections in which the number of Cs is not the same as the number of Os. [3] (d) Find thenumberofwaysinwhichthe9lettersinthewordCROCODILEcanbedividedinto three groups, each containing three letters, if the two Cs must be in diﬀerent groups. [3]",
+      "currently_selected_text": "6 (a) Find the number of different arrangements of the 9 letters in the word CROCODILE. [1] (b) Find the number of different arrangements of the 9 letters in the word CROCODILE in which there is a C at each end and the two Os are not together. [3] (c) Four letters are selected from the 9 letters in the word CROCODILE. Find the number of selections in which the number of Cs is not the same as the number of Os. [3] (d) Find the number of ways in which the 9 letters in the word CROCODILE can be divided into three groups, each containing three letters, if the two Cs must be in different groups. [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -554,7 +552,7 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "OCR-selected text begins at (b) and then later contains (a), losing subpart order.",
-      "source_profile": "ocr",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "readable_text",
@@ -566,14 +564,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "32",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  32.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_32.pdf"
       },
       "question_number": "9",
-      "question_image_path": "pm3/pm3_2023_m23_32_qp_q09_question.png",
-      "mark_scheme_image_path": "",
+      "question_image_path": "pm3/pm3_2023_s23_32_qp_q09_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2023_s23_32_ms_q09_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "2x7 +17x-17 9 Letf(xye 2 ett) = Tapas ae (a) Express f(x) in partial fractions. 1 (b) Hence show that | f(x) dx = 3 —1n72. 0 [5] [5]",
-      "currently_selected_text": "9 Let f(x) = ((2x^{2} 17x)/(1 2x 2) + + )( - -x17)^{2} . (a) Express f(x) in partial fractions. [5] (b) Hence show that ∫_{0}^{1}f(x) dx = 5_{2}-ln 72. [5]",
+      "currently_selected_text": "9 Let f(x) = (21x +2 + 2x 17)(2x - - x17)2. (a) Express f(x) in partial fractions. [5] (b) Hence show that ∫_{0}^{1} f(x) dx = (5)/(2) - ln 72. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -593,7 +591,7 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Severe OCR corruption displaces the question number and destroys rational/integral structure.",
-      "source_profile": "ocr",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -602,17 +600,17 @@
     {
       "record_id": "41summer23_q06",
       "paper_id": "41summer23",
-      "paper_family": "stats",
+      "paper_family": "mechanics",
       "session": {
         "component": "41",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  41.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_41.pdf"
       },
       "question_number": "6",
-      "question_image_path": "stats/stats_2023_m23_41_qp_q06_question.png",
-      "mark_scheme_image_path": "stats/stats_2023_m23_41_ms_q06_markscheme.png",
+      "question_image_path": "mechanics/mechanics_2023_s23_41_qp_q06_question.png",
+      "mark_scheme_image_path": "mechanics/mechanics_2023_s23_41_ms_q06_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "Two particles P and Q, of masses 0.2kg and 0.1 kg respectively, are attached to the ends of a light inextensible string. The string passes over a fixed smooth pulley at B which is attached to two inclined planes. Particle P lies on a smooth plane AB which is inclined at 60° to the horizontal. Particle Q lies on a plane BC which is inclined at an angle of 6° to the horizontal. The string is taut and the particles can move on lines of greatest slope of the two planes (see diagram). (a) It is given that 0 = 60, the plane BC is rough and the coefficient of friction between Q and the plane BC is 0.7. The particles are released from rest. Determine whether the particles move. [4] (b) It is given instead that the plane BC is smooth. The particles are released from rest and in the subsequent motion the tension in the string is (v3 - 1) N. Find the magnitude of the acceleration of P as it moves on the plane, and find the value of 6. [4]",
-      "currently_selected_text": "Two particles P and Q, of masses 0.2kg and 0.1 kg respectively, are attached to the ends of a light inextensible string. The string passes over a fixed smooth pulley at B which is attached to two inclined planes. Particle P lies on a smooth plane AB which is inclined at 60° to the horizontal. Particle Q lies on a plane BC which is inclined at an angle of 6° to the horizontal. The string is taut and the particles can move on lines of greatest slope of the two planes (see diagram). (a) It is given that 0 = 60, the plane BC is rough and the coefficient of friction between Q and the plane BC is 0.7. The particles are released from rest. Determine whether the particles move. [4] (b) It is given instead that the plane BC is smooth. The particles are released from rest and in the subsequent motion the tension in the string is (v3 - 1) N. Find the magnitude of the acceleration of P as it moves on the plane, and find the value of 6. [4]",
+      "currently_selected_text": "6 Two particles P and Q, of masses 0.2 kg and 0.1 kg respectively, are attached to the ends of a light inextensible string. The string passes over a fixed smooth pulley at B which is attached to two inclined planes. Particle P lies on a smooth plane AB which is inclined at 60° to the horizontal. Particle Q lies on a plane BC which is inclined at an angle of θ° to the horizontal. The string is taut and the particles can move on lines of greatest slope of the two planes (see diagram). (a) It is given that θ = 60, the plane BC is rough and the coefficient of friction between Q and the plane BC is 0.7. The particles are released from rest. Determine whether the particles move. [4] (b) It is given instead that the plane BC is smooth. The particles are released from rest and in the subsequent motion the tension in the string is (√(3) - 1) N. Find the magnitude of the acceleration of P as it moves on the plane, and find the value of θ. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -628,7 +626,7 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Mechanics stem drops the leading question number.",
-      "source_profile": "ocr",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -637,17 +635,17 @@
     {
       "record_id": "52summer21_q05",
       "paper_id": "52summer21",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2021 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_52.pdf"
       },
       "question_number": "5",
-      "question_image_path": "mechanics/mechanics_2021_m21_52_qp_q05_question.png",
-      "mark_scheme_image_path": "",
+      "question_image_path": "stats/stats_2021_s21_52_qp_q05_question.png",
+      "mark_scheme_image_path": "stats/stats_2021_s21_52_ms_q05_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "5 A driver records the distance travelled in each of 150 journeys. These distances, correct to the nearest km, are summarised in the following table. FFeweny [| |e fo [fs | (a) Draw a cumulative frequency graph to illustrate the data. [4] Qty ee we Ve are Ga pas CU ase te eee Le (b) For 30% of these journeys the distance travelled is dkm or more. Use your graph to estimate the value of d. [2] (c) Calculate an estimate of the mean distance travelled for the 150 journeys. [3]",
-      "currently_selected_text": "5 Every day Richard takes a flight between As tan and Bejin. On any day, the probability that the flight arrivesearlyis0.15,theprobabilitythatitarrivesontimeis0.55andtheprobabilitythatitarrives late is 0.3. (a) Find the probability that on each of 3 randomly chosen days, Richard’s flight does not arrive late. [1] (b) Find the probability that for 9 randomly chosen days, Richard’s flight arrives early at least 3 times. [3] (c) 60 days are chosen at random. Use an approximation to find the probability that Richard’s flight arrives early at least 12 times. [5]",
+      "currently_selected_text": "5 Every day Richard takes a flight between Astana and Bejin. On any day, the probability that the flight arrives early is 0.15, the probability that it arrives on time is 0.55 and the probability that it arrives late is 0.3. (a) Find the probability that on each of 3 randomly chosen days, Richard’s flight does not arrive late. [1] (b) Find the probability that for 9 randomly chosen days, Richard’s flight arrives early at least 3 times. [3] (c) 60 days are chosen at random. Use an approximation to find the probability that Richard’s flight arrives early at least 12 times. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -664,26 +662,26 @@
         "ocr_noise"
       ],
       "review_notes": "Table region and answer-space artifacts dominate selected/OCR text.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
-      "question_text_role": "search_hint",
-      "question_text_trust": "medium"
+      "question_text_role": "readable_text",
+      "question_text_trust": "high"
     },
     {
       "record_id": "51summer21_q05",
       "paper_id": "51summer21",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "51",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  51.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_51.pdf"
       },
       "question_number": "5",
-      "question_image_path": "mechanics/mechanics_2021_m21_51_qp_q05_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2021_m21_51_ms_q05_markscheme.png",
+      "question_image_path": "stats/stats_2021_s21_51_qp_q05_question.png",
+      "mark_scheme_image_path": "stats/stats_2021_s21_51_ms_q05_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "5 The times taken by 200 players to solve a computer puzzle are summarised in the following table. Time (¢ seconds) 0<r<10 10<t<20 | 20<r<40 | 40<1r<60 | 60<1r< 100 Number of players 16 54 78 32 20 (a) Draw a histogram to represent this information. [4] Qe ee we see es WU Be paw owase ena aerate Le (b) Calculate an estimate of the mean time taken by these 200 players. [2] (c) Find the greatest possible value of the interquartile range of these times. [2]",
-      "currently_selected_text": "5 The times taken by 200 players to solve a computer puzzle are summarised in the following table. Time (t seconds) 0 ≤ t < 10 10 ≤ t < 20 20 ≤ t < 40 40 ≤ t < 60 60 ≤ t < 100 Number of players 16 54 78 32 20 (a) Draw a histogram to represent this information. [4] ATICT Ce INDO OINOD/<£1/KA/T/INA (b) Calculate an estimate of the mean time taken by these 200 players. [2] (c) Find the greatest possible value of the interquartile range of these times. [2]",
+      "currently_selected_text": "5 The times taken by 200 players to solve a computer puzzle are summarised in the following table. Time (t seconds): 0 ≤ t < 10, 10 ≤ t < 20, 20 ≤ t < 40, 40 ≤ t < 60, 60 ≤ t < 100. Number of players: 16, 54, 78, 32, 20. (a) Draw a histogram to represent this information. [4] ATICT Ce INDO OINOD/ < £1/KA/T/INA (b) Calculate an estimate of the mean time taken by these 200 players. [2] (c) Find the greatest possible value of the interquartile range of these times. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -701,28 +699,25 @@
       ],
       "review_notes": "Grouped table extraction confuses variables and includes noisy table/furniture tokens.",
       "source_profile": "hybrid",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "ocr_noise_fragment_present",
-        "weak_extracted_text"
-      ],
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
       "question_text_role": "search_hint",
-      "question_text_trust": "low"
+      "question_text_trust": "medium"
     },
     {
       "record_id": "52summer21_q02",
       "paper_id": "52summer21",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_52.pdf"
       },
       "question_number": "2",
-      "question_image_path": "mechanics/mechanics_2021_m21_52_qp_q02_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2021_m21_52_ms_q02_markscheme.png",
+      "question_image_path": "stats/stats_2021_s21_52_qp_q02_question.png",
+      "mark_scheme_image_path": "stats/stats_2021_s21_52_ms_q02_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "2 The weights of bags of sugar are normally distributed with mean 1.04 kg and standard deviation okg. In a random sample of 2000 bags of sugar, 72 weighed more than 1.10 kg. Find the value of o. [4]",
-      "currently_selected_text": "2 The weights of bags of sugar are normally distributed with mean 1.04 kg and standard deviation okg. In a random sample of 2000 bags of sugar, 72 weighed more than 1.10 kg. Find the value of o. [4]",
+      "currently_selected_text": "2 The weights of bags of sugar are normally distributed with mean 1.04 kg and standard deviation σ kg. In a random sample of 2000 bags of sugar, 72 weighed more than 1.10 kg. Find the value of σ. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -738,7 +733,7 @@
         "units_symbol"
       ],
       "review_notes": "Standard deviation symbol is rendered as o/okg, making the statistical parameter unsafe.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "readable_text",
@@ -747,17 +742,17 @@
     {
       "record_id": "52summer22_q02",
       "paper_id": "52summer22",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2022 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2022/question_papers/9709_s22_qp_52.pdf"
       },
       "question_number": "2",
-      "question_image_path": "mechanics/mechanics_2022_m22_52_qp_q02_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2022_m22_52_ms_q02_markscheme.png",
+      "question_image_path": "stats/stats_2022_s22_52_qp_q02_question.png",
+      "mark_scheme_image_path": "stats/stats_2022_s22_52_ms_q02_markscheme.png",
       "native_pdf_text_raw": "2 A fair 6-sided diehas the numbers1,2,2,3,3,3 on its faces. The die is rolled twice. The random variable X denotes the sum of the two numbers obtained. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
       "ocr_text_raw": "2 A fair 6-sided die has the numbers 1, 2, 2, 3, 3, 3 on its faces. The die is rolled twice. The random variable X denotes the sum of the two numbers obtained. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
-      "currently_selected_text": "2 A fair 6-sided diehas the numbers1,2,2,3,3,3 on its faces. The die is rolled twice. The random variable X denotes the sum of the two numbers obtained. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
+      "currently_selected_text": "2 A fair 6-sided die has the numbers 1, 2, 2, 3, 3, 3 on its faces. The die is rolled twice. The random variable X denotes the sum of the two numbers obtained. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -775,27 +770,25 @@
       ],
       "review_notes": "High-crop record with compacted spacing in selected native text.",
       "source_profile": "native_pdf",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "math_text_corruption_detected"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "53summer22_q07",
       "paper_id": "53summer22",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "53",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2022 Question paper  53.pdf"
+        "source_pdf": "input/pastpapers/9709/2022/question_papers/9709_s22_qp_53.pdf"
       },
       "question_number": "7",
-      "question_image_path": "mechanics/mechanics_2022_m22_53_qp_q07_question.png",
-      "mark_scheme_image_path": "",
+      "question_image_path": "stats/stats_2022_s22_53_qp_q07_question.png",
+      "mark_scheme_image_path": "stats/stats_2022_s22_53_ms_q07_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "7 A group of 15 friends visit an adventure park. The group consists of four families. ¢ Mr and Mrs Kenny and their four children ¢ Mr and Mrs Lizo and their three children ¢ Mrs Martin and her child ¢ Mr and Mrs Nantes The group travel to the park in three cars, one containing 6 people, one containing 5 people and one containing 4 people. The cars are driven by Mr Lizo, Mrs Martin and Mr Nantes respectively. (a) In how many different ways can the remaining 12 members of the group be divided between the three cars? [3] The group enter the park by walking through a gate one at a time. (b) In how many different orders can the 15 friends go through the gate if Mr Lizo goes first and each family stays together? [3] In the park, the group enter a competition which requires a team of 4 adults and 3 children. (c) In how many ways can the team be chosen from the group of 15 so that the 3 children are all from different families? [2] (d) In how many ways can the team be chosen so that at least one of Mr Kenny or Mr Lizo is included? [3]",
-      "currently_selected_text": "7 A group of 15 friends visit an adventure park. The group consists of four families. • Mr and Mrs Kenny and their four children • Mr and Mrs Lizo and their three children • Mrs Martin and her child • Mr and Mrs Nantes The group travel to the park in three cars, one containing 6 people, one containing 5 people and one containing 4 people. The cars are driven by Mr Lizo, Mrs Martin and Mr Nantes respectively. (a) In how many diﬀerent ways can the remaining 12 members of the group be divided between the three cars? [3] The group enter the park by walking through a gate one at a time. (b) Inhowmanydiﬀerentorderscanthe15friendsgothroughthegateifMrLizogoesfirstand each family stays together? [3] In the park, the group enter a competition which requires a team of 4 adults and 3 children. (c) Inhowmanywayscantheteambechosenfromthegroupof15sothatthe3childrenareall from diﬀerent families? [2] (d) In how many ways can the team be chosen so that at least one of Mr Kenny or Mr Lizo is included? [3]",
+      "currently_selected_text": "7 A group of 15 friends visit an adventure park. The group consists of four families. • Mr and Mrs Kenny and their four children • Mr and Mrs Lizo and their three children • Mrs Martin and her child • Mr and Mrs Nantes The group travel to the park in three cars, one containing 6 people, one containing 5 people and one containing 4 people. The cars are driven by Mr Lizo, Mrs Martin and Mr Nantes respectively. (a) In how many different ways can the remaining 12 members of the group be divided between the three cars? [3] The group enter the park by walking through a gate one at a time. (b) In how many different orders can the 15 friends go through the gate if Mr Lizo goes first and each family stays together? [3] In the park, the group enter a competition which requires a team of 4 adults and 3 children. (c) In how many ways can the team be chosen from the group of 15 so that the 3 children are all from different families? [2] (d) In how many ways can the team be chosen so that at least one of Mr Kenny or Mr Lizo is included? [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -811,14 +804,11 @@
         "ocr_noise"
       ],
       "review_notes": "Bullet list OCR has degraded symbols despite high crop confidence.",
-      "source_profile": "ocr",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "ocr_noise_fragment_present",
-        "weak_extracted_text"
-      ],
-      "question_text_role": "search_hint",
-      "question_text_trust": "low"
+      "source_profile": "native_pdf",
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "readable_text",
+      "question_text_trust": "high"
     },
     {
       "record_id": "11winter23_q04",
@@ -826,14 +816,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "11",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2023 Question paper  11.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_11.pdf"
       },
       "question_number": "4",
       "question_image_path": "pm1/pm1_2023_w23_11_qp_q04_question.png",
       "mark_scheme_image_path": "pm1/pm1_2023_w23_11_ms_q04_markscheme.png",
       "native_pdf_text_raw": "4 The transformation R denotes a reflection in the@ A x-axis and the transformation T denotes a translation of -31 . (a) Find the equation,y = g(x),of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations R followed by T. [2] (b) Find the equation,y = h(x),of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations T followed by R. [2] (c) State fully the transformation that maps the curve y = g(x) onto the curve y = h(x). [2]",
       "ocr_text_raw": "(b) (c) The transformation R denotes a reflection in the x-axis and the transformation T denotes a translation 3 of . ( -1 (a) Find the equation, y = g(x), of the curve with equation y = x° after it has been transformed by the sequence of transformations R followed by T. [2] Find the equation, y = h(x), of the curve with equation y = x after it has been transformed by the sequence of transformations T followed by R. [2] State fully the transformation that maps the curve y = g(x) onto the curve y = h(x). [2]",
-      "currently_selected_text": "4 The transformation R denotes a reflection in the@ A x-axis and the transformation T denotes a translation of -31 . (a) Find the equation,y = g(x),of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations R followed by T. [2] (b) Find the equation,y = h(x),of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations T followed by R. [2] (c) State fully the transformation that maps the curve y = g(x) onto the curve y = h(x). [2]",
+      "currently_selected_text": "4 The transformation R denotes a reflection in the() x-axis and the transformation T denotes a translation of -(3)/(1). (a) Find the equation, y = g(x), of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations R followed by T. [2] (b) Find the equation, y = h(x), of the curve with equation y = x^{2} after it has been transformed by the sequence of transformations T followed by R. [2] (c) State fully the transformation that maps the curve y = g(x) onto the curve y = h(x). [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -852,13 +842,10 @@
       ],
       "review_notes": "Transformation vector/furniture is compacted into prose.",
       "source_profile": "native_pdf",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "math_text_corruption_detected",
-        "native_compacted_math_corruption"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "12winter23_q06",
@@ -866,14 +853,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "12",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2023 Question paper  12.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_12.pdf"
       },
       "question_number": "6",
       "question_image_path": "pm1/pm1_2023_w23_12_qp_q06_question.png",
-      "mark_scheme_image_path": "",
+      "mark_scheme_image_path": "pm1/pm1_2023_w23_12_ms_q06_markscheme.png",
       "native_pdf_text_raw": "6 The equation of a curve is y = x^{2}-8x + 5. (a) Find the coordinates of the minimum point of the curve. [2] The curve is stretched by a factor of 2 parallel to the y-axis and then translated by@ 41A. (b) Find the coordinates of the minimum point of the transformed curve. [2] (c) Find the equation of the transformed curve. Give the answer in the form y = ax^{2} + bx + c, where a, b and c are integers to be found. [4]",
       "ocr_text_raw": "6 The equation of a curve is y = x -— 8x45. (a) Find the coordinates of the minimum point of the curve. [2] The curve is stretched by a factor of 2 parallel to the y-axis and then translated by ( t ) (b) Find the coordinates of the minimum point of the transformed curve. [2] (c) Find the equation of the transformed curve. Give the answer in the form y = ax? + bx +.c, where a, b and c are integers to be found. [4]",
-      "currently_selected_text": "6 The equation of a curve is y = x^{2}-8x + 5. (a) Find the coordinates of the minimum point of the curve. [2] The curve is stretched by a factor of 2 parallel to the y-axis and then translated by@ 41A. (b) Find the coordinates of the minimum point of the transformed curve. [2] (c) Find the equation of the transformed curve. Give the answer in the form y = ax^{2} + bx + c, where a, b and c are integers to be found. [4]",
+      "currently_selected_text": "6 The equation of a curve is y = x^{2} - 8x + 5. (a) Find the coordinates of the minimum point of the curve. [2] The curve is stretched by a factor of 2 parallel to the y-axis and then translated by (41). (b) Find the coordinates of the minimum point of the transformed curve. [2] (c) Find the equation of the transformed curve. Give the answer in the form y = ax^{2} + bx + c, where a, b and c are integers to be found. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -890,28 +877,25 @@
       ],
       "review_notes": "Translation vector layout is flattened into garbage despite high crop confidence.",
       "source_profile": "native_pdf",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "math_text_corruption_detected",
-        "native_compacted_math_corruption"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "51winter23_q05",
       "paper_id": "51winter23",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "51",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2023 Question paper  51.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_w23_qp_51.pdf"
       },
       "question_number": "5",
-      "question_image_path": "mechanics/mechanics_2023_w23_51_qp_q05_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2023_w23_51_ms_q05_markscheme.png",
+      "question_image_path": "stats/stats_2023_w23_51_qp_q05_question.png",
+      "mark_scheme_image_path": "stats/stats_2023_w23_51_ms_q05_markscheme.png",
       "native_pdf_text_raw": "5 Aredspinnerhasfoursideslabelled1,2,3,4. When the spinner is spun,the score is the number on the side on which it lands. The random variable X denotes this score. The probability distribution table for X is given below. x 1 2 3 4 P(X = x) 0.28 p 2p 3p (a) Show that p = 0.12. [1] A fair blue spinner and a fair green spinner each have four sides labelled 1, 2, 3, 4. All three spinners (red, blue and green) are spun at the same time. (b) Find the probability that the sum of the three scores is 4 or less. [3] (c) Find the probability that the product of the three scores is 4 or less given that Xis odd. [5]",
       "ocr_text_raw": "5 A red spinner has four sides labelled 1, 2, 3, 4. When the spinner is spun, the score is the number on the side on which it lands. The random variable X denotes this score. The probability distribution table for X is given below. re x) | 0.28 (a) Show that p = 0.12. [1] A fair blue spinner and a fair green spinner each have four sides labelled 1, 2, 3, 4. All three spinners (red, blue and green) are spun at the same time. (b) Find the probability that the sum of the three scores is 4 or less. [3] (c) Find the probability that the product of the three scores is 4 or less given that X is odd. [5]",
-      "currently_selected_text": "5 Aredspinnerhasfoursideslabelled1,2,3,4. When the spinner is spun,the score is the number on the side on which it lands. The random variable X denotes this score. The probability distribution table for X is given below. x 1 2 3 4 P(X = x) 0.28 p 2p 3p (a) Show that p = 0.12. [1] A fair blue spinner and a fair green spinner each have four sides labelled 1, 2, 3, 4. All three spinners (red, blue and green) are spun at the same time. (b) Find the probability that the sum of the three scores is 4 or less. [3] (c) Find the probability that the product of the three scores is 4 or less given that Xis odd. [5]",
+      "currently_selected_text": "5 A red spinner has four sides labelled 1, 2, 3, 4. When the spinner is spun, the score is the number on the side on which it lands. The random variable X denotes this score. The probability distribution table for X is given below. x: 1, 2, 3, 4. P(X = x): 0.28, p, 2p, 3p. (a) Show that p = 0.12. [1] A fair blue spinner and a fair green spinner each have four sides labelled 1, 2, 3, 4. All three spinners (red, blue and green) are spun at the same time. (b) Find the probability that the sum of the three scores is 4 or less. [3] (c) Find the probability that the product of the three scores is 4 or less given that X is odd. [5]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -928,27 +912,25 @@
       ],
       "review_notes": "Readable statistics prompt has severe spacing collapse in selected text.",
       "source_profile": "native_pdf",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "math_text_corruption_detected"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "42winter21_q01",
       "paper_id": "42winter21",
-      "paper_family": "stats",
+      "paper_family": "mechanics",
       "session": {
         "component": "42",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  42.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_42.pdf"
       },
       "question_number": "1",
-      "question_image_path": "stats/stats_2021_w21_42_qp_q01_question.png",
-      "mark_scheme_image_path": "stats/stats_2021_w21_42_ms_q01_markscheme.png",
+      "question_image_path": "mechanics/mechanics_2021_w21_42_qp_q01_question.png",
+      "mark_scheme_image_path": "mechanics/mechanics_2021_w21_42_ms_q01_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "a | ' t(s) 0 5 25 30 T 50 60 The diagram shows a velocity-time graph which models the motion of a car. The graph consists of six straight line segments. The car accelerates from rest to a speed of 20ms\"! over a period of 5s, and then travels at this speed for a further 20s. The car then decelerates to a speed of 6ms™! over a period of 5s. This speed is maintained for a further (T — 30)s. The car then accelerates again to a speed of 20ms™! over a period of (50 — T) s, before decelerating to rest over a period of 10s. (a) Given that during the two stages of the motion when the car is accelerating, the accelerations are equal, find the value of 7. [2] (b) Find the total distance travelled by the car during the motion. [2]",
-      "currently_selected_text": "1 Thesixstraightdiagramlineshowssegments.avelocity-time The car accelerates graph which from models rest the to a motion speed of of 20 m sacar._{-}The_{1} over a graph period consists of 5 s,of and then travels at this speed for a further 20 s. The car then decelerates to a speed of 6 m s^{-}1over a speed of 20 m speriodof5 s. This_{-}1over a period ofspeedismaintained (50 -Tfor) s, before decelerating to rest over a period of 10 s.afurther(T-30) s. The car then accelerates again to a (a) Given that during the two stages of the motion when the car is accelerating, the accelerations are equal, find the value of T. [2] (b) Find the total distance travelled by the car during the motion. [2]",
+      "currently_selected_text": "1 The diagram shows a velocity-time graph which models the motion of a car. The graph consists of six straight line segments. The car accelerates from rest to a speed of 20 m s^{-1} over a period of 5 s, and then travels at this speed for a further 20 s. The car then decelerates to a speed of 6 m s^{-1} over a period of 5 s. This speed is maintained for a further (T - 30) s. The car then accelerates again to a speed of 20 m s^{-1} over a period of (50 - T) s, before decelerating to rest over a period of 10 s. (a) Given that during the two stages of the motion when the car is accelerating, the accelerations are equal, find the value of T. [2] (b) Find the total distance travelled by the car during the motion. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -965,29 +947,26 @@
         "units_symbol"
       ],
       "review_notes": "Mechanics graph axis labels and prose are interleaved.",
-      "source_profile": "hybrid",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "sparse_or_merged_question_text",
-        "weak_extracted_text"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "source_profile": "native_pdf",
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "52winter21_q01",
       "paper_id": "52winter21",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_52.pdf"
       },
       "question_number": "1",
-      "question_image_path": "mechanics/mechanics_2021_w21_52_qp_q01_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2021_w21_52_ms_q01_markscheme.png",
+      "question_image_path": "stats/stats_2021_w21_52_qp_q01_question.png",
+      "mark_scheme_image_path": "stats/stats_2021_w21_52_ms_q01_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "(b) (c) Each of the 180 students at a college plays exactly one of the piano, the guitar and the drums. The numbers of male and female students who play the piano, the guitar and the drums are given in the following table. [Pas ear a A student at the college is chosen at random. (a) Find the probability that the student plays the guitar. [1] Find the probability that the student is male given that the student plays the drums. [2] Determine whether the events ‘the student plays the guitar’ and ‘the student is female’ are independent, justifying your answer. [2]",
-      "currently_selected_text": "1 Eachofthe180studentsatacollegeplaysexactlyoneofthepiano,theguitarandthedrums. The numbersof maleandfemalestudentswhoplaythepiano,theguitarandthedrumsaregiveninthe following table. Piano Guitar Drums Male 25 44 11 Female 42 38 20 A student at the college is chosen at random. (a) Find the probability that the student plays the guitar. [1] (b) Find the probability that the student is male given that the student plays the drums. [2] (c) Determine whether the events ‘the student plays the guitar’ and ‘the student is female’ are independent, justifying your answer. [2]",
+      "currently_selected_text": "1 Each of the 180 students at a college plays exactly one of the piano, the guitar and the drums. The numbers of male and female students who play the piano, the guitar and the drums are given in the following table. Piano, Guitar, Drums. Male: 25, 44, 11. Female: 42, 38, 20. A student at the college is chosen at random. (a) Find the probability that the student plays the guitar. [1] (b) Find the probability that the student is male given that the student plays the drums. [2] (c) Determine whether the events ‘the student plays the guitar’ and ‘the student is female’ are independent, justifying your answer. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1004,14 +983,11 @@
         "crop_boundary_or_contamination"
       ],
       "review_notes": "Two-way table/prose merge and subpart anchors are suspicious.",
-      "source_profile": "hybrid",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "sparse_or_merged_question_text",
-        "weak_extracted_text"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "source_profile": "native_pdf",
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "31summer21_q01",
@@ -1019,14 +995,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "31",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  31.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_31.pdf"
       },
       "question_number": "1",
-      "question_image_path": "pm3/pm3_2021_m21_31_qp_q01_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2021_m21_31_ms_q01_markscheme.png",
+      "question_image_path": "pm3/pm3_2021_s21_31_qp_q01_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2021_s21_31_ms_q01_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "1 Solve the inequality 2|3x - 1| <|x+ 1]. [4]",
-      "currently_selected_text": "1 Solve the in equal it y 2|3x -1| < |x + 1|. [4]",
+      "currently_selected_text": "1 Solve the inequality 2|3x - 1| < |x + 1|. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1043,7 +1019,7 @@
         "short_math_prompt_review"
       ],
       "review_notes": "Short inequality prompt has word splitting; a small symbol error would change meaning.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -1055,14 +1031,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "32",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  32.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_32.pdf"
       },
       "question_number": "1",
-      "question_image_path": "pm3/pm3_2021_m21_32_qp_q01_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2021_m21_32_ms_q01_markscheme.png",
+      "question_image_path": "pm3/pm3_2021_s21_32_qp_q01_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2021_s21_32_ms_q01_markscheme.png",
       "native_pdf_text_raw": "1 Solve the in equal it y |2x -1| < 3|x + 1|. [4]",
       "ocr_text_raw": "1 Solve the inequality |2x — 1| < 3|x+ 1]. [4]",
-      "currently_selected_text": "1 Solve the in equal it y |2x -1| < 3|x + 1|. [4]",
+      "currently_selected_text": "1 Solve the inequality |2x - 1| < 3|x + 1|. [4]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1092,14 +1068,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics November 2021 Question paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_w21_qp_33.pdf"
       },
       "question_number": "2",
       "question_image_path": "pm3/pm3_2021_w21_33_qp_q02_question.png",
       "mark_scheme_image_path": "pm3/pm3_2021_w21_33_ms_q02_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "2 (a) Sketch the graph of y = |2x — 3}. (b) Solve the inequality |2x — 3| < 3x+2. [3] [1]",
-      "currently_selected_text": "2 (a) Sketch the graph of y = |2x -3|. [1] (b) Solve the in equal it y |2x -3| < 3x + 2. [3]",
+      "currently_selected_text": "2 (a) Sketch the graph of y = |2x - 3|. [1] (b) Solve the inequality |2x - 3| < 3x + 2. [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1128,14 +1104,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "32",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2023 Question paper  32.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_32.pdf"
       },
       "question_number": "3",
-      "question_image_path": "pm3/pm3_2023_m23_32_qp_q03_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2023_m23_32_ms_q03_markscheme.png",
+      "question_image_path": "pm3/pm3_2023_s23_32_qp_q03_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2023_s23_32_ms_q03_markscheme.png",
       "native_pdf_text_raw": "3 divided by Thepolynomial x^{2}-x2 +x 1 the remainder is 3^{4} + ax^{3} + bx -1,wherex + 2. aand b are constant s,is denoted by p(x). Whenp(x)is Find the values of a and b. [5]",
       "ocr_text_raw": "3. The polynomial 2x* + ax* + bx — 1, where a and b are constants, is denoted by p(x). When p(x) is divided by x” — x + 1 the remainder is 3x + 2. Find the values of a and b. [5]",
-      "currently_selected_text": "3 (a) Onan Argand diagram, sketch the locus of points representing complex numbers z satisfying |z + 3 -2i| = 2. [2] (b) Find the least value of |z| for points on this locus, giving your answer in an exact form. [2]",
+      "currently_selected_text": "3 (a) On an Argand diagram, sketch the locus of points representing complex numbers z satisfying |z + 3 - 2i| = 2. [2] (b) Find the least value of |z| for points on this locus, giving your answer in an exact form. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1155,8 +1131,8 @@
       "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
-      "question_text_role": "readable_text",
-      "question_text_trust": "high"
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "11summer23_q01",
@@ -1164,11 +1140,11 @@
       "paper_family": "pm1",
       "session": {
         "component": "11",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  11.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_11.pdf"
       },
       "question_number": "1",
-      "question_image_path": "pm1/pm1_2023_m23_11_qp_q01_question.png",
-      "mark_scheme_image_path": "pm1/pm1_2023_m23_11_ms_q01_markscheme.png",
+      "question_image_path": "pm1/pm1_2023_s23_11_qp_q01_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2023_s23_11_ms_q01_markscheme.png",
       "native_pdf_text_raw": "1 Solve the equation 4 sin θ + tan θ = 0 for 0° < θ < 180°. [3]",
       "ocr_text_raw": "1 Solve the equation 4 sin 6 + tan @ = 0 for 0° < 0 < 180°. [3]",
       "currently_selected_text": "1 Solve the equation 4 sin θ + tan θ = 0 for 0° < θ < 180°. [3]",
@@ -1201,14 +1177,14 @@
       "paper_family": "pm1",
       "session": {
         "component": "12",
-        "source_pdf": "input/question_papers/9709 Mathematics March 2021 Question paper  12.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_12.pdf"
       },
       "question_number": "2",
-      "question_image_path": "pm1/pm1_2021_m21_12_qp_q02_question.png",
-      "mark_scheme_image_path": "pm1/pm1_2021_m21_12_ms_q02_markscheme.png",
+      "question_image_path": "pm1/pm1_2021_s21_12_qp_q02_question.png",
+      "mark_scheme_image_path": "pm1/pm1_2021_s21_12_ms_q02_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "2. By using a suitable substitution, solve the equation 4 2 (2x - 3) ox=3P 3=0. [4]",
-      "currently_selected_text": "2 (a) The graph of y = f(x) is transformed to the graph of y = 2f(x -1). Describe fully the two single transformations which have been combined to give the resulting transformation. [3] (b) Thecurvey = sin 2x -5x is reflected in they-axis and then stretched by scale factor 1_{3} inthe x-direction. Write down the equation of the transformed curve. [2]",
+      "currently_selected_text": "2 (a) The graph of y = f(x) is transformed to the graph of y = 2f(x - 1). Describe fully the two single transformations which have been combined to give the resulting transformation. [3] (b) The curve y = sin 2x - 5x is reflected in the y-axis and then stretched by scale factor (1)/(3) in the x-direction. Write down the equation of the transformed curve. [2]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1224,7 +1200,7 @@
         "short_math_prompt_review"
       ],
       "review_notes": "Exponent/operand structure in a short algebra prompt is suspicious.",
-      "source_profile": "hybrid",
+      "source_profile": "native_pdf",
       "text_fidelity_status": "clean",
       "text_fidelity_flags": [],
       "question_text_role": "search_hint",
@@ -1236,14 +1212,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "33",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  33.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_33.pdf"
       },
       "question_number": "7",
-      "question_image_path": "pm3/pm3_2021_m21_33_qp_q07_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2021_m21_33_ms_q07_markscheme.png",
+      "question_image_path": "pm3/pm3_2021_s21_33_qp_q07_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2021_s21_33_ms_q07_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "For the curve shown in the diagram, the normal to the curve at the point P with coordinates (x, y) meets the x-axis at NV. The point M is the foot of the perpendicular from P to the x-axis. The curve is such that for all values of x in the interval 0 < x < An, the area of triangle PMN is equal to tanx. MN d (a) @ Show that — = =. 1] d (ii) Hence show that x and y satisfy the differential equation ye = tanx. [2] (b) Given that y = 1 when x = 0, solve this differential equation to find the equation of the curve, expressing y in terms of x. [6]",
-      "currently_selected_text": "7 For the curve shown in the diagram,the normal to the curve at the point P with coordinates(x,y) meets the x-axis at N. The point Mis the foot of the perpendicular from P to the x-axis. to tan The curve is such that for all values of x. x in the interval 0 ≤ x < 1_{2}π, the area of triangle PM Nis equal (a) (i) Show that (MN)/(y) = ddyx. [1] (ii) Hence show that x and y satisfy the diﬀerential equation(1 2 dy)/(2 dx)y = tan x. [2] (b) expressing Giventhat yy in terms of= 1whenx x.= 0,solvethisdiﬀerentialequationtofindtheequationofthecurve,[6]",
+      "currently_selected_text": "7 For the curve shown in the diagram, the normal to the curve at the point P with coordinates (x, y) meets the x-axis at N. The point M is the foot of the perpendicular from P to the x-axis. The curve is such that for all values of x in the interval 0 ≤ x < (1)/(2)π, the area of triangle PMN is equal (a) (i) Show that (MN)/(y) = (dy)/(dx). [1] (ii) Hence show that x and y satisfy the differential equation (1)/(2)y(2 dy)/(dx) = tan x. [2] (b) Given that y = 1 when x = 0, solve this differential equation to find the equation of the curve, expressing y in terms of x. [6]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1261,29 +1237,26 @@
         "calculus_expression"
       ],
       "review_notes": "Diagram and calculus prose are interleaved and degraded.",
-      "source_profile": "hybrid",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "sparse_or_merged_question_text",
-        "weak_extracted_text"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "source_profile": "native_pdf",
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "52summer21_q04",
       "paper_id": "52summer21",
-      "paper_family": "mechanics",
+      "paper_family": "stats",
       "session": {
         "component": "52",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2021 Question paper  52.pdf"
+        "source_pdf": "input/pastpapers/9709/2021/question_papers/9709_s21_qp_52.pdf"
       },
       "question_number": "4",
-      "question_image_path": "mechanics/mechanics_2021_m21_52_qp_q04_question.png",
-      "mark_scheme_image_path": "mechanics/mechanics_2021_m21_52_ms_q04_markscheme.png",
+      "question_image_path": "stats/stats_2021_s21_52_qp_q04_question.png",
+      "mark_scheme_image_path": "stats/stats_2021_s21_52_ms_q04_markscheme.png",
       "native_pdf_text_raw": null,
       "ocr_text_raw": "4 A fair spinner has sides numbered 1, 2, 2. Another fair spinner has sides numbered —2, 0, 1. Each spinner is spun. The number on the side on which a spinner comes to rest is noted. The random variable X is the sum of the numbers for the two spinners. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
-      "currently_selected_text": "4 A fair spinner has sides numbered1,2,2. Another fair spinner has sides numbered-2,0,1. Each spinner is spun. The number onthe side onwhicha spinner comes to rest isnoted. Therandom variable X is the sum of the numbers for the two spinners. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
+      "currently_selected_text": "4 A fair spinner has sides numbered 1, 2, 2. Another fair spinner has sides numbered -2, 0, 1. Each spinner is spun. The number on the side on which a spinner comes to rest is noted. The random variable X is the sum of the numbers for the two spinners. (a) Draw up the probability distribution table for X. [3] (b) Find E(X) and Var(X). [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [
@@ -1300,14 +1273,11 @@
         "statistics_table_structure"
       ],
       "review_notes": "Spinner/probability prompt has degraded spacing and selected text quality.",
-      "source_profile": "hybrid",
-      "text_fidelity_status": "degraded",
-      "text_fidelity_flags": [
-        "math_text_corruption_detected",
-        "weak_extracted_text"
-      ],
-      "question_text_role": "untrusted_math_text",
-      "question_text_trust": "low"
+      "source_profile": "native_pdf",
+      "text_fidelity_status": "clean",
+      "text_fidelity_flags": [],
+      "question_text_role": "search_hint",
+      "question_text_trust": "medium"
     },
     {
       "record_id": "31summer23_q09",
@@ -1315,14 +1285,14 @@
       "paper_family": "pm3",
       "session": {
         "component": "31",
-        "source_pdf": "input/question_papers/9709 Mathematics June 2023 Question paper  31.pdf"
+        "source_pdf": "input/pastpapers/9709/2023/question_papers/9709_s23_qp_31.pdf"
       },
       "question_number": "9",
-      "question_image_path": "pm3/pm3_2023_m23_31_qp_q09_question.png",
-      "mark_scheme_image_path": "pm3/pm3_2023_m23_31_ms_q09_markscheme.png",
+      "question_image_path": "pm3/pm3_2023_s23_31_qp_q09_question.png",
+      "mark_scheme_image_path": "pm3/pm3_2023_s23_31_ms_q09_markscheme.png",
       "native_pdf_text_raw": "a 9 The constant a is such that ∫_{0} xe^{-}2x dx = 1_{8}. (a) Show that a = 1_{2} ln(4a + 2). [5] (b) Verify by calculation that a lies between 0.5 and 1. [2] (c) Use an iterative formula based on the equation in (a) to determine a correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
       "ocr_text_raw": "(b) (c) a The constant a is such that | xe dx = : 0 (a) Show that a = }1In(4a +2). Verify by calculation that a lies between 0.5 and 1. [2] Use an iterative formula based on the equation in (a) to determine a correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3] [5]",
-      "currently_selected_text": "a 9 The constant a is such that ∫_{0} xe^{-}2x dx = 1_{8}. (a) Show that a = 1_{2} ln(4a + 2). [5] (b) Verify by calculation that a lies between 0.5 and 1. [2] (c) Use an iterative formula based on the equation in (a) to determine a correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
+      "currently_selected_text": "9 The constant a is such that ∫_{0}^{a} xe^{-2x} dx = (1)/(8). (a) Show that a = (1)/(2) ln(4a + 2). [5] (b) Verify by calculation that a lies between 0.5 and 1. [2] (c) Use an iterative formula based on the equation in (a) to determine a correct to 2 decimal places. Give the result of each iteration to 4 decimal places. [3]",
       "expected_normalized_text_or_structural_expectations": {
         "type": "structural_expectations",
         "expectations": [

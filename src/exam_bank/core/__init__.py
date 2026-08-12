@@ -15,6 +15,21 @@ from .paper_identity import (
     session_for_source_path,
     validate_identity_agreement,
 )
+from .subject_contract import (
+    LEGACY_P6_CONTRACT,
+    PAPER_FAMILY_CONTRACTS,
+    P5_S1_FIRST_EXAM_YEAR,
+    P6_S2_FIRST_EXAM_YEAR,
+    SYLLABUS_COURSE_IDS,
+    PaperFamilyContract,
+    SyllabusCourseId,
+    course_id_for_identity,
+    exam_year_from_evidence,
+    paper_contract_for_component,
+    paper_number_from_component,
+    subject_family_for_component,
+    taxonomy_paper_family,
+)
 
 __all__ = [
     "IdentityError",
@@ -31,4 +46,17 @@ __all__ = [
     "parse_session_from_parts",
     "session_for_source_path",
     "validate_identity_agreement",
+    "PAPER_FAMILY_CONTRACTS",
+    "LEGACY_P6_CONTRACT",
+    "P5_S1_FIRST_EXAM_YEAR",
+    "P6_S2_FIRST_EXAM_YEAR",
+    "SYLLABUS_COURSE_IDS",
+    "PaperFamilyContract",
+    "SyllabusCourseId",
+    "course_id_for_identity",
+    "exam_year_from_evidence",
+    "paper_contract_for_component",
+    "paper_number_from_component",
+    "subject_family_for_component",
+    "taxonomy_paper_family",
 ]

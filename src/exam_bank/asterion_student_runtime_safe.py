@@ -19,6 +19,8 @@ from exam_bank.content_lab_auto_review import (
     automated_mark_event_ids,
     automated_source_records,
 )
+from exam_bank.publication_safety import read_json_under_publication_guard
+from exam_bank.review_asset_binding import bind_review_evidence_to_question_bank
 
 
 RUNTIME_SAFE_SCHEMA = "exam_bank.asterion.student_runtime_safe"
@@ -151,7 +153,8 @@ def run_runtime_safe_audit(
     candidates = [item for item in candidates_payload.get("candidates", []) if isinstance(item, dict)]
     p3_candidates = [item for item in candidates if course_id_for_record(item) == "p3"]
     asterion_questions = _questions_by_id(_read_json(asterion_bank_path))
-    source_questions = _questions_by_id(_read_json(question_bank_path) if question_bank_path else {})
+    source_question_bank = _read_json(question_bank_path) if question_bank_path else {}
+    source_questions = _questions_by_id(source_question_bank)
     topic_routing = _topic_routing_by_question(_read_json(topic_routing_path) if topic_routing_path else {})
     mark_events = _mark_event_index(_read_json(mark_events_path) if mark_events_path else {})
     skill_regions = _skill_regions(_read_json(skill_map_path) if skill_map_path and skill_map_path.exists() else {})
@@ -172,6 +175,16 @@ def run_runtime_safe_audit(
         if reviewed_mark_events_path and reviewed_mark_events_path.exists()
         else {}
     )
+    review_binding = bind_review_evidence_to_question_bank(
+        source_question_bank,
+        artifact_root=artifact_root,
+        source_skill_payload=source_review_payload,
+        mark_event_payload=mark_review_payload,
+        content_lab_payload=reviewed_payload,
+    )
+    reviewed_payload = review_binding["content_lab_payload"]
+    source_review_payload = review_binding["source_skill_payload"]
+    mark_review_payload = review_binding["mark_event_payload"]
     evidence = _review_evidence(
         reviewed_payload=reviewed_payload,
         source_review_payload=source_review_payload,
@@ -250,6 +263,7 @@ def run_runtime_safe_audit(
         target_pass_rate=target_pass_rate,
         promotion_validation_errors=promotion_errors,
     )
+    summary["review_asset_binding"] = review_binding["report"]
     out_dir.mkdir(parents=True, exist_ok=True)
     final_run = bool(promotion_decisions_path or write_promotion_decisions_path)
     baseline_exists = (out_dir / "runtime_safe_baseline.json").exists()
@@ -1385,7 +1399,7 @@ def _any_ambiguity(values: Iterable[str]) -> bool:
 def _read_json(path: Path | None) -> dict[str, Any]:
     if path is None:
         return {}
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return read_json_under_publication_guard(path)
 
 
 def _strings(value: Any) -> list[str]:

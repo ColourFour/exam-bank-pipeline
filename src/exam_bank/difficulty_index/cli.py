@@ -14,7 +14,12 @@ def run_build(argv: list[str] | None = None) -> int:
     parser.add_argument("--reports-dir", type=Path, default=Path("reports"))
     parser.add_argument("--artifact-root", type=Path, default=Path("output"))
     parser.add_argument("--mark-events", type=Path, default=Path("output/json/question_bank.mark_events.v1.json"))
-    parser.add_argument("--topic-routing", type=Path, default=Path("output/json/question_bank.topic_routing.v1.json"))
+    parser.add_argument(
+        "--topic-routing",
+        type=Path,
+        default=None,
+        help="Explicit topic-routing artifact. Defaults to the hash-bound release manifest resolver.",
+    )
     parser.add_argument("--advisory-evidence", type=Path, default=Path("output/advisory_evidence/question_bank.advisory_evidence.v1.json"))
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
@@ -42,4 +47,3 @@ def run_build(argv: list[str] | None = None) -> int:
         )
     )
     return 0
-

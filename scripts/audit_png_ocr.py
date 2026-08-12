@@ -45,6 +45,11 @@ def main() -> int:
     parser.add_argument("--workers", type=int, default=6)
     parser.add_argument("--ocr-timeout", type=int, default=45)
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument(
+        "--question-ids-from-sample",
+        default="",
+        help="Restrict the audit to question IDs listed in a visual-audit sample JSON.",
+    )
     args = parser.parse_args()
 
     output_root = Path(args.output_root)
@@ -53,6 +58,17 @@ def main() -> int:
 
     question_bank = json.loads(Path(args.question_bank).read_text(encoding="utf-8"))
     rows = [row for row in question_bank.get("questions", []) if isinstance(row, dict)]
+    if args.question_ids_from_sample:
+        sample_payload = json.loads(Path(args.question_ids_from_sample).read_text(encoding="utf-8"))
+        selected_ids = {
+            str(row.get("question_id") or "")
+            for row in sample_payload.get("questions", [])
+            if isinstance(row, dict)
+        }
+        rows = [row for row in rows if str(row.get("question_id") or "") in selected_ids]
+        missing_ids = selected_ids - {str(row.get("question_id") or "") for row in rows}
+        if missing_ids:
+            raise SystemExit(f"sample question IDs missing from question bank: {sorted(missing_ids)}")
     expected, paper_order = _expected_artifacts(rows)
     question_regen = _load_report(Path(args.question_regeneration_report))
     mark_scheme_regen = _load_report(Path(args.mark_scheme_regeneration_report))
@@ -69,6 +85,12 @@ def main() -> int:
         ],
         key=lambda path: str(path.relative_to(output_root)),
     )
+    if args.question_ids_from_sample:
+        actual_paths = [
+            path
+            for path in actual_paths
+            if str(path.relative_to(output_root)).replace("\\", "/") in expected
+        ]
     cleanup_report: dict[str, Any] | None = None
     if args.prune_unreferenced:
         cleanup_report = _prune_unreferenced_pngs(

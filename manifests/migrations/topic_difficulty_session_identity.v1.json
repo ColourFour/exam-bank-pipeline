@@ -1,0 +1,502 @@
+{
+  "alias_manifest": "manifests/migrations/canonical_session_identity_aliases.v1.json",
+  "alias_manifest_sha256": "9a1826fe5b9427330ffa229cca43bc742444ea2e88059a45b061c440e2736471",
+  "changed_file_count": 54,
+  "file_count": 54,
+  "files": [
+    {
+      "after_sha256": "7f56292daa8e9d8248f16d128acfef6e4867024fdc330659c522964516f50abd",
+      "before_sha256": "2795b9a5bd514ff421a0cedcf0fd929e44e17e087771473dfb4cade80a251708",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_circular_measure_b9e27a7a/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "ae5f06f4b03c703f0c33d4aeef128bd440fca08124916e182b344810ec1e030f",
+      "before_sha256": "e3e56948f522dae9f503428ea7dfdb7cab6aeb825f4751df5a8c944d45711015",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_circular_measure_b9e27a7a/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "aa2db926da69691ac9288d63a766463c13e56227bef31badcf56998b35e9785a",
+      "before_sha256": "9cb3e2b9b15db8183f257729fc998aff40758a129309514301c77275213aebac",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_coordinate_geometry_fc6b0d54/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "c0bddf8ca0a0745da3324e74ea2306870494417a0788b3976b6ccf86c731de4c",
+      "before_sha256": "f15046ea495e98f20877ecb0f736324f876e498b1a3ab6521a5ba166e7eafbba",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_coordinate_geometry_fc6b0d54/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "0c2c603f4e20d884d856b72251e75d776aed539a0f45ce9140d44151d58c0bbf",
+      "before_sha256": "620dff7d1ba0b061fdf9efcedcb26bb0c6b12e2bcce98dd0e16778d965f548a0",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_differentiation_94fd6bfe/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "3100b44d7428ac9065e95493ee7aa8944ac25c43b7f4d9f610801b80670f9562",
+      "before_sha256": "808754e29652414e80aa71dda707984464ff016bdebfd64d0a705f662c8e0ed8",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_differentiation_94fd6bfe/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "93e168ac7701187fbf043dad51a979128e31b3b83e1be87785ed98212c686068",
+      "before_sha256": "99dc1e53e04930714902d1cb3ac7cc17542d4a649aaeb5778184faff19ef5c8b",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_functions_473c6412/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "4788368b4e0abee9a5d1a6441589e2bc339fd1a041d0e36a50319b36750111a6",
+      "before_sha256": "8ae575fa59ed6733859774471654bd915e8e734ece2bd10c0babc285fd7cb69b",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_functions_473c6412/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "9deb6ce992e8f45000ba8242f886168f40ec2e2610122cfbc5da294e35378de5",
+      "before_sha256": "933803d49e8e8d115fbdc455c352ce97749021564a0265520e74ff18d21462eb",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_integration_f9181396/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "fd7b9ba3489f1a686ba20d18db497d3f9b6390c30848c0b74c11a2347e5fdd56",
+      "before_sha256": "48d5c097fcbe071ea810123acb49707b1d98563f6f33e77b858807aecb1a8266",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_integration_f9181396/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "d231eb487bd0e3333110bc69a51edbbfcde055a40686168ac93707dccdf839e4",
+      "before_sha256": "8a8e9b865f1fe4cf6e3b61479bf2dd2cc85b57e1f10f26f68ddd802797bd569a",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_quadratics_363191a8/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 2
+    },
+    {
+      "after_sha256": "a22312edde096c07869a108e57817fcbb51f10c1c3b9dbfcb50d297bf3cfbcf1",
+      "before_sha256": "ef2bdd57c31cfcba3168eed9ca0fa3328a1f7573be391e11f9c8e5cbf8c00a95",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_quadratics_363191a8/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 2
+    },
+    {
+      "after_sha256": "3654ea97608e5a70d7bc70500f59b3b6f343a1d7b80dd01e910d20cf11e795dc",
+      "before_sha256": "37b31cfef6133f7d34bdb3a9998d9f5e537408b2accc3c0f9e33f2ff0993fedb",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_series_c95a0a3d/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "0f8e7d3f7f6dfaac78c29269daff05b0ce323e9625999f8dfc4ed9b0c87f0670",
+      "before_sha256": "481188e22aa5bab20aa60934f123c4f2e6f01fecb39ce98a50eca388cc318b2f",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_series_c95a0a3d/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "06fe7e07e2ad83b28243420cfd77af4bf9a21a782259b5617f60e816e4c8c4db",
+      "before_sha256": "94c542679dd362948f06bfc4ee44a448b61218ac0061c055a8e3867a3822d5a3",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_trigonometry_8c7926da/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "ea6b59a4d2fdddca4edad04fcf0e994a5099e7d9593968665443db26efb15780",
+      "before_sha256": "50555a4f80fe4b5032b2bd7ccda2e1906751424c49c72bfc2231769758b5a4ba",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p1_trigonometry_8c7926da/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "e9816293973813b7b23695211d3f38aa2982071a953985e59624f096b1077b53",
+      "before_sha256": "ecfa015adacfee3b25aa15db5c008dd5d6b4adf80dfb8c34b68c55f5154e891a",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_algebra_b5aa129e/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "a0ff3460a3ea3fbaaff97e91a4902fa7ef60305d975891483f9f34264358a9cd",
+      "before_sha256": "9ef774fb6bc6bb9a78c72880e50a3e72ed8a456359cd6795a06ac8a63ebd72d6",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_algebra_b5aa129e/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 20
+    },
+    {
+      "after_sha256": "82b96f1bdf88e4e2447e03d404dee612dab13775144c592d47de391841512f7a",
+      "before_sha256": "be393646acd469afade1a6e65df0cbe33bdd8079564995b2d239e34e08d6a12f",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_complex_numbers_9c391832/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "92449aa016c3bba5f1032116c96ba774b0883838fbca1ca1c09b7dd701499ab6",
+      "before_sha256": "c0d1fc14647906526e997dc68f8c38707daac5be6a74cefb98c49f5a7d048f47",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_complex_numbers_9c391832/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "65cd279ac9f530c348196f95203df68356f48f91a36784a4ce58aae9a58b2719",
+      "before_sha256": "b8f0448dfd8e60682e9ed07f375fa6ddf393fef60077b55df666f0401c07c369",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_differential_equations_f64d3a49/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "3276fa92d67a1ff964c2a495a953dfe68ea2d2a7debd6ad82e42ce3e6e0ab9e7",
+      "before_sha256": "7eff1aa29546baeebf9d5e25a4deccc966fc206029f96fac4054b74f6dd89829",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_differential_equations_f64d3a49/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "45c1908ce4e53e213e8df141c28042a20ac9e340e22116fb011b84677e91b77d",
+      "before_sha256": "bf240d5fdf4fe15ddc9b0f367b534a60fff55852bd78dd97a9b8ef965378c724",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_differentiation_bd3c32e5/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "3f376eb11ecd1019a2342ae112b3bf31de437e8ce884b38db29ef72b9a1318d7",
+      "before_sha256": "8b0a8898c76ed9a6f9a64af9ce8d2cddfb7672e2f30862a030a3aa7719d6ba4d",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_differentiation_bd3c32e5/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "595edac6ef37144818ec05dca47e6f4a40ae77449e347ef251f45b97d4284e4a",
+      "before_sha256": "1db972d681072a9a0f98ec3e1645c346190c48cc1423e3c0f4920cdcd9672d7f",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_integration_f453023d/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "9ff77bb3554aa25fc0eeed4ee2d3c7db4b65eebc54394241644702c19595243c",
+      "before_sha256": "44d8623f9b3bde45df7ebda5a7097fc6f64949ced0729cdb84d4167f7539cab2",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_integration_f453023d/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 16
+    },
+    {
+      "after_sha256": "056c5cb2df039a8a210131d062472a6fe1a97408ec2f43c84410ba107fc60973",
+      "before_sha256": "a8d6b17e3bb90550a7e8fd14f18a36888393afb9226b5409dea2ae765c2a907a",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_logarithmic_and_exponential_functions_7e0f8ddc/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "366ec8a6e4b995862682454ea82af0aa66ac0be8b02d4ad65134f80a22a831b2",
+      "before_sha256": "5dce8bed0e2adbe9f2e9eff3765ab7799c8a42a33f69e532137fd7c92a0174d3",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_logarithmic_and_exponential_functions_7e0f8ddc/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "13e9ae9af2b22a948121a39ba1046ff8a1c7b6c67b052339024bac7052a6b480",
+      "before_sha256": "8159342337ebfc7c3f2c74b0a850c96c16d7d622eb2eb9abeaaffe8d3211dbf8",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_numerical_solution_of_equations_b37a026a/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "9a7a9dcafc3be362554b9200096a07799270287116f0a0152beb455583a6e298",
+      "before_sha256": "744aa2773346da74e06255c28e7b3980f44122fc34a4cecfc14ce23294d33940",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_numerical_solution_of_equations_b37a026a/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "ea6e31a085f5c2cf2287a4c6252efb0ec16a3efeb2e6ba968684c16f33e61937",
+      "before_sha256": "d6faea795a64060dc3a8583dbd9d9fae2c8ccdeb05509c7d9273ae4635fecf08",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_trigonometry_a388b6c9/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 12
+    },
+    {
+      "after_sha256": "7ac45c759241802257ec45977760a037fae87b3b0bf2d21c38074ffec9137c43",
+      "before_sha256": "f212b0f6d2a8e8b2036c6de37ca00897252e128725ec9c417cc22e2c99cb4935",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_trigonometry_a388b6c9/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 13
+    },
+    {
+      "after_sha256": "de4a9277d65a18c680c7ba74cf3c1a1cb657ca67a4777afdfe8f4192d59731c3",
+      "before_sha256": "1370c5176a4e45f567464708ffdf9e4db5933e449fcc4716a4afdb00543cb278",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_vectors_b1b7752b/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "58be345d93c972d75abf2fdff5456ced3c62272ab9b0b6ae08c6cedc14716b7e",
+      "before_sha256": "9d666694f03ce5157eea2d1acee00a2dd5934fd5e1d9156755da4e3bbefdc933",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p3_vectors_b1b7752b/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "3186e1b0fa0cd6fe0477b0a71e8afc845b894b4266c77a715fac9b7afac12ed6",
+      "before_sha256": "117ed2a039acb71e4adbd82af5a0f6f730afcb7caecde6b740a8dea49c29f0ca",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_energy_work_and_power_46490928/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "c02dcbba4f825f11fc5efdfd0337dd43b68c352749e748349a1046dced6bc874",
+      "before_sha256": "1592dd4082f333436481ff0d183964f7c911bb0228f1c619abcfa616bb9cf8a3",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_energy_work_and_power_46490928/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "4a7b640c09c0403baf0864f0cd6f1ec10ba8ece67de1510f3b694709422ac0cb",
+      "before_sha256": "e4ddb6aa22e3c0e21d5d4a308b1c4a9d2656c678aab282abd082354c07052e3e",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_forces_and_equilibrium_78713553/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 20
+    },
+    {
+      "after_sha256": "cfb35cc0ffcbd0830da03c02abf5a3cb7b2d8422d1aacc0047d095c34b52d8f6",
+      "before_sha256": "69c177befd58c5ebd9b96e557fca7ce8615b38d1401787ddba8037b2af5103ae",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_forces_and_equilibrium_78713553/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 20
+    },
+    {
+      "after_sha256": "967db7f60f66882f13a87db8e8883f16a7bd1786efb3d068bc98ccc948ea3ae9",
+      "before_sha256": "9f731ed13919754f748cc882304b6595e66e16344baada12cf8b4bda8fa58948",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_kinematics_of_motion_in_a_straight_line_81459cb3/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 20
+    },
+    {
+      "after_sha256": "19f43fa1816b58b4d801e60cf2c9acc585bb1ad18cdd5d71785907ec4a648401",
+      "before_sha256": "34bf046e60d3bd28a24fe85192e2e2142affeba523e14086fe0f6cf7c3958079",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_kinematics_of_motion_in_a_straight_line_81459cb3/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 20
+    },
+    {
+      "after_sha256": "259ae0adce05204853e258deb55b35ee9b8786d634aebbf681305aa52d4349cf",
+      "before_sha256": "262912e7e04e81d8bab4a68045c111e9a6af3316f87b0aca45e69aa89e37c976",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_momentum_595ad9dd/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 2
+    },
+    {
+      "after_sha256": "899c3452e3c70e5733b5f78e7523a3d4f2aba2039423572eadd4ec283bfe56a4",
+      "before_sha256": "0369a39a9f036185079fd94a5839810c3ad1a599b9f1e5bf07b9eb17ec9c060f",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_momentum_595ad9dd/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 2
+    },
+    {
+      "after_sha256": "32db88cd3255a8f15c298eee4288156fb2176d0b728ee65638819fd853310964",
+      "before_sha256": "608eb34efae4a191d4f4219f36a55eaf4311bf6449b374f8afb7c2b720d7615d",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_newtons_laws_of_motion_f402b1ca/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "28f494b327ef61b0113affcba801d836602e03a6c0d13b9fecca56fa878b7fdc",
+      "before_sha256": "9cfbf70e6793741b0ab6f2d0eeac86626ab43faf3ee9ded215e4dc7ac1216859",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p4_newtons_laws_of_motion_f402b1ca/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 8
+    },
+    {
+      "after_sha256": "abd68b0ea01f3407a93761648a58632c45429c087baee7fc8ac28c079e703a2d",
+      "before_sha256": "1ac6f28def6b8509c0130d059dd2d6f976d8731f6c62b301623ead55ae7a33f7",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_discrete_random_variables_7a39cda5/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "cc148b3463e609ba63bdf0e2b4e0613230b645dcde01549bd51111438d6fdd96",
+      "before_sha256": "aa03aff5a40e377928abd0a02d324fbc78fad9a1d0baf016e9ce7e57aa57f6a5",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_discrete_random_variables_7a39cda5/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "6729710c72a63e952845af26a1d1c86ad41cd6e875b20f325731f90ae341f89f",
+      "before_sha256": "5892561c3f10585827c84d6465ff1ce8c84a2faddf0dd52bf80032321d04496b",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_permutations_and_combinations_540d5e98/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 14
+    },
+    {
+      "after_sha256": "fb0a5885cad0a40c1889ad78c5033bc6d8686a310f349afdc83494d9ad5e3507",
+      "before_sha256": "5c8eba073fe89c7d57ec7cf4ac307ddda787aacb4ecda74a75b6011802ac6eb6",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_permutations_and_combinations_540d5e98/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 14
+    },
+    {
+      "after_sha256": "1b1387032f1c85fddbf9e5b34eb789c1ec8d065d1ea24c3b64fd6a43e091354b",
+      "before_sha256": "0b8ce4ba67246174ace3c1d7849e852c9a43596f62762b91c1b820d07befac25",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_probability_23f10923/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 12
+    },
+    {
+      "after_sha256": "6f287d3901453706e4199c8339e2bd75433db722e67d8d9002330edefa5e7663",
+      "before_sha256": "8ba1f7a03409d3404fab88e660994a4f2a5192c3ac5012e480587eeef36f776c",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_probability_23f10923/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 12
+    },
+    {
+      "after_sha256": "b27afbbbe813b9f90442e3d85e9ac4204209c5adb959b898c06492c1ddafc396",
+      "before_sha256": "895f5cb277f80f2ca96a19cdcdf4f3384c94f7c0e6848dc609bddf85d2bdcce4",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_representation_of_data_a6b1f80d/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "fa53c7788806cc2756fa6cddda1bb9710b4d510728d1092377751453a20ccd7c",
+      "before_sha256": "2da143d8fba9314126199f7932f04d694c60ff89a9e7a6527754f82575e4f711",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_representation_of_data_a6b1f80d/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 18
+    },
+    {
+      "after_sha256": "1a03f03e09c95dbde79f42cb75132bae9c3ddf0c23aaf71fc2c9945e13ad81ce",
+      "before_sha256": "44442786cfedfadbe064c0c96c694c423e3845815e83fa759226d5bba499c7d8",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_the_normal_distribution_5cca0d3a/topic_packet_difficulty_review.v1.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    },
+    {
+      "after_sha256": "18e41acb639aad325e3be9f19dafa5f2f96879d990242912be62bb58ebfdb966",
+      "before_sha256": "6dab344b799e0e6080bd0ee249644f1b80970be8199f69a8c1be666af31b96be",
+      "changed": true,
+      "legacy_aliases_remaining": 0,
+      "path": "data/review/topic_difficulty/p5_the_normal_distribution_5cca0d3a/topic_packet_difficulty_review.v2.json",
+      "rewritten_keys": 0,
+      "rewritten_values": 10
+    }
+  ],
+  "generated_at": "2026-08-11T12:42:58+00:00",
+  "legacy_aliases_remaining": 0,
+  "ok": true,
+  "rewritten_key_count": 0,
+  "rewritten_value_count": 647,
+  "runtime_policy": "Only consumed topic_packet_difficulty_review.v*.json history was migrated; aliases remain audit-only.",
+  "schema_name": "exam_bank.topic_difficulty_session_identity_migration",
+  "schema_version": 1
+}

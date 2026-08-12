@@ -63,6 +63,35 @@ def test_cleanup_plan_is_dry_run_and_preserves_frozen_baselines(tmp_path: Path) 
     assert "Dry run only" in output_md.read_text(encoding="utf-8")
 
 
+def test_cleanup_plan_applies_conservative_run_checkpoint_retention(tmp_path: Path) -> None:
+    root = tmp_path / "output"
+    _write(
+        root / "run_status" / "completed-old" / "run_status.json",
+        {"status": "completed", "finished_at": "2026-01-01T00:00:00+00:00"},
+    )
+    _write(
+        root / "run_status" / "completed-latest" / "run_status.json",
+        {"status": "completed", "finished_at": "2026-02-01T00:00:00+00:00"},
+    )
+    _write(
+        root / "run_status" / "interrupted" / "run_status.json",
+        {"status": "interrupted", "updated_at": "2026-01-15T00:00:00+00:00"},
+    )
+    _write(
+        root / "run_status" / "pinned" / "run_status.json",
+        {"status": "completed", "finished_at": "2025-01-01T00:00:00+00:00"},
+    )
+    _write(root / "run_status" / "pinned" / ".keep", "")
+
+    plan = build_cleanup_plan([root])
+    by_path = {entry["path"]: entry["action"] for entry in plan["entries"]}
+
+    assert by_path[str(root / "run_status" / "completed-old")] == "archive old completed run checkpoint"
+    assert by_path[str(root / "run_status" / "completed-latest")] == "keep: latest completed run checkpoint"
+    assert by_path[str(root / "run_status" / "interrupted")] == "keep: unfinished run checkpoint"
+    assert by_path[str(root / "run_status" / "pinned")] == "keep: pinned run checkpoint"
+
+
 def _write(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if isinstance(payload, str):

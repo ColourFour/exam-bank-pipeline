@@ -13,7 +13,6 @@ from typing import Any
 from . import __version__
 from .atomic_json import write_atomic_json
 from .config import AppConfig
-from .corpus import DEFAULT_CORPUS_MANIFEST
 from .core.paper_identity import paper_identity_from_parts
 from .missing_mark_scheme import is_known_missing_mark_scheme_companion
 from .models import QuestionRecord
@@ -111,7 +110,7 @@ def _build_run_manifest(
         "model_versions": _model_versions(records, config),
         "ocr_engine_version": _ocr_engine_version(records, config),
         "input_manifest_sha256": input_manifest_sha256,
-        "corpus_manifest_sha256": _corpus_manifest_sha256(),
+        "corpus_manifest_sha256": _corpus_manifest_sha256(config),
         "configuration_sha256": _configuration_sha256(config),
         "artifact_root": _artifact_root_value(output_root, output_path),
         "output_layout": {
@@ -163,8 +162,9 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _corpus_manifest_sha256() -> str:
-    return _sha256_file(DEFAULT_CORPUS_MANIFEST) if DEFAULT_CORPUS_MANIFEST.is_file() else ""
+def _corpus_manifest_sha256(config: AppConfig | None = None) -> str:
+    manifest_path = (config or AppConfig()).input.corpus_manifest
+    return _sha256_file(manifest_path) if manifest_path.is_file() else ""
 
 
 def _configuration_sha256(config: AppConfig | None) -> str:
@@ -602,7 +602,4 @@ def _compact_session_code(canonical_session: str, canonical_year_folder: str) ->
 
 def _allowed_compact_session_codes(canonical_session: str, canonical_year_folder: str) -> set[str]:
     code = _compact_session_code(canonical_session, canonical_year_folder)
-    yy = canonical_year_folder[-2:]
-    if code == f"s{yy}":
-        return {code, f"m{yy}"}
     return {code}

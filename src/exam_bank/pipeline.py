@@ -7,10 +7,14 @@ import re
 import shutil
 import tempfile
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from copy import deepcopy
 from dataclasses import asdict, dataclass, fields, is_dataclass
+from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
+
+import fcntl
 
 from . import __version__
 from .atomic_json import write_atomic_json
@@ -30,11 +34,12 @@ from .document_metadata import (
 )
 from .document_registry import DocumentRegistry, build_document_registry, build_document_registry_from_paths
 from .examiner_reports import examiner_report_topic_evidence
-from .exporters import export_records, records_to_output_questions, write_question_bank_payload
+from .exporters import export_records, records_to_output_questions, write_json as write_question_bank_records
 from .extraction_structure import build_structured_question_text
 from .image_rendering import render_question_image
 from .mark_schemes import (
     MarkSchemeImageResult,
+    analyze_mark_scheme,
     extract_mark_scheme_answers,
     find_mark_scheme,
     render_mark_scheme_images,
@@ -43,6 +48,11 @@ from .models import ClassificationResult, PageLayout, QuestionRecord, QuestionSp
 from .ocr import select_text_candidate
 from .output_layout import paper_family_dir_name, paper_instance_id
 from .pdf_extract import extract_pdf_layout
+from .publication_safety import (
+    PIPELINE_LOCK_FILENAME,
+    publication_committed_prefix,
+    publication_journal_prefix,
+)
 from .question_detection import (
     detect_question_anchor_candidates,
     detect_question_spans,
@@ -96,6 +106,28 @@ class PipelineResult:
     paper_count: int | None = None
 
 
+class EmptyQuestionPaperInputError(ValueError):
+    pass
+
+
+class EmptyPaperExtractionError(RuntimeError):
+    pass
+
+
+class PipelineOutputLockedError(RuntimeError):
+    pass
+
+
+class PipelinePublicationRecoveryError(RuntimeError):
+    pass
+
+
+EXTRACTION_CACHE_SCHEMA_VERSION = 3
+_PUBLICATION_JOURNAL_SCHEMA_VERSION = 1
+_PUBLICATION_JOURNAL_FILENAME = "publication_journal.json"
+_PUBLICATION_BACKUP_DIRNAME = "backups"
+
+
 def process_inputs(
     input_path: str | Path,
     config: AppConfig,
@@ -104,22 +136,24 @@ def process_inputs(
     resume_completed_batch_ids: set[str] | None = None,
     force_rerun: bool = False,
     workers: int = 1,
+    allow_empty: bool = False,
 ) -> PipelineResult:
     config.ensure_output_dirs()
     if progress:
         progress.update_phase("scanning_inputs", force_render=True)
     registry = build_document_registry(input_path, allowed_document_types=set(config.runtime.input_document_types))
-    return _process_registry_entries(
+    return _process_registry_entries_transactionally(
         registry,
         config,
         progress=progress,
         resume_completed_batch_ids=resume_completed_batch_ids,
         force_rerun=force_rerun,
         workers=workers,
+        allow_empty=allow_empty,
     )
 
 
-def process_batch(config: AppConfig, *, workers: int = 1) -> PipelineResult:
+def process_batch(config: AppConfig, *, workers: int = 1, allow_empty: bool = False) -> PipelineResult:
     config.ensure_output_dirs()
     active_document_types = set(config.runtime.input_document_types)
     source_paths: list[Path] = []
@@ -131,13 +165,481 @@ def process_batch(config: AppConfig, *, workers: int = 1) -> PipelineResult:
         source_paths,
         allowed_document_types=active_document_types,
     )
-    return _process_registry_entries(registry, config, workers=workers)
+    return _process_registry_entries_transactionally(
+        registry,
+        config,
+        workers=workers,
+        allow_empty=allow_empty,
+    )
 
 
-def process_folder(folder: str | Path, config: AppConfig, *, workers: int = 1) -> PipelineResult:
+def process_folder(
+    folder: str | Path,
+    config: AppConfig,
+    *,
+    workers: int = 1,
+    allow_empty: bool = False,
+) -> PipelineResult:
     config.ensure_output_dirs()
     registry = build_document_registry(folder, allowed_document_types=set(config.runtime.input_document_types))
-    return _process_registry_entries(registry, config, workers=workers)
+    return _process_registry_entries_transactionally(
+        registry,
+        config,
+        workers=workers,
+        allow_empty=allow_empty,
+    )
+
+
+def _process_registry_entries_transactionally(
+    registry: DocumentRegistry,
+    config: AppConfig,
+    *,
+    progress: Any | None = None,
+    resume_completed_batch_ids: set[str] | None = None,
+    force_rerun: bool = False,
+    workers: int = 1,
+    allow_empty: bool = False,
+) -> PipelineResult:
+    output_root = config.output.root_dir()
+    output_root.parent.mkdir(parents=True, exist_ok=True)
+    with _output_root_lock(output_root):
+        stage_root = Path(
+            tempfile.mkdtemp(
+                prefix=f".{output_root.name}.run-",
+                dir=output_root.parent,
+            )
+        )
+        stage_config = deepcopy(config)
+        stage_config.output.apply_root(stage_root)
+        stage_config.ensure_output_dirs()
+        try:
+            result = _process_registry_entries(
+                registry,
+                stage_config,
+                progress=progress,
+                resume_completed_batch_ids=resume_completed_batch_ids,
+                force_rerun=force_rerun,
+                workers=workers,
+                allow_empty=allow_empty,
+                publication_config=config,
+            )
+            staged_json_relative = result.json_path.relative_to(stage_root)
+            _promote_run_artifacts_transactionally(
+                stage_root,
+                output_root,
+                final_json_relative=staged_json_relative,
+            )
+            return PipelineResult(
+                records=result.records,
+                json_path=output_root / staged_json_relative,
+                output_root=output_root,
+                question_count=result.question_count,
+                paper_count=result.paper_count,
+            )
+        finally:
+            shutil.rmtree(stage_root, ignore_errors=True)
+
+
+@contextmanager
+def _output_root_lock(output_root: Path) -> Iterator[None]:
+    output_root.mkdir(parents=True, exist_ok=True)
+    lock_path = output_root / PIPELINE_LOCK_FILENAME
+    handle = lock_path.open("a+", encoding="utf-8")
+    acquired = False
+    try:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            acquired = True
+        except BlockingIOError as exc:
+            raise PipelineOutputLockedError(
+                f"Another pipeline run is already publishing to {output_root}."
+            ) from exc
+        handle.seek(0)
+        handle.truncate()
+        handle.write(json.dumps({"pid": os.getpid(), "output_root": str(output_root.resolve())}) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+        _recover_interrupted_publications(output_root)
+        yield
+    finally:
+        try:
+            if acquired:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        finally:
+            handle.close()
+
+
+def _promote_run_artifacts_transactionally(
+    stage_root: Path,
+    output_root: Path,
+    *,
+    final_json_relative: Path,
+) -> None:
+    _validate_publication_relative_path(final_json_relative)
+    if final_json_relative.name == PIPELINE_LOCK_FILENAME:
+        raise ValueError("The final JSON path cannot be a pipeline lock file")
+    staged_final_json = stage_root / final_json_relative
+    if not staged_final_json.is_file() or staged_final_json.is_symlink():
+        raise FileNotFoundError(f"Staged final JSON is missing: {staged_final_json}")
+
+    files = [
+        path
+        for path in stage_root.rglob("*")
+        if path.is_file() and path.name != PIPELINE_LOCK_FILENAME
+    ]
+    symlinks = [path for path in files if path.is_symlink()]
+    if symlinks:
+        raise ValueError(f"Staged publication contains a symbolic link: {symlinks[0]}")
+    files.sort(
+        key=lambda path: (
+            path.relative_to(stage_root) == final_json_relative,
+            str(path.relative_to(stage_root)),
+        )
+    )
+    if not files or files[-1] != staged_final_json:
+        raise FileNotFoundError(f"Staged final JSON is not publishable: {staged_final_json}")
+
+    journal_root, entries = _create_publication_journal(
+        files,
+        stage_root=stage_root,
+        output_root=output_root,
+        final_json_relative=final_json_relative,
+    )
+    try:
+        touched_directories: set[Path] = set()
+        for source, entry in zip(files, entries, strict=True):
+            touched_directories.update(
+                _promote_publication_file(
+                    source,
+                    output_root=output_root,
+                    journal_root=journal_root,
+                    entry=entry,
+                )
+            )
+        _fsync_publication_directories(touched_directories)
+        committed_root = _mark_publication_committed(journal_root, output_root=output_root)
+    except BaseException as publication_error:
+        try:
+            _rollback_publication_journal(
+                journal_root,
+                output_root=output_root,
+                entries=entries,
+            )
+        except BaseException as recovery_error:
+            raise PipelinePublicationRecoveryError(
+                "Publication failed and automatic rollback was interrupted; "
+                f"recovery journal retained at {journal_root}"
+            ) from recovery_error
+        _cleanup_publication_journal(journal_root)
+        raise publication_error
+    else:
+        _cleanup_publication_journal(committed_root)
+
+
+def _create_publication_journal(
+    files: list[Path],
+    *,
+    stage_root: Path,
+    output_root: Path,
+    final_json_relative: Path,
+) -> tuple[Path, list[dict[str, Any]]]:
+    entries: list[dict[str, Any]] = []
+    for source in files:
+        relative = source.relative_to(stage_root)
+        destination = _publication_destination(output_root, relative)
+        preexisting = _path_exists(destination)
+        if preexisting and destination.is_dir() and not destination.is_symlink():
+            raise IsADirectoryError(f"Publication destination is a directory: {destination}")
+        entries.append({"path": relative.as_posix(), "preexisting": preexisting})
+
+    journal_root = Path(
+        tempfile.mkdtemp(prefix=_publication_journal_prefix(output_root), dir=output_root.parent)
+    )
+    payload = {
+        "schema_name": "exam_bank.output_publication_journal",
+        "schema_version": _PUBLICATION_JOURNAL_SCHEMA_VERSION,
+        "output_root": str(output_root.resolve()),
+        "final_json_relative": final_json_relative.as_posix(),
+        "entries": entries,
+    }
+    try:
+        write_atomic_json(payload, journal_root / _PUBLICATION_JOURNAL_FILENAME, sort_keys=True)
+        _fsync_publication_directory(journal_root)
+        _fsync_publication_directory(output_root.parent)
+    except BaseException:
+        shutil.rmtree(journal_root, ignore_errors=True)
+        raise
+    return journal_root, entries
+
+
+def _promote_publication_file(
+    source: Path,
+    *,
+    output_root: Path,
+    journal_root: Path,
+    entry: dict[str, Any],
+) -> set[Path]:
+    relative = _journal_entry_relative_path(entry)
+    destination = _publication_destination(output_root, relative)
+    if source.name == PIPELINE_LOCK_FILENAME or destination.name == PIPELINE_LOCK_FILENAME:
+        raise ValueError("Pipeline lock files cannot be promoted")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if source.suffix == ".jsonl" and destination.is_file():
+        _merge_jsonl_into_source(destination, source)
+    if bool(entry["preexisting"]):
+        backup = _publication_backup_path(journal_root, relative)
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(destination, backup)
+        touched_directories = _publication_directory_chain(destination.parent, output_root)
+        touched_directories.update(_publication_directory_chain(backup.parent, journal_root))
+    else:
+        touched_directories = _publication_directory_chain(destination.parent, output_root)
+    os.replace(source, destination)
+    return touched_directories
+
+
+def _mark_publication_committed(journal_root: Path, *, output_root: Path) -> Path:
+    active_prefix = _publication_journal_prefix(output_root)
+    if not journal_root.name.startswith(active_prefix):
+        raise PipelinePublicationRecoveryError(f"Unexpected publication journal name: {journal_root}")
+    suffix = journal_root.name[len(active_prefix) :]
+    committed_root = journal_root.with_name(f"{_publication_committed_prefix(output_root)}{suffix}")
+    os.replace(journal_root, committed_root)
+    _fsync_publication_directory(output_root.parent)
+    return committed_root
+
+
+def _recover_interrupted_publications(output_root: Path) -> None:
+    parent = output_root.parent
+    if not parent.exists():
+        return
+    active_prefix = _publication_journal_prefix(output_root)
+    committed_prefix = _publication_committed_prefix(output_root)
+    siblings = sorted(parent.iterdir(), key=lambda path: path.name)
+    for committed_root in (
+        path for path in siblings if path.name.startswith(committed_prefix)
+    ):
+        if committed_root.is_symlink() or not committed_root.is_dir():
+            raise PipelinePublicationRecoveryError(
+                f"Unsafe committed publication marker: {committed_root}"
+            )
+        manifest_path = committed_root / _PUBLICATION_JOURNAL_FILENAME
+        if not manifest_path.is_file() or manifest_path.is_symlink():
+            raise PipelinePublicationRecoveryError(
+                f"Committed publication marker has no valid manifest: {committed_root}"
+            )
+        try:
+            payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise PipelinePublicationRecoveryError(
+                f"Committed publication manifest is unreadable: {manifest_path}"
+            ) from exc
+        _validate_publication_journal(payload, output_root=output_root)
+        _cleanup_publication_journal(committed_root)
+
+    for journal_root in (
+        path for path in siblings if path.name.startswith(active_prefix)
+    ):
+        if journal_root.is_symlink() or not journal_root.is_dir():
+            raise PipelinePublicationRecoveryError(f"Unsafe publication recovery journal: {journal_root}")
+        manifest_path = journal_root / _PUBLICATION_JOURNAL_FILENAME
+        if not manifest_path.is_file():
+            if any(journal_root.iterdir()):
+                raise PipelinePublicationRecoveryError(
+                    f"Publication recovery journal has no valid manifest: {journal_root}"
+                )
+            _cleanup_publication_journal(journal_root)
+            continue
+        try:
+            payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise PipelinePublicationRecoveryError(
+                f"Publication recovery journal is unreadable: {manifest_path}"
+            ) from exc
+        entries = _validate_publication_journal(payload, output_root=output_root)
+        _rollback_publication_journal(
+            journal_root,
+            output_root=output_root,
+            entries=entries,
+        )
+        _cleanup_publication_journal(journal_root)
+
+
+def _validate_publication_journal(
+    payload: Any,
+    *,
+    output_root: Path,
+) -> list[dict[str, Any]]:
+    if (
+        not isinstance(payload, dict)
+        or payload.get("schema_name") != "exam_bank.output_publication_journal"
+        or payload.get("schema_version") != _PUBLICATION_JOURNAL_SCHEMA_VERSION
+    ):
+        raise PipelinePublicationRecoveryError("Unsupported publication recovery journal schema")
+    try:
+        journal_output_root = Path(str(payload.get("output_root") or "")).resolve()
+    except (OSError, RuntimeError) as exc:
+        raise PipelinePublicationRecoveryError("Invalid output root in publication recovery journal") from exc
+    if journal_output_root != output_root.resolve():
+        raise PipelinePublicationRecoveryError(
+            "Publication recovery journal targets a different output root"
+        )
+    raw_entries = payload.get("entries")
+    if not isinstance(raw_entries, list) or not raw_entries:
+        raise PipelinePublicationRecoveryError("Publication recovery journal has no entries")
+    entries: list[dict[str, Any]] = []
+    seen: set[Path] = set()
+    for raw_entry in raw_entries:
+        if not isinstance(raw_entry, dict) or not isinstance(raw_entry.get("preexisting"), bool):
+            raise PipelinePublicationRecoveryError("Invalid publication recovery journal entry")
+        relative = _journal_entry_relative_path(raw_entry)
+        if relative in seen:
+            raise PipelinePublicationRecoveryError(
+                f"Duplicate path in publication recovery journal: {relative}"
+            )
+        seen.add(relative)
+        _publication_destination(output_root, relative)
+        entries.append({"path": relative.as_posix(), "preexisting": raw_entry["preexisting"]})
+    final_json_relative = Path(str(payload.get("final_json_relative") or ""))
+    _validate_publication_relative_path(final_json_relative)
+    if final_json_relative not in seen or Path(entries[-1]["path"]) != final_json_relative:
+        raise PipelinePublicationRecoveryError(
+            "Publication recovery journal does not end with the final JSON barrier"
+        )
+    return entries
+
+
+def _rollback_publication_journal(
+    journal_root: Path,
+    *,
+    output_root: Path,
+    entries: list[dict[str, Any]],
+) -> None:
+    for entry in reversed(entries):
+        relative = _journal_entry_relative_path(entry)
+        destination = _publication_destination(output_root, relative)
+        backup = _publication_backup_path(journal_root, relative)
+        if bool(entry["preexisting"]):
+            if _path_exists(backup):
+                if _path_exists(destination):
+                    if destination.is_dir() and not destination.is_symlink():
+                        raise PipelinePublicationRecoveryError(
+                            f"Cannot replace directory while recovering publication: {destination}"
+                        )
+                    destination.unlink()
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                os.replace(backup, destination)
+                _fsync_publication_directory(destination.parent)
+                _fsync_publication_directory(backup.parent)
+            elif not _path_exists(destination):
+                raise PipelinePublicationRecoveryError(
+                    f"Both live file and rollback backup are missing: {destination}"
+                )
+        elif _path_exists(destination):
+            if destination.is_dir() and not destination.is_symlink():
+                raise PipelinePublicationRecoveryError(
+                    f"Cannot remove directory while recovering publication: {destination}"
+                )
+            destination.unlink()
+            _fsync_publication_directory(destination.parent)
+
+
+def _publication_destination(output_root: Path, relative: Path) -> Path:
+    _validate_publication_relative_path(relative)
+    if relative.name == PIPELINE_LOCK_FILENAME:
+        raise PipelinePublicationRecoveryError("Publication journal cannot target a pipeline lock")
+    destination = output_root / relative
+    resolved_root = output_root.resolve()
+    resolved_parent = destination.parent.resolve()
+    if resolved_parent != resolved_root and resolved_root not in resolved_parent.parents:
+        raise PipelinePublicationRecoveryError(
+            f"Publication destination escapes the output root: {relative}"
+        )
+    return destination
+
+
+def _publication_backup_path(journal_root: Path, relative: Path) -> Path:
+    _validate_publication_relative_path(relative)
+    backup_root = journal_root / _PUBLICATION_BACKUP_DIRNAME
+    backup = backup_root / relative
+    resolved_journal_root = journal_root.resolve()
+    resolved_backup_root = backup_root.resolve()
+    resolved_parent = backup.parent.resolve()
+    if resolved_backup_root.parent != resolved_journal_root:
+        raise PipelinePublicationRecoveryError(
+            f"Publication backup root escapes the journal: {backup_root}"
+        )
+    if resolved_parent != resolved_backup_root and resolved_backup_root not in resolved_parent.parents:
+        raise PipelinePublicationRecoveryError(
+            f"Publication backup path escapes the journal: {relative}"
+        )
+    return backup
+
+
+def _journal_entry_relative_path(entry: dict[str, Any]) -> Path:
+    relative = Path(str(entry.get("path") or ""))
+    _validate_publication_relative_path(relative)
+    return relative
+
+
+def _validate_publication_relative_path(relative: Path) -> None:
+    if relative.is_absolute() or not relative.parts or ".." in relative.parts:
+        raise ValueError(f"Publication path must be a safe relative path: {relative}")
+
+
+def _publication_journal_prefix(output_root: Path) -> str:
+    return publication_journal_prefix(output_root)
+
+
+def _publication_committed_prefix(output_root: Path) -> str:
+    return publication_committed_prefix(output_root)
+
+
+def _path_exists(path: Path) -> bool:
+    return path.exists() or path.is_symlink()
+
+
+def _cleanup_publication_journal(journal_root: Path) -> None:
+    if journal_root.is_symlink():
+        raise PipelinePublicationRecoveryError(f"Refusing to remove symlinked journal: {journal_root}")
+    shutil.rmtree(journal_root, ignore_errors=True)
+    _fsync_publication_directory(journal_root.parent)
+
+
+def _fsync_publication_directory(path: Path) -> None:
+    descriptor = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _fsync_publication_directories(paths: set[Path]) -> None:
+    for path in sorted(paths, key=lambda item: (-len(item.parts), str(item))):
+        _fsync_publication_directory(path)
+
+
+def _publication_directory_chain(directory: Path, boundary: Path) -> set[Path]:
+    if directory != boundary and boundary not in directory.parents:
+        raise PipelinePublicationRecoveryError(
+            f"Publication directory escapes its durability boundary: {directory}"
+        )
+    paths = {directory}
+    current = directory
+    while current != boundary:
+        current = current.parent
+        paths.add(current)
+    return paths
+
+
+def _merge_jsonl_into_source(existing: Path, staged: Path) -> None:
+    lines = {
+        line
+        for path in (existing, staged)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+    staged.write_text("".join(f"{line}\n" for line in sorted(lines)), encoding="utf-8")
 
 
 def _process_registry_entries(
@@ -148,12 +650,24 @@ def _process_registry_entries(
     resume_completed_batch_ids: set[str] | None = None,
     force_rerun: bool = False,
     workers: int = 1,
+    allow_empty: bool = False,
+    publication_config: AppConfig | None = None,
 ) -> PipelineResult:
+    publication_config = publication_config or config
+    publication_root = publication_config.output.root_dir()
     if workers < 1:
         raise ValueError("workers must be at least 1")
+    if workers > 1 and config.debug.enabled:
+        raise ValueError("workers > 1 is incompatible with debug mode until debug streams are isolated")
+    entries = registry.question_paper_entries()
+    if not entries and not allow_empty:
+        unclassified = ", ".join(str(path) for path in registry.unclassified[:10]) or "none"
+        raise EmptyQuestionPaperInputError(
+            "No classified question-paper PDFs were found; refusing to replace the question bank with an empty output. "
+            f"Unclassified PDFs ({len(registry.unclassified)}): {unclassified}. "
+            "Pass allow_empty=True (CLI: --allow-empty) only when an empty bank is intentional."
+        )
     if workers > 1:
-        if config.debug.enabled:
-            raise ValueError("workers > 1 is incompatible with debug mode until debug streams are isolated")
         return _process_registry_entries_parallel(
             registry,
             config,
@@ -161,37 +675,36 @@ def _process_registry_entries(
             resume_completed_batch_ids=resume_completed_batch_ids,
             force_rerun=force_rerun,
             workers=workers,
+            publication_config=publication_config,
         )
 
     records: list[QuestionRecord] = []
-    question_payloads: list[dict[str, Any]] = []
-    entries = registry.question_paper_entries()
     resume_completed_batch_ids = resume_completed_batch_ids or set()
     if progress:
         progress.set_totals(total_batches=len(entries))
-    existing_output_questions = _load_existing_output_questions(config.output.json_dir / config.naming.json_name)
     for entry in entries:
         assert entry.question_paper is not None
         progress_context = _entry_progress_context(entry)
         batch_id = progress_context["batch_id"]
         paper = progress_context["paper"]
         paper_family = progress_context["paper_family"]
-        cache_key = _extraction_batch_cache_key(entry, config)
+        cache_key = _extraction_batch_cache_key(entry, publication_config)
         if progress and not force_rerun and batch_id in resume_completed_batch_ids:
-            cached_key = progress.read_batch_artifact(batch_id, "cache_key.json")
-            if isinstance(cached_key, dict) and cached_key.get("cache_key") == cache_key:
-                cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
-                if not isinstance(cached_questions, list):
-                    cached_questions = [item for item in existing_output_questions if item.get("paper") == paper]
-                if isinstance(cached_questions, list) and cached_questions:
-                    question_payloads.extend(cached_questions)
-                    progress.skip_batch(
-                        batch_id=batch_id,
-                        paper=paper,
-                        paper_family=paper_family,
-                        record_count=len(cached_questions),
-                    )
-                    continue
+            cached_records = _load_valid_cached_batch_records(
+                progress,
+                batch_id=batch_id,
+                expected_cache_key=cache_key,
+                publication_root=publication_root,
+            )
+            if cached_records:
+                records.extend(cached_records)
+                progress.skip_batch(
+                    batch_id=batch_id,
+                    paper=paper,
+                    paper_family=paper_family,
+                    record_count=len(cached_records),
+                )
+                continue
 
         question_metadata = entry.metadata_by_path.get(str(entry.question_paper))
         if progress:
@@ -217,6 +730,11 @@ def _process_registry_entries(
                 progress_session=progress_context["session"],
                 progress_component=progress_context["component"],
             )
+            _require_paper_records(
+                paper_records,
+                source_path=entry.question_paper,
+                batch_id=batch_id,
+            )
         except Exception as exc:
             if progress:
                 progress.fail_batch(
@@ -226,12 +744,21 @@ def _process_registry_entries(
                     error_message=f"{exc.__class__.__name__}: {exc}",
                 )
             raise
+        if config.output.root_dir().resolve() != publication_root.resolve():
+            for record in paper_records:
+                _rebase_record_artifact_paths(record, config.output.root_dir(), publication_root)
         records.extend(paper_records)
         if progress:
-            paper_payload = records_to_output_questions(paper_records, config.output.root_dir())
-            progress.write_batch_artifact(batch_id, "questions.json", paper_payload)
-            progress.write_batch_artifact(batch_id, "cache_key.json", {"cache_key": cache_key})
-            question_payloads.extend(paper_payload)
+            paper_payload = records_to_output_questions(paper_records, publication_root)
+            _write_batch_cache(
+                progress,
+                batch_id=batch_id,
+                cache_key=cache_key,
+                records=paper_records,
+                question_payload=paper_payload,
+                rendered_root=config.output.root_dir(),
+                publication_root=publication_root,
+            )
             progress.complete_batch(
                 batch_id=batch_id,
                 paper=paper,
@@ -239,7 +766,12 @@ def _process_registry_entries(
                 record_count=len(paper_records),
                 successful_records=len(paper_records),
             )
-    return _finalize_registry_result(records, question_payloads, config, progress=progress)
+    return _finalize_registry_result(
+        records,
+        config,
+        progress=progress,
+        publication_config=publication_config,
+    )
 
 
 def _process_registry_entries_parallel(
@@ -250,59 +782,75 @@ def _process_registry_entries_parallel(
     resume_completed_batch_ids: set[str] | None,
     force_rerun: bool,
     workers: int,
+    publication_config: AppConfig,
 ) -> PipelineResult:
     entries = registry.question_paper_entries()
     resume_completed_batch_ids = resume_completed_batch_ids or set()
-    existing_output_questions = _load_existing_output_questions(config.output.json_dir / config.naming.json_name)
-    question_payloads: list[dict[str, Any]] = []
+    publication_root = publication_config.output.root_dir()
     results_by_index: dict[int, list[QuestionRecord]] = {}
+    stages_by_index: dict[int, Path] = {}
     if progress:
         progress.set_totals(total_batches=len(entries))
 
-    stage_parent = config.output.root_dir() / ".workers"
-    stage_parent.mkdir(parents=True, exist_ok=True)
+    config.output.root_dir().mkdir(parents=True, exist_ok=True)
+    stage_parent = Path(tempfile.mkdtemp(prefix=".workers-", dir=config.output.root_dir()))
     futures: dict[Future[tuple[list[QuestionRecord], Path]], tuple[int, Any, dict[str, str], str]] = {}
     try:
-        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="exam-bank-paper") as executor:
-            for index, entry in enumerate(entries):
-                assert entry.question_paper is not None
-                context = _entry_progress_context(entry)
-                batch_id = context["batch_id"]
-                cache_key = _extraction_batch_cache_key(entry, config)
-                if progress and not force_rerun and batch_id in resume_completed_batch_ids:
-                    cached_key = progress.read_batch_artifact(batch_id, "cache_key.json")
-                    if isinstance(cached_key, dict) and cached_key.get("cache_key") == cache_key:
-                        cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
-                        if not isinstance(cached_questions, list):
-                            cached_questions = [
-                                item for item in existing_output_questions if item.get("paper") == context["paper"]
-                            ]
-                        if isinstance(cached_questions, list) and cached_questions:
-                            question_payloads.extend(cached_questions)
+        with (
+            ThreadPoolExecutor(max_workers=workers, thread_name_prefix="exam-bank-paper") as executor,
+            _cancel_pending_futures_on_error(futures),
+        ):
+            entry_iterator = iter(enumerate(entries))
+
+            def fill_submission_window() -> None:
+                while len(futures) < workers:
+                    try:
+                        index, entry = next(entry_iterator)
+                    except StopIteration:
+                        return
+                    assert entry.question_paper is not None
+                    context = _entry_progress_context(entry)
+                    batch_id = context["batch_id"]
+                    cache_key = _extraction_batch_cache_key(entry, publication_config)
+                    if progress and not force_rerun and batch_id in resume_completed_batch_ids:
+                        cached_records = _load_valid_cached_batch_records(
+                            progress,
+                            batch_id=batch_id,
+                            expected_cache_key=cache_key,
+                            publication_root=publication_root,
+                        )
+                        if cached_records:
+                            results_by_index[index] = cached_records
                             progress.skip_batch(
                                 batch_id=batch_id,
                                 paper=context["paper"],
                                 paper_family=context["paper_family"],
-                                record_count=len(cached_questions),
+                                record_count=len(cached_records),
                             )
                             continue
-                if progress:
-                    progress.start_batch(
-                        batch_id=batch_id,
-                        paper=context["paper"],
-                        paper_family=context["paper_family"],
-                        phase="parsing_pdfs",
-                        session=context["session"],
-                        component=context["component"],
-                    )
-                future = executor.submit(_build_registry_entry_in_stage, entry, config, stage_parent, context)
-                futures[future] = (index, entry, context, cache_key)
+                    if progress:
+                        progress.start_batch(
+                            batch_id=batch_id,
+                            paper=context["paper"],
+                            paper_family=context["paper_family"],
+                            phase="parsing_pdfs",
+                            session=context["session"],
+                            component=context["component"],
+                        )
+                    future = executor.submit(_build_registry_entry_in_stage, entry, config, stage_parent, context)
+                    futures[future] = (index, entry, context, cache_key)
 
-            for future in as_completed(futures):
+            fill_submission_window()
+            while futures:
+                future = next(as_completed(tuple(futures)))
                 index, _entry, context, cache_key = futures[future]
                 try:
                     paper_records, stage_root = future.result()
-                    _promote_worker_artifacts(stage_root, config.output.root_dir(), paper_records)
+                    _require_paper_records(
+                        paper_records,
+                        source_path=_entry.question_paper,
+                        batch_id=context["batch_id"],
+                    )
                 except Exception as exc:
                     if progress:
                         progress.fail_batch(
@@ -313,11 +861,21 @@ def _process_registry_entries_parallel(
                         )
                     raise
                 results_by_index[index] = paper_records
+                stages_by_index[index] = stage_root
+                if stage_root.resolve() != publication_root.resolve():
+                    for record in paper_records:
+                        _rebase_record_artifact_paths(record, stage_root, publication_root)
                 if progress:
-                    paper_payload = records_to_output_questions(paper_records, config.output.root_dir())
-                    progress.write_batch_artifact(context["batch_id"], "questions.json", paper_payload)
-                    progress.write_batch_artifact(context["batch_id"], "cache_key.json", {"cache_key": cache_key})
-                    question_payloads.extend(paper_payload)
+                    paper_payload = records_to_output_questions(paper_records, publication_root)
+                    _write_batch_cache(
+                        progress,
+                        batch_id=context["batch_id"],
+                        cache_key=cache_key,
+                        records=paper_records,
+                        question_payload=paper_payload,
+                        rendered_root=stage_root,
+                        publication_root=publication_root,
+                    )
                     progress.complete_batch(
                         batch_id=context["batch_id"],
                         paper=context["paper"],
@@ -325,11 +883,51 @@ def _process_registry_entries_parallel(
                         record_count=len(paper_records),
                         successful_records=len(paper_records),
                     )
+                del futures[future]
+                fill_submission_window()
+            for index in sorted(results_by_index):
+                future_stage = stages_by_index.get(index)
+                if future_stage is not None and future_stage.exists():
+                    _promote_worker_artifacts(future_stage, config.output.root_dir(), results_by_index[index])
     finally:
         shutil.rmtree(stage_parent, ignore_errors=True)
 
     records = [record for index in sorted(results_by_index) for record in results_by_index[index]]
-    return _finalize_registry_result(records, question_payloads, config, progress=progress)
+    return _finalize_registry_result(
+        records,
+        config,
+        progress=progress,
+        publication_config=publication_config,
+    )
+
+
+def _require_paper_records(
+    records: list[QuestionRecord],
+    *,
+    source_path: Path,
+    batch_id: str,
+) -> None:
+    if records:
+        return
+    raise EmptyPaperExtractionError(
+        "Classified question paper produced zero records; refusing to mark the batch complete. "
+        f"source={source_path} batch_id={batch_id}. "
+        "Check whether the PDF is corrupt or unreadable and inspect question-boundary detection."
+    )
+
+
+@contextmanager
+def _cancel_pending_futures_on_error(
+    futures: dict[Future[Any], Any],
+) -> Iterator[None]:
+    """Cancel queued work before executor shutdown handles an interruption."""
+
+    try:
+        yield
+    except BaseException:
+        for future in futures:
+            future.cancel()
+        raise
 
 
 def _build_registry_entry_in_stage(
@@ -427,33 +1025,37 @@ def _rebase_artifact_value(value: Any, replacements: list[tuple[str, str]]) -> A
 
 def _finalize_registry_result(
     records: list[QuestionRecord],
-    question_payloads: list[dict[str, Any]],
     config: AppConfig,
     *,
     progress: Any | None,
+    publication_config: AppConfig | None = None,
 ) -> PipelineResult:
+    publication_config = publication_config or config
+    publication_root = publication_config.output.root_dir()
     records = sorted(records, key=_canonical_record_sort_key)
     _normalize_debug_jsonl_files(config.output.debug_dir)
     if progress:
+        published_json_path = publication_config.output.json_dir / publication_config.naming.json_name
         progress.update_phase(
-            "writing_outputs", output_path=config.output.json_dir / config.naming.json_name, force_render=True
+            "writing_outputs", output_path=published_json_path, force_render=True
         )
-    if question_payloads and len(question_payloads) != len(records):
-        json_path = write_question_bank_payload(
-            _dedupe_question_payloads(question_payloads),
-            config.output.json_dir / config.naming.json_name,
-        )
-    else:
+    if publication_config is config:
         json_path = export_records(records, config)
+    else:
+        json_path = config.output.json_dir / config.naming.json_name
+        write_question_bank_records(
+            records,
+            json_path,
+            output_root=publication_root,
+            config=publication_config,
+        )
     _write_missing_image_repair_report(records, config)
     if config.debug.enabled:
         _write_batch_diagnostic(records, config)
     if progress:
-        progress.update_phase("writing_reports", output_path=json_path, force_render=True)
-    papers = {question.get("paper", "") for question in question_payloads if isinstance(question, dict)}
-    if not question_payloads:
-        papers = {record.paper_name for record in records}
-    question_count = len(question_payloads) if question_payloads else len(records)
+        progress.update_phase("writing_reports", output_path=published_json_path, force_render=True)
+    papers = {record.paper_name for record in records}
+    question_count = len(records)
     return PipelineResult(records, json_path, config.output.root_dir(), question_count=question_count, paper_count=len(papers))
 
 
@@ -472,15 +1074,65 @@ def _canonical_record_sort_key(record: QuestionRecord) -> tuple[str, str]:
         return f"{record.paper_name}:{record.question_number}", record.full_question_label
 
 
-def process_sample(question_pdf: str | Path, config: AppConfig, mark_scheme_pdf: str | Path | None = None) -> PipelineResult:
-    config.ensure_output_dirs()
-    records = build_records_for_pdf(question_pdf, config, mark_scheme_pdf=mark_scheme_pdf)
-    basename = _safe_basename(Path(question_pdf).stem)
-    json_path = export_records(records, config, basename=f"{basename}_sample")
-    _write_missing_image_repair_report(records, config)
-    if config.debug.enabled:
-        _write_batch_diagnostic(records, config, basename=f"{basename}_sample")
-    return PipelineResult(records, json_path, config.output.root_dir())
+def process_sample(
+    question_pdf: str | Path,
+    config: AppConfig,
+    mark_scheme_pdf: str | Path | None = None,
+) -> PipelineResult:
+    question_pdf = Path(question_pdf)
+    output_root = config.output.root_dir()
+    output_root.parent.mkdir(parents=True, exist_ok=True)
+    basename = _safe_basename(question_pdf.stem)
+    with _output_root_lock(output_root):
+        stage_root = Path(
+            tempfile.mkdtemp(
+                prefix=f".{output_root.name}.sample-",
+                dir=output_root.parent,
+            )
+        )
+        stage_config = deepcopy(config)
+        stage_config.output.apply_root(stage_root)
+        stage_config.ensure_output_dirs()
+        try:
+            records = build_records_for_pdf(
+                question_pdf,
+                stage_config,
+                mark_scheme_pdf=mark_scheme_pdf,
+            )
+            _require_paper_records(
+                records,
+                source_path=question_pdf,
+                batch_id=f"sample:{basename}",
+            )
+            for record in records:
+                _rebase_record_artifact_paths(record, stage_root, output_root)
+            staged_json_path = stage_config.output.json_dir / f"{basename}_sample.json"
+            write_question_bank_records(
+                records,
+                staged_json_path,
+                output_root=output_root,
+                config=config,
+            )
+            _write_missing_image_repair_report(records, stage_config)
+            if stage_config.debug.enabled:
+                _write_batch_diagnostic(
+                    records,
+                    stage_config,
+                    basename=f"{basename}_sample",
+                )
+            final_json_relative = staged_json_path.relative_to(stage_root)
+            _promote_run_artifacts_transactionally(
+                stage_root,
+                output_root,
+                final_json_relative=final_json_relative,
+            )
+            return PipelineResult(
+                records,
+                output_root / final_json_relative,
+                output_root,
+            )
+        finally:
+            shutil.rmtree(stage_root, ignore_errors=True)
 
 
 def _entry_progress_identity(entry) -> tuple[str, str, str]:
@@ -500,13 +1152,203 @@ def _extraction_batch_cache_key(entry: Any, config: AppConfig) -> str:
             }
         )
     payload = {
+        "cache_schema_version": EXTRACTION_CACHE_SCHEMA_VERSION,
         "pipeline_version": __version__,
+        "algorithm_fingerprint": _pipeline_code_fingerprint(),
         "configuration": asdict(config),
         "ocr_profile": asdict(config.ocr),
         "sources": sources,
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+@lru_cache(maxsize=1)
+def _pipeline_code_fingerprint() -> str:
+    package_root = Path(__file__).resolve().parent
+    digest = hashlib.sha256()
+    for path in sorted(package_root.rglob("*.py")):
+        relative = path.relative_to(package_root).as_posix()
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def _write_batch_cache(
+    progress: Any,
+    *,
+    batch_id: str,
+    cache_key: str,
+    records: list[QuestionRecord],
+    question_payload: list[dict[str, Any]],
+    rendered_root: Path,
+    publication_root: Path,
+) -> None:
+    records_payload = [asdict(record) for record in records]
+    assets_payload = _build_batch_asset_manifest(
+        question_payload,
+        rendered_root=rendered_root,
+        publication_root=publication_root,
+    )
+    progress.write_batch_artifact(batch_id, "questions.json", question_payload)
+    progress.write_batch_artifact(batch_id, "records.json", records_payload)
+    progress.write_batch_artifact(batch_id, "assets.json", assets_payload)
+    progress.write_batch_artifact(
+        batch_id,
+        "cache_key.json",
+        {
+            "cache_key": cache_key,
+            "cache_schema_version": EXTRACTION_CACHE_SCHEMA_VERSION,
+            "algorithm_fingerprint": _pipeline_code_fingerprint(),
+            "artifact_sha256": {
+                "questions.json": _json_payload_sha256(question_payload),
+                "records.json": _json_payload_sha256(records_payload),
+                "assets.json": _json_payload_sha256(assets_payload),
+            },
+        },
+    )
+
+
+def _load_valid_cached_batch_records(
+    progress: Any,
+    *,
+    batch_id: str,
+    expected_cache_key: str,
+    publication_root: Path,
+) -> list[QuestionRecord] | None:
+    cached_key = progress.read_batch_artifact(batch_id, "cache_key.json")
+    if not isinstance(cached_key, dict):
+        return None
+    if cached_key.get("cache_key") != expected_cache_key:
+        return None
+    if cached_key.get("cache_schema_version") != EXTRACTION_CACHE_SCHEMA_VERSION:
+        return None
+    cached_questions = progress.read_batch_artifact(batch_id, "questions.json")
+    cached_records = progress.read_batch_artifact(batch_id, "records.json")
+    cached_assets = progress.read_batch_artifact(batch_id, "assets.json")
+    if not isinstance(cached_questions, list) or not isinstance(cached_records, list) or not cached_records:
+        return None
+    expected_artifact_sha256 = cached_key.get("artifact_sha256")
+    if not isinstance(expected_artifact_sha256, dict):
+        return None
+    actual_artifact_sha256 = {
+        "questions.json": _json_payload_sha256(cached_questions),
+        "records.json": _json_payload_sha256(cached_records),
+        "assets.json": _json_payload_sha256(cached_assets),
+    }
+    if actual_artifact_sha256 != expected_artifact_sha256:
+        return None
+    if not _cached_asset_manifest_is_current(cached_assets, publication_root=publication_root):
+        return None
+    try:
+        allowed_fields = {field_info.name for field_info in fields(QuestionRecord)}
+        records = [
+            QuestionRecord(**{key: value for key, value in payload.items() if key in allowed_fields})
+            for payload in cached_records
+            if isinstance(payload, dict)
+        ]
+    except (TypeError, ValueError):
+        return None
+    if len(records) != len(cached_records):
+        return None
+    expected_paths = _question_payload_asset_paths(records_to_output_questions(records, publication_root))
+    cached_paths = {
+        str(item.get("path") or "")
+        for item in cached_assets.get("artifacts", [])
+        if isinstance(item, dict)
+    }
+    if expected_paths != cached_paths:
+        return None
+    return records
+
+
+def _json_payload_sha256(payload: Any) -> str:
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _build_batch_asset_manifest(
+    question_payload: list[dict[str, Any]],
+    *,
+    rendered_root: Path,
+    publication_root: Path,
+) -> dict[str, Any]:
+    artifacts: list[dict[str, Any]] = []
+    for relative in sorted(_question_payload_asset_paths(question_payload)):
+        rendered_path = rendered_root / relative
+        if not rendered_path.is_file():
+            raise FileNotFoundError(f"Rendered cache artifact is missing: {rendered_path}")
+        artifacts.append(
+            {
+                "path": relative,
+                "size_bytes": rendered_path.stat().st_size,
+                "sha256": _file_sha256(rendered_path),
+            }
+        )
+    return {
+        "schema_name": "exam_bank.extraction_batch_assets",
+        "schema_version": 1,
+        "artifact_count": len(artifacts),
+        "artifacts": artifacts,
+    }
+
+
+def _cached_asset_manifest_is_current(payload: Any, *, publication_root: Path) -> bool:
+    if (
+        not isinstance(payload, dict)
+        or payload.get("schema_name") != "exam_bank.extraction_batch_assets"
+        or payload.get("schema_version") != 1
+    ):
+        return False
+    artifacts = payload.get("artifacts")
+    if not isinstance(artifacts, list) or payload.get("artifact_count") != len(artifacts):
+        return False
+    resolved_root = publication_root.resolve()
+    for item in artifacts:
+        if not isinstance(item, dict):
+            return False
+        relative = Path(str(item.get("path") or ""))
+        if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+            return False
+        path = (publication_root / relative).resolve()
+        if resolved_root not in path.parents or not path.is_file():
+            return False
+        if path.stat().st_size != item.get("size_bytes"):
+            return False
+        if _file_sha256(path) != item.get("sha256"):
+            return False
+    return True
+
+
+def _question_payload_asset_paths(question_payload: list[dict[str, Any]]) -> set[str]:
+    paths: set[str] = set()
+    for question in question_payload:
+        if not isinstance(question, dict):
+            continue
+        for field_name in (
+            "question_image_path",
+            "mark_scheme_image_path",
+            "question_image_paths",
+            "mark_scheme_image_paths",
+        ):
+            value = question.get(field_name)
+            values = value if isinstance(value, list) else [value]
+            for item in values:
+                text = str(item or "").strip()
+                path = Path(text)
+                if not text:
+                    continue
+                if path.is_absolute() or ".." in path.parts:
+                    raise ValueError(f"Cached artifact path is not a safe relative path: {text}")
+                paths.add(path.as_posix())
+    return paths
 
 
 def _file_sha256(path: Path) -> str:
@@ -536,28 +1378,6 @@ def _entry_progress_context(entry) -> dict[str, str]:
     }
 
 
-def _load_existing_output_questions(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return []
-    questions = payload.get("questions") if isinstance(payload, dict) else None
-    if not isinstance(questions, list):
-        return []
-    return [question for question in questions if isinstance(question, dict)]
-
-
-def _dedupe_question_payloads(question_payloads: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    deduped: dict[str, dict[str, Any]] = {}
-    for question in question_payloads:
-        question_id = str(question.get("question_id") or "")
-        if question_id:
-            deduped[question_id] = question
-    return [deduped[key] for key in sorted(deduped)]
-
-
 def build_records_for_pdf(
     question_pdf: str | Path,
     config: AppConfig,
@@ -572,63 +1392,25 @@ def build_records_for_pdf(
     progress_component: str | None = None,
 ) -> list[QuestionRecord]:
     question_pdf = Path(question_pdf)
-    if progress:
-        progress.update_phase(
-            "parsing_pdfs",
-            current_paper=progress_paper,
-            current_paper_family=progress_paper_family,
-            current_session=progress_session,
-            current_component=progress_component,
-        )
-    layouts = extract_pdf_layout(question_pdf, config)
-    parsed_filename_metadata = filename_metadata or parse_filename_metadata(question_pdf)
-    internal_metadata = parse_internal_document_metadata(layouts)
-    document_metadata = reconcile_document_metadata(parsed_filename_metadata, internal_metadata)
-    if progress:
-        progress.update_phase(
-            "detecting_question_spans",
-            current_paper=progress_paper,
-            current_paper_family=progress_paper_family,
-            current_session=progress_session,
-            current_component=progress_component,
-        )
-    initial_spans = detect_question_spans(layouts, question_pdf, config)
-    source_paper_code, _source_paper_code_confidence = infer_source_paper_code(question_pdf.name)
-    source_paper_code = document_metadata.component or source_paper_code
-
-    initial_records = _build_records_from_spans(
-        question_pdf=question_pdf,
-        layouts=layouts,
-        spans=initial_spans,
-        config=config,
-        mark_scheme_pdf=mark_scheme_pdf,
-        examiner_report_paths=examiner_report_paths,
-        document_metadata=document_metadata,
-        registry_warnings=registry_warnings or [],
-        source_paper_code=source_paper_code,
-        progress=progress,
-        progress_paper=progress_paper,
-        progress_paper_family=progress_paper_family,
-        progress_session=progress_session,
-        progress_component=progress_component,
-    )
-    initial_total_check = _paper_total_check(
-        initial_records,
-        component=document_metadata.component or source_paper_code,
-        paper_family=initial_records[0].paper_family if initial_records else "",
-        syllabus_code=document_metadata.syllabus,
-    )
-
-    final_spans = initial_spans
-    final_records = initial_records
-    final_total_check = initial_total_check
-    final_layouts = layouts
-    rescan_triggered = False
-    rescan_result = RescanResult.NOT_TRIGGERED
-
-    if _should_trigger_paper_total_rescan(initial_total_check):
-        rescan_triggered = True
-        broader_config = _broadened_detection_config(config)
+    config.output.root_dir().mkdir(parents=True, exist_ok=True)
+    pass_parent = Path(tempfile.mkdtemp(prefix=".detection-passes-", dir=config.output.root_dir()))
+    initial_root = pass_parent / "initial"
+    initial_config = deepcopy(config)
+    initial_config.output.apply_root(initial_root)
+    initial_config.ensure_output_dirs()
+    try:
+        if progress:
+            progress.update_phase(
+                "parsing_pdfs",
+                current_paper=progress_paper,
+                current_paper_family=progress_paper_family,
+                current_session=progress_session,
+                current_component=progress_component,
+            )
+        layouts = extract_pdf_layout(question_pdf, initial_config)
+        parsed_filename_metadata = filename_metadata or parse_filename_metadata(question_pdf)
+        internal_metadata = parse_internal_document_metadata(layouts)
+        document_metadata = reconcile_document_metadata(parsed_filename_metadata, internal_metadata)
         if progress:
             progress.update_phase(
                 "detecting_question_spans",
@@ -637,13 +1419,14 @@ def build_records_for_pdf(
                 current_session=progress_session,
                 current_component=progress_component,
             )
-        rescanned_layouts = extract_pdf_layout(question_pdf, broader_config)
-        rescanned_spans = detect_question_spans(rescanned_layouts, question_pdf, broader_config)
-        rescanned_records = _build_records_from_spans(
+        initial_spans = detect_question_spans(layouts, question_pdf, initial_config)
+        source_paper_code, _source_paper_code_confidence = infer_source_paper_code(question_pdf.name)
+        source_paper_code = document_metadata.component or source_paper_code
+        initial_records = _build_records_from_spans(
             question_pdf=question_pdf,
-            layouts=rescanned_layouts,
-            spans=rescanned_spans,
-            config=config,
+            layouts=layouts,
+            spans=initial_spans,
+            config=initial_config,
             mark_scheme_pdf=mark_scheme_pdf,
             examiner_report_paths=examiner_report_paths,
             document_metadata=document_metadata,
@@ -655,49 +1438,103 @@ def build_records_for_pdf(
             progress_session=progress_session,
             progress_component=progress_component,
         )
-        rescanned_total_check = _paper_total_check(
-            rescanned_records,
+        initial_total_check = _paper_total_check(
+            initial_records,
             component=document_metadata.component or source_paper_code,
-            paper_family=rescanned_records[0].paper_family if rescanned_records else "",
+            paper_family=initial_records[0].paper_family if initial_records else "",
             syllabus_code=document_metadata.syllabus,
         )
-        (
-            final_spans,
-            final_records,
-            final_total_check,
-            rescan_result,
-        ) = _select_preferred_detection_pass(
-            initial_spans=initial_spans,
-            initial_records=initial_records,
-            initial_total_check=initial_total_check,
-            rescanned_spans=rescanned_spans,
-            rescanned_records=rescanned_records,
-            rescanned_total_check=rescanned_total_check,
-        )
-        if final_spans is rescanned_spans:
-            final_layouts = rescanned_layouts
 
-    _reconcile_paper_topics(final_records, config)
-    if progress:
-        progress.update_phase(
-            "validating_records",
-            current_paper=progress_paper,
-            current_paper_family=progress_paper_family,
-            current_session=progress_session,
-            current_component=progress_component,
+        final_spans = initial_spans
+        final_records = initial_records
+        final_total_check = initial_total_check
+        final_layouts = layouts
+        final_artifact_root = initial_root
+        rescan_triggered = False
+        rescan_result = RescanResult.NOT_TRIGGERED
+
+        if _should_trigger_paper_total_rescan(initial_total_check):
+            rescan_triggered = True
+            rescan_root = pass_parent / "rescan"
+            rescan_config = deepcopy(config)
+            rescan_config.output.apply_root(rescan_root)
+            rescan_config.ensure_output_dirs()
+            broader_config = _broadened_detection_config(config)
+            broader_config.output.apply_root(rescan_root)
+            broader_config.ensure_output_dirs()
+            if progress:
+                progress.update_phase(
+                    "detecting_question_spans",
+                    current_paper=progress_paper,
+                    current_paper_family=progress_paper_family,
+                    current_session=progress_session,
+                    current_component=progress_component,
+                )
+            rescanned_layouts = extract_pdf_layout(question_pdf, broader_config)
+            rescanned_spans = detect_question_spans(rescanned_layouts, question_pdf, broader_config)
+            rescanned_records = _build_records_from_spans(
+                question_pdf=question_pdf,
+                layouts=rescanned_layouts,
+                spans=rescanned_spans,
+                config=rescan_config,
+                mark_scheme_pdf=mark_scheme_pdf,
+                examiner_report_paths=examiner_report_paths,
+                document_metadata=document_metadata,
+                registry_warnings=registry_warnings or [],
+                source_paper_code=source_paper_code,
+                progress=progress,
+                progress_paper=progress_paper,
+                progress_paper_family=progress_paper_family,
+                progress_session=progress_session,
+                progress_component=progress_component,
+            )
+            rescanned_total_check = _paper_total_check(
+                rescanned_records,
+                component=document_metadata.component or source_paper_code,
+                paper_family=rescanned_records[0].paper_family if rescanned_records else "",
+                syllabus_code=document_metadata.syllabus,
+            )
+            (
+                final_spans,
+                final_records,
+                final_total_check,
+                rescan_result,
+            ) = _select_preferred_detection_pass(
+                initial_spans=initial_spans,
+                initial_records=initial_records,
+                initial_total_check=initial_total_check,
+                rescanned_spans=rescanned_spans,
+                rescanned_records=rescanned_records,
+                rescanned_total_check=rescanned_total_check,
+            )
+            if final_spans is rescanned_spans:
+                final_layouts = rescanned_layouts
+                final_artifact_root = rescan_root
+
+        _promote_worker_artifacts(final_artifact_root, config.output.root_dir(), final_records)
+        _reconcile_paper_topics(final_records, config)
+        if progress:
+            progress.update_phase(
+                "validating_records",
+                current_paper=progress_paper,
+                current_paper_family=progress_paper_family,
+                current_session=progress_session,
+                current_component=progress_component,
+            )
+        _apply_paper_total_metadata(
+            final_records,
+            initial_total_check=initial_total_check,
+            total_check=final_total_check,
+            rescan_triggered=rescan_triggered,
+            rescan_result=rescan_result,
+            focus=_paper_total_focus(final_records),
         )
-    _apply_paper_total_metadata(
-        final_records,
-        initial_total_check=initial_total_check,
-        total_check=final_total_check,
-        rescan_triggered=rescan_triggered,
-        rescan_result=rescan_result,
-        focus=_paper_total_focus(final_records),
-    )
-    _reconcile_question_mark_total_mismatches(final_records)
-    if config.debug.enabled:
-        _write_pdf_diagnostic(question_pdf, final_layouts, final_spans, final_records, config)
-    return final_records
+        _reconcile_question_mark_total_mismatches(final_records)
+        if config.debug.enabled:
+            _write_pdf_diagnostic(question_pdf, final_layouts, final_spans, final_records, config)
+        return final_records
+    finally:
+        shutil.rmtree(pass_parent, ignore_errors=True)
 
 
 def _build_records_from_spans(
@@ -745,6 +1582,7 @@ def _build_records_from_spans(
     if explicit_mark_scheme_identity_mismatch:
         mark_scheme_flags.append("mark_scheme_identity_mismatch")
     if matched_mark_scheme and matched_mark_scheme.exists():
+        mark_scheme_analysis = None
         try:
             if progress:
                 progress.update_phase(
@@ -755,7 +1593,13 @@ def _build_records_from_spans(
                     current_component=progress_component,
                     total_current_records=len(spans),
                 )
-            answers = extract_mark_scheme_answers(matched_mark_scheme, config, expected_numbers)
+            mark_scheme_analysis = analyze_mark_scheme(matched_mark_scheme, config)
+            answers = extract_mark_scheme_answers(
+                matched_mark_scheme,
+                config,
+                expected_numbers,
+                analysis=mark_scheme_analysis,
+            )
         except Exception as exc:
             mark_scheme_flags.append(f"mark_scheme_extract_failed:{exc.__class__.__name__}")
         try:
@@ -776,6 +1620,7 @@ def _build_records_from_spans(
                 question_subparts=expected_subparts,
                 question_validation_flags=expected_validation_flags,
                 question_identities=question_identities,
+                analysis=mark_scheme_analysis,
             )
         except Exception as exc:
             mark_scheme_flags.append(f"markscheme_image_export_failed:{exc.__class__.__name__}")
@@ -1313,7 +2158,7 @@ def _record_solution_marks(record: QuestionRecord) -> int | None:
 
 
 _PAPER_TOTALS_BY_SYLLABUS: dict[str, dict[str, int]] = {
-    "9709": {"P1": 75, "P3": 75, "P4": 50, "P5": 50},
+    "9709": {"P1": 75, "P3": 75, "P4": 50, "P5": 50, "P6": 50},
 }
 
 

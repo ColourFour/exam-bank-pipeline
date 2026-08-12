@@ -6,8 +6,10 @@ from pathlib import Path
 
 from exam_bank.corpus import (
     DEFAULT_CORPUS_MANIFEST,
+    DEFAULT_CORPUS_QUARANTINE_REPORT,
     DEFAULT_CORPUS_ROOT,
     hydrate_corpus,
+    quarantine_structural_failures,
     verify_corpus,
     write_corpus_manifest,
 )
@@ -59,6 +61,30 @@ def run_manifest(argv: list[str] | None = None) -> int:
         )
     )
     return 0
+
+
+def run_quarantine_invalid(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Plan or apply recoverable quarantine of structurally invalid corpus PDFs."
+    )
+    _add_manifest_and_root(parser)
+    parser.add_argument("--report", type=Path, default=DEFAULT_CORPUS_QUARANTINE_REPORT)
+    parser.add_argument("--active-manifest", type=Path, default=None)
+    parser.add_argument("--quarantine-id", default=None)
+    parser.add_argument("--generated-at", default=None)
+    parser.add_argument("--apply", action="store_true", help="Move eligible files into quarantine.")
+    args = parser.parse_args(argv)
+    report = quarantine_structural_failures(
+        args.manifest,
+        root=args.root,
+        report_path=args.report,
+        active_manifest_path=args.active_manifest,
+        quarantine_id=args.quarantine_id,
+        generated_at=args.generated_at,
+        apply=bool(args.apply),
+    )
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0 if report["operation_ok"] else 1
 
 
 def _add_manifest_and_root(parser: argparse.ArgumentParser) -> None:

@@ -14,7 +14,6 @@ from typing import Any, Iterable, Sequence
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import load_question_bank
 from .paper_components import normalize_component_code as _normalize_component_code
-from .paper_components import packet_family_for_component as _packet_family_for_component
 from .topic_packets import (
     DEFAULT_QUESTION_BANK_PATH,
     DEFAULT_TAXONOMY_PATH,
@@ -602,8 +601,11 @@ def _visual_audit_row(
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
-    source_component_family = _packet_family_for_component(normalization.source_component)
+    source_component_family = normalization.component_family
     target_family = anomaly["paper_family"]
     question_paths = _question_image_paths(record)
     mark_scheme_paths = _mark_scheme_image_paths(record)
@@ -929,6 +931,9 @@ def _packet_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) 
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
     return normalization.expected_family if normalization.resolved else normalization.current_family
 

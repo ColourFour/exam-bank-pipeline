@@ -55,15 +55,6 @@ def _write_sha(path: Path, payload_path: Path) -> str:
     return digest
 
 
-@pytest.fixture()
-def small_expected(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(artifact, "EXPECTED_RECORD_COUNT", 3)
-    monkeypatch.setattr(artifact, "EXPECTED_FAILED_COUNT", 0)
-    monkeypatch.setattr(artifact, "EXPECTED_REVIEW_REQUIRED_COUNT", 1)
-    monkeypatch.setattr(artifact, "EXPECTED_STRICT_FILTER_COUNT", 2)
-    monkeypatch.setattr(artifact, "EXPECTED_MISSING_HASH_COUNT", 0)
-
-
 def _paths(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
     return (
         tmp_path / "question_bank.json",
@@ -71,6 +62,10 @@ def _paths(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
         tmp_path / "data" / "question_bank.topic_routing.v1.json",
         tmp_path / "data" / "question_bank.topic_routing.v1.sha256",
     )
+
+
+def _release_manifest_path(tmp_path: Path) -> Path:
+    return tmp_path / "manifests" / "question_bank_release_manifest.v1.json"
 
 
 def _write_valid_artifacts(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
@@ -86,10 +81,16 @@ def _write_valid_artifacts(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
     _write_json(durable_sidecar_path, payload)
     _write_json(local_sidecar_path, payload)
     _write_sha(durable_sha_path, durable_sidecar_path)
+    artifact.build_topic_routing_release_manifest(
+        question_bank_path=question_bank_path,
+        durable_sidecar_path=durable_sidecar_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
+        base_dir=tmp_path,
+    )
     return question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path
 
 
-def test_topic_routing_artifact_verifies_matching_checksum_and_counts(tmp_path: Path, small_expected: None) -> None:
+def test_topic_routing_artifact_verifies_matching_checksum_and_counts(tmp_path: Path) -> None:
     question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
 
     report = artifact.verify_topic_routing_artifact(
@@ -97,6 +98,7 @@ def test_topic_routing_artifact_verifies_matching_checksum_and_counts(tmp_path: 
         local_sidecar_path=local_sidecar_path,
         durable_sidecar_path=durable_sidecar_path,
         durable_sha256_path=durable_sha_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
     )
 
     assert report["ok"] is True
@@ -107,7 +109,7 @@ def test_topic_routing_artifact_verifies_matching_checksum_and_counts(tmp_path: 
     assert report["id_coverage"]["missing_count"] == 0
 
 
-def test_topic_routing_artifact_detects_local_durable_mismatch(tmp_path: Path, small_expected: None) -> None:
+def test_topic_routing_artifact_detects_local_durable_mismatch(tmp_path: Path) -> None:
     question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
     local_payload = _sidecar(
         {
@@ -123,6 +125,7 @@ def test_topic_routing_artifact_detects_local_durable_mismatch(tmp_path: Path, s
         local_sidecar_path=local_sidecar_path,
         durable_sidecar_path=durable_sidecar_path,
         durable_sha256_path=durable_sha_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
     )
 
     assert report["ok"] is False
@@ -130,20 +133,58 @@ def test_topic_routing_artifact_detects_local_durable_mismatch(tmp_path: Path, s
     assert "Local output/json topic-routing sidecar does not match the durable sidecar artifact." in report["errors"]
 
 
-def test_topic_routing_artifact_fails_when_local_sidecar_missing(tmp_path: Path, small_expected: None) -> None:
+def test_verify_command_ignores_stale_optional_local_cache(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
+    local_payload = _sidecar(
+        {
+            "q1": _route(),
+            "q2": _route(evidence_hash="b" * 64),
+            "q3": _route(review_required=True),
+        }
+    )
+    _write_json(local_sidecar_path, local_payload)
+
+    exit_code = artifact.main(
+        [
+            "verify",
+            "--question-bank",
+            str(question_bank_path),
+            "--local-sidecar",
+            str(local_sidecar_path),
+            "--durable-sidecar",
+            str(durable_sidecar_path),
+            "--durable-sha256",
+            str(durable_sha_path),
+            "--release-manifest",
+            str(_release_manifest_path(tmp_path)),
+        ]
+    )
+
+    report = json.loads(capsys.readouterr().out)
+    assert exit_code == 0
+    assert report["ok"] is True
+    assert report["sha256"]["local_matches_durable"] is False
+
+
+def test_topic_routing_artifact_allows_local_cache_to_be_missing(tmp_path: Path) -> None:
     question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
     local_sidecar_path.unlink()
 
-    with pytest.raises(artifact.TopicRoutingArtifactError, match="Missing local_sidecar"):
-        artifact.verify_topic_routing_artifact(
-            question_bank_path=question_bank_path,
-            local_sidecar_path=local_sidecar_path,
-            durable_sidecar_path=durable_sidecar_path,
-            durable_sha256_path=durable_sha_path,
-        )
+    report = artifact.verify_topic_routing_artifact(
+        question_bank_path=question_bank_path,
+        local_sidecar_path=local_sidecar_path,
+        durable_sidecar_path=durable_sidecar_path,
+        durable_sha256_path=durable_sha_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
+    )
+
+    assert report["ok"] is True
+    assert report["sha256"]["local_sidecar"] is None
 
 
-def test_topic_routing_artifact_detects_missing_question_bank_ids(tmp_path: Path, small_expected: None) -> None:
+def test_topic_routing_artifact_detects_missing_question_bank_ids(tmp_path: Path) -> None:
     question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
     payload = _sidecar(
         {
@@ -161,6 +202,7 @@ def test_topic_routing_artifact_detects_missing_question_bank_ids(tmp_path: Path
         local_sidecar_path=local_sidecar_path,
         durable_sidecar_path=durable_sidecar_path,
         durable_sha256_path=durable_sha_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
     )
 
     assert report["ok"] is False
@@ -168,7 +210,7 @@ def test_topic_routing_artifact_detects_missing_question_bank_ids(tmp_path: Path
     assert report["id_coverage"]["extra_ids"] == ["extra"]
 
 
-def test_restore_copies_durable_sidecar_then_verifies(tmp_path: Path, small_expected: None) -> None:
+def test_restore_copies_durable_sidecar_then_verifies(tmp_path: Path) -> None:
     question_bank_path, local_sidecar_path, durable_sidecar_path, durable_sha_path = _write_valid_artifacts(tmp_path)
     local_sidecar_path.unlink()
 
@@ -177,6 +219,7 @@ def test_restore_copies_durable_sidecar_then_verifies(tmp_path: Path, small_expe
         local_sidecar_path=local_sidecar_path,
         durable_sidecar_path=durable_sidecar_path,
         durable_sha256_path=durable_sha_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
     )
 
     assert report["ok"] is True
@@ -190,3 +233,31 @@ def test_production_sidecar_path_requires_provenance_guard() -> None:
     assert not artifact.should_enforce_production_topic_routing_provenance(
         Path("/tmp/question_bank.topic_routing.v1.json")
     )
+
+
+def test_resolver_uses_manifest_bound_durable_sidecar(tmp_path: Path) -> None:
+    question_bank_path, _, durable_sidecar_path, _ = _write_valid_artifacts(tmp_path)
+
+    resolved = artifact.resolve_topic_routing_sidecar(
+        question_bank_path=question_bank_path,
+        release_manifest_path=_release_manifest_path(tmp_path),
+    )
+
+    assert resolved == durable_sidecar_path
+
+
+def test_resolver_rejects_production_path_without_release_manifest(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    question_bank_path, local_sidecar_path, durable_sidecar_path, _ = _write_valid_artifacts(tmp_path)
+    monkeypatch.setattr(artifact, "DEFAULT_QUESTION_BANK_PATH", question_bank_path)
+    monkeypatch.setattr(artifact, "DEFAULT_LOCAL_SIDECAR_PATH", local_sidecar_path)
+    monkeypatch.setattr(artifact, "DEFAULT_DURABLE_SIDECAR_PATH", durable_sidecar_path)
+
+    with pytest.raises(artifact.TopicRoutingArtifactError, match="Missing release manifest"):
+        artifact.resolve_topic_routing_sidecar(
+            question_bank_path=question_bank_path,
+            requested_path=local_sidecar_path,
+            release_manifest_path=tmp_path / "missing-release.json",
+        )

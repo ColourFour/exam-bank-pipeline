@@ -19,8 +19,18 @@ This file is generated from the lazy public command registry in `exam_bank.comma
 - `exam-bank data hydrate` — Restore checksum-verified source documents.
 - `exam-bank data verify` — Verify source documents against the corpus manifest.
 - `exam-bank data manifest` — Build a source corpus manifest.
+- `exam-bank data normalize-corpus-sessions` — Normalize source session filenames from publisher evidence.
+- `exam-bank data migrate-session-identity` — Migrate legacy March question identities using source evidence.
+- `exam-bank data rebind-text-gold` — Rebind verified text gold to current canonical image hashes.
+- `exam-bank data validate-review-assets` — Validate review decisions against current canonical image hashes.
+- `exam-bank data quarantine-invalid` — Recoverably quarantine structurally invalid source PDFs.
 - `exam-bank data inventory` — Inventory generated output.
 - `exam-bank data cleanup-plan` — Build a non-destructive output cleanup plan.
+- `exam-bank data audit-storage` — Audit exact output duplicates and optionally quarantine safe candidates.
+- `exam-bank data build-asset-manifest` — Build the canonical image asset manifest.
+- `exam-bank data validate-assets` — Validate asset references across canonical and downstream artifacts.
+- `exam-bank data export-questions` — Export canonical questions through the versioned interchange contract.
+- `exam-bank data validate-questions` — Validate a versioned Question interchange export.
 - `exam-bank data normalize` — Normalize generated output layout.
 - `exam-bank data diff` — Compare export summaries.
 
@@ -28,6 +38,9 @@ This file is generated from the lazy public command registry in `exam_bank.comma
 
 - `exam-bank topic route` — Run strict AI topic routing.
 - `exam-bank topic refresh-routing` — Refresh deterministic topic-routing artifacts.
+- `exam-bank topic release-manifest` — Bind the question bank and durable topic routing into a release manifest.
+- `exam-bank topic verify-release` — Verify the hash-bound topic-routing release.
+- `exam-bank topic restore-release` — Restore the local topic-routing cache from the verified release.
 - `exam-bank topic rescore` — Rescore topic confidence deterministically.
 - `exam-bank topic review-batch` — Build a topic review batch.
 - `exam-bank topic review-run` — Run topic reviews.
@@ -45,6 +58,11 @@ This file is generated from the lazy public command registry in `exam_bank.comma
 - `exam-bank asterion content-lab` — Build Asterion Content Lab candidates.
 - `exam-bank asterion package` — Package a checksum-verified Asterion release.
 - `exam-bank asterion verify` — Verify an Asterion release package.
+
+## `exam-bank release`
+
+- `exam-bank release build` — Build the hash-bound multi-artifact release manifest.
+- `exam-bank release verify` — Verify the release manifest and every bound artifact.
 
 ## `exam-bank ai`
 
@@ -66,40 +84,10 @@ This file is generated from the lazy public command registry in `exam_bank.comma
 
 - `exam-bank review promote` — Promote a provenance-stamped canonical review artifact.
 
-## `exam-bank classroom`
-
-- `exam-bank classroom serve` — Serve the local classroom dashboard.
-- `exam-bank classroom init` — Create a local class workspace.
-- `exam-bank classroom add-assignment` — Add an assignment to a class.
-- `exam-bank classroom dispatch-due` — Dispatch due classroom messages.
-- `exam-bank classroom ingest-submissions` — Ingest assignment submissions.
-- `exam-bank classroom quiz` — Run the local quiz-packet workflow.
-- `exam-bank classroom grade-bma` — Build B/M/A grading artifacts.
-- `exam-bank classroom ingest-assignment` — Ingest assignment submissions into the local workspace.
-- `exam-bank classroom review-submissions` — Build a human review queue for submissions.
-- `exam-bank classroom draft-grades` — Build draft grades from reviewed evidence.
-
-## `exam-bank email`
-
-- `exam-bank email check` — Check the configured email provider.
-- `exam-bank email send-test` — Run a controlled send test.
-- `exam-bank email receive-test` — Run a controlled receive test.
-- `exam-bank email smoke-test` — Run the email smoke workflow.
-- `exam-bank email ingest-submissions` — Ingest submissions from a local email export.
-- `exam-bank email import-live` — Import live mailbox submissions into the restricted local root.
-- `exam-bank email build-outgoing` — Build the outgoing classroom email queue.
-- `exam-bank email dry-run-outgoing` — Preview the outgoing email queue without sending.
-- `exam-bank email fake-send-outgoing` — Exercise outgoing delivery using the fake provider.
-
 ## `exam-bank marks`
 
 - `exam-bank marks build` — Build the deterministic mark-event sidecar.
 - `exam-bank marks validate` — Validate the mark-event sidecar.
-
-## `exam-bank autograde`
-
-- `exam-bank autograde build` — Build fail-closed eligible items.
-- `exam-bank autograde validate` — Validate fail-closed eligible items.
 
 ## `exam-bank advisory`
 

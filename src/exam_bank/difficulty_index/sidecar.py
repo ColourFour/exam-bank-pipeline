@@ -10,6 +10,7 @@ from typing import Any
 
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.difficulty_index import DIFFICULTY_INDEX_SCHEMA_NAME, DIFFICULTY_INDEX_SCHEMA_VERSION
+from exam_bank.topic_routing_artifact import resolve_topic_routing_sidecar
 
 
 BAND_LABELS = {
@@ -47,7 +48,7 @@ def build_difficulty_index_sidecar(
     reports_dir: str | Path | None = "reports",
     artifact_root: str | Path = "output",
     mark_events_path: str | Path | None = "output/json/question_bank.mark_events.v1.json",
-    topic_routing_path: str | Path | None = "output/json/question_bank.topic_routing.v1.json",
+    topic_routing_path: str | Path | None = None,
     advisory_evidence_path: str | Path | None = "output/advisory_evidence/question_bank.advisory_evidence.v1.json",
     generated_at: str | None = None,
     dry_run: bool = False,
@@ -56,7 +57,13 @@ def build_difficulty_index_sidecar(
     question_bank = _load_json(question_bank_path)
     questions = _question_records(question_bank)
     mark_events = _records_by_question_id(_load_optional_json(mark_events_path).get("records", []))
-    topic_routing = _topic_routing_by_question_id(_load_optional_json(topic_routing_path).get("records", {}))
+    effective_topic_routing_path = resolve_topic_routing_sidecar(
+        question_bank_path=question_bank_path,
+        requested_path=topic_routing_path,
+    )
+    topic_routing = _topic_routing_by_question_id(
+        _load_optional_json(effective_topic_routing_path).get("records", {})
+    )
     advisory = _records_by_question_id(_load_optional_json(advisory_evidence_path).get("records", []))
 
     records = [
@@ -77,6 +84,12 @@ def build_difficulty_index_sidecar(
         "generated_at": generated_at or _utc_now_iso(),
         "source_question_bank_path": _rel_path(question_bank_path),
         "source_question_bank_sha256": _sha256_file(question_bank_path),
+        "source_topic_routing_path": _rel_path(effective_topic_routing_path)
+        if effective_topic_routing_path
+        else None,
+        "source_topic_routing_sha256": _sha256_file(effective_topic_routing_path)
+        if effective_topic_routing_path
+        else None,
         "interpretation": {
             "difficulty_index_0_100": "Internal advisory sorting score only; not a psychometric measurement or candidate success-rate claim.",
             "paper_relative_difficulty_band": "Assigned within each paper after sorting by the advisory index.",

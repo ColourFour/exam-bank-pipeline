@@ -64,6 +64,30 @@ def test_inventory_flags_duplicate_identities_and_dry_run_does_not_write(tmp_pat
     assert summary["inventories"]["grade_thresholds"]["documents"][0]["document_type"] == "grade_thresholds"
 
 
+def test_inventory_recurses_through_mixed_corpus_root_and_selects_document_type(tmp_path: Path) -> None:
+    corpus = tmp_path / "pastpapers" / "9709"
+    reports = corpus / "2024" / "exam_reports"
+    thresholds = corpus / "2024" / "grade_thresholds"
+    questions = corpus / "2024" / "question_papers"
+    reports.mkdir(parents=True)
+    thresholds.mkdir(parents=True)
+    questions.mkdir(parents=True)
+    _write_pdf(reports / "9709_s24_er_0.pdf", "Paper 9709/12\nComments on specific questions\nQuestion 1\nOK")
+    _write_pdf(thresholds / "9709_s24_gt_0.pdf", "Component 12\n75\n48\n39\n31\n23\n14")
+    _write_pdf(questions / "9709_s24_qp_12.pdf", "Question paper")
+
+    summary = write_all_inventories(
+        output_root=tmp_path / "advisory",
+        examiner_reports_dir=corpus,
+        grade_thresholds_dir=corpus,
+    )
+
+    examiner_documents = summary["inventories"]["examiner_report"]["documents"]
+    threshold_documents = summary["inventories"]["grade_thresholds"]["documents"]
+    assert [document["filename"] for document in examiner_documents] == ["9709_s24_er_0.pdf"]
+    assert [document["filename"] for document in threshold_documents] == ["9709_s24_gt_0.pdf"]
+
+
 def test_native_extraction_preserves_pages_and_method(tmp_path: Path) -> None:
     pdf = _write_pdf(tmp_path / "9709 Mathematics June 2025 Examiner Report.pdf", "Paper 9709/31\nQuestion 1\nComplex numbers")
     payload = extract_native_pdf_text(

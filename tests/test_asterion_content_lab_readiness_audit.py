@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -283,11 +284,22 @@ def _write_fixture(tmp_path: Path) -> dict[str, Path]:
         {
             "decisions": [
                 {
+                    "decision_id": "reviewed-mark-event:31spring24_q01_me0001",
                     "event_id": "31spring24_q01_me0001",
                     "status": "approved",
                     "satisfies_generation_gate": True,
                     "source_question_id": "31spring24_q01",
                     "part_path": ["whole"],
+                    "question_image_ref": {
+                        "path": "p3/31spring24/questions/q01.png",
+                        "sha256": hashlib.sha256(b"question").hexdigest(),
+                        "verified": True,
+                    },
+                    "mark_scheme_image_ref": {
+                        "path": "p3/31spring24/mark_scheme/q01.png",
+                        "sha256": hashlib.sha256(b"mark").hexdigest(),
+                        "verified": True,
+                    },
                 }
             ]
         },
@@ -368,6 +380,20 @@ def _reviewed_source_skill_record(
         "reviewer": {"review_status": status},
         "reviewed_source_skill_ids": ["9709_p3_3_1_algebra"],
         "mark_event_refs": [{"event_id": f"{question_id}_me0001"}],
+        "source_question_asset_refs": [
+            {
+                "path": f"p3/31spring24/questions/q{question_number:02d}.png",
+                "sha256": hashlib.sha256(b"question").hexdigest(),
+                "verified": True,
+            }
+        ],
+        "source_mark_scheme_asset_refs": [
+            {
+                "path": f"p3/31spring24/mark_scheme/q{question_number:02d}.png",
+                "sha256": hashlib.sha256(b"mark").hexdigest(),
+                "verified": True,
+            }
+        ],
         "blockers": blockers or [],
     }
 

@@ -36,19 +36,22 @@ def test_config_yaml_only_advertises_active_operational_sections() -> None:
         assert section not in config_yaml
 
 
-def test_package_metadata_matches_full_local_platform() -> None:
+def test_package_metadata_matches_exam_bank_pipeline() -> None:
     pyproject = PYPROJECT_PATH.read_text(encoding="utf-8")
 
-    assert 'description = "Image-first CAIE 9709 exam-bank extraction and local teaching platform."' in pyproject
+    assert 'description = "Image-first CAIE 9709 exam-bank extraction and normalization pipeline."' in pyproject
     assert '"pandas>=2.0.0"' not in pyproject
+    assert '"pdfplumber>=' not in pyproject
     assert '"reportlab>=4.0.0"' not in pyproject
+    assert "ai = [" in pyproject
 
 
-def test_package_data_includes_runtime_and_dashboard_assets() -> None:
+def test_package_data_includes_runtime_and_interchange_schema() -> None:
     pyproject = PYPROJECT_PATH.read_text(encoding="utf-8")
 
     assert '"runtime_profile.json"' in pyproject
-    assert '"classroom_dashboard/static/*"' in pyproject
+    assert '"schemas/*.json"' in pyproject
+    assert "classroom_dashboard" not in pyproject
 
 
 def test_generated_inventory_files_are_ignored() -> None:
@@ -61,8 +64,12 @@ def test_generated_inventory_files_are_ignored() -> None:
         "output_inventory.md",
         "output_cleanup_plan.md",
         "output_ocr_candidate/",
+        "outputs/",
         "reports/*",
         ".agent-runs/",
+        "/build/",
+        "/dist/",
+        "/input/quarantine/",
     ]:
         assert pattern in gitignore
 
@@ -116,6 +123,9 @@ def test_submission_private_roots_are_gitignored() -> None:
             "output/submissions/drafts/reminder.txt",
             "reports/submissions/audit.jsonl",
             "reports/submissions/run-summary.json",
+            "data/classes/private-roster.csv",
+            "reports/email/provider-smoke.json",
+            ".env",
         ],
         check=True,
         capture_output=True,
@@ -128,6 +138,9 @@ def test_submission_private_roots_are_gitignored() -> None:
         "output/submissions/drafts/reminder.txt",
         "reports/submissions/audit.jsonl",
         "reports/submissions/run-summary.json",
+        "data/classes/private-roster.csv",
+        "reports/email/provider-smoke.json",
+        ".env",
     }
 
     placeholder_check = subprocess.run(
@@ -146,9 +159,9 @@ def test_submission_private_roots_are_gitignored() -> None:
     assert placeholder_check.stdout == ""
 
 
-def test_submission_contract_docs_exist() -> None:
-    assert Path("docs/SUBMISSION_TRACKING_CONTRACT.md").is_file()
-    assert Path("docs/SUBMISSION_PRIVACY_BOUNDARIES.md").is_file()
+def test_split_migration_docs_exist() -> None:
+    assert Path("docs/REPOSITORY_SPLIT_AUDIT_2026_08_11.md").is_file()
+    assert Path("docs/INTERCHANGE_CONTRACT.md").is_file()
 
 
 def test_os_and_python_cache_junk_is_absent_and_ignored() -> None:
@@ -199,6 +212,25 @@ def test_generated_and_external_data_are_not_tracked() -> None:
         or (path.startswith("output/") and path not in {"output/json/.gitkeep", "output/submissions/.gitkeep"})
     ]
     assert forbidden == []
+
+
+def test_tracked_code_and_manifests_do_not_embed_personal_absolute_paths() -> None:
+    tracked = subprocess.run(
+        ["git", "ls-files", "*.py", "manifests/**/*.json"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    offenders = []
+    for path in tracked:
+        if not Path(path).is_file():
+            continue
+        text = Path(path).read_text(encoding="utf-8")
+        unix_home_prefix = "/" + "Users/"
+        windows_home_prefix = "C:" + "\\Users\\"
+        if unix_home_prefix in text or windows_home_prefix in text:
+            offenders.append(path)
+    assert offenders == []
 
 
 def test_large_tracked_files_are_confined_to_explicit_data_contracts() -> None:

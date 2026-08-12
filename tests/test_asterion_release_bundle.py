@@ -9,6 +9,12 @@ from exam_bank import asterion_release_bundle as bundle
 from exam_bank.topic_routing_artifact import TopicRoutingArtifactError
 
 
+def test_release_package_uses_durable_validation_report_default() -> None:
+    assert bundle.DEFAULT_VALIDATION_REPORT_PATH == Path(
+        "output/asterion/exports/latest/asterion_all_course_export_validation.v1.json"
+    )
+
+
 def _write(path: Path, payload: dict | str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if isinstance(payload, dict):
@@ -65,7 +71,7 @@ def _write_inputs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
     _write(paths["runtime"], {"name": "runtime"})
     _write(paths["content_lab"], {"name": "content"})
     _write(paths["validation"], _validation_report())
-    monkeypatch.setattr(bundle, "verify_topic_routing_artifact", lambda: _sidecar_report())
+    monkeypatch.setattr(bundle, "verify_topic_routing_artifact", lambda **_kwargs: _sidecar_report())
     return paths
 
 
@@ -91,6 +97,34 @@ def test_asterion_release_manifest_creation_includes_all_exports_and_counts(
     assert manifest["counts"]["p3_runtime_records"] == 1
     assert manifest["counts"]["non_p3_runtime_records"] == 0
     assert manifest["validation"]["ok"] is True
+
+
+def test_asterion_release_uses_durable_sidecar_without_requiring_local_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    paths = _paths(tmp_path)
+    _write(paths["catalog"], {"name": "catalog"})
+    _write(paths["runtime"], {"name": "runtime"})
+    _write(paths["content_lab"], {"name": "content"})
+    _write(paths["validation"], _validation_report())
+    observed: dict[str, object] = {}
+
+    def verify_sidecar(**kwargs) -> dict:
+        observed.update(kwargs)
+        return _sidecar_report()
+
+    monkeypatch.setattr(bundle, "verify_topic_routing_artifact", verify_sidecar)
+
+    bundle.build_asterion_release_manifest(
+        output_path=paths["output"],
+        validation_report_path=paths["validation"],
+        expected_provenance_path=None,
+        catalog_path=paths["catalog"],
+        runtime_path=paths["runtime"],
+        content_lab_path=paths["content_lab"],
+    )
+
+    assert observed == {"check_local_sidecar": False}
 
 
 def test_asterion_release_manifest_detects_expected_sha_mismatch(
@@ -167,7 +201,7 @@ def test_asterion_release_manifest_fails_on_sidecar_provenance_error(
 ) -> None:
     paths = _write_inputs(tmp_path, monkeypatch)
 
-    def fail_sidecar() -> dict:
+    def fail_sidecar(**_kwargs) -> dict:
         raise TopicRoutingArtifactError("sidecar mismatch")
 
     monkeypatch.setattr(bundle, "verify_topic_routing_artifact", fail_sidecar)

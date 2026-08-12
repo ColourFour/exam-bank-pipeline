@@ -5,6 +5,7 @@ This contract covers:
 - `output/json/question_bank.topic_routing.v1.json`
 - `data/topic_routing/question_bank.topic_routing.v1.json`
 - `data/topic_routing/question_bank.topic_routing.v1.sha256`
+- `manifests/releases/question_bank_release_manifest.v1.json`
 - strict topic routing behavior
 - allowed topic structures for topic filtering consumers
 
@@ -20,7 +21,7 @@ The sidecar stores:
 - one record per `question_id`
 - a parent-topic `primary_topic_id`
 - a parent-topic `topic_distribution`
-- advisory `course_id` and `component_name` metadata for P1, P3, M1, and S1 consumers
+- advisory `course_id` and `component_name` metadata for P1, P3, M1, S1, and S2 consumers
 - deterministic `evidence_packet_hash` freshness metadata for resume safety
 - confidence, review, evidence, provider, and routing-source metadata
 
@@ -37,14 +38,14 @@ data/topic_routing/question_bank.topic_routing.v1.json
 data/topic_routing/question_bank.topic_routing.v1.sha256
 ```
 
-Before regenerating Asterion exports from the production sidecar path, restore and verify the local working copy:
+Before regenerating Asterion exports, verify the hash-bound release. Restore the local working copy only for compatibility with a legacy consumer:
 
 ```bash
-.venv/bin/python -m exam_bank.topic_routing_artifact restore
-.venv/bin/python -m exam_bank.topic_routing_artifact verify
+exam-bank topic verify-release
+exam-bank topic restore-release
 ```
 
-The Asterion export code and all-course export validator verify that `output/json/question_bank.topic_routing.v1.json` matches the durable artifact SHA-256 when the production sidecar path is consumed. This prevents export regeneration from silently depending on a stale or local-only sidecar.
+The release manifest binds both the canonical question bank and durable sidecar by SHA-256, byte size, schema, record count, and exact question-ID set. Asterion and difficulty-index defaults resolve the durable artifact through that manifest. External consumers receive topic information through versioned exports rather than importing this module. This prevents regeneration from silently depending on a stale local-only sidecar or a sidecar from another question-bank release.
 
 ## Advisory Until Validated
 
@@ -61,23 +62,9 @@ metadata.run_summary.safe_for_strict_filters
 
 If this field is missing, false, or unreadable, consumers must default to not using the sidecar for strict topic filtering.
 
-## Current Known State
+## Release-Derived State
 
-Current reviewed durable sidecar state as of `2026-06-11`:
-
-- `schema_name=exam_bank.topic_routing_sidecar`
-- `schema_version=1`
-- `record_count=1301`
-- `successful_records=1301`
-- `failed_records=0`
-- `review_required_records=42`
-- `strict_filter_records=1259`
-- `provider_failure_records=0`
-- `missing_evidence_packet_hash=0`
-- `safe_for_strict_filters=true` by audit computation
-- durable SHA-256: `e73559581b9cd5970d38496b1f6b334050a17789cc25f082eb5ccb94b1142e4e`
-
-PR 13 Asterion export regeneration was valid locally but depended on the ignored `output/json/` sidecar before the durable artifact and provenance guard were added. Future export workflows must restore or verify the production sidecar path from the durable artifact before export.
+Counts and hashes are not constants in code or documentation. They are derived from the exact artifacts named by `manifests/releases/question_bank_release_manifest.v1.json`. Regenerate the sidecar and manifest together whenever question identity, canonical family, taxonomy, or question-bank membership changes. A manifest build fails if sidecar membership is not an exact match for the bound bank.
 
 ## Top-Level Contract
 
@@ -185,8 +172,9 @@ The active paper-family mapping is:
 - `p3` uses `topic_filter_map_9709_p3_v1.json`
 - `p4` uses Mechanics component topics from `topic_filter_map_9709_m1_v1.json`
 - `p5` uses Statistics component topics from `topic_filter_map_9709_s1_v1.json`
+- `p6` is retained as an explicit S2 review-only family until an approved P6 topic-filter map exists
 
-The Asterion static-site course contract exposes these as course IDs `p1`, `p3`, `m1`, and `s1`. The mapping is paper-family-to-course: `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, and `p5 -> s1`. Topic-routing records may include `course_id` and `component_name` for downstream catalog grouping, but those fields do not make the routing authoritative. Topic-routing labels remain advisory unless the sidecar-level strict-filter gate is true and the record itself is non-review-required.
+The Asterion static-site course contract exposes these as course IDs `p1`, `p3`, `m1`, `s1`, and `s2`. The mapping is paper-family-to-course: `p1 -> p1`, `p3 -> p3`, `p4 -> m1`, `p5 -> s1`, and `p6 -> s2`. P6 records are not mapped to S1 merely because both use the canonical `stats` storage family. Topic-routing records may include `course_id` and `component_name` for downstream catalog grouping, but those fields do not make the routing authoritative. Topic-routing labels remain advisory unless the sidecar-level strict-filter gate is true and the record itself is non-review-required.
 
 Allowed parent topics have IDs shaped like:
 
@@ -255,7 +243,7 @@ Before using the sidecar for strict topic filtering:
 1. Verify `schema_name=exam_bank.topic_routing_sidecar` and `schema_version=1`.
 2. Verify `record_count` matches the number of `records`.
 3. Verify `taxonomy_path` points to the expected canonical taxonomy root.
-4. When consuming `output/json/question_bank.topic_routing.v1.json`, verify it matches `data/topic_routing/question_bank.topic_routing.v1.json` and `data/topic_routing/question_bank.topic_routing.v1.sha256`.
+4. Run `exam-bank topic verify-release` and require an exact manifest binding for the question bank and durable sidecar. Treat `output/json/question_bank.topic_routing.v1.json` only as a verified restored cache.
 5. Require `metadata.run_summary.safe_for_strict_filters=true`; default deny if missing or false.
 6. Require `metadata.run_summary.failed_records=0`.
 7. Use only records with no `error`, `review_required=false`, `confidence in {"high", "medium"}`, string `primary_topic_id`, and non-empty `topic_distribution`.

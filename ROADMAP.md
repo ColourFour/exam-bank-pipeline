@@ -17,6 +17,8 @@ under `docs/history/`.
 - Opt-in isolated paper-worker staging with deterministic record, image, and
   diagnostic equivalence against one-worker extraction.
 - Repository-policy tests, Ruff correctness/import checks, and split CI jobs.
+- Homework intake/classroom and automated grading extracted into sibling
+  repositories behind versioned JSON/file contracts.
 
 ## Next priorities
 
@@ -28,3 +30,5 @@ under `docs/history/`.
    segmentation mode.
 4. Continue reviewed promotion for P1, P3, M1, and S1 without weakening image,
    privacy, or student-runtime gates.
+5. Treat Question schema evolution as an explicit versioned release; keep
+   sibling schema copies byte-identical and verify their SHA-256 values.

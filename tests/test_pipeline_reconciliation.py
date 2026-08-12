@@ -677,6 +677,7 @@ def test_expected_paper_total_preserves_9709_totals() -> None:
     assert _expected_paper_total("33", "P3", syllabus_code="9709") == 75
     assert _expected_paper_total("43", "P4", syllabus_code="9709") == 50
     assert _expected_paper_total("53", "P5", syllabus_code="9709") == 50
+    assert _expected_paper_total("62", "P6", syllabus_code="9709") == 50
     assert _expected_paper_total("33", "P3") == 75
 
 

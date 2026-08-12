@@ -23,7 +23,12 @@ def test_component_normalization_and_packet_family_mapping() -> None:
     assert normalize_component_code("P3") == "03"
     assert packet_family_for_component("32") == "p3"
     assert packet_family_for_component("P41") == "p4"
-    assert packet_family_for_component("52") == "p5"
+    assert packet_family_for_component("52", paper="52winter19") == ""
+    assert packet_family_for_component("52", paper="52spring20") == "p5"
+    assert packet_family_for_component("52") == ""
+    assert packet_family_for_component("62", paper="62winter19") == "p5"
+    assert packet_family_for_component("62", paper="62spring20") == "p6"
+    assert packet_family_for_component("62") == ""
     assert packet_family_for_component("unknown") == ""
 
 

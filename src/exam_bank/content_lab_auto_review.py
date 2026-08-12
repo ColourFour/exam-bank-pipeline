@@ -10,7 +10,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
-from openai import OpenAI
+try:
+    from openai import OpenAI
+except ImportError:  # Optional dependency; batch construction and imports remain usable.
+    OpenAI = None  # type: ignore[assignment]
 
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.p3_exact_skill import (
@@ -631,6 +634,8 @@ def run_auto_reviews(
         raise RuntimeError("review runner requires existing image-capable OpenAI API configuration; unsupported provider")
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("review runner requires existing LLM command/API not found: OPENAI_API_KEY is not configured")
+    if OpenAI is None:
+        raise RuntimeError('review runner requires optional AI dependencies; install with `pip install -e ".[ai]"`')
 
     client = OpenAI()
     out_path.parent.mkdir(parents=True, exist_ok=True)

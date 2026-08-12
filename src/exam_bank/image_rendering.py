@@ -14,7 +14,7 @@ from .image_operations import stitch_images as _stitch_images
 from .image_limits import cap_image_pixels, clean_rendered_crop_image, render_pdf_area
 from .models import BoundingBox, PageLayout, QuestionSpan, QuestionStart, RenderResult, TextBlock
 from .mupdf_tools import quiet_mupdf
-from .ocr import run_question_crop_ocr
+from .ocr import disabled_ocr_result, run_question_crop_ocr, score_text_candidate
 from .question_detection_layout import looks_like_diagram_axis_or_label_text as _looks_like_diagram_axis_or_label_text
 from .question_detection import detect_question_anchor_candidates, extract_text_from_blocks, parse_question_start
 from .question_detection_graphics import is_answer_rule_like as _is_answer_rule_like
@@ -90,7 +90,7 @@ def _render_prompt_crop_image(
         flags.extend(["crop_fallback_used", "crop_uncertain"])
         crop_uncertain = True
 
-    if any(flag == "ocr_question_text" or flag.startswith("ocr_") for flag in span.review_flags):
+    if _span_uses_ocr_text(span):
         flags.append("crop_uncertain")
         crop_uncertain = True
 
@@ -149,7 +149,8 @@ def _render_prompt_crop_image(
     )
     stitched = clean_rendered_crop_image(stitched)
     stitched.save(output_path)
-    ocr_result = run_question_crop_ocr(output_path, config)
+    extracted_text = _text_from_regions(regions) or span.combined_text
+    ocr_result = _run_adaptive_question_crop_ocr(output_path, config, span, extracted_text)
     if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
         flags.append("ocr_question_crop_failed")
 
@@ -157,9 +158,10 @@ def _render_prompt_crop_image(
         debug_paths.append(_write_crop_metadata(span, regions, flags, config))
 
     crop_uncertain = crop_uncertain or "crop_uncertain" in flags
-    extracted_text = _text_from_regions(regions) or span.combined_text
     flags = sorted(set(flags))
-    crop_diagnostics = _crop_diagnostics(pdf_path, span, regions, flags, identity=identity, asset=asset)
+    crop_diagnostics = _crop_diagnostics(
+        pdf_path, span, regions, flags, identity=identity, asset=asset, config=config
+    )
     return RenderResult(
         screenshot_path=output_path,
         review_flags=flags,
@@ -344,7 +346,11 @@ def _detect_prompt_regions(
             crop_box = _trim_text_only_top_padding(crop_box, text_box, layout, config)
             crop_box = _trim_text_top_padding_after_answer_rule(crop_box, text_box, layout, config)
             crop_box = _trim_text_bottom_padding_after_answer_rule(crop_box, text_box, layout, config)
-            if _box_height(crop_box) < config.detection.min_crop_height:
+            segment_text_length = len(_clean_text_line(" ".join(block.text for block in segment)))
+            if (
+                _box_height(crop_box) < config.detection.min_crop_height
+                and segment_text_length < config.detection.min_question_chars
+            ):
                 flags.append("crop_uncertain")
             regions.append(
                 CropRegion(
@@ -376,7 +382,14 @@ def _detect_prompt_regions(
     flags.extend(text_diagram_flags)
     flags.extend(furniture_flags)
     flags.extend(content_top_flags)
-    if _span_references_source_visual(span) and not any(region.graphics for region in regions):
+    visual_label_envelope = _regions_include_diagram_label_envelope(regions, span, config)
+    if visual_label_envelope:
+        flags.append("diagram_included_via_text_label_envelope")
+    if (
+        _span_references_source_visual(span)
+        and not any(region.graphics for region in regions)
+        and not visual_label_envelope
+    ):
         flags.extend(["missing_image_detection_failure", "crop_uncertain"])
     regions, foreign_flags = _trim_regions_at_foreign_question_boundaries(regions, span, layouts, config)
     flags.extend(foreign_flags)
@@ -491,7 +504,10 @@ def _trim_text_bottom_padding_after_answer_rule(
     )
     if not has_answer_rule_graphic and not has_answer_rule_text:
         return crop_box
-    bottom = min(crop_box.y1, text_box.y1 - 1.0)
+    # Keep a small amount of source whitespace below the final prompt line.
+    # Cropping one point inside ``text_box`` clipped descenders and the lower
+    # halves of mark values when answer rules followed immediately afterwards.
+    bottom = min(crop_box.y1, text_box.y1 + max(2.0, config.detection.crop_padding * 0.2))
     if bottom <= crop_box.y0 + max(8.0, config.detection.min_crop_height * 0.5):
         return crop_box
     return BoundingBox(crop_box.x0, crop_box.y0, crop_box.x1, bottom)
@@ -690,8 +706,48 @@ def _span_has_figure_prompt(span: QuestionSpan) -> bool:
     return bool(re.search(r"\bcurve\b", text) and re.search(r"\b(?:shown|sketch|diagram|graph|shaded|area under|bounded)\b", text))
 
 
+def _span_uses_ocr_text(span: QuestionSpan) -> bool:
+    text_fallback_flags = {
+        "ocr_question_text",
+        "ocr_page",
+        "ocr_only",
+        "ocr_merged",
+        "ocr_merged_low_pdf_text",
+        "ocr_merged_sparse_lower_region",
+    }
+    return any(flag in text_fallback_flags or flag.startswith("ocr_fallback") for flag in span.review_flags)
+
+
 def _span_references_source_visual(span: QuestionSpan) -> bool:
     return references_source_visual(_clean_text_line(span.combined_text))
+
+
+def _regions_include_diagram_label_envelope(
+    regions: list[CropRegion],
+    span: QuestionSpan,
+    config: AppConfig,
+) -> bool:
+    """Recognize a diagram already enclosed by its extracted text labels.
+
+    Some modern Cambridge PDFs expose a diagram as page drawing primitives that
+    collapse into a full-page background box. The label text still gives a strong,
+    spatially bounded signal, and the PDF crop renders the drawing inside that label
+    envelope even though no standalone graphic bbox survives furniture filtering.
+    """
+
+    labels_by_page: dict[int, list[TextBlock]] = {}
+    for region in regions:
+        for block in region.text_blocks:
+            if _is_diagram_label_only_block(block, span, config):
+                labels_by_page.setdefault(region.page_number, []).append(block)
+    for labels in labels_by_page.values():
+        unique = list({(block.text, block.bbox.x0, block.bbox.y0): block for block in labels}.values())
+        if len(unique) < 2:
+            continue
+        envelope = _union_boxes([block.bbox for block in unique])
+        if _box_width(envelope) >= 40.0 and _box_height(envelope) >= 20.0:
+            return True
+    return False
 
 
 def _single_page_union_regions(
@@ -1041,7 +1097,11 @@ def _contains_other_question_start(box: BoundingBox, span: QuestionSpan, layout:
         if re.fullmatch(r"[\d\s]+", _clean_text_line(block.first_line)):
             continue
         parsed = parse_question_start(block.first_line, config)
-        if parsed and parsed[0] != span.question_number:
+        if (
+            parsed
+            and parsed[0] != span.question_number
+            and block.bbox.x0 <= config.detection.question_start_max_x
+        ):
             return True
     return False
 
@@ -1888,6 +1948,17 @@ def _text_block_is_duplicate_figure_label(
     text = _clean_text_line(block.text)
     if not text or re.search(r"\[\d{1,2}\]", text):
         return False
+    parsed = parse_question_start(block.first_line, config)
+    if (
+        parsed
+        and parsed[0] == span.question_number
+        and text == span.question_number
+        and abs(block.bbox.y0 - span.start_y) <= config.detection.anchor_y_tolerance
+        and block.bbox.x0 <= config.detection.question_start_max_x
+    ):
+        # A standalone current-question number can sit just above or beside a
+        # diagram.  It is part of the prompt, not a duplicated axis label.
+        return False
     label_text = _current_question_axis_label(text, span, config) or text
     if not (_is_diagram_label_only_block(block, span, config) or _looks_like_diagram_axis_or_label_text(label_text)):
         return False
@@ -2679,7 +2750,15 @@ def _render_full_region_image(
             None,
             ["crop_fallback_failed", "crop_uncertain"],
             crop_uncertain=True,
-            crop_diagnostics=_crop_diagnostics(pdf_path, span, regions, ["crop_fallback_failed", "crop_uncertain"], identity=identity, asset=asset),
+            crop_diagnostics=_crop_diagnostics(
+                pdf_path,
+                span,
+                regions,
+                ["crop_fallback_failed", "crop_uncertain"],
+                identity=identity,
+                asset=asset,
+                config=config,
+            ),
         )
 
     stitched = cap_image_pixels(
@@ -2689,7 +2768,7 @@ def _render_full_region_image(
     )
     stitched = clean_rendered_crop_image(stitched)
     stitched.save(output_path)
-    ocr_result = run_question_crop_ocr(output_path, config)
+    ocr_result = _run_adaptive_question_crop_ocr(output_path, config, span, span.combined_text)
     flags = ["full_region_mode"]
     if ocr_result.ocr_ran and ocr_result.ocr_failure_reason:
         flags.append("ocr_question_crop_failed")
@@ -2700,7 +2779,9 @@ def _render_full_region_image(
         review_flags=flags,
         debug_paths=debug_paths,
         extracted_text=span.combined_text,
-        crop_diagnostics=_crop_diagnostics(pdf_path, span, regions, flags, identity=identity, asset=asset),
+        crop_diagnostics=_crop_diagnostics(
+            pdf_path, span, regions, flags, identity=identity, asset=asset, config=config
+        ),
         question_id=identity.question_id,
         paper_id=identity.paper_id,
         component=identity.component,
@@ -2711,6 +2792,46 @@ def _render_full_region_image(
         ocr_text_trust=ocr_result.ocr_text_trust,
         ocr_failure_reason=ocr_result.ocr_failure_reason,
         ocr_text_role=ocr_result.ocr_text_role,
+    )
+
+
+def _run_adaptive_question_crop_ocr(
+    image_path: str | Path,
+    config: AppConfig,
+    span: QuestionSpan,
+    native_text: str,
+):
+    if not config.ocr.enabled:
+        return disabled_ocr_result()
+    strategy = str(config.ocr.strategy or "adaptive").strip().lower()
+    if strategy == "always":
+        return run_question_crop_ocr(image_path, config)
+    if strategy != "adaptive":
+        raise ValueError(f"Unsupported OCR strategy: {config.ocr.strategy!r}")
+    if not _native_text_needs_ocr(span, native_text, config):
+        return disabled_ocr_result()
+    return run_question_crop_ocr(image_path, config)
+
+
+def _native_text_needs_ocr(span: QuestionSpan, native_text: str, config: AppConfig) -> bool:
+    structure = span.structure_detected if isinstance(span.structure_detected, dict) else {}
+    expected_subparts = structure.get("subparts") if isinstance(structure.get("subparts"), list) else []
+    score = score_text_candidate(
+        native_text,
+        source="native",
+        expected_question_number=span.question_number,
+        expected_subparts=[str(value) for value in expected_subparts],
+        expected_mark_count=len(structure.get("mark_values_detected") or []) or None,
+    )
+    if score.rejection_reasons or score.score < int(config.ocr.native_text_min_score):
+        return True
+    if span.validation_status == "fail":
+        return True
+    return bool(
+        structure.get("likely_truncated")
+        or structure.get("contamination_detected")
+        or structure.get("missing_terminal_mark_total")
+        and expected_subparts
     )
 
 
@@ -3225,9 +3346,18 @@ def _crop_diagnostics(
     *,
     identity: PaperIdentity,
     asset: AssetPath,
+    config: AppConfig,
 ) -> dict[str, object]:
     detected_figure_regions = [region for region in regions if region.graphics or region.figure_bbox is not None or "figure" in region.region_kind]
-    missing_image_reason = "detection_failure" if _span_references_source_visual(span) and not detected_figure_regions else ""
+    visual_label_envelope = _regions_include_diagram_label_envelope(regions, span, config)
+    detected_figure_count = len(detected_figure_regions) + int(
+        visual_label_envelope and not detected_figure_regions
+    )
+    missing_image_reason = (
+        "detection_failure"
+        if _span_references_source_visual(span) and detected_figure_count == 0
+        else ""
+    )
     return {
         "source_file": str(pdf_path),
         "question_number": span.question_number,
@@ -3238,7 +3368,7 @@ def _crop_diagnostics(
         "flags": sorted(set(flags)),
         "merged_blocks": sum(len(region.text_blocks) for region in regions),
         "duplicate_visual_blocks_removed": sum(region.duplicate_graphics_removed for region in regions),
-        "detected_figure_count": len(detected_figure_regions),
+        "detected_figure_count": detected_figure_count,
         "missing_image_reason": missing_image_reason,
         "missing_image_failure_metadata": (
             {

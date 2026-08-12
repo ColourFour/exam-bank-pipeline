@@ -1308,7 +1308,15 @@ def test_missing_figure_prompt_is_marked_detection_failure() -> None:
         config,
     )
 
-    diagnostics = _crop_diagnostics(Path("9709_s16_qp_12.pdf"), test_span, regions, flags, identity=identity, asset=asset)
+    diagnostics = _crop_diagnostics(
+        Path("9709_s16_qp_12.pdf"),
+        test_span,
+        regions,
+        flags,
+        identity=identity,
+        asset=asset,
+        config=config,
+    )
 
     assert diagnostics["detected_figure_count"] == 0
     assert diagnostics["missing_image_reason"] == "detection_failure"
@@ -1353,7 +1361,15 @@ def test_student_generated_sketch_prompt_is_not_marked_detection_failure() -> No
         config,
     )
 
-    diagnostics = _crop_diagnostics(Path("9709_s16_qp_12.pdf"), test_span, regions, flags, identity=identity, asset=asset)
+    diagnostics = _crop_diagnostics(
+        Path("9709_s16_qp_12.pdf"),
+        test_span,
+        regions,
+        flags,
+        identity=identity,
+        asset=asset,
+        config=config,
+    )
 
     assert "missing_image_detection_failure" not in flags
     assert diagnostics["detected_figure_count"] == 0

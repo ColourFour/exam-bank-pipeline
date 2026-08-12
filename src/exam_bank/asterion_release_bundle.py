@@ -16,7 +16,9 @@ from .topic_routing_artifact import (
 DEFAULT_CATALOG_PATH = Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json")
 DEFAULT_RUNTIME_PATH = Path("output/asterion/exports/latest/asterion_question_bank_v1.json")
 DEFAULT_CONTENT_LAB_PATH = Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json")
-DEFAULT_VALIDATION_REPORT_PATH = Path("/tmp/asterion_export_release_provenance_pr15_validation.json")
+DEFAULT_VALIDATION_REPORT_PATH = Path(
+    "output/asterion/exports/latest/asterion_all_course_export_validation.v1.json"
+)
 DEFAULT_EXPECTED_PROVENANCE_PATH = Path("manifests/releases/asterion_export_release_provenance.v1.json")
 DEFAULT_OUTPUT_PATH = Path("manifests/releases/asterion_export_release_manifest.v1.json")
 
@@ -60,7 +62,7 @@ def build_asterion_release_manifest(
     if validation_report.get("ok") is not True:
         raise AsterionReleaseBundleError("Validation report is not ok:true.")
 
-    sidecar_report = verify_topic_routing_artifact()
+    sidecar_report = verify_topic_routing_artifact(check_local_sidecar=False)
     artifacts = {
         "catalog": file_report(catalog_path),
         "student_runtime": file_report(runtime_path),
@@ -94,7 +96,6 @@ def build_asterion_release_manifest(
             "warnings": validation_report.get("warnings", []),
         },
         "counts": counts,
-        "auto_grade_eligibility_changed": False,
         "asterion_runtime_behavior_changed": False,
         "p1_m1_s1_became_student_facing": counts["non_p3_runtime_records"] > 0,
         "handoff": {

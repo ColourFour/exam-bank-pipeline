@@ -48,9 +48,10 @@ REPO_W10_P13_QP = Path("input/pastpapers/9709/2010/question_papers/9709_w10_qp_1
 REPO_W12_P13_QP = Path("input/pastpapers/9709/2012/question_papers/9709_w12_qp_13.pdf")
 REPO_S14_P11_QP = Path("input/pastpapers/9709/2014/question_papers/9709_s14_qp_11.pdf")
 REPO_M23_P13_QP = Path("input/pastpapers/9709/2023/question_papers/9709_m23_qp_13.pdf")
+REPO_W23_P51_QP = Path("input/pastpapers/9709/2023/question_papers/9709_w23_qp_51.pdf")
 REPO_W25_P13_QP = Path("input/pastpapers/9709/2025/question_papers/9709_w25_qp_13.pdf")
-REPO_M21_P51_QP = Path("input/pastpapers/9709/2021/question_papers/9709_m21_qp_51.pdf")
-REPO_M21_P52_QP = Path("input/pastpapers/9709/2021/question_papers/9709_m21_qp_52.pdf")
+REPO_S21_P51_QP = Path("input/pastpapers/9709/2021/question_papers/9709_s21_qp_51.pdf")
+REPO_S21_P52_QP = Path("input/pastpapers/9709/2021/question_papers/9709_s21_qp_52.pdf")
 REPO_W21_P52_QP = Path("input/pastpapers/9709/2021/question_papers/9709_w21_qp_52.pdf")
 REPO_W21_P53_QP = Path("input/pastpapers/9709/2021/question_papers/9709_w21_qp_53.pdf")
 REPO_M24_P13_QP = Path("input/pastpapers/9709/2024/question_papers/9709_m24_qp_13.pdf")
@@ -395,11 +396,12 @@ def test_2019_p1_topic_packet_crops_trim_stale_page_floor_blanks(
     [
         (REPO_S19_P61_QP, "stats", "2019", "s19", "61", "8", 440),
         (REPO_W19_P62_QP, "stats", "2019", "w19", "62", "7", 605),
-        (REPO_S19_P63_QP, "stats", "2019", "s19", "63", "5", 115),
-        (REPO_M21_P51_QP, "mechanics", "2021", "m21", "51", "5", 645),
-        (REPO_M21_P52_QP, "mechanics", "2021", "m21", "52", "7", 415),
-        (REPO_W21_P52_QP, "mechanics", "2021", "w21", "52", "7", 690),
-        (REPO_W21_P53_QP, "mechanics", "2021", "w21", "53", "3", 605),
+        (REPO_S19_P63_QP, "stats", "2019", "s19", "63", "1", 458),
+        (REPO_S19_P63_QP, "stats", "2019", "s19", "63", "5", 118),
+        (REPO_S21_P51_QP, "stats", "2021", "s21", "51", "5", 645),
+        (REPO_S21_P52_QP, "stats", "2021", "s21", "52", "7", 415),
+        (REPO_W21_P52_QP, "stats", "2021", "w21", "52", "7", 690),
+        (REPO_W21_P53_QP, "stats", "2021", "w21", "53", "3", 605),
     ],
 )
 def test_stats_topic_packet_crops_trim_answer_blanks(
@@ -425,6 +427,58 @@ def test_stats_topic_packet_crops_trim_answer_blanks(
     assert result.screenshot_path and result.screenshot_path.exists()
     assert "crop_reaches_page_margin" not in result.review_flags
     assert all(region["final_crop_bbox"]["y1"] <= max_region_bottom for region in result.crop_diagnostics["regions"])
+
+
+def test_current_question_number_above_graph_is_not_removed_as_duplicate_label(tmp_path: Path) -> None:
+    result = _render_question(
+        tmp_path,
+        pdf=REPO_W23_P51_QP,
+        subject_family="stats",
+        year="2023",
+        session="w23",
+        component="51",
+        question_number="1",
+    )
+
+    assert result.screenshot_path and result.screenshot_path.exists()
+    first_region = result.crop_diagnostics["regions"][0]
+    assert first_region["final_crop_bbox"]["y0"] <= 64
+    assert first_region["text_bbox"]["y0"] <= 66
+
+
+@pytest.mark.parametrize(
+    ("pdf", "subject_family", "year", "session", "component", "question_number"),
+    [
+        (REPO_S19_P61_QP, "stats", "2019", "s19", "61", "3"),
+        (REPO_W19_P62_QP, "stats", "2019", "w19", "62", "1"),
+        (REPO_S19_P63_QP, "stats", "2019", "s19", "63", "7"),
+        (REPO_W23_P51_QP, "stats", "2023", "w23", "51", "1"),
+    ],
+)
+def test_prompt_text_before_answer_rules_keeps_safe_bottom_padding(
+    tmp_path: Path,
+    pdf: Path,
+    subject_family: str,
+    year: str,
+    session: str,
+    component: str,
+    question_number: str,
+) -> None:
+    Image = pytest.importorskip("PIL.Image")
+    result = _render_question(
+        tmp_path,
+        pdf=pdf,
+        subject_family=subject_family,
+        year=year,
+        session=session,
+        component=component,
+        question_number=question_number,
+    )
+
+    assert result.screenshot_path and result.screenshot_path.exists()
+    with Image.open(result.screenshot_path) as image:
+        grayscale = image.convert("L")
+        assert grayscale.crop((0, max(0, image.height - 3), image.width, image.height)).getextrema() == (255, 255)
 
 
 @pytest.mark.parametrize(
@@ -453,7 +507,7 @@ def test_mechanics_topic_packet_crops_trim_answer_blanks(
     result = _render_question(
         tmp_path,
         pdf=pdf,
-        subject_family="stats",
+        subject_family="mechanics",
         year=year,
         session=session,
         component=component,

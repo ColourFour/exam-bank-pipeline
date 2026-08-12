@@ -6,6 +6,10 @@ from pathlib import Path
 from .document_metadata import DocumentMetadata, parse_filename_metadata
 
 
+class DocumentRegistryError(RuntimeError):
+    """Raised when source documents cannot be assigned one-to-one to canonical identities."""
+
+
 @dataclass
 class DocumentRegistryEntry:
     key: str
@@ -128,12 +132,18 @@ def _attach_document(entry: DocumentRegistryEntry, metadata: DocumentMetadata, p
     entry.metadata_by_path[str(path)] = metadata
     if metadata.document_type == "question_paper":
         if entry.question_paper and entry.question_paper != path:
-            entry.warnings.append(f"duplicate_question_paper:{path.name}")
+            raise DocumentRegistryError(
+                "duplicate question_paper for canonical document identity "
+                f"{entry.key!r}: {entry.question_paper} and {path}"
+            )
         else:
             entry.question_paper = path
     elif metadata.document_type == "mark_scheme":
         if entry.mark_scheme and entry.mark_scheme != path:
-            entry.warnings.append(f"duplicate_mark_scheme:{path.name}")
+            raise DocumentRegistryError(
+                "duplicate mark_scheme for canonical document identity "
+                f"{entry.key!r}: {entry.mark_scheme} and {path}"
+            )
         else:
             entry.mark_scheme = path
     elif metadata.document_type == "examiner_report":

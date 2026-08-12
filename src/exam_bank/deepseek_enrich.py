@@ -11,8 +11,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
 
-from openai import OpenAI
+try:
+    from openai import OpenAI
+except ImportError:  # Optional dependency; non-AI commands must remain importable.
+    OpenAI = None  # type: ignore[assignment]
 from .atomic_json import write_atomic_json
+from .publication_safety import read_json_under_publication_guard
 from .run_status import RunStatusTracker, completed_batch_ids, default_status_root_for_output, resolve_run_id
 from .runtime_profile import DIFFICULTY_LABELS, PAPER_FAMILY_TAXONOMY
 from .trust import Confidence, DeepSeekErrorType, ReconciliationStatus, final_review_reasons as _final_review_reasons
@@ -56,6 +60,8 @@ PAPER_FAMILY_TO_CANONICAL_COMPONENT = {
     "p5": "s1",
     "m1": "m1",
     "s1": "s1",
+    "p6": "s2",
+    "s2": "s2",
 }
 
 CANONICAL_COMPONENT_TO_PAPER_FAMILY = {
@@ -63,6 +69,7 @@ CANONICAL_COMPONENT_TO_PAPER_FAMILY = {
     "p3": "p3",
     "m1": "p4",
     "s1": "p5",
+    "s2": "p6",
 }
 
 AI_ASSISTED_REQUIRED_ITEM_KEYS = {
@@ -444,13 +451,17 @@ def require_api_key(env: dict[str, str] | None = None) -> str:
 
 def create_client(*, base_url: str = DEFAULT_BASE_URL, api_key: str | None = None) -> OpenAI:
     resolved_api_key = api_key if api_key is not None else require_api_key()
+    if OpenAI is None:
+        raise StartupConfigurationError(
+            'OpenAI-compatible enrichment requires the optional AI dependencies. Install with `pip install -e ".[ai]"`.'
+        )
     return OpenAI(api_key=resolved_api_key, base_url=base_url)
 
 
 def load_question_bank(path: str | Path) -> list[dict[str, Any]]:
     input_path = Path(path)
     try:
-        payload = json.loads(input_path.read_text(encoding="utf-8"))
+        payload = read_json_under_publication_guard(input_path)
     except FileNotFoundError as exc:
         raise StartupConfigurationError(f"Input question bank not found: {input_path}") from exc
     except json.JSONDecodeError as exc:

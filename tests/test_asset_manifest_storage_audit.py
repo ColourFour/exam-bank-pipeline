@@ -12,6 +12,7 @@ from exam_bank.asset_manifest import (
 from exam_bank.asterion_export import build_asterion_exam_bank_catalog, build_asterion_export, build_content_lab_candidates
 from exam_bank.storage_audit import (
     CACHE_ACTION,
+    DEFAULT_REFERENCE_JSON_FILES,
     apply_delete_plan,
     apply_quarantine_plan,
     build_delete_manifest,
@@ -19,10 +20,18 @@ from exam_bank.storage_audit import (
 )
 
 
+def test_storage_audit_protects_release_sidecars_and_human_review_evidence() -> None:
+    protected = {path.as_posix() for path in DEFAULT_REFERENCE_JSON_FILES}
+
+    assert "output/json/question_bank.mark_events.v1.json" in protected
+    assert "data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json" in protected
+    assert "data/review/canonical/text_fidelity/question_text_gold.v1.json" in protected
+
+
 def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: Path) -> None:
     output = tmp_path / "output"
-    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
-    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_qp_q01_question.png", b"question-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png", b"mark-one")
     bank_path = output / "json" / "question_bank.json"
     bank = _question_bank()
     _write_json(bank_path, bank)
@@ -30,11 +39,19 @@ def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: P
     manifest_path = write_asset_manifest(bank_path, artifact_root=output, base_dir=tmp_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
-    question_asset_id = asset_id_for_record(QUESTION_IMAGE_KIND, bank["questions"][0], "p1/12spring21/questions/q01.png")
-    mark_asset_id = asset_id_for_record(MARK_SCHEME_IMAGE_KIND, bank["questions"][0], "p1/12spring21/mark_scheme/q01.png")
+    question_asset_id = asset_id_for_record(
+        QUESTION_IMAGE_KIND,
+        bank["questions"][0],
+        "pm1/pm1_2021_m21_12_qp_q01_question.png",
+    )
+    mark_asset_id = asset_id_for_record(
+        MARK_SCHEME_IMAGE_KIND,
+        bank["questions"][0],
+        "pm1/pm1_2021_m21_12_ms_q01_markscheme.png",
+    )
     by_id = {asset["asset_id"]: asset for asset in manifest["assets"]}
-    assert by_id[question_asset_id]["canonical_path"] == "p1/12spring21/questions/q01.png"
-    assert by_id[mark_asset_id]["canonical_path"] == "p1/12spring21/mark_scheme/q01.png"
+    assert by_id[question_asset_id]["canonical_path"] == "pm1/pm1_2021_m21_12_qp_q01_question.png"
+    assert by_id[mark_asset_id]["canonical_path"] == "pm1/pm1_2021_m21_12_ms_q01_markscheme.png"
 
     asterion_catalog = build_asterion_exam_bank_catalog(bank, artifact_root=output, base_dir=tmp_path)
     asterion = build_asterion_export(bank, artifact_root=output, base_dir=tmp_path)
@@ -68,8 +85,8 @@ def test_asset_manifest_indexes_canonical_images_and_exports_resolve(tmp_path: P
 
 def test_asset_reference_validation_fails_when_question_bank_path_missing_from_manifest(tmp_path: Path) -> None:
     output = tmp_path / "output"
-    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
-    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_qp_q01_question.png", b"question-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png", b"mark-one")
     bank_path = output / "json" / "question_bank.json"
     bank = _question_bank()
     _write_json(bank_path, bank)
@@ -79,7 +96,7 @@ def test_asset_reference_validation_fails_when_question_bank_path_missing_from_m
     manifest["assets"] = [
         asset
         for asset in manifest["assets"]
-        if asset["canonical_path"] != "p1/12spring21/mark_scheme/q01.png"
+        if asset["canonical_path"] != "pm1/pm1_2021_m21_12_ms_q01_markscheme.png"
     ]
     manifest["asset_count"] = len(manifest["assets"])
     _write_json(manifest_path, manifest)
@@ -125,15 +142,15 @@ def test_asset_reference_validation_fails_when_question_bank_path_missing_from_m
         "detail": {
             "question_id": "12spring21_q01",
             "field": "canonical_mark_scheme_artifact",
-            "path": "p1/12spring21/mark_scheme/q01.png",
+            "path": "pm1/pm1_2021_m21_12_ms_q01_markscheme.png",
         },
     } in report["errors"]
 
 
 def test_asset_reference_validation_derives_missing_manifest_and_warns_on_optional_inputs(tmp_path: Path) -> None:
     output = tmp_path / "output"
-    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
-    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_qp_q01_question.png", b"question-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png", b"mark-one")
     bank_path = output / "json" / "question_bank.json"
     _write_json(bank_path, _question_bank())
 
@@ -165,8 +182,8 @@ def test_asset_reference_validation_derives_missing_manifest_and_warns_on_option
 
 def test_asset_reference_validation_strict_companion_inputs_fail_when_sidecars_are_missing(tmp_path: Path) -> None:
     output = tmp_path / "output"
-    _write_bytes(output / "p1" / "12spring21" / "questions" / "q01.png", b"question-one")
-    _write_bytes(output / "p1" / "12spring21" / "mark_scheme" / "q01.png", b"mark-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_qp_q01_question.png", b"question-one")
+    _write_bytes(output / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png", b"mark-one")
     bank_path = output / "json" / "question_bank.json"
     _write_json(bank_path, _question_bank())
 
@@ -195,7 +212,7 @@ def test_asset_reference_validation_strict_companion_inputs_fail_when_sidecars_a
 
 
 def test_storage_audit_is_deterministic_and_quarantines_noncanonical_duplicates(tmp_path: Path) -> None:
-    canonical = tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png"
+    canonical = tmp_path / "output" / "pm1" / "pm1_2021_m21_12_qp_q01_question.png"
     duplicate = tmp_path / "output" / "candidates" / "ocr" / "run1" / "p1" / "12spring21" / "questions" / "q01.png"
     _write_bytes(canonical, b"same-image")
     _write_bytes(duplicate, b"same-image")
@@ -213,7 +230,7 @@ def test_storage_audit_is_deterministic_and_quarantines_noncanonical_duplicates(
     assert first == second
     image_groups = first["image_duplicate_groups"]
     assert len(image_groups) == 1
-    assert image_groups[0]["canonical_file"] == "output/p1/12spring21/questions/q01.png"
+    assert image_groups[0]["canonical_file"] == "output/pm1/pm1_2021_m21_12_qp_q01_question.png"
     assert any(item["suggested_action"] == CACHE_ACTION for item in first["cleanup_candidates"])
 
     result = apply_quarantine_plan(first, quarantine_dir=Path("output/_quarantine_test"), project_root=tmp_path)
@@ -224,11 +241,11 @@ def test_storage_audit_is_deterministic_and_quarantines_noncanonical_duplicates(
 
 
 def test_delete_plan_hard_deletes_only_allowlisted_noncanonical_exact_duplicates(tmp_path: Path) -> None:
-    canonical = tmp_path / "output" / "p1" / "12spring21" / "questions" / "q01.png"
+    canonical = tmp_path / "output" / "pm1" / "pm1_2021_m21_12_qp_q01_question.png"
     candidate_duplicate = tmp_path / "output" / "candidates" / "ocr" / "run1" / "p1" / "12spring21" / "questions" / "q01.png"
     targeted_duplicate = tmp_path / "output" / "codex_text_extraction_targeted" / "p1" / "12spring21" / "questions" / "q01.png"
     topic_packet_duplicate = tmp_path / "output" / "topic_packets" / "p1" / "series" / "copied.png"
-    other_canonical_duplicate = tmp_path / "output" / "p1" / "12spring21" / "questions" / "q99.png"
+    other_canonical_duplicate = tmp_path / "output" / "pm1" / "pm1_2021_m21_12_qp_q99_question.png"
     _write_bytes(canonical, b"same-image")
     _write_bytes(candidate_duplicate, b"same-image")
     _write_bytes(targeted_duplicate, b"same-image")
@@ -263,7 +280,7 @@ def test_delete_plan_hard_deletes_only_allowlisted_noncanonical_exact_duplicates
     assert other_canonical_duplicate.is_file()
     assert topic_packet_duplicate.is_file()
     written = json.loads((tmp_path / "reports" / "output_storage_delete_manifest.v1.json").read_text(encoding="utf-8"))
-    assert written["entries"][0]["retained_path"] == "output/p1/12spring21/questions/q01.png"
+    assert written["entries"][0]["retained_path"] == "output/pm1/pm1_2021_m21_12_qp_q01_question.png"
 
 
 def _question_bank() -> dict:
@@ -275,14 +292,14 @@ def _question_bank() -> dict:
             {
                 "question_id": "12spring21_q01",
                 "paper": "12spring21",
-                "paper_family": "p1",
+                "paper_family": "pm1",
                 "question_number": "1",
-                "canonical_question_artifact": "p1/12spring21/questions/q01.png",
-                "canonical_mark_scheme_artifact": "p1/12spring21/mark_scheme/q01.png",
-                "question_image_path": "p1/12spring21/questions/q01.png",
-                "mark_scheme_image_path": "p1/12spring21/mark_scheme/q01.png",
-                "question_image_paths": ["p1/12spring21/questions/q01.png"],
-                "mark_scheme_image_paths": ["p1/12spring21/mark_scheme/q01.png"],
+                "canonical_question_artifact": "pm1/pm1_2021_m21_12_qp_q01_question.png",
+                "canonical_mark_scheme_artifact": "pm1/pm1_2021_m21_12_ms_q01_markscheme.png",
+                "question_image_path": "pm1/pm1_2021_m21_12_qp_q01_question.png",
+                "mark_scheme_image_path": "pm1/pm1_2021_m21_12_ms_q01_markscheme.png",
+                "question_image_paths": ["pm1/pm1_2021_m21_12_qp_q01_question.png"],
+                "mark_scheme_image_paths": ["pm1/pm1_2021_m21_12_ms_q01_markscheme.png"],
                 "question_text": "1 Find x. [1]",
                 "mark_scheme_text": "1 x = 2 B1",
                 "question_text_role": "readable_text",

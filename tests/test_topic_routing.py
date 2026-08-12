@@ -979,7 +979,7 @@ def test_topic_route_writes_status_files_and_final_summary_paths(
     assert status["completed_records"] == 1
     assert status["review_required_records"] == 0
     assert status["provider_failure_records"] == 0
-    assert batches[0]["status"] == "completed"
+    assert [batch["status"] for batch in batches] == ["running", "completed"]
     assert manifest["final_status"] == "completed"
     assert str(output_path) in captured.out
     assert str(status_path) in captured.out
@@ -1114,7 +1114,7 @@ def test_topic_route_sidecar_contains_generated_at_and_schema_metadata() -> None
     assert payload["generated_at"] == "2026-05-13T00:00:00+00:00"
     assert payload["taxonomy_path"] == "exam_bank_taxonomy/canonical"
     assert payload["taxonomy_version"] == "test-version"
-    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1"]
+    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1", "s2"]
     assert payload["course_contract"]["routing_labels_are_advisory"] is True
 
 

@@ -5,6 +5,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+import fitz
+
 from exam_bank.command import COMMANDS, main, render_command_reference
 from exam_bank.corpus import _documents_sha256, sha256_file
 
@@ -19,7 +21,7 @@ def test_public_help_is_namespaced_and_lazy() -> None:
 
     assert "exam-bank <domain> <command>" in result.stdout
     assert "extract" in result.stdout
-    assert "classroom" in result.stdout
+    assert "data" in result.stdout
     assert "exam_bank.cli" not in result.stdout
 
     extract_help = subprocess.run(
@@ -37,13 +39,11 @@ def test_all_active_product_domains_have_commands() -> None:
         "data",
         "topic",
         "asterion",
+        "release",
         "ai",
         "triage",
         "review",
-        "classroom",
-        "email",
         "marks",
-        "autograde",
         "advisory",
     }
     assert {"run", "audit", "integrity"} <= set(COMMANDS["extract"])
@@ -54,7 +54,11 @@ def test_data_verify_command_uses_manifest_contract(tmp_path: Path, capsys) -> N
     root = tmp_path / "input"
     document_path = root / "pastpapers/9709/2024/question_papers/9709_s24_qp_11.pdf"
     document_path.parent.mkdir(parents=True)
-    document_path.write_bytes(b"%PDF-fixture")
+    pdf = fitz.open()
+    page = pdf.new_page()
+    page.insert_text((72, 72), "Cambridge International May/June 2024")
+    pdf.save(document_path)
+    pdf.close()
     document = {
         "document_id": "9709_s24_qp_11",
         "document_type": "question_paper",
@@ -111,7 +115,15 @@ def test_every_namespaced_command_help_smokes() -> None:
 
 
 def test_old_flat_commands_are_absent_from_public_surface() -> None:
-    for old_name in ["process", "output-integrity-audit", "topic-packets", "asterion-export"]:
+    for old_name in [
+        "process",
+        "output-integrity-audit",
+        "topic-packets",
+        "asterion-export",
+        "classroom",
+        "email-smoke-test",
+        "grade-quiz-bma",
+    ]:
         assert old_name not in COMMANDS
 
 

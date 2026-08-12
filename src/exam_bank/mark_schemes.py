@@ -65,16 +65,51 @@ class _CropValidation:
     rejected_reason: str = ""
 
 
+@dataclass(frozen=True)
+class MarkSchemeAnalysis:
+    """Reusable, read-only analysis of one mark-scheme PDF.
+
+    Text extraction and crop rendering consume the same layouts, words, table
+    geometry, and anchors.  Keeping that work in one paper-scoped object avoids
+    parsing the same PDF twice during a normal pipeline pass.
+    """
+
+    source_pdf: Path
+    layouts: list[PageLayout]
+    words_by_page: dict[int, list[MarkSchemeWord]]
+    tables: dict[int, MarkSchemeTable]
+    anchors: list[MarkSchemeAnchor]
+
+
+def analyze_mark_scheme(mark_scheme_pdf: str | Path, config: AppConfig) -> MarkSchemeAnalysis:
+    source_pdf = Path(mark_scheme_pdf)
+    layouts = extract_pdf_layout(source_pdf, config)
+    words_by_page = _extract_mark_scheme_words(source_pdf)
+    tables = _detect_mark_scheme_tables(layouts, config, words_by_page)
+    anchors = _detect_table_question_anchors(layouts, tables, config, None, words_by_page)
+    return MarkSchemeAnalysis(
+        source_pdf=source_pdf,
+        layouts=layouts,
+        words_by_page=words_by_page,
+        tables=tables,
+        anchors=anchors,
+    )
+
+
 def extract_mark_scheme_answers(
     mark_scheme_pdf: str | Path,
     config: AppConfig,
     expected_numbers: list[str] | None = None,
+    *,
+    analysis: MarkSchemeAnalysis | None = None,
 ) -> dict[str, str]:
     mark_scheme_pdf = Path(mark_scheme_pdf)
-    layouts = extract_pdf_layout(mark_scheme_pdf, config)
-    words = _extract_mark_scheme_words(mark_scheme_pdf)
-    tables = _detect_mark_scheme_tables(layouts, config, words)
-    anchors = _detect_table_question_anchors(layouts, tables, config, None, words)
+    analysis = analysis or analyze_mark_scheme(mark_scheme_pdf, config)
+    if analysis.source_pdf != mark_scheme_pdf:
+        raise ValueError("mark-scheme analysis source does not match mark_scheme_pdf")
+    layouts = analysis.layouts
+    tables = analysis.tables
+    anchors = analysis.anchors
     if not anchors:
         return {
             number: block.text
@@ -85,6 +120,7 @@ def extract_mark_scheme_answers(
                 expected_numbers,
                 question_marks={},
                 question_subparts={},
+                words_by_page=analysis.words_by_page,
             ).items()
             if block.text
         }
@@ -115,6 +151,7 @@ def render_mark_scheme_images(
     question_validation_flags: dict[str, list[str]] | None = None,
     question_identities: dict[str, PaperIdentity] | None = None,
     clear_stale: bool = True,
+    analysis: MarkSchemeAnalysis | None = None,
 ) -> dict[str, MarkSchemeImageResult]:
     """Crop rendered mark-scheme answer regions by top-level question number.
 
@@ -138,10 +175,13 @@ def render_mark_scheme_images(
     quiet_mupdf(fitz)
 
     mark_scheme_pdf = Path(mark_scheme_pdf)
-    words = _extract_mark_scheme_words(mark_scheme_pdf)
-    layouts = extract_pdf_layout(mark_scheme_pdf, config)
-    tables = _detect_mark_scheme_tables(layouts, config, words)
-    anchors = _detect_table_question_anchors(layouts, tables, config, None, words)
+    analysis = analysis or analyze_mark_scheme(mark_scheme_pdf, config)
+    if analysis.source_pdf != mark_scheme_pdf:
+        raise ValueError("mark-scheme analysis source does not match mark_scheme_pdf")
+    words = analysis.words_by_page
+    layouts = analysis.layouts
+    tables = analysis.tables
+    anchors = analysis.anchors
     if not tables or not anchors:
         return _render_legacy_mark_scheme_images(
             mark_scheme_pdf,
@@ -152,6 +192,8 @@ def render_mark_scheme_images(
             identities=identities,
             no_blocks_failure_reason="segmentation_failure",
             clear_stale=clear_stale,
+            layouts=layouts,
+            words_by_page=words,
         )
 
     output: dict[str, MarkSchemeImageResult] = {}
@@ -164,6 +206,7 @@ def render_mark_scheme_images(
         expected_numbers,
         question_marks=question_marks,
         question_subparts=question_subparts,
+        words_by_page=words,
     )
     legacy_fallback_anchors = [
         block.anchor
@@ -980,6 +1023,8 @@ def _render_legacy_mark_scheme_images(
     identities: dict[str, PaperIdentity],
     no_blocks_failure_reason: str,
     clear_stale: bool = True,
+    layouts: list[PageLayout] | None = None,
+    words_by_page: dict[int, list[MarkSchemeWord]] | None = None,
 ) -> dict[str, MarkSchemeImageResult]:
     try:
         import fitz
@@ -988,8 +1033,8 @@ def _render_legacy_mark_scheme_images(
     quiet_mupdf(fitz)
 
     mark_scheme_pdf = Path(mark_scheme_pdf)
-    layouts = extract_pdf_layout(mark_scheme_pdf, config)
-    words = _extract_mark_scheme_words(mark_scheme_pdf)
+    layouts = layouts if layouts is not None else extract_pdf_layout(mark_scheme_pdf, config)
+    words = words_by_page if words_by_page is not None else _extract_mark_scheme_words(mark_scheme_pdf)
     blocks = _build_legacy_mark_scheme_blocks(
         mark_scheme_pdf,
         layouts,
@@ -997,6 +1042,7 @@ def _render_legacy_mark_scheme_images(
         expected_numbers,
         question_marks=question_marks,
         question_subparts=question_subparts,
+        words_by_page=words,
     )
     if blocks and clear_stale:
         _clear_stale_mark_scheme_images(mark_scheme_pdf, expected_numbers, config, identities)
@@ -1239,14 +1285,15 @@ def _build_legacy_mark_scheme_blocks(
     *,
     question_marks: dict[str, int | None],
     question_subparts: dict[str, list[str]],
+    words_by_page: dict[int, list[MarkSchemeWord]] | None = None,
 ) -> dict[str, MarkSchemeBlock]:
     expected = [normalize_question_id(number) for number in (expected_numbers or []) if normalize_question_id(number)]
     mark_scheme_pdf = Path(mark_scheme_pdf)
     if mark_scheme_pdf.exists():
-        words_by_page = _extract_mark_scheme_words(mark_scheme_pdf)
-        row_bands = _legacy_table_grid_row_bands(mark_scheme_pdf, layouts, config, words_by_page)
+        words = words_by_page if words_by_page is not None else _extract_mark_scheme_words(mark_scheme_pdf)
+        row_bands = _legacy_table_grid_row_bands(mark_scheme_pdf, layouts, config, words)
     else:
-        words_by_page = {}
+        words = {}
         row_bands = []
     anchors = _detect_legacy_mark_scheme_anchors(layouts, config, expected)
     blocks: dict[str, MarkSchemeBlock] = {}
@@ -1270,7 +1317,7 @@ def _build_legacy_mark_scheme_blocks(
         else:
             regions, flags = _legacy_left_column_regions_for_question(
                 layouts,
-                words_by_page,
+                words,
                 canonical_number,
                 config,
             )

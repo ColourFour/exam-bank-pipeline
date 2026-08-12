@@ -14,8 +14,8 @@ from exam_bank.visual_topic_audit import (
 )
 
 
-def test_build_visual_topic_audit_batch_parses_queues_and_maps_p4_stats_records(tmp_path: Path) -> None:
-    paths = _fixture(tmp_path, family="stats", component="41", paper="41summer17", topic="forces_newtons_second_law")
+def test_build_visual_topic_audit_batch_parses_queues_and_maps_p4_mechanics_records(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path, family="mechanics", component="41", paper="41summer17", topic="forces_newtons_second_law")
     audit = _audit_report(
         tmp_path,
         missing=[{"paper_family": "p4", "paper": "41summer17", "missing_topics": ["momentum"]}],
@@ -36,7 +36,7 @@ def test_build_visual_topic_audit_batch_parses_queues_and_maps_p4_stats_records(
     assert batch["selection"]["selected_paper_count"] == 1
     row = batch["rows"][0]
     assert row["paper_family"] == "p4"
-    assert row["raw_question_bank_family"] == "p5"
+    assert row["raw_question_bank_family"] == "p4"
     assert row["source_component_family"] == "p4"
     assert row["current_topic"] == "newtons_laws_of_motion"
     assert row["missing_topics"] == ["momentum"]
@@ -52,7 +52,7 @@ def test_build_visual_topic_audit_batch_parses_queues_and_maps_p4_stats_records(
 
 
 def test_visual_topic_audit_decision_validation_rejects_bad_topics_and_missing_evidence(tmp_path: Path) -> None:
-    paths = _fixture(tmp_path, family="stats", component="41", paper="41summer17", topic="forces_newtons_second_law")
+    paths = _fixture(tmp_path, family="mechanics", component="41", paper="41summer17", topic="forces_newtons_second_law")
     batch = _build_single_batch(paths, tmp_path, "p4", "41summer17", ["momentum"])
     rows = {batch["rows"][0]["question_id"]: batch["rows"][0]}
     base = _decision(batch["rows"][0], primary_topic="invented", coverage_topics=["invented"])
@@ -84,7 +84,7 @@ def test_visual_topic_audit_decision_validation_rejects_bad_topics_and_missing_e
 
 
 def test_import_visual_topic_audit_decisions_merges_p4_and_skips_pending(tmp_path: Path) -> None:
-    paths = _fixture(tmp_path, family="stats", component="41", paper="41summer17", topic="forces_newtons_second_law")
+    paths = _fixture(tmp_path, family="mechanics", component="41", paper="41summer17", topic="forces_newtons_second_law")
     batch = _build_single_batch(paths, tmp_path, "p4", "41summer17", ["momentum"])
     batch_path = tmp_path / "batch.json"
     _write_json(batch_path, batch)
@@ -117,7 +117,7 @@ def test_import_visual_topic_audit_decisions_merges_p4_and_skips_pending(tmp_pat
 
 
 def test_visual_topic_audit_secondary_coverage_does_not_duplicate_pdf_records(tmp_path: Path) -> None:
-    paths = _fixture(tmp_path, family="stats", component="41", paper="41summer17", topic="forces_newtons_second_law")
+    paths = _fixture(tmp_path, family="mechanics", component="41", paper="41summer17", topic="forces_newtons_second_law")
     batch = _build_single_batch(paths, tmp_path, "p4", "41summer17", ["momentum"])
     batch_path = tmp_path / "batch.json"
     _write_json(batch_path, batch)

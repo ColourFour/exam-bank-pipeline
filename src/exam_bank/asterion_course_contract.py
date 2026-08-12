@@ -1,34 +1,29 @@
 from __future__ import annotations
 
+import re
 from typing import Any, Iterable, Literal, TypedDict
 
+from .core.subject_contract import (
+    PAPER_FAMILY_CONTRACTS,
+    SYLLABUS_COURSE_IDS,
+    course_id_for_identity,
+    paper_number_from_component,
+)
 
-CourseId = Literal["p1", "p3", "m1", "s1"]
+
+CourseId = Literal["p1", "p3", "m1", "s1", "s2"]
 ReviewStatus = Literal["reviewed", "needs_review", "candidate", "blocked"]
 
-COURSE_IDS: tuple[CourseId, ...] = ("p1", "p3", "m1", "s1")
-
-PAPER_FAMILY_TO_COURSE_ID: dict[str, CourseId] = {
-    "p1": "p1",
-    "p3": "p3",
-    "p4": "m1",
-    "p5": "s1",
-    "m1": "m1",
-    "s1": "s1",
-}
+COURSE_IDS: tuple[CourseId, ...] = SYLLABUS_COURSE_IDS
 
 COURSE_ID_TO_PAPER_FAMILIES: dict[CourseId, tuple[str, ...]] = {
-    "p1": ("p1",),
-    "p3": ("p3",),
-    "m1": ("p4",),
-    "s1": ("p5",),
+    contract.course_id: (contract.subject_family, f"p{contract.paper_number}")
+    for contract in PAPER_FAMILY_CONTRACTS.values()
 }
 
 COURSE_COMPONENT_NAMES: dict[CourseId, str] = {
-    "p1": "Pure Mathematics 1",
-    "p3": "Pure Mathematics 3",
-    "m1": "Mechanics 1",
-    "s1": "Probability & Statistics 1",
+    contract.course_id: contract.component_name
+    for contract in PAPER_FAMILY_CONTRACTS.values()
 }
 
 COURSE_EMPTY_STATE_MESSAGE = "No reviewed exam-bank records available yet."
@@ -71,16 +66,49 @@ def normalize_course_id(value: Any) -> CourseId | None:
     return None
 
 
-def course_id_for_paper_family(value: Any) -> CourseId | None:
-    normalized = str(value or "").strip().lower()
-    return PAPER_FAMILY_TO_COURSE_ID.get(normalized)
+def course_id_for_paper_family(
+    value: Any,
+    *,
+    component: Any = None,
+    year: Any = None,
+    session: Any = None,
+    paper: Any = None,
+) -> CourseId | None:
+    normalized = course_id_for_identity(
+        value,
+        component=component,
+        year=year,
+        session=session,
+        paper=paper,
+    )
+    if normalized in COURSE_IDS:
+        return normalized  # type: ignore[return-value]
+    return None
 
 
 def course_id_for_record(record: dict[str, Any]) -> CourseId | None:
+    component = _component_for_record(record)
+    family = _first_text(record, ("paper_family", "paperFamily"))
+    paper = _first_text(record, ("paper", "source_exam", "sourceExam"))
+    year = _first_text(record, ("year", "canonical_year_folder", "canonicalYearFolder"))
+    session = _first_text(record, ("session", "canonical_session", "canonicalSession"))
+    identity_kwargs = {
+        "component": component,
+        "year": year,
+        "session": session,
+        "paper": paper,
+    }
     explicit = _first_text(record, ("course_id", "courseId"))
     if explicit:
-        return normalize_course_id(explicit)
-    return course_id_for_paper_family(_first_text(record, ("paper_family", "paperFamily", "component")))
+        normalized = normalize_course_id(explicit)
+        identity_course = course_id_for_paper_family(family, **identity_kwargs)
+        ambiguous_p6 = paper_number_from_component(component or family) == "6" and identity_course is None
+        if ambiguous_p6:
+            return None
+        if identity_course and normalized != identity_course:
+            return None
+        return normalized
+    return course_id_for_paper_family(family or component, **identity_kwargs)
 
 
 def component_name_for_course(course_id: Any) -> str | None:
@@ -355,6 +383,19 @@ def _first_present(record: dict[str, Any], keys: tuple[str, ...]) -> Any:
         if key in record:
             return record[key]
     return None
+
+
+def _component_for_record(record: dict[str, Any]) -> str:
+    direct = _first_text(record, ("component", "source_paper_code", "sourcePaperCode"))
+    if direct:
+        return direct
+    notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
+    nested = _first_text(notes, ("source_paper_code", "component"))
+    if nested:
+        return nested
+    paper = _first_text(record, ("paper", "source_exam", "sourceExam"))
+    match = re.match(r"(?P<component>\d{1,2})", paper)
+    return match.group("component") if match else ""
 
 
 def _strings(value: Any) -> list[str]:

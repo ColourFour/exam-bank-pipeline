@@ -15,6 +15,7 @@ from exam_bank.audit import (
     write_difficulty_audit,
     write_ocr_candidate_audit,
 )
+from exam_bank.core.subject_contract import subject_family_for_component
 from exam_bank.cli import main as cli_main
 
 
@@ -617,6 +618,31 @@ def test_current_output_integrity_fails_on_question_mark_scheme_path_role_mismat
     assert failures["mark_scheme_image_path_kind_mismatch"]["examples"][0]["path"] == question_looking_mark_scheme_path
 
 
+def test_current_output_integrity_rejects_reversed_component_subject_family(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "output"
+    question_path = "stats/stats_2024_m24_42_qp_q01_question.png"
+    mark_scheme_path = "stats/stats_2024_m24_42_ms_q01_markscheme.png"
+    _write_file(artifact_root / question_path)
+    _write_file(artifact_root / mark_scheme_path)
+    record = _integrity_record(
+        "42spring24_q01",
+        paper="42spring24",
+        paper_family="stats",
+        question_number="1",
+        question_image_path=question_path,
+        mark_scheme_image_path=mark_scheme_path,
+    )
+    input_path = artifact_root / "json" / "question_bank.json"
+    _write_integrity_bank(input_path, [record], artifact_root=artifact_root)
+
+    report = audit_current_output_integrity(input_path)
+
+    failures = {failure["code"]: failure for failure in report["failures"]}
+    assert report["checks"]["component_subject_family_agrees"] is False
+    assert report["counts"]["component_subject_family_mismatch_count"] == 1
+    assert failures["component_subject_family_mismatch"]["examples"][0]["expected_subject_family"] == "mechanics"
+
+
 def test_current_output_integrity_flags_foreign_mark_scheme_text_labels(tmp_path: Path) -> None:
     artifact_root = tmp_path / "output"
     q10_question_path = "p1/13winter11/questions/q10.png"
@@ -882,6 +908,7 @@ def _integrity_record(
     question_id: str,
     *,
     paper: str,
+    paper_family: str | None = None,
     question_number: str,
     question_image_path: str,
     mark_scheme_image_path: str,
@@ -890,7 +917,7 @@ def _integrity_record(
     return {
         "question_id": question_id,
         "paper": paper,
-        "paper_family": "p1",
+        "paper_family": paper_family or subject_family_for_component(paper[:2], paper=paper) or "pm1",
         "question_number": question_number,
         "canonical_question_artifact": question_image_path,
         "question_image_path": question_image_path,

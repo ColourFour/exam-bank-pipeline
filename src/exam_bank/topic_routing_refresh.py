@@ -23,7 +23,11 @@ from .topic_routing import (
     load_topic_routing_sidecar_records,
 )
 from .topic_routing import _course_metadata_for_record
-from .topic_routing_artifact import file_sha256
+from .topic_routing_artifact import (
+    DEFAULT_RELEASE_MANIFEST_PATH,
+    build_topic_routing_release_manifest,
+    file_sha256,
+)
 
 
 DEFAULT_QUESTION_BANK = Path("output/json/question_bank.json")
@@ -42,6 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--taxonomy", type=Path, default=DEFAULT_TAXONOMY)
     parser.add_argument("--canonical-taxonomy-root", type=Path, default=DEFAULT_CANONICAL_TAXONOMY_ROOT)
     parser.add_argument("--routing", type=Path, default=DEFAULT_ROUTING)
+    parser.add_argument("--release-manifest", type=Path, default=DEFAULT_RELEASE_MANIFEST_PATH)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT_PREFIX)
     parser.add_argument("--write", action="store_true", help="Write refreshed sidecar and reports. Without this, dry-run only.")
     return parser
@@ -54,6 +59,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         taxonomy_path=args.taxonomy,
         canonical_taxonomy_root=args.canonical_taxonomy_root,
         routing_path=args.routing,
+        release_manifest_path=args.release_manifest,
         report_prefix=args.report,
         write=bool(args.write),
     )
@@ -67,6 +73,7 @@ def refresh_topic_routing(
     taxonomy_path: str | Path = DEFAULT_TAXONOMY,
     canonical_taxonomy_root: str | Path = DEFAULT_CANONICAL_TAXONOMY_ROOT,
     routing_path: str | Path = DEFAULT_ROUTING,
+    release_manifest_path: str | Path | None = None,
     report_prefix: str | Path = DEFAULT_REPORT_PREFIX,
     write: bool = False,
     generated_at: str | None = None,
@@ -75,6 +82,10 @@ def refresh_topic_routing(
     taxonomy_path = Path(taxonomy_path)
     canonical_taxonomy_root = Path(canonical_taxonomy_root)
     routing_path = Path(routing_path)
+    release_manifest_path = Path(release_manifest_path) if release_manifest_path is not None else _default_release_manifest_path(
+        question_bank_path,
+        routing_path,
+    )
     report_prefix = Path(report_prefix)
     generated_at = generated_at or datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
@@ -82,6 +93,7 @@ def refresh_topic_routing(
     taxonomy = load_packet_taxonomy(taxonomy_path)
     existing_records = load_topic_routing_sidecar_records(routing_path) if routing_path.exists() else {}
     existing_aliases = build_existing_route_aliases(records, existing_records)
+    claimed_existing_ids = {existing_id for existing_id, _route in existing_aliases.values()}
 
     refreshed: dict[str, dict[str, Any]] = {}
     exclusions: list[dict[str, Any]] = []
@@ -95,6 +107,7 @@ def refresh_topic_routing(
     new_review_required = 0
     updated_entries = 0
     replaced_conflicts = 0
+    identity_guard_rejections = 0
 
     for record in records:
         question_id = str(record.get("question_id") or "").strip()
@@ -104,21 +117,40 @@ def refresh_topic_routing(
         route_context = route_context_for_record(record, taxonomy, canonical_taxonomy_root)
         if route_context["normalization_status"] != "resolved":
             unresolved.append(_unresolved_report_row(record, route_context))
-            exclusions.append(_exclusion_row(record, route_context, reason="unresolved_topic"))
-            continue
-
-        existing_key = question_id
-        existing = existing_records.get(question_id)
-        if existing is None and question_id in existing_aliases:
-            existing_key, existing = existing_aliases[question_id]
-        conflict = existing_route_conflict(existing, route_context)
-        if conflict:
-            conflicts.append(conflict_report_row(question_id, record, existing, route_context, conflict))
             route = build_deterministic_route_record(
                 record,
                 route_context,
                 generated_at=generated_at,
-                extra_review_reasons=["existing_route_conflicts_with_normalized_topic"],
+                extra_review_reasons=[
+                    f"topic_normalization_{route_context['normalization_status']}"
+                ],
+            )
+            refreshed[question_id] = route
+            new_entries += 1
+            new_review_required += 1
+            continue
+
+        existing_key = question_id
+        existing = None if question_id in claimed_existing_ids else existing_records.get(question_id)
+        if existing is None and question_id in existing_aliases:
+            existing_key, existing = existing_aliases[question_id]
+        if existing is not None and not existing_route_identity_matches(existing, record):
+            existing = None
+            existing_key = question_id
+            identity_guard_rejections += 1
+        conflict = existing_route_conflict(existing, route_context)
+        if conflict:
+            conflicts.append(conflict_report_row(question_id, record, existing, route_context, conflict))
+            extra_review_reasons = (
+                []
+                if conflict.get("type") == "missing_primary_topic"
+                else ["existing_route_conflicts_with_normalized_topic"]
+            )
+            route = build_deterministic_route_record(
+                record,
+                route_context,
+                generated_at=generated_at,
+                extra_review_reasons=extra_review_reasons,
             )
             route["previous_route_conflict"] = conflict
             refreshed[question_id] = route
@@ -170,6 +202,7 @@ def refresh_topic_routing(
         "new_review_required_entries": new_review_required,
         "conflicts_count": len(conflicts),
         "replaced_conflicts": replaced_conflicts,
+        "identity_guard_rejections": identity_guard_rejections,
         "unresolved_count": len(unresolved),
     }
     sidecar = build_topic_routing_sidecar(
@@ -201,6 +234,8 @@ def refresh_topic_routing(
         write_topic_routing_refresh_outputs(
             sidecar=sidecar,
             routing_path=routing_path,
+            question_bank_path=question_bank_path,
+            release_manifest_path=release_manifest_path,
             report=report,
             report_prefix=report_prefix,
         )
@@ -218,20 +253,38 @@ def route_context_for_record(
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
-    topic_ref = taxonomy["topics"].get((normalization.expected_family, normalization.expected_topic))
+    component_family = normalization.component_family
+    packet_family = normalization.expected_family
+    packet_topic_id = normalization.expected_topic
+    normalization_status = normalization.status
+    normalization_reason = normalization.reason
+    # Packet normalization may identify a topic that is unique to another
+    # syllabus paper.  That is useful anomaly evidence, but a release sidecar
+    # must never use it to move a question into another course.  Keep the
+    # source component authoritative and fail the route closed for review.
+    if normalization.resolved and component_family and packet_family != component_family:
+        packet_family = component_family
+        packet_topic_id = ""
+        normalization_status = "component_family_topic_mismatch"
+        normalization_reason = "topic_resolves_only_outside_source_component_family"
+    topic_ref = taxonomy["topics"].get((packet_family, packet_topic_id))
     canonical_topic_id = str((topic_ref or {}).get("canonical_topic_id") or "").strip()
-    packet_record = normalized_record_for_packet(record, normalization.expected_family or normalization.current_family)
+    packet_record = normalized_record_for_packet(record, packet_family or normalization.current_family)
     packet = build_refresh_evidence_packet(packet_record, canonical_taxonomy_root)
     deterministic_reasons = deterministic_review_reasons(packet)
     return {
         "source_component": component,
+        "identity_year": normalization.identity_year,
         "current_family": normalization.current_family,
-        "packet_family": normalization.expected_family,
-        "packet_topic_id": normalization.expected_topic,
+        "packet_family": packet_family,
+        "packet_topic_id": packet_topic_id,
         "canonical_topic_id": canonical_topic_id,
-        "normalization_status": normalization.status,
-        "normalization_reason": normalization.reason,
+        "normalization_status": normalization_status,
+        "normalization_reason": normalization_reason,
         "raw_topic": normalization.raw_topic,
         "packet": packet,
         "evidence_packet_hash": hash_topic_routing_evidence_packet(packet),
@@ -290,9 +343,10 @@ def build_deterministic_route_record(
         "packet_topic_id": context["packet_topic_id"],
         "raw_topic": context["raw_topic"],
         "source_component": context["source_component"],
+        "source_session_code": source_session_code_for_record(record),
         "normalization_status": context["normalization_status"],
         "normalization_reason": context["normalization_reason"],
-        **_course_metadata_for_record({"paper_family": context["packet_family"]}),
+        **route_course_metadata(record, context),
     }
     if not canonical_topic_id:
         route["review_required"] = True
@@ -320,11 +374,12 @@ def preserve_existing_route_record(
             "packet_topic_id": context["packet_topic_id"],
             "raw_topic": context["raw_topic"],
             "source_component": context["source_component"],
+            "source_session_code": source_session_code_for_record(record),
             "normalization_status": context["normalization_status"],
             "normalization_reason": context["normalization_reason"],
             "routing_preserved_from_existing": True,
             "routing_refreshed_at": generated_at,
-            **_course_metadata_for_record({"paper_family": context["packet_family"]}),
+            **route_course_metadata(record, context),
         }
     )
     if previous_question_id:
@@ -334,11 +389,31 @@ def preserve_existing_route_record(
     return route
 
 
+def route_course_metadata(record: dict[str, Any], context: dict[str, Any]) -> dict[str, str | None]:
+    return _course_metadata_for_record(
+        {
+            "paper_family": context.get("packet_family"),
+            "paper": record.get("paper"),
+            "source_paper_code": context.get("source_component"),
+            "year": context.get("identity_year") or record.get("year") or record.get("canonical_year_folder"),
+            "session": record.get("session"),
+        }
+    )
+
+
 def existing_route_conflict(existing: dict[str, Any] | None, context: dict[str, Any]) -> dict[str, Any] | None:
     if not isinstance(existing, dict):
         return None
     existing_topic = existing.get("primary_topic_id")
     expected_topic = context["canonical_topic_id"]
+    if expected_topic and not existing_topic:
+        return {
+            "type": "missing_primary_topic",
+            "existing_primary_topic_id": existing_topic,
+            "normalized_primary_topic_id": expected_topic,
+            "existing_review_required": existing.get("review_required"),
+            "existing_confidence": existing.get("confidence"),
+        }
     if existing_topic and expected_topic and existing_topic != expected_topic:
         return {
             "type": "primary_topic_conflict",
@@ -364,6 +439,35 @@ def build_existing_route_aliases(
             current_by_paper_qno[(paper, qno)] = question_id
 
     aliases: dict[str, tuple[str, dict[str, Any]]] = {}
+
+    # Before this contract distinguished March from May/June, March records
+    # were keyed as ``summerYY``.  Claim that legacy route for the provenance-
+    # matched March record before an independently admitted June record can
+    # see the same old key.  A route already carrying June provenance, or a
+    # source hash matching the current June record, is never claimed.
+    current_hashes_by_id = {
+        str(record.get("question_id") or "").strip(): source_record_hash(record)
+        for record in records
+        if str(record.get("question_id") or "").strip()
+    }
+    for record in records:
+        current_id = str(record.get("question_id") or "").strip()
+        source_session_code = source_session_code_for_record(record)
+        if not current_id or not source_session_code.startswith("m") or "spring" not in current_id.lower():
+            continue
+        legacy_id = re.sub(r"(?<=^\d{2})spring(?=\d{2}_q)", "summer", current_id, count=1, flags=re.IGNORECASE)
+        route = existing_records.get(legacy_id)
+        if not isinstance(route, dict):
+            continue
+        route_session_code = str(route.get("source_session_code") or "").strip().lower()
+        if route_session_code and route_session_code != source_session_code:
+            continue
+        route_hash = str(route.get("source_record_hash") or "").strip()
+        if route_hash and route_hash == current_hashes_by_id.get(legacy_id):
+            continue
+        if current_id not in existing_records and current_id not in aliases:
+            aliases[current_id] = (legacy_id, route)
+
     for existing_id, route in existing_records.items():
         if existing_id in current_ids:
             continue
@@ -377,6 +481,36 @@ def build_existing_route_aliases(
         if current_id and current_id not in existing_records and current_id not in aliases:
             aliases[current_id] = (existing_id, route)
     return aliases
+
+
+def existing_route_identity_matches(existing: dict[str, Any], record: dict[str, Any]) -> bool:
+    current_session_code = source_session_code_for_record(record)
+    route_session_code = str(existing.get("source_session_code") or "").strip().lower()
+    if route_session_code and current_session_code and route_session_code != current_session_code:
+        return False
+    # A legacy ``summerYY`` route with no raw-session provenance may represent
+    # the formerly collapsed March paper.  Never attach it to a June record if
+    # its source-record hash does not identify that exact June record.
+    if current_session_code.startswith("s") and not route_session_code:
+        route_hash = str(existing.get("source_record_hash") or "").strip()
+        if not route_hash or route_hash != source_record_hash(record):
+            return False
+    return True
+
+
+def source_session_code_for_record(record: dict[str, Any]) -> str:
+    notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
+    candidates = [
+        notes.get("source_pdf"),
+        record.get("source_pdf"),
+        record.get("question_image_path"),
+        record.get("canonical_question_artifact"),
+    ]
+    for value in candidates:
+        match = re.search(r"(?:^|_)(?P<code>[msw]\d{2})(?:_|$)", Path(str(value or "")).name.lower())
+        if match:
+            return match.group("code")
+    return ""
 
 
 def normalize_question_number(value: Any) -> str:
@@ -447,6 +581,7 @@ def build_refresh_report(
         "preserved_existing_entries": sidecar["metadata"].get("preserved_existing_entries", 0),
         "preserved_reviewed_entries": sidecar["metadata"].get("preserved_reviewed_entries", 0),
         "preserved_via_alias_entries": sidecar["metadata"].get("preserved_via_alias_entries", 0),
+        "identity_guard_rejections": sidecar["metadata"].get("identity_guard_rejections", 0),
         "existing_hash_refreshed_count": sidecar["metadata"].get("existing_hash_refreshed_count", 0),
         "new_entries": sidecar["metadata"].get("new_entries", 0),
         "new_review_required_entries": sidecar["metadata"].get("new_review_required_entries", 0),
@@ -487,16 +622,32 @@ def write_topic_routing_refresh_outputs(
     *,
     sidecar: dict[str, Any],
     routing_path: Path,
+    question_bank_path: Path,
+    release_manifest_path: Path,
     report: dict[str, Any],
     report_prefix: Path,
 ) -> None:
     write_atomic_json(sidecar, routing_path)
     sha_path = routing_path.with_suffix(".sha256")
     sha_path.write_text(f"{file_sha256(routing_path)}  {routing_path.name}\n", encoding="utf-8")
+    build_topic_routing_release_manifest(
+        question_bank_path=question_bank_path,
+        durable_sidecar_path=routing_path,
+        release_manifest_path=release_manifest_path,
+    )
     json_report, markdown_report = report_paths(report_prefix)
     write_atomic_json(report, json_report)
     markdown_report.parent.mkdir(parents=True, exist_ok=True)
     markdown_report.write_text(render_markdown(report), encoding="utf-8")
+
+
+def _default_release_manifest_path(question_bank_path: Path, routing_path: Path) -> Path:
+    if (
+        question_bank_path.resolve() == DEFAULT_QUESTION_BANK.resolve()
+        and routing_path.resolve() == DEFAULT_ROUTING.resolve()
+    ):
+        return DEFAULT_RELEASE_MANIFEST_PATH
+    return routing_path.parent / "question_bank_release_manifest.v1.json"
 
 
 def report_paths(prefix: Path) -> tuple[Path, Path]:
@@ -528,6 +679,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "preserved_existing_entries",
         "preserved_reviewed_entries",
         "preserved_via_alias_entries",
+        "identity_guard_rejections",
         "existing_hash_refreshed_count",
         "new_entries",
         "new_review_required_entries",

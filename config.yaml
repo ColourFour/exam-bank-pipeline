@@ -5,6 +5,7 @@ input:
   question_papers_dir: input/question_papers
   mark_schemes_dir: input/mark_schemes
   mappings_dir: input/mappings
+  corpus_manifest: manifests/corpora/caie_9709.active_partial.v1.json
 
 output:
   json_dir: output/json
@@ -39,6 +40,8 @@ detection:
 
 ocr:
   enabled: false
+  strategy: adaptive
+  native_text_min_score: 0
   language: eng
   tesseract_cmd:
   timeout_seconds: 30

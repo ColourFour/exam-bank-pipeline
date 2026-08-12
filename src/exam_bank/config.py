@@ -117,6 +117,7 @@ class InputConfig:
     mark_schemes_dir: Path = Path("input/mark_schemes")
     mappings_dir: Path = Path("input/mappings")
     examiner_reports_dir: Path = Path("input/examiner_reports")
+    corpus_manifest: Path = Path("manifests/corpora/caie_9709.active_partial.v1.json")
 
 
 @dataclass
@@ -166,6 +167,8 @@ class DetectionConfig:
 @dataclass
 class OCRConfig:
     enabled: bool = False
+    strategy: str = "adaptive"
+    native_text_min_score: int = 0
     language: str = "eng"
     tesseract_cmd: str = ""
     timeout_seconds: int = 30
@@ -264,6 +267,12 @@ def validate_config(config: AppConfig) -> None:
         config.detection.output_mode = "prompt_only"
     if not 0 < config.detection.max_crop_height_ratio <= 1:
         raise ValueError("detection.max_crop_height_ratio must be between 0 and 1.")
+    ocr_strategy = str(config.ocr.strategy or "adaptive").strip().lower()
+    if ocr_strategy not in {"adaptive", "always"}:
+        raise ValueError("ocr.strategy must be `adaptive` or `always`.")
+    config.ocr.strategy = ocr_strategy
+    if isinstance(config.ocr.native_text_min_score, bool) or not isinstance(config.ocr.native_text_min_score, int):
+        raise ValueError("ocr.native_text_min_score must be an integer.")
     if config.ocr.timeout_seconds <= 0:
         raise ValueError("ocr.timeout_seconds must be positive.")
 

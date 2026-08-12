@@ -89,6 +89,8 @@ def test_checked_in_config_yaml_loads_with_current_schema() -> None:
     config = load_config(Path("config.yaml"))
 
     assert config.ocr.enabled is False
+    assert config.ocr.strategy == "adaptive"
+    assert config.ocr.native_text_min_score == 0
     assert config.ocr.language == "eng"
     assert config.ocr.timeout_seconds == 30
     assert config.classification.enable_openai is False
@@ -113,3 +115,22 @@ def test_ocr_config_accepts_legacy_aliases(tmp_path: Path) -> None:
     assert config.ocr.language == "eng"
     assert config.ocr.tesseract_cmd == "/opt/homebrew/bin/tesseract"
     assert config.ocr.timeout_seconds == 12
+
+
+@pytest.mark.parametrize(
+    ("ocr_yaml", "message"),
+    [
+        ("strategy: sometimes", "ocr.strategy"),
+        ("native_text_min_score: 0.5", "ocr.native_text_min_score"),
+    ],
+)
+def test_load_config_rejects_invalid_adaptive_ocr_settings(
+    tmp_path: Path,
+    ocr_yaml: str,
+    message: str,
+) -> None:
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(f"ocr:\n  {ocr_yaml}\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match=message):
+        load_config(config_path)

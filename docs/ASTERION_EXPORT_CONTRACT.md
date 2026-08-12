@@ -8,9 +8,9 @@ This contract covers the current Asterion-facing exports:
 
 These files are role-gated projections from the image-first question bank. Asterion must not treat the catalog or Content Lab queue as globally student-facing-safe corpora. A record is usable only for the specific role whose gate allows that use.
 
-Strict topic filters, when backed directly by `output/json/question_bank.topic_routing.v1.json`, are governed by [Topic Routing Sidecar Contract](TOPIC_ROUTING_SIDECAR_CONTRACT.md). Direct raw-sidecar consumers must require `metadata.run_summary.safe_for_strict_filters=true`. The Asterion export may consume the sidecar more narrowly as record-level routing evidence: it can attach a top-level `topic_id` only when that individual route has no error, `review_required=false`, `confidence` of `high` or `medium`, and a non-empty, duplicate-free distribution that totals `100` and contains the primary topic. Failed or review-required routes stay out of student topic filters.
+Strict topic filters are resolved through `manifests/releases/question_bank_release_manifest.v1.json`, which binds the exact question bank and durable `data/topic_routing/question_bank.topic_routing.v1.json` by SHA-256, byte size, schema, count, and question-ID set. `output/json/question_bank.topic_routing.v1.json` is only an optional restored cache. Direct raw-sidecar consumers must require `metadata.run_summary.safe_for_strict_filters=true`. The Asterion export may consume the released sidecar more narrowly as record-level routing evidence: it can attach a top-level `topic_id` only when that individual route has no error, `review_required=false`, `confidence` of `high` or `medium`, and a non-empty, duplicate-free distribution that totals `100` and contains the primary topic. Failed or review-required routes stay out of student topic filters.
 
-The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, and `s1`. Paper family `p4` maps to course `m1`; paper family `p5` maps to course `s1`. All supported courses fail closed for records that do not pass the deterministic readiness gate, and the student runtime export contains only reviewed/safe records.
+The export layer is course-aware for the static 9709 study site. Supported `course_id` values are `p1`, `p3`, `m1`, `s1`, and `s2`. The canonical storage families are `pm1`, `pm3`, `mechanics`, and `stats`; the component is authoritative when the shared `stats` family must be split. Paper 4 maps to `mechanics`/`m1`, Paper 5 to `stats`/`s1`, and Paper 6 to `stats`/`s2`. All supported courses fail closed for records that do not pass the deterministic readiness gate, and the student runtime export contains only reviewed/safe records. The current packet taxonomy has no P6/S2 topic component, so P6 routes remain explicit review-only records rather than being collapsed into S1.
 
 ## Export Purposes
 
@@ -22,7 +22,7 @@ The export layer is course-aware for the static 9709 study site. Supported `cour
 
 `src/exam_bank/asterion_course_contract.py` is the centralized loader/filter contract for static-site use. It filters records by course, paper, and component; returns only reviewed/safe records for student runtime requests; ignores invalid course IDs safely; and refuses to load Content Lab candidate payloads as student-runtime exam-bank records.
 
-`output/asterion/exports/latest/*.json` is ignored/generated. Release handoff must use a tracked manifest under `reports/` that records SHA-256 values, byte sizes, validator status, and durable topic-sidecar provenance for the exact generated files. A packaging manifest is evidence for which files deployment should consume; it does not change role gates, runtime behavior, student-runtime promotion, or auto-grade eligibility.
+`output/asterion/exports/latest/*.json` is ignored/generated. Release handoff must use tracked manifests under `manifests/releases/`: the question-bank release manifest binds canonical inputs and the Asterion package manifest binds generated exports. A packaging manifest is evidence for which files deployment should consume; it does not change role gates, runtime behavior, or student-runtime promotion.
 
 The catalog and runtime exports include top-level `courses` and `components` summaries. `courses` reports counts by static-site course ID. `components` reports the same course IDs with component names and paper-level counts when source paper metadata is available.
 
@@ -92,11 +92,11 @@ These counts are dated release evidence, not eligibility rules. Regenerated expo
 
 Student-facing readiness is limited. The all-course catalog is useful for review and controlled downstream workflows, but only the reviewed/safe subset is eligible for static student practice. Other product roles such as quick checks, Guardian candidate flows, or generation inputs still require their own role gates.
 
-Course readiness is uneven. P3 is the most developed exam-bank path, while P1, M1, and S1 still need broader topic-map and review coverage. Student pages should still show `No reviewed exam-bank records available yet.` for any course or filter whose reviewed/safe runtime subset is empty. Do not reuse P3 questions for these courses.
+Course readiness is uneven. P3 is the most developed exam-bank path, while P1, M1, S1, and S2 still need broader topic-map and review coverage. Student pages should still show `No reviewed exam-bank records available yet.` for any course or filter whose reviewed/safe runtime subset is empty. Do not reuse P3 questions for these courses.
 
 Subpart marks are incomplete. In the dated export evidence above, the Asterion projection has `968` records with labeled subparts, and `48` records have missing subpart marks. Full-question mark totals and rendered mark-scheme images are more reliable than subpart-level automated marking.
 
-The source set is missing the mark scheme for `9709_2025_November_33`. This accounts for `11` records with missing mark-scheme image paths, including `33winter25_q01` through `33winter25_q11`. These records must remain blocked or review-only until the source companion mark scheme is added and the export is regenerated and validated.
+Do not carry dated missing-artifact exceptions forward automatically. The current release must pass the canonical integrity gate and the hash-bound release verifier; any future missing companion must be recorded against that exact release manifest and remain blocked or review-only.
 
 Mark events and generated warmup pattern metadata are not reviewed content. They are machine candidates unless reviewed or approved status is present and the candidate generation gate allows use.
 
@@ -105,7 +105,7 @@ Content Lab candidates remain isolated review material. `asterion_content_lab_ca
 ## Asterion Consumer Checklist
 
 1. Verify `schema_name`, `schema_version`, `source_schema`, `export_purpose`, and `record_count` before loading.
-2. Verify `course_id` is one of `p1`, `p3`, `m1`, or `s1`; default to empty results for invalid or unsupported IDs.
+2. Verify `course_id` is one of `p1`, `p3`, `m1`, `s1`, or `s2`; default to empty results for invalid or unsupported IDs. Require component evidence before splitting the canonical `stats` family between S1 and S2.
 3. Resolve image paths against the artifact root and require expected integrity metadata for any student-visible image display.
 4. Gate static student runtime by `student_runtime_safe=true` and `review_status=reviewed`.
 5. Gate every other use by the exact role field for that workflow. Default deny unknown, missing, `block`, and inappropriate `block_until_reviewed` statuses.
@@ -115,4 +115,4 @@ Content Lab candidates remain isolated review material. `asterion_content_lab_ca
 9. For Content Lab, require both candidate `role_statuses` and `generation_gate.status=allow` before any generated content is considered. Do not emit student-facing generated content from `blocked_until_reviewed` candidates.
 10. Keep `p3_readiness_metric` separate from product eligibility; it is a reporting inclusion flag, not a practice gate.
 11. For strict topic filters over the exported catalog/runtime, require `topic_id` plus `topic_route.filter_ok=true` on records already gated by `student_runtime_safe=true` and `review_status=reviewed`. Direct raw-sidecar filters still require the topic routing sidecar contract and `safe_for_strict_filters=true`; default to review-only behavior when the required route evidence is missing, unsafe, or failed.
-12. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and the missing `9709_2025_November_33` mark scheme.
+12. Recheck known limitations before release: limited student-facing eligibility, incomplete subpart marks, and review-only P6 topic routes until an approved S2 packet taxonomy exists.

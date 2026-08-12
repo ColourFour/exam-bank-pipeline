@@ -9,7 +9,10 @@ from pathlib import Path
 import re
 from typing import Any, Sequence
 
-from openai import OpenAI
+try:
+    from openai import OpenAI
+except ImportError:  # Optional dependency; deterministic routing helpers remain usable.
+    OpenAI = None  # type: ignore[assignment]
 
 from .asterion_course_contract import (
     COURSE_IDS,
@@ -40,6 +43,14 @@ from .run_status import RunStatusTracker, default_status_root_for_output, resolv
 TOPIC_ROUTING_SCHEMA_NAME = "exam_bank.topic_routing_sidecar"
 TOPIC_ROUTING_SCHEMA_VERSION = 1
 TOPIC_ROUTING_PROMPT_VERSION = "topic_routing_v1"
+
+_COURSE_ID_TO_TOPIC_FAMILY = {
+    "p1": "p1",
+    "p3": "p3",
+    "m1": "p4",
+    "s1": "p5",
+    "s2": "p6",
+}
 DEFAULT_INPUT_PATH = Path("output/json/question_bank.json")
 DEFAULT_OUTPUT_PATH = Path("output/json/question_bank.topic_routing.v1.json")
 DEFAULT_TAXONOMY_PATH = Path("exam_bank_taxonomy/canonical")
@@ -352,7 +363,7 @@ def select_topic_routing_records(
         selected = [
             record
             for record in selected
-            if canonical_component_for_paper_family(record.get("paper_family")) == wanted_component
+            if _taxonomy_component_for_record(record) == wanted_component
         ]
     if paper:
         wanted_paper = paper.strip().lower()
@@ -365,13 +376,21 @@ def select_topic_routing_records(
     return selected
 
 
+def _taxonomy_component_for_record(record: dict[str, Any]) -> str:
+    return str(course_id_for_record(record) or "")
+
+
+def _taxonomy_paper_family_for_record(record: dict[str, Any]) -> str:
+    return _COURSE_ID_TO_TOPIC_FAMILY.get(_taxonomy_component_for_record(record), "")
+
+
 def batch_topic_routing_records(records: Sequence[dict[str, Any]], *, batch_by_paper: bool = True) -> list[list[dict[str, Any]]]:
     if not batch_by_paper:
         return [[record] for record in records]
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for record in records:
         key = (
-            canonical_component_for_paper_family(record.get("paper_family")),
+            _taxonomy_component_for_record(record),
             str(record.get("paper") or ""),
         )
         grouped[key].append(record)
@@ -396,7 +415,12 @@ def build_topic_routing_question_packet(
     *,
     taxonomy_root: str | Path,
 ) -> TopicQuestionPacket:
-    taxonomy = load_canonical_taxonomy(taxonomy_root, record.get("paper_family"))
+    paper_family = _taxonomy_paper_family_for_record(record)
+    if not paper_family:
+        raise StartupConfigurationError(
+            f"Record {record.get('question_id')} has no unambiguous era-aware topic-routing family."
+        )
+    taxonomy = load_canonical_taxonomy(taxonomy_root, paper_family)
     notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
     evidence: dict[str, str] = {}
     evidence_sources: dict[str, str] = {}
@@ -425,7 +449,7 @@ def build_topic_routing_question_packet(
 
     packet = {
         "question_id": str(record.get("question_id")),
-        "paper_family": str(record.get("paper_family") or "").lower(),
+        "paper_family": paper_family,
         "paper": record.get("paper"),
         "question_number": record.get("question_number"),
         "visual_required": visual_required,
@@ -492,7 +516,7 @@ def build_deterministic_review_record(
         "llm_prompt_version": TOPIC_ROUTING_PROMPT_VERSION,
         "routing_source": "deterministic_review_gate",
         "paper": record.get("paper"),
-        "paper_family": str(record.get("paper_family") or "").lower(),
+        "paper_family": str(packet.get("paper_family") or "").lower(),
         "question_number": record.get("question_number"),
         "evidence_packet_hash": evidence_packet_hash or hash_topic_routing_evidence_packet(packet),
         **_course_metadata_for_record(record),
@@ -525,7 +549,7 @@ def route_topic_records(
 
     for index, batch in enumerate(batches, start=1):
         paper = str(batch[0].get("paper") or "") if batch else ""
-        paper_family = str(batch[0].get("paper_family") or "").lower() if batch else ""
+        paper_family = _taxonomy_paper_family_for_record(batch[0]) if batch else ""
         batch_id = _batch_id(batch, index=index)
         if progress:
             progress.start_batch(batch_id=batch_id, paper=paper, paper_family=paper_family, record_count=len(batch), phase="routing_topics")
@@ -1117,7 +1141,7 @@ def build_topic_routing_success_record(
             "llm_run_timestamp": run_timestamp,
             "routing_source": "deepseek_topic_routing",
             "paper": source.get("paper"),
-            "paper_family": str(source.get("paper_family") or "").lower(),
+            "paper_family": _taxonomy_paper_family_for_record(source),
             "question_number": source.get("question_number"),
             "evidence_packet_hash": hash_topic_routing_evidence_packet(packet),
             **_course_metadata_for_record(source),
@@ -1412,7 +1436,7 @@ def _batch_id(batch: Sequence[dict[str, Any]], *, index: int) -> str:
     if not batch:
         return f"empty_{index:04d}"
     paper = str(batch[0].get("paper") or "unknown")
-    component = canonical_component_for_paper_family(batch[0].get("paper_family"))
+    component = _taxonomy_component_for_record(batch[0])
     raw = f"{component}_{paper}_{index:04d}"
     safe = "".join(char if char.isalnum() or char in {"_", "-"} else "_" for char in raw)
     digest = hashlib.sha256("|".join(str(record.get("question_id")) for record in batch).encode("utf-8")).hexdigest()[:8]

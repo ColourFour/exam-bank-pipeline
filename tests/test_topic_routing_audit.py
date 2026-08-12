@@ -14,7 +14,6 @@ def test_topic_routing_baseline_audit_counts_and_failure_analysis(tmp_path: Path
     mark_events = tmp_path / "mark_events.json"
     missing_catalog = tmp_path / "missing_catalog.json"
     missing_runtime = tmp_path / "missing_runtime.json"
-    missing_auto_grade = tmp_path / "missing_auto_grade.json"
     _write_json(
         question_bank,
         {
@@ -119,7 +118,6 @@ def test_topic_routing_baseline_audit_counts_and_failure_analysis(tmp_path: Path
         mark_events_path=mark_events,
         asterion_catalog_path=missing_catalog,
         asterion_runtime_path=missing_runtime,
-        auto_grade_eligibility_path=missing_auto_grade,
         generated_at="2026-06-11T00:00:00+00:00",
     )
 
@@ -148,7 +146,6 @@ def test_topic_routing_baseline_audit_counts_and_failure_analysis(tmp_path: Path
     assert audit["mark_events_snapshot"]["record_count"] == 2
     assert audit["mark_events_snapshot"]["extraction_status_counts"] == {"ok": 1, "review": 1}
     assert audit["mark_events_snapshot"]["safe_for_marking_use_true_count"] == 1
-    assert audit["auto_grade_readiness_snapshot"]["file_found"] is False
     assert audit["inputs"]["mark_events"]["exists"] is True
 
 
@@ -157,7 +154,6 @@ def test_topic_routing_baseline_audit_handles_downstream_snapshots(tmp_path: Pat
     topic_routing = tmp_path / "topic_routing.json"
     catalog = tmp_path / "catalog.json"
     runtime = tmp_path / "runtime.json"
-    auto_grade = tmp_path / "eligible_items.json"
     _write_json(question_bank, {"questions": [{"question_id": "q1", "text_only_status": "ready"}]})
     _write_json(
         topic_routing,
@@ -191,23 +187,12 @@ def test_topic_routing_baseline_audit_handles_downstream_snapshots(tmp_path: Pat
         },
     )
     _write_json(runtime, {"questions": [{"question_id": "q1", "paper_family": "p3"}]})
-    _write_json(
-        auto_grade,
-        {
-            "items": [
-                {"question_id": "q1", "eligibility_status": "blocked", "block_reasons": ["rubric_not_reviewed"]},
-                {"question_id": "q2", "eligibility_status": "eligible", "block_reasons": []},
-            ]
-        },
-    )
-
     audit = build_topic_routing_baseline_audit(
         question_bank_path=question_bank,
         topic_routing_path=topic_routing,
         mark_events_path=tmp_path / "mark_events.json",
         asterion_catalog_path=catalog,
         asterion_runtime_path=runtime,
-        auto_grade_eligibility_path=auto_grade,
         generated_at="2026-06-11T00:00:00+00:00",
     )
 
@@ -217,8 +202,6 @@ def test_topic_routing_baseline_audit_handles_downstream_snapshots(tmp_path: Pat
     assert audit["asterion_readiness_snapshot"]["topic_route_filter_ok_true_count"] == 1
     assert audit["asterion_readiness_snapshot"]["route_review_error_or_stale_blocked_count"] == 1
     assert audit["topic_routing_sidecar_baseline"]["missing_evidence_packet_hash_count"] == 0
-    assert audit["auto_grade_readiness_snapshot"]["status_counts"] == {"blocked": 1, "eligible": 1}
-    assert audit["auto_grade_readiness_snapshot"]["top_blocker_counts"] == {"rubric_not_reviewed": 1}
 
 
 def test_topic_routing_baseline_json_output_is_stable(tmp_path: Path) -> None:
@@ -235,7 +218,6 @@ def test_topic_routing_baseline_json_output_is_stable(tmp_path: Path) -> None:
         "mark_events_path": tmp_path / "mark_events.json",
         "asterion_catalog_path": tmp_path / "catalog.json",
         "asterion_runtime_path": tmp_path / "runtime.json",
-        "auto_grade_eligibility_path": tmp_path / "auto_grade.json",
         "generated_at": "2026-06-11T00:00:00+00:00",
     }
     write_json(output_a, build_topic_routing_baseline_audit(**kwargs))

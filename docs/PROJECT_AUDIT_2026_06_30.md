@@ -1,5 +1,9 @@
 # Project Audit - 2026-06-30
 
+> Historical pre-split snapshot. Classroom, homework/email intake, and grading
+> paths described below moved to `../homework-ingest` and `../autograder` on
+> 2026-08-11; their commands and modules are no longer part of exam-bank.
+
 This audit reviews the repository against the intended product scope:
 
 1. Extract PNG images of questions and link them to PNG images of mark schemes.
@@ -19,7 +23,7 @@ Commands and checks run during this audit:
 - Readiness audit: `.venv/bin/python scripts/audit_question_bank_readiness.py --input output/json/question_bank.json --artifact-root output`.
 - Topic packet preflight: `.venv/bin/python scripts/audit_topic_packet_preflight.py --question-bank output/json/question_bank.json --topic-routing data/topic_routing/question_bank.topic_routing.v1.json --taxonomy exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json`.
 - Output inventory and cleanup plan into `/private/tmp/exam_bank_project_audit_20260630`.
-- Storage duplicate audit: `.venv/bin/python scripts/audit_output_storage.py --dry-run`.
+- Storage duplicate audit: `.venv/bin/python -m exam_bank.command data audit-storage --dry-run`.
 - Test suite: `.venv/bin/python -m pytest -q`.
 
 No cleanup or destructive operation was performed.

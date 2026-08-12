@@ -22,8 +22,8 @@ REPO_W18_P32_MS = Path("input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_32.p
 REPO_S19_P33_MS = Path("input/pastpapers/9709/2019/mark_schemes/9709_s19_ms_33.pdf")
 REPO_S20_P31_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_31.pdf")
 REPO_S20_P33_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_33.pdf")
-REPO_M21_P32_MS = Path("input/pastpapers/9709/2021/mark_schemes/9709_m21_ms_32.pdf")
-REPO_M25_P32_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_m25_ms_32.pdf")
+REPO_S21_P32_MS = Path("input/pastpapers/9709/2021/mark_schemes/9709_s21_ms_32.pdf")
+REPO_S25_P32_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_s25_ms_32.pdf")
 REPO_W25_P35_MS = Path("input/pastpapers/9709/2025/mark_schemes/9709_w25_ms_35.pdf")
 REPO_W09_P32_MS = Path("input/pastpapers/9709/2009/mark_schemes/9709_w09_ms_32.pdf")
 
@@ -249,7 +249,7 @@ def test_modern_2025_q08_mark_scheme_keeps_all_subparts_without_neighbors(tmp_pa
 def test_modern_2025_p32_q08_mark_scheme_preserves_guidance_column(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     Image = pytest.importorskip("PIL.Image")
-    if not REPO_M25_P32_MS.exists():
+    if not REPO_S25_P32_MS.exists():
         pytest.skip("Repo 2025 P32 mark scheme PDF is not available.")
 
     config = _config(tmp_path)
@@ -258,14 +258,14 @@ def test_modern_2025_p32_q08_mark_scheme_preserves_guidance_column(tmp_path: Pat
             syllabus="9709",
             subject_family="pm3",
             year="2025",
-            session="m25",
+            session="s25",
             component="32",
             question_number="8",
         )
     }
 
     result = render_mark_scheme_images(
-        REPO_M25_P32_MS,
+        REPO_S25_P32_MS,
         config,
         ["8"],
         question_marks={"8": 7},
@@ -406,7 +406,7 @@ def test_modern_2020_p33_q01_includes_label_column_outside_answer_grid(tmp_path:
 def test_modern_2021_p32_q04_preserves_marks_and_guidance_columns(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     Image = pytest.importorskip("PIL.Image")
-    if not REPO_M21_P32_MS.exists():
+    if not REPO_S21_P32_MS.exists():
         pytest.skip("Repo 2021 P32 mark scheme PDF is not available.")
 
     config = _config(tmp_path)
@@ -415,14 +415,14 @@ def test_modern_2021_p32_q04_preserves_marks_and_guidance_columns(tmp_path: Path
             syllabus="9709",
             subject_family="pm3",
             year="2021",
-            session="m21",
+            session="s21",
             component="32",
             question_number="4",
         )
     }
 
     result = render_mark_scheme_images(
-        REPO_M21_P32_MS,
+        REPO_S21_P32_MS,
         config,
         ["4"],
         question_marks={"4": 5},

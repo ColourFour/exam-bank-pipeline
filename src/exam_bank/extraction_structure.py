@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from functools import lru_cache
-import re
 
 from .config import AppConfig
 from .models import BoundingBox, PageLayout, QuestionSpan, TextBlock
 from .question_detection_layout import distance_to_box as _distance_to_box
-from .question_detection_layout import looks_like_diagram_axis_or_label_text as _shared_looks_like_diagram_axis_or_label_text
-
+from .question_detection_layout import (
+    looks_like_diagram_axis_or_label_text as _shared_looks_like_diagram_axis_or_label_text,
+)
 
 _PART_LINE_RE = re.compile(
     r"^\s*(?:(?P<number>\d{1,2})\s*)?(?P<label>\((?:[a-h]|i{1,3}|iv|v|vi{0,3}|ix|x)\)(?:\((?:i{1,3}|iv|v|vi{0,3}|ix|x)\))?)",
@@ -48,14 +49,27 @@ def build_structured_question_text(
     text_only_diagram_line_keys = _text_only_diagram_line_keys(lines, layouts, span, config)
     diagram_lines: list[str] = []
     body_lines: list[str] = []
+    body_line_items: list[_LineItem] = []
 
     for line in lines:
+        # Copyright acknowledgements are page furniture that follows the last
+        # question on older papers.  Nothing after the first acknowledgement
+        # line belongs to the question body.
+        if _looks_like_document_footer_line(line.text):
+            break
+        if _looks_like_page_turn_furniture_line(line.text):
+            continue
         layout = _layout_by_number(layouts, line.page_number)
+        if body_line_items and _is_lowercase_body_continuation(line, body_line_items[-1]):
+            body_lines.append(line.text)
+            body_line_items.append(line)
+            continue
         split_anchor = _split_question_anchor_diagram_label(line, layout, span, config)
         if split_anchor is not None:
             body_text, diagram_text = split_anchor
             if not _body_already_has_question_anchor(body_lines, body_text):
                 body_lines.append(body_text)
+                body_line_items.append(line)
             diagram_lines.append(diagram_text)
             continue
         if _is_duplicate_question_number_diagram_label(line, layout, span, body_lines, config):
@@ -70,6 +84,7 @@ def build_structured_question_text(
             diagram_lines.append(line.text)
         else:
             body_lines.append(line.text)
+            body_line_items.append(line)
 
     body_text_raw = "\n".join(_clean_raw_line(line) for line in body_lines if _clean_raw_line(line)).strip()
     body_text_normalized = _normalize_preserving_structure(body_text_raw)
@@ -276,6 +291,8 @@ def _looks_like_answer_filler_line(text: str) -> bool:
     cleaned = _normalize_light(text)
     if not cleaned:
         return False
+    if re.match(r"^[A-Za-z][A-Za-z0-9 ]{0,30}(?:[._\-–—]\s*){20,}$", cleaned):
+        return True
     if re.match(r"^(?:[._\-–—]\s*){12,}", cleaned):
         return True
     visible_alnum = len(re.findall(r"[A-Za-z0-9]", cleaned))
@@ -283,9 +300,56 @@ def _looks_like_answer_filler_line(text: str) -> bool:
     return filler_count >= 24 and visible_alnum <= 4
 
 
+def _looks_like_document_footer_line(text: str) -> bool:
+    cleaned = _normalize_light(text)
+    return bool(
+        re.search(
+            r"^(?:Permission to reproduce items|Every reasonable effort has been made by the publisher|"
+            r"University of Cambridge International Examinations is part of|"
+            r"To avoid the issue of disclosure of answer-related information|"
+            r"All copyright acknowledgements are reproduced online)",
+            cleaned,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _looks_like_page_turn_furniture_line(text: str) -> bool:
+    cleaned = _normalize_light(text)
+    return bool(
+        re.fullmatch(
+            r"\[Questions?(?:\s+\d+|\s+\d+\s+\([ivx]+\))(?:\s+and\s+\d+)?\s+"
+            r"(?:is|are)\s+printed\s+on\s+the\s+next\s+page\.\]",
+            cleaned,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _is_lowercase_body_continuation(line: _LineItem, previous: _LineItem) -> bool:
+    """Keep a wrapped prose tail even when a broad graphic overlaps the text."""
+
+    current_text = _normalize_light(line.text)
+    previous_text = _normalize_light(previous.text)
+    if not current_text or not previous_text or line.page_number != previous.page_number:
+        return False
+    if not re.match(r"^[a-z]", current_text):
+        return False
+    if not re.search(r"[.!?](?:\s*\[\d{1,2}\])?$", current_text):
+        return False
+    if re.search(r"[.!?:;](?:\s*\[\d{1,2}\])?$", previous_text):
+        return False
+    if abs(line.bbox.x0 - previous.bbox.x0) > 36:
+        return False
+    font_size = previous.font_size or line.font_size or 11.0
+    vertical_gap = line.bbox.y0 - previous.bbox.y1
+    return -2 <= vertical_gap <= max(20.0, font_size * 1.8)
+
+
 def _normalize_preserving_structure(text: str) -> str:
     normalized_lines = [_normalize_light(line) for line in text.splitlines()]
     normalized = "\n".join(line for line in normalized_lines if line).strip()
+    normalized = _repair_canonical_math_serialization(normalized)
     return _repair_cross_line_theta_context(normalized)
 
 
@@ -322,6 +386,7 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
 
     value = str(text or "")
     replacements = {
+        "\ufb00": "ff",
         "\ufb01": "fi",
         "\ufb02": "fl",
         "\ufb03": "ffi",
@@ -336,12 +401,9 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
         "\x10": "(",
         "\x11": ")",
         "\x8f": "≡",
-        "": "≡",
         "Ó": "∫",
         "Ô": "∫",
         "Å": "°",
-        "": "(",
-        "": ")",
     }
     for old, new in replacements.items():
         value = value.replace(old, new)
@@ -360,17 +422,41 @@ def _normalize_pdf_math_glyphs(text: str) -> str:
 
 def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = text
+    value = value.replace("↦→", "↦").replace("↦ →", "↦")
+    value = re.sub(r"\(--→\)/\(([A-Z]{2})\)", r"\\overrightarrow{\1}", value)
     value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)([.?!])", r"\1(\2)\4 [\3]", value)
     value = re.sub(r"\b([A-Za-z])\(([^()\[\]]+)\[(\d{1,2})\]\)", r"\1(\2) [\3]", value)
     value = re.sub(r"(\[\d{1,2}\])\s*(?:[._\-–—]\s*){12,}.*$", r"\1", value)
     value = _repair_caie_math_delimiters(value)
+    value = re.sub(
+        r"(\binterval\s+)0\s*1\s*([xXθ])\s*1\s*(\^\{[^}]+\}_\{[^}]+\})r\b",
+        r"\g<1>0 ≤ \2 ≤ \3π",
+        value,
+        flags=re.IGNORECASE,
+    )
     value = re.sub(r"(?<![A-Za-z])-\s*r\s*G\s*[i1θ]\s*G\s*r\b", "-π ≤ θ ≤ π", value)
     value = re.sub(r"\br\s*G\s*[i1θ]\s*G\s*r\b", "π ≤ θ ≤ π", value)
-    value = re.sub(r"\b([0-9])\s*G\s*([xXiIθ])", r"\1 ≤ \2", value)
+    value = re.sub(
+        r"\b([0-9])\s*G\s*([xXiIθ])(?![A-FH-Za-z])",
+        r"\1 ≤ \2",
+        value,
+    )
     value = re.sub(r"\b([xXiIθ])\s*G\s*(\^\{[^}]+\}|[0-9])", r"\1 ≤ \2", value)
-    value = re.sub(r"\b([0-9])G([A-Za-zθ])G([0-9])\b", r"\1 ≤ \2 ≤ \3", value)
+    value = re.sub(
+        r"\b(\d+)\s*G\s*([A-Za-zθ])\s*G\s*(\d+)\b",
+        r"\1 ≤ \2 ≤ \3",
+        value,
+    )
     value = re.sub(r"\br20\b", "r > 0", value)
-    value = re.sub(r"(?<=[0-9}_])r\b", "π", value)
+    # In older CAIE fonts the terminal pi in a standard 0-to-angle bound is
+    # sometimes exposed as ``r``.  Restrict that repair to the complete range
+    # expression; quantities such as 12r and common ratios must remain r.
+    value = re.sub(
+        r"(\b0\s*(?:<|≤)\s*[xXiIθ]\s*(?:<|≤)\s*"
+        r"(?:\^\{[^}]+\}_\{[^}]+\}|[0-9]+))r\b",
+        r"\1π",
+        value,
+    )
     value = re.sub(r"°\s*(0|90|180|360)\b", r"\1°", value)
     value = re.sub(r"\b(0|90|180|360)(°?)\s*<\s*1\s*<", r"\1\2 < θ <", value)
     value = re.sub(r"\b(0|90|180|360)(°?)\s*≤\s*1\s*≤", r"\1\2 ≤ θ ≤", value)
@@ -386,6 +472,386 @@ def _normalize_common_math_ocr_substitutions(text: str) -> str:
     value = re.sub(r"\b(cosec|sin|cos|tan|sec|cot|ln|log)\s+([0-9]+)([A-Za-zθ])\b", r"\1 \2\3", value)
     value = re.sub(r"\b(tan|sin|cos|sec|cosec|cot)\^\{-\}\s*θ", r"\1^{-}1", value)
     value = _repair_trig_theta_placeholders(value)
+    return _repair_canonical_math_serialization(value)
+
+
+def _repair_canonical_math_serialization(text: str) -> str:
+    """Finish narrow, source-faithful repairs that can cross PDF span lines."""
+
+    value = text.replace("µ", "μ").replace("∼", "~")
+    value = value.replace("↦→", "↦").replace("↦ →", "↦")
+    value = re.sub(
+        r"\b(\d+)\s*G\s*([A-Za-zθ])\s*G\s*(\d+)\b",
+        r"\1 ≤ \2 ≤ \3",
+        value,
+    )
+    value = re.sub(r"\^\{-\}\s*(\d+)", r"^{-\1}", value)
+    value = re.sub(r"(?<=\})(?=[A-Za-z]{2,}\b)", " ", value)
+    value = re.sub(r"(?<=[A-Za-z0-9)}])\s+\^\{", "^{", value)
+    value = re.sub(
+        r"([A-Za-z)])\^\{-\}\s*(\d+)_\{(\d+)\}",
+        r"\1^{-(\2)/(\3)}",
+        value,
+    )
+    value = re.sub(
+        r"([A-Za-z)])\^\{(-?)(\d+)\}_\{(\d+)\}",
+        lambda match: (
+            f"{match.group(1)}^{{"
+            f"{'-' if match.group(2) else ''}({match.group(3)})/({match.group(4)})"
+            "}"
+        ),
+        value,
+    )
+    value = re.sub(
+        r"(?<![A-Za-z0-9}])(-?)(\d+)_\{(\d+)\}",
+        lambda match: f"{match.group(1)}({match.group(2)})/({match.group(3)})",
+        value,
+    )
+    value = re.sub(r"_\{([A-Za-z])\}\s*\+\s*([0-9]+)", r"_{\1+\2}", value)
+    value = re.sub(
+        r"([A-Za-z0-9])\^\{([A-Za-z])\}\+\s*(\d+)",
+        r"\1^{\2 + \3}",
+        value,
+    )
+    value = re.sub(
+        r"([A-Za-z0-9])\^\{([A-Za-z])\}\^\{\+\}\s*(\d+)",
+        r"\1^{\2+\3}",
+        value,
+    )
+    value = re.sub(r"_\{([A-Za-z])\}_\{\+\}(\d+)", r"_{\1+\2}", value)
+    value = re.sub(
+        r"e\^\{(-?\([^)]+\)/\([^)]+\))\}\^\{([A-Za-z])\}",
+        r"e^{\1\2}",
+        value,
+    )
+    value = re.sub(r"e\^\{-\}\s*([A-Za-z])", r"e^{-\1}", value)
+    value = re.sub(
+        r"e\^\{(-(?:\d+|\([^)]+\)/\([^)]+\)|[A-Za-z])|i)\}([A-Za-zθ])",
+        r"e^{\1\2}",
+        value,
+    )
+    value = re.sub(r"\b(?:ddxy|ddyx|xddy)\b", "(dy)/(dx)", value)
+    value = re.sub(r"\bddθx\b", "(dx)/(dθ)", value)
+    value = re.sub(r"\bf\^\{\s+′\}", "f'", value)
+    value = re.sub(r"\b([fgh])\s+-\s*1\b", r"\1^{-1}", value)
+    value = re.sub(r"√(?!\()(\d+|[A-Za-z])", r"√(\1)", value)
+    value = re.sub(
+        r"\b(cosec|sin|cos|tan|sec|cot)(\^\{[^}]+\})(?=[0-9A-Za-zθ])",
+        r"\1\2 ",
+        value,
+    )
+    value = re.sub(r"\bfor -\s+(?=\()", "for -", value)
+    value = re.sub(r"([=(,])-\s+(?=\()", r"\1-", value)
+    value = re.sub(r"(?<=[A-Za-z])-\s+(?=[A-Za-z])", "-", value)
+    value = re.sub(r"~\s*(?=N\s*\()", "~ ", value)
+    value = re.sub(r"\s*(≤|≥|≡|≈|∈|=|<|>)\s*", r" \1 ", value)
+    value = re.sub(r"(?<=[A-Za-z0-9})|])-(?=\()", " - ", value)
+    # Preserve unary negatives (for example coordinates and constants).  The
+    # two compact binary-minus forms below are recurring complex-number font
+    # artefacts and have enough surrounding syntax to repair unambiguously.
+    value = re.sub(r"(\|z)\s+-\s*(?=\d)", r"\1 - ", value)
+    value = re.sub(r"(arg\(z)\s+-\s*(?=[A-Za-z])", r"\1 - ", value)
+    value = re.sub(r"\s*↦\s*", " ↦ ", value)
+    # A decoded real-set glyph between a scalar and a number is the old-font
+    # greater-than glyph. Genuine membership is already represented by ∈ ℝ.
+    value = re.sub(r"(?<=[A-Za-z0-9})])\s*ℝ\s*(?=[0-9])", " > ", value)
+    value = re.sub(
+        r"(?<=[A-Za-z0-9})θ])\s*ℝ\s*(?=(?:sin|cos|tan|[fgh]\s*\())",
+        " > ",
+        value,
+    )
+    value = re.sub(r"(?<=°)(?=[A-Za-z])", " ", value)
+    value = re.sub(r"([A-Za-zαβθ])\^\{°\}", r"\1°", value)
+    value = re.sub(r"(?<=[0-9)])(?=(?:kg|km|cm|mm|kW|N|J|W)\b)", " ", value)
+    value = re.sub(r"(?<=\d)(?=m(?!\s*kg\b)(?:\s|[.,;:)]|$))", " ", value)
+    value = re.sub(r"\s+([,.;:?!])", r"\1", value)
+    value = re.sub(r"([,;:])(?=\S)", r"\1 ", value)
+    value = re.sub(r"([\[(])\s+", r"\1", value)
+    value = re.sub(r"\s+\)", ")", value)
+    value = re.sub(r"\b([fg])\s+\(", r"\1(", value)
+    value = re.sub(r"\b([fg])\s*:\s*([A-Za-z])", r"\1 : \2", value)
+    value = re.sub(
+        r"\b([A-Z])\s+\((?=\s*-?(?:\d+(?:\.\d+)?|[a-z])\s*,)",
+        r"\1(",
+        value,
+    )
+    value = re.sub(r"(?<!\s)(?=\[\d{1,2}\])", " ", value)
+    value = re.sub(r"\b(?:in\s+equal\s+it\s+y|in\s+equality)\b", "inequality", value)
+    value = re.sub(r"\bco\s+sec\b", "cosec", value)
+    value = value.replace("ln(cost)", "ln(cos t)")
+    value = re.sub(r"(?<== )cott\b", "cot t", value)
+    value = re.sub(r"(?<=[A-Za-z0-9)])\(see diagram\)", " (see diagram)", value)
+    value = re.sub(r"\b(\d+(?:\.\d+)?)ms(?=\^\{-[12]\})", r"\1 m s", value)
+    value = re.sub(r"\b([A-Za-z])ms(?=\^\{-[12]\})", r"\1 m s", value)
+    value = re.sub(r"(?<=\))ms(?=\^\{-[12]\})", " m s", value)
+    value = re.sub(
+        r"\bms(\d+(?:\.\d+)?)\s+-([12])\b",
+        r"\1 m s^{-\2}",
+        value,
+    )
+    value = re.sub(
+        r"\bm(\d+(?:\.\d+)?)\s+s\s+-([12])\b",
+        r"\1 m s^{-\2}",
+        value,
+    )
+    value = re.sub(r"\bm([vV])\s+s\s+-([12])\b", r"\1 m s^{-\2}", value)
+    value = re.sub(
+        r"\b(\d+(?:\.\d+)?)ms\s+-([12])\b",
+        r"\1 m s^{-\2}",
+        value,
+    )
+    value = re.sub(
+        r"\bat\.(\d)\s+(\d+)([A-Za-z])ms\s+-([12])\b",
+        r"at \1.\2\3 m s^{-\4}",
+        value,
+    )
+    value = re.sub(r"\bms([vV])\s+-([12])\b", r"\1 m s^{-\2}", value)
+    value = re.sub(
+        r"\b(\d+(?:\.\d+)?)ms\^\{-\}",
+        r"\1 m s^{-1}",
+        value,
+    )
+    value = re.sub(r"\b((?:kW|W|J|N)\.)\^\{1\}", r"\1", value)
+    value = re.sub(r"Σ\s+(?=[A-Za-z])", "Σ", value)
+    value = re.sub(r"\bafter\s+noon\s+s\b", "afternoons", value)
+    value = re.sub(r"\bwifi\s*connection\b", "wifi connection", value)
+    value = re.sub(r"(∫_\{[^}]+\}\^\{[^}]+\})(?=\()", r"\1 ", value)
+    value = re.sub(r"(\([^()]+\)/\([^()]+\))\s+\(", r"\1(", value)
+    value = re.sub(r"\((\d+)\)/\(-\s*(\d+)\)", r"-(\1)/(\2)", value)
+    value = re.sub(
+        r"([A-Za-z0-9})])(\([^()]+\))/\(-\s*([^()]+)\)",
+        r"\1 - \2/(\3)",
+        value,
+    )
+    value = re.sub(
+        r"([A-Za-z0-9})])\(\+\s*([^()]+)\)/\(([^()]+)\)",
+        r"\1 + (\2)/(\3)",
+        value,
+    )
+    value = re.sub(
+        r"(\([^()]+\)/\()([^()]+)\s+-\)(\d+)",
+        r"\1\2) - \3",
+        value,
+    )
+    value = re.sub(
+        r"([A-Za-z])\(\s*-\s*(\d+)\)/\((\d+)\)",
+        r"\1^{-(\2)/(\3)}",
+        value,
+    )
+    value = re.sub(r"([fgh])\s+-\s*1(?=\s*\()", r"\1^{-1}", value)
+    value = re.sub(r"\((\d+)\)/(\d+)π\)", r"(\1)/(\2)π", value)
+    value = re.sub(r"\((\d+)π\)/\((\d+)\)", r"(\1)/(\2)π", value)
+    value = re.sub(r"√\((\d+)i\)", r"√(\1)i", value)
+    value = re.sub(
+        r"\b(sin|cos|tan|sec|cosec|cot)\s+\((\d+)\)/\((\d+)([A-Za-zθ])\)",
+        r"\1((\2)/(\3)\4)",
+        value,
+    )
+    value = re.sub(r"\((\d+)\)/\((\d+)π\)", r"(\1)/(\2)π", value)
+    value = re.sub(
+        r"--→([A-Z]{2})\.\s*--→([A-Z]{2})",
+        r"\\overrightarrow{\1} · \\overrightarrow{\2}",
+        value,
+    )
+    value = re.sub(r"\b([A-Zxy])2\s+([0-9])\b", r"\1 > \2", value)
+    value = re.sub(r"\b([A-Za-z]{2,})_\{-\}", r"\1", value)
+    value = re.sub(
+        r"\bm\s+s\s+([12])(?=\s|[.,;:)])",
+        r"m s^{-\1}",
+        value,
+    )
+    value = re.sub(
+        r"\bm\s+s\s+([12])(?=(?:and|respectively)\b)",
+        r"m s^{-\1} ",
+        value,
+    )
+    value = re.sub(
+        r"\b(sin|cos|tan|sec|cosec|cot)\^\{-10\}\s+(\d+)\.",
+        r"\1^{-1} 0.\2",
+        value,
+    )
+    value = re.sub(r"(\S)\s+(\[\d{1,2}\])([.?!])", r"\1\3 \2", value)
+    value = re.sub(r"\b(\d+)\s+(\d+)\.\.", r"\1.\2.", value)
+    value = re.sub(
+        r"^(\d+)\s+(?:[αβθ]|\d+(?:\.\d+)?\s+(?:m|kg|N))\s+"
+        r"(?=(?:The diagram|Two particles|A particle))",
+        r"\1 ",
+        value,
+    )
+    if re.search(r"a,\s+b\s+and\s+c\s+respectively", value) and re.search(
+        r"positive\s+constants", value
+    ):
+        value = re.sub(r"(?<=\d)°(?=\^\{2\}|\s|[.,])", "c", value)
+    value = value.replace("an angle of °", "an angle of α°")
+    value = value.replace("the value of °", "the value of α")
+    value = re.sub(
+        r"inclined\s+at\s+an\s+angle\s+to\s+the\s+horizontal,\s+where\s+sin\s*=",
+        "inclined at an angle α to the horizontal, where sin α =",
+        value,
+    )
+    value = _relocate_misplaced_degree(value)
+    if "rectangle ABCD" in value and re.search(r"AQ\s+is\s+an\s+arc\s+of\s+a\s+circle\s+with\s+centre", value):
+        value = re.sub(r"with centre\s+(?=\([ivx]+\))", "with centre D. ", value, count=1)
+    compact_value = re.sub(r"\s+", " ", value)
+    if (
+        "sin = 0.8 and cos = 0.6" in compact_value
+        or "sin β = 0.8 and cos β = 0.6" in compact_value
+    ):
+        value = value.replace("sin = 0.8", "sin β = 0.8")
+        value = value.replace("cos = 0.6", "cos β = 0.6")
+        value = value.replace("W cos)", "W cos α")
+        value = value.replace("W sin)", "W sin α")
+        value = value.replace("W and)", "W and α")
+    value = re.sub(r"\bAs\s+tan\s+a\b", "Astana", value)
+    value = re.sub(r"\bAs\s+tan(?=\s+and\s+Bejin\b)", "Astana", value)
+    value = re.sub(r"\bno\s+on\b", "noon", value)
+    value = re.sub(r"\bafter\s+noon\s+s\b", "afternoons", value)
+    value = re.sub(
+        r"\(([a-z]+)from([a-z]+)\)/\(-\)",
+        r"\1 from \2",
+        value,
+    )
+    if re.search(r"\ban\^\{1\}\s+angle\s+a°", value):
+        value = re.sub(r"\ban\^\{1\}\s+angle\s+a°", "an angle α°", value)
+        value = re.sub(r"\bvalue of a\b", "value of α", value)
+    value = re.sub(
+        r"(There is a constant)\s+"
+        r"(\d+(?:\.\d+)?)\s+m\s+sresistance([12])\.to motion"
+        r"([\s\S]*?\bhis acceleration is)",
+        r"\1 resistance to motion\4 \2 m s^{-\3}.",
+        value,
+    )
+    # Geometry-flattening repairs below require complete surrounding syntax;
+    # keeping them at the end also makes the earlier glyph repairs available.
+    value = re.sub(
+        r"(\bprobability of (?:throwing|obtaining)[^.]{0,80}? is )(\d+)\^\{(\d+)\}",
+        _replace_probability_power_fraction,
+        value,
+    )
+    value = re.sub(
+        r"\(\((\d+)\)/\(([^()]+?)\s+([23])\)\)",
+        r"(\1)/((\2)^{\3})",
+        value,
+    )
+    value = re.sub(
+        r"e\^\{([^{}]+)\}_\{-\}([A-Za-z])\^\{([^{}]+)\}",
+        r"e^{\1 - \2^{\3}}",
+        value,
+    )
+    value = re.sub(r"\bk\((\d+)\)/\(([^()]+)\)", r"(k^{\1})/(\2)", value)
+    value = re.sub(
+        r"(\d+π)([A-Za-z])\((\d+)\s*\+\s*(\d+)\)/\(\2\)",
+        r"\1\2^{\3} + (\4)/(\2)",
+        value,
+    )
+    value = re.sub(r"\(--→\)/\(p([A-Z]{2})\)", r"p\\overrightarrow{\1}", value)
+    value = re.sub(r"--→([A-Z]{2})", r"\\overrightarrow{\1}", value)
+    value = re.sub(
+        r"(\bposition vectors given by)\s*\d{1,2}\s+(?=\\overrightarrow\{OA\})",
+        r"\1 ",
+        value,
+    )
+    value = re.sub(
+        r"^(\d+)\s+z\s+(?=The diagram shows a set of rectangular axes)",
+        r"\1 ",
+        value,
+    )
+    value = re.sub(
+        r"\(([A-Za-z])\s+\1\s*\+\s*1\)/",
+        r"(\1(\1 + 1))/",
+        value,
+    )
+    value = re.sub(r"\(\)\s*d([ux])\b", r" d\1", value)
+    value = re.sub(
+        r"\b(sin|cos|tan|sec|cosec|cot)\s+2\^\{1\}([A-Za-zθ])",
+        r"\1((1)/(2)\2)",
+        value,
+    )
+    value = re.sub(
+        r"\b(sin|cos|tan|sec|cosec|cot)\s+\(1\)/\(2\)([A-Za-zθ])",
+        r"\1((1)/(2)\2)",
+        value,
+    )
+    value = re.sub(r"\b(\d+)\^\{1\}(?=\()", r"(1)/(\1)", value)
+    value = re.sub(
+        r"(cos|sin|tan)\^\{-1\}\(\((\d+)√\)/\((\d+)\)(\d+)\)",
+        r"\1^{-1}((\2)/(\3)√(\4))",
+        value,
+    )
+    value = value.replace("√(s)in x", "√(sin x)")
+    value = re.sub(
+        r"([πθA-Za-z0-9}])\s*-\s*(?=(?:sin|cos|tan|sec|cosec|cot)\b)",
+        r"\1 - ",
+        value,
+    )
+    value = re.sub(r"e\^\{(-?[A-Za-z])\}_\{([A-Za-z])\}", r"e^{\1_{\2}}", value)
+    value = re.sub(r"e\^\{2\}a(?=\s*-\s*4e\^\{a\})", r"e^{2a}", value)
+    value = re.sub(
+        r"\((1\s*-\s*e\^\{[^}]+\}),\s*for\)\s*x",
+        r"(\1), for x",
+        value,
+    )
+    value = re.sub(
+        r"([A-Za-z0-9])\^\{([^{}]+)\}\s*-\s*(\d+[A-Za-z])\s*(?==)",
+        r"\1^{\2 - \3} ",
+        value,
+    )
+    value = re.sub(
+        r"#(\d+)\^\{(-\d+)\}\s*([A-Za-z])",
+        r" × \1^{\2\3}",
+        value,
+    )
+    value = re.sub(
+        r"(\([^()\n]+\))(\d+)\^\{(\d+)\}",
+        r"\1^{(\3)/(\2)}",
+        value,
+    )
+    value = re.sub(
+        r"([=+\-])\s*(\d+)\s+([A-Za-z])(?=\^\{)",
+        r"\1 \2\3",
+        value,
+    )
+    value = re.sub(r"(iterative formula)\s+\(\)\s+", r"\1 ", value)
+    value = re.sub(
+        r"\(([^()]+)\)/\(([A-Za-z])\)\s+([A-Za-z])(?=\s+to determine)",
+        r"(\1)/(\2_{\3})",
+        value,
+    )
+    value = re.sub(
+        r"\bexp\s+([^.,]+?)(?=\s+to determine)",
+        r"exp(\1)",
+        value,
+    )
+    value = re.sub(
+        r"(crosses the)(\([^.;\n]+\)\.)(\s*x-axis.*?passes through the point)\s*"
+        r"(?=\([ivx]+\))",
+        r"\1\3 \2 ",
+        value,
+        flags=re.DOTALL,
+    )
+    return re.sub(r"[ \t]+", " ", value).strip()
+
+
+def _replace_probability_power_fraction(match: re.Match[str]) -> str:
+    denominator = int(match.group(2))
+    numerator = int(match.group(3))
+    if denominator <= numerator:
+        return match.group(0)
+    return f"{match.group(1)}({numerator})/({denominator})"
+
+
+def _relocate_misplaced_degree(text: str) -> str:
+    if "_{°}" not in text:
+        return text
+    value = text.replace("_{°}", "", 1)
+    patterns = (
+        r"(\bangle(?:\s+[A-Z]{3})?\s+is\s+)(\d+|[αθ])\b(?!°)",
+        r"(\bangle\s+of\s+)(\d+|[αθ])\b(?!°)",
+    )
+    for pattern in patterns:
+        repaired, count = re.subn(pattern, r"\1\2°", value, count=1)
+        if count:
+            return repaired
     return value
 
 

@@ -230,6 +230,13 @@ def test_client_creation_uses_configured_base_url_and_env_key(monkeypatch: pytes
     }
 
 
+def test_client_creation_without_optional_ai_dependency_fails_clearly(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(deepseek_enrich, "OpenAI", None)
+
+    with pytest.raises(deepseek_enrich.StartupConfigurationError, match="optional AI dependencies"):
+        deepseek_enrich.create_client(api_key="configured-for-test")
+
+
 def test_prompt_requests_numeric_difficulty_score_with_cohort_scale() -> None:
     payload = deepseek_enrich.build_enrichment_payload(_record())
     system_message = deepseek_enrich.build_messages(payload)[0]
@@ -1410,7 +1417,7 @@ def test_paper_batched_outputs_merge_deterministically_and_failed_batches_do_not
         for line in tracker.batch_status_path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
-    assert batch_statuses == ["completed", "failed"]
+    assert batch_statuses == ["running", "completed", "running", "failed"]
 
 
 def test_invalid_multi_record_ai_batch_retries_individual_records(tmp_path: Path) -> None:
@@ -1588,7 +1595,7 @@ def test_final_output_includes_metadata_batch_ids_hashes_model_prompt_and_calibr
     assert status["status_file_path"] == str(tmp_path / "run_status" / "ai-status" / "run_status.json")
     assert status["checkpoint_path"] == str(tmp_path / "run_status" / "ai-status")
     assert status["successful_records"] == 2
-    assert batches[0]["status"] == "completed"
+    assert [batch["status"] for batch in batches] == ["running", "completed"]
     assert payload["schema_name"] == "exam_bank.ai_assisted_sidecar"
     assert payload["metadata"]["prompt_version"] == "ai_assisted_v2"
     assert payload["metadata"]["run_summary"]["total_records_written"] == 2
@@ -2066,10 +2073,9 @@ def test_ai_resume_uses_completed_batch_cache_without_calling_provider(tmp_path:
         if line.strip()
     ]
     assert enrichments["12spring24_q01"]["ai_assisted_items"][0]["question_id"] == "12spring24_q01"
-    assert len(batches) == 1
-    assert batches[0]["status"] == "skipped"
-    assert batches[0]["record_count"] == 1
-    assert batches[0]["skipped_records"] == 1
+    assert [batch["status"] for batch in batches] == ["running", "skipped"]
+    assert batches[-1]["record_count"] == 1
+    assert batches[-1]["skipped_records"] == 1
     assert status["skipped_records"] == 1
 
 

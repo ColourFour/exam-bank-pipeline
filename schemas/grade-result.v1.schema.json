@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grade-result.v1.schema.json",
+  "title": "GradeResult",
+  "description": "Source-agnostic grading result for one question response. Mark awards are an array because Cambridge mark codes may repeat.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "grade_result_id",
+    "submission_id",
+    "student_id",
+    "assignment_id",
+    "question_id",
+    "status",
+    "score",
+    "max_score",
+    "marks",
+    "confidence",
+    "confidence_label",
+    "review_required",
+    "review_flags",
+    "graded_at",
+    "provider",
+    "metadata"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "autograder.interchange.grade_result"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "grade_result_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "submission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "student_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assignment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["graded", "needs_review", "blocked", "failed"]
+    },
+    "score": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "max_score": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "marks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/markAward"
+      }
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "confidence_label": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high"]
+    },
+    "review_required": {
+      "type": "boolean"
+    },
+    "review_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "graded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "provider": {
+      "$ref": "#/$defs/provider"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "markAward": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mark_id",
+        "mark_code",
+        "awarded",
+        "max_marks",
+        "met",
+        "confidence",
+        "reason",
+        "evidence"
+      ],
+      "properties": {
+        "mark_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mark_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "awarded": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "max_marks": {
+          "type": "number",
+          "minimum": 0
+        },
+        "met": {
+          "type": ["boolean", "null"]
+        },
+        "confidence": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "model"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -26,6 +26,7 @@ _SESSION_TO_SEASON: dict[str, SeasonCode] = {
     "march": "m",
     "febmarch": "m",
     "februarymarch": "m",
+    "spring": "m",
     "s": "s",
     "summer": "s",
     "may": "s",
@@ -47,7 +48,7 @@ _SESSION_TO_SEASON: dict[str, SeasonCode] = {
 }
 
 _CANONICAL_SESSION_LABEL: dict[SeasonCode, str] = {
-    "m": "summer",
+    "m": "spring",
     "s": "summer",
     "w": "winter",
 }

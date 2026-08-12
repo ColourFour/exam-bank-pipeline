@@ -3,10 +3,13 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import pytest
+
 from exam_bank import pipeline
 from exam_bank.config import AppConfig
 from exam_bank.document_metadata import DocumentMetadata, parse_filename_metadata, reconcile_document_metadata
-from exam_bank.document_registry import build_document_registry
+from exam_bank.document_registry import DocumentRegistryError, build_document_registry
+from exam_bank.output_layout import paper_instance_id
 
 
 @dataclass
@@ -66,11 +69,11 @@ def test_filename_metadata_handles_loose_exam_paper_p_family_names() -> None:
 
     assert question.syllabus == ""
     assert question.year == "2019"
-    assert question.session == "summer19"
+    assert question.session == "spring19"
     assert question.document_type == "question_paper"
     assert question.component == "1"
     assert question.paper_family == "P1"
-    assert question.canonical_key == "unknown_2019_summer19_1"
+    assert question.canonical_key == "unknown_2019_spring19_1"
     assert mark_scheme.document_type == "mark_scheme"
     assert mark_scheme.component == "1"
     assert mark_scheme.canonical_key == question.canonical_key
@@ -146,16 +149,78 @@ def test_folder_registry_classifies_and_pairs_companion_files(tmp_path: Path) ->
     assert registry.session_reports["9709_2025_winter25"] == [er]
 
 
+def test_registry_keeps_march_and_june_documents_as_distinct_paper_entries(tmp_path: Path) -> None:
+    march_qp = touch_pdf(tmp_path / "9709_m21_qp_12.pdf")
+    march_ms = touch_pdf(tmp_path / "9709_m21_ms_12.pdf")
+    june_qp = touch_pdf(tmp_path / "9709_s21_qp_12.pdf")
+    june_ms = touch_pdf(tmp_path / "9709_s21_ms_12.pdf")
+
+    registry = build_document_registry(tmp_path)
+
+    assert set(registry.entries) == {
+        "9709_2021_spring21_12",
+        "9709_2021_summer21_12",
+    }
+    march = registry.entries["9709_2021_spring21_12"]
+    june = registry.entries["9709_2021_summer21_12"]
+    assert (march.question_paper, march.mark_scheme) == (march_qp, march_ms)
+    assert (june.question_paper, june.mark_scheme) == (june_qp, june_ms)
+    assert march.warnings == []
+    assert june.warnings == []
+    assert paper_instance_id("12", march.normalized_session_key, march.year) == "12spring21"
+    assert paper_instance_id("12", june.normalized_session_key, june.year) == "12summer21"
+
+
+@pytest.mark.parametrize(
+    ("compact_name", "long_name", "document_type"),
+    [
+        ("9709_m21_qp_12.pdf", "9709 Mathematics March 2021 Question Paper 12.pdf", "question_paper"),
+        ("9709_m21_ms_12.pdf", "9709 Mathematics March 2021 Mark Scheme 12.pdf", "mark_scheme"),
+    ],
+)
+def test_registry_rejects_true_duplicate_canonical_documents(
+    tmp_path: Path,
+    compact_name: str,
+    long_name: str,
+    document_type: str,
+) -> None:
+    touch_pdf(tmp_path / compact_name)
+    touch_pdf(tmp_path / long_name)
+
+    with pytest.raises(
+        DocumentRegistryError,
+        match=rf"duplicate {document_type} for canonical document identity '9709_2021_spring21_12'",
+    ):
+        build_document_registry(tmp_path)
+
+
 def test_missing_companion_files_do_not_remove_question_paper_entry(tmp_path: Path) -> None:
     qp = touch_pdf(tmp_path / "9709 Mathematics March 2022 Question Paper 42.pdf")
 
     registry = build_document_registry(tmp_path)
 
-    entry = registry.entries["9709_2022_summer22_42"]
+    entry = registry.entries["9709_2022_spring22_42"]
     assert entry.question_paper == qp
     assert entry.mark_scheme is None
     assert entry.examiner_reports == []
     assert entry.missing_companions == ["mark_scheme"]
+
+
+def test_process_registry_refuses_empty_or_unclassified_input_without_explicit_opt_in(
+    tmp_path: Path, monkeypatch
+) -> None:
+    unclassified = touch_pdf(tmp_path / "mystery.pdf")
+    registry = build_document_registry(tmp_path)
+    config = AppConfig()
+    config.output.apply_root(tmp_path / "output")
+    monkeypatch.setattr(pipeline, "export_records", lambda records, config: config.output.json_dir / "question_bank.json")
+
+    with pytest.raises(pipeline.EmptyQuestionPaperInputError, match="No classified question-paper PDFs") as exc:
+        pipeline._process_registry_entries(registry, config)
+
+    assert str(unclassified) in str(exc.value)
+    result = pipeline._process_registry_entries(registry, config, allow_empty=True)
+    assert result.records == []
 
 
 def test_process_registry_routes_only_question_papers_to_question_extraction(tmp_path: Path, monkeypatch) -> None:
@@ -178,6 +243,9 @@ def test_process_registry_routes_only_question_papers_to_question_extraction(tmp
         return []
 
     monkeypatch.setattr(pipeline, "build_records_for_pdf", fake_build_records_for_pdf)
+    # This test exercises registry routing, not the separate fail-closed
+    # zero-record extraction contract.
+    monkeypatch.setattr(pipeline, "_require_paper_records", lambda *_args, **_kwargs: None)
     monkeypatch.setattr(pipeline, "export_records", lambda records, config: tmp_path / "question_bank.json")
     monkeypatch.setattr(pipeline, "_write_batch_diagnostic", lambda records, config: tmp_path / "diagnostics.json")
 

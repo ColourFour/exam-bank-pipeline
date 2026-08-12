@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "submission.v1.schema.json",
+  "title": "Submission",
+  "description": "Transport-neutral normalized student work. Email, scanner, web, and filesystem provenance belongs outside the grading input.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "submission_id",
+    "student_id",
+    "assignment_id",
+    "submitted_at",
+    "status",
+    "late",
+    "documents",
+    "pages",
+    "answers",
+    "review_required",
+    "warnings",
+    "metadata"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "homework_ingest.interchange.submission"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "submission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "student_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assignment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["accepted", "late", "rejected", "late_rejected", "quarantined", "needs_review"]
+    },
+    "late": {
+      "type": "boolean"
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/document"
+      }
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/answer"
+      }
+    },
+    "review_required": {
+      "type": "boolean"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_id", "path", "mime_type", "sha256"],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mime_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "page_count": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_number", "document_id", "image", "text", "warnings"],
+      "properties": {
+        "page_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "text": {
+          "type": ["string", "null"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "image": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "response_text", "page_numbers", "response_images", "warnings"],
+      "properties": {
+        "question_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "response_text": {
+          "type": ["string", "null"]
+        },
+        "page_numbers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "uniqueItems": true
+        },
+        "response_images": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "response_text": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "response_images": {
+              "type": "array",
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -12,6 +12,11 @@ from .core.paper_identity import (
     canonical_subject_family,
     paper_identity_from_parts,
 )
+from .core.subject_contract import (
+    CANONICAL_SUBJECTS,
+    LEGACY_PAPER_FAMILY_TO_SUBJECT,
+    default_component_for_subject,
+)
 from .document_metadata import DocumentMetadata, parse_filename_metadata
 
 
@@ -24,14 +29,7 @@ QUESTION_BANK_FILENAME = "question_bank.json"
 TRIAGE_BASELINE_FILENAME = "baseline_question_bank.json"
 TRIAGE_COMPARISONS_DIRNAME = "comparisons"
 
-LEGACY_SUBJECT_DIRS: dict[str, str] = {
-    "p1": "pm1",
-    "p3": "pm3",
-    "p4": "stats",
-    "p5": "mechanics",
-    "p6": "stats",
-}
-CANONICAL_SUBJECTS: tuple[str, ...] = ("pm1", "pm3", "stats", "mechanics")
+LEGACY_SUBJECT_DIRS: dict[str, str] = dict(LEGACY_PAPER_FAMILY_TO_SUBJECT)
 
 PAPER_ARTIFACT_DIR_RE = re.compile(r"^(?:pm1|pm3|stats|mechanics)$")
 ITERATION_DIR_RE = re.compile(r"^iteration_\d{3}$")
@@ -238,13 +236,7 @@ def compact_session_code(session: str, year: str) -> str:
 
 
 def _component_from_subject(subject: str) -> str:
-    family = canonical_subject(subject)
-    return {
-        "pm1": "11",
-        "pm3": "31",
-        "stats": "41",
-        "mechanics": "51",
-    }.get(family, "11")
+    return default_component_for_subject(subject) or "11"
 
 
 def _canonical_year(year: str) -> str:

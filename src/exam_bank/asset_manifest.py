@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
@@ -8,6 +9,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .atomic_json import write_atomic_json
+from .publication_safety import read_json_under_publication_guard
 from .topic_routing import audit_topic_routing_sidecar_payload
 
 
@@ -19,6 +21,91 @@ QUESTION_IMAGE_KIND = "question_image"
 MARK_SCHEME_IMAGE_KIND = "mark_scheme_image"
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"}
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Build the canonical image asset manifest.")
+    parser.add_argument("--question-bank", type=Path, default=Path("output/json/question_bank.json"))
+    parser.add_argument("--output", type=Path, default=Path("output/json/asset_manifest.v1.json"))
+    parser.add_argument("--artifact-root", type=Path, default=Path("output"))
+    parser.add_argument("--base-dir", type=Path, default=Path.cwd())
+    return parser
+
+
+def _validate_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Validate canonical asset references across the question bank and downstream exports."
+    )
+    parser.add_argument("--question-bank", default="output/json/question_bank.json")
+    parser.add_argument("--asset-manifest", default="output/json/asset_manifest.v1.json")
+    parser.add_argument(
+        "--asterion-catalog",
+        default="output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json",
+    )
+    parser.add_argument(
+        "--asterion",
+        default="output/asterion/exports/latest/asterion_question_bank_v1.json",
+    )
+    parser.add_argument(
+        "--content-lab",
+        default="output/asterion/exports/latest/asterion_content_lab_candidates_v1.json",
+    )
+    parser.add_argument("--topic-routing", default="output/json/question_bank.topic_routing.v1.json")
+    parser.add_argument("--artifact-root", default="output")
+    parser.add_argument("--project-root", default=None)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("manifests/validations/asset_reference_validation.v1.json"),
+    )
+    parser.add_argument(
+        "--strict-companion-inputs",
+        action="store_true",
+        help="Fail when the asset manifest, export, or topic sidecar is missing.",
+    )
+    return parser
+
+
+def run_build(argv: list[str] | None = None) -> int:
+    args = _build_parser().parse_args(argv)
+    output = write_asset_manifest(
+        args.question_bank,
+        args.output,
+        artifact_root=args.artifact_root,
+        base_dir=args.base_dir,
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "output": str(output),
+                "asset_count": payload.get("asset_count"),
+                "source_question_bank_path": payload.get("source_question_bank_path"),
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
+def run_validate(argv: list[str] | None = None) -> int:
+    args = _validate_parser().parse_args(argv)
+    report = validate_asset_references(
+        question_bank_path=args.question_bank,
+        asset_manifest_path=args.asset_manifest,
+        asterion_catalog_path=args.asterion_catalog,
+        asterion_path=args.asterion,
+        content_lab_path=args.content_lab,
+        topic_routing_path=args.topic_routing,
+        artifact_root=args.artifact_root,
+        project_root=args.project_root,
+        strict_companion_inputs=args.strict_companion_inputs,
+    )
+    write_atomic_json(report, args.output, sort_keys=True)
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["ok"] else 1
 
 
 def asset_id_for_record(kind: str, record: dict[str, Any], path: str, *, occurrence: int = 0) -> str:
@@ -49,7 +136,7 @@ def build_asset_manifest(
     base_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     path = Path(question_bank_path)
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = read_json_under_publication_guard(path)
     root = Path(artifact_root) if artifact_root is not None else _infer_artifact_root(path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     return build_asset_manifest_payload(
@@ -580,7 +667,7 @@ def _read_json_if_exists(
         target.append(_issue(code, str(path), f"Missing {label} input.", missing_detail))
         return {}
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = read_json_under_publication_guard(path)
     except json.JSONDecodeError as exc:
         errors.append(_issue("invalid_json", str(path), f"Invalid JSON: {exc}"))
         return {}

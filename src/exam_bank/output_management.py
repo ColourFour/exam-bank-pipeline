@@ -136,6 +136,8 @@ def build_cleanup_plan(
         for report in _report_paths(root):
             plans.append(_plan_entry(report, root, "safe delete generated report", include_size))
 
+        plans.extend(_run_status_retention_plan(root, include_size=include_size))
+
         for unknown in _unknown_top_level_paths(root):
             plans.append(_plan_entry(unknown, root, "unknown/manual review", include_size))
 
@@ -148,6 +150,7 @@ def build_cleanup_plan(
         "notes": [
             "This is a dry-run plan only. It never deletes or moves files.",
             "Frozen triage baselines are always classified as keep.",
+            "The latest completed, explicitly pinned, and unfinished run checkpoints are retained.",
             "Archive/delete classifications are suggestions for human review.",
         ],
     }
@@ -347,6 +350,52 @@ def _report_paths(root: Path) -> list[Path]:
     return sorted(set(paths), key=lambda path: str(path))
 
 
+def _run_status_retention_plan(root: Path, *, include_size: bool) -> list[dict[str, Any]]:
+    status_root = root / "run_status"
+    if not status_root.is_dir():
+        return []
+
+    rows: list[tuple[Path, dict[str, Any] | None]] = []
+    for run_dir in sorted(path for path in status_root.iterdir() if path.is_dir()):
+        status_path = run_dir / RUN_STATUS_FILENAME
+        if not status_path.is_file():
+            rows.append((run_dir, None))
+            continue
+        try:
+            payload = json.loads(status_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            payload = None
+        rows.append((run_dir, payload if isinstance(payload, dict) else None))
+
+    completed = [row for row in rows if row[1] is not None and row[1].get("status") == "completed"]
+    latest_completed = max(completed, key=_run_status_recency_key, default=None)
+    plans: list[dict[str, Any]] = []
+    for run_dir, payload in rows:
+        if (run_dir / ".keep").exists() or (run_dir / "PINNED").exists():
+            action = "keep: pinned run checkpoint"
+        elif payload is None:
+            action = "unknown/manual review"
+        elif payload.get("status") != "completed":
+            action = "keep: unfinished run checkpoint"
+        elif latest_completed is not None and run_dir == latest_completed[0]:
+            action = "keep: latest completed run checkpoint"
+        else:
+            action = "archive old completed run checkpoint"
+        plans.append(_plan_entry(run_dir, root, action, include_size))
+    return plans
+
+
+def _run_status_recency_key(row: tuple[Path, dict[str, Any] | None]) -> tuple[str, float, str]:
+    run_dir, payload = row
+    payload = payload or {}
+    recorded = str(payload.get("finished_at") or payload.get("updated_at") or payload.get("started_at") or "")
+    try:
+        modified = run_dir.stat().st_mtime
+    except OSError:
+        modified = 0.0
+    return recorded, modified, run_dir.name
+
+
 def _unknown_top_level_paths(root: Path) -> list[Path]:
     known = {
         ".gitkeep",
@@ -385,9 +434,13 @@ def _dedupe_plan(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     priority = {
         "keep: canonical/current": 0,
         "keep: frozen baseline": 0,
+        "keep: pinned run checkpoint": 0,
+        "keep: unfinished run checkpoint": 0,
+        "keep: latest completed run checkpoint": 1,
         "keep: latest candidate": 1,
         "keep: latest audit/report": 2,
         "archive candidate": 3,
+        "archive old completed run checkpoint": 3,
         "archive old audit/report": 4,
         "safe delete generated report": 5,
         "unknown/manual review": 6,

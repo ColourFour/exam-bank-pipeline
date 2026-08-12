@@ -229,6 +229,9 @@ def _record_context(
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
     routing = routing_records.get(question_id, {})
     return {

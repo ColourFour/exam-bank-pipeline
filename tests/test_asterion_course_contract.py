@@ -18,17 +18,21 @@ from exam_bank.asterion_course_contract import (
 
 def test_course_ids_map_product_components_without_cross_loading_p3() -> None:
     records = [
-        _record("p3-q1", "p3", "31spring24", safe=True),
-        _record("p1-q1", "p1", "12spring24", safe=True),
-        _record("m1-q1", "p4", "42spring24", safe=True),
-        _record("s1-q1", "p5", "52spring24", safe=True),
+        _record("p3-q1", "pm3", "31spring24", safe=True),
+        _record("p1-q1", "pm1", "12spring24", safe=True),
+        _record("m1-q1", "mechanics", "42spring24", safe=True),
+        _record("s1-q1", "stats", "52spring24", safe=True),
+        _record("s2-q1", "stats", "62spring24", safe=True),
     ]
 
     assert course_id_for_record(records[0]) == "p3"
     assert course_id_for_record(records[2]) == "m1"
+    assert course_id_for_record(records[3]) == "s1"
+    assert course_id_for_record(records[4]) == "s2"
     assert [record["question_id"] for record in filter_records_by_course(records, "p3")] == ["p3-q1"]
     assert [record["question_id"] for record in filter_records_by_course(records, "m1")] == ["m1-q1"]
     assert [record["question_id"] for record in filter_records_by_course(records, "s1")] == ["s1-q1"]
+    assert [record["question_id"] for record in filter_records_by_course(records, "s2")] == ["s2-q1"]
 
 
 def test_canonical_practice_runtime_safe_applies_to_all_supported_courses() -> None:
@@ -36,15 +40,18 @@ def test_canonical_practice_runtime_safe_applies_to_all_supported_courses() -> N
     p1 = _record("p1-q1", "p1", "12spring24", safe=True)
     m1 = _record("m1-q1", "p4", "42spring24", safe=True)
     s1 = _record("s1-q1", "p5", "52spring24", safe=True)
+    s2 = _record("s2-q1", "p6", "62spring24", safe=True)
 
     assert student_runtime_safe_for_record(p3) is True
     assert student_runtime_safe_for_record(p1) is True
     assert student_runtime_safe_for_record(m1) is True
     assert student_runtime_safe_for_record(s1) is True
+    assert student_runtime_safe_for_record(s2) is True
     assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "p3", student_runtime_only=True)] == ["p3-q1"]
     assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "p1", student_runtime_only=True)] == ["p1-q1"]
     assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "m1", student_runtime_only=True)] == ["m1-q1"]
     assert [record["question_id"] for record in filter_records_by_course([p3, p1, m1, s1], "s1", student_runtime_only=True)] == ["s1-q1"]
+    assert [record["question_id"] for record in filter_records_by_course([s2], "s2", student_runtime_only=True)] == ["s2-q1"]
 
 
 def test_explicit_reviewed_non_p3_record_can_enter_future_runtime() -> None:
@@ -84,6 +91,7 @@ def test_empty_scaffold_courses_return_empty_arrays_and_known_empty_state() -> N
     assert student_runtime_course_records(payload, "p1") == []
     assert student_runtime_course_records(payload, "m1") == []
     assert student_runtime_course_records(payload, "s1") == []
+    assert student_runtime_course_records(payload, "s2") == []
     assert COURSE_EMPTY_STATE_MESSAGE == "No reviewed exam-bank records available yet."
 
 
@@ -129,10 +137,30 @@ def test_invalid_course_ids_and_missing_images_fail_closed() -> None:
     assert "student_runtime_safe_missing_question_image_path" in validate_exam_bank_course_record(missing_images)
 
 
+def test_explicit_course_id_must_agree_with_unambiguous_family_without_component() -> None:
+    assert course_id_for_record({"course_id": "s1", "paper_family": "p6"}) is None
+    assert course_id_for_record({"course_id": "p3", "paper_family": "pm1"}) is None
+    assert course_id_for_record({"course_id": "s2", "paper_family": "p6"}) is None
+    assert course_id_for_record({"course_id": "s1", "paper_family": "p6", "paper": "62winter19"}) == "s1"
+    assert course_id_for_record({"course_id": "s2", "paper_family": "p6", "paper": "62spring20"}) == "s2"
+    # Canonical stats storage intentionally needs either an explicit course or
+    # component evidence to distinguish S1 from S2.
+    assert course_id_for_record({"course_id": "s2", "paper_family": "stats"}) == "s2"
+
+
+def test_statistics_component_course_identity_is_era_aware_and_yearless_records_fail_closed() -> None:
+    assert course_id_for_record({"paper_family": "stats", "paper": "51winter19"}) is None
+    assert course_id_for_record({"paper_family": "stats", "paper": "51spring20"}) == "s1"
+    assert course_id_for_record({"paper_family": "stats", "component": "51"}) is None
+    assert course_id_for_record({"paper_family": "stats", "paper": "62winter19"}) == "s1"
+    assert course_id_for_record({"paper_family": "stats", "paper": "62spring20"}) == "s2"
+    assert course_id_for_record({"paper_family": "stats", "component": "62"}) is None
+
+
 def test_course_counts_include_all_courses_even_when_empty() -> None:
     counts = {row["course_id"]: row for row in course_counts([_record("p3-q1", "p3", "31spring24", safe=True)])}
 
-    assert set(counts) == {"p1", "p3", "m1", "s1"}
+    assert set(counts) == {"p1", "p3", "m1", "s1", "s2"}
     assert counts["p3"]["student_runtime_safe_record_count"] == 1
     assert counts["p1"]["record_count"] == 0
     assert counts["p1"]["empty_state_message"] == COURSE_EMPTY_STATE_MESSAGE

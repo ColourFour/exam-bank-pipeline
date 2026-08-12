@@ -136,7 +136,7 @@ def test_paper_first_image_paths_follow_family_paper_questions_and_mark_scheme_l
         config,
     )
 
-    assert paper_instance_id("12", "March", "2021") == "12summer21"
+    assert paper_instance_id("12", "March", "2021") == "12spring21"
     assert qp_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_12_qp_q01_question.png"
     assert ms_path == tmp_path / "output" / "pm1" / "pm1_2021_m21_12_ms_q01_markscheme.png"
 

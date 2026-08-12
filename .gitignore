@@ -6,6 +6,11 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+/build/
+/dist/
 
 # Environment / secrets
 .env
@@ -14,15 +19,22 @@ __pycache__/
 
 # Generated extraction output
 output/*
+.output.run-*/
+.output.sample-*/
+.output.rollback-*/
+.output.committed-*/
+outputs/
 !output/json/
 output/json/*
 !output/json/.gitkeep
+# Legacy homework-ingest output stays ignored here to protect pre-split local data.
 !output/submissions/
 output/submissions/*
 !output/submissions/.gitkeep
 output_ocr_candidate/
 reports/*
 !reports/.gitkeep
+# Legacy homework-ingest reports stay ignored here to protect pre-split local data.
 !reports/submissions/
 reports/submissions/*
 !reports/submissions/.gitkeep
@@ -30,6 +42,7 @@ reports/submissions/*
 agent_handoffs/
 tmp/
 input/pastpapers/
+/input/quarantine/
 data/review/runs/
 data/review/*
 !data/review/canonical/
@@ -49,7 +62,7 @@ output_cleanup_plan.md
 # Legacy/generated practice output
 practice/
 
-# Private local submission data
+# Legacy private homework-ingest data. Do not migrate, expose, or delete automatically.
 data/submissions/*
 !data/submissions/.gitkeep
 data/classes/*

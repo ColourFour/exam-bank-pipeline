@@ -261,7 +261,10 @@ Current inspected source run:
 - `output/json/question_bank.mark_events.v1.json`: `1301` records. P3 has `378` advisory-safe mark-event records, `18` not advisory-safe, and all `396` remain `safe_for_marking_use=false`. Validation currently reports `ok=true`, `0` errors, `0` warnings.
 - `exam_bank_taxonomy/canonical/skill_maps/skill_map_9709_p3_v1.json`: `26` P3 skill IDs, but the map says `review_status=needs_review`.
 - `exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json`: `749` P3 mapping candidates, all `review_status=needs_review`; `608` are subpart-level and `141` are whole-question-only.
-- `output/auto_grade/reviewed_rubrics.v1.json`: `3` approved reviewed rubrics, all P1. This is useful as a review/validation pattern but does not provide P3 evidence yet.
+- Historical pre-split `output/auto_grade/reviewed_rubrics.v1.json`: `3`
+  approved reviewed rubrics, all P1. The workflow now lives in
+  `../autograder`; this snapshot is useful as a review/validation pattern but
+  does not provide P3 evidence.
 
 ## A. Current Artifacts That Can Support The Sidecar
 
@@ -279,7 +282,11 @@ Current inspected source run:
 
 `exam_bank_taxonomy/canonical/question_skill_mappings/question_skill_mappings_9709_p3_v1.json` and `question_topic_assignments_9709_p3_v1.json` are useful review inputs. They contain subpart IDs, candidate primary/secondary/prerequisite skills, candidate topic/subtopic assignment, confidence, evidence snippets, and review statuses. They are not clean evidence because every skill mapping is still `needs_review`.
 
-`output/auto_grade/*` and `reports/auto_grade/*` provide a reviewed-rubric workflow pattern: review queues, reviewer packets, approved registry, validation, reviewer identity, timestamps, total verification, and accepted evidence. The current approved registry has no P3 records, so it is process support only.
+The pre-split `output/auto_grade/*` and `reports/auto_grade/*` snapshots document
+a reviewed-rubric workflow pattern: review queues, reviewer packets, approved
+registry, validation, reviewer identity, timestamps, total verification, and
+accepted evidence. Active rubric-readiness tooling is in `../autograder`. The
+historical approved registry has no P3 records, so it is process support only.
 
 ## B. Fields Already Available
 
@@ -303,7 +310,11 @@ The current repo can already supply these fields without changing extraction:
 
 ## C. Missing Or Partial Fields
 
-The critical missing field is a human-reviewed P3 exact-skill decision. The current P3 skill map and P3 question-skill mappings are machine-generated or mixed-evidence candidates with `needs_review` status. There are no approved P3 reviewed rubrics in the current auto-grade registry.
+The critical missing field is a human-reviewed P3 exact-skill decision. The
+current P3 skill map and P3 question-skill mappings are machine-generated or
+mixed-evidence candidates with `needs_review` status. The historical pre-split
+auto-grade registry had no approved P3 reviewed rubrics; current rubric
+readiness is owned and reported by `../autograder`.
 
 Other missing or partial fields:
 

@@ -193,7 +193,7 @@ def test_resolve_image_to_question_is_deterministic_by_bbox_then_identity(tmp_pa
 def test_orphan_rebinding_does_not_create_duplicate_slot_bindings(tmp_path: Path) -> None:
     output = tmp_path / "output"
     _write_image(output / _q_path(1))
-    _write_image(output / "pm1" / "pm1_2021_m21_12_qp_q01_question_v2.png")
+    _write_image(output / "pm1" / "pm1_2021_s21_12_qp_q01_question_v2.png")
     bank = _question_bank([_question(1)])
 
     result = run_image_alignment_loop(
@@ -253,11 +253,11 @@ def _question(
 
 
 def _q_path(number: int) -> str:
-    return f"pm1/pm1_2021_m21_12_qp_q{number:02d}_question.png"
+    return f"pm1/pm1_2021_s21_12_qp_q{number:02d}_question.png"
 
 
 def _ms_path(number: int) -> str:
-    return f"pm1/pm1_2021_m21_12_ms_q{number:02d}_markscheme.png"
+    return f"pm1/pm1_2021_s21_12_ms_q{number:02d}_markscheme.png"
 
 
 def _write_image(path: Path) -> None:

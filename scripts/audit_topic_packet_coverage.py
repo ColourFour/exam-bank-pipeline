@@ -100,6 +100,9 @@ def build_report(*, question_bank_path: Path, packets_root: Path, taxonomy_path:
             current_family=record.get("paper_family"),
             raw_topic=record.get("topic"),
             taxonomy=taxonomy,
+            year=record.get("year") or record.get("canonical_year_folder"),
+            session=record.get("session"),
+            paper=record.get("paper") or record.get("question_id"),
         )
         if normalization.expected_family != "p4":
             continue

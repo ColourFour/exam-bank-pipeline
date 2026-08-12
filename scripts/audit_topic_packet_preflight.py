@@ -174,6 +174,9 @@ def enrich_question_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> 
         current_family=current_family,
         raw_topic=raw_topic,
         taxonomy=taxonomy,
+        year=year,
+        session=record.get("session"),
+        paper=record.get("paper") or question_id,
     )
 
     mapping_status = status_value(record, "mapping_status")

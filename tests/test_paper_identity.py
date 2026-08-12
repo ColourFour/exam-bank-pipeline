@@ -10,17 +10,22 @@ from exam_bank.core.paper_identity import (
     paper_identity_from_parts,
     parse_session,
 )
+from exam_bank.core.subject_contract import (
+    course_id_for_identity,
+    subject_family_for_component,
+    taxonomy_paper_family,
+)
 from exam_bank.document_metadata import parse_filename_metadata
 from exam_bank.mark_scheme_pairing import find_mark_scheme
 from exam_bank.output_layout import mark_scheme_image_output_path, question_image_output_path
 
 
-def test_m21_maps_to_summer21_with_compact_session_code() -> None:
+def test_m21_maps_to_spring21_with_compact_session_code() -> None:
     parsed = parse_session("m21")
 
     assert parsed.year == 2021
     assert parsed.session_code == "m21"
-    assert parsed.canonical_session == "summer21"
+    assert parsed.canonical_session == "spring21"
     assert parsed.canonical_year_folder == "2021"
 
 
@@ -43,8 +48,8 @@ def test_pm1_identity_is_deterministic_across_calls() -> None:
     )
 
     assert first == second
-    assert first.paper_id == "12summer21"
-    assert first.question_id == "12summer21_q01"
+    assert first.paper_id == "12spring21"
+    assert first.question_id == "12spring21_q01"
     assert first.subject_family == "pm1"
 
 
@@ -71,8 +76,8 @@ def test_same_file_metadata_produces_same_identity_every_time() -> None:
     )
 
     assert first == second
-    assert first.paper_id == "12summer21"
-    assert first.question_id == "12summer21_q03"
+    assert first.paper_id == "12spring21"
+    assert first.question_id == "12spring21_q03"
 
 
 def test_legacy_and_modern_subject_families_use_same_canonical_values() -> None:
@@ -80,11 +85,60 @@ def test_legacy_and_modern_subject_families_use_same_canonical_values() -> None:
     assert canonical_subject_family("pm1") == "pm1"
     assert canonical_subject_family("p3") == "pm3"
     assert canonical_subject_family("pm3") == "pm3"
-    assert canonical_subject_family("p4") == "stats"
+    assert canonical_subject_family("p4") == "mechanics"
+    assert canonical_subject_family("mechanics") == "mechanics"
+    assert canonical_subject_family("p5") == "stats"
     assert canonical_subject_family("p6") == "stats"
     assert canonical_subject_family("stats") == "stats"
-    assert canonical_subject_family("p5") == "mechanics"
-    assert canonical_subject_family("mechanics") == "mechanics"
+
+
+def test_component_contract_distinguishes_mechanics_and_era_aware_statistics() -> None:
+    assert subject_family_for_component("42") == "mechanics"
+    assert subject_family_for_component("51") is None
+    assert subject_family_for_component("51", paper="51winter19") is None
+    assert subject_family_for_component("51", paper="51spring20") == "stats"
+    assert subject_family_for_component("62") == "stats"
+    assert course_id_for_identity("mechanics", component="42") == "m1"
+    assert course_id_for_identity("stats", component="51", paper="51winter19") is None
+    assert course_id_for_identity("stats", component="51", paper="51spring20") == "s1"
+    assert course_id_for_identity("stats", component="51") is None
+    assert course_id_for_identity("stats", component="62", paper="62winter19") == "s1"
+    assert course_id_for_identity("stats", component="62", paper="62spring20") == "s2"
+    assert course_id_for_identity("stats", component="62") is None
+    assert taxonomy_paper_family("stats", component="62", paper="62winter19") == "p5"
+    assert taxonomy_paper_family("stats", component="62", paper="62spring20") == "p6"
+    assert taxonomy_paper_family("stats", component="62") == ""
+    assert course_id_for_identity("stats") is None
+
+
+def test_identity_rejects_subject_component_disagreement() -> None:
+    with pytest.raises(IdentityError, match="subject family does not match component"):
+        paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="stats",
+            year=2024,
+            session="s24",
+            component="42",
+        )
+
+
+def test_pre_2020_p5_mechanics_2_is_unsupported_by_current_domain() -> None:
+    with pytest.raises(IdentityError, match="unsupported or era-ambiguous component"):
+        paper_identity_from_parts(
+            syllabus="9709",
+            year=2019,
+            session="s19",
+            component="51",
+        )
+
+    with pytest.raises(IdentityError, match="subject family does not match component"):
+        paper_identity_from_parts(
+            syllabus="9709",
+            subject_family="stats",
+            year=2019,
+            session="s19",
+            component="51",
+        )
 
 
 def test_builders_are_canonical_and_reject_inconsistent_identity() -> None:

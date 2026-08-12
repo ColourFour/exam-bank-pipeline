@@ -14,7 +14,6 @@ from exam_bank.topic_packets import (
     load_topic_overlap_review_decisions,
     normalize_packet_topic,
 )
-from exam_bank.topic_packets import _packet_family_for_component
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -162,8 +161,11 @@ def routing_mismatch_row(record: dict[str, Any], taxonomy: dict[str, Any]) -> di
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
-    source_family = _packet_family_for_component(normalization.source_component)
+    source_family = normalization.component_family
     if not source_family or not normalization.expected_family or source_family == normalization.expected_family:
         return None
     return {

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -10,6 +11,8 @@ import sys
 import time
 from typing import Any, Callable, TextIO
 from uuid import uuid4
+
+from .atomic_json import write_atomic_json
 
 
 RUN_STATUS_FILENAME = "run_status.json"
@@ -460,6 +463,24 @@ class RunStatusTracker:
             started_at=now,
         )
         self._batch_starts[batch_id] = now
+        self._append_batch_event(
+            {
+                "run_id": self.run_id,
+                "run_type": self.run_type,
+                "batch_id": batch_id,
+                "paper": paper,
+                "paper_family": paper_family,
+                "status": "running",
+                "started_at": _iso(now),
+                "finished_at": None,
+                "elapsed_seconds": 0.0,
+                "record_count": max(0, int(record_count)),
+                "successful_records": 0,
+                "failed_records": 0,
+                "skipped_records": 0,
+                "error_message": None,
+            }
+        )
         self.update_phase(
             phase,
             current_batch_id=batch_id,
@@ -602,9 +623,7 @@ class RunStatusTracker:
 
     def write_batch_artifact(self, batch_id: str, filename: str, payload: Any) -> Path:
         path = self.batch_artifact_path(batch_id, filename)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        return path
+        return write_atomic_json(payload, path)
 
     def read_batch_artifact(self, batch_id: str, filename: str) -> Any | None:
         path = self.batch_artifact_path(batch_id, filename)
@@ -612,7 +631,7 @@ class RunStatusTracker:
             return None
         try:
             return json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
+        except (OSError, json.JSONDecodeError):
             return None
 
     def status_snapshot(self) -> dict[str, Any]:
@@ -682,9 +701,14 @@ class RunStatusTracker:
             "skipped_records": max(0, int(skipped_records)),
             "error_message": error_message,
         }
+        self._append_batch_event(payload)
+
+    def _append_batch_event(self, payload: dict[str, Any]) -> None:
         self.status_dir.mkdir(parents=True, exist_ok=True)
         with self.batch_status_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
 
     def _clear_current_batch_if(self, batch_id: str) -> None:
         if self._current_batch and self._current_batch.batch_id == batch_id:

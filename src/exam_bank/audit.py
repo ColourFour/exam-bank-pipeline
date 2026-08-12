@@ -9,6 +9,13 @@ from typing import Any, Iterable
 
 from PIL import Image, UnidentifiedImageError
 
+from .core.subject_contract import (
+    P5_S1_FIRST_EXAM_YEAR,
+    exam_year_from_evidence,
+    normalize_subject_family,
+    paper_number_from_component,
+    subject_family_for_component,
+)
 from .missing_mark_scheme import KNOWN_MISSING_MARK_SCHEME_COMPANIONS, source_companion_key, source_companion_key_from_paper
 from .mark_scheme_labels import top_level_mark_scheme_text_label
 
@@ -121,6 +128,8 @@ def audit_current_output_integrity_records(
 
     missing_question_ids: list[dict[str, Any]] = []
     missing_paper_question_pairs: list[dict[str, Any]] = []
+    component_subject_family_mismatches: list[dict[str, Any]] = []
+    unsupported_component_era_records: list[dict[str, Any]] = []
     question_id_records: list[tuple[int, str, dict[str, Any]]] = []
     paper_question_records: list[tuple[int, tuple[str, str], dict[str, Any]]] = []
 
@@ -153,6 +162,43 @@ def audit_current_output_integrity_records(
         paper = _clean_text(record.get("paper"))
         question_number = _clean_text(record.get("question_number"))
         companion = _source_companion_key(record)
+        component = _record_component(record, paper=paper)
+        expected_subject_family = subject_family_for_component(
+            component,
+            year=record.get("year") or record.get("canonical_year_folder"),
+            session=record.get("session") or record.get("canonical_session"),
+            paper=paper or question_id,
+        )
+        actual_subject_family = normalize_subject_family(record.get("paper_family"))
+        if paper_number_from_component(component) == "5" and expected_subject_family is None:
+            identity_year = exam_year_from_evidence(
+                year=record.get("year") or record.get("canonical_year_folder"),
+                session=record.get("session") or record.get("canonical_session"),
+                paper=paper or question_id,
+            )
+            ref = _record_ref(index, record, companion=companion)
+            ref.update(
+                {
+                    "component": component,
+                    "identity_year": identity_year,
+                    "reason": (
+                        f"pre_{P5_S1_FIRST_EXAM_YEAR}_paper_5_mechanics_2_is_unsupported"
+                        if identity_year is not None
+                        else "paper_5_requires_year_for_m2_s1_split"
+                    ),
+                }
+            )
+            unsupported_component_era_records.append(ref)
+        elif expected_subject_family and actual_subject_family != expected_subject_family:
+            ref = _record_ref(index, record, companion=companion)
+            ref.update(
+                {
+                    "component": component,
+                    "paper_family": record.get("paper_family"),
+                    "expected_subject_family": expected_subject_family,
+                }
+            )
+            component_subject_family_mismatches.append(ref)
 
         if question_id:
             question_id_records.append((index, question_id, record))
@@ -337,6 +383,18 @@ def audit_current_output_integrity_records(
             example_limit=example_limit,
         ),
         _failure(
+            "component_subject_family_mismatch",
+            "paper_family must agree with the authoritative paper component.",
+            component_subject_family_mismatches,
+            example_limit=example_limit,
+        ),
+        _failure(
+            "unsupported_component_era",
+            "Pre-2020 Paper 5 is unsupported Mechanics 2; yearless Paper 5 is era-ambiguous.",
+            unsupported_component_era_records,
+            example_limit=example_limit,
+        ),
+        _failure(
             "duplicate_question_image_path",
             "Question image paths should not be shared by multiple records.",
             duplicate_question_image_path_records,
@@ -428,6 +486,8 @@ def audit_current_output_integrity_records(
             "declared_record_count_matches": not record_count_mismatch,
             "question_id_present_and_unique": not missing_question_ids and not duplicate_question_id_records,
             "paper_question_pairs_present_and_unique": not missing_paper_question_pairs and not duplicate_paper_question_records,
+            "component_subject_family_agrees": not component_subject_family_mismatches,
+            "component_era_supported": not unsupported_component_era_records,
             "image_paths_unique_across_records": not duplicate_question_image_path_records
             and not duplicate_mark_scheme_image_path_records,
             "image_path_roles_match_fields": not question_image_path_kind_mismatches
@@ -451,6 +511,8 @@ def audit_current_output_integrity_records(
             "missing_paper_or_question_number_count": len(missing_paper_question_pairs),
             "duplicate_paper_question_pair_count": len(duplicate_paper_question_values),
             "duplicate_paper_question_record_count": len(duplicate_paper_question_records),
+            "component_subject_family_mismatch_count": len(component_subject_family_mismatches),
+            "unsupported_component_era_count": len(unsupported_component_era_records),
             "duplicate_question_image_path_value_count": len(duplicate_question_image_path_values),
             "duplicate_question_image_path_record_count": len(duplicate_question_image_path_records),
             "duplicate_mark_scheme_image_path_value_count": len(duplicate_mark_scheme_image_path_values),
@@ -509,6 +571,18 @@ def audit_current_output_integrity_records(
         "failures": failures,
     }
     return report
+
+
+def _record_component(record: dict[str, Any], *, paper: str) -> str:
+    direct = _clean_text(record.get("component"))
+    if direct:
+        return direct
+    notes = record.get("notes") if isinstance(record.get("notes"), dict) else {}
+    source_code = _clean_text(notes.get("source_paper_code"))
+    if source_code:
+        return source_code
+    match = re.match(r"\d{1,2}", paper)
+    return match.group(0) if match else ""
 
 
 def audit_ocr_candidates(

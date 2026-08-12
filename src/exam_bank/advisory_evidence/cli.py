@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Sequence
 
 from exam_bank.advisory_evidence.extraction import extract_all_advisory_text
-from exam_bank.advisory_evidence.inventory import write_all_inventories
+from exam_bank.advisory_evidence.inventory import DOCUMENT_SPECS, write_all_inventories
 from exam_bank.advisory_evidence.linking import build_all_links
 from exam_bank.advisory_evidence.parsing import parse_all_examiner_reports, parse_all_grade_thresholds
 from exam_bank.advisory_evidence.reports import build_review_reports
@@ -17,8 +17,16 @@ from exam_bank.advisory_evidence.validation import validate_advisory_evidence
 
 def run_inventory(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build deterministic advisory PDF inventories.")
-    parser.add_argument("--examiner-reports-dir", type=Path, default=Path("input/examiner_reports"))
-    parser.add_argument("--grade-thresholds-dir", type=Path, default=Path("input/grade_thresholds"))
+    parser.add_argument(
+        "--examiner-reports-dir",
+        type=Path,
+        default=DOCUMENT_SPECS["examiner_report"]["source_dir"],
+    )
+    parser.add_argument(
+        "--grade-thresholds-dir",
+        type=Path,
+        default=DOCUMENT_SPECS["grade_thresholds"]["source_dir"],
+    )
     parser.add_argument("--output-root", type=Path, default=Path("output/advisory_evidence"))
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)

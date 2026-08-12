@@ -10,7 +10,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
 
-from openai import OpenAI
+try:
+    from openai import OpenAI
+except ImportError:  # Optional dependency; deterministic review operations remain usable.
+    OpenAI = None  # type: ignore[assignment]
 
 from .atomic_json import write_atomic_json
 from .deepseek_enrich import load_question_bank
@@ -289,6 +292,8 @@ def run_topic_reviews(
         raise TopicReviewLoopError("topic review runner supports provider=openai only")
     if not os.environ.get("OPENAI_API_KEY"):
         raise TopicReviewLoopError("topic review runner requires OPENAI_API_KEY")
+    if OpenAI is None:
+        raise TopicReviewLoopError('topic review runner requires optional AI dependencies; install with `pip install -e ".[ai]"`')
 
     client = OpenAI()
     out_path.parent.mkdir(parents=True, exist_ok=True)

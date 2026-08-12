@@ -17,7 +17,6 @@ DEFAULT_TOPIC_ROUTING = Path("output/json/question_bank.topic_routing.v1.json")
 DEFAULT_MARK_EVENTS = Path("output/json/question_bank.mark_events.v1.json")
 DEFAULT_CATALOG = Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json")
 DEFAULT_RUNTIME = Path("output/asterion/exports/latest/asterion_question_bank_v1.json")
-DEFAULT_AUTO_GRADE = Path("output/auto_grade/eligible_items.v1.json")
 
 COURSE_METADATA_FIELDS = ("course_id", "component_name")
 
@@ -29,7 +28,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mark-events", type=Path, default=DEFAULT_MARK_EVENTS)
     parser.add_argument("--asterion-catalog", type=Path, default=DEFAULT_CATALOG)
     parser.add_argument("--asterion-runtime", type=Path, default=DEFAULT_RUNTIME)
-    parser.add_argument("--auto-grade-eligibility", type=Path, default=DEFAULT_AUTO_GRADE)
     parser.add_argument("--json-out", type=Path, default=None, help="Optional path for stable JSON output.")
     parser.add_argument("--markdown-out", type=Path, default=None, help="Optional path for Markdown output.")
     return parser
@@ -43,7 +41,6 @@ def main(argv: list[str] | None = None) -> int:
         mark_events_path=args.mark_events,
         asterion_catalog_path=args.asterion_catalog,
         asterion_runtime_path=args.asterion_runtime,
-        auto_grade_eligibility_path=args.auto_grade_eligibility,
     )
     if args.json_out:
         write_json(args.json_out, audit)
@@ -61,7 +58,6 @@ def build_topic_routing_baseline_audit(
     mark_events_path: Path = DEFAULT_MARK_EVENTS,
     asterion_catalog_path: Path = DEFAULT_CATALOG,
     asterion_runtime_path: Path = DEFAULT_RUNTIME,
-    auto_grade_eligibility_path: Path = DEFAULT_AUTO_GRADE,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     qbank_payload = read_required_json(question_bank_path)
@@ -78,12 +74,10 @@ def build_topic_routing_baseline_audit(
         "mark_events": file_state(mark_events_path),
         "asterion_catalog": file_state(asterion_catalog_path),
         "asterion_runtime": file_state(asterion_runtime_path),
-        "auto_grade_eligibility": file_state(auto_grade_eligibility_path),
     }
     mark_events_payload = read_optional_json(mark_events_path)
     catalog_payload = read_optional_json(asterion_catalog_path)
     runtime_payload = read_optional_json(asterion_runtime_path)
-    auto_grade_payload = read_optional_json(auto_grade_eligibility_path)
 
     question_bank = summarize_question_bank(qbank_records)
     topic_routing = summarize_topic_routing(topic_payload, route_rows, qbank_by_id)
@@ -91,7 +85,6 @@ def build_topic_routing_baseline_audit(
     review_required = summarize_review_required(route_rows, qbank_by_id)
     mark_events = summarize_mark_events(mark_events_payload, mark_events_path)
     asterion = summarize_asterion(catalog_payload, runtime_payload)
-    auto_grade = summarize_auto_grade(auto_grade_payload, auto_grade_eligibility_path)
 
     summary = {
         "question_bank_total_records": question_bank["total_records"],
@@ -103,7 +96,6 @@ def build_topic_routing_baseline_audit(
         "asterion_catalog_count": asterion["all_course_catalog_count"],
         "asterion_student_runtime_count": asterion["student_runtime_count"],
         "asterion_p3_runtime_count": asterion["p3_runtime_count"],
-        "auto_grade_eligibility_file_found": auto_grade["file_found"],
     }
     return {
         "schema_name": AUDIT_SCHEMA_NAME,
@@ -121,7 +113,6 @@ def build_topic_routing_baseline_audit(
         "review_required_analysis": review_required,
         "mark_events_snapshot": mark_events,
         "asterion_readiness_snapshot": asterion,
-        "auto_grade_readiness_snapshot": auto_grade,
     }
 
 
@@ -274,33 +265,9 @@ def summarize_asterion(catalog_payload: dict[str, Any] | None, runtime_payload: 
     }
 
 
-def summarize_auto_grade(payload: dict[str, Any] | None, path: Path) -> dict[str, Any]:
-    if payload is None:
-        return {
-            "file_found": False,
-            "path": str(path),
-            "status_counts": {},
-            "top_blocker_counts": {},
-            "note": "No current auto-grade eligibility file was found.",
-        }
-    items = records_from_payload(payload, "items")
-    blocker_counter: Counter[str] = Counter()
-    for item in items:
-        for reason in item.get("block_reasons") or []:
-            blocker_counter[str(reason)] += 1
-    return {
-        "file_found": True,
-        "path": str(path),
-        "record_count": len(items),
-        "status_counts": sorted_counter(item.get("eligibility_status") for item in items),
-        "top_blocker_counts": dict(sorted(blocker_counter.most_common(), key=lambda pair: (-pair[1], pair[0]))[:20]),
-    }
-
-
 def render_markdown(audit: dict[str, Any]) -> str:
     summary = audit["summary"]
     failure = audit["failure_analysis"]
-    auto = audit["auto_grade_readiness_snapshot"]
     lines = [
         "# Topic Routing Baseline Audit",
         "",
@@ -316,7 +283,6 @@ def render_markdown(audit: dict[str, Any]) -> str:
         f"- Asterion P3 runtime records: `{summary['asterion_p3_runtime_count']}`",
         f"- Unique failure messages: `{failure['unique_failure_message_count']}`",
         f"- Unsupported evidence_used failures: `{failure['unsupported_evidence_used_failure_count']}`",
-        f"- Auto-grade eligibility file found: `{auto['file_found']}`",
         "",
     ]
     return "\n".join(lines)

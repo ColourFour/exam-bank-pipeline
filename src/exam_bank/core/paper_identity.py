@@ -9,9 +9,12 @@ from exam_bank.identifiers import parent_question_id
 from exam_bank.shared.session_parser import SessionParseError
 from exam_bank.shared.session_parser import parse_session as _parse_shared_session
 from exam_bank.shared.session_parser import parse_session_from_parts as _parse_shared_session_from_parts
-
-
-SubjectFamily = Literal["pm1", "pm3", "stats", "mechanics"]
+from .subject_contract import (
+    SubjectFamily,
+    normalize_subject_family,
+    subject_family_agrees_with_component,
+    subject_family_for_component,
+)
 
 
 class IdentityError(ValueError):
@@ -54,7 +57,30 @@ class PaperIdentity:
         parsed = parse_session_from_parts(session, year)
         normalized_syllabus = _normalize_syllabus(syllabus)
         normalized_component = _normalize_component(component)
-        normalized_subject = canonical_subject_family(subject_family or _subject_from_component(normalized_component))
+        inferred_subject = subject_family_for_component(
+            normalized_component,
+            year=parsed.year,
+            session=parsed.session_code,
+        )
+        if subject_family:
+            normalized_subject = canonical_subject_family(subject_family)
+        elif inferred_subject:
+            normalized_subject = canonical_subject_family(inferred_subject)
+        else:
+            raise IdentityError(
+                "subject family cannot be inferred for unsupported or era-ambiguous component: "
+                f"component={normalized_component!r} year={parsed.year!r}"
+            )
+        if not subject_family_agrees_with_component(
+            normalized_subject,
+            normalized_component,
+            year=parsed.year,
+            session=parsed.session_code,
+        ):
+            raise IdentityError(
+                "subject family does not match component: "
+                f"subject_family={normalized_subject!r} component={normalized_component!r}"
+            )
         paper_id = build_paper_id(normalized_syllabus, parsed.session_code, normalized_component)
         question_id = build_question_id(paper_id, question_number) if question_number not in (None, "") else ""
 
@@ -156,36 +182,10 @@ def session_for_source_path(path: str | Path, *, year: str | int, fallback_sessi
 
 
 def canonical_subject_family(value: str) -> SubjectFamily:
-    normalized = re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
-    mapping: dict[str, SubjectFamily] = {
-        "pm1": "pm1",
-        "puremaths1": "pm1",
-        "puremathematics1": "pm1",
-        "p1": "pm1",
-        "1": "pm1",
-        "pm3": "pm3",
-        "puremaths3": "pm3",
-        "puremathematics3": "pm3",
-        "p3": "pm3",
-        "3": "pm3",
-        "stats": "stats",
-        "statistics": "stats",
-        "stat": "stats",
-        "s1": "stats",
-        "p4": "stats",
-        "4": "stats",
-        "p6": "stats",
-        "6": "stats",
-        "mechanics": "mechanics",
-        "mech": "mechanics",
-        "m1": "mechanics",
-        "p5": "mechanics",
-        "5": "mechanics",
-    }
-    try:
-        return mapping[normalized]
-    except KeyError as exc:
-        raise IdentityError(f"unknown subject family: {value!r}") from exc
+    normalized = normalize_subject_family(value)
+    if normalized is None:
+        raise IdentityError(f"unknown subject family: {value!r}")
+    return normalized
 
 
 def validate_identity_agreement(
@@ -221,10 +221,3 @@ def _normalize_component(value: str | int) -> str:
     if len(digits) == 1:
         return digits.zfill(2)
     raise IdentityError(f"component cannot be derived from {value!r}")
-
-
-def _subject_from_component(component: str) -> str:
-    normalized = component.lstrip("0") or component
-    if not normalized or not normalized[0].isdigit():
-        raise IdentityError(f"subject family cannot be inferred from component {component!r}")
-    return f"p{normalized[0]}"

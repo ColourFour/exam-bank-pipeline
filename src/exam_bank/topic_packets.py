@@ -5,6 +5,7 @@ import io
 import json
 import re
 import shutil
+import tempfile
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
@@ -15,6 +16,11 @@ import fitz
 from PIL import Image, ImageChops
 
 from .atomic_json import write_atomic_json
+from .core.subject_contract import (
+    P5_S1_FIRST_EXAM_YEAR,
+    exam_year_from_evidence,
+    paper_number_from_component,
+)
 from .deepseek_enrich import canonical_component_for_paper_family, load_question_bank
 from .paper_components import normalize_component_code as _normalize_component_code
 from .paper_components import packet_family_for_component as _packet_family_for_component
@@ -53,10 +59,58 @@ PDF_PROFILE_DEFAULTS: dict[str, dict[str, int | None]] = {
 }
 FLOW_BLOCK_HEADER_FONT_SIZE = 8.5
 ANSWER_IMAGE_SPLIT_SCALE_THRESHOLD = 0.72
+_SAFE_PACKET_PATH_SEGMENT_RE = re.compile(r"^[a-z0-9]+(?:_[a-z0-9]+)*$")
 
 
 class TopicPacketError(ValueError):
     pass
+
+
+def _validate_packet_path_segment(value: str, *, label: str) -> str:
+    segment = str(value or "").strip()
+    if not _SAFE_PACKET_PATH_SEGMENT_RE.fullmatch(segment):
+        raise TopicPacketError(
+            f"Invalid {label} for packet output path: {segment!r}. "
+            "Use lowercase letters, digits, and single underscores only."
+        )
+    return segment
+
+
+def _validated_topic_packet_output_root(
+    output_root: str | Path,
+    *,
+    protected_paths: Sequence[str | Path] = (),
+) -> Path:
+    candidate = Path(output_root)
+    if candidate.is_symlink():
+        raise TopicPacketError(f"Topic-packet output root must not be a symlink: {candidate}")
+    resolved = candidate.resolve()
+    filesystem_root = Path(resolved.anchor).resolve()
+    broad_roots = {
+        filesystem_root,
+        Path.cwd().resolve(),
+        Path.home().resolve(),
+        Path(tempfile.gettempdir()).resolve(),
+        Path("/tmp").resolve(),
+        Path("/var/tmp").resolve(),
+    }
+    for protected in broad_roots:
+        if resolved == protected or resolved in protected.parents:
+            raise TopicPacketError(
+                f"Unsafe topic-packet output root {candidate}: it overlaps protected path {protected}."
+            )
+    for protected in protected_paths:
+        protected_path = Path(protected).resolve()
+        overlaps = (
+            resolved == protected_path
+            or resolved in protected_path.parents
+            or protected_path in resolved.parents
+        )
+        if overlaps:
+            raise TopicPacketError(
+                f"Unsafe topic-packet output root {candidate}: it overlaps protected path {protected_path}."
+            )
+    return candidate
 
 
 @dataclass(frozen=True)
@@ -110,6 +164,8 @@ class PacketTopicNormalization:
     expected_topic: str
     status: str
     reason: str
+    component_family: str = ""
+    identity_year: int | None = None
 
     @property
     def resolved(self) -> bool:
@@ -410,7 +466,10 @@ def generate_topic_packets(
 ) -> dict[str, Any]:
     question_bank_path = Path(question_bank_path)
     taxonomy_path = Path(taxonomy_path)
-    output_root = Path(output_root)
+    output_root = _validated_topic_packet_output_root(
+        output_root,
+        protected_paths=(question_bank_path, taxonomy_path, canonical_taxonomy_root),
+    )
     records = load_question_bank(question_bank_path)
     all_records = list(records)
     taxonomy = load_packet_taxonomy(taxonomy_path)
@@ -893,7 +952,10 @@ def load_packet_taxonomy(path: str | Path) -> dict[str, Any]:
     subtopic_aliases: dict[tuple[str, str], tuple[str, str]] = {}
     for component in components:
         family = str(component.get("paper_family", "")).strip().lower()
-        component_key = str(component.get("component_key") or canonical_component_for_paper_family(family))
+        component_key = _validate_packet_path_segment(
+            str(component.get("component_key") or canonical_component_for_paper_family(family)),
+            label="component_key",
+        )
         if family not in {"p1", "p3", "p4", "p5"}:
             raise TopicPacketError(f"Unsupported paper family in taxonomy: {family}")
         for topic in component.get("topics", []):
@@ -902,6 +964,7 @@ def load_packet_taxonomy(path: str | Path) -> dict[str, Any]:
             canonical_topic_id = str(topic.get("canonical_topic_id", "")).strip()
             if not topic_id or not topic_label:
                 raise TopicPacketError(f"Invalid topic entry for {family}.")
+            topic_id = _validate_packet_path_segment(topic_id, label="topic_id")
             topics[(family, topic_id)] = {
                 "paper_family": family,
                 "component_key": component_key,
@@ -920,6 +983,7 @@ def load_packet_taxonomy(path: str | Path) -> dict[str, Any]:
                 canonical_subtopic_id = str(subtopic.get("canonical_subtopic_id", "")).strip()
                 if not subtopic_id or not subtopic_label:
                     raise TopicPacketError(f"Invalid subtopic entry for {family}/{topic_id}.")
+                subtopic_id = _validate_packet_path_segment(subtopic_id, label="subtopic_id")
                 ref = SubtopicRef(
                     paper_family=family,
                     component_key=component_key,
@@ -1376,7 +1440,14 @@ def _topic_overlap_family(
 ) -> str:
     if record is not None:
         return _reviewed_decision_family_for_record(record, taxonomy)
-    family = normalize_paper_family(raw.get("paper_family"))
+    paper = raw.get("paper") or raw.get("question_id")
+    family = normalize_paper_family(
+        raw.get("paper_family"),
+        component=raw.get("source_paper_code"),
+        year=raw.get("year"),
+        session=raw.get("session"),
+        paper=paper,
+    )
     if family in {"p1", "p3", "p4", "p5"}:
         return family
     component = _normalize_component_code(raw.get("source_paper_code"))
@@ -1384,7 +1455,12 @@ def _topic_overlap_family(
         paper = str(raw.get("paper") or raw.get("question_id") or "")
         match = re.match(r"(\d+)", paper)
         component = _normalize_component_code(match.group(1) if match else "")
-    family = _packet_family_for_component(component)
+    family = _packet_family_for_component(
+        component,
+        year=raw.get("year"),
+        session=raw.get("session"),
+        paper=paper,
+    )
     if family:
         return family
     raise TopicPacketError(
@@ -1651,15 +1727,61 @@ def normalize_packet_topic(
     current_family: Any,
     raw_topic: Any,
     taxonomy: dict[str, Any],
+    year: Any = None,
+    session: Any = None,
+    paper: Any = None,
 ) -> PacketTopicNormalization:
     source_component = _normalize_component_code(component_code)
-    family = normalize_paper_family(current_family)
+    identity_year = exam_year_from_evidence(year=year, session=session, paper=paper)
+    component_family = _packet_family_for_component(
+        source_component,
+        year=identity_year,
+        session=session,
+        paper=paper,
+    )
+    family = normalize_paper_family(
+        current_family,
+        component=source_component,
+        year=identity_year,
+        session=session,
+        paper=paper,
+    )
     topic_text = str(raw_topic or "").strip()
+    common = {
+        "source_component": source_component,
+        "current_family": family,
+        "raw_topic": topic_text,
+        "component_family": component_family,
+        "identity_year": identity_year,
+    }
+    component_paper_number = paper_number_from_component(source_component)
+    if component_paper_number == "5" and not component_family:
+        status = "ambiguous_component_era" if identity_year is None else "unsupported_component_era"
+        reason = (
+            "component_5_requires_year_for_m2_s1_split"
+            if identity_year is None
+            else f"pre_{P5_S1_FIRST_EXAM_YEAR}_paper_5_mechanics_2_is_unsupported"
+        )
+        return PacketTopicNormalization(
+            **common,
+            current_topic="",
+            expected_family="",
+            expected_topic="",
+            status=status,
+            reason=reason,
+        )
+    if component_paper_number == "6" and not component_family:
+        return PacketTopicNormalization(
+            **common,
+            current_topic="",
+            expected_family="",
+            expected_topic="",
+            status="ambiguous_component_era",
+            reason="component_6_requires_year_for_s1_s2_split",
+        )
     if not topic_text:
         return PacketTopicNormalization(
-            source_component=source_component,
-            current_family=family,
-            raw_topic=topic_text,
+            **common,
             current_topic="",
             expected_family="",
             expected_topic="",
@@ -1667,15 +1789,21 @@ def normalize_packet_topic(
             reason="record_missing_topic",
         )
 
-    component_family = _packet_family_for_component(source_component)
+    if component_family and not any(family == component_family for family, _ in taxonomy["topics"]):
+        return PacketTopicNormalization(
+            **common,
+            current_topic="",
+            expected_family=component_family,
+            expected_topic="",
+            status="unsupported_component_family",
+            reason="component_family_not_present_in_packet_taxonomy",
+        )
     current_topic = _resolve_known_topic_for_family(topic_text, family, taxonomy)
     if component_family:
         component_topic = _resolve_known_topic_for_family(topic_text, component_family, taxonomy)
         if component_topic:
             return PacketTopicNormalization(
-                source_component=source_component,
-                current_family=family,
-                raw_topic=topic_text,
+                **common,
                 current_topic=current_topic,
                 expected_family=component_family,
                 expected_topic=component_topic,
@@ -1685,9 +1813,7 @@ def normalize_packet_topic(
 
     if current_topic:
         return PacketTopicNormalization(
-            source_component=source_component,
-            current_family=family,
-            raw_topic=topic_text,
+            **common,
             current_topic=current_topic,
             expected_family=family,
             expected_topic=current_topic,
@@ -1701,9 +1827,7 @@ def normalize_packet_topic(
         if len(component_matches) == 1:
             expected_family, expected_topic = component_matches[0]
             return PacketTopicNormalization(
-                source_component=source_component,
-                current_family=family,
-                raw_topic=topic_text,
+                **common,
                 current_topic=current_topic,
                 expected_family=expected_family,
                 expected_topic=expected_topic,
@@ -1713,9 +1837,7 @@ def normalize_packet_topic(
     if len(matches) == 1:
         expected_family, expected_topic = matches[0]
         return PacketTopicNormalization(
-            source_component=source_component,
-            current_family=family,
-            raw_topic=topic_text,
+            **common,
             current_topic=current_topic,
             expected_family=expected_family,
             expected_topic=expected_topic,
@@ -1724,9 +1846,7 @@ def normalize_packet_topic(
         )
     if len(matches) > 1:
         return PacketTopicNormalization(
-            source_component=source_component,
-            current_family=family,
-            raw_topic=topic_text,
+            **common,
             current_topic=current_topic,
             expected_family="",
             expected_topic="",
@@ -1734,9 +1854,7 @@ def normalize_packet_topic(
             reason="topic_matches_multiple_families",
         )
     return PacketTopicNormalization(
-        source_component=source_component,
-        current_family=family,
-        raw_topic=topic_text,
+        **common,
         current_topic=current_topic,
         expected_family="",
         expected_topic="",
@@ -1745,17 +1863,23 @@ def normalize_packet_topic(
     )
 
 
-def normalize_paper_family(value: Any) -> str:
-    family = str(value or "").strip().lower()
-    if family in {"pm1", "pure1"}:
-        return "p1"
-    if family in {"pm3", "pure3"}:
-        return "p3"
-    if family in {"mechanics", "m1", "p4"}:
-        return "p4"
-    if family in {"stats", "statistics", "s1", "p5"}:
-        return "p5"
-    return family
+def normalize_paper_family(
+    value: Any,
+    *,
+    component: Any = None,
+    year: Any = None,
+    session: Any = None,
+    paper: Any = None,
+) -> str:
+    from .core.subject_contract import taxonomy_paper_family
+
+    return taxonomy_paper_family(
+        value,
+        component=component,
+        year=year,
+        session=session,
+        paper=paper,
+    )
 
 
 def _resolve_known_topic_for_family(value: str, paper_family: str, taxonomy: dict[str, Any]) -> str:
@@ -3367,15 +3491,29 @@ def _topic_overlap_coverage_only_records(
 
 
 def packet_output_dir(output_root: Path, key: PacketKey) -> Path:
+    paper_family = _validate_packet_path_segment(key.paper_family, label="paper_family")
+    topic_id = _validate_packet_path_segment(key.topic_id, label="topic_id")
+    subtopic_id = (
+        _validate_packet_path_segment(key.subtopic_id, label="subtopic_id")
+        if key.subtopic_id
+        else ""
+    )
     if key.mode == "review":
-        base = output_root / "review_required" / key.paper_family / key.topic_id
+        base = output_root / "review_required" / paper_family / topic_id
     else:
-        base = output_root / key.paper_family / key.topic_id
-    return base / key.subtopic_id if key.subtopic_id else base
+        base = output_root / paper_family / topic_id
+    destination = base / subtopic_id if subtopic_id else base
+    resolved_root = output_root.resolve()
+    resolved_destination = destination.resolve()
+    if resolved_destination != resolved_root and resolved_root not in resolved_destination.parents:
+        raise TopicPacketError(f"Packet output path escapes output root: {destination}")
+    return destination
 
 
 def packet_pdf_filename(key: PacketKey) -> str:
-    return f"{key.paper_family}_{key.topic_id}_packet.pdf"
+    paper_family = _validate_packet_path_segment(key.paper_family, label="paper_family")
+    topic_id = _validate_packet_path_segment(key.topic_id, label="topic_id")
+    return f"{paper_family}_{topic_id}_packet.pdf"
 
 
 def packet_pdf_path(packet_dir: Path, key: PacketKey) -> Path:
@@ -3701,7 +3839,13 @@ def _first(value: Any) -> Any:
 
 
 def _paper_family(record: dict[str, Any]) -> str:
-    return normalize_paper_family(record.get("paper_family"))
+    return normalize_paper_family(
+        record.get("paper_family"),
+        component=_source_paper_code(record),
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
+    )
 
 
 def _packet_topic_normalization_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> PacketTopicNormalization:
@@ -3710,6 +3854,9 @@ def _packet_topic_normalization_for_record(record: dict[str, Any], taxonomy: dic
         current_family=record.get("paper_family"),
         raw_topic=record.get("topic"),
         taxonomy=taxonomy,
+        year=record.get("year") or record.get("canonical_year_folder"),
+        session=record.get("session"),
+        paper=record.get("paper") or record.get("question_id"),
     )
 
 
@@ -3751,7 +3898,7 @@ def _record_matches_paper_family_filter(
 
 
 def _is_unsafe_raw_cross_family_normalization(normalization: PacketTopicNormalization) -> bool:
-    component_family = _packet_family_for_component(normalization.source_component)
+    component_family = normalization.component_family
     if not component_family or not normalization.expected_family:
         return False
     return (
@@ -3771,7 +3918,7 @@ def _unsafe_cross_family_assignment(
     normalization = _packet_topic_normalization_for_record(record, taxonomy)
     if not _is_unsafe_raw_cross_family_normalization(normalization):
         return None
-    component_family = _packet_family_for_component(normalization.source_component)
+    component_family = normalization.component_family
     if assignment.paper_family != normalization.expected_family:
         return None
     return {
@@ -3788,7 +3935,8 @@ def _assignment_has_explicit_routing_review(assignment: Assignment) -> bool:
 
 
 def _reviewed_decision_family_for_record(record: dict[str, Any], taxonomy: dict[str, Any]) -> str:
-    component_family = _packet_family_for_component(_source_paper_code(record))
+    normalization = _packet_topic_normalization_for_record(record, taxonomy)
+    component_family = normalization.component_family
     if component_family:
         return component_family
     return _packet_family_for_record(record, taxonomy)

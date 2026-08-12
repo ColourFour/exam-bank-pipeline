@@ -156,6 +156,13 @@ def reconcile_topic_difficulty(
 
         for index, row in enumerate(rows, start=1):
             question_id = str(row.get("question_id") or "")
+            current_evidence_refs = _batch_row(
+                row,
+                index=index,
+                manifest=manifest,
+                artifact_root=artifact_root,
+                manifest_dir=manifest_path.parent,
+            )["evidence_refs"]
             prior = history.get(question_id, [])
             latest_prior = prior[0] if prior else None
             same_packet = latest_prior if latest_prior is not None and latest_prior["packet_key"] == current_key else None
@@ -196,6 +203,7 @@ def reconcile_topic_difficulty(
                     source="difficulty_index" if percentile is not None else "missing",
                 )
                 pending_rows.append(row)
+            record["evidence_refs"] = current_evidence_refs
             classifications.update([str(record["difficulty_status"])])
             active.append(record)
 
@@ -440,6 +448,8 @@ def run_topic_difficulty_reviews(
         "created_at": _utc_now_iso(),
     }
     if dry_run:
+        return manifest
+    if not pending:
         return manifest
     if provider != "openai":
         raise TopicDifficultyReviewError("topic difficulty review runner supports provider=openai only.")
@@ -1235,9 +1245,8 @@ def _validate_image_evidence_refs(value: Any, *, artifact_root: Path) -> list[st
         found.add(ref_type)
         raw_path = str(ref.get("path") or "")
         path = Path(raw_path)
-        if not path.is_absolute():
-            path = artifact_root / raw_path
-        if not path.is_file():
+        candidates = [path] if path.is_absolute() else [artifact_root / path, path]
+        if not any(candidate.is_file() for candidate in candidates):
             errors.append(f"evidence_path_not_found:{raw_path}")
     for missing_type in sorted(IMAGE_EVIDENCE_TYPES - found):
         errors.append(f"missing_evidence_ref_type:{missing_type}")

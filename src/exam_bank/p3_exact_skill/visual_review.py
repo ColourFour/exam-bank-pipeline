@@ -180,14 +180,18 @@ def _render_item(
     blockers = queue_item.get("proposed_blockers") if isinstance(queue_item.get("proposed_blockers"), list) else []
     cross_topic_status = _text(queue_item.get("cross_topic_status") or record.get("suggested_cross_topic_status") or "unknown")
     candidate_status = _text(queue_item.get("proposed_route_status") or record.get("suggested_candidate_status") or "unknown")
+    part_and_subpart = f"{_text(record.get('part_id'))} / {_text(record.get('subpart_id'))}"
+    paper_session_variant = (
+        f"{_text(record.get('paper'))} / {_text(record.get('session'))} / {_text(record.get('variant'))}"
+    )
     return (
         f'    <article class="review-item" id="item-{index}">\n'
         f"      <h2>{index}. {escape(_text(record.get('question_id')))} / {escape(_text(record.get('subpart_id')))}</h2>\n"
         '      <div class="meta-grid">\n'
         f"{_meta('Queue ID', record.get('queue_id'))}"
         f"{_meta('Question ID', record.get('question_id'))}"
-        f"{_meta('Part / subpart', f'{_text(record.get('part_id'))} / {_text(record.get('subpart_id'))}')}"
-        f"{_meta('Paper / session / variant', f'{_text(record.get('paper'))} / {_text(record.get('session'))} / {_text(record.get('variant'))}')}"
+        f"{_meta('Part / subpart', part_and_subpart)}"
+        f"{_meta('Paper / session / variant', paper_session_variant)}"
         f"{_meta('Candidate skill IDs', ', '.join(_texts(candidate_skill_ids)) or 'none')}"
         f"{_meta('Suggested source skill IDs', ', '.join(_texts(suggested_skill_ids)) or 'none')}"
         f"{_meta('Candidate status', candidate_status)}"
@@ -295,13 +299,14 @@ def _part_decomposition_section(record: dict[str, Any], queue_item: dict[str, An
             f"{_json_block('Other-part mark-event refs', candidate.get('other_part_mark_event_refs') or [])}"
             "          </details>\n"
         )
+    candidate_html = "".join(candidate_blocks) if candidate_blocks else "        <p>No proposed part-level candidates.</p>\n"
     return (
         '      <section class="part-decomposition">\n'
         "        <h3>Part-level Decomposition</h3>\n"
         f"        <p><strong>Status:</strong> <code>{escape(status or 'unknown')}</code></p>\n"
         f'        <p class="warning small">{escape(warning)}</p>\n'
         f"{_json_block('Part signal summary', summary)}"
-        f"{''.join(candidate_blocks) if candidate_blocks else '        <p>No proposed part-level candidates.</p>\\n'}"
+        f"{candidate_html}"
         "        <h4>Part-boundary review questions</h4>\n"
         "        <ul>\n"
         "          <li>Is this part actually testing one specific skill?</li>\n"

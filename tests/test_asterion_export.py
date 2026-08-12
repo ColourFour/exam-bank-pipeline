@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from exam_bank.publication_safety import PublicationReadBlockedError
 from exam_bank.asterion_export import (
     ASTERION_CATALOG_FILENAME,
     ASTERION_CATALOG_SCHEMA_NAME,
@@ -26,7 +27,21 @@ from exam_bank.asterion_export import (
     export_asterion_content_lab_candidates,
     export_asterion_question_bank,
     load_skill_mappings,
+    _topic_route_filter_ok,
 )
+
+
+def test_asterion_export_fails_closed_during_incomplete_publication(tmp_path: Path) -> None:
+    input_path = tmp_path / "output/json/question_bank.json"
+    input_path.parent.mkdir(parents=True)
+    input_path.write_text("{}", encoding="utf-8")
+    (tmp_path / ".output.rollback-crashed").mkdir()
+    output_path = tmp_path / "asterion.json"
+
+    with pytest.raises(PublicationReadBlockedError, match="awaiting recovery"):
+        export_asterion_question_bank(input_path, output_path)
+
+    assert not output_path.exists()
 
 
 def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: Path) -> None:
@@ -46,9 +61,9 @@ def test_asterion_projection_is_conservative_for_12spring21_fixtures(tmp_path: P
     assert payload["schema_version"] == ASTERION_SCHEMA_VERSION
     assert payload["generated_at"] == generated_at
     assert payload["last_run_at"] == generated_at
-    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1"]
-    assert {course["course_id"] for course in payload["courses"]} == {"p1", "p3", "m1", "s1"}
-    assert {component["course_id"] for component in payload["components"]} == {"p1", "p3", "m1", "s1"}
+    assert payload["course_contract"]["course_ids"] == ["p1", "p3", "m1", "s1", "s2"]
+    assert {course["course_id"] for course in payload["courses"]} == {"p1", "p3", "m1", "s1", "s2"}
+    assert {component["course_id"] for component in payload["components"]} == {"p1", "p3", "m1", "s1", "s2"}
     assert payload["components"][0]["component_name"] == "Pure Mathematics 1"
     assert payload["components"][0]["papers"] == [{"paper": "12spring21", "record_count": 2}]
     assert payload["record_count"] == 2
@@ -278,6 +293,101 @@ def test_asterion_projection_preserves_legacy_p3_runtime_gate(tmp_path: Path) ->
     assert payload["courses"][1]["student_runtime_safe_record_count"] == 1
 
 
+def test_asterion_projection_preserves_runtime_gate_for_canonical_pm3_family(tmp_path: Path) -> None:
+    artifact_root = _write_artifacts(tmp_path)
+    record = _ready_runtime_record(artifact_root, "31spring24_q01", "pm3", "31spring24", "1")
+
+    catalog = build_asterion_exam_bank_catalog(
+        {
+            "schema_name": "exam_bank.question_bank",
+            "schema_version": 2,
+            "record_count": 1,
+            "questions": [record],
+        },
+        artifact_root=artifact_root,
+        base_dir=tmp_path,
+    )
+
+    output_record = catalog["questions"][0]
+    assert output_record["course_id"] == "p3"
+    assert output_record["usage_roles"]["canonical_practice"] == "allow"
+    assert output_record["usage_roles"]["p3_readiness_metric"] == "include"
+    assert output_record["learning_runtime_safe"] is True
+
+
+@pytest.mark.parametrize(
+    ("record_family", "paper", "route_family", "expected"),
+    [
+        ("pm1", "12spring24", "p1", True),
+        ("pm3", "31spring24", "p3", True),
+        ("mechanics", "42spring24", "p4", True),
+        ("stats", "52spring24", "p5", True),
+        ("stats", "62winter19", "p5", True),
+        ("stats", "62winter19", "p6", False),
+        ("stats", "62spring24", "p6", True),
+        ("stats", "52spring24", "p6", False),
+        ("stats", "62spring24", "p5", False),
+        ("pm1", "12spring24", "p3", False),
+    ],
+)
+def test_topic_route_filter_compares_component_aware_course_identity(
+    record_family: str,
+    paper: str,
+    route_family: str,
+    expected: bool,
+) -> None:
+    record = {"paper_family": record_family, "paper": paper}
+    route = {
+        "paper_family": route_family,
+        "paper": paper,
+        "primary_topic_id": "topic-id",
+        "topic_distribution": [{"topic_id": "topic-id", "fit_percent": 100}],
+        "confidence": "high",
+        "review_required": False,
+    }
+
+    assert _topic_route_filter_ok(record, route) is expected
+
+
+def test_topic_route_filter_rejects_ambiguous_stats_route_without_component_identity() -> None:
+    record = {"paper_family": "stats", "paper": "62spring24"}
+    route = {
+        "paper_family": "stats",
+        "primary_topic_id": "topic-id",
+        "topic_distribution": [{"topic_id": "topic-id", "fit_percent": 100}],
+        "confidence": "high",
+        "review_required": False,
+    }
+
+    assert _topic_route_filter_ok(record, route) is False
+
+
+def test_topic_route_filter_rejects_route_without_course_or_family_identity() -> None:
+    record = {"paper_family": "pm1", "paper": "12spring24"}
+    route = {
+        "primary_topic_id": "topic-id",
+        "topic_distribution": [{"topic_id": "topic-id", "fit_percent": 100}],
+        "confidence": "high",
+        "review_required": False,
+    }
+
+    assert _topic_route_filter_ok(record, route) is False
+
+
+def test_topic_route_filter_rejects_conflicting_explicit_course_and_packet_family() -> None:
+    record = {"paper_family": "stats", "paper": "62spring24"}
+    route = {
+        "course_id": "s1",
+        "paper_family": "p6",
+        "primary_topic_id": "topic-id",
+        "topic_distribution": [{"topic_id": "topic-id", "fit_percent": 100}],
+        "confidence": "high",
+        "review_required": False,
+    }
+
+    assert _topic_route_filter_ok(record, route) is False
+
+
 def test_asterion_projection_preserves_p3_learning_runtime_and_keeps_non_p3_image_practice_separate(tmp_path: Path) -> None:
     artifact_root = _write_artifacts(tmp_path)
     records = [
@@ -312,6 +422,7 @@ def test_asterion_projection_preserves_p3_learning_runtime_and_keeps_non_p3_imag
         "p3": 1,
         "m1": 0,
         "s1": 0,
+        "s2": 0,
     }
 
 
@@ -323,6 +434,7 @@ def test_image_first_gate_marks_image_and_advisory_topic_safe_without_learning_r
     record["notes"]["mark_scheme_crop_confidence"] = "medium"
     topic_routes = {
         "12spring21_q01": {
+            "paper_family": "p1",
             "primary_topic_id": "9709_p1_topic_quadratics",
             "confidence": "high",
             "review_required": False,
@@ -369,6 +481,7 @@ def test_image_first_runtime_gate_rejects_review_required_topic_route(tmp_path: 
     record["notes"]["mark_scheme_crop_confidence"] = "medium"
     topic_routes = {
         "12spring21_q01": {
+            "paper_family": "p1",
             "primary_topic_id": "9709_p1_topic_quadratics",
             "confidence": "high",
             "review_required": True,

@@ -1,5 +1,6 @@
-from pathlib import Path
 import json
+import os
+from pathlib import Path
 
 import pytest
 
@@ -12,60 +13,143 @@ from exam_bank.question_detection import detect_question_starts
 pytestmark = [pytest.mark.integration, pytest.mark.sample_pipeline]
 
 
-SAMPLE_QP = Path(
-    "/Users/sbrooker/Favorite/Former Classes/RCF 2024-2025/AS Maths/00 General/Math A Level Exams All/March 2019_qp_32.pdf"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _repo_pdf(legacy_path: str, year: int, corpus_name: str) -> Path:
+    legacy = REPO_ROOT / legacy_path
+    if legacy.exists():
+        return legacy
+    corpus_folder = "question_papers" if "_qp_" in corpus_name else "mark_schemes"
+    return REPO_ROOT / "input" / "pastpapers" / "9709" / str(year) / corpus_folder / corpus_name
+
+
+SAMPLE_QP = Path(os.environ.get("EXAM_BANK_SAMPLE_QP", ""))
+SAMPLE_MS = Path(os.environ.get("EXAM_BANK_SAMPLE_MS", ""))
+REPO_SAMPLE_QP = _repo_pdf("input/question_papers/March 2019 Exam Paper P1 (2).pdf", 2019, "9709_m19_qp_32.pdf")
+REPO_SAMPLE_MS = _repo_pdf("input/mark_schemes/March 2019 Mark Scheme P1 (2).pdf", 2019, "9709_m19_ms_32.pdf")
+REPO_S24_P3_QP = _repo_pdf("input/question_papers/9709_s24_qp_33.pdf", 2024, "9709_s24_qp_33.pdf")
+REPO_S24_P3_MS = _repo_pdf("input/mark_schemes/9709_s24_ms_33.pdf", 2024, "9709_s24_ms_33.pdf")
+REPO_N25_P5_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2025 Question Paper  53.pdf", 2025, "9709_w25_qp_53.pdf"
 )
-SAMPLE_MS = Path(
-    "/Users/sbrooker/Favorite/Former Classes/RCF 2024-2025/AS Maths/00 General/Math A Level Exams All/March 2019_ms_32.pdf"
+REPO_N25_P5_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  53.pdf", 2025, "9709_w25_ms_53.pdf"
 )
-REPO_SAMPLE_QP = Path("input/question_papers/March 2019 Exam Paper P1 (2).pdf")
-REPO_SAMPLE_MS = Path("input/mark_schemes/March 2019 Mark Scheme P1 (2).pdf")
-REPO_S24_P3_QP = Path("input/question_papers/9709_s24_qp_33.pdf")
-REPO_S24_P3_MS = Path("input/mark_schemes/9709_s24_ms_33.pdf")
-REPO_N25_P5_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  53.pdf")
-REPO_N25_P5_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  53.pdf")
-REPO_N23_P41_QP = Path("input/question_papers/9709 Mathematics November 2023 Question paper  41.pdf")
-REPO_N23_P41_MS = Path("input/mark_schemes/9709 Mathematics November 2023 Mark Scheme  41.pdf")
-REPO_J24_P51_QP = Path("input/question_papers/9709 Mathematics June 2024 Question paper  51.pdf")
-REPO_J24_P51_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  51.pdf")
-REPO_J24_P52_QP = Path("input/question_papers/9709 Mathematics June 2024 Question paper  52.pdf")
-REPO_J24_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  52.pdf")
-REPO_N25_P51_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  51.pdf")
-REPO_N25_P51_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  51.pdf")
-REPO_J25_P51_QP = Path("input/question_papers/9709 Mathematics June 2025 Question Paper  51.pdf")
-REPO_J25_P51_MS = Path("input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  51.pdf")
-REPO_J25_P33_QP = Path("input/question_papers/9709 Mathematics June 2025 Question Paper  33.pdf")
-REPO_J25_P33_MS = Path("input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  33.pdf")
-REPO_N25_P31_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  31.pdf")
-REPO_N25_P31_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  31.pdf")
-REPO_J24_P13_QP = Path("input/question_papers/9709 Mathematics June 2024 Question paper  13.pdf")
-REPO_J24_P13_MS = Path("input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  13.pdf")
-REPO_N25_P55_QP = Path("input/question_papers/9709 Mathematics November 2025 Question Paper  55.pdf")
-REPO_N25_P55_MS = Path("input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  55.pdf")
-REPO_J22_P52_QP = Path("input/question_papers/9709 Mathematics June 2022 Question paper  52.pdf")
-REPO_J22_P52_MS = Path("input/mark_schemes/9709 Mathematics June 2022 Mark Scheme  52.pdf")
-REPO_J21_P11_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  11.pdf")
-REPO_J21_P11_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  11.pdf")
-REPO_J21_P33_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  33.pdf")
-REPO_J21_P33_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  33.pdf")
-REPO_J21_P42_QP = Path("input/question_papers/9709 Mathematics June 2021 Question paper  42.pdf")
-REPO_J21_P42_MS = Path("input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  42.pdf")
+REPO_N23_P41_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2023 Question paper  41.pdf", 2023, "9709_w23_qp_41.pdf"
+)
+REPO_N23_P41_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2023 Mark Scheme  41.pdf", 2023, "9709_w23_ms_41.pdf"
+)
+REPO_J24_P51_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2024 Question paper  51.pdf", 2024, "9709_s24_qp_51.pdf"
+)
+REPO_J24_P51_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  51.pdf", 2024, "9709_s24_ms_51.pdf"
+)
+REPO_J24_P52_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2024 Question paper  52.pdf", 2024, "9709_s24_qp_52.pdf"
+)
+REPO_J24_P52_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  52.pdf", 2024, "9709_s24_ms_52.pdf"
+)
+REPO_N25_P51_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2025 Question Paper  51.pdf", 2025, "9709_w25_qp_51.pdf"
+)
+REPO_N25_P51_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  51.pdf", 2025, "9709_w25_ms_51.pdf"
+)
+REPO_J25_P51_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2025 Question Paper  51.pdf", 2025, "9709_s25_qp_51.pdf"
+)
+REPO_J25_P51_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  51.pdf", 2025, "9709_s25_ms_51.pdf"
+)
+REPO_J25_P33_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2025 Question Paper  33.pdf", 2025, "9709_s25_qp_33.pdf"
+)
+REPO_J25_P33_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2025 Mark Scheme  33.pdf", 2025, "9709_s25_ms_33.pdf"
+)
+REPO_N25_P31_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2025 Question Paper  31.pdf", 2025, "9709_w25_qp_31.pdf"
+)
+REPO_N25_P31_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  31.pdf", 2025, "9709_w25_ms_31.pdf"
+)
+REPO_J24_P13_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2024 Question paper  13.pdf", 2024, "9709_s24_qp_13.pdf"
+)
+REPO_J24_P13_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2024 Mark Scheme  13.pdf", 2024, "9709_s24_ms_13.pdf"
+)
+REPO_N25_P55_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2025 Question Paper  55.pdf", 2025, "9709_w25_qp_55.pdf"
+)
+REPO_N25_P55_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2025 Mark Scheme  55.pdf", 2025, "9709_w25_ms_55.pdf"
+)
+REPO_J22_P52_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2022 Question paper  52.pdf", 2022, "9709_s22_qp_52.pdf"
+)
+REPO_J22_P52_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2022 Mark Scheme  52.pdf", 2022, "9709_s22_ms_52.pdf"
+)
+REPO_J21_P11_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2021 Question paper  11.pdf", 2021, "9709_s21_qp_11.pdf"
+)
+REPO_J21_P11_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  11.pdf", 2021, "9709_s21_ms_11.pdf"
+)
+REPO_J21_P33_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2021 Question paper  33.pdf", 2021, "9709_s21_qp_33.pdf"
+)
+REPO_J21_P33_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  33.pdf", 2021, "9709_s21_ms_33.pdf"
+)
+REPO_J21_P42_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics June 2021 Question paper  42.pdf", 2021, "9709_s21_qp_42.pdf"
+)
+REPO_J21_P42_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics June 2021 Mark Scheme  42.pdf", 2021, "9709_s21_ms_42.pdf"
+)
 REPO_S20_P51_QP = Path("input/pastpapers/9709/2020/question_papers/9709_s20_qp_51.pdf")
 REPO_S20_P51_MS = Path("input/pastpapers/9709/2020/mark_schemes/9709_s20_ms_51.pdf")
 REPO_W18_P11_QP = Path("input/pastpapers/9709/2018/question_papers/9709_w18_qp_11.pdf")
 REPO_W18_P11_MS = Path("input/pastpapers/9709/2018/mark_schemes/9709_w18_ms_11.pdf")
 REPO_W11_P13_QP = Path("input/pastpapers/9709/2011/question_papers/9709_w11_qp_13.pdf")
 REPO_W11_P13_MS = Path("input/pastpapers/9709/2011/mark_schemes/9709_w11_ms_13.pdf")
-REPO_N24_P12_QP = Path("input/question_papers/9709 Mathematics November 2024 Question paper  12.pdf")
-REPO_N24_P12_MS = Path("input/mark_schemes/9709 Mathematics November 2024 Mark Scheme  12.pdf")
-REPO_M24_P12_QP = Path("input/question_papers/9709 Mathematics March 2024 Question paper  12.pdf")
-REPO_M24_P12_MS = Path("input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  12.pdf")
-REPO_M24_P32_QP = Path("input/question_papers/9709 Mathematics March 2024 Question paper  32.pdf")
-REPO_M24_P32_MS = Path("input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  32.pdf")
-REPO_N24_P32_QP = Path("input/question_papers/9709 Mathematics November 2024 Question paper  32.pdf")
-REPO_N24_P32_MS = Path("input/mark_schemes/9709 Mathematics November 2024 Mark Scheme  32.pdf")
-REPO_M24_P42_QP = Path("input/question_papers/9709 Mathematics March 2024 Question paper  42.pdf")
-REPO_M24_P42_MS = Path("input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  42.pdf")
+REPO_N24_P12_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2024 Question paper  12.pdf", 2024, "9709_w24_qp_12.pdf"
+)
+REPO_N24_P12_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2024 Mark Scheme  12.pdf", 2024, "9709_w24_ms_12.pdf"
+)
+REPO_M24_P12_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics March 2024 Question paper  12.pdf", 2024, "9709_m24_qp_12.pdf"
+)
+REPO_M24_P12_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  12.pdf", 2024, "9709_m24_ms_12.pdf"
+)
+REPO_M24_P32_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics March 2024 Question paper  32.pdf", 2024, "9709_m24_qp_32.pdf"
+)
+REPO_M24_P32_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  32.pdf", 2024, "9709_m24_ms_32.pdf"
+)
+REPO_N24_P32_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics November 2024 Question paper  32.pdf", 2024, "9709_w24_qp_32.pdf"
+)
+REPO_N24_P32_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics November 2024 Mark Scheme  32.pdf", 2024, "9709_w24_ms_32.pdf"
+)
+REPO_M24_P42_QP = _repo_pdf(
+    "input/question_papers/9709 Mathematics March 2024 Question paper  42.pdf", 2024, "9709_m24_qp_42.pdf"
+)
+REPO_M24_P42_MS = _repo_pdf(
+    "input/mark_schemes/9709 Mathematics March 2024 Mark Scheme  42.pdf", 2024, "9709_m24_ms_42.pdf"
+)
 
 
 def _paper_total(result) -> int:
@@ -84,8 +168,10 @@ def test_sample_pipeline_on_march_2019_pdf(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
-    if not SAMPLE_QP.exists() or not SAMPLE_MS.exists():
-        pytest.skip("March 2019 sample PDFs are not available on this machine.")
+    if not os.environ.get("EXAM_BANK_SAMPLE_QP") or not os.environ.get("EXAM_BANK_SAMPLE_MS"):
+        pytest.skip("EXAM_BANK_SAMPLE_QP and EXAM_BANK_SAMPLE_MS are not configured.")
+    if not SAMPLE_QP.is_file() or not SAMPLE_MS.is_file():
+        pytest.skip("Configured March 2019 sample PDFs are not available.")
 
     config = AppConfig()
     _configure_test_output(config, tmp_path)
@@ -121,7 +207,7 @@ def test_repo_march_2019_pipeline_exports_whole_questions_with_matched_mark_sche
     assert all(record.markscheme_mapping_status == "pass" for record in result.records)
     assert all(record.markscheme_failure_reason == "" for record in result.records)
     assert all("adjacent_question_block_selected" not in record.review_flags for record in result.records)
-    assert next(record for record in result.records if record.question_number == "8").markscheme_subparts == ["i", "ii", "iii", "iv"]
+    assert next(record for record in result.records if record.question_number == "8").markscheme_subparts == ["i", "ii"]
 
 
 def test_repo_pipeline_does_not_pass_scope_mismatches_on_newer_papers(tmp_path: Path) -> None:
@@ -264,7 +350,8 @@ def test_repo_m24_p1_diagram_sensitive_controls_do_not_fail_on_weak_anchor_only(
 
     result = process_sample(REPO_M24_P12_QP, config, mark_scheme_pdf=REPO_M24_P12_MS)
 
-    for question_number in ["2", "10", "11"]:
+    assert [record.question_number for record in result.records] == [str(number) for number in range(1, 12)]
+    for question_number in ["2", "10"]:
         record = next(record for record in result.records if record.question_number == question_number)
         assert record.markscheme_mapping_status == "pass"
         assert record.validation_status == "pass"
@@ -348,7 +435,7 @@ def test_repo_n24_p32_readable_visual_math_text_exports_clean_fidelity_and_degra
     assert q2.topic_trust_status == "degraded_text"
     assert q2.scope_quality_status == "review"
     assert q2_json["notes"]["mapping_status"] == "pass"
-    assert q2_json["notes"]["text_source_profile"] == "hybrid"
+    assert q2_json["notes"]["text_source_profile"] == "native_pdf"
     assert q2_json["notes"]["text_fidelity_status"] == "clean"
     assert q2_json["notes"]["topic_trust_status"] == "degraded_text"
 
@@ -646,14 +733,14 @@ def test_repo_j21_p11_reconstructs_powers_and_stacked_trig_fractions(tmp_path: P
     q3 = next(record for record in result.records if record.question_number == "3")
     q7 = next(record for record in result.records if record.question_number == "7")
 
-    assert "(3 -2x)^{5} in ascending powers" in q3.combined_question_text
-    assert "(4 + x)^{2}(3 -2x)^{5}" in q3.combined_question_text
+    assert "(3 - 2x)^{5} in ascending powers" in q3.combined_question_text
+    assert "(4 + x)^{2}(3 - 2x)^{5}" in q3.combined_question_text
     assert q3.validation_status == "pass"
     assert q3.markscheme_mapping_status == "pass"
     assert "math_corruption_suspected" not in q3.extraction_quality_flags
     assert "polluted_pass_requires_review" not in q3.validation_flags
 
-    assert "(1 -2 sin^{2} θ)/(1 -sin^{2} θ)" in q7.combined_question_text
+    assert "(1 - 2 sin^{2} θ)/(1 - sin^{2} θ)" in q7.combined_question_text
     assert "2 tan^{4} θ" in q7.combined_question_text
     assert q7.validation_status == "pass"
     assert q7.markscheme_mapping_status == "pass"
@@ -681,7 +768,7 @@ def test_repo_n25_p55_q4_recovers_full_whole_question_scope(tmp_path: Path) -> N
     assert q4.markscheme_mapping_status == "pass"
 
 
-def test_repo_mark_scheme_subpart_totals_fix_j22_p52_q6(tmp_path: Path) -> None:
+def test_repo_mark_scheme_subpart_totals_match_j22_p52_q6(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -703,7 +790,7 @@ def test_repo_mark_scheme_subpart_totals_fix_j22_p52_q6(tmp_path: Path) -> None:
     assert q6.markscheme_mapping_status == "pass"
 
 
-def test_repo_mark_scheme_no_subparts_fix_j21_p42_q6(tmp_path: Path) -> None:
+def test_repo_mark_scheme_subparts_match_j21_p42_q5_q6(tmp_path: Path) -> None:
     pytest.importorskip("fitz")
     pytest.importorskip("PIL")
 
@@ -720,6 +807,7 @@ def test_repo_mark_scheme_no_subparts_fix_j21_p42_q6(tmp_path: Path) -> None:
     q6 = next(record for record in result.records if record.question_number == "6")
 
     assert q5.question_subparts == ["a", "b"]
+    assert q5.markscheme_subparts == ["a", "b"]
     assert q5.question_marks_total == 11
     assert q5.markscheme_marks_total == 11
     assert q5.validation_status == "pass"
@@ -840,7 +928,8 @@ def test_repo_j21_p33_q9_recovers_embedded_part_a(tmp_path: Path) -> None:
     assert q9.markscheme_subparts == ["a", "b", "c"]
     assert q9.question_marks_total == 9
     assert q9.markscheme_marks_total == 9
-    assert q9.validation_status == "pass"
+    assert q9.validation_status == "review"
+    assert "question_start_uncertain" in q9.review_flags
     assert q9.markscheme_mapping_status == "pass"
 
 

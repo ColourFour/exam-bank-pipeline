@@ -7,6 +7,7 @@ import re
 from typing import Any
 
 from .atomic_json import write_atomic_json
+from .core.subject_contract import paper_number_from_component, subject_family_for_component
 from .output_layout import (
     CANONICAL_SUBJECTS,
     LEGACY_SUBJECT_DIRS,
@@ -71,8 +72,9 @@ def normalize_output_structure(root: str | Path = "output", *, dry_run: bool = F
         old_path.rename(target)
         _prune_empty_parents(old_path.parent, stop=root_path)
 
-    write_atomic_json(_report(root_path, dry_run=dry_run, plan=plan, dir_plan=dir_plan, json_updates=json_updates), log_path)
-    return report
+    final_report = _report(root_path, dry_run=dry_run, plan=plan, dir_plan=dir_plan, json_updates=json_updates)
+    write_atomic_json(final_report, log_path)
+    return final_report
 
 
 def build_normalization_plan(root: str | Path = "output") -> list[RenamePlanEntry]:
@@ -83,7 +85,25 @@ def build_normalization_plan(root: str | Path = "output") -> list[RenamePlanEntr
     plan: list[RenamePlanEntry] = []
     for path in sorted(root_path.rglob("*.png")):
         relative = path.relative_to(root_path).as_posix()
-        if CANONICAL_IMAGE_RE.fullmatch(relative):
+        canonical_match = CANONICAL_IMAGE_RE.fullmatch(relative)
+        if canonical_match:
+            current_subject = canonical_match.group("subject")
+            expected_subject = subject_family_for_component(
+                canonical_match.group("component"),
+                year=canonical_match.group("year"),
+            )
+            if not expected_subject or current_subject == expected_subject:
+                continue
+            filename = path.name.replace(f"{current_subject}_", f"{expected_subject}_", 1)
+            target = _non_conflicting_path(root_path / expected_subject / filename, reserved)
+            reserved.add(target.resolve())
+            plan.append(
+                RenamePlanEntry(
+                    old_path=path,
+                    new_path=target,
+                    reason="component_subject_family_mismatch",
+                )
+            )
             continue
         match = LEGACY_IMAGE_RE.fullmatch(relative)
         if not match:
@@ -108,10 +128,23 @@ def build_legacy_directory_plan(root: str | Path = "output", *, exclude_paths: s
         return []
     excluded = {path.resolve() for path in (exclude_paths or set())}
     plan: list[tuple[Path, Path]] = []
-    for path in sorted((item for item in root_path.rglob("*") if item.is_dir()), key=lambda item: len(item.parts), reverse=True):
+    # Only the direct children of the generated-output root are legacy image
+    # family directories.  Nested p1/p3/p4/p5/p6 directories are used by
+    # taxonomy-facing artifacts (for example topic_packets/p4) and must retain
+    # their syllabus component names.
+    for path in sorted((item for item in root_path.iterdir() if item.is_dir()), key=lambda item: item.name):
         if path.name not in LEGACY_SUBJECT_DIRS:
             continue
         if path.resolve() in excluded:
+            continue
+        unplanned_files = [
+            item
+            for item in path.rglob("*")
+            if item.is_file() and item.name != ".DS_Store" and item.resolve() not in excluded
+        ]
+        if unplanned_files:
+            # Unsupported or unrecognized legacy artifacts must remain visible
+            # to validation instead of being wholesale relabeled by directory.
             continue
         plan.append((path, path.with_name(LEGACY_SUBJECT_DIRS[path.name])))
     return plan
@@ -125,8 +158,10 @@ def legacy_image_path_to_canonical(path_value: str) -> str | None:
         match = LEGACY_IMAGE_RE.fullmatch(candidate)
         if not match:
             continue
-        subject = LEGACY_SUBJECT_DIRS[match.group("family")]
         year = f"20{match.group('yy')}"
+        subject = subject_family_for_component(match.group("component"), year=year)
+        if not subject:
+            return None
         session = f"{_session_letter(match.group('session'))}{match.group('yy')}"
         paper_type = "qp" if match.group("role") == "questions" else "ms"
         asset_type = "question" if paper_type == "qp" else "markscheme"
@@ -148,26 +183,51 @@ def validate_normalized_output(root: str | Path = "output") -> dict[str, Any]:
     legacy_paths = []
     invalid_pngs = []
     mixed_subject_paths = []
+    component_subject_mismatches = []
+    unsupported_component_era_paths = []
     for path in sorted(root_path.rglob("*")) if root_path.exists() else []:
-        if any(part in LEGACY_PATH_PARTS for part in path.relative_to(root_path).parts):
+        relative_parts = path.relative_to(root_path).parts
+        top_level = relative_parts[0] if relative_parts else ""
+        if top_level in LEGACY_PATH_PARTS:
             legacy_paths.append(str(path))
-        if path.suffix.lower() == ".png":
+        # Audit screenshots and rendered topic-packet pages are valid generated
+        # PNGs too.  The canonical filename contract applies only inside the
+        # top-level image-family namespaces.
+        if path.suffix.lower() == ".png" and top_level in CANONICAL_SUBJECTS:
             relative = path.relative_to(root_path).as_posix()
-            parts = path.relative_to(root_path).parts
+            canonical_match = CANONICAL_IMAGE_RE.fullmatch(relative)
+            parts = relative_parts
             filename_subject = path.name.split("_", 1)[0]
             if parts and parts[0] in CANONICAL_SUBJECTS and filename_subject in CANONICAL_SUBJECTS:
                 if parts[0] != filename_subject:
                     mixed_subject_paths.append(str(path))
-            if not CANONICAL_IMAGE_RE.fullmatch(relative):
+            if canonical_match:
+                expected_subject = subject_family_for_component(
+                    canonical_match.group("component"),
+                    year=canonical_match.group("year"),
+                )
+                if not expected_subject and paper_number_from_component(canonical_match.group("component")) == "5":
+                    unsupported_component_era_paths.append(str(path))
+                elif expected_subject and canonical_match.group("subject") != expected_subject:
+                    component_subject_mismatches.append(str(path))
+            else:
                 invalid_pngs.append(str(path))
     report = {
-        "ok": not legacy_paths and not invalid_pngs and not mixed_subject_paths,
+        "ok": not legacy_paths
+        and not invalid_pngs
+        and not mixed_subject_paths
+        and not component_subject_mismatches
+        and not unsupported_component_era_paths,
         "legacy_path_count": len(legacy_paths),
         "invalid_png_count": len(invalid_pngs),
         "mixed_subject_path_count": len(mixed_subject_paths),
+        "component_subject_mismatch_count": len(component_subject_mismatches),
+        "unsupported_component_era_count": len(unsupported_component_era_paths),
         "legacy_paths": legacy_paths[:25],
         "invalid_pngs": invalid_pngs[:25],
         "mixed_subject_paths": mixed_subject_paths[:25],
+        "component_subject_mismatches": component_subject_mismatches[:25],
+        "unsupported_component_era_paths": unsupported_component_era_paths[:25],
     }
     return report
 
@@ -185,8 +245,6 @@ def _json_update_plan(root: Path, plan: list[RenamePlanEntry]) -> dict[Path, Any
             pass
 
     updates: dict[Path, Any] = {}
-    if not replacements:
-        return updates
     for path in sorted(root.rglob("*.json")):
         if path.parts[-3:] == ("migration", "output_structure_normalization.json"):
             continue
@@ -194,20 +252,80 @@ def _json_update_plan(root: Path, plan: list[RenamePlanEntry]) -> dict[Path, Any
             payload = json.loads(path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError):
             continue
-        updated = _replace_strings(payload, replacements)
+        updated = _normalize_component_subject_families(_replace_strings(payload, replacements))
         if updated != payload:
             updates[path] = updated
     return updates
 
 
+def _normalize_component_subject_families(value: Any) -> Any:
+    if isinstance(value, list):
+        return [_normalize_component_subject_families(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+
+    normalized = {key: _normalize_component_subject_families(item) for key, item in value.items()}
+    component = _component_from_mapping(normalized)
+    expected_subject = subject_family_for_component(
+        component,
+        year=normalized.get("year") or normalized.get("canonical_year_folder"),
+        session=normalized.get("session") or normalized.get("canonical_session"),
+        paper=normalized.get("paper") or normalized.get("question_id") or normalized.get("canonical_paper_id"),
+    )
+    if expected_subject:
+        for field_name in ("paper_family", "subject_family"):
+            current = normalized.get(field_name)
+            if current in CANONICAL_SUBJECTS and current != expected_subject:
+                normalized[field_name] = expected_subject
+    return normalized
+
+
+def _component_from_mapping(value: dict[str, Any]) -> str:
+    for field_name in ("component", "source_component"):
+        candidate = str(value.get(field_name) or "").strip()
+        if re.fullmatch(r"\d{1,2}", candidate):
+            return candidate.zfill(2)
+    for field_name in ("question_id", "paper", "canonical_paper_id"):
+        match = re.match(r"^(\d{1,2})", str(value.get(field_name) or "").strip())
+        if match:
+            return match.group(1).zfill(2)
+    return ""
+
+
 def _replace_strings(value: Any, replacements: dict[str, str]) -> Any:
     if isinstance(value, str):
-        return replacements.get(value, value)
+        return replacements.get(value, _normalize_canonical_asset_path(value))
     if isinstance(value, list):
         return [_replace_strings(item, replacements) for item in value]
     if isinstance(value, dict):
         return {key: _replace_strings(item, replacements) for key, item in value.items()}
     return value
+
+
+def _normalize_canonical_asset_path(value: str) -> str:
+    """Normalize a reversed canonical path even after its file was moved.
+
+    This makes an interrupted migration resumable: a second run can still
+    repair JSON references for files that were renamed before the first run
+    stopped and therefore no longer appear in the current rename plan.
+    """
+
+    path = Path(value)
+    if path.parent.name not in CANONICAL_SUBJECTS:
+        return value
+    relative = f"{path.parent.name}/{path.name}"
+    match = CANONICAL_IMAGE_RE.fullmatch(relative)
+    if not match:
+        return value
+    current_subject = match.group("subject")
+    expected_subject = subject_family_for_component(
+        match.group("component"),
+        year=match.group("year"),
+    )
+    if not expected_subject or current_subject == expected_subject:
+        return value
+    filename = path.name.replace(f"{current_subject}_", f"{expected_subject}_", 1)
+    return str(path.parent.with_name(expected_subject) / filename)
 
 
 def _report(

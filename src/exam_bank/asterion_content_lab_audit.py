@@ -13,6 +13,8 @@ from exam_bank.content_lab_auto_review import (
     automated_mark_event_ids,
     automated_source_records,
 )
+from exam_bank.publication_safety import read_json_under_publication_guard
+from exam_bank.review_asset_binding import bind_review_evidence_to_question_bank
 
 
 AUDIT_VERSION = "asterion_content_lab_readiness_audit_v1"
@@ -114,7 +116,8 @@ def run_audit(
     candidates_payload = _read_json(candidates_path)
     candidates = [item for item in candidates_payload.get("candidates", []) if isinstance(item, dict)]
     asterion_questions = _questions_by_id(_read_json(asterion_bank_path) if asterion_bank_path else {})
-    question_bank = _questions_by_id(_read_json(question_bank_path) if question_bank_path else {})
+    question_bank_payload = _read_json(question_bank_path) if question_bank_path else {}
+    question_bank = _questions_by_id(question_bank_payload)
     topic_routing = _topic_routing_by_question(_read_json(topic_routing_path) if topic_routing_path else {})
     skill_regions = _skill_regions(_read_json(skill_map_path) if skill_map_path and skill_map_path.exists() else {})
     reviewed_source_payload = (
@@ -124,6 +127,16 @@ def run_audit(
         _read_json(reviewed_mark_events_path) if reviewed_mark_events_path and reviewed_mark_events_path.exists() else {}
     )
     automated_review_payload = _read_json(reviewed_decisions_path) if reviewed_decisions_path and reviewed_decisions_path.exists() else {}
+    review_binding = bind_review_evidence_to_question_bank(
+        question_bank_payload,
+        artifact_root=artifact_root,
+        source_skill_payload=reviewed_source_payload,
+        mark_event_payload=reviewed_mark_events_payload,
+        content_lab_payload=automated_review_payload,
+    )
+    reviewed_source_payload = review_binding["source_skill_payload"]
+    reviewed_mark_events_payload = review_binding["mark_event_payload"]
+    automated_review_payload = review_binding["content_lab_payload"]
     clean_source_records = _clean_source_skill_records_by_subpart(reviewed_source_payload)
     approved_mark_event_ids = _approved_mark_event_ids(reviewed_mark_events_payload)
     for subpart_id, records in automated_source_records(automated_review_payload).items():
@@ -179,6 +192,7 @@ def run_audit(
         automated_review_payload=automated_review_payload,
     )
     summary["reviewed_evidence_coverage"] = coverage["summary"]
+    summary["review_asset_binding"] = review_binding["report"]
 
     out_dir.mkdir(parents=True, exist_ok=True)
     _write_json(out_dir / "audit_summary.json", summary)
@@ -805,7 +819,7 @@ def _unsafe_generated_content_present(candidate: dict[str, Any]) -> bool:
 def _read_json(path: Path | None) -> dict[str, Any]:
     if path is None:
         return {}
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return read_json_under_publication_guard(path)
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:

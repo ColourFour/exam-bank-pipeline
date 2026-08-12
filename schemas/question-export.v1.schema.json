@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question-export.v1.schema.json",
+  "title": "QuestionExport",
+  "description": "Versioned envelope for Question interchange records exported by exam-bank.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "generated_at",
+    "source",
+    "question_schema",
+    "asset_root",
+    "record_count",
+    "questions"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "exam_bank.interchange.questions"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_name", "schema_version", "path", "sha256", "record_count"],
+      "properties": {
+        "schema_name": {
+          "const": "exam_bank.question_bank"
+        },
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "question_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": {
+          "const": "question.v1.schema.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "asset_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "record_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "$ref": "question.v1.schema.json"
+      }
+    }
+  }
+}

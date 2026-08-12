@@ -9,8 +9,8 @@ from exam_bank.shared.session_parser import parse_session
 def test_canonical_session_parser_maps_compact_series_codes() -> None:
     assert parse_session("m21") == {
         "year": 2021,
-        "session": "summer",
-        "canonical_session": "summer21",
+        "session": "spring",
+        "canonical_session": "spring21",
         "season": "m",
         "component_year_key": "m21",
         "canonical_year_folder": "2021",
@@ -19,17 +19,28 @@ def test_canonical_session_parser_maps_compact_series_codes() -> None:
     assert parse_session("w22")["canonical_session"] == "winter22"
 
 
+def test_march_and_june_series_have_distinct_canonical_identities() -> None:
+    march = parse_session("m21")
+    june = parse_session("s21")
+
+    assert march["canonical_session"] == "spring21"
+    assert june["canonical_session"] == "summer21"
+    assert march["component_year_key"] == "m21"
+    assert june["component_year_key"] == "s21"
+    assert march["canonical_session"] != june["canonical_session"]
+
+
 def test_session_outputs_are_deterministic_across_modules() -> None:
     metadata = parse_filename_metadata("9709_m21_qp_12.pdf")
     resource = parse_pdf_resource(
         "https://pastpapers.co/caie/a-level/mathematics-9709/2021-may-june/9709_m21_qp_12.pdf"
     )
 
-    assert metadata.session == "summer21"
+    assert metadata.session == "spring21"
     assert metadata.year == "2021"
     assert resource is not None
-    assert resource.canonical_session == "summer21"
-    assert paper_instance_id(metadata.component, metadata.session, metadata.year) == "12summer21"
+    assert resource.canonical_session == "spring21"
+    assert paper_instance_id(metadata.component, metadata.session, metadata.year) == "12spring21"
 
 
 def test_no_legacy_session_fallback_tables_remain_in_parsing_path() -> None:

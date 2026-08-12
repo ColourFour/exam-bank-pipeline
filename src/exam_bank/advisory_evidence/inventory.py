@@ -17,12 +17,12 @@ from exam_bank.mupdf_tools import quiet_mupdf
 
 DOCUMENT_SPECS = {
     "examiner_report": {
-        "source_dir": Path("input/examiner_reports"),
+        "source_dir": Path("input/pastpapers/9709"),
         "output": EXAMINER_REPORT_INVENTORY,
         "output_subdir": "examiner_reports",
     },
     "grade_thresholds": {
-        "source_dir": Path("input/grade_thresholds"),
+        "source_dir": Path("input/pastpapers/9709"),
         "output": GRADE_THRESHOLD_INVENTORY,
         "output_subdir": "grade_thresholds",
     },
@@ -32,7 +32,12 @@ DOCUMENT_SPECS = {
 def build_inventory_for_dir(source_dir: str | Path, expected_document_type: str) -> dict[str, Any]:
     source_dir = Path(source_dir)
     warnings: list[str] = []
-    paths = sorted(source_dir.glob("*.pdf")) if source_dir.exists() else []
+    discovered_paths = sorted(source_dir.rglob("*.pdf")) if source_dir.exists() else []
+    paths = [
+        path
+        for path in discovered_paths
+        if parse_filename_metadata(path).document_type == expected_document_type
+    ]
     if not source_dir.exists():
         warnings.append(f"missing_input_dir:{source_dir.as_posix()}")
 
@@ -146,4 +151,3 @@ def _pdf_readiness(path: Path) -> tuple[bool, int, int, str]:
     except Exception as exc:
         return False, 0, 0, f"pdf_open_failed:{exc.__class__.__name__}"
     return True, len(lengths), sum(lengths), ""
-

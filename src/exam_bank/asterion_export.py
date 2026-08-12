@@ -15,6 +15,7 @@ from .asterion_course_contract import (
     course_registry,
     component_name_for_course,
     course_id_for_record,
+    normalize_course_id,
     review_status_for_record,
     student_runtime_ready_for_record,
     student_runtime_safe_for_record,
@@ -27,9 +28,10 @@ from .p3_exact_skill.reviewed_mark_events import (
     mark_event_status_satisfies_generation,
     reviewed_mark_event_status_by_id,
 )
+from .publication_safety import read_json_under_publication_guard
+from .review_asset_binding import bind_review_evidence_to_question_bank
 from .topic_routing_artifact import (
-    should_enforce_production_topic_routing_provenance,
-    verify_topic_routing_artifact,
+    resolve_topic_routing_sidecar,
 )
 
 
@@ -65,15 +67,16 @@ def export_asterion_question_bank(
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
-    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    payload = read_json_under_publication_guard(input_path)
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_EXPORT_FILENAME)
     catalog_output = output.parent / ASTERION_CATALOG_FILENAME
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
-    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
-    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
-        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    effective_topic_routing_path = resolve_topic_routing_sidecar(
+        question_bank_path=input_path,
+        requested_path=topic_routing_path,
+    )
     topic_routes = load_topic_routes(effective_topic_routing_path)
     catalog_payload = build_asterion_exam_bank_catalog(
         payload,
@@ -101,14 +104,15 @@ def export_asterion_exam_bank_catalog(
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
-    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    payload = read_json_under_publication_guard(input_path)
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, ASTERION_CATALOG_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
-    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
-    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
-        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    effective_topic_routing_path = resolve_topic_routing_sidecar(
+        question_bank_path=input_path,
+        requested_path=topic_routing_path,
+    )
     topic_routes = load_topic_routes(effective_topic_routing_path)
     write_atomic_json(
         build_asterion_exam_bank_catalog(
@@ -137,19 +141,29 @@ def export_asterion_content_lab_candidates(
     allow_unusable_ai_sidecar: bool = False,
 ) -> Path:
     input_path = Path(input_path)
-    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    payload = read_json_under_publication_guard(input_path)
     root = Path(artifact_root) if artifact_root is not None else infer_artifact_root(input_path)
     base = Path(base_dir) if base_dir is not None else Path.cwd()
     output = Path(output_path) if output_path is not None else default_asterion_export_path(input_path, CONTENT_LAB_EXPORT_FILENAME)
     skill_mappings = load_skill_mappings(skill_map_path, allow_unusable_ai_sidecar=allow_unusable_ai_sidecar) if skill_map_path else None
     reviewed_source_skills = load_reviewed_source_skill_decisions(reviewed_source_skills_path)
     reviewed_mark_events = load_reviewed_mark_event_decisions(reviewed_mark_events_path)
+    review_binding = bind_review_evidence_to_question_bank(
+        payload,
+        artifact_root=root,
+        base_dir=base,
+        source_skill_payload=reviewed_source_skills,
+        mark_event_payload=reviewed_mark_events,
+    )
+    reviewed_source_skills = review_binding["source_skill_payload"]
+    reviewed_mark_events = review_binding["mark_event_payload"]
     canonical_mark_events = load_canonical_mark_event_ids_by_subpart(
         mark_events_path if mark_events_path is not None else _default_mark_events_path(input_path)
     )
-    effective_topic_routing_path = topic_routing_path if topic_routing_path is not None else _default_topic_routing_path(input_path)
-    if should_enforce_production_topic_routing_provenance(effective_topic_routing_path):
-        verify_topic_routing_artifact(question_bank_path=input_path, local_sidecar_path=effective_topic_routing_path, question_bank_payload=payload)
+    effective_topic_routing_path = resolve_topic_routing_sidecar(
+        question_bank_path=input_path,
+        requested_path=topic_routing_path,
+    )
     topic_routes = load_topic_routes(effective_topic_routing_path)
     asterion_payload = _ensure_asterion_payload(
         payload,
@@ -158,15 +172,14 @@ def export_asterion_content_lab_candidates(
         skill_mappings=skill_mappings,
         topic_routes=topic_routes,
     )
-    write_atomic_json(
-        build_content_lab_candidates(
-            asterion_payload,
-            reviewed_source_skill_decisions=reviewed_source_skills,
-            reviewed_mark_events=reviewed_mark_events,
-            canonical_mark_event_ids_by_subpart=canonical_mark_events,
-        ),
-        output,
+    content_lab_payload = build_content_lab_candidates(
+        asterion_payload,
+        reviewed_source_skill_decisions=reviewed_source_skills,
+        reviewed_mark_events=reviewed_mark_events,
+        canonical_mark_event_ids_by_subpart=canonical_mark_events,
     )
+    content_lab_payload["policy"]["review_asset_binding"] = review_binding["report"]
+    write_atomic_json(content_lab_payload, output)
     return output
 
 
@@ -592,8 +605,7 @@ def load_topic_routes(path: str | Path | None) -> dict[str, dict[str, Any]]:
 
 
 def _default_topic_routing_path(input_path: Path) -> Path | None:
-    sibling = input_path.parent / "question_bank.topic_routing.v1.json"
-    return sibling if sibling.exists() else None
+    return resolve_topic_routing_sidecar(question_bank_path=input_path)
 
 
 def _topic_id_for_output(
@@ -617,9 +629,30 @@ def _topic_route_filter_ok(record: dict[str, Any], topic_route: dict[str, Any]) 
         return False
     if str(topic_route.get("confidence") or "").lower() not in {"high", "medium"}:
         return False
-    route_family = str(topic_route.get("paper_family") or "").strip().lower()
-    record_family = str(_get(record, "paper_family") or "").strip().lower()
-    if route_family and record_family and route_family != record_family:
+    # Question-bank records use canonical storage families (pm1, pm3,
+    # mechanics, stats), while topic routes use syllabus packet families
+    # (p1, p3, p4, p5, p6).  Compare their component-aware course identities
+    # instead of their intentionally different labels.  This also keeps the
+    # shared `stats` storage family from blurring S1 and S2.
+    route_family = str(topic_route.get("paper_family") or topic_route.get("paperFamily") or "").strip().lower()
+    if not route_family:
+        return False
+    record_course_id = course_id_for_record(record)
+    expected_route_family = {
+        "p1": "p1",
+        "p3": "p3",
+        "m1": "p4",
+        "s1": "p5",
+        "s2": "p6",
+    }.get(record_course_id or "")
+    if not expected_route_family or route_family != expected_route_family:
+        return False
+    explicit_route_course = topic_route.get("course_id", topic_route.get("courseId"))
+    if explicit_route_course is not None and normalize_course_id(explicit_route_course) != record_course_id:
+        return False
+    record_paper = str(_get(record, "paper") or "").strip().lower()
+    route_paper = str(topic_route.get("paper") or "").strip().lower()
+    if record_paper and route_paper and record_paper != route_paper:
         return False
     primary_topic_id = str(topic_route.get("primary_topic_id") or "").strip()
     distribution = topic_route.get("topic_distribution")
@@ -778,9 +811,8 @@ def _usage_roles(record: dict[str, Any], gate: dict[str, Any]) -> dict[str, str]
     hard_blocked = _hard_blocked(record, gate)
     review_needed = _review_needed(record, gate)
     content_review_needed = review_needed or not gate["content_lab_generation_allowed"]
-    p3_legacy_runtime_ok = str(_get(record, "paper_family") or "").lower() == "p3" and (
-        not review_needed or gate["student_runtime_image_ok"]
-    )
+    is_p3 = course_id_for_record(record) == "p3"
+    p3_legacy_runtime_ok = is_p3 and (not review_needed or gate["student_runtime_image_ok"])
     return {
         "canonical_practice": "allow"
         if not hard_blocked and p3_legacy_runtime_ok
@@ -789,7 +821,7 @@ def _usage_roles(record: dict[str, Any], gate: dict[str, Any]) -> dict[str, str]
         "quick_check_source": _tri_state_role(hard_blocked=hard_blocked, review_needed=review_needed or not gate["text_only_display_allowed"]),
         "warmup_generator_source": _tri_state_role(hard_blocked=hard_blocked, review_needed=content_review_needed),
         "guardian_candidate": "allow" if not hard_blocked and p3_legacy_runtime_ok else "block",
-        "p3_readiness_metric": "include" if str(_get(record, "paper_family") or "").lower() == "p3" else "exclude",
+        "p3_readiness_metric": "include" if is_p3 else "exclude",
     }
 
 

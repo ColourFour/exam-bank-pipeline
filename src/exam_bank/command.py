@@ -44,8 +44,58 @@ COMMANDS: dict[str, dict[str, CommandSpec]] = {
         "hydrate": CommandSpec("Restore checksum-verified source documents.", module="exam_bank.commands.data", function="run_hydrate"),
         "verify": CommandSpec("Verify source documents against the corpus manifest.", module="exam_bank.commands.data", function="run_verify"),
         "manifest": CommandSpec("Build a source corpus manifest.", module="exam_bank.commands.data", function="run_manifest"),
+        "normalize-corpus-sessions": CommandSpec(
+            "Normalize source session filenames from publisher evidence.",
+            module="exam_bank.corpus_session_identity",
+            function="main",
+        ),
+        "migrate-session-identity": CommandSpec(
+            "Migrate legacy March question identities using source evidence.",
+            module="exam_bank.canonical_session_migration",
+            function="main",
+        ),
+        "rebind-text-gold": CommandSpec(
+            "Rebind verified text gold to current canonical image hashes.",
+            module="exam_bank.question_text_gold",
+            function="main",
+        ),
+        "validate-review-assets": CommandSpec(
+            "Validate review decisions against current canonical image hashes.",
+            module="exam_bank.review_asset_binding",
+            function="main",
+        ),
+        "quarantine-invalid": CommandSpec(
+            "Recoverably quarantine structurally invalid source PDFs.",
+            module="exam_bank.commands.data",
+            function="run_quarantine_invalid",
+        ),
         "inventory": CommandSpec("Inventory generated output.", ("output-inventory",)),
         "cleanup-plan": CommandSpec("Build a non-destructive output cleanup plan.", ("output-cleanup-plan",)),
+        "audit-storage": CommandSpec(
+            "Audit exact output duplicates and optionally quarantine safe candidates.",
+            module="exam_bank.storage_audit",
+            function="main",
+        ),
+        "build-asset-manifest": CommandSpec(
+            "Build the canonical image asset manifest.",
+            module="exam_bank.asset_manifest",
+            function="run_build",
+        ),
+        "validate-assets": CommandSpec(
+            "Validate asset references across canonical and downstream artifacts.",
+            module="exam_bank.asset_manifest",
+            function="run_validate",
+        ),
+        "export-questions": CommandSpec(
+            "Export canonical questions through the versioned interchange contract.",
+            module="exam_bank.question_interchange",
+            function="run_export",
+        ),
+        "validate-questions": CommandSpec(
+            "Validate a versioned Question interchange export.",
+            module="exam_bank.question_interchange",
+            function="run_validate",
+        ),
         "normalize": CommandSpec("Normalize generated output layout.", ("output-normalize-structure",)),
         "diff": CommandSpec("Compare export summaries.", ("export-summary-diff",)),
     },
@@ -55,6 +105,21 @@ COMMANDS: dict[str, dict[str, CommandSpec]] = {
             "Refresh deterministic topic-routing artifacts.",
             module="exam_bank.topic_routing_refresh",
             function="main",
+        ),
+        "release-manifest": CommandSpec(
+            "Bind the question bank and durable topic routing into a release manifest.",
+            module="exam_bank.topic_routing_artifact",
+            function="manifest_main",
+        ),
+        "verify-release": CommandSpec(
+            "Verify the hash-bound topic-routing release.",
+            module="exam_bank.topic_routing_artifact",
+            function="verify_main",
+        ),
+        "restore-release": CommandSpec(
+            "Restore the local topic-routing cache from the verified release.",
+            module="exam_bank.topic_routing_artifact",
+            function="restore_main",
         ),
         "rescore": CommandSpec("Rescore topic confidence deterministically.", ("topic-confidence-rescore",)),
         "review-batch": CommandSpec("Build a topic review batch.", ("topic-review-batch",)),
@@ -85,6 +150,18 @@ COMMANDS: dict[str, dict[str, CommandSpec]] = {
             function="verify_main",
         ),
     },
+    "release": {
+        "build": CommandSpec(
+            "Build the hash-bound multi-artifact release manifest.",
+            module="exam_bank.release_manifest",
+            function="run_build",
+        ),
+        "verify": CommandSpec(
+            "Verify the release manifest and every bound artifact.",
+            module="exam_bank.release_manifest",
+            function="run_verify",
+        ),
+    },
     "ai": {
         "enrich": CommandSpec("Run advisory AI enrichment.", ("enrich-ai",)),
         "audit": CommandSpec("Audit an AI sidecar.", ("ai-sidecar-audit",)),
@@ -106,68 +183,9 @@ COMMANDS: dict[str, dict[str, CommandSpec]] = {
             function="run_promote",
         ),
     },
-    "classroom": {
-        "serve": CommandSpec("Serve the local classroom dashboard.", ("classroom",)),
-        "init": CommandSpec("Create a local class workspace.", ("class-init",)),
-        "add-assignment": CommandSpec("Add an assignment to a class.", ("class-add-assignment",)),
-        "dispatch-due": CommandSpec("Dispatch due classroom messages.", ("class-dispatch-due",)),
-        "ingest-submissions": CommandSpec("Ingest assignment submissions.", ("class-ingest-submissions",)),
-        "quiz": CommandSpec("Run the local quiz-packet workflow.", ("quiz-packet",)),
-        "grade-bma": CommandSpec("Build B/M/A grading artifacts.", ("grade-quiz-bma",)),
-        "ingest-assignment": CommandSpec(
-            "Ingest assignment submissions into the local workspace.",
-            module="exam_bank.submissions.cli",
-            function="main",
-        ),
-        "review-submissions": CommandSpec(
-            "Build a human review queue for submissions.",
-            module="exam_bank.submissions.review_cli",
-            function="main",
-        ),
-        "draft-grades": CommandSpec(
-            "Build draft grades from reviewed evidence.",
-            module="exam_bank.submissions.draft_grading_cli",
-            function="main",
-        ),
-    },
-    "email": {
-        "check": CommandSpec("Check the configured email provider.", ("email-check",)),
-        "send-test": CommandSpec("Run a controlled send test.", ("email-send-test",)),
-        "receive-test": CommandSpec("Run a controlled receive test.", ("email-receive-test",)),
-        "smoke-test": CommandSpec("Run the email smoke workflow.", ("email-smoke-test",)),
-        "ingest-submissions": CommandSpec(
-            "Ingest submissions from a local email export.",
-            module="exam_bank.submissions.email_intake_cli",
-            function="main",
-        ),
-        "import-live": CommandSpec(
-            "Import live mailbox submissions into the restricted local root.",
-            module="exam_bank.submissions.live_email_import_cli",
-            function="main",
-        ),
-        "build-outgoing": CommandSpec(
-            "Build the outgoing classroom email queue.",
-            module="exam_bank.submissions.outgoing_email_cli",
-            function="build_queue_main",
-        ),
-        "dry-run-outgoing": CommandSpec(
-            "Preview the outgoing email queue without sending.",
-            module="exam_bank.submissions.outgoing_email_cli",
-            function="dry_run_main",
-        ),
-        "fake-send-outgoing": CommandSpec(
-            "Exercise outgoing delivery using the fake provider.",
-            module="exam_bank.submissions.outgoing_email_cli",
-            function="fake_send_main",
-        ),
-    },
     "marks": {
         "build": CommandSpec("Build the deterministic mark-event sidecar.", module="exam_bank.mark_events.cli", function="run_build"),
         "validate": CommandSpec("Validate the mark-event sidecar.", module="exam_bank.mark_events.cli", function="run_validate"),
-    },
-    "autograde": {
-        "build": CommandSpec("Build fail-closed eligible items.", module="exam_bank.auto_grade.cli", function="run_build"),
-        "validate": CommandSpec("Validate fail-closed eligible items.", module="exam_bank.auto_grade.cli", function="run_validate"),
     },
     "advisory": {
         "inventory": CommandSpec("Inventory advisory PDFs.", module="exam_bank.advisory_evidence.cli", function="run_inventory"),
@@ -215,7 +233,7 @@ def _run(spec: CommandSpec, argv: list[str]) -> int:
 
 def _print_top_help() -> None:
     print("usage: exam-bank <domain> <command> [options]\n")
-    print("CAIE 9709 exam-bank extraction and classroom platform.\n")
+    print("CAIE 9709 exam-bank extraction and normalization pipeline.\n")
     print("domains:")
     for domain in COMMANDS:
         print(f"  {domain}")

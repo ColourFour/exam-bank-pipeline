@@ -4,6 +4,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import fitz
@@ -18,6 +19,7 @@ from exam_bank.topic_packets import (
     generate_topic_packets,
     load_packet_taxonomy,
     normalize_packet_topic,
+    _validated_topic_packet_output_root,
     resolve_answer_image_paths,
     validate_packet_key,
 )
@@ -39,6 +41,47 @@ def test_invalid_topic_subtopic_ids_rejected_in_strict_mode(tmp_path: Path) -> N
     with pytest.raises(TopicPacketError):
         if not validate_packet_key(PacketKey("release", "p3", "invented", "integration_by_parts"), taxonomy):
             raise TopicPacketError("Packet key outside allowed taxonomy")
+
+
+@pytest.mark.parametrize("unsafe_id", ["../escape", "/tmp/escape", "two/slugs", "bad-id", "."])
+def test_taxonomy_rejects_unsafe_output_path_segments(tmp_path: Path, unsafe_id: str) -> None:
+    taxonomy_path = _write_taxonomy(tmp_path)
+    payload = json.loads(taxonomy_path.read_text(encoding="utf-8"))
+    payload["components"][0]["topics"][0]["topic_id"] = unsafe_id
+    taxonomy_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(TopicPacketError, match="Invalid topic_id"):
+        load_packet_taxonomy(taxonomy_path)
+
+
+def test_packet_output_root_rejects_protected_or_symlink_paths(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    with pytest.raises(TopicPacketError, match="Unsafe topic-packet output root"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=tmp_path,
+            artifact_root=paths["artifact_root"],
+        )
+
+    target = tmp_path / "real_packets"
+    target.mkdir()
+    link = tmp_path / "packet_link"
+    link.symlink_to(target, target_is_directory=True)
+    with pytest.raises(TopicPacketError, match="must not be a symlink"):
+        generate_topic_packets(
+            question_bank_path=paths["bank"],
+            taxonomy_path=paths["taxonomy"],
+            canonical_taxonomy_root=paths["canonical_root"],
+            output_root=link,
+            artifact_root=paths["artifact_root"],
+        )
+
+
+def test_packet_output_root_rejects_broad_temporary_directory() -> None:
+    with pytest.raises(TopicPacketError, match="Unsafe topic-packet output root"):
+        _validated_topic_packet_output_root(Path(tempfile.gettempdir()))
 
 
 def test_major_topic_grouping_ignores_subtopic_and_manifest_shape(tmp_path: Path) -> None:
@@ -399,9 +442,6 @@ def test_p3_vector_plane_questions_are_special_marked_as_removed_syllabus(tmp_pa
         ("04summer08_q02", "04", "stats", "work_energy_power", "p4", "energy_work_and_power"),
         ("04winter08_q02", "04", "stats", "friction_rough_plane", "p4", "forces_and_equilibrium"),
         ("41winter09_q01", "41", "stats", "work_energy_power", "p4", "energy_work_and_power"),
-        ("06summer09_q02", "06", "stats", "probability", "p5", "probability"),
-        ("06summer08_q04", "06", "stats", "normal_distribution", "p5", "the_normal_distribution"),
-        ("61winter09_q03", "61", "stats", "normal_distribution", "p5", "the_normal_distribution"),
         ("41winter20_q06", "41", "stats", "connected_particles_energy", "p4", "energy_work_and_power"),
     ],
 )
@@ -428,10 +468,10 @@ def test_packet_topic_normalization_uses_component_before_routing(
     assert normalization.expected_topic == expected_topic
 
 
-def test_normal_distribution_alias_resolves_only_to_p5() -> None:
+def test_normal_distribution_alias_resolves_only_to_supported_family() -> None:
     taxonomy = load_packet_taxonomy(ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json")
 
-    for component, stored_family in [("04", "p4"), ("11", "p1"), ("31", "p3"), ("61", "stats")]:
+    for component, stored_family in [("04", "p4"), ("11", "p1"), ("31", "p3")]:
         normalization = normalize_packet_topic(
             component_code=component,
             current_family=stored_family,
@@ -442,6 +482,86 @@ def test_normal_distribution_alias_resolves_only_to_p5() -> None:
         assert normalization.status == "resolved"
         assert normalization.expected_family == "p5"
         assert normalization.expected_topic == "the_normal_distribution"
+
+
+@pytest.mark.parametrize("component", ["06", "61", "62", "63"])
+def test_pre_2020_p6_topic_packet_routing_uses_s1_taxonomy(component: str) -> None:
+    taxonomy = load_packet_taxonomy(ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json")
+
+    normalization = normalize_packet_topic(
+        component_code=component,
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+        paper=f"{component}winter19",
+    )
+
+    assert normalization.status == "resolved"
+    assert normalization.expected_family == "p5"
+    assert normalization.expected_topic == "the_normal_distribution"
+
+
+def test_post_2020_p6_topic_packet_routing_is_explicitly_unsupported() -> None:
+    taxonomy = load_packet_taxonomy(ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json")
+
+    normalization = normalize_packet_topic(
+        component_code="62",
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+        paper="62spring20",
+    )
+
+    assert normalization.status == "unsupported_component_family"
+    assert normalization.expected_family == "p6"
+    assert normalization.expected_topic == ""
+
+
+def test_yearless_p6_topic_packet_routing_fails_closed() -> None:
+    taxonomy = load_packet_taxonomy(ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json")
+
+    normalization = normalize_packet_topic(
+        component_code="62",
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+    )
+
+    assert normalization.status == "ambiguous_component_era"
+    assert normalization.expected_family == ""
+    assert normalization.expected_topic == ""
+
+
+def test_p5_topic_packet_routing_is_era_aware_and_pre_2020_m2_is_unsupported() -> None:
+    taxonomy = load_packet_taxonomy(ROOT / "exam_bank_taxonomy/caie_9709_syllabus_topics.v1.json")
+
+    legacy = normalize_packet_topic(
+        component_code="51",
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+        paper="51summer19",
+    )
+    current = normalize_packet_topic(
+        component_code="51",
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+        paper="51summer20",
+    )
+    yearless = normalize_packet_topic(
+        component_code="51",
+        current_family="stats",
+        raw_topic="normal_distribution",
+        taxonomy=taxonomy,
+    )
+
+    assert legacy.status == "unsupported_component_era"
+    assert legacy.expected_family == ""
+    assert current.status == "resolved"
+    assert current.expected_family == "p5"
+    assert current.expected_topic == "the_normal_distribution"
+    assert yearless.status == "ambiguous_component_era"
 
 
 def test_major_topic_assignment_uses_normalized_packet_family_for_audit_sample() -> None:
@@ -1666,8 +1786,8 @@ def test_source_label_maps_compact_seasons(tmp_path: Path) -> None:
     paths = _fixture(
         tmp_path,
         record_overrides={
-            "q1": {"paper": "11spring23", "notes": {"source_paper_code": "11"}},
-            "q2": {"paper": "52winter21", "question_number": "7", "notes": {"source_paper_code": "52"}},
+            "q1": {"paper": "31spring23", "notes": {"source_paper_code": "31"}},
+            "q2": {"paper": "32winter21", "question_number": "7", "notes": {"source_paper_code": "32"}},
         },
     )
 
@@ -1681,8 +1801,8 @@ def test_source_label_maps_compact_seasons(tmp_path: Path) -> None:
 
     manifest = json.loads((paths["output"] / "p3" / "integration" / "manifest.json").read_text(encoding="utf-8"))
     labels = {item["question_id"]: item["source_label"] for item in manifest["included_records"]}
-    assert labels["q1"] == "2023 March P11 Question 1"
-    assert labels["q2"] == "2021 November P52 Question 7"
+    assert labels["q1"] == "2023 March P31 Question 1"
+    assert labels["q2"] == "2021 November P32 Question 7"
 
 
 def test_multiple_question_and_mark_scheme_images_do_not_increment_problem_number(tmp_path: Path) -> None:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 import hashlib
 import json
@@ -21,10 +22,20 @@ DEFAULT_SCAN_ROOTS = (Path("output"), Path("reports"))
 DEFAULT_REFERENCE_JSON_FILES = (
     Path("output/json/question_bank.json"),
     Path("output/json/question_bank.topic_routing.v1.json"),
+    Path("output/json/question_bank.mark_events.v1.json"),
+    Path("output/json/question_bank.difficulty_index.v1.json"),
+    Path("output/advisory_evidence/question_bank.advisory_evidence.v1.json"),
     Path("output/asterion/exports/latest/asterion_exam_bank_catalog_v1.json"),
     Path("output/asterion/exports/latest/asterion_question_bank_v1.json"),
     Path("output/asterion/exports/latest/asterion_content_lab_candidates_v1.json"),
     Path("output/json/asset_manifest.v1.json"),
+    Path("data/review/canonical/asterion/content_lab_reviewed_decisions.v1.json"),
+    Path("data/review/canonical/asterion/student_runtime_safe_decisions.v1.json"),
+    Path("data/review/canonical/p3_exact_skill/reviewed_decisions.v1.json"),
+    Path("data/review/canonical/p3_exact_skill/reviewed_mark_events.v1.json"),
+    Path("data/review/canonical/text_fidelity/question_text_gold.v1.json"),
+    Path("data/review/canonical/topic/topic_bank_reviewed_decisions.v1.json"),
+    Path("data/review/canonical/topic/topic_overlap_review_current.v1.json"),
 )
 SELF_REPORT_PATHS = {
     "reports/output_storage_duplicate_audit.v1.json",
@@ -43,6 +54,108 @@ SAFE_DELETE_ACTION = "safe duplicate delete candidate"
 CACHE_ACTION = "generated cache candidate"
 QUARANTINE_ACTION = "quarantine only"
 DO_NOT_TOUCH_ACTION = "do not touch"
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Audit output/report storage duplication using SHA-256 and write optimization reports.",
+    )
+    parser.add_argument("--scan-root", action="append", default=[], help="Directory to scan. May be repeated.")
+    parser.add_argument(
+        "--reference-json",
+        action="append",
+        default=[],
+        help="JSON export to inspect for file references. May be repeated.",
+    )
+    parser.add_argument(
+        "--question-bank",
+        default="output/json/question_bank.json",
+        help="Question bank used to build the asset manifest.",
+    )
+    parser.add_argument(
+        "--asset-manifest",
+        default="output/json/asset_manifest.v1.json",
+        help="Asset manifest output path.",
+    )
+    parser.add_argument(
+        "--json",
+        default="reports/output_storage_duplicate_audit.v1.json",
+        help="Audit JSON output path.",
+    )
+    parser.add_argument(
+        "--markdown",
+        default="reports/output_storage_duplicate_audit.md",
+        help="Audit Markdown output path.",
+    )
+    parser.add_argument(
+        "--plan",
+        default="reports/output_storage_optimization_plan.md",
+        help="Optimization plan Markdown output path.",
+    )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--dry-run", action="store_true", help="Do not move files. This is the default.")
+    mode.add_argument(
+        "--apply",
+        action="store_true",
+        help="Move conservative exact-duplicate candidates to quarantine.",
+    )
+    mode.add_argument(
+        "--apply-delete",
+        "--delete",
+        action="store_true",
+        help="Hard-delete allowlisted exact non-canonical duplicates after writing a deletion manifest.",
+    )
+    parser.add_argument(
+        "--delete-manifest",
+        default="reports/output_storage_delete_manifest.v1.json",
+        help="Deletion manifest path for --apply-delete.",
+    )
+    parser.add_argument(
+        "--quarantine-dir",
+        default="",
+        help="Quarantine directory for --apply. Defaults to output/_quarantine_storage_cleanup.",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    scan_roots = [Path(path) for path in args.scan_root] if args.scan_root else list(DEFAULT_SCAN_ROOTS)
+    reference_json = (
+        [Path(path) for path in args.reference_json]
+        if args.reference_json
+        else list(DEFAULT_REFERENCE_JSON_FILES)
+    )
+    audit = run_storage_audit(
+        scan_roots=scan_roots,
+        reference_json_files=reference_json,
+        question_bank_path=args.question_bank,
+        asset_manifest_path=args.asset_manifest,
+        json_path=args.json,
+        markdown_path=args.markdown,
+        plan_path=args.plan,
+        dry_run=not args.apply and not args.apply_delete,
+        apply=bool(args.apply),
+        apply_delete=bool(args.apply_delete),
+        delete_manifest_path=args.delete_manifest,
+        quarantine_dir=Path(args.quarantine_dir) if args.quarantine_dir else None,
+    )
+    delete_result = dict(audit["delete_result"])
+    if len(delete_result.get("deleted_files") or []) > 10:
+        delete_result["deleted_files_sample"] = delete_result["deleted_files"][:10]
+        del delete_result["deleted_files"]
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "summary": audit["summary"],
+                "cleanup_result": audit["cleanup_result"],
+                "delete_result": delete_result,
+            },
+            indent=2,
+        )
+    )
+    return 0
 
 
 @dataclass(frozen=True)
@@ -134,7 +247,7 @@ def build_storage_audit(
         "files_not_referenced_by_current_json_exports": unreferenced_files,
         "cleanup_candidates": cleanup_candidates,
         "policy_notes": [
-            "Canonical image evidence is under output/p*/<paper>/questions/*.png and output/p*/<paper>/mark_scheme/*.png.",
+            "Canonical image evidence is flat under output/pm1, output/pm3, output/mechanics, and output/stats.",
             "Cleanup candidates are exact SHA-256 duplicates only; default mode is dry-run.",
             "Apply mode moves candidates to a quarantine directory and never permanently deletes files.",
             "Delete mode writes a deletion manifest before hard-deleting allowlisted non-canonical exact duplicates.",
@@ -506,8 +619,10 @@ def render_storage_optimization_plan(audit: dict[str, Any]) -> str:
             "## Canonical Directories To Keep",
             "- `output/json/question_bank.json`",
             "- `output/json/asset_manifest.v1.json`",
-            "- `output/p*/<paper>/questions/*.png`",
-            "- `output/p*/<paper>/mark_scheme/*.png`",
+            "- `output/pm1/*.png`",
+            "- `output/pm3/*.png`",
+            "- `output/mechanics/*.png`",
+            "- `output/stats/*.png`",
             "- `output/asterion/exports/latest/*.json` as lightweight references, not copied images",
             "",
             "## Generated Or Rebuildable Candidates",
@@ -538,7 +653,7 @@ def render_storage_optimization_plan(audit: dict[str, Any]) -> str:
         [
             "",
             "## Recommended Implementation Steps",
-            "1. Keep canonical images under `output/p*/...` as the source of truth.",
+            "1. Keep flat canonical images under `output/pm1`, `output/pm3`, `output/mechanics`, and `output/stats` as the source of truth.",
             "2. Keep downstream JSON exports path-compatible but prefer `*_asset_id` fields and canonical relative paths.",
             "3. Use `output/json/asset_manifest.v1.json` as an index for asset lookup and integrity checks.",
             "4. Use hard-delete mode only for exact duplicate non-canonical files after reviewing `reports/output_storage_delete_manifest.v1.json`.",
@@ -550,12 +665,12 @@ def render_storage_optimization_plan(audit: dict[str, Any]) -> str:
             "- Canonical image duplicates can be real duplicate evidence across papers; do not remove them without explicit remap review.",
             "",
             "## Regeneration Commands",
-            "- `.venv/bin/python -m exam_bank.cli asterion-export --input output/json/question_bank.json --artifact-root output`",
-            "- `.venv/bin/python -m exam_bank.cli asterion-content-lab-candidates --input output/json/question_bank.json --artifact-root output`",
-            "- `.venv/bin/python -m exam_bank.cli topic-packets --input output/json/question_bank.json --artifact-root output`",
-            "- `.venv/bin/python scripts/audit_output_storage.py --dry-run`",
-            "- `.venv/bin/python scripts/audit_output_storage.py --apply-delete`",
-            "- `.venv/bin/python scripts/validate_asset_references.py`",
+            "- `.venv/bin/python -m exam_bank.command asterion export --input output/json/question_bank.json --artifact-root output`",
+            "- `.venv/bin/python -m exam_bank.command asterion content-lab --input output/json/question_bank.json --artifact-root output`",
+            "- `.venv/bin/python -m exam_bank.command topic packets --input output/json/question_bank.json --artifact-root output`",
+            "- `.venv/bin/python -m exam_bank.command data audit-storage --dry-run`",
+            "- `.venv/bin/python -m exam_bank.command data audit-storage --apply`",
+            "- `.venv/bin/python -m exam_bank.command data validate-assets --strict-companion-inputs`",
         ]
     )
     return "\n".join(lines).rstrip() + "\n"
@@ -717,11 +832,10 @@ def _canonical_rank(path: str, referenced_paths: set[str]) -> tuple[int, int, in
 def _is_canonical_asset_path(path: str) -> bool:
     parts = Path(path).parts
     return (
-        len(parts) >= 5
+        len(parts) == 3
         and parts[0] == "output"
-        and parts[1].startswith("p")
+        and parts[1] in {"pm1", "pm3", "mechanics", "stats"}
         and parts[2]
-        and parts[3] in {"questions", "mark_scheme"}
         and Path(path).suffix.lower() in IMAGE_SUFFIXES
     )
 

@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "question.v1.schema.json",
+  "title": "Question",
+  "description": "Source-agnostic question input for grading. Question identifiers are opaque and must not be reconstructed by consumers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_name",
+    "schema_version",
+    "question_id",
+    "paper",
+    "question_number",
+    "paper_family",
+    "topic",
+    "subtopic",
+    "question_text",
+    "question_image",
+    "mark_scheme_image",
+    "mark_scheme_text",
+    "max_marks",
+    "rubric_status",
+    "rubric",
+    "quality",
+    "metadata"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "exam_bank.interchange.question"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paper": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_number": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paper_family": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "subtopic": {
+      "type": "string"
+    },
+    "question_text": {
+      "type": "string"
+    },
+    "question_image": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "mark_scheme_image": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "mark_scheme_text": {
+      "type": "string"
+    },
+    "max_marks": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "rubric_status": {
+      "type": "string",
+      "enum": ["not_included", "included", "review_required"]
+    },
+    "rubric": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rubricItem"
+      }
+    },
+    "quality": {
+      "$ref": "#/$defs/quality"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "rubricItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mark_id",
+        "mark_code",
+        "mark_type",
+        "max_marks",
+        "criteria",
+        "depends_on",
+        "follow_through",
+        "accepted_evidence",
+        "metadata"
+      ],
+      "properties": {
+        "mark_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mark_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mark_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_marks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "criteria": {
+          "type": "string"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "follow_through": {
+          "type": "boolean"
+        },
+        "accepted_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_status",
+        "validation_status",
+        "question_text_trust",
+        "visual_curation_status",
+        "text_only_status",
+        "mark_scheme_confidence",
+        "review_flags"
+      ],
+      "properties": {
+        "mapping_status": {
+          "type": "string"
+        },
+        "validation_status": {
+          "type": "string"
+        },
+        "question_text_trust": {
+          "type": "string"
+        },
+        "visual_curation_status": {
+          "type": "string"
+        },
+        "text_only_status": {
+          "type": "string"
+        },
+        "mark_scheme_confidence": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

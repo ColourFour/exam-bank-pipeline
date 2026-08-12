@@ -63,6 +63,16 @@ def test_reconcile_preserves_same_packet_and_flags_moved_new_and_removed(tmp_pat
     records = {row["question_id"]: row for row in sidecar["records"]}
     assert packet_report["removed_question_ids"] == ["q_removed"]
     assert records["q1"]["difficulty_status"] == "reviewed"
+    assert records["q1"]["evidence_refs"] == [
+        {
+            "type": "canonical_question_image",
+            "path": str(paths["artifact_root"] / "questions" / "q1.png"),
+        },
+        {
+            "type": "canonical_mark_scheme_image",
+            "path": str(paths["artifact_root"] / "marks" / "q1_ms.png"),
+        },
+    ]
     assert records["q2"]["difficulty_status"] == "provisional_topic_changed"
     assert records["q2"]["provisional_percentile_0_100"] == 60.0
     assert records["q2"]["source_packet_id"] == "p3_differentiation_old"

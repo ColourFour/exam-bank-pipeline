@@ -7,6 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from exam_bank.asterion_course_contract import COURSE_IDS, course_id_for_record
 from exam_bank.atomic_json import write_atomic_json
 from exam_bank.topic_routing_artifact import (
     build_topic_routing_artifact_report,
@@ -14,15 +15,7 @@ from exam_bank.topic_routing_artifact import (
 )
 
 
-VALID_COURSE_IDS = {"p1", "p3", "m1", "s1"}
-PAPER_FAMILY_TO_COURSE_ID = {
-    "p1": "p1",
-    "p3": "p3",
-    "p4": "m1",
-    "m1": "m1",
-    "p5": "s1",
-    "s1": "s1",
-}
+VALID_COURSE_IDS = set(COURSE_IDS)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -66,7 +59,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--output",
-        default="output/asterion/exports/latest/asterion_all_course_export_validation_2026_06_01.json",
+        default="output/asterion/exports/latest/asterion_all_course_export_validation.v1.json",
     )
     return parser
 
@@ -85,12 +78,6 @@ def json_format_report(path: Path) -> dict[str, Any]:
     }
 
 
-def course_id_for_paper_family(paper_family: Any) -> str | None:
-    if not isinstance(paper_family, str):
-        return None
-    return PAPER_FAMILY_TO_COURSE_ID.get(paper_family.lower())
-
-
 def course_counts_from_questions(records: list[dict[str, Any]]) -> Counter[str]:
     return Counter(str(record.get("course_id", "")) for record in records)
 
@@ -98,10 +85,24 @@ def course_counts_from_questions(records: list[dict[str, Any]]) -> Counter[str]:
 def source_course_counts(question_bank: dict[str, Any]) -> Counter[str]:
     counts: Counter[str] = Counter()
     for record in question_bank.get("questions", []):
-        course_id = course_id_for_paper_family(record.get("paper_family"))
+        course_id = course_id_for_record(record)
         if course_id:
             counts[course_id] += 1
     return counts
+
+
+def course_count_mismatch_error(
+    label: str,
+    *,
+    expected: Counter[str],
+    actual: Counter[str],
+) -> str | None:
+    if actual == expected:
+        return None
+    return (
+        f"{label} course counts do not match era-aware source counts: "
+        f"expected={dict(sorted(expected.items()))}, actual={dict(sorted(actual.items()))}."
+    )
 
 
 def count_by(records: list[dict[str, Any]], key: str) -> dict[str, int]:
@@ -226,7 +227,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     candidate_course_counts = Counter(
         course_id
         for candidate in candidates
-        if (course_id := course_id_for_paper_family(candidate.get("paper_family")))
+        if (course_id := course_id_for_record(candidate))
     )
     catalog_visible_counts = Counter(
         str(record.get("course_id", ""))
@@ -253,6 +254,13 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         for record in catalog_questions
         if record.get("learning_runtime_safe") is True
     )
+
+    if mismatch := course_count_mismatch_error(
+        "Catalog",
+        expected=source_counts,
+        actual=catalog_course_counts,
+    ):
+        errors.append(mismatch)
 
     catalog_course_ids = set(catalog_course_counts)
     invalid_catalog_course_ids = sorted(catalog_course_ids - VALID_COURSE_IDS)
@@ -426,12 +434,18 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
     topic_paper_families = Counter()
     for record in topic_records.values():
-        course_id = course_id_for_paper_family(record.get("paper_family"))
+        course_id = course_id_for_record(record)
         if course_id:
             topic_paper_families[course_id] += 1
         else:
             warnings.append("Topic routing contains a record with unmapped paper_family.")
             break
+    if mismatch := course_count_mismatch_error(
+        "Topic routing",
+        expected=source_counts,
+        actual=topic_paper_families,
+    ):
+        errors.append(mismatch)
 
     format_reports = {
         name: json_format_report(path)
